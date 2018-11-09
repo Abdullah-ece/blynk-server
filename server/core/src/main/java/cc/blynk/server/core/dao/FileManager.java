@@ -137,15 +137,15 @@ public class FileManager {
         return true;
     }
 
-    public void override(Organization org) throws IOException {
+    public void override(Organization org, boolean isFancy) throws IOException {
         Path path = generateOrgFileName(org.id);
-        JsonParser.writeOrg(path.toFile(), org);
+        JsonParser.writeOrg(path.toFile(), org, isFancy);
     }
 
-    public void overrideUserFile(User user) throws IOException {
+    public void overrideUserFile(User user, boolean isFancy) throws IOException {
         Path path = generateFileName(user.email);
 
-        JsonParser.writeUser(path.toFile(), user);
+        JsonParser.writeUser(path.toFile(), user, isFancy);
     }
 
     public ConcurrentMap<Integer, Organization> deserializeOrganizations() {

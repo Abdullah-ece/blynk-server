@@ -64,11 +64,11 @@ public class ProfileSaverWorkerTest {
         when(userDao.getUsers()).thenReturn(userMap);
         profileSaverWorker.run();
 
-        verify(fileManager, times(4)).overrideUserFile(any());
-        verify(fileManager).overrideUserFile(user1);
-        verify(fileManager).overrideUserFile(user2);
-        verify(fileManager).overrideUserFile(user3);
-        verify(fileManager).overrideUserFile(user4);
+        verify(fileManager, times(4)).overrideUserFile(any(), any());
+        verify(fileManager).overrideUserFile(user1, false);
+        verify(fileManager).overrideUserFile(user2, false);
+        verify(fileManager).overrideUserFile(user3, false);
+        verify(fileManager).overrideUserFile(user4, false);
     }
 
     @Test

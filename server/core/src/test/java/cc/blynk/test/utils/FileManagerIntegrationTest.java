@@ -41,7 +41,7 @@ public class FileManagerIntegrationTest {
 
     @Test
     public void testNotNullTokenManager() throws IOException {
-        fileManager.overrideUserFile(user1);
+        fileManager.overrideUserFile(user1, false);
 
         Map<String, User> users = fileManager.deserializeUsers();
         assertNotNull(users);
@@ -50,15 +50,15 @@ public class FileManagerIntegrationTest {
 
     @Test
     public void testCreationTempFile() throws IOException {
-        fileManager.overrideUserFile(user1);
+        fileManager.overrideUserFile(user1, false);
         //file existence ignored
-        fileManager.overrideUserFile(user1);
+        fileManager.overrideUserFile(user1, false);
     }
 
     @Test
     public void testReadListOfFiles() throws IOException {
-        fileManager.overrideUserFile(user1);
-        fileManager.overrideUserFile(user2);
+        fileManager.overrideUserFile(user1, false);
+        fileManager.overrideUserFile(user2, false);
         Path fakeFile = Paths.get(fileManager.getDataDir().toString(), "123.txt");
         Files.deleteIfExists(fakeFile);
         Files.createFile(fakeFile);
@@ -72,8 +72,8 @@ public class FileManagerIntegrationTest {
 
     @Test
     public void testOverrideFiles() throws IOException {
-        fileManager.overrideUserFile(user1);
-        fileManager.overrideUserFile(user1);
+        fileManager.overrideUserFile(user1, false);
+        fileManager.overrideUserFile(user1, false);
 
         Map<String, User> users = fileManager.deserializeUsers();
         assertNotNull(users);

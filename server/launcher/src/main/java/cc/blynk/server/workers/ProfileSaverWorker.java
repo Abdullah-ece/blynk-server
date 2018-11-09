@@ -45,31 +45,33 @@ public class ProfileSaverWorker implements Runnable, Closeable {
 
     @Override
     public void run() {
-        final long now = System.currentTimeMillis();
+        long now = System.currentTimeMillis();
+        //todo change in production, via property later?
+        boolean isFancy = true;
         try {
-            saveOrgs();
+            saveOrgs(isFancy);
         } catch (Throwable t) {
             log.error("Error saving organizations.", t);
         }
         try {
-            saveUsers(now);
+            saveUsers(now, isFancy);
         } catch (Throwable t) {
             log.error("Error saving users.", t);
         }
         lastStart = now;
     }
 
-    private void saveOrgs() {
+    private void saveOrgs(boolean isFancy) {
         log.debug("Starting saving organization db.");
-        ArrayList<Organization> orgs = saveModifiedOrgs();
+        ArrayList<Organization> orgs = saveModifiedOrgs(isFancy);
         log.debug("Saving organization db finished. Modified {} organizations.", orgs.size());
 
     }
 
-    private void saveUsers(long now) {
+    private void saveUsers(long now, boolean isFancy) {
         log.debug("Starting saving user db.");
 
-        ArrayList<User> users = saveModifiedUsers();
+        ArrayList<User> users = saveModifiedUsers(isFancy);
 
         dbManager.saveUsers(users);
 
@@ -88,7 +90,7 @@ public class ProfileSaverWorker implements Runnable, Closeable {
             for (User user : userDao.users.values()) {
                 try {
                     Path path = fileManager.generateBackupFileName(user.email, user.orgId);
-                    JsonParser.writeUser(path.toFile(), user);
+                    JsonParser.writeUser(path.toFile(), user, false);
                 } catch (Exception e) {
                     //ignore
                 }
@@ -96,13 +98,13 @@ public class ProfileSaverWorker implements Runnable, Closeable {
         }
     }
 
-    private ArrayList<Organization> saveModifiedOrgs() {
+    private ArrayList<Organization> saveModifiedOrgs(boolean isFancy) {
         ArrayList<Organization> orgs = new ArrayList<>();
 
         for (Organization org : organizationDao.organizations.values()) {
             if (org.isUpdated(lastStart)) {
                 try {
-                    fileManager.override(org);
+                    fileManager.override(org, isFancy);
                     orgs.add(org);
                 } catch (Exception e) {
                     log.error("Error saving : {}.", org);
@@ -113,13 +115,13 @@ public class ProfileSaverWorker implements Runnable, Closeable {
         return orgs;
     }
 
-    private ArrayList<User> saveModifiedUsers() {
+    private ArrayList<User> saveModifiedUsers(boolean isFancy) {
         var users = new ArrayList<User>();
 
         for (User user : userDao.getUsers().values()) {
             if (user.isUpdated(lastStart)) {
                 try {
-                    fileManager.overrideUserFile(user);
+                    fileManager.overrideUserFile(user, isFancy);
                     users.add(user);
                 } catch (Exception e) {
                     log.error("Error saving : {}.", user);

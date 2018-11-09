@@ -75,9 +75,12 @@ public final class JsonParser {
     private static final ObjectReader productReader = MAPPER.readerFor(Product.class);
     private static final ObjectReader metafieldReader = MAPPER.readerFor(MetaField.class);
 
+    private static final ObjectWriter organizationFancyWriter =
+            MAPPER.writerWithDefaultPrettyPrinter().forType(Organization.class);
     private static final ObjectWriter organizationWriter = MAPPER.writerFor(Organization.class);
     private static final ObjectWriter errorMessageWriter = MAPPER.writerFor(ErrorMessage.class);
     private static final ObjectWriter okMessageWriter = MAPPER.writerFor(OkMessage.class);
+    private static final ObjectWriter userFancyWriter = MAPPER.writerWithDefaultPrettyPrinter().forType(User.class);
     private static final ObjectWriter userWriter = MAPPER.writerFor(User.class);
     private static final ObjectWriter userWebWriter = init()
             .disable(MapperFeature.DEFAULT_VIEW_INCLUSION)
@@ -93,9 +96,6 @@ public final class JsonParser {
 
     public static final ObjectWriter restrictiveDashWriter = init()
             .writerFor(DashBoard.class).withView(View.PublicOnly.class);
-
-    private static final ObjectWriter restrictiveDashWriterForHttp = init()
-            .writerFor(DashBoard.class).withView(View.PublicOnly.class).withView(View.HttpAPIField.class);
 
     private static final ObjectWriter restrictiveProfileWriter = init()
             .writerFor(Profile.class).withView(View.PublicOnly.class);
@@ -185,10 +185,6 @@ public final class JsonParser {
         return toJson(restrictiveDashWriter, dashBoard);
     }
 
-    public static String toJsonRestrictiveDashboardForHTTP(DashBoard dashBoard) {
-        return toJson(restrictiveDashWriterForHttp, dashBoard);
-    }
-
     public static String toJson(Device device) {
         return toJson(deviceWriter, device);
     }
@@ -209,12 +205,20 @@ public final class JsonParser {
         return toJson(productWriter, product);
     }
 
-    public static void writeUser(File file, User user) throws IOException {
-        userWriter.writeValue(file, user);
+    public static void writeUser(File file, User user, boolean fancy) throws IOException {
+        if (fancy) {
+            userFancyWriter.writeValue(file, user);
+        } else {
+            userWriter.writeValue(file, user);
+        }
     }
 
-    public static void writeOrg(File file, Organization org) throws IOException {
-        organizationWriter.writeValue(file, org);
+    public static void writeOrg(File file, Organization org, boolean isFancy) throws IOException {
+        if (isFancy) {
+            organizationFancyWriter.writeValue(file, org);
+        } else {
+            organizationWriter.writeValue(file, org);
+        }
     }
 
     private static String toJson(ObjectWriter writer, List<?> list) {
