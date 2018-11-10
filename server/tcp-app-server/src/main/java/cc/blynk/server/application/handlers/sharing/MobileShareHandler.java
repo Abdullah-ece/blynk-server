@@ -42,9 +42,7 @@ public class MobileShareHandler extends BaseSimpleChannelInboundHandler<StringMe
         super(StringMessage.class);
         this.state = state;
         this.holder = holder;
-
-        this.hardwareApp = new MobileShareHardwareLogic(holder, state.user.email);
-
+        this.hardwareApp = new MobileShareHardwareLogic(holder);
     }
 
     @Override

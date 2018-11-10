@@ -48,13 +48,12 @@ public class MobileHardwareLogic extends BaseProcessorHandler {
     private final SessionDao sessionDao;
     private final DeviceDao deviceDao;
 
-    public MobileHardwareLogic(Holder holder, String email) {
+    public MobileHardwareLogic(Holder holder) {
         super(holder.eventorProcessor, new WebhookProcessor(holder.asyncHttpClient,
                 holder.limits.webhookPeriodLimitation,
                 holder.limits.webhookResponseSizeLimitBytes,
                 holder.limits.webhookFailureLimit,
-                holder.stats,
-                email),
+                holder.stats),
                 holder.deviceDao);
         this.sessionDao = holder.sessionDao;
         this.deviceDao = holder.deviceDao;

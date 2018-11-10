@@ -52,19 +52,17 @@ public class WebhookProcessor extends NotificationBase {
     private final AsyncHttpClient httpclient;
     private final GlobalStats globalStats;
     private final int responseSizeLimit;
-    private final String email;
     private final int webhookFailureLimit;
 
     public WebhookProcessor(DefaultAsyncHttpClient httpclient,
                             long quotaFrequencyLimit,
                             int responseSizeLimit,
                             int failureLimit,
-                            GlobalStats stats, String email) {
+                            GlobalStats stats) {
         super(quotaFrequencyLimit);
         this.httpclient = httpclient;
         this.globalStats = stats;
         this.responseSizeLimit = responseSizeLimit;
-        this.email = email;
         this.webhookFailureLimit = failureLimit;
     }
 
@@ -133,7 +131,7 @@ public class WebhookProcessor extends NotificationBase {
                 length += content.length();
 
                 if (length > responseSizeLimit) {
-                    log.warn("Response from webhook is too big for {}. Skipping. Size : {}", email, length);
+                    log.warn("Response from webhook is too big. Skipping. Size : {}", length);
                     return State.ABORT;
                 }
                 return super.onBodyPartReceived(content);
@@ -152,7 +150,7 @@ public class WebhookProcessor extends NotificationBase {
                     }
                 } else {
                     webHook.failureCounter++;
-                    log.debug("Error sending webhook for {}. Code {}.", email, response.getStatusCode());
+                    log.debug("Error sending webhook. Code {}.", response.getStatusCode());
                     if (log.isDebugEnabled()) {
                         log.debug("Reason {}", response.getResponseBody());
                     }
@@ -164,7 +162,7 @@ public class WebhookProcessor extends NotificationBase {
             @Override
             public void onThrowable(Throwable t) {
                 webHook.failureCounter++;
-                log.debug("Error sending webhook for {}.", email);
+                log.debug("Error sending webhook {}.");
                 if (log.isDebugEnabled()) {
                     log.debug("Reason {}", t.getMessage());
                 }

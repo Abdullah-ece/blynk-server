@@ -146,7 +146,7 @@ public class MobileHandler extends BaseSimpleChannelInboundHandler<StringMessage
         this.state = state;
         this.holder = holder;
 
-        this.hardwareLogic = new MobileHardwareLogic(holder, state.user.email);
+        this.hardwareLogic = new MobileHardwareLogic(holder);
     }
 
     @Override
@@ -158,7 +158,7 @@ public class MobileHandler extends BaseSimpleChannelInboundHandler<StringMessage
                 break;
             case HARDWARE_RESEND_FROM_BLUETOOTH :
                 if (hardwareResendFromBTLogic == null) {
-                    this.hardwareResendFromBTLogic = new MobileHardwareResendFromBTLogic(holder, state.user.email);
+                    this.hardwareResendFromBTLogic = new MobileHardwareResendFromBTLogic(holder);
                 }
                 hardwareResendFromBTLogic.messageReceived(ctx, state, msg);
                 break;

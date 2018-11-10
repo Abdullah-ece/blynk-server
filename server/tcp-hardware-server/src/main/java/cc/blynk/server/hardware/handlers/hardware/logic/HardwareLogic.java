@@ -34,13 +34,12 @@ public class HardwareLogic extends BaseProcessorHandler {
     private final ReportingDiskDao reportingDao;
     private final SessionDao sessionDao;
 
-    public HardwareLogic(Holder holder, String email) {
+    public HardwareLogic(Holder holder) {
         super(holder.eventorProcessor, new WebhookProcessor(holder.asyncHttpClient,
                 holder.limits.webhookPeriodLimitation,
                 holder.limits.webhookResponseSizeLimitBytes,
                 holder.limits.webhookFailureLimit,
-                holder.stats,
-                email),
+                holder.stats),
                 holder.deviceDao);
         this.sessionDao = holder.sessionDao;
         this.reportingDao = holder.reportingDiskDao;

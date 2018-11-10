@@ -60,7 +60,7 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
         this.state = stateHolder;
         this.holder = holder;
 
-        this.hardware = new HardwareLogic(holder, stateHolder.user.email);
+        this.hardware = new HardwareLogic(holder);
         this.hardwareLogEventLogic = new HardwareLogEventLogic(holder);
         this.bridge = new BridgeLogic(holder.sessionDao, holder.tokenManager);
 
