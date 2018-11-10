@@ -16,7 +16,7 @@ CREATE TABLE users (
   role_id int,
   energy int,
   json text,
-  PRIMARY KEY(email, org_id)
+  PRIMARY KEY(email)
 );
 
 CREATE TABLE redeem (

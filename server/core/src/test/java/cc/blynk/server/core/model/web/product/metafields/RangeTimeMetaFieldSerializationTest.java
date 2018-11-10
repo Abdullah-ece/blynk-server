@@ -22,8 +22,7 @@ public class RangeTimeMetaFieldSerializationTest {
 
         String s = JsonParser.MAPPER.writeValueAsString(rangeTimeMetaField);
         assertNotNull(s);
-        assertEquals("{\"type\":\"Range\",\"id\":1,\"name\":\"name\","
-                + "\"role\":\"ADMIN\",\"isMandatory\":false,\"from\":1,\"to\":100}", s);
+        assertEquals("{\"type\":\"Range\",\"id\":1,\"name\":\"name\",\"roleIds\":[1],\"includeInProvision\":false,\"isMandatory\":false,\"isDefault\":false,\"from\":1,\"to\":100}", s);
         RangeTimeMetaField result = JsonParser.MAPPER.readValue(s, RangeTimeMetaField.class);
         assertNotNull(result);
         assertEquals(LocalTime.ofSecondOfDay(1), result.from);

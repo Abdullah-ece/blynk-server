@@ -161,7 +161,7 @@ public abstract class BaseReportTask implements Runnable {
                         String deviceName = deviceDao.getCSVDeviceName(deviceId);
                         for (ReportDataStream reportDataStream : reportSource.reportDataStreams) {
                             if (reportDataStream.isValid()) {
-                                ByteBuffer onePinData = reportingDiskDao.getByteBufferFromDisk(key.user,
+                                ByteBuffer onePinData = reportingDiskDao.getByteBufferFromDisk(
                                         deviceId, reportDataStream.pinType,
                                         reportDataStream.pin, fetchCount, report.granularityType, 0);
 
@@ -193,7 +193,7 @@ public abstract class BaseReportTask implements Runnable {
                         zipStream.putNextEntry(zipEntry);
                         for (ReportDataStream reportDataStream : reportSource.reportDataStreams) {
                             if (reportDataStream.isValid()) {
-                                ByteBuffer onePinData = reportingDiskDao.getByteBufferFromDisk(key.user,
+                                ByteBuffer onePinData = reportingDiskDao.getByteBufferFromDisk(
                                         deviceId, reportDataStream.pinType,
                                         reportDataStream.pin, fetchCount, report.granularityType, 0);
 
@@ -221,7 +221,7 @@ public abstract class BaseReportTask implements Runnable {
                         String deviceName = deviceDao.getDeviceName(deviceId);
                         for (ReportDataStream reportDataStream : reportSource.reportDataStreams) {
                             if (reportDataStream.isValid()) {
-                                ByteBuffer onePinData = reportingDiskDao.getByteBufferFromDisk(key.user,
+                                ByteBuffer onePinData = reportingDiskDao.getByteBufferFromDisk(
                                         deviceId, reportDataStream.pinType,
                                         reportDataStream.pin, fetchCount, report.granularityType, 0);
 

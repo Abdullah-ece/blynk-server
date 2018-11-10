@@ -23,44 +23,6 @@ CREATE TABLE reporting_events_last_seen (
   PRIMARY KEY(device_id, email)
 );
 
-CREATE TABLE knight_laundry (
-   device_id int4,
-   pin int2,
-   pin_type int2,
-   created timestamp,
-   type_of_record int4,
-   washer_id int4,
-   start_date date,
-   start_time time,
-   finish_time time,
-   cycle_time time,
-   formula_number int4,
-   load_weight int4,
-   pump_id int4,
-   volume int4,
-   run_time int4,
-   pulse_count int4
-);
-create index on knight_laundry (device_id, pin, pin_type, created);
-
-CREATE TABLE knight_scopetech (
-   device_id int4,
-   pin int2,
-   pin_type int2,
-   created timestamp,
-   time timestamp,
-   scope_user text,
-   serial int4,
-   dose_volume int4,
-   flush_volume int4,
-   rinse_volume int4,
-   leak_test int4,
-   pressure int4,
-   temperature int4,
-   error int4
-);
-create index on knight_scopetech (device_id, pin, pin_type, created);
-
 CREATE TABLE blynk_default (
    device_id int4,
    pin int2,
@@ -71,7 +33,6 @@ CREATE TABLE blynk_default (
 create index on blynk_default (device_id, pin, pin_type, created);
 
 CREATE TABLE reporting_raw_data (
-  email text,
   project_id int4,
   device_id int4,
   pin int2,
@@ -80,40 +41,37 @@ CREATE TABLE reporting_raw_data (
   stringValue text,
   doubleValue float8,
 
-  PRIMARY KEY (email, project_id, device_id, pin, pinType, ts)
+  PRIMARY KEY (project_id, device_id, pin, pinType, ts)
 );
 
 CREATE TABLE reporting_average_minute (
-  email text,
   project_id int4,
   device_id int8,
   pin int2,
   pin_type int2,
   ts timestamp with time zone,
   value float8,
-  PRIMARY KEY (email, project_id, device_id, pin, pin_type, ts)
+  PRIMARY KEY (project_id, device_id, pin, pin_type, ts)
 );
 
 CREATE TABLE reporting_average_hourly (
-  email text,
   project_id int4,
   device_id int8,
   pin int2,
   pin_type int2,
   ts timestamp with time zone,
   value float8,
-  PRIMARY KEY (email, project_id, device_id, pin, pin_type, ts)
+  PRIMARY KEY (project_id, device_id, pin, pin_type, ts)
 );
 
 CREATE TABLE reporting_average_daily (
-  email text,
   project_id int4,
   device_id int8,
   pin int2,
   pin_type int2,
   ts timestamp with time zone,
   value float8,
-  PRIMARY KEY (email, project_id, device_id, pin, pin_type, ts)
+  PRIMARY KEY (project_id, device_id, pin, pin_type, ts)
 );
 
 CREATE TABLE reporting_app_stat_minute (

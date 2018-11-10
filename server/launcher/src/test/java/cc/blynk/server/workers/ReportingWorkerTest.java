@@ -95,8 +95,7 @@ public class ReportingWorkerTest {
 
         long ts = getTS() / AverageAggregatorProcessor.HOUR;
 
-        AggregationKey aggregationKey = new AggregationKey("ddd\0+123@gmail.com",
-                1, 0, PinType.ANALOG, (short) 1, ts);
+        AggregationKey aggregationKey = new AggregationKey(1, 0, PinType.ANALOG, (short) 1, ts);
         AggregationValue aggregationValue = new AggregationValue();
         aggregationValue.update(100);
 
@@ -120,13 +119,13 @@ public class ReportingWorkerTest {
 
         long ts = getTS() / AverageAggregatorProcessor.HOUR;
 
-        AggregationKey aggregationKey = new AggregationKey("test", 1, 0, PinType.ANALOG, (short) 1, ts);
+        AggregationKey aggregationKey = new AggregationKey(1, 0, PinType.ANALOG, (short) 1, ts);
         AggregationValue aggregationValue = new AggregationValue();
         aggregationValue.update(100);
-        AggregationKey aggregationKey2 = new AggregationKey("test", 1, 0, PinType.ANALOG, (short) 1, ts - 1);
+        AggregationKey aggregationKey2 = new AggregationKey(1, 0, PinType.ANALOG, (short) 1, ts - 1);
         AggregationValue aggregationValue2 = new AggregationValue();
         aggregationValue2.update(150.54);
-        AggregationKey aggregationKey3 = new AggregationKey("test2", 2, 0, PinType.ANALOG, (short) 2, ts);
+        AggregationKey aggregationKey3 = new AggregationKey(2, 0, PinType.ANALOG, (short) 2, ts);
         AggregationValue aggregationValue3 = new AggregationValue();
         aggregationValue3.update(200);
 
@@ -141,13 +140,13 @@ public class ReportingWorkerTest {
         reportingWorker.run();
 
         assertTrue(Files.exists(Paths.get(reportingFolder, "test",
-                generateFilename(0, PinType.ANALOG, (short) 1, GraphGranularityType.HOURLY))));
+                generateFilename(PinType.ANALOG, (short) 1, GraphGranularityType.HOURLY))));
         assertTrue(Files.exists(Paths.get(reportingFolder, "test2",
-                generateFilename(0, PinType.ANALOG, (short) 2, GraphGranularityType.HOURLY))));
+                generateFilename(PinType.ANALOG, (short) 2, GraphGranularityType.HOURLY))));
 
         assertTrue(map.isEmpty());
 
-        ByteBuffer data = reportingDaoMock.getByteBufferFromDisk(user, 0, PinType.ANALOG, (short) 1, 2, GraphGranularityType.HOURLY, 0);
+        ByteBuffer data = reportingDaoMock.getByteBufferFromDisk(0, PinType.ANALOG, (short) 1, 2, GraphGranularityType.HOURLY, 0);
         assertNotNull(data);
         assertEquals(32, data.capacity());
 
@@ -160,7 +159,7 @@ public class ReportingWorkerTest {
         User user2 = new User();
         user2.email = "test2";
 
-        data = reportingDaoMock.getByteBufferFromDisk(user2, 0, PinType.ANALOG, (short) 2, 1, GraphGranularityType.HOURLY, 0);
+        data = reportingDaoMock.getByteBufferFromDisk(0, PinType.ANALOG, (short) 2, 1, GraphGranularityType.HOURLY, 0);
         assertNotNull(data);
         assertEquals(16, data.capacity());
         assertEquals(200.0, data.getDouble(), 0.001);
@@ -176,13 +175,13 @@ public class ReportingWorkerTest {
 
         long ts = getTS() / AverageAggregatorProcessor.HOUR;
 
-        AggregationKey aggregationKey = new AggregationKey("test", 1, 0, PinType.ANALOG, (short) 1, ts);
+        AggregationKey aggregationKey = new AggregationKey( 1, 0, PinType.ANALOG, (short) 1, ts);
         AggregationValue aggregationValue = new AggregationValue();
         aggregationValue.update(100);
-        AggregationKey aggregationKey2 = new AggregationKey("test", 1, 0, PinType.ANALOG, (short) 1, ts - 1);
+        AggregationKey aggregationKey2 = new AggregationKey( 1, 0, PinType.ANALOG, (short) 1, ts - 1);
         AggregationValue aggregationValue2 = new AggregationValue();
         aggregationValue2.update(150.54);
-        AggregationKey aggregationKey3 = new AggregationKey("test", 1, 0, PinType.ANALOG, (short) 1, ts - 2);
+        AggregationKey aggregationKey3 = new AggregationKey( 1, 0, PinType.ANALOG, (short) 1, ts - 2);
         AggregationValue aggregationValue3 = new AggregationValue();
         aggregationValue3.update(200);
 
@@ -197,7 +196,7 @@ public class ReportingWorkerTest {
         reportingWorker.run();
 
         assertTrue(Files.exists(Paths.get(reportingFolder, "test",
-                generateFilename(0, PinType.ANALOG, (short) 1, GraphGranularityType.HOURLY))));
+                generateFilename(PinType.ANALOG, (short) 1, GraphGranularityType.HOURLY))));
 
         assertTrue(map.isEmpty());
 
@@ -205,7 +204,7 @@ public class ReportingWorkerTest {
         user.email = "test";
 
         //take less
-        ByteBuffer data = reportingDaoMock.getByteBufferFromDisk(user, 0, PinType.ANALOG, (short) 1, 1, GraphGranularityType.HOURLY, 0);
+        ByteBuffer data = reportingDaoMock.getByteBufferFromDisk(0, PinType.ANALOG, (short) 1, 1, GraphGranularityType.HOURLY, 0);
         assertNotNull(data);
         assertEquals(16, data.capacity());
 
@@ -214,7 +213,7 @@ public class ReportingWorkerTest {
 
 
         //take more
-        data = reportingDaoMock.getByteBufferFromDisk(user, 0, PinType.ANALOG, (short) 1, 24, GraphGranularityType.HOURLY, 0);
+        data = reportingDaoMock.getByteBufferFromDisk(0, PinType.ANALOG, (short) 1, 24, GraphGranularityType.HOURLY, 0);
         assertNotNull(data);
         assertEquals(48, data.capacity());
 
@@ -238,13 +237,13 @@ public class ReportingWorkerTest {
 
         long ts = getTS() / AverageAggregatorProcessor.HOUR;
 
-        AggregationKey aggregationKey = new AggregationKey("test", 1, 0, PinType.ANALOG, (short) 1, ts);
+        AggregationKey aggregationKey = new AggregationKey( 1, 0, PinType.ANALOG, (short) 1, ts);
         AggregationValue aggregationValue = new AggregationValue();
         aggregationValue.update(100);
-        AggregationKey aggregationKey2 = new AggregationKey("test", 1, 0, PinType.ANALOG, (short) 1, ts - 1);
+        AggregationKey aggregationKey2 = new AggregationKey( 1, 0, PinType.ANALOG, (short) 1, ts - 1);
         AggregationValue aggregationValue2 = new AggregationValue();
         aggregationValue2.update(150.54);
-        AggregationKey aggregationKey3 = new AggregationKey("test2", 2, 0, PinType.ANALOG, (short) 2, ts);
+        AggregationKey aggregationKey3 = new AggregationKey(2, 0, PinType.ANALOG, (short) 2, ts);
         AggregationValue aggregationValue3 = new AggregationValue();
         aggregationValue3.update(200);
 
@@ -259,14 +258,14 @@ public class ReportingWorkerTest {
 
         reportingWorker.run();
 
-        assertTrue(Files.exists(Paths.get(reportingFolder, "test", generateFilename(0, PinType.ANALOG, (short) 1, GraphGranularityType.HOURLY))));
-        assertTrue(Files.exists(Paths.get(reportingFolder, "test2", generateFilename(0, PinType.ANALOG, (short) 2, GraphGranularityType.HOURLY))));
+        assertTrue(Files.exists(Paths.get(reportingFolder,  generateFilename(PinType.ANALOG, (short) 1, GraphGranularityType.HOURLY))));
+        assertTrue(Files.exists(Paths.get(reportingFolder, "test2", generateFilename(PinType.ANALOG, (short) 2, GraphGranularityType.HOURLY))));
 
         User user = new User();
         user.email = "test";
 
-        new ReportingDiskDao(reportingFolder, true).delete(user, 0, PinType.ANALOG, (short) 1);
-        assertFalse(Files.exists(Paths.get(reportingFolder, "test", generateFilename(0, PinType.ANALOG, (short) 1, GraphGranularityType.HOURLY))));
+        new ReportingDiskDao(reportingFolder, true).delete(0, PinType.ANALOG, (short) 1);
+        assertFalse(Files.exists(Paths.get(reportingFolder,  generateFilename(PinType.ANALOG, (short) 1, GraphGranularityType.HOURLY))));
     }
 
     private long getTS() {

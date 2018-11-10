@@ -1,6 +1,5 @@
 package cc.blynk.server.core.reporting.raw;
 
-import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.reporting.GraphPinRequest;
 import cc.blynk.utils.structure.LimitedArrayDeque;
 import org.apache.logging.log4j.LogManager;
@@ -39,8 +38,8 @@ public class RawDataCacheForGraphProcessor {
         cache.add(graphCacheValue);
     }
 
-    public ByteBuffer getLiveGraphData(User user, GraphPinRequest graphPinRequest) {
-        LimitedArrayDeque<GraphValue> cache = rawStorage.get(new BaseReportingKey(user, graphPinRequest));
+    public ByteBuffer getLiveGraphData(int orgId, GraphPinRequest graphPinRequest) {
+        LimitedArrayDeque<GraphValue> cache = rawStorage.get(new BaseReportingKey(orgId, graphPinRequest));
 
         if (cache != null && cache.size() > graphPinRequest.skipCount) {
             return toByteBuffer(cache, graphPinRequest.count, graphPinRequest.skipCount);

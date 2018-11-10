@@ -81,7 +81,7 @@ public class WebDeleteDeviceLogic {
 
         blockingIOProcessor.executeHistory(() -> {
             try {
-                reportingDiskDao.delete(state.user, deviceId);
+                reportingDiskDao.delete(deviceId);
             } catch (Exception e) {
                 log.warn("Error removing device data. Reason : {}.", e.getMessage());
             }

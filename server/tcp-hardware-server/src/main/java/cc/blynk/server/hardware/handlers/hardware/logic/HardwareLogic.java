@@ -51,11 +51,11 @@ public class HardwareLogic extends BaseProcessorHandler {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
-        messageReceived(ctx, message, state.orgId, state.user.email, state.user, state.dash, state.device);
+        messageReceived(ctx, message, state.orgId, state.user, state.dash, state.device);
     }
 
     public void messageReceived(ChannelHandlerContext ctx, StringMessage message,
-                                int orgId, String email, User user, DashBoard dash, Device device) {
+                                int orgId, User user, DashBoard dash, Device device) {
         String body = message.body;
 
         //minimum command - "ar 1"
@@ -80,7 +80,7 @@ public class HardwareLogic extends BaseProcessorHandler {
             long now = System.currentTimeMillis();
             int deviceId = device.id;
 
-            reportingDao.process(user, dash, device, pin, pinType, value, now);
+            reportingDao.process(orgId, dash, device, pin, pinType, value, now);
             device.updateValue(dash, pin, pinType, value, now);
             device.updateWebDashboard(pin, pinType, value, now);
 

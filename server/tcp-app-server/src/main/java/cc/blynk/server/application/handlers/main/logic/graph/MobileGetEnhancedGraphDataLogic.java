@@ -127,7 +127,7 @@ public final class MobileGetEnhancedGraphDataLogic {
                                       GraphPinRequest[] requestedPins, int msgId) {
         holder.blockingIOProcessor.executeHistory(() -> {
             try {
-                byte[][] data = holder.reportingDiskDao.getReportingData(user, requestedPins);
+                byte[][] data = holder.reportingDiskDao.getReportingData(user.orgId, requestedPins);
                 byte[] compressed = compress(requestedPins[0].dashId, data);
 
                 if (channel.isWritable()) {

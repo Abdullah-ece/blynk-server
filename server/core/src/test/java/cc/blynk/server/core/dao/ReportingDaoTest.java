@@ -13,24 +13,23 @@ import static org.junit.Assert.assertEquals;
  */
 public class ReportingDaoTest {
 
-    final String REPORTING_MINUTE_FILE_NAME = "history_%s-0_%c%d_minute.bin";
-    final String REPORTING_HOURLY_FILE_NAME = "history_%s-0_%c%d_hourly.bin";
-    final String REPORTING_DAILY_FILE_NAME = "history_%s-0_%c%d_daily.bin";
+    final String REPORTING_MINUTE_FILE_NAME = "history_%c%d_minute.bin";
+    final String REPORTING_HOURLY_FILE_NAME = "history_%c%d_hourly.bin";
+    final String REPORTING_DAILY_FILE_NAME = "history_%c%d_daily.bin";
 
     @Test
     public void testFileName() {
-        int dashId = 1;
         PinType pinType = PinType.VIRTUAL;
         short pin = 2;
 
-        assertEquals(String.format(REPORTING_MINUTE_FILE_NAME, dashId, pinType.pintTypeChar, pin),
-                ReportingDiskDao.generateFilename(0, pinType, pin, GraphGranularityType.MINUTE));
+        assertEquals(String.format(REPORTING_MINUTE_FILE_NAME, pinType.pintTypeChar, pin),
+                ReportingDiskDao.generateFilename(pinType, pin, GraphGranularityType.MINUTE));
 
-        assertEquals(String.format(REPORTING_HOURLY_FILE_NAME, dashId, pinType.pintTypeChar, pin),
-                ReportingDiskDao.generateFilename(0, pinType, pin, GraphGranularityType.HOURLY));
+        assertEquals(String.format(REPORTING_HOURLY_FILE_NAME, pinType.pintTypeChar, pin),
+                ReportingDiskDao.generateFilename(pinType, pin, GraphGranularityType.HOURLY));
 
-        assertEquals(String.format(REPORTING_DAILY_FILE_NAME, dashId, pinType.pintTypeChar, pin),
-                ReportingDiskDao.generateFilename(0, pinType, pin, GraphGranularityType.DAILY));
+        assertEquals(String.format(REPORTING_DAILY_FILE_NAME, pinType.pintTypeChar, pin),
+                ReportingDiskDao.generateFilename(pinType, pin, GraphGranularityType.DAILY));
 
     }
 

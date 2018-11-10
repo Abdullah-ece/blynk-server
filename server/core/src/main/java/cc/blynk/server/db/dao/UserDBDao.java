@@ -28,10 +28,11 @@ public class UserDBDao {
     private static final String upsertUser =
             "INSERT INTO users (email, org_id, region, ip, name, pass, last_modified, last_logged,"
                     + " last_logged_ip, is_facebook_user, role_id, energy, json) "
-                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (email, org_id) DO UPDATE "
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (email) DO UPDATE "
                     + "SET ip = EXCLUDED.ip, pass = EXCLUDED.pass, name = EXCLUDED.name, "
                     + "last_modified = EXCLUDED.last_modified, "
                     + "last_logged = EXCLUDED.last_logged, last_logged_ip = EXCLUDED.last_logged_ip, "
+                    + "org_id = EXCLUDED.org_id,"
                     + "is_facebook_user = EXCLUDED.is_facebook_user, role_id = EXCLUDED.role_id, "
                     + "energy = EXCLUDED.energy, json = EXCLUDED.json, region = EXCLUDED.region";
     private static final String selectAllUsers = "SELECT * from users where region = ?";

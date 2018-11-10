@@ -18,6 +18,7 @@ import java.security.MessageDigest;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
@@ -204,10 +205,6 @@ public final class FileUtils {
         return Paths.get(FileUtils.CSV_DIR, email + "_" + orgId + "_" + reportId + "_" + date);
     }
 
-    public static String getUserStorageDir(String email) {
-        return email;
-    }
-
     public static String downloadUrl(String host, String httpPort, boolean forcePort80) {
         if (forcePort80) {
             return "http://" + host + "/";
@@ -286,4 +283,12 @@ public final class FileUtils {
         FileTime modifiedTime = attr.lastModifiedTime();
         return modifiedTime.toMillis();
     }
+
+    public static void deleteDirectory(Path path) throws IOException {
+        Files.walk(path)
+             .sorted(Comparator.reverseOrder())
+             .map(Path::toFile)
+             .forEach(File::delete);
+    }
+
 }

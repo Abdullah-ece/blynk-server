@@ -176,7 +176,7 @@ public class WebGetGraphDataLogic {
     private void readGraphDataFromDisk(Channel channel, User user, GraphPinRequest[] requestedPins, int msgId) {
         blockingIOProcessor.executeHistory(() -> {
             try {
-                byte[][] allPinsData = reportingDiskDao.getReportingData(user, requestedPins);
+                byte[][] allPinsData = reportingDiskDao.getReportingData(user.orgId, requestedPins);
 
                 ByteArrayOutputStream out = new ByteArrayOutputStream(8096);
                 ByteUtils.writeInt(out, requestedPins[0].deviceId);

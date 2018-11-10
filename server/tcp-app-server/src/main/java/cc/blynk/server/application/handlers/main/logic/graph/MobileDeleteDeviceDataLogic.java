@@ -61,7 +61,7 @@ public final class MobileDeleteDeviceDataLogic {
 
         //we have only deviceId
         if (messageParts.length == 1) {
-            delete(holder, ctx.channel(), message.id, user, dash, deviceId);
+            delete(holder, ctx.channel(), message.id, dash, deviceId);
         } else {
             //we have deviceId and datastreams to clean
             delete(holder,  ctx.channel(), message.id, user, dash, deviceId,
@@ -69,11 +69,11 @@ public final class MobileDeleteDeviceDataLogic {
         }
     }
 
-    private static void delete(Holder holder, Channel channel, int msgId, User user, DashBoard dash, int... deviceIds) {
+    private static void delete(Holder holder, Channel channel, int msgId, DashBoard dash, int... deviceIds) {
         holder.blockingIOProcessor.executeHistory(() -> {
             try {
                 for (int deviceId : deviceIds) {
-                    int removedCounter = holder.reportingDiskDao.delete(user, deviceId);
+                    int removedCounter = holder.reportingDiskDao.delete(deviceId);
                     log.debug("Removed {} files for dashId {} and deviceId {}", removedCounter, dash.id, deviceId);
                 }
                 channel.writeAndFlush(ok(msgId), channel.voidPromise());
@@ -88,7 +88,7 @@ public final class MobileDeleteDeviceDataLogic {
                         User user, DashBoard dash, int deviceId, String[] pins) {
         holder.blockingIOProcessor.executeHistory(() -> {
             try {
-                int removedCounter = holder.reportingDiskDao.delete(user, dash.id, deviceId, pins);
+                int removedCounter = holder.reportingDiskDao.delete(deviceId, pins);
                 log.debug("Removed {} files for dashId {} and deviceId {}", removedCounter, dash.id, deviceId);
                 channel.writeAndFlush(ok(msgId), channel.voidPromise());
             } catch (Exception e) {

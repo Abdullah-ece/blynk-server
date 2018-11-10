@@ -389,7 +389,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
 
         Device device = deviceDao.getByIdOrThrow(deviceId);
 
-        reportingDiskDao.process(user, dash, device, pin, pinType, pinValue, now);
+        reportingDiskDao.process(tokenValue.orgId, dash, device, pin, pinType, pinValue, now);
         device.webDashboard.update(deviceId, pin, pinType, pinValue);
         device.updateValue(dash, pin, pinType, pinValue, now);
 
@@ -545,7 +545,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
 
         Device device = deviceDao.getByIdOrThrow(deviceId);
         for (PinData pinData : pinsData) {
-            reportingDiskDao.process(user, dash, device, pin, pinType, pinData.value, pinData.timestamp);
+            reportingDiskDao.process(tokenValue.orgId, dash, device, pin, pinType, pinData.value, pinData.timestamp);
         }
 
         long now = System.currentTimeMillis();

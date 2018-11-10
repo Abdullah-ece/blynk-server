@@ -68,7 +68,7 @@ public class HistoryGraphUnusedPinDataCleanerWorker implements Runnable {
         }
     }
 
-    private static void add(Set<String> doNotRemovePaths,
+    private static void add(Set<DeviceFile> doNotRemovePaths,
                             ReportingWidget reportingWidget) {
         for (Report report : reportingWidget.reports) {
             for (ReportSource reportSource : report.reportSources) {
@@ -77,9 +77,8 @@ public class HistoryGraphUnusedPinDataCleanerWorker implements Runnable {
                     for (int deviceId : deviceIds) {
                         for (GraphGranularityType type : GraphGranularityType.values()) {
                             String filename = ReportingDiskDao.generateFilename(
-                                    deviceId,
                                     reportDataStream.pinType, reportDataStream.pin, type);
-                            doNotRemovePaths.add(filename);
+                            doNotRemovePaths.add(new DeviceFile(deviceId, filename));
                         }
                     }
                 }
@@ -87,7 +86,7 @@ public class HistoryGraphUnusedPinDataCleanerWorker implements Runnable {
         }
     }
 
-    private void add(Set<String> doNotRemovePaths, Profile profile,
+    private void add(Set<DeviceFile> doNotRemovePaths, Profile profile,
                      DashBoard dash, Widget widget, int[] deviceIds) {
         if (widget instanceof Superchart) {
             Superchart enhancedHistoryGraph = (Superchart) widget;
@@ -99,7 +98,7 @@ public class HistoryGraphUnusedPinDataCleanerWorker implements Runnable {
         }
     }
 
-    private void add(Set<String> doNotRemovePaths, Profile profile,
+    private void add(Set<DeviceFile> doNotRemovePaths, Profile profile,
                      DashBoard dash, Superchart graph, int[] deviceIds) {
         for (GraphDataStream graphDataStream : graph.dataStreams) {
             if (graphDataStream != null && graphDataStream.dataStream != null && graphDataStream.dataStream.isValid()) {
@@ -128,10 +127,9 @@ public class HistoryGraphUnusedPinDataCleanerWorker implements Runnable {
 
                 for (int deviceId : resultIds) {
                     for (GraphGranularityType type : GraphGranularityType.values()) {
-                        String filename = ReportingDiskDao.generateFilename(
-                                deviceId,
-                                dataStream.pinType, dataStream.pin, type);
-                        doNotRemovePaths.add(filename);
+                        String filename =
+                                ReportingDiskDao.generateFilename(dataStream.pinType, dataStream.pin, type);
+                        doNotRemovePaths.add(new DeviceFile(deviceId, filename));
                     }
                 }
             }
@@ -140,7 +138,7 @@ public class HistoryGraphUnusedPinDataCleanerWorker implements Runnable {
 
     private int removeUnsedInHistoryGraphData() {
         int removedFilesCounter = 0;
-        Set<String> doNotRemovePaths = new HashSet<>();
+        Set<DeviceFile> doNotRemovePaths = new HashSet<>();
 
         for (User user : userDao.getUsers().values()) {
             //we don't want to do a lot of work here,
@@ -165,14 +163,50 @@ public class HistoryGraphUnusedPinDataCleanerWorker implements Runnable {
                         }
                     }
 
-                    removedFilesCounter += reportingDao.delete(user,
-                            reportingFile -> !doNotRemovePaths.contains(reportingFile.getFileName().toString()));
+                    //todo finish.
+                    //removedFilesCounter += reportingDao.delete(
+                    //        (deviceId, reportingFile)
+                    // -> !doNotRemovePaths.contains(new DeviceFile(deviceId, reportingFile)));
                 } catch (Exception e) {
                     log.error("Error cleaning reporting record for user {}. {}", user.email, e.getMessage());
                 }
             }
         }
         return removedFilesCounter;
+    }
+
+    private static class DeviceFile {
+        final int deviceId;
+        final String pinFileName;
+
+        DeviceFile(int deviceId, String pinFileName) {
+            this.deviceId = deviceId;
+            this.pinFileName = pinFileName;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+
+            DeviceFile that = (DeviceFile) o;
+
+            if (deviceId != that.deviceId) {
+                return false;
+            }
+            return pinFileName != null ? pinFileName.equals(that.pinFileName) : that.pinFileName == null;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = deviceId;
+            result = 31 * result + (pinFileName != null ? pinFileName.hashCode() : 0);
+            return result;
+        }
     }
 
 }

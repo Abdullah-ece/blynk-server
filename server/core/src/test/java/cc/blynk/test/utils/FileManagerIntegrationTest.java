@@ -36,7 +36,7 @@ public class FileManagerIntegrationTest {
     @Test
     public void testGenerateFileName() {
         Path file = fileManager.generateFileName(user1.email);
-        assertEquals("name1.Blynk.user", file.getFileName().toString());
+        assertEquals("name1.user", file.getFileName().toString());
     }
 
     @Test

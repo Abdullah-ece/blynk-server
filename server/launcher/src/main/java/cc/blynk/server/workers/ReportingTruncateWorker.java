@@ -1,6 +1,5 @@
 package cc.blynk.server.workers;
 
-import cc.blynk.server.core.dao.CSVGenerator;
 import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.utils.FileUtils;
 import org.apache.logging.log4j.LogManager;
@@ -28,6 +27,8 @@ import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 public class ReportingTruncateWorker implements Runnable {
 
     private static final Logger log = LogManager.getLogger(ReportingTruncateWorker.class);
+
+    private static final String EXPORT_CSV_EXTENSION = ".csv.gz";
 
     private final ReportingDiskDao reportingDao;
     private final long exportExpirePeriod;
@@ -70,7 +71,7 @@ public class ReportingTruncateWorker implements Runnable {
         int counter = 0;
         try (DirectoryStream<Path> csvFolder = Files.newDirectoryStream(Paths.get(FileUtils.CSV_DIR), "*")) {
             for (Path csvFile : csvFolder) {
-                if (csvFile.getFileName().toString().endsWith(CSVGenerator.EXPORT_CSV_EXTENSION)
+                if (csvFile.getFileName().toString().endsWith(EXPORT_CSV_EXTENSION)
                         && isOutdated(csvFile, now)) {
                     counter++;
                     Files.delete(csvFile);

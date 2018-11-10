@@ -55,7 +55,7 @@ public final class MobileDeleteDeviceLogic {
 
         holder.blockingIOProcessor.executeHistory(() -> {
             try {
-                holder.reportingDiskDao.delete(user, deviceId);
+                holder.reportingDiskDao.delete(deviceId);
             } catch (Exception e) {
                 log.warn("Error removing device data. Reason : {}.", e.getMessage());
             }

@@ -84,7 +84,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         super.init();
         this.hardwareServer = new HardwareAndHttpAPIServer(holder).start();
         this.tempDir = holder.props.getProperty("data.folder");
-        Path userReportFolder = Paths.get(tempDir, "data", regularUser.email);
+        Path userReportFolder = Paths.get(tempDir, "data", "1");
         org.apache.commons.io.FileUtils.deleteDirectory(userReportFolder.toFile());
         Files.createDirectories(userReportFolder);
     }
@@ -406,10 +406,10 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         appWebSocketClient.verifyResult(ok(1));
         appWebSocketClient.reset();
 
-        Path pinReportingDataPath = Paths.get(tempDir, "data", regularUser.email,
-                ReportingDiskDao.generateFilename(1, PinType.VIRTUAL, (byte) 3, GraphGranularityType.DAILY));
-        Path pinReportingDataPath2 = Paths.get(tempDir, "data", regularUser.email,
-                ReportingDiskDao.generateFilename(1, PinType.VIRTUAL, (byte) 4, GraphGranularityType.DAILY));
+        Path pinReportingDataPath = Paths.get(tempDir, "data", "1",
+                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (byte) 3, GraphGranularityType.DAILY));
+        Path pinReportingDataPath2 = Paths.get(tempDir, "data", "1",
+                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (byte) 4, GraphGranularityType.DAILY));
 
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
@@ -519,14 +519,14 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         aggregationValue.update(1.11D);
         Map<AggregationKey, AggregationValue> data = new HashMap<>();
         data.put(
-                new AggregationKey("123", 1, 1, PinType.VIRTUAL, (byte) 3, (now - 60_000) / MINUTE),
+                new AggregationKey(1, 1, PinType.VIRTUAL, (byte) 3, (now - 60_000) / MINUTE),
                 aggregationValue
         );
 
         aggregationValue = new AggregationValue();
         aggregationValue.update(1.22D);
         data.put(
-                new AggregationKey("123", 1, 1, PinType.VIRTUAL, (byte) 3, now / MINUTE),
+                new AggregationKey(1, 1, PinType.VIRTUAL, (byte) 3, now / MINUTE),
                 aggregationValue
         );
         holder.reportingDBManager.reportingDBDao.insert(data, GraphGranularityType.MINUTE);

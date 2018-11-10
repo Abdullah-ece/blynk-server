@@ -19,8 +19,8 @@ public final class AggregationKey implements Serializable {
     private final BaseReportingKey baseReportingKey;
     public final long ts;
 
-    public AggregationKey(String email, int orgId, int deviceId, PinType pinType, short pin, long ts) {
-        this(new BaseReportingKey(email, orgId, deviceId, pinType, pin), ts);
+    public AggregationKey(int orgId, int deviceId, PinType pinType, short pin, long ts) {
+        this(new BaseReportingKey(orgId, deviceId, pinType, pin), ts);
     }
 
     public AggregationKey(BaseReportingKey baseReportingKey, long ts) {
@@ -34,10 +34,6 @@ public final class AggregationKey implements Serializable {
 
     public boolean isOutdated(long nowTruncatedToPeriod) {
         return ts < nowTruncatedToPeriod;
-    }
-
-    public String getEmail() {
-        return baseReportingKey.email;
     }
 
     public int getOrgId() {

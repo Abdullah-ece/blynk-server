@@ -93,15 +93,13 @@ public class ReportingWorker implements Runnable {
                 AggregationValue value = map.get(keyToRemove);
 
                 try {
-                    Path userReportFolder = Paths.get(reportingPath,
-                            FileUtils.getUserStorageDir(keyToRemove.getEmail()));
-                    if (Files.notExists(userReportFolder)) {
-                        Files.createDirectories(userReportFolder);
+                    Path deviceReportFolder = Paths.get(reportingPath, String.valueOf(keyToRemove.getDeviceId()));
+                    if (Files.notExists(deviceReportFolder)) {
+                        Files.createDirectories(deviceReportFolder);
                     }
 
-                    String fileName = generateFilename(
-                            keyToRemove.getDeviceId(), keyToRemove.getPinType(), keyToRemove.getPin(), type);
-                    Path filePath = Paths.get(userReportFolder.toString(), fileName);
+                    String pinFileName = generateFilename(keyToRemove.getPinType(), keyToRemove.getPin(), type);
+                    Path filePath = Paths.get(deviceReportFolder.toString(), pinFileName);
 
                     FileUtils.write(filePath, value.calcAverage(), keyToRemove.getTs(type));
 

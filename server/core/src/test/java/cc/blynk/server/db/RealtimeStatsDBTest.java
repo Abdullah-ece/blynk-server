@@ -268,7 +268,7 @@ public class RealtimeStatsDBTest {
         value.update(1);
         long ts = System.currentTimeMillis();
         for (int i = 0; i < 60; i++) {
-            map.put(new AggregationKey(user.email, user.orgId, 0, PinType.ANALOG, (short) i, ts), value);
+            map.put(new AggregationKey(user.orgId, 0, PinType.ANALOG, (short) i, ts), value);
             reportingDBManager.insertReporting(map, GraphGranularityType.MINUTE);
             reportingDBManager.insertReporting(map, GraphGranularityType.HOURLY);
             reportingDBManager.insertReporting(map, GraphGranularityType.DAILY);
@@ -296,7 +296,7 @@ public class RealtimeStatsDBTest {
             minute = (System.currentTimeMillis() / AverageAggregatorProcessor.MINUTE) * AverageAggregatorProcessor.MINUTE;
 
             for (int i = 0; i < 370; i++) {
-                ReportingDBDao.prepareReportingInsert(ps, "test1111@gmail.com", 0, (short) 0, PinType.VIRTUAL, minute, (double) i);
+                ReportingDBDao.prepareReportingInsert(ps, 0, (short) 0, PinType.VIRTUAL, minute, (double) i);
                 ps.addBatch();
                 minute += AverageAggregatorProcessor.MINUTE;
             }
@@ -310,8 +310,6 @@ public class RealtimeStatsDBTest {
     public void testInsert1000RecordsAndSelect() throws Exception {
         int a = 0;
 
-        String userName = "test@gmail.com";
-
         long start = System.currentTimeMillis();
         long minute = (start / AverageAggregatorProcessor.MINUTE) * AverageAggregatorProcessor.MINUTE;
         long startMinute = minute;
@@ -320,7 +318,7 @@ public class RealtimeStatsDBTest {
              PreparedStatement ps = connection.prepareStatement(ReportingDBDao.insertMinute)) {
 
             for (int i = 0; i < 1000; i++) {
-                ReportingDBDao.prepareReportingInsert(ps, userName, 2, (short) 0, PinType.VIRTUAL, minute, (double) i);
+                ReportingDBDao.prepareReportingInsert(ps, 2, (short) 0, PinType.VIRTUAL, minute, (double) i);
                 ps.addBatch();
                 minute += AverageAggregatorProcessor.MINUTE;
                 a++;
@@ -339,8 +337,6 @@ public class RealtimeStatsDBTest {
 
             int i = 0;
             while (rs.next()) {
-                assertEquals(userName, rs.getString("email"));
-                assertEquals(1, rs.getInt("project_id"));
                 assertEquals(2, rs.getInt("device_id"));
                 assertEquals(0, rs.getByte("pin"));
                 assertEquals(PinType.VIRTUAL, PinType.values()[rs.getInt("pin_type")]);
