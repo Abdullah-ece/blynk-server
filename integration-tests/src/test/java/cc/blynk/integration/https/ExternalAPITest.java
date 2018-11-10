@@ -45,7 +45,7 @@ public class ExternalAPITest extends APIBaseTest {
 
     @Test
     public void testGetWithFakeToken() throws Exception {
-        HttpGet request = new HttpGet(httpsServerUrl + "dsadasddasdasdasdasdasdas/pin/d8");
+        HttpGet request = new HttpGet(httpsServerUrl + "dsadasddasdasdasdasdasdas/get/d8");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(400, response.getStatusLine().getStatusCode());
@@ -66,7 +66,7 @@ public class ExternalAPITest extends APIBaseTest {
 
     @Test
     public void testGetWithWrongPin() throws Exception {
-        HttpGet request = new HttpGet(httpsServerUrl + token + "/pin/x8");
+        HttpGet request = new HttpGet(httpsServerUrl + token + "/get/x8");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(400, response.getStatusLine().getStatusCode());
@@ -76,7 +76,7 @@ public class ExternalAPITest extends APIBaseTest {
 
     @Test
     public void testGetWithNonExistingPin() throws Exception {
-        HttpGet request = new HttpGet(httpsServerUrl + token + "/pin/v11");
+        HttpGet request = new HttpGet(httpsServerUrl + token + "/get/v11");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(400, response.getStatusLine().getStatusCode());
@@ -86,7 +86,7 @@ public class ExternalAPITest extends APIBaseTest {
 
     @Test
     public void testGetWringPin() throws Exception {
-        HttpGet request = new HttpGet(httpsServerUrl + token + "/getOrgSession/v256");
+        HttpGet request = new HttpGet(httpsServerUrl + token + "/get/v256");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(400, response.getStatusLine().getStatusCode());
@@ -96,14 +96,14 @@ public class ExternalAPITest extends APIBaseTest {
 
     @Test
     public void testPutGetNonExistingPin() throws Exception {
-        HttpPut put = new HttpPut(httpsServerUrl + token + "/pin/v10");
+        HttpPut put = new HttpPut(httpsServerUrl + token + "/update/v10");
         put.setEntity(new StringEntity("[\"100\"]", ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(put)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
 
-        HttpGet get = new HttpGet(httpsServerUrl + token + "/pin/v10");
+        HttpGet get = new HttpGet(httpsServerUrl + token + "/get/v10");
 
         try (CloseableHttpResponse response = httpclient.execute(get)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -115,14 +115,14 @@ public class ExternalAPITest extends APIBaseTest {
 
     @Test
     public void testMultiPutGetNonExistingPin() throws Exception {
-        HttpPut put = new HttpPut(httpsServerUrl + token + "/pin/v10");
+        HttpPut put = new HttpPut(httpsServerUrl + token + "/update/v10");
         put.setEntity(new StringEntity("[\"100\", \"101\", \"102\"]", ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(put)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
 
-        HttpGet get = new HttpGet(httpsServerUrl + token + "/pin/v10");
+        HttpGet get = new HttpGet(httpsServerUrl + token + "/get/v10");
 
         try (CloseableHttpResponse response = httpclient.execute(get)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -143,7 +143,7 @@ public class ExternalAPITest extends APIBaseTest {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
 
-        HttpGet get = new HttpGet(httpsServerUrl + token + "/getOrgSession/v10");
+        HttpGet get = new HttpGet(httpsServerUrl + token + "/get/v10");
 
         try (CloseableHttpResponse response = httpclient.execute(get)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -337,14 +337,14 @@ public class ExternalAPITest extends APIBaseTest {
 
     @Test
     public void testPutWithExistingPin() throws Exception {
-        HttpPut request = new HttpPut(httpsServerUrl + token + "/pin/a14");
+        HttpPut request = new HttpPut(httpsServerUrl + token + "/update/a14");
         request.setEntity(new StringEntity("[\"100\"]", ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
 
-        HttpGet getRequest = new HttpGet(httpsServerUrl + token + "/pin/a14");
+        HttpGet getRequest = new HttpGet(httpsServerUrl + token + "/get/a14");
 
         try (CloseableHttpResponse response = httpclient.execute(getRequest)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -466,10 +466,10 @@ public class ExternalAPITest extends APIBaseTest {
     //------------------------------ SYNC TEST
     @Test
     public void testSync() throws Exception {
-        String url = httpsServerUrl + token + "/pin/a14";
+        String url = httpsServerUrl + token + "/update/a14";
 
-        HttpPut request = new HttpPut(url);
-        HttpGet getRequest = new HttpGet(url);
+        HttpPut request = new HttpPut(httpsServerUrl + token + "/update/a14");
+        HttpGet getRequest = new HttpGet(httpsServerUrl + token + "/get/a14");
 
         for (int i = 0; i < 100; i++) {
             request.setEntity(new StringEntity("[\""+ i + "\"]", ContentType.APPLICATION_JSON));
