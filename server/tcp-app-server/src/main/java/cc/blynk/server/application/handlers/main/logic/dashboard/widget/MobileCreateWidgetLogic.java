@@ -1,7 +1,6 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard.widget;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.application.handlers.main.auth.MobileStateHolder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
@@ -13,6 +12,7 @@ import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.core.session.mobile.MobileStateHolder;
 import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.StringUtils;
@@ -113,9 +113,10 @@ public final class MobileCreateWidgetLogic {
 
         TimerWorker timerWorker = holder.timerWorker;
         if (newWidget instanceof Timer) {
-            timerWorker.add(state.user.email, (Timer) newWidget, dashId, widgetAddToId, templateIdAddToId);
+            timerWorker.add(state.user.orgId,
+                    state.user.email, (Timer) newWidget, dashId, widgetAddToId, templateIdAddToId);
         } else if (newWidget instanceof Eventor) {
-            timerWorker.add(state.user.email, (Eventor) newWidget, dashId);
+            timerWorker.add(state.user.orgId, state.user.email, (Eventor) newWidget, dashId);
         }
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());

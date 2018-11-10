@@ -115,7 +115,7 @@ public class HttpAndTCPSameJVMTest extends SingleServerInstancePerTest {
 
         reset(clientPair.appClient.responseMock);
 
-        HttpGet request = new HttpGet(httpsServerUrl + clientPair.token + "/get/v10");
+        HttpGet request = new HttpGet(httpsServerUrl + clientPair.token + "/getOrgSession/v10");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -142,7 +142,7 @@ public class HttpAndTCPSameJVMTest extends SingleServerInstancePerTest {
 
         reset(clientPair.appClient.responseMock);
 
-        HttpGet request = new HttpGet(httpsServerUrl + clientPair.token + "/get/v4");
+        HttpGet request = new HttpGet(httpsServerUrl + clientPair.token + "/getOrgSession/v4");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -235,7 +235,7 @@ public class HttpAndTCPSameJVMTest extends SingleServerInstancePerTest {
 
 
         clientPair.appClient.reset();
-        HttpGet requestGET = new HttpGet(httpsServerUrl + clientPair.token + "/get/v4");
+        HttpGet requestGET = new HttpGet(httpsServerUrl + clientPair.token + "/getOrgSession/v4");
 
         try (CloseableHttpResponse response = httpclient.execute(requestGET)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -275,7 +275,7 @@ public class HttpAndTCPSameJVMTest extends SingleServerInstancePerTest {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(7777, HARDWARE, b("1-0 vw 4 0"))));
 
         clientPair.appClient.reset();
-        HttpGet requestGET = new HttpGet(httpsServerUrl + clientPair.token + "/get/v4");
+        HttpGet requestGET = new HttpGet(httpsServerUrl + clientPair.token + "/getOrgSession/v4");
 
         try (CloseableHttpResponse response = httpclient.execute(requestGET)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -293,7 +293,7 @@ public class HttpAndTCPSameJVMTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(1));
 
         clientPair.appClient.reset();
-        HttpGet requestGET = new HttpGet(httpsServerUrl + clientPair.token + "/get/d18");
+        HttpGet requestGET = new HttpGet(httpsServerUrl + clientPair.token + "/getOrgSession/d18");
 
         try (CloseableHttpResponse response = httpclient.execute(requestGET)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -316,7 +316,7 @@ public class HttpAndTCPSameJVMTest extends SingleServerInstancePerTest {
     @Test
     public void testChangePinValueViaHttpAPI() throws Exception {
         HttpPut request = new HttpPut(httpsServerUrl + clientPair.token + "/update/v4");
-        HttpGet getRequest = new HttpGet(httpsServerUrl + clientPair.token + "/get/v4");
+        HttpGet getRequest = new HttpGet(httpsServerUrl + clientPair.token + "/getOrgSession/v4");
 
         for (int i = 0; i < 50; i++) {
             request.setEntity(new StringEntity("[\"" + i + "\"]", ContentType.APPLICATION_JSON));
@@ -346,7 +346,7 @@ public class HttpAndTCPSameJVMTest extends SingleServerInstancePerTest {
             byte[] data = EntityUtils.toByteArray(response.getEntity());
             assertNotNull(data);
 
-            //get the data from the input stream
+            //getOrgSession the data from the input stream
             BufferedImage image = ImageIO.read(new ByteArrayInputStream(data));
 
             //convert the image to a binary bitmap source
@@ -685,7 +685,7 @@ public class HttpAndTCPSameJVMTest extends SingleServerInstancePerTest {
         clientPair.hardwareClient.send("hardware vw 45 124");
         clientPair.appClient.verifyResult(hardware(2, "1-0 vw 45 124"));
 
-        HttpGet request = new HttpGet(httpsServerUrl + clientPair.token + "/get/v45");
+        HttpGet request = new HttpGet(httpsServerUrl + clientPair.token + "/getOrgSession/v45");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -719,7 +719,7 @@ public class HttpAndTCPSameJVMTest extends SingleServerInstancePerTest {
 
         clientPair.hardwareClient.send("hardware vw 44 123");
 
-        HttpGet request = new HttpGet(httpsServerUrl + clientPair.token + "/get/v44");
+        HttpGet request = new HttpGet(httpsServerUrl + clientPair.token + "/getOrgSession/v44");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());

@@ -51,11 +51,11 @@ public class HardwareLogic extends BaseProcessorHandler {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
-        messageReceived(ctx, message, state.user.email, state.user, state.dash, state.device);
+        messageReceived(ctx, message, state.orgId, state.user.email, state.user, state.dash, state.device);
     }
 
     public void messageReceived(ChannelHandlerContext ctx, StringMessage message,
-                                String email, User user, DashBoard dash, Device device) {
+                                int orgId, String email, User user, DashBoard dash, Device device) {
         String body = message.body;
 
         //minimum command - "ar 1"
@@ -84,7 +84,7 @@ public class HardwareLogic extends BaseProcessorHandler {
             device.updateValue(dash, pin, pinType, value, now);
             device.updateWebDashboard(pin, pinType, value, now);
 
-            Session session = sessionDao.userSession.get(email);
+            Session session = sessionDao.getOrgSession(orgId);
             processEventorAndWebhook(user, dash, deviceId, session, pin, pinType, value, now);
 
             session.sendToApps(HARDWARE, message.id, deviceId, body);

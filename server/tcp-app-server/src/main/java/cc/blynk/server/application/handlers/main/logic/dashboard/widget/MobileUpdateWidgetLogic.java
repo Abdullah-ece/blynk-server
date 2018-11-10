@@ -1,7 +1,6 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard.widget;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.application.handlers.main.auth.MobileStateHolder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
@@ -16,6 +15,7 @@ import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.core.session.mobile.MobileStateHolder;
 import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.ArrayUtil;
 import io.netty.channel.ChannelHandlerContext;
@@ -149,15 +149,19 @@ public final class MobileUpdateWidgetLogic {
         user.lastModifiedTs = dash.updatedAt;
 
         if (prevWidget instanceof Timer) {
-            timerWorker.delete(state.user.email, (Timer) prevWidget, dashId, deviceTilesId, deviceTilesTemplateId);
+            timerWorker.delete(state.user.orgId,
+                    state.user.email, (Timer) prevWidget, dashId, deviceTilesId, deviceTilesTemplateId);
         } else if (prevWidget instanceof Eventor) {
-            timerWorker.delete(state.user.email, (Eventor) prevWidget, dashId);
+            timerWorker.delete(state.user.orgId,
+                    state.user.email, (Eventor) prevWidget, dashId);
         }
 
         if (newWidget instanceof Timer) {
-            timerWorker.add(state.user.email, (Timer) newWidget, dashId, deviceTilesId, deviceTilesTemplateId);
+            timerWorker.add(state.user.orgId,
+                    state.user.email, (Timer) newWidget, dashId, deviceTilesId, deviceTilesTemplateId);
         } else if (newWidget instanceof Eventor) {
-            timerWorker.add(state.user.email, (Eventor) newWidget, dashId);
+            timerWorker.add(state.user.orgId,
+                    state.user.email, (Eventor) newWidget, dashId);
         }
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());

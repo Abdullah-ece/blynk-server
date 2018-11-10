@@ -62,7 +62,7 @@ public class HttpAPIKeepAliveServerTest extends BaseTest {
         HttpPut request = new HttpPut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/update/a14");
         request.setHeader("Connection", "keep-alive");
 
-        HttpGet getRequest = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/a14");
+        HttpGet getRequest = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/getOrgSession/a14");
         getRequest.setHeader("Connection", "keep-alive");
 
         for (int i = 0; i < 100; i++) {
@@ -118,7 +118,7 @@ public class HttpAPIKeepAliveServerTest extends BaseTest {
             assertEquals(1, holder.stats.totalMessages.getCount());
         }
 
-        getRequest = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/v11");
+        getRequest = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/getOrgSession/v11");
         try (CloseableHttpResponse response = httpsClient.execute(getRequest)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             assertEquals(1, holder.stats.specificCounters[HTTP_UPDATE_PIN_DATA].intValue());

@@ -3,16 +3,13 @@ package cc.blynk.server.core.stats.model;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
-import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
-import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.ui.reporting.ReportScheduler;
 import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.stats.GlobalStats;
 import io.netty.buffer.ByteBufAllocator;
 
-import java.util.Map;
 import java.util.concurrent.atomic.LongAdder;
 
 /**
@@ -72,9 +69,7 @@ public class Stat {
         int activeMonth = 0;
 
         this.ts = System.currentTimeMillis();
-        for (Map.Entry<String, Session> entry: sessionDao.userSession.entrySet()) {
-            Session session = entry.getValue();
-
+        for (Session session: sessionDao.orgSession.values()) {
             if (session.isHardwareConnected() && session.isAppConnected()) {
                 connectedSessions++;
             }
@@ -85,25 +80,6 @@ public class Stat {
             if (session.isAppConnected()) {
                 appActive++;
                 totalOnlineApps += session.appChannels.size();
-            }
-            String userKey = entry.getKey();
-            User user = userDao.users.get(userKey);
-
-            if (user != null) {
-                if (this.ts - user.lastModifiedTs < ONE_DAY || dashUpdated(user, this.ts, ONE_DAY)) {
-                    active++;
-                    activeWeek++;
-                    activeMonth++;
-                    continue;
-                }
-                if (this.ts - user.lastModifiedTs < ONE_WEEK || dashUpdated(user, this.ts, ONE_WEEK)) {
-                    activeWeek++;
-                    activeMonth++;
-                    continue;
-                }
-                if (this.ts - user.lastModifiedTs < ONE_MONTH || dashUpdated(user, this.ts, ONE_MONTH)) {
-                    activeMonth++;
-                }
             }
         }
 
@@ -120,15 +96,6 @@ public class Stat {
 
         this.ioStat = new BlockingIOStat(blockingIOProcessor, reportScheduler);
         this.memoryStat = new MemoryStat(ByteBufAllocator.DEFAULT);
-    }
-
-    private boolean dashUpdated(User user, long now, long period) {
-        for (DashBoard dash : user.profile.dashBoards) {
-            if (now - dash.updatedAt < period) {
-                return true;
-            }
-        }
-        return false;
     }
 
     @Override

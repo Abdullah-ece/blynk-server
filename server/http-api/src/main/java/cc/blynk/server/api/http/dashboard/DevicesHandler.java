@@ -133,7 +133,7 @@ public class DevicesHandler extends BaseHttpHandler {
                 String userComment = comment == null ? null : comment.comment;
                 if (reportingDBManager.eventDBDao.resolveEvent(logEventId, user.name, userComment)) {
                     response = ok();
-                    Session session = sessionDao.userSession.get(user.email);
+                    Session session = sessionDao.getOrgSession(orgId);
                     String body = logEventId + StringUtils.BODY_SEPARATOR_STRING + user.email;
                     if (comment != null) {
                         body = body + StringUtils.BODY_SEPARATOR + userComment;

@@ -1,9 +1,9 @@
 package cc.blynk.utils;
 
 import cc.blynk.server.application.handlers.main.MobileHandler;
-import cc.blynk.server.application.handlers.main.auth.MobileStateHolder;
 import cc.blynk.server.application.handlers.sharing.MobileShareHandler;
 import cc.blynk.server.application.handlers.sharing.auth.MobileShareStateHolder;
+import cc.blynk.server.core.session.mobile.MobileStateHolder;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelPipeline;
 

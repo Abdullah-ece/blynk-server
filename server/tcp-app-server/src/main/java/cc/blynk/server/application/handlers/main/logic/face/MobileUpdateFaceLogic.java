@@ -68,7 +68,7 @@ public final class MobileUpdateFaceLogic {
                         existingDash.updateFaceFields(parent);
                         //do not close connection for initiator
                         if (existingUser != user) {
-                            holder.sessionDao.closeAppChannelsByUser(existingUser.email);
+                            holder.sessionDao.closeAppChannelsByUser(existingUser.orgId, existingUser.email);
                         }
                         count++;
                     } catch (Exception e) {

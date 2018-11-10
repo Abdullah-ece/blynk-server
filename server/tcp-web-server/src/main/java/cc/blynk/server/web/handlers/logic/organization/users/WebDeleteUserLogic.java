@@ -80,7 +80,7 @@ public final class WebDeleteUserLogic {
                     userDao.delete(emailToDelete);
                     fileManager.delete(emailToDelete);
                     dbManager.deleteUser(emailToDelete);
-                    sessionDao.deleteUser(emailToDelete);
+                    sessionDao.deleteUser(orgId, emailToDelete);
                 }
             }
         }

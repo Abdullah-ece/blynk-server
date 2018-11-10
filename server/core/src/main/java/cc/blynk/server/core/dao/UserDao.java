@@ -144,7 +144,7 @@ public class UserDao {
         dash.devices = list.toArray(new Device[0]);
         */
 
-        clonedDash.addTimers(timerWorker, newUser.email);
+        clonedDash.addTimers(timerWorker, newUser.orgId, newUser.email);
 
         newUser.profile.dashBoards = new DashBoard[] {clonedDash};
 

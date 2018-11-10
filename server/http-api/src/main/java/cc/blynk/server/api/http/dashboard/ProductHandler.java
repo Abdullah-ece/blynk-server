@@ -84,7 +84,7 @@ public class ProductHandler extends BaseHttpHandler {
         int orgId = organizationDao.getOrganizationIdByProductId(product.id);
         if (!organizationDao.hasAccess(user, orgId)) {
             log.error("User {} tries to access product he has no access.", user.email);
-            return forbidden("You are not allowed to get this product.");
+            return forbidden("You are not allowed to getOrgSession this product.");
         }
 
         return ok(product);

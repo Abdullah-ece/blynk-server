@@ -1,10 +1,10 @@
 package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.application.handlers.main.auth.MobileStateHolder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.core.session.mobile.MobileStateHolder;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.model.Purchase;
 import io.netty.channel.ChannelHandlerContext;

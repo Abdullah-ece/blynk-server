@@ -12,10 +12,12 @@ public class WebAppStateHolder implements StateHolderBase {
 
     private static final int NO_DEVICE = -1;
 
+    public final int orgId;
     public final User user;
     public int selectedDeviceId;
 
-    public WebAppStateHolder(User user) {
+    public WebAppStateHolder(int orgId, User user) {
+        this.orgId = orgId;
         this.user = user;
         this.selectedDeviceId = NO_DEVICE;
     }

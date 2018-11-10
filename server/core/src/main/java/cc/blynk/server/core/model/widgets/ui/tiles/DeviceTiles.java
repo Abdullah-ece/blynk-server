@@ -6,10 +6,8 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.DeviceCleaner;
 import cc.blynk.server.core.model.widgets.MobileSyncWidget;
 import cc.blynk.server.core.model.widgets.Widget;
-import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.outputs.TextAlignment;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
-import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.ArrayUtil;
 import io.netty.channel.Channel;
 
@@ -212,19 +210,6 @@ public class DeviceTiles extends Widget implements MobileSyncWidget, DeviceClean
                 tileTemplate.erase();
             }
         }
-    }
-
-    public int addTimers(TimerWorker timerWorker, String email, int dashId) {
-        int counter = 0;
-        for (TileTemplate template : templates) {
-            for (Widget widgetInTemplate : template.widgets) {
-                if (widgetInTemplate instanceof Timer) {
-                    timerWorker.add(email, (Timer) widgetInTemplate, dashId, this.id, template.id);
-                    counter++;
-                }
-            }
-        }
-        return counter;
     }
 
     public String getValue(int deviceId, short pin, PinType pinType) {

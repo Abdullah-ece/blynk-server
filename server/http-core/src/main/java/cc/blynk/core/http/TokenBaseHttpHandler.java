@@ -41,7 +41,7 @@ public abstract class TokenBaseHttpHandler extends BaseHttpHandler {
             return;
         }
 
-        Session session = sessionDao.getOrCreateSessionByUser(tokenValue.user.email, ctx.channel().eventLoop());
+        Session session = sessionDao.getOrCreateSessionForOrg(tokenValue.orgId, ctx.channel().eventLoop());
         if (session.isSameEventLoop(ctx)) {
             completeLogin(ctx.channel(), handler, params);
         } else {

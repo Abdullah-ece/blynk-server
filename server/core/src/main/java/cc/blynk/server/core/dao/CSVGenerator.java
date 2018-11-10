@@ -39,14 +39,14 @@ public class CSVGenerator {
 
     public static final String EXPORT_CSV_EXTENSION = ".csv.gz";
 
-    private static Path generateExportCSVPath(String email, int deviceId, PinType pinType, short pin) {
-        return Paths.get(CSV_DIR, format(email, deviceId, pinType, pin));
+    private static Path generateExportCSVPath(int orgId, int deviceId, PinType pinType, short pin) {
+        return Paths.get(CSV_DIR, format(orgId, deviceId, pinType, pin));
     }
 
     //"%s_%s_%c%d.csv.gz"
-    private static String format(String email, int deviceId, PinType pinType, short pin) {
+    private static String format(int orgId, int deviceId, PinType pinType, short pin) {
         long now = System.currentTimeMillis();
-        return email + "_" + deviceId + "_"
+        return "" + orgId + "_" + deviceId + "_"
                 + pinType.pintTypeChar + pin + "_" + now + EXPORT_CSV_EXTENSION;
     }
 
@@ -56,7 +56,7 @@ public class CSVGenerator {
             throw new IllegalStateException("Wrong pin format.");
         }
 
-        Path path = generateExportCSVPath(user.email, inDeviceId, pinType, pin);
+        Path path = generateExportCSVPath(user.orgId, inDeviceId, pinType, pin);
 
         try (OutputStream output = Files.newOutputStream(path);
              BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(

@@ -1,7 +1,6 @@
 package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.application.handlers.main.auth.MobileStateHolder;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.dao.SessionDao;
@@ -13,6 +12,7 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.processors.BaseProcessorHandler;
 import cc.blynk.server.core.processors.WebhookProcessor;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.core.session.mobile.MobileStateHolder;
 import cc.blynk.utils.NumberUtil;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -89,7 +89,7 @@ public class MobileHardwareResendFromBTLogic extends BaseProcessorHandler {
             reportingDao.process(state.user, dash, device, pin, pinType, value, now);
             device.updateValue(dash, pin, pinType, value, now);
 
-            Session session = sessionDao.userSession.get(user.email);
+            Session session = sessionDao.getOrgSession(state.orgId);
             processEventorAndWebhook(user, dash, deviceId, session, pin, pinType, value, now);
         }
     }

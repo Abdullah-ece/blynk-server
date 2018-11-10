@@ -1,7 +1,6 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard.widget;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.application.handlers.main.auth.MobileStateHolder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.Widget;
@@ -12,6 +11,7 @@ import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.core.session.mobile.MobileStateHolder;
 import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.ArrayUtil;
 import io.netty.channel.ChannelHandlerContext;
@@ -104,9 +104,10 @@ public final class MobileDeleteWidgetLogic {
         dash.updatedAt = System.currentTimeMillis();
 
         if (widgetToDelete instanceof Timer) {
-            timerWorker.delete(state.user.email, (Timer) widgetToDelete, dashId, deviceTilesId, templateId);
+            timerWorker.delete(state.orgId, state.user.email,
+                    (Timer) widgetToDelete, dashId, deviceTilesId, templateId);
         } else if (widgetToDelete instanceof Eventor) {
-            timerWorker.delete(state.user.email, (Eventor) widgetToDelete, dashId);
+            timerWorker.delete(state.orgId, state.user.email, (Eventor) widgetToDelete, dashId);
         }
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
@@ -124,9 +125,9 @@ public final class MobileDeleteWidgetLogic {
             if (widgetToDelete.tabId > lastTabIndex) {
                 removedWidgetPrice += widgetToDelete.getPrice();
                 if (widgetToDelete instanceof Timer) {
-                    timerWorker.delete(userKey, (Timer) widgetToDelete, dashId, deviceTilesId, templateId);
+                    timerWorker.delete(user.orgId, userKey, (Timer) widgetToDelete, dashId, deviceTilesId, templateId);
                 } else if (widgetToDelete instanceof Eventor) {
-                    timerWorker.delete(userKey, (Eventor) widgetToDelete, dashId);
+                    timerWorker.delete(user.orgId, userKey, (Eventor) widgetToDelete, dashId);
                 }
             } else {
                 zeroTabWidgets.add(widgetToDelete);

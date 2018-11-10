@@ -72,7 +72,7 @@ public final class SetWidgetPropertyLogic {
 
         state.device.updateValue(dash, pin, widgetProperty, propertyValue);
 
-        Session session = sessionDao.userSession.get(state.user.email);
+        Session session = sessionDao.getOrgSession(state.orgId);
         session.sendToApps(SET_WIDGET_PROPERTY, message.id, deviceId, message.body);
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }

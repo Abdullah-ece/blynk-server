@@ -1,7 +1,6 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard.device;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.application.handlers.main.auth.MobileStateHolder;
 import cc.blynk.server.core.dao.DeviceKey;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.dto.IdNameDTO;
@@ -10,6 +9,7 @@ import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.metafields.DeviceReferenceMetaField;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.core.session.mobile.MobileStateHolder;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;

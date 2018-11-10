@@ -1,4 +1,4 @@
-package cc.blynk.server.application.handlers.main.auth;
+package cc.blynk.server.core.session.mobile;
 
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.session.StateHolderBase;
@@ -10,12 +10,18 @@ import cc.blynk.server.core.session.StateHolderBase;
  */
 public class MobileStateHolder implements StateHolderBase {
 
+    public final int orgId;
     public final User user;
     public final Version version;
 
-    public MobileStateHolder(User user, Version version) {
+    public MobileStateHolder(int orgId, User user, Version version) {
+        this.orgId = orgId;
         this.user = user;
         this.version = version;
+    }
+
+    public boolean isSameUser(String email) {
+        return user.email.equals(email);
     }
 
     @Override

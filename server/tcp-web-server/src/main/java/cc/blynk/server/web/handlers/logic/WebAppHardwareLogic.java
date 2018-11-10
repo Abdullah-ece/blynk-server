@@ -44,7 +44,7 @@ public class WebAppHardwareLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
-        Session session = sessionDao.userSession.get(state.user.email);
+        Session session = sessionDao.getOrgSession(state.orgId);
 
         //here expecting command in format "200000 vw 88 1"
         String[] split = split2(message.body);

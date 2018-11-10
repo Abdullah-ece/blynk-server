@@ -1,11 +1,11 @@
 package cc.blynk.server.application.handlers.main.logic.face;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.application.handlers.main.auth.MobileStateHolder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.App;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.core.session.mobile.MobileStateHolder;
 import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.ArrayUtil;
 import io.netty.channel.ChannelHandlerContext;
@@ -43,7 +43,7 @@ public final class MobileDeleteAppLogic {
         var result = new ArrayList<DashBoard>();
         for (DashBoard dash : user.profile.dashBoards) {
             if (ArrayUtil.contains(projectIds, dash.id)) {
-                timerWorker.deleteTimers(state.user.email, dash);
+                timerWorker.deleteTimers(state.orgId, state.user.email, dash);
             } else {
                 result.add(dash);
             }

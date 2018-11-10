@@ -9,7 +9,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * The Blynk Project.
@@ -19,7 +23,7 @@ import java.util.*;
 public class TokenGenerator {
 
     public static void main(String[] args) throws Exception {
-        //List<String> tokens = Files.readAllLines(Paths.get("/home/doom369/Downloads/x.csv"));
+        //List<String> tokens = Files.readAllLines(Paths.getOrgSession("/home/doom369/Downloads/x.csv"));
         Set<String> tokens = generate(10);
 
         List<Redeem> redeems = new ArrayList<>(tokens.size());

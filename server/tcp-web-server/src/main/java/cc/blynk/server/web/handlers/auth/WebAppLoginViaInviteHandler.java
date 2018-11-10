@@ -2,13 +2,13 @@ package cc.blynk.server.web.handlers.auth;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.MobileGetServerHandler;
-import cc.blynk.server.application.handlers.main.auth.Version;
 import cc.blynk.server.common.handlers.UserNotLoggedHandler;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.auth.UserStatus;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.protocol.model.messages.web.WebLoginViaInviteMessage;
+import cc.blynk.server.core.session.mobile.Version;
 import cc.blynk.server.internal.ReregisterChannelUtil;
 import cc.blynk.server.internal.token.InviteToken;
 import cc.blynk.server.web.handlers.WebAppHandler;
@@ -108,12 +108,12 @@ public class WebAppLoginViaInviteHandler extends SimpleChannelInboundHandler<Web
         DefaultChannelPipeline pipeline = (DefaultChannelPipeline) ctx.pipeline();
         cleanPipeline(pipeline);
 
-        WebAppStateHolder appStateHolder = new WebAppStateHolder(user);
+        WebAppStateHolder appStateHolder = new WebAppStateHolder(user.orgId, user);
         pipeline.addLast("AWebAppHandler", new WebAppHandler(holder, appStateHolder));
 
         Channel channel = ctx.channel();
 
-        Session session = holder.sessionDao.getOrCreateSessionByUser(appStateHolder.user.email, channel.eventLoop());
+        Session session = holder.sessionDao.getOrCreateSessionForOrg(appStateHolder.orgId, channel.eventLoop());
         if (session.initialEventLoop != channel.eventLoop()) {
             log.debug("Re registering websocket app channel. {}", ctx.channel());
             ReregisterChannelUtil.reRegisterChannel(ctx, session, channelFuture ->

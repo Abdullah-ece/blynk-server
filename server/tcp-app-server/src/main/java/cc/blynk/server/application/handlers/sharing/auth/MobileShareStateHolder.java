@@ -1,9 +1,9 @@
 package cc.blynk.server.application.handlers.sharing.auth;
 
-import cc.blynk.server.application.handlers.main.auth.MobileStateHolder;
-import cc.blynk.server.application.handlers.main.auth.Version;
 import cc.blynk.server.core.dao.SharedTokenManager;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.session.mobile.MobileStateHolder;
+import cc.blynk.server.core.session.mobile.Version;
 
 /**
  * The Blynk Project.
@@ -15,8 +15,8 @@ public final class MobileShareStateHolder extends MobileStateHolder {
     public final String token;
     public final int dashId;
 
-    MobileShareStateHolder(User user, Version version, String token, int dashId) {
-        super(user, version);
+    MobileShareStateHolder(int orgId, User user, Version version, String token, int dashId) {
+        super(orgId, user, version);
         this.token = token;
         this.dashId = dashId;
     }

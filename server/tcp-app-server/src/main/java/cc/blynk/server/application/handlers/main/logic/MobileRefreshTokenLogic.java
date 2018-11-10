@@ -1,12 +1,12 @@
 package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.application.handlers.main.auth.MobileStateHolder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.core.session.mobile.MobileStateHolder;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -49,7 +49,7 @@ public final class MobileRefreshTokenLogic {
 
         String token = holder.tokenManager.refreshToken(user.orgId, user, dash, device);
 
-        Session session = holder.sessionDao.userSession.get(state.user.email);
+        Session session = holder.sessionDao.getOrgSession(state.orgId);
         session.closeHardwareChannelByDeviceId(deviceId);
 
         if (ctx.channel().isWritable()) {

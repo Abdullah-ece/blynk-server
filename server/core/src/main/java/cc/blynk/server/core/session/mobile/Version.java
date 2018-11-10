@@ -1,4 +1,4 @@
-package cc.blynk.server.application.handlers.main.auth;
+package cc.blynk.server.core.session.mobile;
 
 import cc.blynk.utils.AppNameUtil;
 import org.apache.logging.log4j.LogManager;
@@ -18,7 +18,7 @@ public final class Version {
     public static final Version UNKNOWN_VERSION = new Version(OsType.OTHER, 0);
 
     public final OsType osType;
-    final int versionSingleNumber;
+    public final int versionSingleNumber;
     public String appName;
 
     public Version(OsType osType, int version) {
@@ -60,7 +60,7 @@ public final class Version {
     //this method should be changed to notify users that they use outdated app.
     //done mostly for some changes that cannot be used on old apps.
     //not used right now.
-    boolean isOutdated() {
+    public boolean isOutdated() {
         //hardcoded value for tests
         return versionSingleNumber == 10101;
     }

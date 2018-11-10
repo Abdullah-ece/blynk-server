@@ -1,13 +1,13 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.application.handlers.main.auth.MobileStateHolder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.core.session.mobile.MobileStateHolder;
 import cc.blynk.server.workers.timer.TimerWorker;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -55,8 +55,8 @@ public final class MobileUpdateDashLogic {
         DashBoard existingDash = user.profile.getDashByIdOrThrow(updatedDash.id);
 
         TimerWorker timerWorker = holder.timerWorker;
-        timerWorker.deleteTimers(state.user.email, existingDash);
-        updatedDash.addTimers(timerWorker, state.user.email);
+        timerWorker.deleteTimers(state.user.orgId, state.user.email, existingDash);
+        updatedDash.addTimers(timerWorker, state.user.orgId, state.user.email);
 
         existingDash.updateFields(updatedDash);
 

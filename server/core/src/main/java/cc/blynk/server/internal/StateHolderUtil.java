@@ -3,6 +3,7 @@ package cc.blynk.server.internal;
 import cc.blynk.server.common.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.core.session.StateHolderBase;
+import cc.blynk.server.core.session.mobile.MobileStateHolder;
 import io.netty.channel.Channel;
 
 /**
@@ -31,6 +32,15 @@ public final class StateHolderUtil {
     public static boolean isSameDeviceId(Channel channel, int deviceId) {
         BaseSimpleChannelInboundHandler handler = channel.pipeline().get(BaseSimpleChannelInboundHandler.class);
         return handler != null && handler.getState().isSameDevice(deviceId);
+    }
+
+    public static boolean isSameEmail(Channel channel, String email) {
+        BaseSimpleChannelInboundHandler handler = channel.pipeline().get(BaseSimpleChannelInboundHandler.class);
+        if (handler != null) {
+            MobileStateHolder mobileStateHolder = ((MobileStateHolder) handler.getState());
+            return mobileStateHolder.isSameUser(email);
+        }
+        return false;
     }
 
 }

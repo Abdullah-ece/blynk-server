@@ -9,6 +9,8 @@ import cc.blynk.server.core.model.widgets.others.eventor.TimerTime;
  */
 public class TimerKey {
 
+    public final int orgId;
+
     public final String userKey;
 
     public final int dashId;
@@ -25,8 +27,9 @@ public class TimerKey {
 
     public final TimerTime time;
 
-    public TimerKey(String email, int dashId, int deviceId, long widgetId,
+    public TimerKey(int orgId, String email, int dashId, int deviceId, long widgetId,
                     int additionalId, long deviceTilesId, long templateId, TimerTime time) {
+        this.orgId = orgId;
         this.userKey = email;
         this.dashId = dashId;
         this.deviceId = deviceId;
@@ -46,12 +49,15 @@ public class TimerKey {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof TimerKey)) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
 
         TimerKey timerKey = (TimerKey) o;
 
+        if (orgId != timerKey.orgId) {
+            return false;
+        }
         if (dashId != timerKey.dashId) {
             return false;
         }
@@ -78,7 +84,8 @@ public class TimerKey {
 
     @Override
     public int hashCode() {
-        int result = userKey != null ? userKey.hashCode() : 0;
+        int result = orgId;
+        result = 31 * result + (userKey != null ? userKey.hashCode() : 0);
         result = 31 * result + dashId;
         result = 31 * result + deviceId;
         result = 31 * result + (int) (widgetId ^ (widgetId >>> 32));

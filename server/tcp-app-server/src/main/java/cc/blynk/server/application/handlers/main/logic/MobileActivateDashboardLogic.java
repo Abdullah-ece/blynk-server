@@ -1,13 +1,13 @@
 package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.application.handlers.main.auth.MobileStateHolder;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.core.session.mobile.MobileStateHolder;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -49,7 +49,7 @@ public final class MobileActivateDashboardLogic {
         user.lastModifiedTs = dash.updatedAt;
 
         SessionDao sessionDao = holder.sessionDao;
-        Session session = sessionDao.userSession.get(state.user.email);
+        Session session = sessionDao.getOrgSession(state.orgId);
 
         List<Device> devices = holder.deviceDao.getDevicesOwnedByUser(user.email);
         if (session.isHardwareConnected()) {

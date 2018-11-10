@@ -1,7 +1,6 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard.device;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.application.handlers.main.auth.MobileStateHolder;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
@@ -11,6 +10,7 @@ import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.core.session.mobile.MobileStateHolder;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -76,7 +76,7 @@ public final class MobileUpdateDeviceMetafieldLogic {
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
 
         //if update comes from the app - send update to the web
-        Session session = holder.sessionDao.userSession.get(user.email);
+        Session session = holder.sessionDao.getOrgSession(user.orgId);
         session.sendToSelectedDeviceOnWeb(ctx.channel(), WEB_UPDATE_DEVICE_METAFIELD, message.id, split[1], device.id);
     }
 

@@ -70,29 +70,30 @@ public class ReadingWidgetsWorker implements Runnable {
     }
 
     private void process(long now) {
-        for (Map.Entry<String, Session> entry : sessionDao.userSession.entrySet()) {
+        for (Map.Entry<Integer, Session> entry : sessionDao.orgSession.entrySet()) {
             Session session = entry.getValue();
             //for now checking widgets for active app only
             if ((allowRunWithoutApp || session.isAppConnected()) && session.isHardwareConnected()) {
-                String userKey = entry.getKey();
-                User user = userDao.users.get(userKey);
-                if (user != null) {
-                    Profile profile = user.profile;
-                    for (DashBoard dashBoard : profile.dashBoards) {
-                        if (dashBoard.isActive) {
-                            for (Channel channel : session.hardwareChannels) {
-                                HardwareStateHolder stateHolder = StateHolderUtil.getHardState(channel);
-                                if (stateHolder != null && stateHolder.dash.id == dashBoard.id) {
-                                    int deviceId = stateHolder.device.id;
-                                    for (Widget widget : dashBoard.widgets) {
-                                        if (widget instanceof FrequencyWidget) {
-                                            process(channel, (FrequencyWidget) widget,
-                                                    profile, dashBoard, deviceId, now);
-                                        } else if (widget instanceof DeviceTiles) {
-                                            processDeviceTile(channel, (DeviceTiles) widget, deviceId, now);
+                for (User user : userDao.users.values()) {
+                    int orgId = entry.getKey();
+                    if (user.orgId == orgId) {
+                        Profile profile = user.profile;
+                        for (DashBoard dashBoard : profile.dashBoards) {
+                            if (dashBoard.isActive) {
+                                for (Channel channel : session.hardwareChannels) {
+                                    HardwareStateHolder stateHolder = StateHolderUtil.getHardState(channel);
+                                    if (stateHolder != null && stateHolder.dash.id == dashBoard.id) {
+                                        int deviceId = stateHolder.device.id;
+                                        for (Widget widget : dashBoard.widgets) {
+                                            if (widget instanceof FrequencyWidget) {
+                                                process(channel, (FrequencyWidget) widget,
+                                                        profile, dashBoard, deviceId, now);
+                                            } else if (widget instanceof DeviceTiles) {
+                                                processDeviceTile(channel, (DeviceTiles) widget, deviceId, now);
+                                            }
                                         }
+                                        channel.flush();
                                     }
-                                    channel.flush();
                                 }
                             }
                         }

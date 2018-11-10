@@ -75,7 +75,7 @@ public class WebResolveLogEventLogic {
             try {
                 if (reportingDBManager.eventDBDao.resolveEvent(logEventId, user.name, comment)) {
                     response = ok(message.id);
-                    Session session = sessionDao.userSession.get(state.user.email);
+                    Session session = sessionDao.getOrgSession(state.orgId);
                     String body = messageParts[1] + BODY_SEPARATOR_STRING + user.email;
                     if (comment != null) {
                         body = body + BODY_SEPARATOR_STRING + comment;

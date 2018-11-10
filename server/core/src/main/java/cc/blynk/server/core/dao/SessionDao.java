@@ -3,7 +3,7 @@ package cc.blynk.server.core.dao;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.session.CookieUtil;
-import io.netty.channel.Channel;
+import cc.blynk.server.internal.StateHolderUtil;
 import io.netty.channel.EventLoop;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.handler.codec.http.HttpRequest;
@@ -29,18 +29,22 @@ public class SessionDao {
     public final static AttributeKey<HttpSession> userSessionAttributeKey = AttributeKey.valueOf("userSession");
     public static final String SESSION_COOKIE = "session";
     private static final Logger log = LogManager.getLogger(SessionDao.class);
-    public final ConcurrentHashMap<String, Session> userSession = new ConcurrentHashMap<>();
+    public final ConcurrentHashMap<Integer, Session> orgSession = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, User> httpSession = new ConcurrentHashMap<>();
 
+    public Session getOrgSession(int orgId) {
+        return orgSession.get(orgId);
+    }
+
     //threadsafe
-    public Session getOrCreateSessionByUser(String email, EventLoop initialEventLoop) {
-        Session group = userSession.get(email);
+    public Session getOrCreateSessionForOrg(int orgId, EventLoop initialEventLoop) {
+        Session group = orgSession.get(orgId);
         //only one side came
         if (group == null) {
             Session value = new Session(initialEventLoop);
-            group = userSession.putIfAbsent(email, value);
+            group = orgSession.putIfAbsent(orgId, value);
             if (group == null) {
-                log.trace("Creating unique session for user: {}", email);
+                log.trace("Creating unique session for org: {}", orgId);
                 return value;
             }
         }
@@ -58,17 +62,21 @@ public class SessionDao {
         httpSession.remove(sessionId);
     }
 
-    public void deleteUser(String email) {
-        Session session = userSession.remove(email);
-        if (session != null) {
-            session.closeAll();
-        }
+    public void deleteUser(int orgId, String email) {
+        closeAppChannelsByUser(orgId, email);
         for (Map.Entry<String, User> entry : httpSession.entrySet()) {
             User user = entry.getValue();
             if (user.email.equals(email)) {
                 httpSession.remove(entry.getKey());
                 return;
             }
+        }
+    }
+
+    public void closeAppChannelsByUser(int orgId, String email) {
+        Session session = orgSession.get(orgId);
+        if (session != null) {
+            session.appChannels.removeIf(channel -> StateHolderUtil.isSameEmail(channel, email));
         }
     }
 
@@ -89,19 +97,11 @@ public class SessionDao {
     public void close() {
         System.out.println("Closing all sockets...");
         DefaultChannelGroup allChannels = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
-        userSession.forEach((userKey, session) -> {
+        orgSession.forEach((orgKey, session) -> {
             allChannels.addAll(session.appChannels);
             allChannels.addAll(session.hardwareChannels);
+            allChannels.addAll(session.webChannels);
         });
         allChannels.close().awaitUninterruptibly();
-    }
-
-    public void closeAppChannelsByUser(String email) {
-        Session session = userSession.get(email);
-        if (session != null) {
-            for (Channel appChannel : session.appChannels) {
-                appChannel.close();
-            }
-        }
     }
 }

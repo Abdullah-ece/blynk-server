@@ -1,7 +1,6 @@
 package cc.blynk.server.application.handlers.main;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.application.handlers.main.auth.MobileStateHolder;
 import cc.blynk.server.application.handlers.main.logic.MobileActivateDashboardLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileAddPushLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileAssignTokenLogic;
@@ -62,6 +61,7 @@ import cc.blynk.server.common.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.common.handlers.logic.PingLogic;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.StateHolderBase;
+import cc.blynk.server.core.session.mobile.MobileStateHolder;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.ACTIVATE_DASHBOARD;

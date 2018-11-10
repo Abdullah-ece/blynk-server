@@ -10,13 +10,16 @@ import cc.blynk.server.core.protocol.model.messages.StringMessage;
  */
 public class BridgeForwardMessage {
 
+    public final int orgId;
+
     public final StringMessage message;
 
     public final TokenValue tokenValue;
 
     public final String email;
 
-    public BridgeForwardMessage(StringMessage bridgeMessage, TokenValue tokenValue, String email) {
+    public BridgeForwardMessage(int orgId, StringMessage bridgeMessage, TokenValue tokenValue, String email) {
+        this.orgId = orgId;
         this.message = bridgeMessage;
         this.tokenValue = tokenValue;
         this.email = email;

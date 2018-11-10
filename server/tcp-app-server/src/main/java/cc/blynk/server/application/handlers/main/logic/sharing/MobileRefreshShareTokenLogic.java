@@ -1,13 +1,13 @@
 package cc.blynk.server.application.handlers.main.logic.sharing;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.application.handlers.main.auth.MobileStateHolder;
 import cc.blynk.server.application.handlers.sharing.auth.MobileShareStateHolder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.core.session.mobile.MobileStateHolder;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -45,7 +45,7 @@ public final class MobileRefreshShareTokenLogic {
         String token = holder.tokenManager.refreshSharedToken(user, dash);
 
         //todo move to session class?
-        Session session = holder.sessionDao.userSession.get(state.user.email);
+        Session session = holder.sessionDao.getOrgSession(state.orgId);
         for (Channel appChannel : session.appChannels) {
             MobileShareStateHolder localState = getShareState(appChannel);
             if (localState != null && localState.dashId == dashId) {

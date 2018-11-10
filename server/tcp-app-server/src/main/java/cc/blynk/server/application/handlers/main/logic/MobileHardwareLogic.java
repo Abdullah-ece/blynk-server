@@ -1,7 +1,6 @@
 package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.application.handlers.main.auth.MobileStateHolder;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
@@ -16,6 +15,7 @@ import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.processors.BaseProcessorHandler;
 import cc.blynk.server.core.processors.WebhookProcessor;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.core.session.mobile.MobileStateHolder;
 import cc.blynk.utils.NumberUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -88,7 +88,7 @@ public class MobileHardwareLogic extends BaseProcessorHandler {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, MobileStateHolder state, StringMessage message) {
-        Session session = sessionDao.userSession.get(state.user.email);
+        Session session = sessionDao.getOrgSession(state.orgId);
 
         //here expecting command in format "1-200000 vw 88 1"
         String[] split = split2(message.body);

@@ -129,7 +129,7 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
             var bridgeForwardMessage = (BridgeForwardMessage) evt;
             var tokenValue = bridgeForwardMessage.tokenValue;
             try {
-                hardware.messageReceived(ctx, bridgeForwardMessage.message,
+                hardware.messageReceived(ctx, bridgeForwardMessage.message, bridgeForwardMessage.orgId,
                         bridgeForwardMessage.email, tokenValue.user, tokenValue.dash, tokenValue.device);
             } catch (NumberFormatException nfe) {
                 log.debug("Error parsing number. {}", nfe.getMessage());

@@ -1,4 +1,4 @@
-package cc.blynk.server.application.handlers.main.auth;
+package cc.blynk.server.core.session.mobile;
 
 /**
  * The Blynk Project.

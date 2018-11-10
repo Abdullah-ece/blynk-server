@@ -12,6 +12,8 @@ import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
+import cc.blynk.server.core.session.mobile.MobileStateHolder;
+import cc.blynk.server.core.session.mobile.Version;
 import cc.blynk.server.internal.ReregisterChannelUtil;
 import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.IPUtils;
@@ -180,7 +182,7 @@ public class MobileLoginHandler extends SimpleChannelInboundHandler<LoginMessage
         var pipeline = (DefaultChannelPipeline) ctx.pipeline();
         cleanPipeline(pipeline);
 
-        var appStateHolder = new MobileStateHolder(user, version);
+        var appStateHolder = new MobileStateHolder(user.orgId, user, version);
         pipeline.addLast("AAppHandler", new MobileHandler(holder, appStateHolder));
 
         var channel = ctx.channel();
@@ -190,7 +192,7 @@ public class MobileLoginHandler extends SimpleChannelInboundHandler<LoginMessage
             user.region = holder.props.region;
         }
 
-        var session = holder.sessionDao.getOrCreateSessionByUser(appStateHolder.user.email, channel.eventLoop());
+        var session = holder.sessionDao.getOrCreateSessionForOrg(appStateHolder.user.orgId, channel.eventLoop());
         if (session.isSameEventLoop(channel)) {
             completeLogin(channel, session, user, messageId, version);
         } else {

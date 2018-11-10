@@ -270,15 +270,14 @@ public class DashBoard {
         }
     }
 
-    public void addTimers(TimerWorker timerWorker, String email) {
+    public void addTimers(TimerWorker timerWorker, int orgId, String email) {
         for (Widget widget : widgets) {
             if (widget instanceof DeviceTiles) {
-                DeviceTiles deviceTiles = (DeviceTiles) widget;
-                deviceTiles.addTimers(timerWorker, email, id);
+                timerWorker.add(orgId, email, (DeviceTiles) widget, id);
             } else if (widget instanceof Timer) {
-                timerWorker.add(email, (Timer) widget, id, -1L, -1L);
+                timerWorker.add(orgId, email, (Timer) widget, id, -1L, -1L);
             } else if (widget instanceof Eventor) {
-                timerWorker.add(email, (Eventor) widget, id);
+                timerWorker.add(orgId, email, (Eventor) widget, id);
             }
         }
     }

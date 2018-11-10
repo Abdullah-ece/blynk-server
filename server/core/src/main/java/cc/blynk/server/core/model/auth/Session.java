@@ -38,7 +38,7 @@ public class Session {
     public final EventLoop initialEventLoop;
     public final Set<Channel> appChannels = ConcurrentHashMap.newKeySet();
     public final Set<Channel> hardwareChannels = ConcurrentHashMap.newKeySet();
-    private final Set<Channel> webChannels = ConcurrentHashMap.newKeySet();
+    public final Set<Channel> webChannels = ConcurrentHashMap.newKeySet();
 
     private final ChannelFutureListener webRemover = future -> webChannels.remove(future.channel());
     private final ChannelFutureListener appRemover = future -> appChannels.remove(future.channel());

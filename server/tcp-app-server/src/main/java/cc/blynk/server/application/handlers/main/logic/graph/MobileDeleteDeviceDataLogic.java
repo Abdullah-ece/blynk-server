@@ -1,7 +1,6 @@
 package cc.blynk.server.application.handlers.main.logic.graph;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.application.handlers.main.auth.MobileStateHolder;
 import cc.blynk.server.application.handlers.sharing.auth.MobileShareStateHolder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
@@ -9,6 +8,7 @@ import cc.blynk.server.core.model.widgets.ui.reporting.ReportingWidget;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.core.session.mobile.MobileStateHolder;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;

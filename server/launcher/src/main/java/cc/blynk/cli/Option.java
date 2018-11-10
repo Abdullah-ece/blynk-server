@@ -278,7 +278,7 @@ public class Option implements Cloneable {
     private void processValue(String value) {
         // this Option has a separator character
         if (hasValueSeparator()) {
-            // get the separator character
+            // getOrgSession the separator character
             char sep = getValueSeparator();
 
             // store the index for the value separator
@@ -297,7 +297,7 @@ public class Option implements Cloneable {
                 // parse
                 value = value.substring(index + 1);
 
-                // get new index
+                // getOrgSession new index
                 index = value.indexOf(sep);
             }
         }

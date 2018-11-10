@@ -4,7 +4,6 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.MobileGetServerHandler;
 import cc.blynk.server.application.handlers.main.auth.MobileLoginHandler;
 import cc.blynk.server.application.handlers.main.auth.MobileRegisterHandler;
-import cc.blynk.server.application.handlers.main.auth.Version;
 import cc.blynk.server.application.handlers.sharing.MobileShareHandler;
 import cc.blynk.server.common.handlers.UserNotLoggedHandler;
 import cc.blynk.server.core.dao.SharedTokenValue;
@@ -12,6 +11,7 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.model.messages.appllication.sharing.ShareLoginMessage;
+import cc.blynk.server.core.session.mobile.Version;
 import cc.blynk.server.internal.ReregisterChannelUtil;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.Channel;
@@ -87,11 +87,12 @@ public class MobileShareLoginHandler extends SimpleChannelInboundHandler<ShareLo
         }
 
         cleanPipeline(ctx.pipeline());
-        MobileShareStateHolder mobileShareStateHolder = new MobileShareStateHolder(user, version, token, dashId);
+        MobileShareStateHolder mobileShareStateHolder =
+                new MobileShareStateHolder(user.orgId, user, version, token, dashId);
         ctx.pipeline().addLast("AAppSHareHandler", new MobileShareHandler(holder, mobileShareStateHolder));
 
-        Session session = holder.sessionDao.getOrCreateSessionByUser(
-                mobileShareStateHolder.user.email, ctx.channel().eventLoop());
+        Session session = holder.sessionDao.getOrCreateSessionForOrg(
+                mobileShareStateHolder.orgId, ctx.channel().eventLoop());
 
         if (session.isSameEventLoop(ctx)) {
             completeLogin(ctx.channel(), session, user.email, messageId);

@@ -152,7 +152,7 @@ public class WebhookTest extends SingleServerInstancePerTest {
         clientPair.hardwareClient.send("hardware vw 123 $$");
         verify(clientPair.hardwareClient.responseMock, after(1000).times(0)).channelRead(any(), any());
 
-        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124");
+        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/getOrgSession/V124");
 
         try (CloseableHttpResponse response = httpsClient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -180,7 +180,7 @@ public class WebhookTest extends SingleServerInstancePerTest {
         clientPair.hardwareClient.send("hardware vw 123 10");
         verify(clientPair.hardwareClient.responseMock, after(1000).times(0)).channelRead(any(), any());
 
-        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124");
+        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/getOrgSession/V124");
 
         try (CloseableHttpResponse response = httpsClient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -208,7 +208,7 @@ public class WebhookTest extends SingleServerInstancePerTest {
         clientPair.hardwareClient.send("hardware vw 123 10");
         verify(clientPair.hardwareClient.responseMock, after(1000).times(0)).channelRead(any(), any());
 
-        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V125");
+        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/getOrgSession/V125");
         try (CloseableHttpResponse response = httpsClient.execute(request)) {
             assertEquals(400, response.getStatusLine().getStatusCode());
         }
@@ -232,7 +232,7 @@ public class WebhookTest extends SingleServerInstancePerTest {
         clientPair.hardwareClient.send("hardware vw 123 " + b("10 11 12"));
         verify(clientPair.hardwareClient.responseMock, after(1000).times(0)).channelRead(any(), any());
 
-        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124");
+        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/getOrgSession/V124");
 
         try (CloseableHttpResponse response = httpsClient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -272,7 +272,7 @@ public class WebhookTest extends SingleServerInstancePerTest {
         clientPair.hardwareClient.send("hardware vw 123 " + b("0 1 2 3 4 5 6 7 8 9"));
         verify(clientPair.hardwareClient.responseMock, after(1000).times(0)).channelRead(any(), any());
 
-        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124");
+        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/getOrgSession/V124");
 
         try (CloseableHttpResponse response = httpsClient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -302,7 +302,7 @@ public class WebhookTest extends SingleServerInstancePerTest {
         clientPair.hardwareClient.send("hardware vw 123 10");
         verify(clientPair.hardwareClient.responseMock, after(1000).times(0)).channelRead(any(), any());
 
-        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124");
+        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/getOrgSession/V124");
 
         try (CloseableHttpResponse response = httpsClient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -331,7 +331,7 @@ public class WebhookTest extends SingleServerInstancePerTest {
         clientPair.hardwareClient.send("hardware vw 123 10 11");
         verify(clientPair.hardwareClient.responseMock, after(1000).times(0)).channelRead(any(), any());
 
-        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124");
+        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/getOrgSession/V124");
 
         try (CloseableHttpResponse response = httpsClient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -366,7 +366,7 @@ public class WebhookTest extends SingleServerInstancePerTest {
         clientPair.hardwareClient.send("hardware vw 123 10");
         verify(clientPair.hardwareClient.responseMock, after(1000).times(0)).channelRead(any(), any());
 
-        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124");
+        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/getOrgSession/V124");
 
         try (CloseableHttpResponse response = httpsClient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -394,7 +394,7 @@ public class WebhookTest extends SingleServerInstancePerTest {
         clientPair.hardwareClient.send("hardware vw 123 " + b("10 11 12"));
         verify(clientPair.hardwareClient.responseMock, after(1000).times(0)).channelRead(any(), any());
 
-        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124");
+        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/getOrgSession/V124");
 
         try (CloseableHttpResponse response = httpsClient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -424,7 +424,7 @@ public class WebhookTest extends SingleServerInstancePerTest {
         clientPair.hardwareClient.send("hardware vw 123 10");
         verify(clientPair.hardwareClient.responseMock, after(1000).times(0)).channelRead(any(), any());
 
-        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124");
+        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/getOrgSession/V124");
 
         try (CloseableHttpResponse response = httpsClient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -452,7 +452,7 @@ public class WebhookTest extends SingleServerInstancePerTest {
         clientPair.hardwareClient.send("hardware vw 123 10");
         verify(clientPair.hardwareClient.responseMock, after(500).times(0)).channelRead(any(), any());
 
-        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124");
+        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/getOrgSession/V124");
 
         try (CloseableHttpResponse response = httpsClient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -464,7 +464,7 @@ public class WebhookTest extends SingleServerInstancePerTest {
         clientPair.hardwareClient.send("hardware vw 123 11");
         verify(clientPair.hardwareClient.responseMock, after(600).times(0)).channelRead(any(), any());
 
-        request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124");
+        request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/getOrgSession/V124");
 
         try (CloseableHttpResponse response = httpsClient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -476,7 +476,7 @@ public class WebhookTest extends SingleServerInstancePerTest {
         clientPair.hardwareClient.send("hardware vw 123 12");
         verify(clientPair.hardwareClient.responseMock, after(500).times(0)).channelRead(any(), any());
 
-        request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124");
+        request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/getOrgSession/V124");
 
         try (CloseableHttpResponse response = httpsClient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -505,7 +505,7 @@ public class WebhookTest extends SingleServerInstancePerTest {
         clientPair.appClient.send("hardware 1 vw 123 10");
         verify(clientPair.hardwareClient.responseMock, after(500).times(1)).channelRead(any(), eq(hardware(2, "vw 123 10")));
 
-        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124");
+        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/getOrgSession/V124");
 
         try (CloseableHttpResponse response = httpsClient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -533,7 +533,7 @@ public class WebhookTest extends SingleServerInstancePerTest {
         clientPair.appClient.send("hardware 1 vw 123 10");
         verify(clientPair.hardwareClient.responseMock, after(500)).channelRead(any(), eq(hardware(2, "vw 123 10")));
 
-        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124");
+        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/getOrgSession/V124");
 
         try (CloseableHttpResponse response = httpsClient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -544,7 +544,7 @@ public class WebhookTest extends SingleServerInstancePerTest {
         clientPair.appClient.send("hardware 1 vw 123 11");
         verify(clientPair.hardwareClient.responseMock, after(1000)).channelRead(any(), eq(hardware(3, "vw 123 11")));
 
-        request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124");
+        request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/getOrgSession/V124");
 
         try (CloseableHttpResponse response = httpsClient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -557,7 +557,7 @@ public class WebhookTest extends SingleServerInstancePerTest {
         clientPair.appClient.send("hardware 1 vw 123 11");
         verify(clientPair.hardwareClient.responseMock, after(500)).channelRead(any(), eq(hardware(4, "vw 123 11")));
 
-        request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124");
+        request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/getOrgSession/V124");
 
         try (CloseableHttpResponse response = httpsClient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -615,7 +615,7 @@ public class WebhookTest extends SingleServerInstancePerTest {
         verify(clientPair.hardwareClient.responseMock, after(500).times(1)).channelRead(any(), eq(
                 new HardwareMessage(2, b("vw 123 " + httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/update/V124"))));
 
-        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124");
+        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/getOrgSession/V124");
 
         try (CloseableHttpResponse response = httpsClient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -642,7 +642,7 @@ public class WebhookTest extends SingleServerInstancePerTest {
         clientPair.appClient.send("hardware 1 vw 123 1");
         clientPair.hardwareClient.verifyResult(hardware(2, "vw 123 1"));
 
-        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V126");
+        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/getOrgSession/V126");
 
         try (CloseableHttpResponse response = httpsClient.execute(request)) {
             assertEquals(400, response.getStatusLine().getStatusCode());

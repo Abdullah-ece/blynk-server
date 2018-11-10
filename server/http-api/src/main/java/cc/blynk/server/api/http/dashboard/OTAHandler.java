@@ -138,7 +138,7 @@ public class OTAHandler extends BaseHttpHandler {
             device.setDeviceOtaInfo(deviceOtaInfo);
         }
 
-        Session session = sessionDao.userSession.get(user.email);
+        Session session = sessionDao.getOrgSession(user.orgId);
         if (session != null) {
             for (Channel channel : session.hardwareChannels) {
                 HardwareStateHolder hardwareState = getHardState(channel);

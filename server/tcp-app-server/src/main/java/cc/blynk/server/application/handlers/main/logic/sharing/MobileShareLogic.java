@@ -1,10 +1,10 @@
 package cc.blynk.server.application.handlers.main.logic.sharing;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.application.handlers.main.auth.MobileStateHolder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.core.session.mobile.MobileStateHolder;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -37,7 +37,7 @@ public final class MobileShareLogic {
                 break;
         }
 
-        Session session = holder.sessionDao.userSession.get(state.user.email);
+        Session session = holder.sessionDao.getOrgSession(state.orgId);
         session.sendToSharedApps(ctx.channel(), dash.sharedToken, message.command, message.id, message.body);
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }

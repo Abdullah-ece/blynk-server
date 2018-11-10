@@ -1,5 +1,7 @@
 package cc.blynk.server.application.handlers.main.auth;
 
+import cc.blynk.server.core.session.mobile.OsType;
+import cc.blynk.server.core.session.mobile.Version;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

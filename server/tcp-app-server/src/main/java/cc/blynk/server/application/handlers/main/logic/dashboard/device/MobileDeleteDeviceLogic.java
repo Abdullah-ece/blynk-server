@@ -1,13 +1,13 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard.device;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.application.handlers.main.auth.MobileStateHolder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.core.session.mobile.MobileStateHolder;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -48,7 +48,7 @@ public final class MobileDeleteDeviceLogic {
         user.profile.deleteDeviceFromTags(deviceId);
         holder.tokenManager.deleteDevice(device);
         holder.deviceDao.delete(device.id);
-        Session session = holder.sessionDao.userSession.get(state.user.email);
+        Session session = holder.sessionDao.getOrgSession(state.orgId);
         session.closeHardwareChannelByDeviceId(deviceId);
 
         user.lastModifiedTs = System.currentTimeMillis();

@@ -35,10 +35,8 @@ import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.notifications.Mail;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
-import cc.blynk.server.core.model.widgets.others.rtc.RTC;
 import cc.blynk.server.core.processors.EventorProcessor;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
-import cc.blynk.server.core.protocol.exceptions.NoDataException;
 import cc.blynk.server.db.ReportingDBManager;
 import cc.blynk.server.db.dao.descriptor.TableDataMapper;
 import cc.blynk.server.db.dao.descriptor.TableDescriptor;
@@ -49,29 +47,21 @@ import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.http.MediaType;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
-import net.glxn.qrgen.core.image.ImageType;
-import net.glxn.qrgen.javase.QRCode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.Base64;
 
 import static cc.blynk.core.http.Response.badRequest;
 import static cc.blynk.core.http.Response.ok;
-import static cc.blynk.core.http.Response.redirect;
 import static cc.blynk.core.http.Response.serverError;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_LOG_EVENT;
 import static cc.blynk.server.core.protocol.enums.Command.HTTP_EMAIL;
-import static cc.blynk.server.core.protocol.enums.Command.HTTP_GET_HISTORY_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.HTTP_GET_PIN_DATA;
-import static cc.blynk.server.core.protocol.enums.Command.HTTP_GET_PROJECT;
-import static cc.blynk.server.core.protocol.enums.Command.HTTP_IS_APP_CONNECTED;
 import static cc.blynk.server.core.protocol.enums.Command.HTTP_IS_HARDWARE_CONNECTED;
 import static cc.blynk.server.core.protocol.enums.Command.HTTP_NOTIFY;
-import static cc.blynk.server.core.protocol.enums.Command.HTTP_QR;
 import static cc.blynk.server.core.protocol.enums.Command.HTTP_UPDATE_PIN_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.SET_WIDGET_PROPERTY;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
@@ -136,7 +126,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
             return badRequest("Event with code not found in product.");
         }
 
-        var session = sessionDao.userSession.get(tokenValue.user.email);
+        var session = sessionDao.getOrgSession(tokenValue.orgId);
         var bodyForWeb = event.getType() + StringUtils.BODY_SEPARATOR_STRING + eventCode;
         session.sendToSelectedDeviceOnWeb(HARDWARE_LOG_EVENT, 111, bodyForWeb, device.id);
 
@@ -156,20 +146,6 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
     }
 
     @GET
-    @Path("/{token}/project")
-    @Metric(HTTP_GET_PROJECT)
-    public Response getDashboard(@PathParam("token") String token) {
-        TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
-
-        if (tokenValue == null) {
-            log.debug("Requested token {} not found.", token);
-            return Response.badRequest("Invalid token.");
-        }
-
-        return ok(tokenValue.dash.toString());
-    }
-
-    @GET
     @Path("/{token}/isHardwareConnected")
     @Metric(HTTP_IS_HARDWARE_CONNECTED)
     public Response isHardwareConnected(@PathParam("token") String token) {
@@ -180,30 +156,11 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
             return Response.badRequest("Invalid token.");
         }
 
-        User user = tokenValue.user;
-        int dashId = tokenValue.dash.id;
         int deviceId = tokenValue.device.id;
 
-        Session session = sessionDao.userSession.get(user.email);
+        Session session = sessionDao.getOrgSession(tokenValue.orgId);
 
         return ok(session.isHardwareConnected(deviceId));
-    }
-
-    @GET
-    @Path("/{token}/isAppConnected")
-    @Metric(HTTP_IS_APP_CONNECTED)
-    public Response isAppConnected(@PathParam("token") String token) {
-        TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
-
-        if (tokenValue == null) {
-            log.debug("Requested token {} not found.", token);
-            return Response.badRequest("Invalid token.");
-        }
-
-        User user = tokenValue.user;
-        Session session = sessionDao.userSession.get(user.email);
-
-        return ok(tokenValue.dash.isActive && session.isAppConnected());
     }
 
     @GET
@@ -227,59 +184,8 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
         }
     }
 
-    @GET
-    @Path("/{token}/rtc")
-    @Metric(HTTP_GET_PIN_DATA)
-    public Response getWidgetPinData(@PathParam("token") String token) {
-        TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
-
-        if (tokenValue == null) {
-            log.debug("Requested token {} not found.", token);
-            return Response.badRequest("Invalid token.");
-        }
-
-        User user = tokenValue.user;
-
-        RTC rtc = tokenValue.dash.getWidgetByType(RTC.class);
-
-        if (rtc == null) {
-            log.debug("Requested rtc widget not found. User {}", user.email);
-            return Response.badRequest("Requested rtc not exists in app.");
-        }
-
-        return ok(rtc.getJsonValue());
-    }
-
-    @GET
-    @Path("/{token}/qr")
-    @Metric(HTTP_QR)
-    public Response getQR(@PathParam("token") String token) {
-        TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
-
-        if (tokenValue == null) {
-            log.debug("Requested token {} not found.", token);
-            return Response.badRequest("Invalid token.");
-        }
-
-        DashBoard dashBoard = tokenValue.dash;
-
-        try {
-            byte[] compressed = JsonParser.gzipDashRestrictive(dashBoard);
-            String qrData = "bp1" + Base64.getEncoder().encodeToString(compressed);
-            byte[] qrDataBinary = QRCode.from(qrData).to(ImageType.PNG).withSize(500, 500).stream().toByteArray();
-            return ok(qrDataBinary, "image/png");
-        } catch (Throwable e) {
-            log.error("Error generating QR. Reason : {}", e.getMessage());
-            return Response.badRequest("Error generating QR.");
-        }
-    }
-
-    //todo old API.
-    @GET
-    @Path("/{token}/pin/{pin}")
-    @Metric(HTTP_GET_PIN_DATA)
-    public Response getWidgetPinData(@PathParam("token") String token,
-                                     @PathParam("pin") String pinString) {
+    private Response getWidgetPinData(@PathParam("token") String token,
+                                      @PathParam("pin") String pinString) {
 
         TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
 
@@ -288,7 +194,6 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
             return Response.badRequest("Invalid token.");
         }
 
-        User user = tokenValue.user;
         int deviceId = tokenValue.device.id;
 
         PinType pinType;
@@ -307,7 +212,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
         if (device != null) {
             PinStorageValue value = device.pinStorage.get(pin, pinType);
             if (value == null) {
-                log.debug("Requested pin {} not found. User {}", pinString, user.email);
+                log.debug("Requested {} and pin {} not found.", token, pinString);
                 return Response.badRequest("Requested pin doesn't exist in the app.");
             }
             if (value instanceof SinglePinStorageValue) {
@@ -317,51 +222,8 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
             }
         }
 
-        log.debug("Requested pin {} not found. User {}", pinString, user.email);
+        log.debug("Requested {} and pin {} not found.", token, pinString);
         return Response.badRequest("Requested pin doesn't exist in the app.");
-    }
-
-    @GET
-    @Path("/{token}/data/{pin}")
-    @Metric(HTTP_GET_HISTORY_DATA)
-    public Response getPinHistoryData(@PathParam("token") String token,
-                                      @PathParam("pin") String pinString) {
-        TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
-
-        if (tokenValue == null) {
-            log.debug("Requested token {} not found.", token);
-            return Response.badRequest("Invalid token.");
-        }
-
-        User user = tokenValue.user;
-        int deviceId = tokenValue.device.id;
-
-        PinType pinType;
-        short pin;
-
-        try {
-            pinType = PinType.getPinType(pinString.charAt(0));
-            pin = NumberUtil.parsePin(pinString.substring(1));
-        } catch (NumberFormatException | IllegalCommandBodyException e) {
-            log.debug("Wrong pin format. {}", pinString);
-            return Response.badRequest("Wrong pin format.");
-        }
-
-        //todo may be optimized
-        try {
-            java.nio.file.Path path = reportingDiskDao.csvGenerator.createCSV(
-                    user, deviceId, pinType, pin, deviceId);
-            return redirect("/" + path.getFileName().toString());
-        } catch (IllegalCommandBodyException e1) {
-            log.debug(e1.getMessage());
-            return Response.badRequest(e1.getMessage());
-        } catch (NoDataException noData) {
-            log.debug("No data for pin.");
-            return Response.badRequest("No data for pin.");
-        } catch (Exception e) {
-            log.debug("Error getting pin data.");
-            return Response.badRequest("Error getting pin data.");
-        }
     }
 
     //todo it is a bit ugly right now. could be simplified by passing map of query params.
@@ -432,14 +294,8 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
             return Response.badRequest("Invalid token.");
         }
 
-        User user = tokenValue.user;
         int deviceId = tokenValue.device.id;
         DashBoard dash = tokenValue.dash;
-
-        //todo add test for this use case
-        if (!dash.isActive) {
-            return Response.badRequest("Project is not active.");
-        }
 
         PinType pinType;
         short pin;
@@ -451,29 +307,21 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
             return Response.badRequest("Wrong pin format.");
         }
 
-        //for now supporting only virtual pins
-        Widget widget = dash.findWidgetByPin(deviceId, pin, pinType);
-
-        if (widget == null || pinType != PinType.VIRTUAL) {
-            log.debug("No widget for SetWidgetProperty command.");
-            return Response.badRequest("No widget for SetWidgetProperty command.");
+        if (pinType != PinType.VIRTUAL) {
+            log.debug("Only virtual pins supported for SetWidgetProperty command.");
+            return Response.badRequest("Only virtual pins supported for SetWidgetProperty command.");
         }
 
-      WidgetProperty widgetProperty = WidgetProperty.getProperty(property);
-      if (widgetProperty == null) {
-        log.debug("Property not exists. Property : {}", property);
-        return badRequest("Property not exists.");
-      }
-
-        try {
-            //todo for now supporting only single property
-            widget.setProperty(widgetProperty, values[0]);
-        } catch (Exception e) {
-            log.debug("Error setting widget property. Reason : {}", e.getMessage());
-            return Response.badRequest("Error setting widget property.");
+        WidgetProperty widgetProperty = WidgetProperty.getProperty(property);
+        if (widgetProperty == null) {
+            log.debug("Property not exists. Property : {}", property);
+            return badRequest("Property not exists.");
         }
 
-        Session session = sessionDao.userSession.get(user.email);
+        //todo for now supporting only single property
+        tokenValue.device.updateValue(dash, pin, widgetProperty, values[0]);
+
+        Session session = sessionDao.getOrgSession(tokenValue.orgId);
         session.sendToApps(SET_WIDGET_PROPERTY, 111,
                 deviceId, "" + pin + BODY_SEPARATOR + property + BODY_SEPARATOR + values[0]);
         return ok();
@@ -501,7 +349,6 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
         }
 
         User user = tokenValue.user;
-        int dashId = tokenValue.dash.id;
         int deviceId = tokenValue.device.id;
 
         DashBoard dash = tokenValue.dash;
@@ -548,7 +395,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
 
         String body = makeBody(dash, deviceId, pin, pinType, pinValue);
 
-        Session session = sessionDao.userSession.get(user.email);
+        Session session = sessionDao.getOrgSession(tokenValue.orgId);
         if (session == null) {
             log.debug("No session for user {}.", user.email);
             return Response.ok();
@@ -681,7 +528,6 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
         }
 
         User user = tokenValue.user;
-        int dashId = tokenValue.dash.id;
         int deviceId = tokenValue.device.id;
 
         DashBoard dash = tokenValue.dash;
@@ -708,7 +554,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
         String body = makeBody(dash, deviceId, pin, pinType, pinsData[0].value);
 
         if (body != null) {
-            Session session = sessionDao.userSession.get(user.email);
+            Session session = sessionDao.getOrgSession(tokenValue.orgId);
             if (session == null) {
                 log.error("No session for user {}.", user.email);
                 return Response.ok();

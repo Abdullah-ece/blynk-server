@@ -1,11 +1,11 @@
 package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.application.handlers.main.auth.MobileStateHolder;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.SharedTokenManager;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.core.session.mobile.MobileStateHolder;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -45,7 +45,7 @@ public final class MobileDeActivateDashboardLogic {
         user.lastModifiedTs = System.currentTimeMillis();
 
         SessionDao sessionDao = holder.sessionDao;
-        var session = sessionDao.userSession.get(state.user.email);
+        var session = sessionDao.getOrgSession(state.orgId);
         session.sendToSharedApps(ctx.channel(), sharedToken, message.command, message.id, message.body);
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }

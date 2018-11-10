@@ -86,7 +86,7 @@ public class ExternalAPITest extends APIBaseTest {
 
     @Test
     public void testGetWringPin() throws Exception {
-        HttpGet request = new HttpGet(httpsServerUrl + token + "/get/v256");
+        HttpGet request = new HttpGet(httpsServerUrl + token + "/getOrgSession/v256");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(400, response.getStatusLine().getStatusCode());
@@ -143,7 +143,7 @@ public class ExternalAPITest extends APIBaseTest {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
 
-        HttpGet get = new HttpGet(httpsServerUrl + token + "/get/v10");
+        HttpGet get = new HttpGet(httpsServerUrl + token + "/getOrgSession/v10");
 
         try (CloseableHttpResponse response = httpclient.execute(get)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
