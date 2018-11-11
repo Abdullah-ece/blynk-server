@@ -105,7 +105,7 @@ public class ProvisionedHardwareFirstHandler extends SimpleChannelInboundHandler
                     holder.deviceDao.createWithPredefinedId(orgId, device);
 
                     holder.tokenManager.updateRegularCache(
-                            device.token, new TokenValue(orgId, user, dash, device));
+                            device.token, new TokenValue(orgId, user, device));
 
                     dash.addDeviceToTemplate(device, templateId);
                     device.activatedBy = user.email;

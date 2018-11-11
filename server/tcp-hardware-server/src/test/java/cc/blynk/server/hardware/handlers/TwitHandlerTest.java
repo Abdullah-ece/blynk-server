@@ -56,7 +56,7 @@ public class TwitHandlerTest {
 
     @Before
     public void setup() {
-		state = new HardwareStateHolder(0, user, dash, device);
+		state = new HardwareStateHolder(0, user, device);
     }
 
 	@Test(expected = QuotaLimitException.class)

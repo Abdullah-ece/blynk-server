@@ -15,9 +15,11 @@ public final class TemporaryTokenValue extends TokenValue {
 
     private static final long EXPIRATION_PERIOD = TimeUnit.DAYS.toMillis(7);
     private final long created;
+    public final DashBoard dash;
 
     public TemporaryTokenValue(int orgId, User user, DashBoard dash, Device device) {
-        super(orgId, user, dash, device);
+        super(orgId, user, device);
+        this.dash = dash;
         this.created = System.currentTimeMillis();
     }
 

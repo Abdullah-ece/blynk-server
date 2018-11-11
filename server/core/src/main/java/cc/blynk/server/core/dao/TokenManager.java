@@ -58,8 +58,8 @@ public class TokenManager {
         String newToken = TokenGeneratorUtil.generateNewToken();
         temporaryTokenValue.device.token = newToken;
         regularTokenManager.cache.put(newToken, temporaryTokenValue);
-        log.debug("Generated temp token for user {}, dashId {}, deviceId {} is {}.",
-                temporaryTokenValue.user.email, temporaryTokenValue.dash.id, temporaryTokenValue.device.id, newToken);
+        log.debug("Generated temp token for user {}, deviceId {} is {}.",
+                temporaryTokenValue.user.email, temporaryTokenValue.device.id, newToken);
     }
 
     public void assignToken(int orgId, User user, DashBoard dash, Device device, String newToken) {
@@ -85,7 +85,7 @@ public class TokenManager {
 
     public void updateRegularCache(String token, TokenValue tokenValue) {
         regularTokenManager.cache.put(token,
-                new TokenValue(tokenValue.orgId, tokenValue.user, tokenValue.dash, tokenValue.device));
+                new TokenValue(tokenValue.orgId, tokenValue.user, tokenValue.device));
     }
 
     public boolean clearTemporaryTokens() {

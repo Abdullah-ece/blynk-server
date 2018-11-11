@@ -5,7 +5,6 @@ import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.web.product.EventReceiver;
-import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.db.ReportingDBManager;
@@ -127,12 +126,14 @@ public class HardwareLogEventLogic {
         for (EventReceiver pushReceiver : event.pushNotifications) {
             var metaField = device.findMetaFieldById(pushReceiver.metaFieldId);
             if (metaField != null) {
+                //todo finish
                 push(state, "You received new event : " + event.name);
             }
         }
     }
 
     private void push(HardwareStateHolder state, String message) {
+        /*
         var dash = state.dash;
         var widget = dash.getWidgetByType(Notification.class);
 
@@ -141,6 +142,7 @@ public class HardwareLogEventLogic {
             return;
         }
         widget.push(gcmWrapper, message, state.dash.id);
+        */
     }
 
     private void mail(String to, String subj, String body) {

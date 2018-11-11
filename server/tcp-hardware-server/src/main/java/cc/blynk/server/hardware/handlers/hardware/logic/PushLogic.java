@@ -43,7 +43,8 @@ public class PushLogic extends NotificationBase {
             return;
         }
 
-        DashBoard dash = state.dash;
+        //todo fix?
+        DashBoard dash = new DashBoard();
 
         if (!dash.isActive) {
             log.debug("No active dashboard.");
@@ -72,7 +73,7 @@ public class PushLogic extends NotificationBase {
         }
 
         log.trace("Sending push for user {}, with message : '{}'.", state.user.email, message.body);
-        widget.push(gcmWrapper, updatedBody, state.dash.id);
+        widget.push(gcmWrapper, updatedBody, dash.id);
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }
 

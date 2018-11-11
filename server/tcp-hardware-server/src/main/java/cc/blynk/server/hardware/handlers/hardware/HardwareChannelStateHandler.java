@@ -2,7 +2,6 @@ package cc.blynk.server.hardware.handlers.hardware;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.SessionDao;
-import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
@@ -55,7 +54,7 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
             if (session != null) {
                 var device = state.device;
                 log.trace("Hardware channel disconnect for deviceId {}, token {}.", device.id, device.token);
-                sentOfflineMessage(ctx, session, state.dash, device);
+                sentOfflineMessage(ctx, session, device);
             }
         }
     }
@@ -71,30 +70,19 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
         }
     }
 
-    private void sentOfflineMessage(ChannelHandlerContext ctx, Session session, DashBoard dashBoard, Device device) {
+    private void sentOfflineMessage(ChannelHandlerContext ctx, Session session, Device device) {
         //this is special case.
         //in case hardware quickly reconnects we do not mark it as disconnected
         //as it is already online after quick disconnect.
         //https://github.com/blynkkk/blynk-server/issues/403
         boolean isHardwareConnected = session.isHardwareConnected(device.id);
         if (!isHardwareConnected) {
-            log.trace("Changing device status. Device {}, dashId {}", device.id, dashBoard.id);
+            log.trace("Changing device status. Device {}", device.id);
             device.disconnected();
             reportingDBManager.insertSystemEvent(device.id, EventType.OFFLINE);
         }
 
-        if (!dashBoard.isActive) {
-            return;
-        }
-
-        Notification notification = dashBoard.getNotificationWidget();
-
-        if (notification != null && notification.notifyWhenOffline) {
-            sendPushNotification(ctx, notification, dashBoard.id, device);
-        } else if (!dashBoard.isNotificationsOff) {
-            session.sendOfflineMessageToApps(device.id);
-        }
-
+        session.sendOfflineMessageToApps(device.id);
         session.sendOfflineMessageToWeb(device.id);
     }
 

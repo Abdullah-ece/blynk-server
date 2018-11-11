@@ -2,8 +2,8 @@ package cc.blynk.server.hardware.handlers.hardware.auth;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
+import cc.blynk.server.core.dao.TemporaryTokenValue;
 import cc.blynk.server.core.dao.TokenValue;
-import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
@@ -30,7 +30,6 @@ import org.apache.logging.log4j.Logger;
 import java.util.concurrent.RejectedExecutionException;
 
 import static cc.blynk.server.core.protocol.enums.Command.CONNECT_REDIRECT;
-import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_CONNECTED;
 import static cc.blynk.server.internal.CommonByteBufUtil.invalidToken;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeASCIIStringMessage;
@@ -52,8 +51,6 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
 
     private static final Logger log = LogManager.getLogger(HardwareLoginHandler.class);
 
-    private static final int HARDWARE_PIN_MODE_MSG_ID = 1;
-
     private final Holder holder;
     private final DBManager dbManager;
     private final ReportingDBManager reportingDBManager;
@@ -72,16 +69,18 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
     }
 
     private void completeLogin(Channel channel, Session session, User user,
-                                      DashBoard dash, Device device, int msgId) {
+                                      Device device, int msgId) {
         log.debug("completeLogin. {}", channel);
 
         session.addHardChannel(channel);
         channel.write(ok(msgId));
 
+        /*
         String body = dash.buildPMMessage(device.id);
         if (dash.isActive && body != null) {
             channel.write(makeASCIIStringMessage(HARDWARE, HARDWARE_PIN_MODE_MSG_ID, body));
         }
+        */
 
         log.trace("Device {} goes online DB event.", device.id);
         reportingDBManager.insertSystemEvent(device.id, EventType.ONLINE);
@@ -91,7 +90,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         String responseBody = "" + device.id;
         session.sendToApps(HARDWARE_CONNECTED, msgId, responseBody);
         session.sendToWeb(HARDWARE_CONNECTED, msgId, responseBody);
-        log.trace("Connected device id {}, dash id {}", device.id, dash.id);
+        log.trace("Connected device id {}", device.id);
         device.connected();
         if (device.firstConnectTime == 0) {
             device.firstConnectTime = device.connectTime;
@@ -123,18 +122,18 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         int orgId = tokenValue.orgId;
         User user = tokenValue.user;
         Device device = tokenValue.device;
-        DashBoard dash = tokenValue.dash;
 
         if (tokenValue.isTemporary()) {
             //this is special case for provisioned devices, we adding additional
             //handler in order to add product to the device
+            TemporaryTokenValue temporaryTokenValue = (TemporaryTokenValue) tokenValue;
             ctx.pipeline().addBefore("H_Login", "HHProvisionedHardwareFirstGandler",
-                    new ProvisionedHardwareFirstHandler(holder, orgId, user, dash, device));
+                    new ProvisionedHardwareFirstHandler(holder, orgId, user, temporaryTokenValue.dash, device));
             ctx.writeAndFlush(ok(message.id));
             return;
         }
 
-        createSessionAndReregister(ctx, orgId, user, dash, device, message.id);
+        createSessionAndReregister(ctx, orgId, user, device, message.id);
     }
 
     @Override
@@ -145,7 +144,6 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
             createSessionAndReregister(ctx,
                     bridgeForwardMessage.orgId,
                     bridgeForwardMessage.user,
-                    bridgeForwardMessage.dash,
                     bridgeForwardMessage.device,
                     bridgeForwardMessage.msgId);
         } else {
@@ -154,8 +152,8 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
     }
 
     private void createSessionAndReregister(ChannelHandlerContext ctx, int orgId,
-                                            User user, DashBoard dash, Device device, int msgId) {
-        HardwareStateHolder hardwareStateHolder = new HardwareStateHolder(orgId, user, dash, device);
+                                            User user, Device device, int msgId) {
+        HardwareStateHolder hardwareStateHolder = new HardwareStateHolder(orgId, user, device);
 
         ChannelPipeline pipeline = ctx.pipeline();
         pipeline.replace(this, "HHArdwareHandler", new HardwareHandler(holder, hardwareStateHolder));
@@ -164,11 +162,11 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
                 hardwareStateHolder.orgId, ctx.channel().eventLoop());
 
         if (session.isSameEventLoop(ctx)) {
-            completeLogin(ctx.channel(), session, user, dash, device, msgId);
+            completeLogin(ctx.channel(), session, user, device, msgId);
         } else {
             log.debug("Re registering hard channel. {}", ctx.channel());
             ReregisterChannelUtil.reRegisterChannel(ctx, session, channelFuture ->
-                    completeLogin(channelFuture.channel(), session, user, dash, device, msgId));
+                    completeLogin(channelFuture.channel(), session, user, device, msgId));
         }
     }
 

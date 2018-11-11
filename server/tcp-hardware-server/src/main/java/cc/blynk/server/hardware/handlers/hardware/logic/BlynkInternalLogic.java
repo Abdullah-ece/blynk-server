@@ -71,7 +71,8 @@ public final class BlynkInternalLogic {
     }
 
     private static void sendRTC(ChannelHandlerContext ctx, HardwareStateHolder state, int msgId) {
-        DashBoard dashBoard = state.dash;
+        //todo fix?
+        DashBoard dashBoard = new DashBoard();
         RTC rtc = dashBoard.getWidgetByType(RTC.class);
         if (rtc != null && ctx.channel().isWritable()) {
             ctx.writeAndFlush(makeASCIIStringMessage(BLYNK_INTERNAL, msgId, "rtc" + BODY_SEPARATOR + rtc.getTime()),
@@ -96,7 +97,6 @@ public final class BlynkInternalLogic {
                     "H_IdleStateHandler_Replaced", new IdleStateHandler(newReadTimeout, 0, 0));
         }
 
-        DashBoard dashBoard = state.dash;
         Device device = state.device;
 
         if (device != null) {
