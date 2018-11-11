@@ -1,7 +1,6 @@
 package cc.blynk.server.core.dao;
 
 import cc.blynk.server.core.dao.functions.GraphFunction;
-import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType;
@@ -232,17 +231,17 @@ public class ReportingDiskDao implements Closeable {
         }
     }
 
-    public void process(int orgId, DashBoard dash, Device device, short pin, PinType pinType, String value, long ts) {
+    public void process(int orgId, Device device, short pin, PinType pinType, String value, long ts) {
         try {
             double doubleVal = NumberUtil.parseDouble(value);
-            process(orgId, dash, device, pin, pinType, value, ts, doubleVal);
+            process(orgId, device, pin, pinType, value, ts, doubleVal);
         } catch (Exception e) {
             //just in case
             log.trace("Error collecting reporting entry.");
         }
     }
 
-    private void process(int orgId, DashBoard dash, Device device, short pin, PinType pinType,
+    private void process(int orgId, Device device, short pin, PinType pinType,
                          String value, long ts, double doubleVal) {
         int deviceId = device.id;
         if (enableRawDbDataStore) {
@@ -256,7 +255,7 @@ public class ReportingDiskDao implements Closeable {
 
         BaseReportingKey key = new BaseReportingKey(orgId, deviceId, pinType, pin);
         averageAggregator.collect(key, ts, doubleVal);
-        if (device.webDashboard.needRawDataForGraph(pin, pinType) || dash.needRawDataForGraph(pin, pinType)) {
+        if (device.webDashboard.needRawDataForGraph(pin, pinType) /* || dash.needRawDataForGraph(pin, pinType)*/) {
             rawDataCacheForGraphProcessor.collect(key, new GraphValue(doubleVal, ts));
         }
     }

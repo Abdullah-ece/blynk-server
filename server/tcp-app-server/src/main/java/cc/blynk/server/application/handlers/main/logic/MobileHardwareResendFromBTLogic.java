@@ -85,7 +85,7 @@ public class MobileHardwareResendFromBTLogic extends BaseProcessorHandler {
             String value = splitBody[2];
             long now = System.currentTimeMillis();
 
-            reportingDao.process(state.orgId, dash, device, pin, pinType, value, now);
+            reportingDao.process(state.orgId, device, pin, pinType, value, now);
             device.updateValue(dash, pin, pinType, value, now);
 
             Session session = sessionDao.getOrgSession(state.orgId);

@@ -40,11 +40,11 @@ public abstract class BaseProcessorHandler {
                 eventorProcessor.process(user, session, dash, device, pin, pinType, value);
                 webhookProcessor.process(session, dash, device.id, pin, pinType, value, now);
             } catch (QuotaLimitException qle) {
-                log.debug("User {} reached notification limit for eventor/webhook.", user.name);
+                log.debug("Device {} reached notification limit for eventor/webhook.", device.id);
             } catch (IllegalArgumentException iae) {
                 String errorMessage = iae.getMessage();
                 if (errorMessage != null && errorMessage.contains("missing host")) {
-                    log.debug("Error processing webhook for {}. Reason : {}", user.email, errorMessage);
+                    log.debug("Error processing webhook. Reason : {}", errorMessage);
                 } else {
                     log.error("Error processing eventor/webhook.", iae);
                 }
