@@ -2,7 +2,6 @@ package cc.blynk.server.common;
 
 import cc.blynk.server.core.protocol.exceptions.BaseServerException;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
-import cc.blynk.server.core.session.StateHolderBase;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.ReferenceCountUtil;
@@ -18,7 +17,7 @@ import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/3/2015.
  */
-public abstract class BaseSimpleChannelInboundHandler<I> extends ChannelInboundHandlerAdapter {
+public abstract class BaseSimpleChannelInboundHandler<I, T> extends ChannelInboundHandlerAdapter {
 
     protected static final Logger log = LogManager.getLogger(BaseSimpleChannelInboundHandler.class);
 
@@ -66,7 +65,7 @@ public abstract class BaseSimpleChannelInboundHandler<I> extends ChannelInboundH
      */
     public abstract void messageReceived(ChannelHandlerContext ctx, I msg);
 
-    public abstract StateHolderBase getState();
+    public abstract T getState();
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {

@@ -1,14 +1,13 @@
 package cc.blynk.server.core.session.mobile;
 
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.session.StateHolderBase;
 
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 13.09.15.
  */
-public class MobileStateHolder implements StateHolderBase {
+public class MobileStateHolder {
 
     public final int orgId;
     public final User user;
@@ -24,13 +23,8 @@ public class MobileStateHolder implements StateHolderBase {
         return user.email.equals(email);
     }
 
-    @Override
     public boolean contains(String sharedToken) {
         return true;
     }
 
-    @Override
-    public boolean isSameDevice(int deviceId) {
-        return true;
-    }
 }

@@ -5,7 +5,7 @@ import cc.blynk.server.application.handlers.main.logic.MobileLogoutLogic;
 import cc.blynk.server.common.WebBaseSimpleChannelInboundHandler;
 import cc.blynk.server.common.handlers.logic.PingLogic;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.core.session.StateHolderBase;
+import cc.blynk.server.core.session.web.WebAppStateHolder;
 import cc.blynk.server.web.handlers.logic.WebAppHardwareLogic;
 import cc.blynk.server.web.handlers.logic.WebGetGraphDataLogic;
 import cc.blynk.server.web.handlers.logic.account.WebGetAccountLogic;
@@ -39,7 +39,6 @@ import cc.blynk.server.web.handlers.logic.product.WebGetProductLogic;
 import cc.blynk.server.web.handlers.logic.product.WebGetProductsLogic;
 import cc.blynk.server.web.handlers.logic.product.WebUpdateDevicesMetaInProductLogic;
 import cc.blynk.server.web.handlers.logic.product.WebUpdateProductLogic;
-import cc.blynk.server.web.session.WebAppStateHolder;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENHANCED_GRAPH_DATA;
@@ -84,7 +83,7 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_USER_INFO;
  * Created on 2/1/2015.
  *
  */
-public class WebAppHandler extends WebBaseSimpleChannelInboundHandler<StringMessage> {
+public class WebAppHandler extends WebBaseSimpleChannelInboundHandler<StringMessage, WebAppStateHolder> {
 
     public final WebAppStateHolder state;
     private final WebAppHardwareLogic webAppHardwareLogic;
@@ -258,7 +257,7 @@ public class WebAppHandler extends WebBaseSimpleChannelInboundHandler<StringMess
     }
 
     @Override
-    public StateHolderBase getState() {
+    public WebAppStateHolder getState() {
         return state;
     }
 }

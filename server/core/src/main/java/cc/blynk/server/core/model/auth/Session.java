@@ -3,7 +3,8 @@ package cc.blynk.server.core.model.auth;
 import cc.blynk.server.common.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
-import cc.blynk.server.core.session.StateHolderBase;
+import cc.blynk.server.core.session.mobile.MobileStateHolder;
+import cc.blynk.server.core.session.web.WebAppStateHolder;
 import cc.blynk.utils.ArrayUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
@@ -57,7 +58,7 @@ public class Session {
 
     public static boolean needSync(Channel channel, String sharedToken) {
         BaseSimpleChannelInboundHandler appHandler = channel.pipeline().get(BaseSimpleChannelInboundHandler.class);
-        return appHandler != null && appHandler.getState().contains(sharedToken);
+        return appHandler != null && ((MobileStateHolder) appHandler.getState()).contains(sharedToken);
     }
 
     public void addAppChannel(Channel appChannel) {
@@ -177,7 +178,7 @@ public class Session {
         }
         for (Channel channel : webChannels) {
             if (channel != self) {
-                StateHolderBase webAppStateHolder = getWebState(channel);
+                WebAppStateHolder webAppStateHolder = getWebState(channel);
                 if (webAppStateHolder != null) {
                     for (int deviceId : deviceIds) {
                         if (webAppStateHolder.isSameDevice(deviceId)) {

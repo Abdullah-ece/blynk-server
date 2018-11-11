@@ -60,7 +60,6 @@ import cc.blynk.server.application.handlers.main.logic.sharing.MobileShareLogic;
 import cc.blynk.server.common.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.common.handlers.logic.PingLogic;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.core.session.StateHolderBase;
 import cc.blynk.server.core.session.mobile.MobileStateHolder;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -128,7 +127,7 @@ import static cc.blynk.server.core.protocol.enums.Command.UPDATE_WIDGET;
  * Created on 2/1/2015.
  *
  */
-public class MobileHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
+public class MobileHandler extends BaseSimpleChannelInboundHandler<StringMessage, MobileStateHolder> {
 
     public final MobileStateHolder state;
     private final Holder holder;
@@ -361,7 +360,7 @@ public class MobileHandler extends BaseSimpleChannelInboundHandler<StringMessage
     }
 
     @Override
-    public StateHolderBase getState() {
+    public MobileStateHolder getState() {
         return state;
     }
 }

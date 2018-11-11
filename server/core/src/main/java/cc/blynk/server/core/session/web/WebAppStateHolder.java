@@ -1,14 +1,13 @@
-package cc.blynk.server.web.session;
+package cc.blynk.server.core.session.web;
 
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.session.StateHolderBase;
 
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 13.09.15.
  */
-public class WebAppStateHolder implements StateHolderBase {
+public class WebAppStateHolder {
 
     private static final int NO_DEVICE = -1;
 
@@ -22,12 +21,6 @@ public class WebAppStateHolder implements StateHolderBase {
         this.selectedDeviceId = NO_DEVICE;
     }
 
-    @Override
-    public boolean contains(String sharedToken) {
-        return true;
-    }
-
-    @Override
     public boolean isSameDevice(int deviceId) {
         return selectedDeviceId == deviceId;
     }

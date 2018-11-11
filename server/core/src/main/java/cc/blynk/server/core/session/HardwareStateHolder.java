@@ -7,7 +7,7 @@ import cc.blynk.server.core.model.device.Device;
  * Created by Dmitriy Dumanskiy.
  * Created on 13.09.15.
  */
-public final class HardwareStateHolder implements StateHolderBase {
+public final class HardwareStateHolder  {
 
     public final int orgId;
     public final Device device;
@@ -18,11 +18,6 @@ public final class HardwareStateHolder implements StateHolderBase {
     }
 
     @Override
-    public boolean contains(String sharedToken) {
-        return false;
-    }
-
-    @Override
     public String toString() {
         return "HardwareStateHolder{"
                 + ", deviceId=" + device.id
@@ -30,7 +25,6 @@ public final class HardwareStateHolder implements StateHolderBase {
                 + '}';
     }
 
-    @Override
     public boolean isSameDevice(int deviceId) {
         return device.id == deviceId;
     }

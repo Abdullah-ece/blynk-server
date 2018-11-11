@@ -5,7 +5,6 @@ import cc.blynk.server.common.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.common.handlers.logic.PingLogic;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
-import cc.blynk.server.core.session.StateHolderBase;
 import cc.blynk.server.hardware.handlers.hardware.logic.BlynkInternalLogic;
 import cc.blynk.server.hardware.handlers.hardware.logic.BridgeLogic;
 import cc.blynk.server.hardware.handlers.hardware.logic.HardwareLogEventLogic;
@@ -41,7 +40,7 @@ import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
  * Created by Dmitriy Dumanskiy.
  * Created on 29.07.15.
  */
-public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
+public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessage, HardwareStateHolder> {
 
     private final HardwareStateHolder state;
     private final Holder holder;
@@ -141,7 +140,7 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
     }
 
     @Override
-    public StateHolderBase getState() {
+    public HardwareStateHolder getState() {
         return state;
     }
 }

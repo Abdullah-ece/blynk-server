@@ -13,7 +13,6 @@ import cc.blynk.server.application.handlers.sharing.logic.MobileShareHardwareLog
 import cc.blynk.server.common.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.common.handlers.logic.PingLogic;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.core.session.StateHolderBase;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.ADD_PUSH_TOKEN;
@@ -32,7 +31,7 @@ import static cc.blynk.server.core.protocol.enums.Command.PING;
  * Created on 2/1/2015.
  *
  */
-public class MobileShareHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
+public class MobileShareHandler extends BaseSimpleChannelInboundHandler<StringMessage, MobileShareStateHolder> {
 
     public final MobileShareStateHolder state;
     private final Holder holder;
@@ -80,7 +79,7 @@ public class MobileShareHandler extends BaseSimpleChannelInboundHandler<StringMe
     }
 
     @Override
-    public StateHolderBase getState() {
+    public MobileShareStateHolder getState() {
         return state;
     }
 }

@@ -3,7 +3,7 @@ package cc.blynk.server.web.handlers.logic.product;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.web.session.WebAppStateHolder;
+import cc.blynk.server.core.session.web.WebAppStateHolder;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;

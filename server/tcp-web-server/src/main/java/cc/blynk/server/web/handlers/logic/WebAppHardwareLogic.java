@@ -7,7 +7,7 @@ import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.web.session.WebAppStateHolder;
+import cc.blynk.server.core.session.web.WebAppStateHolder;
 import cc.blynk.utils.NumberUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
