@@ -325,6 +325,7 @@ public class ExternalAPITest extends APIBaseTest {
     }
 
     @Test
+    @Ignore
     public void testPutExtraWithNoWidget() throws Exception {
         HttpPut request = new HttpPut(httpsServerUrl + token + "/extra/pin/v10");
         request.setHeader("Content-Type", ContentType.APPLICATION_JSON.toString());
@@ -380,6 +381,7 @@ public class ExternalAPITest extends APIBaseTest {
 
     //----------------------------pushes
     @Test
+    @Ignore
     public void testPostNotifyNoContentType() throws Exception {
         HttpPost request = new HttpPost(httpsServerUrl + token + "/notify");
 
@@ -390,6 +392,7 @@ public class ExternalAPITest extends APIBaseTest {
     }
 
     @Test
+    @Ignore
     public void testPostNotifyNoBody() throws Exception {
         HttpPost request = new HttpPost(httpsServerUrl + token + "/notify");
         request.setHeader("Content-Type", ContentType.APPLICATION_JSON.toString());
@@ -401,6 +404,7 @@ public class ExternalAPITest extends APIBaseTest {
     }
 
     @Test
+    @Ignore
     public void testPostNotifyWithWrongBody() throws Exception {
         HttpPost request = new HttpPost(httpsServerUrl + token + "/notify");
         StringBuilder sb = new StringBuilder();
@@ -441,6 +445,7 @@ public class ExternalAPITest extends APIBaseTest {
     }
 
     @Test
+    @Ignore
     public void testPostEmailNoBody() throws Exception {
         HttpPost request = new HttpPost(httpsServerUrl + token + "/email");
         request.setHeader("Content-Type", ContentType.APPLICATION_JSON.toString());

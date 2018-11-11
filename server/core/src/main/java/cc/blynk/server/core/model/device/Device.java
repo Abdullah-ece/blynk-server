@@ -1,6 +1,5 @@
 package cc.blynk.server.core.model.device;
 
-import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.device.ota.DeviceOtaInfo;
 import cc.blynk.server.core.model.device.ota.OTAStatus;
@@ -251,7 +250,7 @@ public class Device implements Target {
         updateFromMobile(newDevice);
     }
 
-    public void updateWebDashboard(short pin, PinType type, String value, long now) {
+    public void updateWebDashboard(short pin, PinType type, String value) {
         webDashboard.update(id, pin, type, value);
     }
 
@@ -369,28 +368,28 @@ public class Device implements Target {
     }
 
     //property users always virtual pins
-    public void updateValue(DashBoard dash, short pin, WidgetProperty widgetProperty, String value) {
-        pinStorage.updateValue(id, dash, new DevicePropertyStorageKey(PinType.VIRTUAL, pin, widgetProperty), value);
+    public void updateValue(short pin, WidgetProperty widgetProperty, String value) {
+        pinStorage.updateValue(new DevicePropertyStorageKey(PinType.VIRTUAL, pin, widgetProperty), value);
     }
 
-    public void updateValue(DashBoard dash, short pin, PinType pinType, String value) {
-        pinStorage.updateValue(id, dash, new DeviceStorageKey(pin, pinType), value);
+    public void updateValue(short pin, PinType pinType, String value) {
+        pinStorage.updateValue(new DeviceStorageKey(pin, pinType), value);
     }
 
-    public void updateValue(DashBoard dash, DeviceStorageKey key, String value) {
-        pinStorage.updateValue(id, dash, key, value, System.currentTimeMillis());
+    public void updateValue(DeviceStorageKey key, String value) {
+        pinStorage.updateValue(key, value, System.currentTimeMillis());
     }
 
-    public void updateValue(DashBoard dash, DataStream dataStream, String value, long now) {
-        pinStorage.updateValue(id, dash, new DeviceStorageKey(dataStream.pin, dataStream.pinType), value, now);
+    public void updateValue(DataStream dataStream, String value, long now) {
+        pinStorage.updateValue(new DeviceStorageKey(dataStream.pin, dataStream.pinType), value, now);
     }
 
-    public void updateValue(DashBoard dash, short pin, PinType pinType,  String value, long now) {
-        pinStorage.updateValue(id, dash, pin, pinType, value, now);
+    public void updateValue(short pin, PinType pinType, String value, long now) {
+        pinStorage.updateValue(pin, pinType, value, now);
     }
 
-    public void updateValue(DashBoard dash, DeviceStorageKey key, String value, long now) {
-        pinStorage.updateValue(id, dash, key, value, now);
+    public void updateValue(DeviceStorageKey key, String value, long now) {
+        pinStorage.updateValue(key, value, now);
     }
 
     public void sendPinStorageSyncs(Channel appChannel) {

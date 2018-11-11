@@ -298,7 +298,7 @@ public class TimerWorker implements Runnable {
                 for (int deviceId : deviceIds) {
                     Device device = deviceDao.getById(deviceId);
                     if (device != null) {
-                        device.updateValue(dash, setPinAction.dataStream, setPinAction.value, now);
+                        device.updateValue(setPinAction.dataStream, setPinAction.value, now);
                     }
                 }
 

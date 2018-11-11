@@ -6,21 +6,16 @@ import cc.blynk.core.http.annotation.Consumes;
 import cc.blynk.core.http.annotation.Context;
 import cc.blynk.core.http.annotation.GET;
 import cc.blynk.core.http.annotation.Metric;
-import cc.blynk.core.http.annotation.POST;
 import cc.blynk.core.http.annotation.PUT;
 import cc.blynk.core.http.annotation.Path;
 import cc.blynk.core.http.annotation.PathParam;
 import cc.blynk.core.http.annotation.QueryParam;
 import cc.blynk.server.Holder;
-import cc.blynk.server.api.http.pojo.EmailPojo;
-import cc.blynk.server.api.http.pojo.PinData;
-import cc.blynk.server.api.http.pojo.PushMessagePojo;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.dao.TokenValue;
-import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
@@ -30,18 +25,10 @@ import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.storage.value.PinStorageValue;
 import cc.blynk.server.core.model.storage.value.SinglePinStorageValue;
-import cc.blynk.server.core.model.widgets.MultiPinWidget;
-import cc.blynk.server.core.model.widgets.OnePinWidget;
-import cc.blynk.server.core.model.widgets.Widget;
-import cc.blynk.server.core.model.widgets.notifications.Mail;
-import cc.blynk.server.core.model.widgets.notifications.Notification;
-import cc.blynk.server.core.processors.EventorProcessor;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.db.ReportingDBManager;
 import cc.blynk.server.db.dao.descriptor.TableDataMapper;
 import cc.blynk.server.db.dao.descriptor.TableDescriptor;
-import cc.blynk.server.notifications.mail.MailWrapper;
-import cc.blynk.server.notifications.push.GCMWrapper;
 import cc.blynk.utils.NumberUtil;
 import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.http.MediaType;
@@ -58,10 +45,8 @@ import static cc.blynk.core.http.Response.ok;
 import static cc.blynk.core.http.Response.serverError;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_LOG_EVENT;
-import static cc.blynk.server.core.protocol.enums.Command.HTTP_EMAIL;
 import static cc.blynk.server.core.protocol.enums.Command.HTTP_GET_PIN_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.HTTP_IS_HARDWARE_CONNECTED;
-import static cc.blynk.server.core.protocol.enums.Command.HTTP_NOTIFY;
 import static cc.blynk.server.core.protocol.enums.Command.HTTP_UPDATE_PIN_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.SET_WIDGET_PROPERTY;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
@@ -78,22 +63,16 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
     private static final Logger log = LogManager.getLogger(ExternalAPIHandler.class);
     private final BlockingIOProcessor blockingIOProcessor;
     private final OrganizationDao organizationDao;
-    private final MailWrapper mailWrapper;
-    private final GCMWrapper gcmWrapper;
     private final ReportingDiskDao reportingDiskDao;
     private final ReportingDBManager reportingDBManager;
-    private final EventorProcessor eventorProcessor;
     private final DeviceDao deviceDao;
 
     public ExternalAPIHandler(Holder holder, String rootPath) {
         super(holder.tokenManager, holder.sessionDao, holder.stats, rootPath);
         this.blockingIOProcessor = holder.blockingIOProcessor;
         this.organizationDao = holder.organizationDao;
-        this.mailWrapper = holder.mailWrapper;
-        this.gcmWrapper = holder.gcmWrapper;
         this.reportingDiskDao = holder.reportingDiskDao;
         this.reportingDBManager = holder.reportingDBManager;
-        this.eventorProcessor = holder.eventorProcessor;
         this.deviceDao = holder.deviceDao;
     }
 
@@ -169,19 +148,6 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
     public Response getWidgetPinDataNew(@PathParam("token") String token,
                                         @PathParam("pin") String pinString) {
         return getWidgetPinData(token, pinString);
-    }
-
-    private static String makeBody(DashBoard dash, int deviceId, short pin, PinType pinType, String pinValue) {
-        Widget widget = dash.findWidgetByPin(deviceId, pin, pinType);
-        if (widget == null) {
-            return DataStream.makeHardwareBody(pinType, pin, pinValue);
-        } else {
-            if (widget instanceof OnePinWidget) {
-                return ((OnePinWidget) widget).makeHardwareBody();
-            } else {
-                return ((MultiPinWidget) widget).makeHardwareBody(pin, pinType);
-            }
-        }
     }
 
     private Response getWidgetPinData(@PathParam("token") String token,
@@ -295,7 +261,6 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
         }
 
         int deviceId = tokenValue.device.id;
-        DashBoard dash = tokenValue.dash;
 
         PinType pinType;
         short pin;
@@ -319,7 +284,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
         }
 
         //todo for now supporting only single property
-        tokenValue.device.updateValue(dash, pin, widgetProperty, values[0]);
+        tokenValue.device.updateValue(pin, widgetProperty, values[0]);
 
         Session session = sessionDao.getOrgSession(tokenValue.orgId);
         session.sendToApps(SET_WIDGET_PROPERTY, 111,
@@ -350,8 +315,6 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
 
         User user = tokenValue.user;
         int deviceId = tokenValue.device.id;
-
-        DashBoard dash = tokenValue.dash;
 
         PinType pinType;
         short pin;
@@ -391,9 +354,9 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
 
         reportingDiskDao.process(tokenValue.orgId, device, pin, pinType, pinValue, now);
         device.webDashboard.update(deviceId, pin, pinType, pinValue);
-        device.updateValue(dash, pin, pinType, pinValue, now);
+        device.updateValue(pin, pinType, pinValue, now);
 
-        String body = makeBody(dash, deviceId, pin, pinType, pinValue);
+        String body = DataStream.makeHardwareBody(pinType, pin, pinValue);
 
         Session session = sessionDao.getOrgSession(tokenValue.orgId);
         if (session == null) {
@@ -401,171 +364,10 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
             return Response.ok();
         }
 
-        eventorProcessor.process(user, session, dash, device, pin, pinType, pinValue);
-
         session.sendMessageToHardware(HARDWARE, 111, body, deviceId);
         session.sendToApps(HARDWARE, 111, deviceId, body);
         session.sendToSelectedDeviceOnWeb(HARDWARE, 111, body, deviceId);
 
         return ok();
-    }
-
-    @POST
-    @Path("/{token}/notify")
-    @Consumes(value = MediaType.APPLICATION_JSON)
-    @Metric(HTTP_NOTIFY)
-    public Response notify(@PathParam("token") String token,
-                           PushMessagePojo message) {
-
-        TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
-
-        if (tokenValue == null) {
-            log.debug("Requested token {} not found.", token);
-            return Response.badRequest("Invalid token.");
-        }
-
-        User user = tokenValue.user;
-
-        if (message == null || Notification.isWrongBody(message.body)) {
-            log.debug("Notification body is wrong. '{}'", message == null ? "" : message.body);
-            return Response.badRequest("Body is empty or larger than 255 chars.");
-        }
-
-        DashBoard dash = tokenValue.dash;
-
-        if (!dash.isActive) {
-            log.debug("Project is not active.");
-            return Response.badRequest("Project is not active.");
-        }
-
-        Notification notification = dash.getWidgetByType(Notification.class);
-
-        if (notification == null || notification.hasNoToken()) {
-            log.debug("No notification tokens.");
-            if (notification == null) {
-                return Response.badRequest("No notification widget.");
-            } else {
-                return Response.badRequest("Notification widget not initialized.");
-            }
-        }
-
-        log.trace("Sending push for user {}, with message : '{}'.", user.email, message.body);
-        notification.push(gcmWrapper, message.body, dash.id);
-
-        return Response.ok();
-    }
-
-    @POST
-    @Path("/{token}/email")
-    @Consumes(value = MediaType.APPLICATION_JSON)
-    @Metric(HTTP_EMAIL)
-    public Response email(@PathParam("token") String token,
-                          EmailPojo message) {
-
-        TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
-
-        if (tokenValue == null) {
-            log.debug("Requested token {} not found.", token);
-            return Response.badRequest("Invalid token.");
-        }
-
-        DashBoard dash = tokenValue.dash;
-
-        if (dash == null || !dash.isActive) {
-            log.debug("Project is not active.");
-            return Response.badRequest("Project is not active.");
-        }
-
-        Mail mail = dash.getWidgetByType(Mail.class);
-
-        if (mail == null) {
-            log.debug("No email widget.");
-            return Response.badRequest("No email widget.");
-        }
-
-        if (message == null
-                || message.subj == null || message.subj.isEmpty()
-                || message.to == null || message.to.isEmpty()) {
-            log.debug("Email body empty. '{}'", message);
-            return Response.badRequest("Email body is wrong. Missing or empty fields 'to', 'subj'.");
-        }
-
-        log.trace("Sending Mail for user {}, with message : '{}'.", tokenValue.user.email, message.subj);
-        mail(tokenValue.user.email, message.to, message.subj, message.title);
-
-        return Response.ok();
-    }
-
-    private void mail(String email, String to, String subj, String body) {
-        blockingIOProcessor.execute(() -> {
-            try {
-                mailWrapper.sendText(to, subj, body);
-            } catch (Exception e) {
-                log.error("Error sending email from HTTP. From : '{}', to : '{}'. Reason : {}",
-                        email, to, e.getMessage());
-            }
-        });
-    }
-
-    @PUT
-    @Path("/{token}/extra/pin/{pin}")
-    @Consumes(value = MediaType.APPLICATION_JSON)
-    @Metric(HTTP_UPDATE_PIN_DATA)
-    public Response updateWidgetPinData(@PathParam("token") String token,
-                                        @PathParam("pin") String pinString,
-                                        PinData[] pinsData) {
-
-        if (pinsData.length == 0) {
-            log.debug("No pin for update provided.");
-            return Response.badRequest("No pin for update provided.");
-        }
-
-        TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
-
-        if (tokenValue == null) {
-            log.debug("Requested token {} not found.", token);
-            return Response.badRequest("Invalid token.");
-        }
-
-        User user = tokenValue.user;
-        int deviceId = tokenValue.device.id;
-
-        DashBoard dash = tokenValue.dash;
-
-        PinType pinType;
-        short pin;
-
-        try {
-            pinType = PinType.getPinType(pinString.charAt(0));
-            pin = NumberUtil.parsePin(pinString.substring(1));
-        } catch (NumberFormatException | IllegalCommandBodyException e) {
-            log.debug("Wrong pin format. {}", pinString);
-            return Response.badRequest("Wrong pin format.");
-        }
-
-        Device device = deviceDao.getByIdOrThrow(deviceId);
-        for (PinData pinData : pinsData) {
-            reportingDiskDao.process(tokenValue.orgId, device, pin, pinType, pinData.value, pinData.timestamp);
-        }
-
-        long now = System.currentTimeMillis();
-        device.updateValue(dash, pin, pinType, pinsData[0].value, now);
-
-        String body = makeBody(dash, deviceId, pin, pinType, pinsData[0].value);
-
-        if (body != null) {
-            Session session = sessionDao.getOrgSession(tokenValue.orgId);
-            if (session == null) {
-                log.error("No session for user {}.", user.email);
-                return Response.ok();
-            }
-            session.sendMessageToHardware(HARDWARE, 111, body, deviceId);
-
-            if (dash.isActive) {
-                session.sendToApps(HARDWARE, 111, deviceId, body);
-            }
-        }
-
-        return Response.ok();
     }
 }

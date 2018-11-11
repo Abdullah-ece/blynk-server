@@ -134,7 +134,7 @@ public class MobileShareHardwareLogic extends BaseProcessorHandler {
                 for (int deviceId : deviceIds) {
                     Device device = deviceDao.getById(deviceId);
                     if (device != null) {
-                        device.updateValue(dash, pin, pinType, value, now);
+                        device.updateValue(pin, pinType, value, now);
                     }
                 }
 

@@ -21,7 +21,6 @@ import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.server.internal.StateHolderUtil.getHardState;
 import static cc.blynk.server.internal.StateHolderUtil.getWebState;
 import static cc.blynk.server.internal.StateHolderUtil.isSameDeviceId;
-import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 import static cc.blynk.utils.StringUtils.prependDeviceId;
 
 /**
@@ -182,7 +181,7 @@ public class Session {
                 if (webAppStateHolder != null) {
                     for (int deviceId : deviceIds) {
                         if (webAppStateHolder.isSameDevice(deviceId)) {
-                            String finalBody = String.valueOf(deviceId) + BODY_SEPARATOR + body;
+                            String finalBody = prependDeviceId(deviceId, body);
                             StringMessage msg = makeUTF8StringMessage(cmd, msgId, finalBody);
                             if (channel.isWritable()) {
                                 channel.writeAndFlush(msg, channel.voidPromise());

@@ -3,10 +3,6 @@ package cc.blynk.server.application.handlers.main.logic;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.ReportingDiskDao;
-import cc.blynk.server.core.dao.SessionDao;
-import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.auth.Session;
-import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.processors.BaseProcessorHandler;
@@ -33,7 +29,6 @@ import static cc.blynk.utils.StringUtils.split3;
 public class MobileHardwareResendFromBTLogic extends BaseProcessorHandler {
 
     private final ReportingDiskDao reportingDao;
-    private final SessionDao sessionDao;
     private final DeviceDao deviceDao;
 
     public MobileHardwareResendFromBTLogic(Holder holder) {
@@ -43,7 +38,6 @@ public class MobileHardwareResendFromBTLogic extends BaseProcessorHandler {
                 holder.limits.webhookFailureLimit,
                 holder.stats),
                 holder.deviceDao);
-        this.sessionDao = holder.sessionDao;
         this.reportingDao = holder.reportingDiskDao;
         this.deviceDao = holder.deviceDao;
     }
@@ -64,11 +58,7 @@ public class MobileHardwareResendFromBTLogic extends BaseProcessorHandler {
 
         //here we have "1-200000"
         String[] dashIdAndTargetIdString = split2Device(split[0]);
-        int dashId = Integer.parseInt(dashIdAndTargetIdString[0]);
         int deviceId = Integer.parseInt(dashIdAndTargetIdString[1]);
-
-        User user = state.user;
-        DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
         Device device = deviceDao.getByIdOrThrow(deviceId);
 
         if (isWriteOperation(split[1])) {
@@ -86,10 +76,7 @@ public class MobileHardwareResendFromBTLogic extends BaseProcessorHandler {
             long now = System.currentTimeMillis();
 
             reportingDao.process(state.orgId, device, pin, pinType, value, now);
-            device.updateValue(dash, pin, pinType, value, now);
-
-            Session session = sessionDao.getOrgSession(state.orgId);
-            processEventorAndWebhook(user, dash, deviceId, session, pin, pinType, value, now);
+            device.updateValue(pin, pinType, value, now);
         }
     }
 

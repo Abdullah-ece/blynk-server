@@ -195,7 +195,7 @@ public class EventorProcessor {
         int deviceId = device.id;
         session.sendMessageToHardware(HARDWARE, 888, body, deviceId);
         session.sendToApps(HARDWARE, 888, deviceId, body);
-        device.updateValue(dash, action.dataStream.pin, action.dataStream.pinType, action.value);
+        device.updateValue(action.dataStream.pin, action.dataStream.pinType, action.value);
     }
 
     private void execute(Session session, DashBoard dash,
@@ -208,7 +208,7 @@ public class EventorProcessor {
         if (widget == null) {
             short pin = action.dataStream.pin;
             WidgetProperty property = action.property;
-            device.updateValue(dash, pin, property, action.value);
+            device.updateValue(pin, property, action.value);
         }
     }
 }

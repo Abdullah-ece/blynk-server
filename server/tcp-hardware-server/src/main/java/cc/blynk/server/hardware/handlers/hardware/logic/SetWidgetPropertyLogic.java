@@ -2,7 +2,6 @@ package cc.blynk.server.hardware.handlers.hardware.logic;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.SessionDao;
-import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -53,12 +52,6 @@ public final class SetWidgetPropertyLogic {
             return;
         }
 
-        DashBoard dash = state.dash;
-
-        if (!dash.isActive) {
-            return;
-        }
-
         WidgetProperty widgetProperty = WidgetProperty.getProperty(property);
 
         if (widgetProperty == null) {
@@ -70,7 +63,7 @@ public final class SetWidgetPropertyLogic {
         int deviceId = state.device.id;
         short pin = NumberUtil.parsePin(bodyParts[0]);
 
-        state.device.updateValue(dash, pin, widgetProperty, propertyValue);
+        state.device.updateValue(pin, widgetProperty, propertyValue);
 
         Session session = sessionDao.getOrgSession(state.orgId);
         session.sendToApps(SET_WIDGET_PROPERTY, message.id, deviceId, message.body);

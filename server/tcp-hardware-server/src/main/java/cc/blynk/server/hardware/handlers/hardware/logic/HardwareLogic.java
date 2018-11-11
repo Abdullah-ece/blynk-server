@@ -3,9 +3,7 @@ package cc.blynk.server.hardware.handlers.hardware.logic;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.dao.SessionDao;
-import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
-import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.processors.BaseProcessorHandler;
@@ -50,11 +48,11 @@ public class HardwareLogic extends BaseProcessorHandler {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
-        messageReceived(ctx, message, state.orgId, state.user, state.dash, state.device);
+        messageReceived(ctx, message, state.orgId, state.device);
     }
 
     public void messageReceived(ChannelHandlerContext ctx, StringMessage message,
-                                int orgId, User user, DashBoard dash, Device device) {
+                                int orgId, Device device) {
         String body = message.body;
 
         //minimum command - "ar 1"
@@ -68,7 +66,7 @@ public class HardwareLogic extends BaseProcessorHandler {
             String[] splitBody = split3(body);
 
             if (splitBody.length < 3 || splitBody[0].length() == 0 || splitBody[2].length() == 0) {
-                log.debug("Write command is wrong {} for {} and deviceId {}.", body, user.email, device.id);
+                log.debug("Write command is wrong {} for deviceId {}.", body, device.id);
                 ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
                 return;
             }
@@ -80,11 +78,10 @@ public class HardwareLogic extends BaseProcessorHandler {
             int deviceId = device.id;
 
             reportingDao.process(orgId, device, pin, pinType, value, now);
-            device.updateValue(dash, pin, pinType, value, now);
-            device.updateWebDashboard(pin, pinType, value, now);
+            device.updateValue(pin, pinType, value, now);
+            device.updateWebDashboard(pin, pinType, value);
 
             Session session = sessionDao.getOrgSession(orgId);
-            processEventorAndWebhook(user, dash, deviceId, session, pin, pinType, value, now);
 
             session.sendToApps(HARDWARE, message.id, deviceId, body);
             session.sendToSelectedDeviceOnWeb(HARDWARE, message.id, body, deviceId);

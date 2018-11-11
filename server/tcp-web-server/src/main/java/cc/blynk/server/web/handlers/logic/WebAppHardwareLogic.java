@@ -3,7 +3,6 @@ package cc.blynk.server.web.handlers.logic;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.SessionDao;
-import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
@@ -71,10 +70,7 @@ public class WebAppHardwareLogic {
         String value = splitBody[2];
 
         device.webDashboard.update(device.id, pin, pinType, value);
-
-        //todo temp solution.
-        DashBoard dash = state.user.profile.dashBoards[0];
-        device.updateValue(dash, pin, pinType, value);
+        device.updateValue(pin, pinType, value);
 
         Channel channel = ctx.channel();
 
