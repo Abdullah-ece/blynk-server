@@ -46,9 +46,9 @@ public class MailLogic extends NotificationBase {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
-        User user = state.user;
         //todo fix?
         DashBoard dash = new DashBoard();
+        User user = new User();
 
         Mail mail = dash.getMailWidget();
 

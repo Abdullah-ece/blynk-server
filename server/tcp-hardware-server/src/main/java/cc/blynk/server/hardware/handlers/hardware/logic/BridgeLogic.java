@@ -84,24 +84,18 @@ public class BridgeLogic {
                 }
             }
 
-            if (!tokenValue.user.equals(state.user)) {
-                log.debug("User {} allowed to access devices only within own account.", state.user.email);
-                ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
-                return;
-            }
-
             sendToMap.put(bridgePin, tokenValue);
             ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
         } else {
             if (sendToMap == null || sendToMap.size() == 0) {
-                log.debug("Bridge not initialized. {}", state.user.email);
+                log.debug("Bridge not initialized for deviceId {}.", state.device.id);
                 ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
                 return;
             }
 
             var tokenvalue = sendToMap.get(bridgePin);
             if (tokenvalue == null) {
-                log.debug("No token. Bridge not initialized. {}", state.user.email);
+                log.debug("No token. Bridge not initialized for deviceId {}.", state.device.id);
                 ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
                 return;
             }
@@ -131,7 +125,7 @@ public class BridgeLogic {
             }
 
             ctx.pipeline().fireUserEventTriggered(
-                    new BridgeForwardMessage(orgId, bridgeMessage, tokenvalue, state.user.email));
+                    new BridgeForwardMessage(orgId, bridgeMessage, tokenvalue));
         }
     }
 }

@@ -1,6 +1,5 @@
 package cc.blynk.server.core.session;
 
-import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 
 /**
@@ -11,12 +10,10 @@ import cc.blynk.server.core.model.device.Device;
 public final class HardwareStateHolder implements StateHolderBase {
 
     public final int orgId;
-    public final User user;
     public final Device device;
 
-    public HardwareStateHolder(int orgId, User user, Device device) {
+    public HardwareStateHolder(int orgId, Device device) {
         this.orgId = orgId;
-        this.user = user;
         this.device = device;
     }
 

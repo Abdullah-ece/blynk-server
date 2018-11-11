@@ -5,7 +5,6 @@ import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.TemporaryTokenValue;
 import cc.blynk.server.core.dao.TokenValue;
 import cc.blynk.server.core.model.auth.Session;
-import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.web.product.EventType;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
@@ -68,7 +67,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         this.allowStoreIp = holder.props.getAllowStoreIp();
     }
 
-    private void completeLogin(Channel channel, Session session, User user,
+    private void completeLogin(Channel channel, Session session,
                                       Device device, int msgId) {
         log.debug("completeLogin. {}", channel);
 
@@ -99,7 +98,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
             device.lastLoggedIP = IPUtils.getIp(channel.remoteAddress());
         }
 
-        log.info("{} hardware joined.", user.email);
+        log.info("{} hardware joined.", device.id);
     }
 
     @Override
@@ -120,7 +119,6 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         }
 
         int orgId = tokenValue.orgId;
-        User user = tokenValue.user;
         Device device = tokenValue.device;
 
         if (tokenValue.isTemporary()) {
@@ -128,12 +126,13 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
             //handler in order to add product to the device
             TemporaryTokenValue temporaryTokenValue = (TemporaryTokenValue) tokenValue;
             ctx.pipeline().addBefore("H_Login", "HHProvisionedHardwareFirstGandler",
-                    new ProvisionedHardwareFirstHandler(holder, orgId, user, temporaryTokenValue.dash, device));
+                    new ProvisionedHardwareFirstHandler(holder,
+                            orgId, temporaryTokenValue.user, temporaryTokenValue.dash, device));
             ctx.writeAndFlush(ok(message.id));
             return;
         }
 
-        createSessionAndReregister(ctx, orgId, user, device, message.id);
+        createSessionAndReregister(ctx, orgId, device, message.id);
     }
 
     @Override
@@ -143,7 +142,6 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
             log.debug("Triggered user event for provisioned device (id={}).", bridgeForwardMessage.device.id);
             createSessionAndReregister(ctx,
                     bridgeForwardMessage.orgId,
-                    bridgeForwardMessage.user,
                     bridgeForwardMessage.device,
                     bridgeForwardMessage.msgId);
         } else {
@@ -152,8 +150,8 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
     }
 
     private void createSessionAndReregister(ChannelHandlerContext ctx, int orgId,
-                                            User user, Device device, int msgId) {
-        HardwareStateHolder hardwareStateHolder = new HardwareStateHolder(orgId, user, device);
+                                            Device device, int msgId) {
+        HardwareStateHolder hardwareStateHolder = new HardwareStateHolder(orgId, device);
 
         ChannelPipeline pipeline = ctx.pipeline();
         pipeline.replace(this, "HHArdwareHandler", new HardwareHandler(holder, hardwareStateHolder));
@@ -162,11 +160,11 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
                 hardwareStateHolder.orgId, ctx.channel().eventLoop());
 
         if (session.isSameEventLoop(ctx)) {
-            completeLogin(ctx.channel(), session, user, device, msgId);
+            completeLogin(ctx.channel(), session, device, msgId);
         } else {
             log.debug("Re registering hard channel. {}", ctx.channel());
             ReregisterChannelUtil.reRegisterChannel(ctx, session, channelFuture ->
-                    completeLogin(channelFuture.channel(), session, user, device, msgId));
+                    completeLogin(channelFuture.channel(), session, device, msgId));
         }
     }
 

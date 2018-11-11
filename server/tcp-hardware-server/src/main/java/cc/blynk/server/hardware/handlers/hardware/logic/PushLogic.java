@@ -72,7 +72,7 @@ public class PushLogic extends NotificationBase {
             return;
         }
 
-        log.trace("Sending push for user {}, with message : '{}'.", state.user.email, message.body);
+        log.trace("Sending push with message : '{}'.", message.body);
         widget.push(gcmWrapper, updatedBody, dash.id);
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }

@@ -38,16 +38,16 @@ public class TwitLogic extends NotificationBase {
         this.twitterWrapper = twitterWrapper;
     }
 
-    private static void logError(String errorMessage, String email) {
+    private static void logError(String errorMessage) {
         if (errorMessage != null) {
             if (errorMessage.contains("Status is a duplicate")) {
-                log.warn("Duplicate twit status for user {}.", email);
+                log.warn("Duplicate twit status.");
             } else if (errorMessage.contains("Authentication credentials")) {
-                log.warn("Tweet authentication failure for {}.", email);
+                log.warn("Tweet authentication failure.");
             } else if (errorMessage.contains("The request is understood, but it has been refused.")) {
-                log.warn("User twit account is banned by twitter. {}.", email);
+                log.warn("User twit account is banned by twitter.");
             } else {
-                log.error("Error sending twit for user {}. Reason : {}", email, errorMessage);
+                log.error("Error sending twit. Reason : {}", errorMessage);
             }
         }
     }
@@ -73,11 +73,11 @@ public class TwitLogic extends NotificationBase {
 
         checkIfNotificationQuotaLimitIsNotReached();
 
-        log.trace("Sending Twit for user {}, with message : '{}'.", state.user.email, message.body);
-        twit(ctx.channel(), state.user.email, twitterWidget.token, twitterWidget.secret, message.body, message.id);
+        log.trace("Sending Twit, with message : '{}'.", message.body);
+        twit(ctx.channel(), twitterWidget.token, twitterWidget.secret, message.body, message.id);
     }
 
-    private void twit(Channel channel, String email, String token, String secret, String body, int msgId) {
+    private void twit(Channel channel, String token, String secret, String body, int msgId) {
         twitterWrapper.send(token, secret, body,
                 new AsyncCompletionHandler<>() {
                     @Override
@@ -90,7 +90,7 @@ public class TwitLogic extends NotificationBase {
 
                     @Override
                     public void onThrowable(Throwable t) {
-                        logError(t.getMessage(), email);
+                        logError(t.getMessage());
                         channel.writeAndFlush(notificationError(msgId), channel.voidPromise());
                     }
                 }

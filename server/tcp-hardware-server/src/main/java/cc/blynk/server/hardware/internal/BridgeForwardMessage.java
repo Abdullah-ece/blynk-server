@@ -16,13 +16,10 @@ public class BridgeForwardMessage {
 
     public final TokenValue tokenValue;
 
-    public final String email;
-
-    public BridgeForwardMessage(int orgId, StringMessage bridgeMessage, TokenValue tokenValue, String email) {
+    public BridgeForwardMessage(int orgId, StringMessage bridgeMessage, TokenValue tokenValue) {
         this.orgId = orgId;
         this.message = bridgeMessage;
         this.tokenValue = tokenValue;
-        this.email = email;
     }
 }
 

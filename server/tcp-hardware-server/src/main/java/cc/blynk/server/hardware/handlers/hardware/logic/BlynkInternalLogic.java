@@ -105,7 +105,7 @@ public final class BlynkInternalLogic {
                 if (hardwareInfo.isFirmwareVersionChanged(device.deviceOtaInfo.buildDate)) {
                     if (device.deviceOtaInfo.otaStatus != OTAStatus.FAILURE) {
                         if (device.isAttemptsLimitReached()) {
-                            log.warn("OTA limit reached for {} and deviceId {}.", state.user.email, device.id);
+                            log.warn("OTA limit reached for deviceId {}.", device.id);
                             device.firmwareUploadFailure();
                         } else {
                             StringMessage msg = makeASCIIStringMessage(BLYNK_INTERNAL, 7777,
