@@ -1,3 +1,3 @@
 #!/bin/sh
 
-scp ../server/launcher/target/server-0.41.0-SNAPSHOT.jar root@qa.blynk.cc:/root
+scp ../server/launcher/target/webdash-0.41.0-SNAPSHOT.jar root@webdash-qa.blynk.cc:/root

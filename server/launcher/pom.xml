@@ -22,7 +22,7 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <finalName>airiusfans-${project.version}</finalName>
+                            <finalName>webdash-${project.version}</finalName>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <manifestEntries>

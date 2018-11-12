@@ -512,7 +512,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
     }
 
     @Test
-    //https://github.com/blynkkk/knight/issues/1276
+    //https://github.com/blynkkk/dash/issues/1276
     public void testDeviceQuicklyReconnects() throws Exception {
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
         Device device = createProductAndDevice(client, orgId);

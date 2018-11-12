@@ -338,8 +338,8 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
                     reportingDBManager.reportingDBDao.insertDataPoint(tableDataMapper);
                     ctx.writeAndFlush(ok());
                 } catch (Exception e) {
-                    log.error("Error insert knight record.", e);
-                    ctx.writeAndFlush(serverError("Error insert knight record. " + e.getMessage()));
+                    log.error("Error insert record.", e);
+                    ctx.writeAndFlush(serverError("Error insert record. " + e.getMessage()));
                 }
             });
             return null;

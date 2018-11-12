@@ -185,10 +185,10 @@ public final class ServerLauncher {
                     defaultSuperAdminDash,
                     childDash
             };
-            App app = new App("airiusprod", Theme.Blynk,
+            App app = new App("webdashprod", Theme.Blynk,
                     ProvisionType.DYNAMIC,
                     600084223, //BLYNK_GREEN
-                    false, "Airius app", null, new int[] {childDash.id});
+                    false, "WebDash app", null, new int[] {childDash.id});
             superAdmin.profile.apps = new App[] {
                 app
             };

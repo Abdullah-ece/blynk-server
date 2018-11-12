@@ -51,7 +51,7 @@ public final class WebUpdateDeviceMetafieldLogic {
         String metafieldString = split[1];
 
         MetaField[] metaFields;
-        //https://github.com/blynkkk/knight/issues/1498
+        //https://github.com/blynkkk/dash/issues/1498
         if (metafieldString.startsWith("{")) {
             metaFields = new MetaField[] {
                     JsonParser.parseMetafield(metafieldString, message.id)
