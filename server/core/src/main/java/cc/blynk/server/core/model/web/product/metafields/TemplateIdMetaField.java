@@ -1,5 +1,6 @@
 package cc.blynk.server.core.model.web.product.metafields;
 
+import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.utils.ArrayUtil;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -28,4 +29,10 @@ public class TemplateIdMetaField extends ListMetaField {
         return ArrayUtil.contains(this.options, templateId);
     }
 
+    @Override
+    public MetaField copy() {
+        return new TemplateIdMetaField(id, name, roleIds,
+                includeInProvision, isMandatory, isDefault,
+                icon, options, selectedOption);
+    }
 }

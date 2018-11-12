@@ -1,5 +1,6 @@
 package cc.blynk.server.core.model.web.product.metafields;
 
+import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -29,6 +30,13 @@ public class DeviceOwnerMetaField extends TextMetaField {
         if (isEmptyValue()) {
             throw new IllegalCommandBodyException("Device owner metafield value is empty.");
         }
+    }
+
+    @Override
+    public MetaField copy() {
+        return new DeviceOwnerMetaField(id, name, roleIds,
+                includeInProvision, isMandatory, isDefault,
+                icon, value);
     }
 
 }

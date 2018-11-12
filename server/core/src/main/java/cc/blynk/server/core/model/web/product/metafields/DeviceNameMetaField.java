@@ -1,5 +1,6 @@
 package cc.blynk.server.core.model.web.product.metafields;
 
+import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -31,4 +32,10 @@ public class DeviceNameMetaField extends TextMetaField {
         }
     }
 
+    @Override
+    public MetaField copy() {
+        return new DeviceNameMetaField(id, name, roleIds,
+                includeInProvision, isMandatory, isDefault,
+                icon, value);
+    }
 }

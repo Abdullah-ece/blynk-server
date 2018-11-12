@@ -22,7 +22,6 @@ import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.metafields.DeviceOwnerMetaField;
-import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.core.model.widgets.MobileSyncWidget;
 import cc.blynk.server.core.model.widgets.web.WebLineGraph;
 import cc.blynk.server.core.model.widgets.web.WebSlider;
@@ -67,7 +66,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import static cc.blynk.integration.APIBaseTest.createDeviceNameMeta;
 import static cc.blynk.integration.APIBaseTest.createDeviceOwnerMeta;
-import static cc.blynk.integration.APIBaseTest.createTextMeta;
 import static cc.blynk.server.core.model.web.Organization.SUPER_ORG_PARENT_ID;
 import static cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType.RAW_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
@@ -292,14 +290,12 @@ public final class TestUtil {
 
         Device device = new Device();
         device.name = "Default Device";
-        device.metaFields = new MetaField[] {
-                new DeviceOwnerMetaField(1, "Device Owner", new int[] {0}, true, true, false, null, user)
-        };
         appClient.createDevice(dashId, device);
         Device createdDevice = appClient.parseDevice(5 + profile.dashBoards.length);
 
-        TextMetaField textMetaField = (TextMetaField) createdDevice.metaFields[1];
-        appClient.updateDeviceMetafield(createdDevice.id, createTextMeta(textMetaField.id, textMetaField.name, user));
+        DeviceOwnerMetaField deviceOwnerMetaField = (DeviceOwnerMetaField) createdDevice.metaFields[1];
+        appClient.updateDeviceMetafield(createdDevice.id,
+                createDeviceOwnerMeta(deviceOwnerMetaField.id, deviceOwnerMetaField.name, user, true));
         //appClient.verifyResult(ok(6 + profile.dashBoards.length + expectedSyncCommandsCount));
 
         appClient.getDevices(dashId);
