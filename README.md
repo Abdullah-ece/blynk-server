@@ -21,14 +21,7 @@ Local server uses by default self-generated certificates, so you have to disable
 
 ## Installing DB
 
-#### 1. Enabling raw data on server
-
-Enable raw data in ```server.properties``` : 
-
-        enable.db=true
-        enable.raw.db.data.store=true
-
-#### 2. Install PostgreSQL. Option A
+#### 1. a) Install PostgreSQL.
 
         sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" >> /etc/apt/sources.list.d/pgdg.list'
         wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | sudo apt-key add -
@@ -36,17 +29,17 @@ Enable raw data in ```server.properties``` :
         sudo apt-get update
         sudo apt-get install postgresql postgresql-contrib
         
-#### 2. Install PostgreSQL.  Option B 
+#### 1. b) Install PostgreSQL.
 
         sudo apt-get update
         apt-get --no-install-recommends install postgresql-9.6 postgresql-contrib-9.6
 
-#### 3. Download Blynk DB script
+#### 2. Download Blynk DB script
 
         wget https://raw.githubusercontent.com/blynkkk/dash/master/server/core/src/main/resources/create_schema.sql?token=ABdx7pmBJ_DKVb5EMoU2DqMAq3LuBg7Aks5b8oPdwA%3D%3D
         wget https://raw.githubusercontent.com/blynkkk/dash/master/server/core/src/main/resources/reporting_schema.sql?token=ABdx7k1gDnSZ5viAlvFJDzmNcBq396AQks5b8oPHwA%3D%3D
 
-#### 4. Move create_schema.sql and reporting_schema.sql to temp folder (to avoid permission problems)
+#### 3. Move create_schema.sql and reporting_schema.sql to temp folder (to avoid permission problems)
 
         mv create_schema.sql /tmp
         mv reporting_schema.sql /tmp
@@ -56,7 +49,7 @@ Result:
         /tmp/create_schema.sql
         /tmp/reporting_schema.sql
         
-Copy it to clipboard from your console.
+Copy this paths to clipboard from your console.
 
 #### 5. Connect to PostgreSQL
 
@@ -68,7 +61,7 @@ Copy it to clipboard from your console.
         \i /tmp/create_schema.sql
         \i /tmp/reporting_schema.sql
         
-```/tmp/create_schema.sql``` - is path from step 4.
+```/tmp/create_schema.sql``` - is path from step 3.
         
 You should see next output:
 
