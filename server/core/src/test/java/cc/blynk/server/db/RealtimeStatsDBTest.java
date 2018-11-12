@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -144,7 +145,8 @@ public class RealtimeStatsDBTest {
         cs.webhooks = i++;
         cs.appTotal = i++;
 
-        reportingDBManager.reportingDBDao.insertStat(region, stat);
+        boolean insertResult = reportingDBManager.reportingDBDao.insertStat(region, stat);
+        assertTrue(insertResult);
 
         try (Connection connection = reportingDBManager.getConnection();
              Statement statement = connection.createStatement();
@@ -213,7 +215,6 @@ public class RealtimeStatsDBTest {
                 assertEquals(i++, rs.getInt("deactivate"));
                 assertEquals(i++, rs.getInt("refresh_token"));
                 assertEquals(i++, rs.getInt("get_graph_data"));
-                assertEquals(i++, rs.getInt("export_graph_data"));
                 assertEquals(i++, rs.getInt("set_widget_property"));
                 assertEquals(i++, rs.getInt("bridge"));
                 assertEquals(i++, rs.getInt("hardware"));
@@ -250,7 +251,6 @@ public class RealtimeStatsDBTest {
                 assertEquals(i++, rs.getInt("eventor"));
                 assertEquals(i++, rs.getInt("webhooks"));
                 assertEquals(i++, rs.getInt("appTotal"));
-                assertEquals(i, rs.getInt("hardTotal"));
             }
 
             connection.commit();

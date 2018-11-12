@@ -92,9 +92,9 @@ public class ReportingDBDao {
                     + "add_push_token, create_widget, update_widget, delete_widget, create_device, "
                     + "update_device, delete_device, get_devices, create_tag, update_tag, "
                     + "delete_tag, get_tags, add_energy, get_energy, get_server, connect_redirect, "
-                    + "web_sockets, eventor, webhooks, appTotal, hardTotal) "
+                    + "web_sockets, eventor, webhooks, appTotal) "
                     + "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?"
-                    + ",?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                    + ",?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
     private static final String insertStatHttpCommandMinute =
             "INSERT INTO reporting_http_command_stat_minute (region, ts, is_hardware_connected, "
@@ -229,7 +229,7 @@ public class ReportingDBDao {
         }
     }
 
-    public void insertStat(String region, Stat stat) {
+    public boolean insertStat(String region, Stat stat) {
         final long ts = (stat.ts / AverageAggregatorProcessor.MINUTE) * AverageAggregatorProcessor.MINUTE;
         final Timestamp timestamp = new Timestamp(ts);
 
@@ -323,9 +323,11 @@ public class ReportingDBDao {
             commandStatPS.executeUpdate();
 
             connection.commit();
+            return true;
         } catch (Exception e) {
             log.error("Error inserting real time stat in DB.", e);
         }
+        return false;
     }
 
     public void insert(Map<AggregationKey, AggregationValue> map, GraphGranularityType graphGranularityType) {
