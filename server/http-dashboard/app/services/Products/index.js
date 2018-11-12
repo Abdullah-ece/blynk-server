@@ -101,6 +101,9 @@ export const MetadataInitialValues = {
 
 export const Metadata = {
   Fields: {
+    DEVICE_NAME: 'DeviceName',
+    DEVICE_OWNER: 'DeviceOwner',
+    TEMPLATE_ID: 'TemplateId',
     ADDRESS: 'Address',
     TEXT: 'Text',
     NUMBER: 'Number',
@@ -158,7 +161,7 @@ export const getHardcodedRequiredMetadataFields = ({timezoneDefaultValue, manufa
   return [
     {
       id: 1,
-      type: Metadata.Fields.TEXT,
+      type: Metadata.Fields.DEVICE_NAME,
       name: hardcodedRequiredMetadataFieldsNames.DeviceName,
       roleIds: [],
       isDefault: true,
@@ -170,7 +173,7 @@ export const getHardcodedRequiredMetadataFields = ({timezoneDefaultValue, manufa
     },
     {
       id: 2,
-      type: Metadata.Fields.EMAIL,
+      type: Metadata.Fields.DEVICE_OWNER,
       name: hardcodedRequiredMetadataFieldsNames.DeviceOwner,
       roleIds: [],
       isDefault: true,

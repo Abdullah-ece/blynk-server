@@ -8,6 +8,7 @@ const {
     TextField,
     NumberField,
     UnitField,
+    TemplateIdField,
     TimeField,
     ShiftField,
     CostField,
@@ -103,6 +104,18 @@ class Metadata extends React.Component {
       if (field.type === MetadataFields.Fields.UNIT) {
         fields.push(
           <UnitField.Static
+            {...props}
+            name={field.name}
+            value={field.value}
+            units={field.units}
+            role={convertRoleToArr(field.roleIds)}
+          />
+        );
+      }
+
+      if (field.type === MetadataFields.Fields.TEMPLATE_ID) {
+        fields.push(
+          <TemplateIdField.Static
             {...props}
             name={field.name}
             value={field.value}

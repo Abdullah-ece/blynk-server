@@ -21,6 +21,7 @@ import ModelNameField from './components/ModelNameField';
 import TimezoneOfDeviceField from './components/TimezoneOfDeviceField';
 import DeviceReferenceField from './components/DeviceReferenceField';
 import ListField from './components/ListField';
+import TemplateIdField from './components/TemplateIdField';
 
 const Metadata = {
   Item: Item,
@@ -44,6 +45,7 @@ const Metadata = {
     ModelNameField,
     TimezoneOfDeviceField,
     DeviceReferenceField,
+    TemplateIdField,
     ListField
   }
 };

@@ -244,6 +244,16 @@ class ProductMetadata extends React.Component {
         />
       );
     }
+
+    if (field.get('type') === MetadataService.Fields.TEMPLATE_ID) {
+      element = (
+        <MetadataFields.TemplateIdField
+          isDirty={!isMetadataPristine()[MetadataService.Fields.LIST](field)}
+          {...props}
+        />
+      );
+    }
+
     if (field.get('type') === MetadataService.Fields.LOCATION) {
       element = (
         <MetadataFields.LocationField
