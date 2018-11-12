@@ -14,7 +14,7 @@ class Resolved extends React.Component {
 
     const resolvedTime = getCalendarFormatDate(this.props.event.resolvedAt);
 
-    const time = getCalendarFormatDate(this.props.event.ts);
+    const time = getCalendarFormatDate(this.props.event.ts, true);
 
     const className = classnames({
       "devices--device-timeline--event-resolved-content-name": true,
