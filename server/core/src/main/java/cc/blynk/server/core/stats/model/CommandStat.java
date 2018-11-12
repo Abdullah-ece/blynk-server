@@ -16,6 +16,7 @@ import static cc.blynk.server.core.protocol.enums.Command.DELETE_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_TAG;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_WIDGET;
+import static cc.blynk.server.core.protocol.enums.Command.DEVICE_CONNECTED;
 import static cc.blynk.server.core.protocol.enums.Command.EMAIL;
 import static cc.blynk.server.core.protocol.enums.Command.EVENTOR;
 import static cc.blynk.server.core.protocol.enums.Command.GET_DEVICES;
@@ -24,7 +25,6 @@ import static cc.blynk.server.core.protocol.enums.Command.GET_SERVER;
 import static cc.blynk.server.core.protocol.enums.Command.GET_SHARE_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.GET_TAGS;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
-import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_CONNECTED;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_LOGIN;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_LOG_EVENT;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_SYNC;
@@ -127,7 +127,7 @@ public class CommandStat {
             case REDEEM :
                 this.redeem = val;
                 break;
-            case HARDWARE_CONNECTED :
+            case DEVICE_CONNECTED:
                 this.hardwareConnected = val;
                 break;
             case REGISTER :

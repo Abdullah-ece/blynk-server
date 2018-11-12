@@ -6,7 +6,7 @@ import cc.blynk.server.core.protocol.model.messages.StringMessage;
 
 import java.nio.charset.StandardCharsets;
 
-import static cc.blynk.server.core.protocol.enums.Command.DEVICE_OFFLINE;
+import static cc.blynk.server.core.protocol.enums.Command.DEVICE_DISCONNECTED;
 import static cc.blynk.server.core.protocol.enums.Response.DEVICE_NOT_IN_NETWORK;
 import static cc.blynk.server.core.protocol.enums.Response.ENERGY_LIMIT;
 import static cc.blynk.server.core.protocol.enums.Response.FACEBOOK_USER_LOGIN_WITH_PASS;
@@ -116,7 +116,7 @@ public final class CommonByteBufUtil {
     }
 
     public static StringMessage deviceOffline(int deviceId) {
-        return makeASCIIStringMessage(DEVICE_OFFLINE, 0, String.valueOf(deviceId));
+        return makeASCIIStringMessage(DEVICE_DISCONNECTED, 0, String.valueOf(deviceId));
     }
 
     public static StringMessage makeUTF8StringMessage(short cmd, int msgId, String data) {

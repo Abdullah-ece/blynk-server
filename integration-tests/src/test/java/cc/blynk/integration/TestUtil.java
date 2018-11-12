@@ -73,11 +73,11 @@ import static cc.blynk.server.core.protocol.enums.Command.BRIDGE;
 import static cc.blynk.server.core.protocol.enums.Command.CONNECT_REDIRECT;
 import static cc.blynk.server.core.protocol.enums.Command.CREATE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.CREATE_TAG;
-import static cc.blynk.server.core.protocol.enums.Command.DEVICE_OFFLINE;
+import static cc.blynk.server.core.protocol.enums.Command.DEVICE_CONNECTED;
+import static cc.blynk.server.core.protocol.enums.Command.DEVICE_DISCONNECTED;
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_CLONE_CODE;
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROVISION_TOKEN;
-import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_CONNECTED;
 import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
 import static cc.blynk.server.core.protocol.enums.Command.OUTDATED_APP_NOTIFICATION;
 import static cc.blynk.server.core.protocol.enums.Command.SET_WIDGET_PROPERTY;
@@ -180,11 +180,11 @@ public final class TestUtil {
     }
 
     public static StringMessage hardwareConnected(int msgId, int deviceId) {
-        return new StringMessage(msgId, HARDWARE_CONNECTED, "" + deviceId);
+        return new StringMessage(msgId, DEVICE_CONNECTED, "" + deviceId);
     }
 
     public static StringMessage hardwareConnected(int msgId, String body) {
-        return new StringMessage(msgId, HARDWARE_CONNECTED, body);
+        return new StringMessage(msgId, DEVICE_CONNECTED, body);
     }
 
     public static GetServerMessage getServer(int msgId, String body) {
@@ -192,7 +192,7 @@ public final class TestUtil {
     }
 
     public static StringMessage deviceOffline(int msgId, String body) {
-        return new StringMessage(msgId, DEVICE_OFFLINE, body);
+        return new StringMessage(msgId, DEVICE_DISCONNECTED, body);
     }
 
     public static StringMessage createTag(int msgId, Tag tag) {

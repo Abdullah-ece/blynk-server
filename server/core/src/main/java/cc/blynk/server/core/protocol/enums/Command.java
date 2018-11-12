@@ -15,7 +15,7 @@ public final class Command {
     public static final short REGISTER = 1;
     public static final short LOGIN = 2;
     public static final short REDEEM = 3;
-    public static final short HARDWARE_CONNECTED = 4;
+    public static final short DEVICE_CONNECTED = 4;
 
     public static final short PING = 6;
     public static final short ACTIVATE_DASHBOARD = 7;
@@ -104,7 +104,7 @@ public final class Command {
     public static final short UPDATE_TILE_TEMPLATE = 68;
     public static final short DELETE_TILE_TEMPLATE = 69;
     public static final short GET_WIDGET = 70;
-    public static final short DEVICE_OFFLINE = 71;
+    public static final short DEVICE_DISCONNECTED = 71;
     public static final short OUTDATED_APP_NOTIFICATION = 72;
     public static final short TRACK_DEVICE = 73;
     public static final short GET_PROVISION_TOKEN = 74;
@@ -175,7 +175,7 @@ public final class Command {
     public static final Map<Short, String> VALUES_NAME = Map.ofEntries(
             Map.entry(RESPONSE, "Response"),
             Map.entry(REDEEM, "Redeem"),
-            Map.entry(HARDWARE_CONNECTED, "HardwareConnected"),
+            Map.entry(DEVICE_CONNECTED, "HardwareConnected"),
             Map.entry(REGISTER, "Register"),
             Map.entry(LOGIN, "Login"),
             Map.entry(HARDWARE_LOGIN, "LoginHardware"),
@@ -234,7 +234,7 @@ public final class Command {
             Map.entry(HARDWARE_RESEND_FROM_BLUETOOTH, "HardwareResendFromBluetooth"),
             Map.entry(GET_CLONE_CODE, "GetCloneCode"),
             Map.entry(GET_PROJECT_BY_CLONE_CODE, "GetProjectByCloneCode"),
-            Map.entry(DEVICE_OFFLINE, "deviceOffline"),
+            Map.entry(DEVICE_DISCONNECTED, "deviceOffline"),
             Map.entry(OUTDATED_APP_NOTIFICATION, "outdatedAppNotification"),
             Map.entry(TRACK_DEVICE, "trackDevice"),
             Map.entry(CREATE_REPORT, "createReport"),

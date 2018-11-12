@@ -22,7 +22,7 @@ import static cc.blynk.integration.TestUtil.hardwareConnected;
 import static cc.blynk.integration.TestUtil.illegalCommand;
 import static cc.blynk.integration.TestUtil.notAllowed;
 import static cc.blynk.integration.TestUtil.ok;
-import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_CONNECTED;
+import static cc.blynk.server.core.protocol.enums.Command.DEVICE_CONNECTED;
 import static cc.blynk.server.core.protocol.enums.Response.DEVICE_NOT_IN_NETWORK;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static org.junit.Assert.assertNotNull;
@@ -308,7 +308,7 @@ public class BridgeWorkflowTest extends SingleServerInstancePerTest {
         hardClient1.verifyResult(bridge(2, "aw 11 11"));
         hardClient2.verifyResult(bridge(2, "aw 11 11"));
 
-        clientPair.appClient.verifyResult(produce(1, HARDWARE_CONNECTED, "2-" + device.id), 2);
+        clientPair.appClient.verifyResult(produce(1, DEVICE_CONNECTED, "2-" + device.id), 2);
         clientPair.appClient.never(hardware(2, "2 aw 11 11"));
 
         hardClient1.sync(PinType.ANALOG, 11);

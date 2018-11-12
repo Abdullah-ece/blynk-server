@@ -29,7 +29,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.concurrent.RejectedExecutionException;
 
 import static cc.blynk.server.core.protocol.enums.Command.CONNECT_REDIRECT;
-import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_CONNECTED;
+import static cc.blynk.server.core.protocol.enums.Command.DEVICE_CONNECTED;
 import static cc.blynk.server.internal.CommonByteBufUtil.invalidToken;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeASCIIStringMessage;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
@@ -87,8 +87,8 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         channel.flush();
 
         String responseBody = "" + device.id;
-        session.sendToApps(HARDWARE_CONNECTED, msgId, responseBody);
-        session.sendToWeb(HARDWARE_CONNECTED, msgId, responseBody);
+        session.sendToApps(DEVICE_CONNECTED, msgId, responseBody);
+        session.sendToWeb(DEVICE_CONNECTED, msgId, responseBody);
         log.trace("Connected device id {}", device.id);
         device.connected();
         if (device.firstConnectTime == 0) {

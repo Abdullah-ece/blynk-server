@@ -52,8 +52,8 @@ import static cc.blynk.integration.TestUtil.notAllowed;
 import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.integration.TestUtil.parseProfile;
 import static cc.blynk.integration.TestUtil.readTestUserProfile;
+import static cc.blynk.server.core.protocol.enums.Command.DEVICE_CONNECTED;
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
-import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_CONNECTED;
 import static cc.blynk.server.core.protocol.enums.Response.DEVICE_NOT_IN_NETWORK;
 import static cc.blynk.server.core.protocol.enums.Response.INVALID_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_INVALID_BODY;
@@ -254,7 +254,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         hardClient.login(device.token);
         hardClient.verifyResult(ok(1));
         hardClient.never(hardware(1, "pm"));
-        appClient.verifyResult(new StringMessage(1, HARDWARE_CONNECTED, "1-1"));
+        appClient.verifyResult(new StringMessage(1, DEVICE_CONNECTED, "1-1"));
 
         appClient.activate(1);
         appClient.verifyResult(ok(7));

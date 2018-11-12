@@ -28,9 +28,9 @@ import static cc.blynk.integration.TestUtil.b;
 import static cc.blynk.integration.TestUtil.createDevice;
 import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.integration.TestUtil.setProperty;
+import static cc.blynk.server.core.protocol.enums.Command.DEVICE_CONNECTED;
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
-import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_CONNECTED;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -545,7 +545,7 @@ public class SyncWorkflowTest extends SingleServerInstancePerTest {
         hardClient2.login(device.token);
         hardClient2.verifyResult(ok(1));
         hardClient2.reset();
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE_CONNECTED, "1-1")));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, DEVICE_CONNECTED, "1-1")));
 
         clientPair.hardwareClient.send("hardware vw 119 1");
         hardClient2.send("hardware vw 119 1");
