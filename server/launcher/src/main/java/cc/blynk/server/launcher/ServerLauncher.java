@@ -25,7 +25,8 @@ import cc.blynk.server.core.model.web.product.events.InformationEvent;
 import cc.blynk.server.core.model.web.product.events.OfflineEvent;
 import cc.blynk.server.core.model.web.product.events.OnlineEvent;
 import cc.blynk.server.core.model.web.product.events.WarningEvent;
-import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
+import cc.blynk.server.core.model.web.product.metafields.DeviceNameMetaField;
+import cc.blynk.server.core.model.web.product.metafields.DeviceOwnerMetaField;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.web.WebSource;
 import cc.blynk.server.core.model.widgets.web.label.WebLabel;
@@ -215,9 +216,9 @@ public final class ServerLauncher {
         product.description = "Default Product Template";
         product.name = "Test Product";
         product.metaFields = new MetaField[] {
-                new TextMetaField(1, TextMetaField.DEVICE_NAME,
+                new DeviceNameMetaField(1, "Device Name",
                         new int[] {1}, false, false, true, null, "Default device"),
-                new TextMetaField(2, TextMetaField.DEVICE_NAME, new int[] {}, false, false, true, null, null)
+                new DeviceOwnerMetaField(2, "Device Owner", new int[] {}, false, false, true, null, null)
         };
         product.events = createDefaultEvents();
 

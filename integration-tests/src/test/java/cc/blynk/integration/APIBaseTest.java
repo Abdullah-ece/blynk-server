@@ -10,6 +10,8 @@ import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.metafields.ContactMetaField;
+import cc.blynk.server.core.model.web.product.metafields.DeviceNameMetaField;
+import cc.blynk.server.core.model.web.product.metafields.DeviceOwnerMetaField;
 import cc.blynk.server.core.model.web.product.metafields.ListMetaField;
 import cc.blynk.server.core.model.web.product.metafields.MeasurementUnit;
 import cc.blynk.server.core.model.web.product.metafields.MeasurementUnitMetaField;
@@ -181,6 +183,14 @@ public abstract class APIBaseTest extends CounterBase {
 
     public static TextMetaField createTextMeta(int id, String name, String value, boolean include) {
         return new TextMetaField(id, name, new int[] {1}, include, false, false, null, value);
+    }
+
+    public static DeviceOwnerMetaField createDeviceOwnerMeta(int id, String name, String value, boolean include) {
+        return new DeviceOwnerMetaField(id, name, new int[] {1}, include, false, false, null, value);
+    }
+
+    public static DeviceNameMetaField createDeviceNameMeta(int id, String name, String value, boolean include) {
+        return new DeviceNameMetaField(id, name, new int[] {1}, include, false, false, null, value);
     }
 
     public static ListMetaField createListMeta(int id, String name, String templateId) {

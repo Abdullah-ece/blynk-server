@@ -9,7 +9,7 @@ import cc.blynk.server.core.model.device.HardwareInfo;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
-import cc.blynk.server.core.model.web.product.metafields.ListMetaField;
+import cc.blynk.server.core.model.web.product.metafields.TemplateIdMetaField;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.hardware.internal.CreateSessionForwardMessage;
 import cc.blynk.utils.StringUtils;
@@ -125,9 +125,9 @@ public class ProvisionedHardwareFirstHandler extends SimpleChannelInboundHandler
     private static void setTemplateIdInMeta(MetaField[] metaFields, String templateId) {
         for (int i = 0; i < metaFields.length; i++) {
             MetaField metaField = metaFields[i];
-            if (metaField instanceof ListMetaField && metaField.isTemplateIdMetaField()) {
-                ListMetaField listMetaField = (ListMetaField) metaField;
-                metaFields[i] = listMetaField.copy(templateId);
+            if (metaField instanceof TemplateIdMetaField) {
+                TemplateIdMetaField templateIdMetaField = (TemplateIdMetaField) metaField;
+                metaFields[i] = templateIdMetaField.copy(templateId);
                 return;
             }
         }

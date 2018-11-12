@@ -5,6 +5,8 @@ import cc.blynk.server.core.model.web.product.metafields.AddressMetaField;
 import cc.blynk.server.core.model.web.product.metafields.ContactMetaField;
 import cc.blynk.server.core.model.web.product.metafields.CoordinatesMetaField;
 import cc.blynk.server.core.model.web.product.metafields.CostMetaField;
+import cc.blynk.server.core.model.web.product.metafields.DeviceNameMetaField;
+import cc.blynk.server.core.model.web.product.metafields.DeviceOwnerMetaField;
 import cc.blynk.server.core.model.web.product.metafields.DeviceReferenceMetaField;
 import cc.blynk.server.core.model.web.product.metafields.EmailMetaField;
 import cc.blynk.server.core.model.web.product.metafields.ImageMetaField;
@@ -16,6 +18,7 @@ import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
 import cc.blynk.server.core.model.web.product.metafields.RangeTimeMetaField;
 import cc.blynk.server.core.model.web.product.metafields.ShiftMetaField;
 import cc.blynk.server.core.model.web.product.metafields.SwitchMetaField;
+import cc.blynk.server.core.model.web.product.metafields.TemplateIdMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TimeMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TimeZoneMetaField;
@@ -30,10 +33,6 @@ import org.jooq.SelectSelectStep;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static cc.blynk.server.core.model.web.product.metafields.ListMetaField.TEMPLATE_ID;
-import static cc.blynk.server.core.model.web.product.metafields.TextMetaField.DEVICE_NAME;
-import static cc.blynk.server.core.model.web.product.metafields.TextMetaField.DEVICE_OWNER;
 
 /**
  * The Blynk Project.
@@ -64,7 +63,10 @@ import static cc.blynk.server.core.model.web.product.metafields.TextMetaField.DE
         @JsonSubTypes.Type(value = DeviceReferenceMetaField.class, name = "DeviceReference"),
         @JsonSubTypes.Type(value = LocationMetaField.class, name = "Location"),
         @JsonSubTypes.Type(value = TimeZoneMetaField.class, name = "Tz"),
-        @JsonSubTypes.Type(value = ImageMetaField.class, name = "Image")
+        @JsonSubTypes.Type(value = ImageMetaField.class, name = "Image"),
+        @JsonSubTypes.Type(value = DeviceNameMetaField.class, name = "DeviceName"),
+        @JsonSubTypes.Type(value = DeviceOwnerMetaField.class, name = "DeviceOwner"),
+        @JsonSubTypes.Type(value = TemplateIdMetaField.class, name = "TemplateId")
 
 })
 public abstract class MetaField implements CopyObject<MetaField> {
@@ -116,18 +118,6 @@ public abstract class MetaField implements CopyObject<MetaField> {
 
     public String getNotificationEmail() {
         return null;
-    }
-
-    public boolean isDeviceNameMetaField() {
-        return DEVICE_NAME.equals(name);
-    }
-
-    public boolean isDeviceOwnerMetaField() {
-        return DEVICE_OWNER.equals(name);
-    }
-
-    public boolean isTemplateIdMetaField() {
-        return TEMPLATE_ID.equals(name);
     }
 
     public void validate() {

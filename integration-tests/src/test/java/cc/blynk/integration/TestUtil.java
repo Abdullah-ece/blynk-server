@@ -21,6 +21,7 @@ import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
+import cc.blynk.server.core.model.web.product.metafields.DeviceOwnerMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.core.model.widgets.MobileSyncWidget;
 import cc.blynk.server.core.model.widgets.web.WebLineGraph;
@@ -64,6 +65,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static cc.blynk.integration.APIBaseTest.createDeviceNameMeta;
+import static cc.blynk.integration.APIBaseTest.createDeviceOwnerMeta;
 import static cc.blynk.integration.APIBaseTest.createTextMeta;
 import static cc.blynk.server.core.model.web.Organization.SUPER_ORG_PARENT_ID;
 import static cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType.RAW_DATA;
@@ -290,7 +293,7 @@ public final class TestUtil {
         Device device = new Device();
         device.name = "Default Device";
         device.metaFields = new MetaField[] {
-                new TextMetaField(1, TextMetaField.DEVICE_OWNER, new int[] {0}, true, true, false, null, user)
+                new DeviceOwnerMetaField(1, "Device Owner", new int[] {0}, true, true, false, null, user)
         };
         appClient.createDevice(dashId, device);
         Device createdDevice = appClient.parseDevice(5 + profile.dashBoards.length);
@@ -517,8 +520,8 @@ public final class TestUtil {
         product.name = "Default Product";
         product.boardType = BoardType.ESP8266.name();
         product.metaFields = new MetaField[] {
-                createTextMeta(1, TextMetaField.DEVICE_NAME, "My Default device Name", true),
-                createTextMeta(2, TextMetaField.DEVICE_OWNER, null),
+                createDeviceNameMeta(1, "Device Name", "My Default device Name", true),
+                createDeviceOwnerMeta(2, "Device Owner", null, true),
         };
         org.products = new Product[] {
                 product

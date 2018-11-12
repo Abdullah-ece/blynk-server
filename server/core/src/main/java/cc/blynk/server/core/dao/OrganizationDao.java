@@ -363,7 +363,7 @@ public class OrganizationDao {
     public Product getProductByTemplateId(String templateId) {
         for (Organization org : organizations.values()) {
             for (Product product : org.products) {
-                if (product.hasTemplateId(templateId)) {
+                if (product.containsTemplateId(templateId)) {
                     return product;
                 }
             }

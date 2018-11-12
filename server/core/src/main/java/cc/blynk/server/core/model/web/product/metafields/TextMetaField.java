@@ -11,9 +11,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class TextMetaField extends MetaField {
 
-    public static final String DEVICE_NAME = "Device Name";
-    public static final String DEVICE_OWNER = "Device Owner";
-
     public final String value;
 
     @JsonCreator
@@ -46,6 +43,10 @@ public class TextMetaField extends MetaField {
         return new TextMetaField(id, name, roleIds,
                 includeInProvision, isMandatory, isDefault,
                 icon, value);
+    }
+
+    public boolean isEmptyValue() {
+        return this.value == null || this.value.isEmpty();
     }
 
 }

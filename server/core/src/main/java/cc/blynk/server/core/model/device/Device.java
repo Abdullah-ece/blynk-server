@@ -12,7 +12,8 @@ import cc.blynk.server.core.model.storage.key.DeviceStorageKey;
 import cc.blynk.server.core.model.storage.value.PinStorageValue;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.WebDashboard;
-import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
+import cc.blynk.server.core.model.web.product.metafields.DeviceNameMetaField;
+import cc.blynk.server.core.model.web.product.metafields.DeviceOwnerMetaField;
 import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -204,8 +205,8 @@ public class Device implements Target {
     }
 
     private boolean updateNameForDeviceNameMeta(MetaField updated) {
-        if (updated instanceof TextMetaField && updated.isDeviceNameMetaField()) {
-            this.name = ((TextMetaField) updated).value;
+        if (updated instanceof DeviceNameMetaField) {
+            this.name = ((DeviceNameMetaField) updated).value;
             return true;
         }
         return false;
@@ -353,9 +354,9 @@ public class Device implements Target {
 
     public boolean hasOwner(String ownerEmail) {
         for (MetaField metaField : metaFields) {
-            if (metaField.isDeviceOwnerMetaField()) {
-                TextMetaField textMetaField = (TextMetaField) metaField;
-                if (ownerEmail.equals(textMetaField.value)) {
+            if (metaField instanceof DeviceOwnerMetaField) {
+                DeviceOwnerMetaField deviceOwnerMetaField = (DeviceOwnerMetaField) metaField;
+                if (ownerEmail.equals(deviceOwnerMetaField.value)) {
                     return true;
                 }
             }
