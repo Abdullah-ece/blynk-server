@@ -20,8 +20,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 import static cc.blynk.integration.TestUtil.appSync;
 import static cc.blynk.integration.TestUtil.b;
 import static cc.blynk.integration.TestUtil.createDevice;
+import static cc.blynk.integration.TestUtil.deviceConnected;
 import static cc.blynk.integration.TestUtil.hardware;
-import static cc.blynk.integration.TestUtil.hardwareConnected;
 import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.integration.TestUtil.setProperty;
 import static org.junit.Assert.assertEquals;
@@ -156,7 +156,7 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
         hardClient2.login(devices[1].token);
         hardClient2.verifyResult(ok(1));
         device1.status = Status.ONLINE;
-        clientPair.appClient.verifyResult(hardwareConnected(1, "1-" + devices[1].id));
+        clientPair.appClient.verifyResult(deviceConnected(1, "1-" + devices[1].id));
 
 
         //login with shared app
@@ -288,7 +288,7 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
 
         hardClient2.login(devices[1].token);
         hardClient2.verifyResult(ok(1));
-        clientPair.appClient.verifyResult(hardwareConnected(1, "1-" + devices[1].id));
+        clientPair.appClient.verifyResult(deviceConnected(1, "1-" + devices[1].id));
 
         hardClient2.setProperty(88, "label", "124");
         clientPair.appClient.verifyResult(setProperty(2, "1-" + devices[1].id + " 88 label 124"));
@@ -335,7 +335,7 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
 
         hardClient2.login(devices[1].token);
         hardClient2.verifyResult(ok(1));
-        clientPair.appClient.verifyResult(hardwareConnected(1, "1-" + devices[1].id));
+        clientPair.appClient.verifyResult(deviceConnected(1, "1-" + devices[1].id));
         device1.status = Status.ONLINE;
 
         clientPair.hardwareClient.send("hardware vw 89 value_from_device_0");
@@ -404,7 +404,7 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
 
         hardClient2.login(devices[1].token);
         hardClient2.verifyResult(ok(1));
-        clientPair.appClient.verifyResult(hardwareConnected(1, "1-" + devices[1].id));
+        clientPair.appClient.verifyResult(deviceConnected(1, "1-" + devices[1].id));
         device1.status = Status.ONLINE;
 
         clientPair.appClient.send("hardware 1 vw " + b("99 82800 82860 Europe/Kiev 1"));

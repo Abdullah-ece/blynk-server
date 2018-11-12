@@ -21,8 +21,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.Map;
 
 import static cc.blynk.integration.TestUtil.createDevice;
+import static cc.blynk.integration.TestUtil.deviceConnected;
 import static cc.blynk.integration.TestUtil.deviceOffline;
-import static cc.blynk.integration.TestUtil.hardwareConnected;
 import static cc.blynk.integration.TestUtil.notAllowed;
 import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.integration.TestUtil.parseProfile;
@@ -155,7 +155,7 @@ public class NotificationsLogicTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.stop();
-        clientPair.appClient.verifyResult(deviceOffline(0, "1-0"));
+        clientPair.appClient.verifyResult(deviceOffline(0, 0));
     }
 
     @Test
@@ -173,7 +173,7 @@ public class NotificationsLogicTest extends SingleServerInstancePerTest {
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         newHardClient.stop();
-        verify(clientPair.appClient.responseMock, timeout(1500)).channelRead(any(), eq(deviceOffline(0, "1-0")));
+        verify(clientPair.appClient.responseMock, timeout(1500)).channelRead(any(), eq(deviceOffline(0, 0)));
     }
 
     @Test
@@ -200,10 +200,10 @@ public class NotificationsLogicTest extends SingleServerInstancePerTest {
         newHardClient.start();
         newHardClient.login(device.token);
         newHardClient.verifyResult(ok(1));
-        clientPair.appClient.verifyResult(hardwareConnected(1, "1-" + device.id));
+        clientPair.appClient.verifyResult(deviceConnected(1, "1-" + device.id));
 
         newHardClient.stop();
-        clientPair.appClient.verifyResult(deviceOffline(0, "1-" + device.id));
+        clientPair.appClient.verifyResult(deviceOffline(0, device.id));
     }
 
     @Test
@@ -248,7 +248,7 @@ public class NotificationsLogicTest extends SingleServerInstancePerTest {
         String expectedJson = new AndroidGCMMessage("token", Priority.normal, "Your My Device went offline.", 1).toJson();
         assertEquals(expectedJson, message.toJson());
 
-        clientPair.appClient.never(deviceOffline(0, "1-0"));
+        clientPair.appClient.never(deviceOffline(0, 0));
     }
 
     @Test
@@ -267,7 +267,7 @@ public class NotificationsLogicTest extends SingleServerInstancePerTest {
         channelFuture.await();
 
         verify(holder.gcmWrapper, after(500).never()).send(any(), any(), any());
-        clientPair.appClient.never(deviceOffline(0, "1-0"));
+        clientPair.appClient.never(deviceOffline(0, 0));
     }
 
     @Test
@@ -286,7 +286,7 @@ public class NotificationsLogicTest extends SingleServerInstancePerTest {
         channelFuture.await();
 
         verify(holder.gcmWrapper, after(500).never()).send(any(), any(), any());
-        clientPair.appClient.verifyResult(deviceOffline(0, "1-0"));
+        clientPair.appClient.verifyResult(deviceOffline(0, 0));
     }
 
     @Test
@@ -601,8 +601,8 @@ public class NotificationsLogicTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.stop();
-        clientPair.appClient.verifyResult(deviceOffline(0, "1-0"));
-        appClient.verifyResult(deviceOffline(0, "1-0"));
+        clientPair.appClient.verifyResult(deviceOffline(0, 0));
+        appClient.verifyResult(deviceOffline(0, 0));
     }
 
 

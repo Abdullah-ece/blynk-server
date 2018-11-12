@@ -32,8 +32,9 @@ import static cc.blynk.integration.APIBaseTest.createContactMeta;
 import static cc.blynk.integration.APIBaseTest.createNumberMeta;
 import static cc.blynk.integration.APIBaseTest.createTextMeta;
 import static cc.blynk.integration.TestUtil.b;
+import static cc.blynk.integration.TestUtil.deviceConnected;
+import static cc.blynk.integration.TestUtil.deviceOffline;
 import static cc.blynk.integration.TestUtil.getDefaultHttpsClient;
-import static cc.blynk.integration.TestUtil.hardwareConnected;
 import static cc.blynk.integration.TestUtil.logEvent;
 import static cc.blynk.integration.TestUtil.loggedDefaultClient;
 import static cc.blynk.integration.TestUtil.ok;
@@ -70,11 +71,11 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
 
         TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
         newHardClient.start();
-        newHardClient.send("login " + device.token);
+        newHardClient.login(device.token);
         newHardClient.verifyResult(ok(1));
         newHardClient.send("logEvent temp_is_high");
         newHardClient.verifyResult(ok(2));
-        client.verifyResult(hardwareConnected(1, device.id));
+        client.verifyResult(deviceConnected(1, device.id));
         client.reset();
 
         long now = System.currentTimeMillis();
@@ -101,11 +102,11 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
 
         TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
         newHardClient.start();
-        newHardClient.send("login " + device.token);
+        newHardClient.login(device.token);
         newHardClient.verifyResult(ok(1));
         newHardClient.logEvent("temp_is_high", "123" + StringUtils.BODY_SEPARATOR_STRING);
         newHardClient.verifyResult(ok(2));
-        client.verifyResult(hardwareConnected(1, device.id));
+        client.verifyResult(deviceConnected(1, device.id));
         client.reset();
 
         long now = System.currentTimeMillis();
@@ -133,9 +134,10 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
 
         TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
         newHardClient.start();
-        newHardClient.send("login " + device.token);
+        newHardClient.login(device.token);
         newHardClient.verifyResult(ok(1));
-        client.verifyResult(hardwareConnected(1, device.id));
+        client.verifyResult(deviceConnected(1, device.id));
+        client.verifyResult(logEvent(1, device.id + " " + EventType.ONLINE.name()));
         client.reset();
 
         newHardClient.logEvent("temp_is_high");
@@ -316,7 +318,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
 
         TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
         newHardClient.start();
-        newHardClient.send("login " + device.token);
+        newHardClient.login(device.token);
         newHardClient.verifyResult(ok(1));
         client.reset();
 
@@ -347,7 +349,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
 
         TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
         newHardClient.start();
-        newHardClient.send("login " + device.token);
+        newHardClient.login(device.token);
         newHardClient.verifyResult(ok(1));
         client.reset();
 
@@ -381,7 +383,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
 
         TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
         newHardClient.start();
-        newHardClient.send("login " + device.token);
+        newHardClient.login(device.token);
         newHardClient.verifyResult(ok(1));
         client.reset();
 
@@ -399,13 +401,50 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
     }
 
     @Test
+    public void testOnlineOfflineLogEventIsForwardedToWebapp() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+        Device device = createProductAndDevice(client, orgId);
+        client.track(device.id);
+
+        TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
+        newHardClient.start();
+        newHardClient.login(device.token);
+        newHardClient.verifyResult(ok(1));
+        client.verifyResult(deviceConnected(1, device.id));
+        client.verifyResult(logEvent(1, device.id + " " + EventType.ONLINE.name()));
+        client.reset();
+
+        newHardClient.stop();
+        client.verifyResult(deviceOffline(0, device.id));
+        client.verifyResult(logEvent(0, device.id + " " + EventType.OFFLINE.name()));
+    }
+
+    @Test
+    public void testOnlineOfflineLogEventIsNotForwardedToWebappBecauseNoTrack() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+        Device device = createProductAndDevice(client, orgId);
+
+        TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
+        newHardClient.start();
+        newHardClient.login(device.token);
+        newHardClient.verifyResult(ok(1));
+        client.verifyResult(deviceConnected(1, device.id));
+        client.never(logEvent(1, device.id + " " + EventType.ONLINE.name()));
+        client.reset();
+
+        newHardClient.stop();
+        client.verifyResult(deviceOffline(0, device.id));
+        client.never(logEvent(0, device.id + " " + EventType.OFFLINE.name()));
+    }
+
+    @Test
     public void testResolveLogEventFlow() throws Exception {
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
         Device device = createProductAndDevice(client, orgId);
 
         TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
         newHardClient.start();
-        newHardClient.send("login " + device.token);
+        newHardClient.login(device.token);
         newHardClient.verifyResult(ok(1));
         client.reset();
 
@@ -467,7 +506,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
 
         TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
         newHardClient.start();
-        newHardClient.send("login " + device.token);
+        newHardClient.login(device.token);
         newHardClient.verifyResult(ok(1));
         client.reset();
 
@@ -519,17 +558,17 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
 
         TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
         newHardClient.start();
-        newHardClient.send("login " + device.token);
+        newHardClient.login(device.token);
         newHardClient.verifyResult(ok(1));
-        client.verifyResult(hardwareConnected(1, device.id));
+        client.verifyResult(deviceConnected(1, device.id));
         newHardClient.stop();
         client.reset();
 
         newHardClient = new TestHardClient("localhost", properties.getHttpPort());
         newHardClient.start();
-        newHardClient.send("login " + device.token);
+        newHardClient.login(device.token);
         newHardClient.verifyResult(ok(1));
-        client.verifyResult(hardwareConnected(1, device.id));
+        client.verifyResult(deviceConnected(1, device.id));
         newHardClient.stop();
         client.reset();
 
@@ -559,9 +598,9 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
 
         TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
         newHardClient.start();
-        newHardClient.send("login " + device.token);
+        newHardClient.login(device.token);
         newHardClient.verifyResult(ok(1));
-        client.verifyResult(hardwareConnected(1, device.id));
+        client.verifyResult(deviceConnected(1, device.id));
         client.reset();
 
         sleep(500);
@@ -606,7 +645,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
 
         TestHardClient newHardClient = new TestHardClient("localhost", tcpHardPort);
         newHardClient.start();
-        newHardClient.send("login " + token);
+        newHardClient.login(token);
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         newHardClient.send("logEvent temp_is_high");
@@ -637,7 +676,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
 
         TestHardClient newHardClient = new TestHardClient("localhost", tcpHardPort);
         newHardClient.start();
-        newHardClient.send("login " + token);
+        newHardClient.login(token);
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         newHardClient.send("logEvent temp_is_high");

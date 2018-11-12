@@ -75,14 +75,14 @@ public class OfflineNotificationTest extends SingleServerInstancePerTest {
 
         clientPair.hardwareClient.stop();
 
-        clientPair.appClient.verifyResult(deviceOffline(0, "1-0"));
-        clientPair.appClient.never(deviceOffline(0, "1-1"));
+        clientPair.appClient.verifyResult(deviceOffline(0, 0));
+        clientPair.appClient.never(deviceOffline(0, 0));
 
         clientPair.appClient.reset();
         hardClient2.stop();
 
-        clientPair.appClient.verifyResult(deviceOffline(0, b("1-1")));
-        clientPair.appClient.never(deviceOffline(0, b("1-0")));
+        clientPair.appClient.verifyResult(deviceOffline(0, 0));
+        clientPair.appClient.never(deviceOffline(0, 0));
     }
 
     @Test
@@ -115,8 +115,8 @@ public class OfflineNotificationTest extends SingleServerInstancePerTest {
         clientPair.hardwareClient.stop();
         hardClient2.stop();
 
-        clientPair.appClient.verifyResult(deviceOffline(0, b("1-0")));
-        clientPair.appClient.verifyResult(deviceOffline(0, b("1-1")));
+        clientPair.appClient.verifyResult(deviceOffline(0, 0));
+        clientPair.appClient.verifyResult(deviceOffline(0, 0));
     }
 
     @Test
@@ -142,7 +142,7 @@ public class OfflineNotificationTest extends SingleServerInstancePerTest {
 
         clientPair.hardwareClient.stop();
 
-        clientPair.appClient.neverAfter(500, deviceOffline(0, "1-0"));
+        clientPair.appClient.neverAfter(500, deviceOffline(0, 0));
 
         Device device2 = new Device(1, "My Device", BoardType.ESP8266);
         device2.status = Status.OFFLINE;
@@ -172,7 +172,7 @@ public class OfflineNotificationTest extends SingleServerInstancePerTest {
         hardClient2.verifyResult(ok(1));
         hardClient2.stop();
 
-        clientPair.appClient.verifyResult(deviceOffline(0, "1-1"));
+        clientPair.appClient.verifyResult(deviceOffline(0, 0));
     }
 
     @Test
@@ -184,7 +184,7 @@ public class OfflineNotificationTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.stop();
-        clientPair.appClient.neverAfter(500, deviceOffline(0, "1-0"));
+        clientPair.appClient.neverAfter(500, deviceOffline(0, 0));
 
         clientPair.appClient.activate(1);
         clientPair.appClient.verifyResult(ok(2));
@@ -215,7 +215,7 @@ public class OfflineNotificationTest extends SingleServerInstancePerTest {
         //just waiting 2.5 secs so server trigger idle event
         TestUtil.sleep(2500);
 
-        clientPair.appClient.verifyResult(deviceOffline(0, b("1-1")));
+        clientPair.appClient.verifyResult(deviceOffline(0, 0));
     }
 
     @Test

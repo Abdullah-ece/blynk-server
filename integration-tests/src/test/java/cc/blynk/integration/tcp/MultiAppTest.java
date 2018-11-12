@@ -13,7 +13,7 @@ import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static cc.blynk.integration.TestUtil.b;
-import static cc.blynk.integration.TestUtil.hardwareConnected;
+import static cc.blynk.integration.TestUtil.deviceConnected;
 import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.server.core.protocol.enums.Response.DEVICE_NOT_IN_NETWORK;
 import static org.junit.Assert.assertNotNull;
@@ -51,10 +51,10 @@ public class MultiAppTest extends SingleServerInstancePerTest {
 
         hardClient1.login(token1);
         verify(hardClient1.responseMock, timeout(2000)).channelRead(any(), eq(ok(1)));
-        verify(appClient1.responseMock, timeout(2000)).channelRead(any(), eq(hardwareConnected(1, "1-0")));
+        verify(appClient1.responseMock, timeout(2000)).channelRead(any(), eq(deviceConnected(1, "1-0")));
         hardClient2.login(token2);
         verify(hardClient2.responseMock, timeout(2000)).channelRead(any(), eq(ok(1)));
-        verify(appClient2.responseMock, timeout(2000)).channelRead(any(), eq(hardwareConnected(1, "1-0")));
+        verify(appClient2.responseMock, timeout(2000)).channelRead(any(), eq(deviceConnected(1, "1-0")));
 
         hardClient1.send("hardware vw 1 100");
         verify(appClient1.responseMock, timeout(2000)).channelRead(any(), eq(new HardwareMessage(2, b("1-0 vw 1 100"))));

@@ -44,8 +44,8 @@ import java.util.List;
 import static cc.blynk.integration.TestUtil.appIsOutdated;
 import static cc.blynk.integration.TestUtil.b;
 import static cc.blynk.integration.TestUtil.createDevice;
+import static cc.blynk.integration.TestUtil.deviceConnected;
 import static cc.blynk.integration.TestUtil.hardware;
-import static cc.blynk.integration.TestUtil.hardwareConnected;
 import static cc.blynk.integration.TestUtil.illegalCommand;
 import static cc.blynk.integration.TestUtil.illegalCommandBody;
 import static cc.blynk.integration.TestUtil.notAllowed;
@@ -1279,7 +1279,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         nonActiveDashHardClient.send("hardware aw 1 1");
         //verify(nonActiveDashHardClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, NO_ACTIVE_DASHBOARD)));
         verify(clientPair.appClient.responseMock, timeout(1000).times(1)).channelRead(any(), any());
-        verify(clientPair.appClient.responseMock, timeout(1000).times(1)).channelRead(any(), eq(hardwareConnected(1, "2-" + device.id)));
+        verify(clientPair.appClient.responseMock, timeout(1000).times(1)).channelRead(any(), eq(deviceConnected(1, "2-" + device.id)));
 
         clientPair.hardwareClient.send("hardware aw 1 1");
         verify(clientPair.hardwareClient.responseMock, after(1000).never()).channelRead(any(), any());

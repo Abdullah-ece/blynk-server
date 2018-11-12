@@ -30,6 +30,7 @@ import java.util.concurrent.RejectedExecutionException;
 
 import static cc.blynk.server.core.protocol.enums.Command.CONNECT_REDIRECT;
 import static cc.blynk.server.core.protocol.enums.Command.DEVICE_CONNECTED;
+import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_LOG_EVENT;
 import static cc.blynk.server.internal.CommonByteBufUtil.invalidToken;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeASCIIStringMessage;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
@@ -83,6 +84,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
 
         log.trace("Device {} goes online DB event.", device.id);
         reportingDBManager.insertSystemEvent(device.id, EventType.ONLINE);
+        session.sendToSelectedDeviceOnWeb(HARDWARE_LOG_EVENT, msgId, EventType.ONLINE.name(), device.id);
 
         channel.flush();
 

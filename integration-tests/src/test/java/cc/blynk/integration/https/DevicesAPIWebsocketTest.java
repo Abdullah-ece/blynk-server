@@ -1,6 +1,7 @@
 package cc.blynk.integration.https;
 
 import cc.blynk.integration.SingleServerInstancePerTestWithDBAndNewOrg;
+import cc.blynk.integration.TestUtil;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
@@ -34,7 +35,6 @@ import static cc.blynk.integration.APIBaseTest.createNumberMeta;
 import static cc.blynk.integration.APIBaseTest.createTextMeta;
 import static cc.blynk.integration.TestUtil.createWebLabelWidget;
 import static cc.blynk.integration.TestUtil.createWebLineGraph;
-import static cc.blynk.integration.TestUtil.hardwareConnected;
 import static cc.blynk.integration.TestUtil.illegalCommand;
 import static cc.blynk.integration.TestUtil.illegalCommandBody;
 import static cc.blynk.integration.TestUtil.loggedDefaultClient;
@@ -850,7 +850,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         newHardClient.send("login " + token);
         newHardClient.verifyResult(ok(1));
         newHardClient.send("hardware vw 1 121");
-        client.verifyResult(hardwareConnected(1, createdDevice.id));
+        client.verifyResult(TestUtil.deviceConnected(1, createdDevice.id));
 
         client.getDevice(orgId, createdDevice.id);
         createdDevice = client.parseDevice(4);

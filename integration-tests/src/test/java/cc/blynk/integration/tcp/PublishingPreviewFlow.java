@@ -40,8 +40,8 @@ import java.util.List;
 
 import static cc.blynk.integration.TestUtil.b;
 import static cc.blynk.integration.TestUtil.createDevice;
+import static cc.blynk.integration.TestUtil.deviceConnected;
 import static cc.blynk.integration.TestUtil.hardware;
-import static cc.blynk.integration.TestUtil.hardwareConnected;
 import static cc.blynk.integration.TestUtil.illegalCommand;
 import static cc.blynk.integration.TestUtil.notAllowed;
 import static cc.blynk.integration.TestUtil.ok;
@@ -839,7 +839,7 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
 
         hardClient1.login(device.token);
         hardClient1.verifyResult(ok(1));
-        appClient2.verifyResult(hardwareConnected(1, "1-0"));
+        appClient2.verifyResult(deviceConnected(1, "1-0"));
 
         hardClient1.send("hardware vw 1 100");
         appClient2.verifyResult(hardware(2, "1-0 vw 1 100"));
@@ -905,7 +905,7 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
 
         hardClient1.login(device.token);
         hardClient1.verifyResult(ok(1));
-        appClient2.verifyResult(hardwareConnected(1, "1-0"));
+        appClient2.verifyResult(deviceConnected(1, "1-0"));
 
         hardClient1.send("hardware vw 1 100");
         appClient2.verifyResult(hardware(2, "1-0 vw 1 100"));

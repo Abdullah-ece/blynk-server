@@ -180,11 +180,11 @@ public final class TestUtil {
         return new HardwareLogEventMessage(msgId, b(body));
     }
 
-    public static StringMessage hardwareConnected(int msgId, int deviceId) {
+    public static StringMessage deviceConnected(int msgId, int deviceId) {
         return new StringMessage(msgId, DEVICE_CONNECTED, "" + deviceId);
     }
 
-    public static StringMessage hardwareConnected(int msgId, String body) {
+    public static StringMessage deviceConnected(int msgId, String body) {
         return new StringMessage(msgId, DEVICE_CONNECTED, body);
     }
 
@@ -192,8 +192,8 @@ public final class TestUtil {
         return new GetServerMessage(msgId, body);
     }
 
-    public static StringMessage deviceOffline(int msgId, String body) {
-        return new StringMessage(msgId, DEVICE_DISCONNECTED, body);
+    public static StringMessage deviceOffline(int msgId, int deviceId) {
+        return new StringMessage(msgId, DEVICE_DISCONNECTED, String.valueOf(deviceId));
     }
 
     public static StringMessage createTag(int msgId, Tag tag) {
@@ -305,7 +305,7 @@ public final class TestUtil {
 
         hardClient.login(token);
         verify(hardClient.responseMock, timeout(2000)).channelRead(any(), eq(ok(1)));
-        //verify(appClient.responseMock, timeout(2000)).channelRead(any(), eq(hardwareConnected(1, "" + dashId + "-0")));
+        //verify(appClient.responseMock, timeout(2000)).channelRead(any(), eq(deviceConnected(1, "" + dashId + "-0")));
 
         appClient.reset();
         hardClient.reset();

@@ -21,7 +21,7 @@ public class WebAppStateHolder {
         this.selectedDeviceId = NO_DEVICE;
     }
 
-    public boolean isSameDevice(int deviceId) {
+    public boolean isSelected(int deviceId) {
         return selectedDeviceId == deviceId;
     }
 

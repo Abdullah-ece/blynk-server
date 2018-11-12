@@ -35,8 +35,8 @@ import static cc.blynk.integration.TestUtil.appSync;
 import static cc.blynk.integration.TestUtil.b;
 import static cc.blynk.integration.TestUtil.createDevice;
 import static cc.blynk.integration.TestUtil.createTag;
+import static cc.blynk.integration.TestUtil.deviceConnected;
 import static cc.blynk.integration.TestUtil.hardware;
-import static cc.blynk.integration.TestUtil.hardwareConnected;
 import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.integration.TestUtil.sleep;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
@@ -157,7 +157,7 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
 
         hardClient2.login(devices[1].token);
         hardClient2.verifyResult(ok(1));
-        clientPair.appClient.verifyResult(hardwareConnected(1, "1-1"));
+        clientPair.appClient.verifyResult(deviceConnected(1, "1-1"));
 
         clientPair.hardwareClient.send("hardware vw 100 101");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 100 101"))));
@@ -184,7 +184,7 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
 
         hardClient.login(device.token);
         hardClient.verifyResult(ok(1));
-        clientPair.appClient.verifyResult(hardwareConnected(1, "1-1"));
+        clientPair.appClient.verifyResult(deviceConnected(1, "1-1"));
 
         String expectedBody = "pm 1 out";
         verify(hardClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b(expectedBody))));
@@ -210,7 +210,7 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
 
         hardClient.login(device.token);
         hardClient.verifyResult(ok(1));
-        clientPair.appClient.verifyResult(hardwareConnected(1, "1-1"));
+        clientPair.appClient.verifyResult(deviceConnected(1, "1-1"));
 
         verify(hardClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("pm 33 out"))));
         verify(hardClient.responseMock, times(2)).channelRead(any(), any());
@@ -424,7 +424,7 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
 
         hardClient2.login(devices[0].token);
         hardClient2.verifyResult(ok(1));
-        clientPair.appClient.verifyResult(hardwareConnected(1, "1-0"));
+        clientPair.appClient.verifyResult(deviceConnected(1, "1-0"));
 
         clientPair.appClient.reset();
 
@@ -484,7 +484,7 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
 
         hardClient2.login(device.token);
         hardClient2.verifyResult(ok(1));
-        clientPair.appClient.verifyResult(hardwareConnected(1, "1-1"));
+        clientPair.appClient.verifyResult(deviceConnected(1, "1-1"));
 
         String tempDir = holder.props.getProperty("data.folder");
         Path userReportFolder = Paths.get(tempDir, "data", getUserName());
@@ -555,7 +555,7 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
 
         hardClient2.login(device.token);
         hardClient2.verifyResult(ok(1));
-        clientPair.appClient.verifyResult(hardwareConnected(1, "1-1"));
+        clientPair.appClient.verifyResult(deviceConnected(1, "1-1"));
 
         hardClient2.send("hardware vw 1 123");
         clientPair.appClient.verifyResult(hardware(2, "1-1 vw 1 123"));
@@ -601,7 +601,7 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
 
         hardClient2.login(device1.token);
         hardClient2.verifyResult(ok(1));
-        clientPair.appClient.verifyResult(hardwareConnected(1, "1-1"));
+        clientPair.appClient.verifyResult(deviceConnected(1, "1-1"));
 
         clientPair.appClient.send("loadProfileGzipped 1");
         dash = clientPair.appClient.parseDash(4);
@@ -615,7 +615,7 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
 
         hardClient2.login(device1.token);
         hardClient2.verifyResult(ok(1));
-        clientPair.appClient.verifyResult(hardwareConnected(1, "1-1"));
+        clientPair.appClient.verifyResult(deviceConnected(1, "1-1"));
 
         clientPair.appClient.send("loadProfileGzipped 1");
         dash = clientPair.appClient.parseDash(2);

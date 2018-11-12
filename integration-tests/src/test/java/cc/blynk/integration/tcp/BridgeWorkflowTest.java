@@ -17,8 +17,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import static cc.blynk.integration.TestUtil.bridge;
 import static cc.blynk.integration.TestUtil.createDevice;
+import static cc.blynk.integration.TestUtil.deviceConnected;
 import static cc.blynk.integration.TestUtil.hardware;
-import static cc.blynk.integration.TestUtil.hardwareConnected;
 import static cc.blynk.integration.TestUtil.illegalCommand;
 import static cc.blynk.integration.TestUtil.notAllowed;
 import static cc.blynk.integration.TestUtil.ok;
@@ -200,7 +200,7 @@ public class BridgeWorkflowTest extends SingleServerInstancePerTest {
         clientPair.hardwareClient.verifyResult(ok(1));
         clientPair.hardwareClient.send("bridge 1 aw 11 11");
         hardClient1.verifyResult(bridge(2, "aw 11 11"));
-        clientPair.appClient.verifyResult(hardwareConnected(1, "2-" + device.id));
+        clientPair.appClient.verifyResult(deviceConnected(1, "2-" + device.id));
         clientPair.appClient.verifyResult(hardware(2, "2-" + device.id +" aw 11 11"));
     }
 
@@ -232,7 +232,7 @@ public class BridgeWorkflowTest extends SingleServerInstancePerTest {
         hardClient1.verifyResult(bridge(2, "aw 11 11"));
         hardClient2.verifyResult(bridge(2, "aw 11 11"));
 
-        clientPair.appClient.verifyResult(hardwareConnected(1, "2-" + device.id), 2);
+        clientPair.appClient.verifyResult(deviceConnected(1, "2-" + device.id), 2);
         clientPair.appClient.never(hardware(2, "2 aw 11 11"));
     }
 
@@ -426,7 +426,7 @@ public class BridgeWorkflowTest extends SingleServerInstancePerTest {
         clientPair.hardwareClient.verifyResult(ok(1));
         clientPair.hardwareClient.send("bridge 1 vw 11 11");
         hardClient1.verifyResult(bridge(2, "vw 11 11"));
-        clientPair.appClient.verifyResult(hardwareConnected(1, "5-" + device.id));
+        clientPair.appClient.verifyResult(deviceConnected(1, "5-" + device.id));
         clientPair.appClient.verifyResult(hardware(2, "5-" + device.id + " vw 11 11"));
         clientPair.appClient.never(hardware(2, "5-0 vw 11 11"));
         clientPair.appClient.never(hardware(2, "1-0 vw 11 11"));
@@ -450,7 +450,7 @@ public class BridgeWorkflowTest extends SingleServerInstancePerTest {
         hardClient1.login(device.token);
         hardClient1.verifyResult(ok(1));
         hardClient1.reset();
-        clientPair.appClient.verifyResult(hardwareConnected(1, "5-" + device.id));
+        clientPair.appClient.verifyResult(deviceConnected(1, "5-" + device.id));
         clientPair.appClient.reset();
 
         dash.id = 6;
@@ -466,7 +466,7 @@ public class BridgeWorkflowTest extends SingleServerInstancePerTest {
         hardClient2.login(device.token);
         hardClient2.verifyResult(ok(1));
         hardClient2.reset();
-        clientPair.appClient.verifyResult(hardwareConnected(1, "6-" + device.id));
+        clientPair.appClient.verifyResult(deviceConnected(1, "6-" + device.id));
 
         clientPair.hardwareClient.send("bridge 1 i " + device.token);
         clientPair.hardwareClient.verifyResult(ok(1));

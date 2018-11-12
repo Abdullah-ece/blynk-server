@@ -181,7 +181,7 @@ public class Session {
                 WebAppStateHolder webAppStateHolder = getWebState(channel);
                 if (webAppStateHolder != null) {
                     for (int deviceId : deviceIds) {
-                        if (webAppStateHolder.isSameDevice(deviceId)) {
+                        if (webAppStateHolder.isSelected(deviceId)) {
                             String finalBody = prependDeviceId(deviceId, body);
                             StringMessage msg = makeUTF8StringMessage(cmd, msgId, finalBody);
                             if (channel.isWritable()) {
