@@ -458,8 +458,8 @@ Enable raw data in ```server.properties``` :
 
 #### 3. Download Blynk DB script
 
-        wget https://github.com/blynkkk/dash/blob/master/server/core/src/main/resources/create_schema.sql
-        wget https://github.com/blynkkk/dash/blob/master/server/core/src/main/resources/reporting_schema.sql
+        wget https://raw.githubusercontent.com/blynkkk/dash/master/server/core/src/main/resources/create_schema.sql?token=ABdx7pmBJ_DKVb5EMoU2DqMAq3LuBg7Aks5b8oPdwA%3D%3D
+        wget https://raw.githubusercontent.com/blynkkk/dash/master/server/core/src/main/resources/reporting_schema.sql?token=ABdx7k1gDnSZ5viAlvFJDzmNcBq396AQks5b8oPHwA%3D%3D
 
 #### 4. Move create_schema.sql and reporting_schema.sql to temp folder (to avoid permission problems)
 
