@@ -191,6 +191,15 @@ public class Organization {
         return copy.toArray(new Role[0]);
     }
 
+    public Product getProductByTemplateId(String templateId) {
+        for (Product product : this.products) {
+            if (product.containsTemplateId(templateId)) {
+                return product;
+            }
+        }
+        return null;
+    }
+
     @Override
     public String toString() {
         return JsonParser.toJson(this);

@@ -359,16 +359,4 @@ public class OrganizationDao {
         }
     }
 
-    //todo restrict to the one organization only?
-    public Product getProductByTemplateId(String templateId) {
-        for (Organization org : organizations.values()) {
-            for (Product product : org.products) {
-                if (product.containsTemplateId(templateId)) {
-                    return product;
-                }
-            }
-        }
-        return null;
-    }
-
 }

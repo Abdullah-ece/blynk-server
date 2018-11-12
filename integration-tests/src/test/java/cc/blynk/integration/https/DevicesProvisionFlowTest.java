@@ -26,6 +26,9 @@ import cc.blynk.server.core.model.widgets.outputs.ValueDisplay;
 import cc.blynk.server.core.model.widgets.outputs.graph.FontSize;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.templates.PageTileTemplate;
+import cc.blynk.server.core.protocol.enums.Command;
+import cc.blynk.server.core.protocol.model.messages.MessageBase;
+import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.notifications.mail.QrHolder;
 import cc.blynk.utils.SHA256Util;
 import cc.blynk.utils.StringUtils;
@@ -35,6 +38,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.List;
 
 import static cc.blynk.integration.APIBaseTest.createDeviceNameMeta;
 import static cc.blynk.integration.APIBaseTest.createMeasurementMeta;
@@ -481,13 +486,35 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
 
         TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
         newHardClient.start();
-        newHardClient.send("login " + deviceFromApi.token);
+        newHardClient.login(deviceFromApi.token);
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         appClient.never(deviceConnected(1, "1-1"));
 
         newHardClient.send("internal " + b("ver 0.3.1 tmpl TMPL0001 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
         newHardClient.verifyResult(ok(2));
-        appClient.verifyResult(TestUtil.deviceConnected(2, deviceFromApi.id));
+        appClient.verifyResult(deviceConnected(2, deviceFromApi.id));
+        client.verifyResult(deviceConnected(2, deviceFromApi.id));
+
+        //here we check, that webapp retrieves WEB_CREATE_DEVICE after device was provisioned.
+        String response = null;
+        ArgumentCaptor<MessageBase> objectArgumentCaptor = ArgumentCaptor.forClass(StringMessage.class);
+        verify(client.responseMock, timeout(1000).times(4)).channelRead(any(), objectArgumentCaptor.capture());
+        List<MessageBase> arguments = objectArgumentCaptor.getAllValues();
+        for (MessageBase messageBase : arguments) {
+            if (messageBase.command == Command.WEB_CREATE_DEVICE) {
+                response = ((StringMessage) messageBase).body;
+            }
+        }
+        Device createdDeviceFromTheProvision = JsonParser.parseDevice(response, -1);
+        assertNotNull(createdDeviceFromTheProvision);
+        assertNotNull(createdDeviceFromTheProvision.metaFields);
+        assertEquals(2, createdDeviceFromTheProvision.metaFields.length);
+        assertEquals(fromApiProduct2.id, createdDeviceFromTheProvision.productId);
+        assertNotNull(createdDeviceFromTheProvision.hardwareInfo);
+        assertEquals("TMPL0001", createdDeviceFromTheProvision.hardwareInfo.templateId);
+        assertEquals("iconName", createdDeviceFromTheProvision.iconName);
+        assertEquals(ESP8266, createdDeviceFromTheProvision.boardType);
+        assertEquals("My Default device Name", createdDeviceFromTheProvision.name);
 
         appClient.getDevice(deviceFromApi.id);
         Device provisionedDevice = appClient.parseDevice(6);

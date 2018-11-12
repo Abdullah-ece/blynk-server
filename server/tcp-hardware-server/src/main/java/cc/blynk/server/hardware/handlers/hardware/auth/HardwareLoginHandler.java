@@ -6,6 +6,7 @@ import cc.blynk.server.core.dao.TemporaryTokenValue;
 import cc.blynk.server.core.dao.TokenValue;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.dto.DeviceDTO;
 import cc.blynk.server.core.model.web.product.EventType;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
@@ -13,7 +14,7 @@ import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.ReportingDBManager;
 import cc.blynk.server.hardware.handlers.hardware.HardwareHandler;
-import cc.blynk.server.hardware.internal.CreateSessionForwardMessage;
+import cc.blynk.server.hardware.internal.ProvisionedDeviceAddedMessage;
 import cc.blynk.server.internal.ReregisterChannelUtil;
 import cc.blynk.utils.IPUtils;
 import cc.blynk.utils.StringUtils;
@@ -31,6 +32,7 @@ import java.util.concurrent.RejectedExecutionException;
 import static cc.blynk.server.core.protocol.enums.Command.CONNECT_REDIRECT;
 import static cc.blynk.server.core.protocol.enums.Command.DEVICE_CONNECTED;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_LOG_EVENT;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_CREATE_DEVICE;
 import static cc.blynk.server.internal.CommonByteBufUtil.invalidToken;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeASCIIStringMessage;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
@@ -69,7 +71,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
     }
 
     private void completeLogin(Channel channel, Session session,
-                                      Device device, int msgId) {
+                               Device device, int msgId) {
         log.debug("completeLogin. {}", channel);
 
         session.addHardChannel(channel);
@@ -127,7 +129,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
             //this is special case for provisioned devices, we adding additional
             //handler in order to add product to the device
             TemporaryTokenValue temporaryTokenValue = (TemporaryTokenValue) tokenValue;
-            ctx.pipeline().addBefore("H_Login", "HHProvisionedHardwareFirstGandler",
+            ctx.pipeline().addBefore("H_Login", "HHProvisionedHardwareFirstHandler",
                     new ProvisionedHardwareFirstHandler(holder,
                             orgId, temporaryTokenValue.user, temporaryTokenValue.dash, device));
             ctx.writeAndFlush(ok(message.id));
@@ -139,20 +141,22 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
 
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) {
-        if (evt instanceof CreateSessionForwardMessage) {
-            CreateSessionForwardMessage bridgeForwardMessage = (CreateSessionForwardMessage) evt;
-            log.debug("Triggered user event for provisioned device (id={}).", bridgeForwardMessage.device.id);
-            createSessionAndReregister(ctx,
-                    bridgeForwardMessage.orgId,
-                    bridgeForwardMessage.device,
-                    bridgeForwardMessage.msgId);
+        if (evt instanceof ProvisionedDeviceAddedMessage) {
+            ProvisionedDeviceAddedMessage msg = (ProvisionedDeviceAddedMessage) evt;
+            log.debug("Triggered user event for provisioned device (id={}).", msg.device.id);
+            Session session = createSessionAndReregister(ctx,
+                    msg.orgId,
+                    msg.device,
+                    msg.msgId);
+            String body = new DeviceDTO(msg.device, msg.product, msg.orgName).toString();
+            session.sendToWeb(WEB_CREATE_DEVICE, msg.msgId, body);
         } else {
             ctx.fireUserEventTriggered(evt);
         }
     }
 
-    private void createSessionAndReregister(ChannelHandlerContext ctx, int orgId,
-                                            Device device, int msgId) {
+    private Session createSessionAndReregister(ChannelHandlerContext ctx, int orgId,
+                                               Device device, int msgId) {
         HardwareStateHolder hardwareStateHolder = new HardwareStateHolder(orgId, device);
 
         ChannelPipeline pipeline = ctx.pipeline();
@@ -168,6 +172,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
             ReregisterChannelUtil.reRegisterChannel(ctx, session, channelFuture ->
                     completeLogin(channelFuture.channel(), session, device, msgId));
         }
+        return session;
     }
 
     private void checkTokenOnOtherServer(ChannelHandlerContext ctx, String token, int msgId) {

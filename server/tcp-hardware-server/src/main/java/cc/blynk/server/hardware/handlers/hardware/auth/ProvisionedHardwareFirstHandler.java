@@ -11,7 +11,7 @@ import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.metafields.TemplateIdMetaField;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.hardware.internal.CreateSessionForwardMessage;
+import cc.blynk.server.hardware.internal.ProvisionedDeviceAddedMessage;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
@@ -42,6 +42,8 @@ public class ProvisionedHardwareFirstHandler extends SimpleChannelInboundHandler
     private final User user;
     private final DashBoard dash;
     private final Device device;
+    private Organization org;
+    private Product product;
 
     ProvisionedHardwareFirstHandler(Holder holder, int orgId, User user, DashBoard dash, Device device) {
         super(StringMessage.class);
@@ -75,16 +77,15 @@ public class ProvisionedHardwareFirstHandler extends SimpleChannelInboundHandler
                     HardwareInfo hardwareInfo = new HardwareInfo(messageParts);
                     String templateId = hardwareInfo.templateId;
 
-                    Product product;
                     if (templateId == null) {
-                        Organization org = holder.organizationDao.getOrgByIdOrThrow(orgId);
+                        org = holder.organizationDao.getOrgByIdOrThrow(orgId);
                         product = org.getFirstProduct();
                         log.warn("No templateId from hardware. Getting first product (id={}) "
                                 + "for provisioned device {}.", product.id, device.id);
                     } else {
-                        product = holder.organizationDao.getProductByTemplateId(templateId);
+                        getProductAndOrgByTemplateId(templateId);
                         if (product == null) {
-                            Organization org = holder.organizationDao.getOrgByIdOrThrow(orgId);
+                            org = holder.organizationDao.getOrgByIdOrThrow(orgId);
                             product = org.getFirstProduct();
                             log.warn("No templateId {} in products for deviceId {}. "
                                             + "Getting first product (id={}) for provisioned device.",
@@ -114,11 +115,22 @@ public class ProvisionedHardwareFirstHandler extends SimpleChannelInboundHandler
                     ChannelPipeline pipeline = ctx.pipeline();
                     pipeline.remove(this)
                             .fireUserEventTriggered(
-                                    new CreateSessionForwardMessage(orgId, user, dash, device, message.id));
+                                    new ProvisionedDeviceAddedMessage(orgId, user,
+                                            dash, device, message.id, product, org.name));
                     break;
             }
         } else {
             log.warn("Expecting only internal command here for user {}", user.email);
+        }
+    }
+
+    private void getProductAndOrgByTemplateId(String templateId) {
+        for (Organization tempOrg : holder.organizationDao.organizations.values()) {
+            Product productWithTemplate = tempOrg.getProductByTemplateId(templateId);
+            if (productWithTemplate != null) {
+                this.org = tempOrg;
+                this.product = productWithTemplate;
+            }
         }
     }
 
