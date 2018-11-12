@@ -16,6 +16,7 @@ import cc.blynk.server.core.model.web.product.metafields.ListMetaField;
 import cc.blynk.server.core.model.web.product.metafields.MeasurementUnit;
 import cc.blynk.server.core.model.web.product.metafields.MeasurementUnitMetaField;
 import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
+import cc.blynk.server.core.model.web.product.metafields.TemplateIdMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.MobileAndHttpsServer;
@@ -195,6 +196,10 @@ public abstract class APIBaseTest extends CounterBase {
 
     public static ListMetaField createListMeta(int id, String name, String templateId) {
         return new ListMetaField(id, name, new int[] {1}, false, false, true, null, new String[] {templateId}, null);
+    }
+
+    public static TemplateIdMetaField createTemplateIdMeta(int id, String name, String templateId) {
+        return new TemplateIdMetaField(id, name, new int[] {1}, false, false, true, null, new String[] {templateId}, null);
     }
 
     public static ContactMetaField createContactMeta(int id, String name) {

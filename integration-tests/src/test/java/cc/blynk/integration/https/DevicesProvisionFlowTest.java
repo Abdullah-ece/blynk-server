@@ -35,10 +35,10 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import static cc.blynk.integration.APIBaseTest.createListMeta;
+import static cc.blynk.integration.APIBaseTest.createDeviceNameMeta;
 import static cc.blynk.integration.APIBaseTest.createMeasurementMeta;
 import static cc.blynk.integration.APIBaseTest.createNumberMeta;
-import static cc.blynk.integration.APIBaseTest.createTextMeta;
+import static cc.blynk.integration.APIBaseTest.createTemplateIdMeta;
 import static cc.blynk.integration.TestUtil.b;
 import static cc.blynk.integration.TestUtil.defaultClient;
 import static cc.blynk.integration.TestUtil.hardwareConnected;
@@ -272,7 +272,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         product.name = "My product";
         product.metaFields = new MetaField[] {
                 createNumberMeta(1, "Jopa", 123D),
-                createTextMeta(2, "Device Name", "My Default device Name")
+                createDeviceNameMeta(2, "Device Name", "My Default device Name", false)
         };
 
         client.createProduct(orgId, product);
@@ -357,7 +357,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         product.name = "My product";
         product.metaFields = new MetaField[] {
                 createMeasurementMeta(1, "Jopa", 1, MeasurementUnit.Celsius),
-                createTextMeta(2, "Device Name", "My Default device Name")
+                createDeviceNameMeta(2, "Device Name", "My Default device Name", false)
         };
 
         client.createProduct(orgId, product);
@@ -367,8 +367,8 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         Product product2 = new Product();
         product2.name = "My product2";
         product2.metaFields = new MetaField[] {
-                createTextMeta(2, "Device Name", "My Default device Name", true),
-                createListMeta(3, "Template Id", "TMPL0001")
+                createDeviceNameMeta(2, "Device Name", "My Default device Name", true),
+                createTemplateIdMeta(3, "Template Id", "TMPL0001")
         };
         client.createProduct(orgId, product2);
         Product fromApiProduct2 = client.parseProduct(2);
@@ -428,7 +428,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         product.name = "My product";
         product.metaFields = new MetaField[] {
                 createMeasurementMeta(1, "Jopa", 1, MeasurementUnit.Celsius),
-                createTextMeta(2, "Device Name", "My Default device Name")
+                createDeviceNameMeta(2, "Device Name", "My Default device Name", false)
         };
 
         client.createProduct(orgId, product);
@@ -438,8 +438,8 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         Product product2 = new Product();
         product2.name = "My product2";
         product2.metaFields = new MetaField[] {
-                createTextMeta(2, "Device Name", "My Default device Name", true),
-                createListMeta(3, "Template Id", "TMPL0001")
+                createDeviceNameMeta(2, "Device Name", "My Default device Name", true),
+                createTemplateIdMeta(3, "Template Id", "TMPL0001")
         };
         client.createProduct(orgId, product2);
         Product fromApiProduct2 = client.parseProduct(2);
@@ -539,8 +539,8 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         Product product = new Product();
         product.name = "My product";
         product.metaFields = new MetaField[] {
-                createTextMeta(2, "Device Name", "My Default device Name", true),
-                createListMeta(3, "Template Id", "TMPL0002")
+                createDeviceNameMeta(2, "Device Name", "My Default device Name", true),
+                createTemplateIdMeta(3, "Template Id", "TMPL0002")
         };
 
         client.createProduct(orgId, product);
@@ -605,7 +605,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         Product product = new Product();
         product.name = "My product";
         product.metaFields = new MetaField[] {
-                createTextMeta(2, "Device Name", "My Default device Name", true),
+                createDeviceNameMeta(2, "Device Name", "My Default device Name", true),
         };
 
         client.createProduct(orgId, product);
@@ -615,8 +615,8 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         Product product2 = new Product();
         product2.name = "My product2";
         product2.metaFields = new MetaField[] {
-                createTextMeta(2, "Device Name", "My Default device Name", true),
-                createListMeta(3, "Template Id", "TMPL0001")
+                createDeviceNameMeta(2, "Device Name", "My Default device Name", true),
+                createTemplateIdMeta(3, "Template Id", "TMPL0001")
         };
         client.createProduct(orgId, product2);
         Product fromApiProduct2 = client.parseProduct(2);
@@ -672,7 +672,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         Product product = new Product();
         product.name = "My product";
         product.metaFields = new MetaField[] {
-                createTextMeta(2, "Device Name", "My Default device Name", true),
+                createDeviceNameMeta(2, "Device Name", "My Default device Name", true),
         };
 
         client.createProduct(orgId, product);
@@ -682,8 +682,8 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         Product product2 = new Product();
         product2.name = "My product2";
         product2.metaFields = new MetaField[] {
-                createTextMeta(2, "Device Name", "My Default device Name", true),
-                createListMeta(3, "Template Id", "TMPL0001")
+                createDeviceNameMeta(2, "Device Name", "My Default device Name", true),
+                createTemplateIdMeta(3, "Template Id", "TMPL0001")
         };
         client.createProduct(orgId, product2);
         Product fromApiProduct2 = client.parseProduct(2);

@@ -28,6 +28,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static cc.blynk.integration.APIBaseTest.createDeviceNameMeta;
 import static cc.blynk.integration.APIBaseTest.createMeasurementMeta;
 import static cc.blynk.integration.APIBaseTest.createNumberMeta;
 import static cc.blynk.integration.APIBaseTest.createTextMeta;
@@ -725,7 +726,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         product.name = "My product";
         product.metaFields = new MetaField[] {
                 createNumberMeta(1, "Jopa", 123D, true),
-                createTextMeta(2, "Device Name", "My Default device Name", true)
+                createDeviceNameMeta(2, "Device Name", "My Default device Name", true)
         };
 
         client.createProduct(orgId, product);
@@ -760,7 +761,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertEquals(1, textMetaField.roleIds[0]);
         assertEquals("My Default device Name", textMetaField.value);
 
-        MetaField updatedMeta = createTextMeta(2, "Device Name", "Updated Name", true);
+        MetaField updatedMeta = createDeviceNameMeta(2, "Device Name", "Updated Name", true);
         appClient.updateDeviceMetafield(createdDevice.id, updatedMeta);
         appClient.verifyResult(ok(3));
 
