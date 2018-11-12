@@ -1,7 +1,7 @@
 {
-  "name": "KnightDashboard",
+  "name": "BlynkWebDashboard",
   "version": "0.1.0",
-  "description": "Knight Dashboard",
+  "description": "BlynkWebDashboard",
   "engines": {
     "npm": ">=3"
   },
