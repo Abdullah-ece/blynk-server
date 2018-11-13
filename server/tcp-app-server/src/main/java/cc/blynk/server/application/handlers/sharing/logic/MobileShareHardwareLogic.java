@@ -22,7 +22,7 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
+import static cc.blynk.server.core.protocol.enums.Command.DEVICE_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.internal.CommonByteBufUtil.deviceNotInNetwork;
 import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommandBody;
@@ -144,7 +144,7 @@ public class MobileShareHardwareLogic extends BaseProcessorHandler {
                         if (appChannel != ctx.channel() && appChannel.isWritable()
                                 && Session.needSync(appChannel, sharedToken)) {
                             appChannel.writeAndFlush(
-                                    makeUTF8StringMessage(APP_SYNC, message.id, message.body),
+                                    makeUTF8StringMessage(DEVICE_SYNC, message.id, message.body),
                                     appChannel.voidPromise());
                         }
                     }

@@ -1,7 +1,6 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard.device;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
@@ -14,7 +13,6 @@ import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.CREATE_DEVICE;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
-import static cc.blynk.utils.StringUtils.split2;
 
 /**
  * The Blynk Project.
@@ -30,20 +28,11 @@ public final class MobileCreateDeviceLogic {
 
     public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
                                        User user, StringMessage message) {
-        String[] split = split2(message.body);
-
-        if (split.length < 2) {
-            throw new IllegalCommandException("Wrong income message format.");
-        }
-
-        int dashId = Integer.parseInt(split[0]);
-        String deviceString = split[1];
+        String deviceString = message.body;
 
         if (deviceString == null || deviceString.isEmpty()) {
             throw new IllegalCommandException("Income device message is empty.");
         }
-
-        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
         Device newDevice = JsonParser.parseDevice(deviceString, message.id);
 
@@ -58,7 +47,7 @@ public final class MobileCreateDeviceLogic {
         holder.deviceDao.create(orgId, newDevice);
 
         String newToken = TokenGeneratorUtil.generateNewToken();
-        holder.tokenManager.assignToken(orgId, user, dash, newDevice, newToken);
+        holder.tokenManager.assignToken(orgId, user, newDevice, newToken);
 
         user.lastModifiedTs = System.currentTimeMillis();
         log.debug("Device for orgId {} created {}.", orgId, newDevice);

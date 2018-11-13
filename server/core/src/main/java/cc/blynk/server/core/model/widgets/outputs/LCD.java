@@ -13,7 +13,7 @@ import cc.blynk.utils.structure.LCDLimitedQueue;
 import cc.blynk.utils.structure.LimitedArrayDeque;
 import io.netty.channel.Channel;
 
-import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
+import static cc.blynk.server.core.protocol.enums.Command.DEVICE_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.utils.StringUtils.prependDeviceId;
@@ -42,7 +42,7 @@ public class LCD extends MultiPinWidget implements FrequencyWidget {
     private static void sendSyncOnActivate(DataStream dataStream, int deviceId, Channel appChannel) {
         if (dataStream.notEmptyAndIsValid()) {
             String body = prependDeviceId(deviceId, dataStream.makeHardwareBody());
-            appChannel.write(makeUTF8StringMessage(APP_SYNC, SYNC_DEFAULT_MESSAGE_ID, body),
+            appChannel.write(makeUTF8StringMessage(DEVICE_SYNC, SYNC_DEFAULT_MESSAGE_ID, body),
                     appChannel.voidPromise());
         }
     }

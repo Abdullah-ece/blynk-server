@@ -62,18 +62,19 @@ public class TokenManager {
                 temporaryTokenValue.user.email, temporaryTokenValue.device.id, newToken);
     }
 
-    public void assignToken(int orgId, User user, DashBoard dash, Device device, String newToken) {
-        String oldToken = regularTokenManager.assignToken(orgId, user, dash, device, newToken);
+    public void assignToken(int orgId, User user, Device device, String newToken) {
+        String oldToken = regularTokenManager.assignToken(orgId, user, device, newToken);
 
-        dbManager.assignServerToToken(newToken, host, user.email, dash.id, device.id);
+        //todo remove dashId
+        dbManager.assignServerToToken(newToken, host, user.email, 0, device.id);
         if (oldToken != null) {
             dbManager.removeToken(oldToken);
         }
     }
 
-    public String refreshToken(int orgId, User user, DashBoard dash, Device device) {
+    public String refreshToken(int orgId, User user, Device device) {
         String newToken = TokenGeneratorUtil.generateNewToken();
-        assignToken(orgId, user, dash, device, newToken);
+        assignToken(orgId, user, device, newToken);
         return newToken;
     }
 

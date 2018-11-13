@@ -40,17 +40,15 @@ public class ProvisionedHardwareFirstHandler extends SimpleChannelInboundHandler
     private final Holder holder;
     private final int orgId;
     private final User user;
-    private final DashBoard dash;
     private final Device device;
     private Organization org;
     private Product product;
 
-    ProvisionedHardwareFirstHandler(Holder holder, int orgId, User user, DashBoard dash, Device device) {
+    ProvisionedHardwareFirstHandler(Holder holder, int orgId, User user, Device device) {
         super(StringMessage.class);
         this.holder = holder;
         this.orgId = orgId;
         this.user = user;
-        this.dash = dash;
         this.device = device;
     }
 
@@ -108,15 +106,18 @@ public class ProvisionedHardwareFirstHandler extends SimpleChannelInboundHandler
                     holder.tokenManager.updateRegularCache(
                             device.token, new TokenValue(orgId, user, device));
 
-                    dash.addDeviceToTemplate(device, templateId);
+                    for (DashBoard dash : user.profile.dashBoards) {
+                        dash.addDeviceToTemplate(device, templateId);
+                    }
+
                     device.activatedBy = user.email;
-                    device.activatedAt = dash.updatedAt;
+                    device.activatedAt = System.currentTimeMillis();
 
                     ChannelPipeline pipeline = ctx.pipeline();
                     pipeline.remove(this)
                             .fireUserEventTriggered(
                                     new ProvisionedDeviceAddedMessage(orgId, user,
-                                            dash, device, message.id, product, org.name));
+                                            device, message.id, product, org.name));
                     break;
             }
         } else {

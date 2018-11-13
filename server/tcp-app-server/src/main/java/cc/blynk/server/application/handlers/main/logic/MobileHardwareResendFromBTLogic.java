@@ -14,7 +14,6 @@ import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
 import static cc.blynk.utils.StringUtils.split2;
-import static cc.blynk.utils.StringUtils.split2Device;
 import static cc.blynk.utils.StringUtils.split3;
 
 /**
@@ -56,9 +55,8 @@ public class MobileHardwareResendFromBTLogic extends BaseProcessorHandler {
 
         String[] split = split2(message.body);
 
-        //here we have "1-200000"
-        String[] dashIdAndTargetIdString = split2Device(split[0]);
-        int deviceId = Integer.parseInt(dashIdAndTargetIdString[1]);
+        //here we have "200000"
+        int deviceId = Integer.parseInt(split[0]);
         Device device = deviceDao.getByIdOrThrow(deviceId);
 
         if (isWriteOperation(split[1])) {

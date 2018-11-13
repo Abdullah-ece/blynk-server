@@ -131,7 +131,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
             TemporaryTokenValue temporaryTokenValue = (TemporaryTokenValue) tokenValue;
             ctx.pipeline().addBefore("H_Login", "HHProvisionedHardwareFirstHandler",
                     new ProvisionedHardwareFirstHandler(holder,
-                            orgId, temporaryTokenValue.user, temporaryTokenValue.dash, device));
+                            orgId, temporaryTokenValue.user, device));
             ctx.writeAndFlush(ok(message.id));
             return;
         }

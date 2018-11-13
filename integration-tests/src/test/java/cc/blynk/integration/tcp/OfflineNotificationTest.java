@@ -51,7 +51,7 @@ public class OfflineNotificationTest extends SingleServerInstancePerTest {
         Device device2 = new Device(1, "My Device", BoardType.ESP8266);
         device2.status = Status.OFFLINE;
 
-        clientPair.appClient.createDevice(1, device2);
+        clientPair.appClient.createDevice(device2);
         Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
@@ -90,7 +90,7 @@ public class OfflineNotificationTest extends SingleServerInstancePerTest {
         Device device2 = new Device(1, "My Device", BoardType.ESP8266);
         device2.status = Status.OFFLINE;
 
-        clientPair.appClient.createDevice(1, device2);
+        clientPair.appClient.createDevice(device2);
         Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
@@ -147,7 +147,7 @@ public class OfflineNotificationTest extends SingleServerInstancePerTest {
         Device device2 = new Device(1, "My Device", BoardType.ESP8266);
         device2.status = Status.OFFLINE;
 
-        clientPair.appClient.createDevice(1, device2);
+        clientPair.appClient.createDevice(device2);
         Device device = clientPair.appClient.parseDevice(3);
         assertNotNull(device);
         assertNotNull(device.token);
@@ -195,7 +195,7 @@ public class OfflineNotificationTest extends SingleServerInstancePerTest {
         Device device2 = new Device(1, "My Device", BoardType.ESP8266);
         device2.status = Status.OFFLINE;
 
-        clientPair.appClient.createDevice(1, device2);
+        clientPair.appClient.createDevice(device2);
         clientPair.appClient.send("getDevices 1");
 
         Device[] devices = clientPair.appClient.parseDevices(2);
@@ -223,7 +223,7 @@ public class OfflineNotificationTest extends SingleServerInstancePerTest {
         Device device2 = new Device(1, "My Device", BoardType.ESP8266);
         device2.status = Status.OFFLINE;
 
-        clientPair.appClient.createDevice(1, device2);
+        clientPair.appClient.createDevice(device2);
         clientPair.appClient.send("getDevices 1");
 
         Device[] devices = clientPair.appClient.parseDevices(2);

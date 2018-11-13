@@ -12,7 +12,6 @@ import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommandBody;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
-import static cc.blynk.utils.StringUtils.split2;
 
 /**
  * The Blynk Project.
@@ -27,14 +26,7 @@ public final class MobileUpdateDeviceLogic {
     }
 
     public static void messageReceived(Holder holder, ChannelHandlerContext ctx, User user, StringMessage message) {
-        String[] split = split2(message.body);
-
-        if (split.length < 2) {
-            throw new IllegalCommandException("Wrong income message format.");
-        }
-
-        int dashId = Integer.parseInt(split[0]);
-        String deviceString = split[1];
+        String deviceString = message.body;
 
         if (deviceString == null || deviceString.isEmpty()) {
             throw new IllegalCommandException("Income device message is empty.");

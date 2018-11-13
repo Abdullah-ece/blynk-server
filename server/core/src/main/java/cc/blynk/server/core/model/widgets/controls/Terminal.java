@@ -13,7 +13,7 @@ import io.netty.channel.Channel;
 
 import java.util.Iterator;
 
-import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
+import static cc.blynk.server.core.protocol.enums.Command.DEVICE_SYNC;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 
 /**
@@ -57,7 +57,7 @@ public class Terminal extends OnePinWidget {
             Iterator<String> valIterator = lastCommands.iterator();
             if (valIterator.hasNext()) {
                 String body = makeMultiValueHardwareBody(deviceId, pinType.pintTypeChar, pin, valIterator);
-                appChannel.write(makeUTF8StringMessage(APP_SYNC, SYNC_DEFAULT_MESSAGE_ID, body));
+                appChannel.write(makeUTF8StringMessage(DEVICE_SYNC, SYNC_DEFAULT_MESSAGE_ID, body));
             }
         }
     }

@@ -30,7 +30,7 @@ public class DeviceCommandsTest extends SingleServerInstancePerTest {
         Device device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
 
-        clientPair.appClient.createDevice(1, device1);
+        clientPair.appClient.createDevice(device1);
         Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
@@ -130,7 +130,7 @@ public class DeviceCommandsTest extends SingleServerInstancePerTest {
         Device device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
 
-        clientPair.appClient.createDevice(1, device1);
+        clientPair.appClient.createDevice(device1);
         device1 = clientPair.appClient.parseDevice();
         assertNotNull(device1);
         assertNotNull(device1.token);

@@ -85,7 +85,7 @@ public class MultiAppTest extends SingleServerInstancePerTest {
         verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(4, DEVICE_NOT_IN_NETWORK)));
 
         appClient.reset();
-        appClient.createDevice(1, new Device(0, "123", BoardType.ESP8266));
+        appClient.createDevice(new Device(0, "123", BoardType.ESP8266));
         Device device = appClient.parseDevice();
 
         String token = device.token;

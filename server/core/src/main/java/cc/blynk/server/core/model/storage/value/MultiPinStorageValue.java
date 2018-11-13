@@ -9,7 +9,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import static cc.blynk.server.core.model.widgets.MobileSyncWidget.SYNC_DEFAULT_MESSAGE_ID;
-import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
+import static cc.blynk.server.core.protocol.enums.Command.DEVICE_SYNC;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 import static cc.blynk.utils.StringUtils.prependDeviceId;
@@ -45,11 +45,11 @@ public class MultiPinStorageValue extends PinStorageValue {
                     sb.append(BODY_SEPARATOR).append(last);
                 }
 
-                appChannel.write(makeUTF8StringMessage(APP_SYNC, SYNC_DEFAULT_MESSAGE_ID, sb.toString()));
+                appChannel.write(makeUTF8StringMessage(DEVICE_SYNC, SYNC_DEFAULT_MESSAGE_ID, sb.toString()));
 
                 //special case, when few widgets are on the same pin
                 String body = prependDeviceId(deviceId, key.makeHardwareBody(last));
-                StringMessage message = makeUTF8StringMessage(APP_SYNC, SYNC_DEFAULT_MESSAGE_ID, body);
+                StringMessage message = makeUTF8StringMessage(DEVICE_SYNC, SYNC_DEFAULT_MESSAGE_ID, body);
                 appChannel.write(message, appChannel.voidPromise());
             }
         }

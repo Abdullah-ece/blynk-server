@@ -1,6 +1,5 @@
 package cc.blynk.server.hardware.internal;
 
-import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.web.product.Product;
@@ -16,8 +15,6 @@ public class ProvisionedDeviceAddedMessage {
 
     public final User user;
 
-    public final DashBoard dash;
-
     public final Device device;
 
     public final int msgId;
@@ -27,11 +24,10 @@ public class ProvisionedDeviceAddedMessage {
     public final String orgName;
 
     public ProvisionedDeviceAddedMessage(int orgId, User user,
-                                         DashBoard dash, Device device, int msgId,
+                                         Device device, int msgId,
                                          Product product, String orgName) {
         this.orgId = orgId;
         this.user = user;
-        this.dash = dash;
         this.device = device;
         this.msgId = msgId;
         this.product = product;

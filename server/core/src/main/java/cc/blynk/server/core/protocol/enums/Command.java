@@ -39,7 +39,7 @@ public final class Command {
     public static final short UPDATE_DASH = 22;
     public static final short DELETE_DASH = 23;
     public static final short LOAD_PROFILE_GZIPPED = 24;
-    public static final short APP_SYNC = 25;
+    public static final short DEVICE_SYNC = 25;
     public static final short SHARING = 26;
     public static final short ADD_PUSH_TOKEN = 27;
 
@@ -181,7 +181,7 @@ public final class Command {
             Map.entry(HARDWARE_LOGIN, "LoginHardware"),
             Map.entry(LOGOUT, "Logout"),
             Map.entry(LOAD_PROFILE_GZIPPED, "LoadProfile"),
-            Map.entry(APP_SYNC, "AppSync"),
+            Map.entry(DEVICE_SYNC, "AppSync"),
             Map.entry(SHARING, "Sharing"),
             Map.entry(ASSIGN_TOKEN, "AssignToken"),
             Map.entry(PING, "Ping"), Map.entry(SMS, "Sms"),

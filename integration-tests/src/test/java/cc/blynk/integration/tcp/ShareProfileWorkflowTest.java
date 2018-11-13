@@ -38,8 +38,8 @@ import static cc.blynk.integration.TestUtil.parseProfile;
 import static cc.blynk.integration.TestUtil.readTestUserProfile;
 import static cc.blynk.integration.TestUtil.setProperty;
 import static cc.blynk.server.core.protocol.enums.Command.ACTIVATE_DASHBOARD;
-import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.DEACTIVATE_DASHBOARD;
+import static cc.blynk.server.core.protocol.enums.Command.DEVICE_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.SHARING;
@@ -145,10 +145,10 @@ public class ShareProfileWorkflowTest extends SingleServerInstancePerTest {
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.send("hardware 1 vw 1 1");
-        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(produce(2, APP_SYNC, b("1 vw 1 1"))));
+        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(produce(2, DEVICE_SYNC, b("1 vw 1 1"))));
 
         appClient2.send("hardware 1 vw 2 2");
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(2, APP_SYNC, b("1 vw 2 2"))));
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(2, DEVICE_SYNC, b("1 vw 2 2"))));
 
         clientPair.appClient.reset();
         clientPair.hardwareClient.reset();
@@ -215,10 +215,10 @@ public class ShareProfileWorkflowTest extends SingleServerInstancePerTest {
         verify(appClient3.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.send("hardware 1 vw 1 1");
-        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(produce(5, APP_SYNC, b("1 vw 1 1"))));
+        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(produce(5, DEVICE_SYNC, b("1 vw 1 1"))));
 
         appClient2.send("hardware 1 vw 2 2");
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(2, APP_SYNC, b("1 vw 2 2"))));
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(2, DEVICE_SYNC, b("1 vw 2 2"))));
 
         clientPair.appClient.reset();
         clientPair.hardwareClient.reset();
@@ -300,10 +300,10 @@ public class ShareProfileWorkflowTest extends SingleServerInstancePerTest {
         appClient2.verifyResult(ok(1));
 
         clientPair.appClient.send("hardware 1 vw 1 1");
-        appClient2.verifyResult(produce(2, APP_SYNC, b("1 vw 1 1")));
+        appClient2.verifyResult(produce(2, DEVICE_SYNC, b("1 vw 1 1")));
 
         appClient2.send("hardware 1 vw 2 2");
-        clientPair.appClient.verifyResult(produce(2, APP_SYNC, b("1 vw 2 2")));
+        clientPair.appClient.verifyResult(produce(2, DEVICE_SYNC, b("1 vw 2 2")));
 
         clientPair.appClient.reset();
         appClient2.reset();
@@ -470,7 +470,7 @@ public class ShareProfileWorkflowTest extends SingleServerInstancePerTest {
         appClient2.send("hardware 1 vw 1 38");
 
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("vw 1 38"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, APP_SYNC, b("1 vw 1 38"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, DEVICE_SYNC, b("1 vw 1 38"))));
 
         clientPair.hardwareClient.verifyResult(hardware(888, "vw 2 123"));
         clientPair.appClient.verifyResult(hardware(888, "1-0 vw 2 123"));
@@ -695,10 +695,10 @@ public class ShareProfileWorkflowTest extends SingleServerInstancePerTest {
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.send("hardware 1 vw 1 1");
-        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, APP_SYNC, b("1 vw 1 1"))));
+        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, DEVICE_SYNC, b("1 vw 1 1"))));
 
         appClient2.send("hardware 1 vw 2 2");
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(2, APP_SYNC, b("1 vw 2 2"))));
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(2, DEVICE_SYNC, b("1 vw 2 2"))));
     }
 
     @Test
@@ -717,7 +717,7 @@ public class ShareProfileWorkflowTest extends SingleServerInstancePerTest {
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.send("hardware 1 vw 1 1");
-        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(produce(2, APP_SYNC, b("1 vw 1 1"))));
+        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(produce(2, DEVICE_SYNC, b("1 vw 1 1"))));
 
         clientPair.appClient.reset();
         clientPair.hardwareClient.reset();

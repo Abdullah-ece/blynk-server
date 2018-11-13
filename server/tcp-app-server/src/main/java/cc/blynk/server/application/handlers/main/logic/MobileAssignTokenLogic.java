@@ -2,7 +2,6 @@ package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.TokenManager;
-import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -14,7 +13,6 @@ import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
-import static cc.blynk.utils.StringUtils.split2;
 
 /**
  * Assigns static generated token to assigned device.
@@ -33,11 +31,7 @@ public final class MobileAssignTokenLogic {
 
     public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
                                        User user, StringMessage message) {
-        String[] split = split2(message.body);
-
-        int dashId = Integer.parseInt(split[0]);
-        String token = split[1];
-        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
+        String token = message.body;
 
         DBManager dbManager = holder.dbManager;
         TokenManager tokenManager = holder.tokenManager;
@@ -70,7 +64,7 @@ public final class MobileAssignTokenLogic {
                 return;
             }
 
-            tokenManager.assignToken(user.orgId, user, dash, device, token);
+            tokenManager.assignToken(user.orgId, user, device, token);
 
             ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
         });

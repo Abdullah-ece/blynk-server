@@ -388,7 +388,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         appClient.start();
         appClient.login(getUserName(), "1");
         appClient.verifyResult(ok(1));
-        appClient.getProvisionToken(1, newDevice);
+        appClient.getProvisionToken(newDevice);
         Device deviceFromApi = appClient.parseDevice(2);
         assertNotNull(deviceFromApi);
         assertNotNull(deviceFromApi.token);
@@ -459,7 +459,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         appClient.start();
         appClient.login(getUserName(), "1");
         appClient.verifyResult(ok(1));
-        appClient.getProvisionToken(1, newDevice);
+        appClient.getProvisionToken(newDevice);
         Device deviceFromApi = appClient.parseDevice(2);
         assertNotNull(deviceFromApi);
         assertNotNull(deviceFromApi.token);
@@ -590,7 +590,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         appClient.start();
         appClient.login(getUserName(), "1");
         appClient.verifyResult(ok(1));
-        appClient.getProvisionToken(1, newDevice);
+        appClient.getProvisionToken(newDevice);
         Device deviceFromApi = appClient.parseDevice(2);
         assertNotNull(deviceFromApi);
         assertNotNull(deviceFromApi.token);
@@ -658,7 +658,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         appClient.start();
         appClient.login(getUserName(), "1");
         appClient.verifyResult(ok(1));
-        appClient.getProvisionToken(1, newDevice);
+        appClient.getProvisionToken(newDevice);
         Device deviceFromApi = appClient.parseDevice(2);
         assertNotNull(deviceFromApi);
         assertNotNull(deviceFromApi.token);
@@ -725,7 +725,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         appClient.start();
         appClient.login(getUserName(), "1");
         appClient.verifyResult(ok(1));
-        appClient.getProvisionToken(1, newDevice);
+        appClient.getProvisionToken(newDevice);
         Device deviceFromApi = appClient.parseDevice(2);
         assertNotNull(deviceFromApi);
         assertNotNull(deviceFromApi.token);

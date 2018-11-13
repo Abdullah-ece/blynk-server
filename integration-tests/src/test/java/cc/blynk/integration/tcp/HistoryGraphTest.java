@@ -169,7 +169,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
     public void testGetGraphDataForTagAndForEnhancedGraph1StreamWithoutData() throws Exception {
         Device device1 = new Device(1, "My Device", BoardType.ESP8266);
 
-        clientPair.appClient.createDevice(1, device1);
+        clientPair.appClient.createDevice(device1);
         Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
@@ -233,7 +233,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
     public void testGetGraphDataForTagAndForEnhancedGraphMAX() throws Exception {
         Device device1 = new Device(1, "My Device", BoardType.ESP8266);
 
-        clientPair.appClient.createDevice(1, device1);
+        clientPair.appClient.createDevice(device1);
         Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
@@ -299,7 +299,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
     public void testGetGraphDataForTagAndForEnhancedGraphMIN() throws Exception {
         Device device1 = new Device(1, "My Device", BoardType.ESP8266);
 
-        clientPair.appClient.createDevice(1, device1);
+        clientPair.appClient.createDevice(device1);
         Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
@@ -365,7 +365,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
     public void testGetGraphDataForTagAndForEnhancedGraphSUM() throws Exception {
         Device device1 = new Device(1, "My Device", BoardType.ESP8266);
 
-        clientPair.appClient.createDevice(1, device1);
+        clientPair.appClient.createDevice(device1);
         Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
@@ -431,7 +431,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
     public void testGetGraphDataForTagAndForEnhancedGraphAVG() throws Exception {
         Device device1 = new Device(1, "My Device", BoardType.ESP8266);
 
-        clientPair.appClient.createDevice(1, device1);
+        clientPair.appClient.createDevice(device1);
         Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
@@ -497,7 +497,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
     public void testGetGraphDataForTagAndForEnhancedGraphMEDIAN() throws Exception {
         Device device1 = new Device(1, "My Device", BoardType.ESP8266);
 
-        clientPair.appClient.createDevice(1, device1);
+        clientPair.appClient.createDevice(device1);
         Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
@@ -564,13 +564,13 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         Device device1 = new Device(1, "My Device", BoardType.ESP8266);
         Device device2 = new Device(2, "My Device", BoardType.ESP8266);
 
-        clientPair.appClient.createDevice(1, device1);
+        clientPair.appClient.createDevice(device1);
         Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
 
-        clientPair.appClient.createDevice(1, device2);
+        clientPair.appClient.createDevice(device2);
         device = clientPair.appClient.parseDevice(2);
         assertNotNull(device);
         assertNotNull(device.token);
@@ -1009,7 +1009,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         Device device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
 
-        clientPair.appClient.createDevice(1, device1);
+        clientPair.appClient.createDevice(device1);
         Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
@@ -1668,7 +1668,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         Device device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
 
-        clientPair.appClient.createDevice(1, device1);
+        clientPair.appClient.createDevice(device1);
         Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
@@ -1939,7 +1939,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         Device device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
 
-        clientPair.appClient.createDevice(1, device1);
+        clientPair.appClient.createDevice(device1);
         Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
@@ -2182,7 +2182,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         Device device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
 
-        clientPair.appClient.createDevice(1, device1);
+        clientPair.appClient.createDevice(device1);
         Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
@@ -2259,7 +2259,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         Device device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
 
-        clientPair.appClient.createDevice(1, device1);
+        clientPair.appClient.createDevice(device1);
         Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);

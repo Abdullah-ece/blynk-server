@@ -146,8 +146,8 @@ public class TestAppClient extends BaseTestAppClient {
         send("updateTag " + dashId + BODY_SEPARATOR + tag.toString());
     }
 
-    public void createDevice(int dashId, Device device) {
-        send("createDevice " + dashId + BODY_SEPARATOR + device.toString());
+    public void createDevice(Device device) {
+        send("createDevice " + device.toString());
     }
 
     public void updateDevice(int dashId, Device device) {
@@ -347,8 +347,8 @@ public class TestAppClient extends BaseTestAppClient {
         send(produceMessageBaseOnUserInput(line, id));
     }
 
-    public void getProvisionToken(int dashId, Device device) {
-        send("getProvisionToken " + dashId + BODY_SEPARATOR + device.toString());
+    public void getProvisionToken(Device device) {
+        send("getProvisionToken " + device.toString());
     }
 
     public void createApp(App app) {

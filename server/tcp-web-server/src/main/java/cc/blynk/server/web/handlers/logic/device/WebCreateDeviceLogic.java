@@ -103,7 +103,7 @@ public class WebCreateDeviceLogic {
         deviceDao.create(orgId, newDevice);
 
         String newToken = TokenGeneratorUtil.generateNewToken();
-        tokenManager.assignToken(orgId, user, dash, newDevice, newToken);
+        tokenManager.assignToken(orgId, user, newDevice, newToken);
 
         user.lastModifiedTs = System.currentTimeMillis();
 

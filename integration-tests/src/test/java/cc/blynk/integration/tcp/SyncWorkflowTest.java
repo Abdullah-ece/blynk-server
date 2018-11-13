@@ -501,7 +501,7 @@ public class SyncWorkflowTest extends SingleServerInstancePerTest {
 
         Device device1 = new Device(1, "My Device", BoardType.ESP8266);
 
-        clientPair.appClient.createDevice(1, device1);
+        clientPair.appClient.createDevice(device1);
         Device device = clientPair.appClient.parseDevice(2);
         assertNotNull(device);
         assertNotNull(device.token);
@@ -533,7 +533,7 @@ public class SyncWorkflowTest extends SingleServerInstancePerTest {
     public void testSyncForMultiDevicesNoWidget() throws Exception {
         Device device1 = new Device(1, "My Device", BoardType.ESP8266);
 
-        clientPair.appClient.createDevice(1, device1);
+        clientPair.appClient.createDevice(device1);
         Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);

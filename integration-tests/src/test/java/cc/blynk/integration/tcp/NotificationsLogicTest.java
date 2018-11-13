@@ -187,7 +187,7 @@ public class NotificationsLogicTest extends SingleServerInstancePerTest {
 
         Device device1 = new Device(1, "Name", BoardType.ESP8266);
 
-        clientPair.appClient.createDevice(1, device1);
+        clientPair.appClient.createDevice(device1);
         Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);

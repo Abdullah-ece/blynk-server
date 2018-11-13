@@ -1,13 +1,11 @@
 package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.mobile.MobileStateHolder;
-import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.REFRESH_TOKEN;
@@ -27,19 +25,9 @@ public final class MobileRefreshTokenLogic {
 
     public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
                                        MobileStateHolder state, StringMessage message) {
-        String[] split = StringUtils.split2(message.body);
-
-        int dashId = Integer.parseInt(split[0]);
-        int deviceId = 0;
-
-        //new value for multi devices
-        if (split.length == 2) {
-            deviceId = Integer.parseInt(split[1]);
-        }
-
+        int deviceId = Integer.parseInt(message.body);
         User user = state.user;
 
-        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
         Device device = holder.deviceDao.getById(deviceId);
 
         if (device == null) {
@@ -47,7 +35,7 @@ public final class MobileRefreshTokenLogic {
             return;
         }
 
-        String token = holder.tokenManager.refreshToken(user.orgId, user, dash, device);
+        String token = holder.tokenManager.refreshToken(user.orgId, user, device);
 
         Session session = holder.sessionDao.getOrgSession(state.orgId);
         session.closeHardwareChannelByDeviceId(deviceId);

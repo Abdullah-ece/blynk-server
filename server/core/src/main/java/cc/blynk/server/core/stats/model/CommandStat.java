@@ -3,7 +3,6 @@ package cc.blynk.server.core.stats.model;
 import static cc.blynk.server.core.protocol.enums.Command.ACTIVATE_DASHBOARD;
 import static cc.blynk.server.core.protocol.enums.Command.ADD_ENERGY;
 import static cc.blynk.server.core.protocol.enums.Command.ADD_PUSH_TOKEN;
-import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.BLYNK_INTERNAL;
 import static cc.blynk.server.core.protocol.enums.Command.BRIDGE;
 import static cc.blynk.server.core.protocol.enums.Command.CONNECT_REDIRECT;
@@ -17,6 +16,7 @@ import static cc.blynk.server.core.protocol.enums.Command.DELETE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_TAG;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.DEVICE_CONNECTED;
+import static cc.blynk.server.core.protocol.enums.Command.DEVICE_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.EMAIL;
 import static cc.blynk.server.core.protocol.enums.Command.EVENTOR;
 import static cc.blynk.server.core.protocol.enums.Command.GET_DEVICES;
@@ -142,7 +142,7 @@ public class CommandStat {
             case LOAD_PROFILE_GZIPPED :
                 this.loadProfile = val;
                 break;
-            case APP_SYNC :
+            case DEVICE_SYNC:
                 this.appSync = val;
                 break;
             case SHARING :

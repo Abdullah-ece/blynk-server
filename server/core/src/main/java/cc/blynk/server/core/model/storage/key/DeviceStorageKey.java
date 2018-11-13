@@ -6,7 +6,7 @@ import cc.blynk.server.core.model.widgets.MultiPinWidget;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
+import static cc.blynk.server.core.protocol.enums.Command.DEVICE_SYNC;
 
 /**
  * The Blynk Project.
@@ -50,7 +50,7 @@ public class DeviceStorageKey {
     }
 
     public short getCmdType() {
-        return APP_SYNC;
+        return DEVICE_SYNC;
     }
 
     @Override

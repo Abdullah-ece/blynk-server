@@ -238,7 +238,7 @@ public class LoadBalancingIntegrationTest extends BaseTest {
         Device device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
 
-        clientPair.appClient.createDevice(1, device1);
+        clientPair.appClient.createDevice(device1);
         Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
@@ -252,7 +252,7 @@ public class LoadBalancingIntegrationTest extends BaseTest {
         Device device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
 
-        clientPair.appClient.createDevice(1, device1);
+        clientPair.appClient.createDevice(device1);
         Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
@@ -374,7 +374,7 @@ public class LoadBalancingIntegrationTest extends BaseTest {
         appClient.verifyResult(new ResponseMessage(4, DEVICE_NOT_IN_NETWORK));
 
         appClient.reset();
-        appClient.createDevice(1, new Device(0, "123", BoardType.ESP8266));
+        appClient.createDevice(new Device(0, "123", BoardType.ESP8266));
         Device device = appClient.parseDevice();
 
         String token = device.token;

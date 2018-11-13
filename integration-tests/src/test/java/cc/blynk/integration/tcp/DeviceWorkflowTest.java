@@ -75,7 +75,7 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
         Device device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
 
-        clientPair.appClient.createDevice(1, device1);
+        clientPair.appClient.createDevice(device1);
         Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
@@ -115,7 +115,7 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
     public void testDeviceWentOfflineMessage() throws Exception {
         Device device1 = new Device(1, "My Device", BoardType.ESP8266);
 
-        clientPair.appClient.createDevice(1, device1);
+        clientPair.appClient.createDevice(device1);
         Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
@@ -141,7 +141,7 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
     public void testSendHardwareCommandToAppFromMultipleDevices() throws Exception {
         Device device1 = new Device(1, "My Device", BoardType.ESP8266);
 
-        clientPair.appClient.createDevice(1, device1);
+        clientPair.appClient.createDevice(device1);
         Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
@@ -173,7 +173,7 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
 
         Device device1 = new Device(1, "My Device", BoardType.ESP8266);
 
-        clientPair.appClient.createDevice(1, device1);
+        clientPair.appClient.createDevice(device1);
         Device device = clientPair.appClient.parseDevice(2);
         assertNotNull(device);
         assertNotNull(device.token);
@@ -199,7 +199,7 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
 
         Device device1 = new Device(1, "My Device", BoardType.ESP8266);
 
-        clientPair.appClient.createDevice(1, device1);
+        clientPair.appClient.createDevice(device1);
         Device device = clientPair.appClient.parseDevice(2);
         assertNotNull(device);
         assertNotNull(device.token);
@@ -238,7 +238,7 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
     public void testActivateForMultiDevices() throws Exception {
         Device device1 = new Device(1, "My Device", BoardType.ESP8266);
 
-        clientPair.appClient.createDevice(1, device1);
+        clientPair.appClient.createDevice(device1);
         Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
@@ -266,7 +266,7 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
 
         Device device1 = new Device(1, "My Device", BoardType.ESP8266);
 
-        clientPair.appClient.createDevice(1, device1);
+        clientPair.appClient.createDevice(device1);
         Device device = clientPair.appClient.parseDevice(3);
         assertNotNull(device);
         assertNotNull(device.token);
@@ -301,7 +301,7 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
 
         Device device1 = new Device(1, "My Device", BoardType.ESP8266);
 
-        clientPair.appClient.createDevice(1, device1);
+        clientPair.appClient.createDevice(device1);
         Device device = clientPair.appClient.parseDevice(2);
 
         assertNotNull(device);
@@ -333,7 +333,7 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
         Device device0 = new Device(0, "My Dashboard", BoardType.Arduino_UNO);
         Device device1 = new Device(1, "My Device", BoardType.ESP8266);
 
-        clientPair.appClient.createDevice(1, device1);
+        clientPair.appClient.createDevice(device1);
         Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
@@ -442,7 +442,7 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
     public void testHardwareChannelClosedOnDashRemoval() throws Exception {
         Device device1 = new Device(1, "My Device", BoardType.ESP8266);
 
-        clientPair.appClient.createDevice(1, device1);
+        clientPair.appClient.createDevice(device1);
         Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
@@ -473,7 +473,7 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
     public void testHardwareChannelClosedOnDeviceRemoval() throws Exception {
         Device device1 = new Device(1, "My Device", BoardType.ESP8266);
 
-        clientPair.appClient.createDevice(1, device1);
+        clientPair.appClient.createDevice(device1);
         Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
@@ -520,7 +520,7 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testHardwareDataRemovedWhenDeviceRemoved() throws Exception {
-        clientPair.appClient.createDevice(1, new Device(1, "My Device", BoardType.ESP8266));
+        clientPair.appClient.createDevice(new Device(1, "My Device", BoardType.ESP8266));
         Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
@@ -583,7 +583,7 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
     public void testTemporaryTokenWorksAsExpected() throws Exception {
         Device device1 = new Device(1, "My Device", BoardType.ESP8266);
 
-        clientPair.appClient.getProvisionToken(1, device1);
+        clientPair.appClient.getProvisionToken(device1);
         device1 = clientPair.appClient.parseDevice(1);
         assertNotNull(device1);
         assertEquals(1, device1.id);
@@ -630,7 +630,7 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
     public void testCorrectRemovalForTags() throws Exception {
         Device device1 = new Device(1, "My Device", BoardType.ESP8266);
 
-        clientPair.appClient.createDevice(1, device1);
+        clientPair.appClient.createDevice(device1);
         Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
@@ -676,7 +676,7 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
     public void testCorrectRemovalForDeviceSelector() throws Exception {
         Device device1 = new Device(1, "My Device", BoardType.ESP8266);
 
-        clientPair.appClient.createDevice(1, device1);
+        clientPair.appClient.createDevice(device1);
         Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);

@@ -192,7 +192,7 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
         Device device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
 
-        clientPair.appClient.createDevice(1, device1);
+        clientPair.appClient.createDevice(device1);
         device1 = clientPair.appClient.parseDevice();
         assertNotNull(device1);
         assertEquals(1, device1.id);
@@ -236,7 +236,7 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
         Device device0 = new Device(0, "My Dashboard", BoardType.Arduino_UNO);
         device0.status = Status.ONLINE;
 
-        clientPair.appClient.createDevice(10, device0);
+        clientPair.appClient.createDevice(device0);
         Device device = clientPair.appClient.parseDevice(2);
         assertNotNull(device);
         assertNotNull(device.token);
@@ -306,7 +306,7 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
         Device device0 = new Device(0, "My Dashboard", BoardType.ESP8266);
         device0.status = Status.ONLINE;
 
-        clientPair.appClient.createDevice(10, device0);
+        clientPair.appClient.createDevice(device0);
         Device device = clientPair.appClient.parseDevice(2);
         assertNotNull(device);
         assertNotNull(device.token);
@@ -434,12 +434,12 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
         clientPair.appClient.createDash(dashBoard);
 
         Device device0 = new Device(0, "My Dashboard", BoardType.Arduino_UNO);
-        clientPair.appClient.createDevice(10, device0);
+        clientPair.appClient.createDevice(device0);
         device0 = clientPair.appClient.parseDevice(2);
         clientPair.appClient.verifyResult(createDevice(2, device0));
 
         Device device2 = new Device(2, "My Dashboard", BoardType.Arduino_UNO);
-        clientPair.appClient.createDevice(10, device2);
+        clientPair.appClient.createDevice(device2);
         device2 = clientPair.appClient.parseDevice(3);
         clientPair.appClient.verifyResult(createDevice(3, device2));
 
@@ -511,12 +511,12 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
         clientPair.appClient.createDash(dashBoard);
 
         Device device0 = new Device(0, "My Dashboard", BoardType.Arduino_UNO);
-        clientPair.appClient.createDevice(10, device0);
+        clientPair.appClient.createDevice(device0);
         device0 = clientPair.appClient.parseDevice(2);
         clientPair.appClient.verifyResult(createDevice(2, device0));
 
         Device device2 = new Device(2, "My Dashboard", BoardType.Arduino_UNO);
-        clientPair.appClient.createDevice(10, device2);
+        clientPair.appClient.createDevice(device2);
         device2 = clientPair.appClient.parseDevice(3);
         clientPair.appClient.verifyResult(createDevice(3, device2));
 
@@ -635,7 +635,7 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
         Device device0 = new Device(0, "My Device", BoardType.Arduino_UNO);
         device0.status = Status.ONLINE;
 
-        clientPair.appClient.createDevice(10, device0);
+        clientPair.appClient.createDevice(device0);
         Device device = clientPair.appClient.parseDevice(2);
         assertNotNull(device);
         assertNotNull(device.token);

@@ -1,6 +1,5 @@
 package cc.blynk.server.application.handlers.main.logic;
 
-import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -23,9 +22,6 @@ import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 public final class MobileSetWidgetPropertyLogic {
 
     private static final Logger log = LogManager.getLogger(MobileSetWidgetPropertyLogic.class);
-
-    private MobileSetWidgetPropertyLogic(SessionDao sessionDao) {
-    }
 
     public static void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
         var splitBody = message.body.split(StringUtils.BODY_SEPARATOR_STRING);

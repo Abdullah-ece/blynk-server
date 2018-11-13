@@ -3,7 +3,6 @@ package cc.blynk.client;
 import static cc.blynk.server.core.protocol.enums.Command.ACTIVATE_DASHBOARD;
 import static cc.blynk.server.core.protocol.enums.Command.ADD_ENERGY;
 import static cc.blynk.server.core.protocol.enums.Command.ADD_PUSH_TOKEN;
-import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.ASSIGN_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.BLYNK_INTERNAL;
 import static cc.blynk.server.core.protocol.enums.Command.BRIDGE;
@@ -24,6 +23,7 @@ import static cc.blynk.server.core.protocol.enums.Command.DELETE_REPORT;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_TAG;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_TILE_TEMPLATE;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_WIDGET;
+import static cc.blynk.server.core.protocol.enums.Command.DEVICE_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.EMAIL;
 import static cc.blynk.server.core.protocol.enums.Command.EMAIL_QR;
 import static cc.blynk.server.core.protocol.enums.Command.EXPORT_REPORT;
@@ -127,7 +127,7 @@ public final class CommandParserUtil {
             case "loadprofilegzipped" :
                 return LOAD_PROFILE_GZIPPED;
             case "appsync" :
-                return APP_SYNC;
+                return DEVICE_SYNC;
             case "sharing" :
                 return SHARING;
             case "assigntoken" :

@@ -107,7 +107,7 @@ public class ReportingTest extends BaseTest {
     @Test
     public void testDeleteAllDeviceData() throws Exception {
         Device device1 = new Device(2, "My Device2", BoardType.ESP8266);
-        clientPair.appClient.createDevice(1, device1);
+        clientPair.appClient.createDevice(device1);
 
         String tempDir = holder.props.getProperty("data.folder");
 
@@ -144,7 +144,7 @@ public class ReportingTest extends BaseTest {
     @Test
     public void testDeleteDeviceDataFor1Device() throws Exception {
         Device device1 = new Device(2, "My Device2", BoardType.ESP8266);
-        clientPair.appClient.createDevice(1, device1);
+        clientPair.appClient.createDevice(device1);
 
         String tempDir = holder.props.getProperty("data.folder");
 
@@ -181,7 +181,7 @@ public class ReportingTest extends BaseTest {
     @Test
     public void testDeleteDeviceDataForSpecificPin() throws Exception {
         Device device1 = new Device(2, "My Device2", BoardType.ESP8266);
-        clientPair.appClient.createDevice(1, device1);
+        clientPair.appClient.createDevice(device1);
 
         String tempDir = holder.props.getProperty("data.folder");
 
@@ -674,7 +674,7 @@ public class ReportingTest extends BaseTest {
     @Test
     public void testFinalFileNameCSVPerDevicePerPin() throws Exception {
         Device device1 = new Device(2, "My Device2 with big name", BoardType.ESP8266);
-        clientPair.appClient.createDevice(1, device1);
+        clientPair.appClient.createDevice(device1);
 
         String tempDir = holder.props.getProperty("data.folder");
         Path userReportFolder = Paths.get(tempDir, "data", getUserName());
@@ -755,7 +755,7 @@ public class ReportingTest extends BaseTest {
     @Test
     public void testFinalFileNameCSVPerDevice() throws Exception {
         Device device1 = new Device(2, "My Device2 with big name", BoardType.ESP8266);
-        clientPair.appClient.createDevice(1, device1);
+        clientPair.appClient.createDevice(device1);
 
         String tempDir = holder.props.getProperty("data.folder");
         Path userReportFolder = Paths.get(tempDir, "data", getUserName());
@@ -844,7 +844,7 @@ public class ReportingTest extends BaseTest {
     @Test
     public void testFinalFileNameCSVPerDeviceUtf8() throws Exception {
         Device device1 = new Device(2, "My Device2 with big name", BoardType.ESP8266);
-        clientPair.appClient.createDevice(1, device1);
+        clientPair.appClient.createDevice(device1);
 
         String tempDir = holder.props.getProperty("data.folder");
         Path userReportFolder = Paths.get(tempDir, "data", getUserName());
@@ -933,7 +933,7 @@ public class ReportingTest extends BaseTest {
     @Test
     public void testFinalFileNameCSVPerDevice2() throws Exception {
         Device device1 = new Device(2, "My Device2 with big name", BoardType.ESP8266);
-        clientPair.appClient.createDevice(1, device1);
+        clientPair.appClient.createDevice(device1);
 
         String tempDir = holder.props.getProperty("data.folder");
         Path userReportFolder = Paths.get(tempDir, "data", getUserName());
@@ -1033,7 +1033,7 @@ public class ReportingTest extends BaseTest {
     @Test
     public void testFinalFileNameCSVPerDeviceUnicode() throws Exception {
         Device device1 = new Device(2, "Мій девайс", BoardType.ESP8266);
-        clientPair.appClient.createDevice(1, device1);
+        clientPair.appClient.createDevice(device1);
 
         String tempDir = holder.props.getProperty("data.folder");
         Path userReportFolder = Paths.get(tempDir, "data", getUserName());
@@ -1119,7 +1119,7 @@ public class ReportingTest extends BaseTest {
     @Test
     public void testFinalFileNameCSVPerDevice2DataStreamWithName() throws Exception {
         Device device1 = new Device(2, "My Device2 with big name", BoardType.ESP8266);
-        clientPair.appClient.createDevice(1, device1);
+        clientPair.appClient.createDevice(device1);
 
         String tempDir = holder.props.getProperty("data.folder");
         Path userReportFolder = Paths.get(tempDir, "data", getUserName());
@@ -1219,7 +1219,7 @@ public class ReportingTest extends BaseTest {
     @Test
     public void testFinalFileNameCSVMerged2DataStreamWithName() throws Exception {
         Device device1 = new Device(2, "My Device2 with big name", BoardType.ESP8266);
-        clientPair.appClient.createDevice(1, device1);
+        clientPair.appClient.createDevice(device1);
 
         String tempDir = holder.props.getProperty("data.folder");
         Path userReportFolder = Paths.get(tempDir, "data", getUserName());
@@ -1312,7 +1312,7 @@ public class ReportingTest extends BaseTest {
     @Test
     public void testFinalFileNameCSVMerged2DataStreamWithNameCorrectEscaping() throws Exception {
         Device device1 = new Device(2, "My Device2 with \"big\" name", BoardType.ESP8266);
-        clientPair.appClient.createDevice(1, device1);
+        clientPair.appClient.createDevice(device1);
 
         String tempDir = holder.props.getProperty("data.folder");
         Path userReportFolder = Paths.get(tempDir, "data", getUserName());
@@ -1405,7 +1405,7 @@ public class ReportingTest extends BaseTest {
     @Test
     public void testFinalFileNameCSVMerged2DataStreamWithNameCorrectEscaping2() throws Exception {
         Device device1 = new Device(2, "My Device2 with, big name", BoardType.ESP8266);
-        clientPair.appClient.createDevice(1, device1);
+        clientPair.appClient.createDevice(device1);
 
         String tempDir = holder.props.getProperty("data.folder");
         Path userReportFolder = Paths.get(tempDir, "data", getUserName());

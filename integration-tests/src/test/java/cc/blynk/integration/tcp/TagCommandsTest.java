@@ -157,7 +157,7 @@ public class TagCommandsTest extends SingleServerInstancePerTest {
         //creating new device
         Device device1 = new Device(1, "My Device", BoardType.ESP8266);
 
-        clientPair.appClient.createDevice(1, device1);
+        clientPair.appClient.createDevice(device1);
         device1 = clientPair.appClient.parseDevice();
         assertNotNull(device1);
         assertNotNull(device1.token);

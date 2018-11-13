@@ -1,6 +1,5 @@
 package cc.blynk.server.core.dao;
 
-import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.web.Organization;
@@ -33,7 +32,7 @@ class RegularTokenManager {
         }
     }
 
-    String assignToken(int orgId, User user, DashBoard dash, Device device, String newToken) {
+    String assignToken(int orgId, User user, Device device, String newToken) {
         // Clean old token from cache if exists.
         String oldToken = deleteDeviceToken(device.token);
 
@@ -48,8 +47,8 @@ class RegularTokenManager {
 
         user.lastModifiedTs = System.currentTimeMillis();
 
-        log.debug("Generated token for user {}, dashId {}, deviceId {} is {}.",
-                user.email, dash.id, device.id, newToken);
+        log.debug("Generated token for user {}, deviceId {} is {}.",
+                user.email, device.id, newToken);
 
         return oldToken;
     }

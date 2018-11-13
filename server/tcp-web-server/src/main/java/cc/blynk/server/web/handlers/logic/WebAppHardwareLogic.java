@@ -14,7 +14,7 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
+import static cc.blynk.server.core.protocol.enums.Command.DEVICE_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.internal.CommonByteBufUtil.deviceNotInNetwork;
 import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommandBody;
@@ -76,9 +76,9 @@ public class WebAppHardwareLogic {
 
         //sending to shared dashes and master-master apps
 
-        session.sendToApps(APP_SYNC, message.id, deviceId, split[1]);
+        session.sendToApps(DEVICE_SYNC, message.id, deviceId, split[1]);
 
-        session.sendToSelectedDeviceOnWeb(channel, APP_SYNC, message.id, split[1], deviceId);
+        session.sendToSelectedDeviceOnWeb(channel, DEVICE_SYNC, message.id, split[1], deviceId);
 
         if (session.sendMessageToHardware(HARDWARE, message.id, split[1], deviceId)) {
             log.debug("No device in session.");

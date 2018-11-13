@@ -5,7 +5,6 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.mobile.MobileStateHolder;
 import io.netty.channel.ChannelHandlerContext;
@@ -13,7 +12,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
-import static cc.blynk.utils.StringUtils.split2;
 
 /**
  * The Blynk Project.
@@ -29,22 +27,16 @@ public final class MobileDeleteDeviceLogic {
 
     public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
                                        MobileStateHolder state, StringMessage message) {
-        String[] split = split2(message.body);
-
-        if (split.length < 2) {
-            throw new IllegalCommandException("Wrong income message format.");
-        }
-
-        int dashId = Integer.parseInt(split[0]);
-        int deviceId = Integer.parseInt(split[1]);
+        int deviceId = Integer.parseInt(message.body);
 
         User user = state.user;
-        DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
 
         Device device = holder.deviceDao.getByIdOrThrow(deviceId);
         log.debug("Deleting device with id {}.", deviceId);
 
-        dash.eraseWidgetValuesForDevice(deviceId);
+        for (DashBoard dash : user.profile.dashBoards) {
+            dash.eraseWidgetValuesForDevice(deviceId);
+        }
         user.profile.deleteDeviceFromTags(deviceId);
         holder.tokenManager.deleteDevice(device);
         holder.deviceDao.delete(device.id);

@@ -16,8 +16,8 @@ import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.ADD_PUSH_TOKEN;
-import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_DEVICE_DATA;
+import static cc.blynk.server.core.protocol.enums.Command.DEVICE_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.GET_DEVICES;
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENHANCED_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
@@ -66,8 +66,8 @@ public class MobileShareHandler extends BaseSimpleChannelInboundHandler<StringMe
             case PING :
                 PingLogic.messageReceived(ctx, msg.id);
                 break;
-            case APP_SYNC :
-                MobileSyncLogic.messageReceived(holder, ctx, state, msg);
+            case DEVICE_SYNC:
+                MobileSyncLogic.messageReceived(holder, ctx, msg);
                 break;
             case LOGOUT :
                 MobileLogoutLogic.messageReceived(ctx, state.user, msg);

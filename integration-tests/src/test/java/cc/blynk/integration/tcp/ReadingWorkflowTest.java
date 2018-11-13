@@ -116,7 +116,7 @@ public class ReadingWorkflowTest extends SingleServerInstancePerTest {
     public void testSendReadForMultipleDevices() throws Exception {
         Device device2 = new Device(2, "My Device", BoardType.ESP8266);
 
-        clientPair.appClient.createDevice(1, device2);
+        clientPair.appClient.createDevice(device2);
         device2 = clientPair.appClient.parseDevice();
 
         assertNotNull(device2);
@@ -147,7 +147,7 @@ public class ReadingWorkflowTest extends SingleServerInstancePerTest {
     public void testSendReadForDeviceSelector() throws Exception {
         Device device2 = new Device(2, "My Device", BoardType.ESP8266);
 
-        clientPair.appClient.createDevice(1, device2);
+        clientPair.appClient.createDevice(device2);
         device2 = clientPair.appClient.parseDevice();
 
         assertNotNull(device2);
@@ -185,7 +185,7 @@ public class ReadingWorkflowTest extends SingleServerInstancePerTest {
     public void testSendReadForMultipleDevices2() throws Exception {
         Device device2 = new Device(2, "My Device", BoardType.ESP8266);
 
-        clientPair.appClient.createDevice(1, device2);
+        clientPair.appClient.createDevice(device2);
         device2 = clientPair.appClient.parseDevice();
 
         assertNotNull(device2);
@@ -241,7 +241,7 @@ public class ReadingWorkflowTest extends SingleServerInstancePerTest {
     public void testSendReadOnlyForOnlineApp() throws Exception {
         Device device2 = new Device(2, "My Device", BoardType.ESP8266);
 
-        clientPair.appClient.createDevice(1, device2);
+        clientPair.appClient.createDevice(device2);
 
         device2 = clientPair.appClient.parseDevice();
         assertNotNull(device2);

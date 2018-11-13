@@ -5,7 +5,7 @@ import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
 import io.netty.channel.Channel;
 
-import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
+import static cc.blynk.server.core.protocol.enums.Command.DEVICE_SYNC;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.utils.StringUtils.prependDeviceId;
 
@@ -34,14 +34,14 @@ public class TwoAxisJoystick extends MultiPinWidget {
                 for (DataStream dataStream : dataStreams) {
                     if (dataStream.notEmptyAndIsValid()) {
                         String body = prependDeviceId(deviceId, dataStream.makeHardwareBody());
-                        appChannel.write(makeUTF8StringMessage(APP_SYNC, SYNC_DEFAULT_MESSAGE_ID, body),
+                        appChannel.write(makeUTF8StringMessage(DEVICE_SYNC, SYNC_DEFAULT_MESSAGE_ID, body),
                                 appChannel.voidPromise());
                     }
                 }
             } else {
                 if (dataStreams[0].notEmptyAndIsValid()) {
                     String body = prependDeviceId(deviceId, dataStreams[0].makeHardwareBody());
-                    appChannel.write(makeUTF8StringMessage(APP_SYNC, SYNC_DEFAULT_MESSAGE_ID, body),
+                    appChannel.write(makeUTF8StringMessage(DEVICE_SYNC, SYNC_DEFAULT_MESSAGE_ID, body),
                             appChannel.voidPromise());
                 }
             }

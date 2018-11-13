@@ -66,7 +66,6 @@ import io.netty.channel.ChannelHandlerContext;
 import static cc.blynk.server.core.protocol.enums.Command.ACTIVATE_DASHBOARD;
 import static cc.blynk.server.core.protocol.enums.Command.ADD_ENERGY;
 import static cc.blynk.server.core.protocol.enums.Command.ADD_PUSH_TOKEN;
-import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.ASSIGN_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.CREATE_APP;
 import static cc.blynk.server.core.protocol.enums.Command.CREATE_DASH;
@@ -85,6 +84,7 @@ import static cc.blynk.server.core.protocol.enums.Command.DELETE_REPORT;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_TAG;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_TILE_TEMPLATE;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_WIDGET;
+import static cc.blynk.server.core.protocol.enums.Command.DEVICE_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.EMAIL;
 import static cc.blynk.server.core.protocol.enums.Command.EMAIL_QR;
 import static cc.blynk.server.core.protocol.enums.Command.EXPORT_REPORT;
@@ -294,8 +294,8 @@ public class MobileHandler extends BaseSimpleChannelInboundHandler<StringMessage
                 MobileGetTagsLogic.messageReceived(ctx, state.user, msg);
                 break;
 
-            case APP_SYNC :
-                MobileSyncLogic.messageReceived(holder, ctx, state, msg);
+            case DEVICE_SYNC:
+                MobileSyncLogic.messageReceived(holder, ctx, msg);
                 break;
 
             case CREATE_APP :

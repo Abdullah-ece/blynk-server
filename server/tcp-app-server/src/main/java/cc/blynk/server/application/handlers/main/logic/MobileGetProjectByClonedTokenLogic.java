@@ -3,7 +3,6 @@ package cc.blynk.server.application.handlers.main.logic;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.FileManager;
-import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
@@ -42,7 +41,6 @@ public class MobileGetProjectByClonedTokenLogic {
     private final DBManager dbManager;
     private final FileManager fileManager;
     private final TimerWorker timerWorker;
-    private final TokenManager tokenManager;
     private final int dashMaxLimit;
 
     public MobileGetProjectByClonedTokenLogic(Holder holder) {
@@ -51,7 +49,6 @@ public class MobileGetProjectByClonedTokenLogic {
         this.fileManager = holder.fileManager;
         this.dashMaxLimit = holder.limits.dashboardsLimit;
         this.timerWorker = holder.timerWorker;
-        this.tokenManager = holder.tokenManager;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {

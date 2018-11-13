@@ -14,7 +14,7 @@ import io.netty.channel.Channel;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
+import static cc.blynk.server.core.protocol.enums.Command.DEVICE_SYNC;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_DEVICE_TILES;
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_TEMPLATES;
@@ -167,7 +167,7 @@ public class DeviceTiles extends Widget implements MobileSyncWidget, DeviceClean
                     && tile.isValidDataStream() && tile.dataStream.isNotEmpty()) {
                 String hardBody = tile.dataStream.makeHardwareBody();
                 String body = prependDeviceId(tile.deviceId, hardBody);
-                appChannel.write(makeUTF8StringMessage(APP_SYNC, SYNC_DEFAULT_MESSAGE_ID, body));
+                appChannel.write(makeUTF8StringMessage(DEVICE_SYNC, SYNC_DEFAULT_MESSAGE_ID, body));
             }
         }
     }

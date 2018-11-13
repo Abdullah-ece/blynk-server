@@ -68,7 +68,6 @@ import static cc.blynk.integration.APIBaseTest.createDeviceNameMeta;
 import static cc.blynk.integration.APIBaseTest.createDeviceOwnerMeta;
 import static cc.blynk.server.core.model.web.Organization.SUPER_ORG_PARENT_ID;
 import static cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType.RAW_DATA;
-import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.BLYNK_INTERNAL;
 import static cc.blynk.server.core.protocol.enums.Command.BRIDGE;
 import static cc.blynk.server.core.protocol.enums.Command.CONNECT_REDIRECT;
@@ -76,6 +75,7 @@ import static cc.blynk.server.core.protocol.enums.Command.CREATE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.CREATE_TAG;
 import static cc.blynk.server.core.protocol.enums.Command.DEVICE_CONNECTED;
 import static cc.blynk.server.core.protocol.enums.Command.DEVICE_DISCONNECTED;
+import static cc.blynk.server.core.protocol.enums.Command.DEVICE_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_CLONE_CODE;
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROVISION_TOKEN;
@@ -209,7 +209,7 @@ public final class TestUtil {
     }
 
     public static StringMessage appSync(int msgId, String body) {
-        return new StringMessage(msgId, APP_SYNC, b(body));
+        return new StringMessage(msgId, DEVICE_SYNC, b(body));
     }
 
     public static StringMessage hardware(int msgId, String body) {
@@ -290,7 +290,7 @@ public final class TestUtil {
 
         Device device = new Device();
         device.name = "Default Device";
-        appClient.createDevice(dashId, device);
+        appClient.createDevice(device);
         Device createdDevice = appClient.parseDevice(5 + profile.dashBoards.length);
 
         DeviceOwnerMetaField deviceOwnerMetaField = (DeviceOwnerMetaField) createdDevice.metaFields[1];

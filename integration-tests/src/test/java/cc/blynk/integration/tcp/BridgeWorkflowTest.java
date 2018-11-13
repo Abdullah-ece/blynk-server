@@ -119,7 +119,7 @@ public class BridgeWorkflowTest extends SingleServerInstancePerTest {
         Device device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
 
-        clientPair.appClient.createDevice(1, device1);
+        clientPair.appClient.createDevice(device1);
         Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
@@ -181,7 +181,7 @@ public class BridgeWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testCorrectWorkflow2HardsDifferentToken() throws Exception {
-        clientPair.appClient.createDevice(2, new Device(4, "123", BoardType.ESP8266));
+        clientPair.appClient.createDevice(new Device(4, "123", BoardType.ESP8266));
         Device device = clientPair.appClient.parseDevice();
         String token = device.token;
 
@@ -206,7 +206,7 @@ public class BridgeWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testCorrectWorkflow3HardsDifferentToken() throws Exception {
-        clientPair.appClient.createDevice(2, new Device(4, "123", BoardType.ESP8266));
+        clientPair.appClient.createDevice(new Device(4, "123", BoardType.ESP8266));
         Device device = clientPair.appClient.parseDevice();
         String token = device.token;
         clientPair.appClient.reset();
@@ -238,11 +238,11 @@ public class BridgeWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testCorrectWorkflow4HardsDifferentToken() throws Exception {
-        clientPair.appClient.createDevice(2, new Device(4, "123", BoardType.ESP8266));
+        clientPair.appClient.createDevice(new Device(4, "123", BoardType.ESP8266));
         Device device = clientPair.appClient.parseDevice();
         String token2 = device.token;
 
-        clientPair.appClient.createDevice(3, new Device(5, "123", BoardType.ESP8266));
+        clientPair.appClient.createDevice(new Device(5, "123", BoardType.ESP8266));
         device = clientPair.appClient.parseDevice(2);
         String token3 = device.token;
 
@@ -282,7 +282,7 @@ public class BridgeWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testCorrectWorkflow3HardsDifferentTokenAndSync() throws Exception {
-        clientPair.appClient.createDevice(2, new Device(4, "123", BoardType.ESP8266));
+        clientPair.appClient.createDevice(new Device(4, "123", BoardType.ESP8266));
         Device device = clientPair.appClient.parseDevice();
         String token = device.token;
         clientPair.appClient.reset();
@@ -319,11 +319,11 @@ public class BridgeWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testCorrectWorkflow4HardsDifferentTokenAndSync() throws Exception {
-        clientPair.appClient.createDevice(2, new Device(4, "123", BoardType.ESP8266));
+        clientPair.appClient.createDevice(new Device(4, "123", BoardType.ESP8266));
         Device device = clientPair.appClient.parseDevice();
         String token2 = device.token;
 
-        clientPair.appClient.createDevice(3, new Device(5, "123", BoardType.ESP8266));
+        clientPair.appClient.createDevice(new Device(5, "123", BoardType.ESP8266));
         device = clientPair.appClient.parseDevice(2);
         String token3 = device.token;
 
@@ -390,7 +390,7 @@ public class BridgeWorkflowTest extends SingleServerInstancePerTest {
         Device device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
 
-        appClient.createDevice(1, device1);
+        appClient.createDevice(device1);
         Device device = appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
@@ -412,7 +412,7 @@ public class BridgeWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(1));
 
         Device device = new Device(1, "My Device", BoardType.ESP8266);
-        clientPair.appClient.createDevice(dash.id, device);
+        clientPair.appClient.createDevice(device);
         device = clientPair.appClient.parseDevice(2);
 
         //creating 1 new hard client
@@ -442,7 +442,7 @@ public class BridgeWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(1));
 
         Device device = new Device(0, "My Device", BoardType.ESP8266);
-        clientPair.appClient.createDevice(dash.id, device);
+        clientPair.appClient.createDevice(device);
         device = clientPair.appClient.parseDevice(2);
 
         TestHardClient hardClient1 = new TestHardClient("localhost", tcpHardPort);
@@ -458,7 +458,7 @@ public class BridgeWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(1));
 
         device = new Device(0, "My Device", BoardType.ESP8266);
-        clientPair.appClient.createDevice(dash.id, device);
+        clientPair.appClient.createDevice(device);
         device = clientPair.appClient.parseDevice(2);
 
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);

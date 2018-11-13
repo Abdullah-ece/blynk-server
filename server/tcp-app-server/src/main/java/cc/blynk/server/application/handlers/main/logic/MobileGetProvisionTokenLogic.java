@@ -2,7 +2,6 @@ package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.TemporaryTokenValue;
-import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
@@ -14,7 +13,6 @@ import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROVISION_TOKEN;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeASCIIStringMessage;
-import static cc.blynk.utils.StringUtils.split2;
 
 /**
  * The Blynk Project.
@@ -29,12 +27,7 @@ public final class MobileGetProvisionTokenLogic {
     }
 
     public static void messageReceived(Holder holder, ChannelHandlerContext ctx, User user, StringMessage message) {
-        String[] split = split2(message.body);
-
-        int dashId = Integer.parseInt(split[0]);
-        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
-
-        String deviceString = split[1];
+        String deviceString = message.body;
         if (deviceString == null || deviceString.isEmpty()) {
             throw new IllegalCommandException("Income device message is empty.");
         }
@@ -43,8 +36,8 @@ public final class MobileGetProvisionTokenLogic {
 
         temporaryDevice.id = holder.deviceDao.getId();
 
-        log.debug("Getting provision token for dashId = {} and deviceId {}.", dashId, temporaryDevice.id);
-        holder.tokenManager.assignTempToken(new TemporaryTokenValue(user.orgId, user, dash, temporaryDevice));
+        log.debug("Getting provision token for deviceId {}.", temporaryDevice.id);
+        holder.tokenManager.assignTempToken(new TemporaryTokenValue(user.orgId, user, temporaryDevice));
 
         if (ctx.channel().isWritable()) {
             ctx.writeAndFlush(makeASCIIStringMessage(GET_PROVISION_TOKEN,
