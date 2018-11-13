@@ -17,9 +17,9 @@ import static cc.blynk.server.internal.CommonByteBufUtil.ok;
  * Created on 2/1/2015.
  *
  */
-public final class MobileSyncLogic {
+public final class DeviceSyncLogic {
 
-    private MobileSyncLogic() {
+    private DeviceSyncLogic() {
     }
 
     public static void messageReceived(Holder holder,

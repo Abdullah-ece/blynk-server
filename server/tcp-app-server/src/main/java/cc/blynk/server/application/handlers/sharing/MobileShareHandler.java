@@ -1,10 +1,10 @@
 package cc.blynk.server.application.handlers.sharing;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.application.handlers.main.logic.DeviceSyncLogic;
 import cc.blynk.server.application.handlers.main.logic.LoadSharedProfileGzippedLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileAddPushLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileLogoutLogic;
-import cc.blynk.server.application.handlers.main.logic.MobileSyncLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.MobileGetDevicesLogic;
 import cc.blynk.server.application.handlers.main.logic.graph.MobileDeleteDeviceDataLogic;
 import cc.blynk.server.application.handlers.main.logic.graph.MobileGetEnhancedGraphDataLogic;
@@ -67,7 +67,7 @@ public class MobileShareHandler extends BaseSimpleChannelInboundHandler<StringMe
                 PingLogic.messageReceived(ctx, msg.id);
                 break;
             case DEVICE_SYNC:
-                MobileSyncLogic.messageReceived(holder, ctx, msg);
+                DeviceSyncLogic.messageReceived(holder, ctx, msg);
                 break;
             case LOGOUT :
                 MobileLogoutLogic.messageReceived(ctx, state.user, msg);

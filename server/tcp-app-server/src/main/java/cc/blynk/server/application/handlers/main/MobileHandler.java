@@ -1,6 +1,7 @@
 package cc.blynk.server.application.handlers.main;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.application.handlers.main.logic.DeviceSyncLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileActivateDashboardLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileAddPushLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileAssignTokenLogic;
@@ -19,7 +20,6 @@ import cc.blynk.server.application.handlers.main.logic.MobilePurchaseLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileRedeemLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileRefreshTokenLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileSetWidgetPropertyLogic;
-import cc.blynk.server.application.handlers.main.logic.MobileSyncLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.MobileCreateDashLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.MobileDeleteDashLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.MobileUpdateDashLogic;
@@ -295,7 +295,7 @@ public class MobileHandler extends BaseSimpleChannelInboundHandler<StringMessage
                 break;
 
             case DEVICE_SYNC:
-                MobileSyncLogic.messageReceived(holder, ctx, msg);
+                DeviceSyncLogic.messageReceived(holder, ctx, msg);
                 break;
 
             case CREATE_APP :
