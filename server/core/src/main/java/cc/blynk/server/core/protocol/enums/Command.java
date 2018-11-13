@@ -17,6 +17,7 @@ public final class Command {
     public static final short REDEEM = 3;
     public static final short DEVICE_CONNECTED = 4;
 
+    public static final short DASH_SYNC = 5;
     public static final short PING = 6;
     public static final short ACTIVATE_DASHBOARD = 7;
     public static final short DEACTIVATE_DASHBOARD = 8;

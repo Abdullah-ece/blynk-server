@@ -1,6 +1,7 @@
 package cc.blynk.server.application.handlers.sharing;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.application.handlers.main.logic.DashSyncLogic;
 import cc.blynk.server.application.handlers.main.logic.DeviceSyncLogic;
 import cc.blynk.server.application.handlers.main.logic.LoadSharedProfileGzippedLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileAddPushLogic;
@@ -16,6 +17,7 @@ import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.ADD_PUSH_TOKEN;
+import static cc.blynk.server.core.protocol.enums.Command.DASH_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_DEVICE_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.DEVICE_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.GET_DEVICES;
@@ -68,6 +70,9 @@ public class MobileShareHandler extends BaseSimpleChannelInboundHandler<StringMe
                 break;
             case DEVICE_SYNC:
                 DeviceSyncLogic.messageReceived(holder, ctx, msg);
+                break;
+            case DASH_SYNC:
+                DashSyncLogic.messageReceived(holder, ctx, state, msg);
                 break;
             case LOGOUT :
                 MobileLogoutLogic.messageReceived(ctx, state.user, msg);

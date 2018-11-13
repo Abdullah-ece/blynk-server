@@ -1,6 +1,7 @@
 package cc.blynk.server.application.handlers.main;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.application.handlers.main.logic.DashSyncLogic;
 import cc.blynk.server.application.handlers.main.logic.DeviceSyncLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileActivateDashboardLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileAddPushLogic;
@@ -74,6 +75,7 @@ import static cc.blynk.server.core.protocol.enums.Command.CREATE_REPORT;
 import static cc.blynk.server.core.protocol.enums.Command.CREATE_TAG;
 import static cc.blynk.server.core.protocol.enums.Command.CREATE_TILE_TEMPLATE;
 import static cc.blynk.server.core.protocol.enums.Command.CREATE_WIDGET;
+import static cc.blynk.server.core.protocol.enums.Command.DASH_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.DEACTIVATE_DASHBOARD;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_APP;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_DASH;
@@ -294,8 +296,11 @@ public class MobileHandler extends BaseSimpleChannelInboundHandler<StringMessage
                 MobileGetTagsLogic.messageReceived(ctx, state.user, msg);
                 break;
 
-            case DEVICE_SYNC:
+            case DEVICE_SYNC :
                 DeviceSyncLogic.messageReceived(holder, ctx, msg);
+                break;
+            case DASH_SYNC :
+                DashSyncLogic.messageReceived(holder, ctx, state, msg);
                 break;
 
             case CREATE_APP :
