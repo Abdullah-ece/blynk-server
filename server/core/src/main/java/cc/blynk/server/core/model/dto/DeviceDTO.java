@@ -40,8 +40,6 @@ public class DeviceDTO {
 
     public final Status status;
 
-    public final long createdAt;
-
     public final long activatedAt;
 
     public final String activatedBy;
@@ -82,7 +80,6 @@ public class DeviceDTO {
                      @JsonProperty("token") String token,
                      @JsonProperty("connectionType") ConnectionType connectionType,
                      @JsonProperty("status") Status status,
-                     @JsonProperty("createdAt") long createdAt,
                      @JsonProperty("activatedAt") long activatedAt,
                      @JsonProperty("activatedBy") String activatedBy,
                      @JsonProperty("disconnectTime") long disconnectTime,
@@ -107,7 +104,6 @@ public class DeviceDTO {
         this.token = token;
         this.connectionType = connectionType;
         this.status = status;
-        this.createdAt = createdAt;
         this.activatedAt = activatedAt;
         this.activatedBy = activatedBy;
         this.disconnectTime = disconnectTime;
@@ -134,7 +130,6 @@ public class DeviceDTO {
         this.token = device.token;
         this.connectionType = device.connectionType;
         this.status = device.status;
-        this.createdAt = device.createdAt;
         this.disconnectTime = device.disconnectTime;
         this.lastLoggedIP = device.lastLoggedIP;
         this.iconName = device.iconName;

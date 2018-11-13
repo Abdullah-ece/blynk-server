@@ -50,9 +50,6 @@ public class Device implements Target {
     @JsonView(View.Private.class)
     public volatile Status status = Status.OFFLINE;
 
-    @JsonView(View.Private.class)
-    public final long createdAt;
-
     public volatile long activatedAt;
 
     public volatile String activatedBy;
@@ -98,7 +95,6 @@ public class Device implements Target {
     }
 
     public Device() {
-        this.createdAt = System.currentTimeMillis();
         this.webDashboard = new WebDashboard();
     }
 
