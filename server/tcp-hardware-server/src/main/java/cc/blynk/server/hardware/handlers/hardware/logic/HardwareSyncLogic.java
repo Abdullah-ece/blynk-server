@@ -72,7 +72,7 @@ public final class HardwareSyncLogic {
             for (int i = 1; i < bodyParts.length; i++) {
                 short pin = NumberUtil.parsePin(bodyParts[i]);
                 if (ctx.channel().isWritable()) {
-                    PinStorageValue pinStorageValue = device.pinStorage.get(pin, pinType);
+                    PinStorageValue pinStorageValue = device.getValue(pin, pinType);
                     if (pinStorageValue != null) {
                         for (String value : pinStorageValue.values()) {
                             String body = DataStream.makeHardwareBody(pinType, pin, value);

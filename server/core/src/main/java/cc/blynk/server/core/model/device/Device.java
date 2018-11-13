@@ -74,9 +74,9 @@ public class Device implements Target {
 
     public volatile long metadataUpdatedAt;
 
-    public volatile long updatedAt;
-
     public volatile String metadataUpdatedBy;
+
+    public volatile long updatedAt;
 
     public volatile MetaField[] metaFields = EMPTY_META_FIELDS;
 
@@ -395,6 +395,10 @@ public class Device implements Target {
 
     public PinStorageValue getValue(short pin, PinType pinType) {
         return pinStorage.get(pin, pinType);
+    }
+
+    public void setLastReportedAt(long lastReportedAt) {
+        pinStorage.setLastReportedAt(lastReportedAt);
     }
 
     @Override

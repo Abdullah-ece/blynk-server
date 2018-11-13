@@ -92,7 +92,7 @@ public class HardwareLogEventLogic {
             try {
                 long now = System.currentTimeMillis();
                 reportingDBManager.insertEvent(device.id, event.getType(), now, eventCode.hashCode(), desc);
-                device.pinStorage.setDataReceivedAt(now);
+                device.setLastReportedAt(now);
                 ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
             } catch (Exception e) {
                 log.error("Error inserting log event.", e);

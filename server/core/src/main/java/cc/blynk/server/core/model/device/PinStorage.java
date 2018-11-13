@@ -21,7 +21,7 @@ public final class PinStorage {
             contentUsing = PinStorageValueDeserializer.class)
     public final Map<DeviceStorageKey, PinStorageValue> values = new HashMap<>();
 
-    public volatile long dataReceivedAt;
+    public volatile long lastReportedAt;
 
     void removePinValue(PinType pinType, short pin, boolean removeProperties) {
         this.values.remove(new DeviceStorageKey(pin, pinType));
@@ -61,7 +61,7 @@ public final class PinStorage {
             values.put(key, pinStorageValue);
         }
         pinStorageValue.update(value);
-        this.dataReceivedAt = now;
+        this.lastReportedAt = now;
     }
 
     void sendPinStorageSyncs(Channel appChannel, int deviceId) {
@@ -82,12 +82,12 @@ public final class PinStorage {
         return get(new DeviceStorageKey(pin, pinType));
     }
 
-    public void setDataReceivedAt(long now) {
-        this.dataReceivedAt = now;
+    public void setLastReportedAt(long now) {
+        this.lastReportedAt = now;
     }
 
     public void erase() {
         this.values.clear();
-        this.dataReceivedAt = 0;
+        this.lastReportedAt = 0;
     }
 }

@@ -52,6 +52,8 @@ public class DeviceDTO {
 
     public final String metadataUpdatedBy;
 
+    public final long lastReportedAt;
+
     public final String iconName;
 
     public MetaField[] metaFields;
@@ -84,7 +86,7 @@ public class DeviceDTO {
                      @JsonProperty("activatedBy") String activatedBy,
                      @JsonProperty("disconnectTime") long disconnectTime,
                      @JsonProperty("lastLoggedIP") String lastLoggedIP,
-                     @JsonProperty("dataReceivedAt") long dataReceivedAt,
+                     @JsonProperty("lastReportedAt") long lastReportedAt,
                      @JsonProperty("metadataUpdatedAt") long metadataUpdatedAt,
                      @JsonProperty("metadataUpdatedBy") String metadataUpdatedBy,
                      @JsonProperty("iconName") String iconName,
@@ -111,6 +113,7 @@ public class DeviceDTO {
         this.iconName = iconName;
         this.metadataUpdatedAt = metadataUpdatedAt;
         this.metadataUpdatedBy = metadataUpdatedBy;
+        this.lastReportedAt = lastReportedAt;
         this.metaFields = metaFields;
         this.webDashboard = webDashboard;
         this.productName = productName;
@@ -139,6 +142,7 @@ public class DeviceDTO {
         this.activatedBy = device.activatedBy;
         this.metadataUpdatedAt = device.metadataUpdatedAt;
         this.metadataUpdatedBy = device.metadataUpdatedBy;
+        this.lastReportedAt = device.pinStorage.lastReportedAt;
         this.hardwareInfo = device.hardwareInfo;
         this.deviceOtaInfo = device.deviceOtaInfo;
 

@@ -112,7 +112,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
             try {
                 long now = System.currentTimeMillis();
                 reportingDBManager.insertEvent(device.id, event.getType(), now, eventCode.hashCode(), description);
-                device.pinStorage.setDataReceivedAt(now);
+                device.setLastReportedAt(now);
                 ctx.writeAndFlush(ok(), ctx.voidPromise());
             } catch (Exception e) {
                 log.error("Error inserting log event.", e);
@@ -175,7 +175,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
         Device device = deviceDao.getById(deviceId);
 
         if (device != null) {
-            PinStorageValue value = device.pinStorage.get(pin, pinType);
+            PinStorageValue value = device.getValue(pin, pinType);
             if (value == null) {
                 log.debug("Requested {} and pin {} not found.", token, pinString);
                 return Response.badRequest("Requested pin doesn't exist in the app.");
