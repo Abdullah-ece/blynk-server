@@ -1,6 +1,5 @@
 package cc.blynk.server.core.dao;
 
-import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.web.Organization;
 import org.apache.logging.log4j.LogManager;
@@ -26,29 +25,22 @@ class RegularTokenManager {
         for (Organization org : orgs) {
             for (Device device : org.devices) {
                 if (device.token != null) {
-                    cache.put(device.token, new TokenValue(org.id, null, device));
+                    cache.put(device.token, new TokenValue(org.id, device));
                 }
             }
         }
     }
 
-    String assignToken(int orgId, User user, Device device, String newToken) {
+    String assignToken(int orgId, Device device, String newToken) {
         // Clean old token from cache if exists.
         String oldToken = deleteDeviceToken(device.token);
 
         //assign new token
         device.token = newToken;
-        TokenValue tokenValue = new TokenValue(orgId, user, device);
+        TokenValue tokenValue = new TokenValue(orgId, device);
         cache.put(newToken, tokenValue);
 
-        //device activated when new token is assigned
-        device.activatedAt = System.currentTimeMillis();
-        device.activatedBy = user.email;
-
-        user.lastModifiedTs = System.currentTimeMillis();
-
-        log.debug("Generated token for user {}, deviceId {} is {}.",
-                user.email, device.id, newToken);
+        log.debug("Generated token for deviceId {} is {}.", device.id, newToken);
 
         return oldToken;
     }

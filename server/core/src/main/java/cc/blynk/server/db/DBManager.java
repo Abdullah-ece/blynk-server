@@ -218,10 +218,11 @@ public class DBManager implements Closeable {
         return null;
     }
 
-    public void assignServerToToken(String token, String serverIp, String email, int dashId, int deviceId) {
+    public void assignServerToToken(String token, String serverIp, String email, int deviceId) {
         if (isDBEnabled()) {
             blockingIOProcessor.executeDB(() ->
-                    forwardingTokenDBDao.insertTokenHost(token, serverIp, email, dashId, deviceId));
+                    //todo fix dashId
+                    forwardingTokenDBDao.insertTokenHost(token, serverIp, email, 0, deviceId));
         }
     }
 

@@ -18,7 +18,6 @@ import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.dao.TokenValue;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.auth.Session;
-import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.WidgetProperty;
@@ -313,7 +312,6 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
             return Response.badRequest("Invalid token.");
         }
 
-        User user = tokenValue.user;
         int deviceId = tokenValue.device.id;
 
         PinType pinType;
@@ -360,7 +358,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
 
         Session session = sessionDao.getOrgSession(tokenValue.orgId);
         if (session == null) {
-            log.debug("No session for user {}.", user.email);
+            log.debug("No session for hardware {}.", device.id);
             return Response.ok();
         }
 

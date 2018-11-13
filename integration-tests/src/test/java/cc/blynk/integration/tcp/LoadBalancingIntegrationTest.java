@@ -225,7 +225,7 @@ public class LoadBalancingIntegrationTest extends BaseTest {
         hardClient.login("123");
         hardClient.verifyResult(invalidToken(1));
 
-        holder.dbManager.assignServerToToken("123", "127.0.0.1", "user", 0, 0);
+        holder.dbManager.assignServerToToken("123", "127.0.0.1", "user", 0);
         hardClient.login("123");
         hardClient.verifyResult(invalidToken(2));
 

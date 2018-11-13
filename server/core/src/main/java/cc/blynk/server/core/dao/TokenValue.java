@@ -1,6 +1,5 @@
 package cc.blynk.server.core.dao;
 
-import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 
 /**
@@ -12,13 +11,10 @@ public class TokenValue {
 
     public final int orgId;
 
-    public final User user;
-
     public final Device device;
 
-    public TokenValue(int orgId, User user, Device device) {
+    public TokenValue(int orgId, Device device) {
         this.orgId = orgId;
-        this.user = user;
         this.device = device;
     }
 
