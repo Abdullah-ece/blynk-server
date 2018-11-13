@@ -248,8 +248,7 @@ public final class ServerLauncher {
                     product.id, ConnectionType.WI_FI);
             device.hardwareInfo = new HardwareInfo("1.0.0", "0.5.0", "Particle Photon", "atm33",
                     "WI-FI", "0.0.0", null, 1, -1);
-            holder.tokenManager.assignNewToken(superOrg.id, "admin@blynk.cc", device);
-            holder.deviceDao.create(superOrg.id, device);
+            holder.deviceDao.create(superOrg.id, "admin@blynk.cc", device);
             for (EventType eventType : EventType.values()) {
                 try {
                     Event event = product.findEventByType(eventType);

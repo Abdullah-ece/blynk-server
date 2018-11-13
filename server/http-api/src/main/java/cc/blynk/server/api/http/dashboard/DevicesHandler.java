@@ -105,8 +105,7 @@ public class DevicesHandler extends BaseHttpHandler {
         newDevice.metaFields = product.copyMetaFields();
         newDevice.webDashboard = product.webDashboard.copy();
 
-        deviceDao.create(orgId, newDevice);
-        tokenManager.assignNewToken(orgId, user.email, newDevice);
+        deviceDao.create(orgId, user.email, newDevice);
 
         user.lastModifiedTs = System.currentTimeMillis();
 
@@ -162,7 +161,7 @@ public class DevicesHandler extends BaseHttpHandler {
         DashBoard dash = user.profile.dashBoards[0];
 
         if (dash == null) {
-            log.error("Dash with orgId = {} not exists.", dash.id);
+            log.error("Dash with orgId = {} not exists.", orgId);
             return badRequest();
         }
 

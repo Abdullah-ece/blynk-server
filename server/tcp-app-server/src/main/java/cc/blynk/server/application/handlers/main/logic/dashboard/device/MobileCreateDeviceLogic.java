@@ -43,9 +43,7 @@ public final class MobileCreateDeviceLogic {
 
         int orgId = user.orgId;
         holder.organizationDao.assignToOrgAndAddDevice(orgId, newDevice);
-        holder.deviceDao.create(orgId, newDevice);
-
-        holder.tokenManager.assignNewToken(orgId, user.email, newDevice);
+        holder.deviceDao.create(orgId, user.email, newDevice);
 
         user.lastModifiedTs = System.currentTimeMillis();
         log.debug("Device for orgId {} created {}.", orgId, newDevice);

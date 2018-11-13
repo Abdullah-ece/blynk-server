@@ -29,8 +29,9 @@ public class DeviceDao {
 
     public final ConcurrentMap<DeviceKey, Device> devices;
     private final AtomicInteger deviceSequence;
+    public final TokenManager tokenManager;
 
-    public DeviceDao(Collection<Organization> orgs) {
+    public DeviceDao(Collection<Organization> orgs, TokenManager tokenManager) {
         devices = new ConcurrentHashMap<>();
 
         int maxDeviceId = 0;
@@ -42,6 +43,7 @@ public class DeviceDao {
         }
 
         this.deviceSequence = new AtomicInteger(maxDeviceId);
+        this.tokenManager = tokenManager;
         log.info("Devices count is {}, sequence is {}", devices.size(), deviceSequence.get());
     }
 
@@ -54,8 +56,9 @@ public class DeviceDao {
         return device;
     }
 
-    public Device create(int orgId, Device device) {
+    public Device create(int orgId, String email, Device device) {
         device.id = deviceSequence.incrementAndGet();
+        tokenManager.assignNewToken(orgId, email, device);
         return createWithPredefinedId(orgId, device);
     }
 

@@ -3,7 +3,6 @@ package cc.blynk.server.web.handlers.logic.device;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.OrganizationDao;
-import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.dto.DeviceDTO;
@@ -31,12 +30,10 @@ public class WebCreateDeviceLogic {
 
     private final DeviceDao deviceDao;
     private final OrganizationDao organizationDao;
-    private final TokenManager tokenManager;
 
     public WebCreateDeviceLogic(Holder holder) {
         this.deviceDao = holder.deviceDao;
         this.organizationDao = holder.organizationDao;
-        this.tokenManager = holder.tokenManager;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
@@ -83,10 +80,7 @@ public class WebCreateDeviceLogic {
         newDevice.metaFields = product.copyMetaFields();
         newDevice.webDashboard = product.webDashboard.copy();
 
-        deviceDao.create(orgId, newDevice);
-        tokenManager.assignNewToken(orgId, user.email, newDevice);
-
-        user.lastModifiedTs = System.currentTimeMillis();
+        deviceDao.create(orgId, user.email, newDevice);
 
         if (ctx.channel().isWritable()) {
             String deviceString = new DeviceDTO(newDevice, product, org.name).toString();
