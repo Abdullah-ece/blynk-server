@@ -1,18 +1,25 @@
 import React from 'react';
 import Scroll from 'react-scroll';
 // import {BackTop} from 'components';
-import {Online, Offline, Info, Warning, Critical, Add} from 'scenes/Products/components/Events';
-import {EVENT_TYPES, FORMS, getNextId} from 'services/Products';
+import {
+  Online,
+  Offline,
+  Info,
+  Warning,
+  Critical,
+  Add
+} from 'scenes/Products/components/Events';
+import { EVENT_TYPES, FORMS, getNextId } from 'services/Products';
 // import {getNextId} from 'services/Entity';
-import {SortableContainer, SortableElement} from 'react-sortable-hoc';
+import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import _ from 'lodash';
 import classnames from 'classnames';
-import {fromJS} from 'immutable';
+import { fromJS } from 'immutable';
 
 import PropTypes from 'prop-types';
-import {connect} from 'react-redux';
-import {bindActionCreators} from 'redux';
-import {change} from 'redux-form';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { change } from 'redux-form';
 
 @connect((state) => state, (dispatch) => ({
   changeForm: bindActionCreators(change, dispatch)
@@ -28,8 +35,8 @@ class List extends React.Component {
   constructor(props) {
     super(props);
 
-    // this.onSortEnd = this.onSortEnd.bind(this);
-    // this.onSortStart = this.onSortStart.bind(this);
+    this.onSortEnd = this.onSortEnd.bind(this);
+    this.onSortStart = this.onSortStart.bind(this);
     this.handleAddField = this.handleAddField.bind(this);
     this.handleCloneField = this.handleCloneField.bind(this);
     this.handleDeleteField = this.handleDeleteField.bind(this);
@@ -70,9 +77,10 @@ class List extends React.Component {
       });
     });
 
-    if(shouldUpdateFields)
+    if (shouldUpdateFields)
       this.props.changeForm(FORMS.PRODUCTS_PRODUCT_MANAGE, 'events', fields);
   }
+
   //
   // handleFieldChange(values, /*dispatch, props*/) {
   //   if (values.id) {
@@ -116,7 +124,7 @@ class List extends React.Component {
     let fieldIndex = null;
 
     this.props.fields.getAll().forEach((field, index) => {
-      if(Number(field.id) === Number(id))
+      if (Number(field.id) === Number(id))
         fieldIndex = index;
     });
 
@@ -136,7 +144,7 @@ class List extends React.Component {
       let uniqueValue = !oldValue;
 
       while (!uniqueValue) {
-        value = `${oldValue || ''}${property === "eventCode" ? "_copy": " Copy"}` ;
+        value = `${oldValue || ''}${property === "eventCode" ? "_copy" : " Copy"}`;
         if (!isValueAlreadyExists(property, value)) {
           uniqueValue = true;
         }
@@ -145,12 +153,12 @@ class List extends React.Component {
       return value;
     };
 
-    const cloned = _.find(this.props.fields.getAll(), {id: id});
+    const cloned = _.find(this.props.fields.getAll(), { id: id });
 
     const name = getUniqueValue("name", cloned.name);
     const eventCode = getUniqueValue("eventCode", cloned.eventCode);
 
-    const originalIndex = _.findIndex(this.props.fields.getAll(), {id: id});
+    const originalIndex = _.findIndex(this.props.fields.getAll(), { id: id });
 
     this.props.fields.push({
       ...cloned,
@@ -163,10 +171,11 @@ class List extends React.Component {
     const newIndex = this.props.fields.getAll().length;
     const oldIndex = originalIndex + 1;
 
-    if(newIndex !== oldIndex)
+    if (newIndex !== oldIndex)
       this.props.fields.swap(newIndex, oldIndex);
 
   }
+
   //
   // getFieldsForTypes(fields, types) {
   //   const elements = [];
@@ -243,36 +252,35 @@ class List extends React.Component {
     /** @todo dirty hack, remove it after refactoring */
     setTimeout(() => document.querySelector(`.event-name-field-${nextId}  input`).focus(), 100);
   }
+
   //
   //
-  // SortableList = SortableContainer(({items}) => {
-  //   return (
-  //     <div>
-  //       {items.map((value, index) => {
-  //         return (
-  //           <this.SortableItem key={`item-${value.id}`} index={index} value={value}/>
-  //         );
-  //       })}
-  //     </div>
-  //   );
-  // });
-  //
-  // onSortStart() {
-  //   this.setState({
-  //     isSortEnabled: true
-  //   });
-  // }
-  //
-  // onSortEnd({oldIndex, newIndex}) {
-  //   this.setState({
-  //     isSortEnabled: false
-  //   });
-  //
-  //   const COUNT_OF_STATIC_FIELDS = 2;
-  //   this.props.onFieldsChange(
-  //     arrayMove(this.props.fields, oldIndex + COUNT_OF_STATIC_FIELDS, newIndex + COUNT_OF_STATIC_FIELDS)
-  //   );
-  // }
+  SortableList = SortableContainer(({ items }) => {
+    return (
+      <div>
+        {items.map((value, index) => {
+          return (
+            <this.SortableItem key={`item-${value.id}`} index={index}
+                               value={value}/>
+          );
+        })}
+      </div>
+    );
+  });
+
+  onSortStart() {
+    this.setState({
+      isSortEnabled: true
+    });
+  }
+
+  onSortEnd({ oldIndex, newIndex }) {
+    if (newIndex === oldIndex)
+      return false;
+
+    let dynamicFields = this.getDynamicFields();
+    this.props.fields.swap(dynamicFields[oldIndex].get('eventKey'), dynamicFields[newIndex].get('eventKey'));
+  }
 
   getFieldsByTypes(types) {
     return this.props.fields.map((name, index, fields) => {
@@ -315,7 +323,7 @@ class List extends React.Component {
     });
   }
 
-  SortableItem = SortableElement(({value}) => {
+  SortableItem = SortableElement(({ value }) => {
 
     const field = value;
 
@@ -347,13 +355,14 @@ class List extends React.Component {
 
   });
 
-  SortableList = SortableContainer(({items}) => {
+  SortableList = SortableContainer(({ items }) => {
 
     return (
       <div>
         {items.map((item, index) => {
           return (
-            <this.SortableItem key={`item-${item.get('id')}`} index={index} value={item}/>
+            <this.SortableItem key={`item-${item.get('id')}`} index={index}
+                               value={item}/>
           );
         })}
       </div>
@@ -368,8 +377,8 @@ class List extends React.Component {
       <this.SortableList items={fields}
                          useDragHandle={true}
                          useWindowAsScrollContainer={true}
-        // onSortStart={this.onSortStart}
-        // onSortEnd={this.onSortEnd}
+                         onSortStart={this.onSortStart}
+                         onSortEnd={this.onSortEnd}
                          lockAxis="y"
                          helperClass="product-events-item-drag-active"/>
 

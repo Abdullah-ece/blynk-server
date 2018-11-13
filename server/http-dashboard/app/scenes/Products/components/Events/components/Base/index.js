@@ -20,6 +20,8 @@ import {getFormValues} from 'redux-form';
 import {List, fromJS} from 'immutable';
 import {connect} from 'react-redux';
 
+const DragHandler = SortableHandle(() => <Icon type="bars" className="cursor-move"/>);
+
 @connect((state) => ({
   contactMetaFields: (() => {
     /* get MetaFields type Contact and Hardcoded Device Owner to display those metaFields on Notifications select */
@@ -162,9 +164,8 @@ class Base extends React.Component {
     );
   }
 
-  toolsDragAndDropButton = SortableHandle(() => <Icon type="bars" className="cursor-move"/>);
-
   render() {
+    // console.log(this.props.tools)
     const itemClasses = classnames({
       'product-metadata-item': true,
       'product-metadata-item-active': this.props.isActive || this.state.isActive,
@@ -186,7 +187,7 @@ class Base extends React.Component {
                 </Col>
                 {this.props.tools && (
                   <Col span={1} className="product-events-event-tools">
-                    <this.toolsDragAndDropButton/>
+                    <DragHandler/>
 
                     {!isEventPristine(this.props.field) && this.toolsPopconfirmDeleteButton() || this.toolsDeleteButton()}
 
