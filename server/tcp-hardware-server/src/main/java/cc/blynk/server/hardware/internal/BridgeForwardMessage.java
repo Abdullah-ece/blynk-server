@@ -1,6 +1,6 @@
 package cc.blynk.server.hardware.internal;
 
-import cc.blynk.server.core.dao.TokenValue;
+import cc.blynk.server.core.dao.DeviceTokenValue;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 
 /**
@@ -14,9 +14,9 @@ public class BridgeForwardMessage {
 
     public final StringMessage message;
 
-    public final TokenValue tokenValue;
+    public final DeviceTokenValue tokenValue;
 
-    public BridgeForwardMessage(int orgId, StringMessage bridgeMessage, TokenValue tokenValue) {
+    public BridgeForwardMessage(int orgId, StringMessage bridgeMessage, DeviceTokenValue tokenValue) {
         this.orgId = orgId;
         this.message = bridgeMessage;
         this.tokenValue = tokenValue;

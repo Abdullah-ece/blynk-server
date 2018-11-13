@@ -57,8 +57,6 @@ public class Holder {
 
     public final OrganizationDao organizationDao;
 
-    public final TokenManager tokenManager;
-
     public final ReportingDiskDao reportingDiskDao;
 
     public final DBManager dbManager;
@@ -125,7 +123,7 @@ public class Holder {
 
         this.organizationDao = new OrganizationDao(fileManager, userDao);
         Collection<Organization> orgs = organizationDao.organizations.values();
-        this.tokenManager = new TokenManager(orgs, userDao.users.values(), dbManager, serverProperties.host);
+        TokenManager tokenManager = new TokenManager(orgs, userDao.users.values(), dbManager, serverProperties.host);
         this.deviceDao = new DeviceDao(orgs, tokenManager);
 
         this.stats = new GlobalStats();
@@ -187,7 +185,7 @@ public class Holder {
 
         this.organizationDao = new OrganizationDao(fileManager, userDao);
         Collection<Organization> orgs = organizationDao.organizations.values();
-        this.tokenManager = new TokenManager(orgs, userDao.users.values(), dbManager, serverProperties.host);
+        TokenManager tokenManager = new TokenManager(orgs, userDao.users.values(), dbManager, serverProperties.host);
         this.deviceDao = new DeviceDao(orgs, tokenManager);
 
         this.stats = new GlobalStats();

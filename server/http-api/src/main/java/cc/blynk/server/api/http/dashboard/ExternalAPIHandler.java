@@ -12,10 +12,9 @@ import cc.blynk.core.http.annotation.PathParam;
 import cc.blynk.core.http.annotation.QueryParam;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
-import cc.blynk.server.core.dao.DeviceDao;
+import cc.blynk.server.core.dao.DeviceTokenValue;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.ReportingDiskDao;
-import cc.blynk.server.core.dao.TokenValue;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.device.Device;
@@ -64,15 +63,13 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
     private final OrganizationDao organizationDao;
     private final ReportingDiskDao reportingDiskDao;
     private final ReportingDBManager reportingDBManager;
-    private final DeviceDao deviceDao;
 
     public ExternalAPIHandler(Holder holder, String rootPath) {
-        super(holder.tokenManager, holder.sessionDao, holder.stats, rootPath);
+        super(holder.deviceDao, holder.sessionDao, holder.stats, rootPath);
         this.blockingIOProcessor = holder.blockingIOProcessor;
         this.organizationDao = holder.organizationDao;
         this.reportingDiskDao = holder.reportingDiskDao;
         this.reportingDBManager = holder.reportingDBManager;
-        this.deviceDao = holder.deviceDao;
     }
 
     @GET
@@ -82,7 +79,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
                              @QueryParam("code") String eventCode,
                              @QueryParam("description") String description) {
 
-        var tokenValue = tokenManager.getTokenValueByToken(token);
+        var tokenValue = deviceDao.getDeviceTokenValue(token);
 
         var device = tokenValue.device;
 
@@ -127,7 +124,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
     @Path("/{token}/isHardwareConnected")
     @Metric(HTTP_IS_HARDWARE_CONNECTED)
     public Response isHardwareConnected(@PathParam("token") String token) {
-        TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
+        DeviceTokenValue tokenValue = deviceDao.getDeviceTokenValue(token);
 
         if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);
@@ -152,7 +149,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
     private Response getWidgetPinData(@PathParam("token") String token,
                                       @PathParam("pin") String pinString) {
 
-        TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
+        DeviceTokenValue tokenValue = deviceDao.getDeviceTokenValue(token);
 
         if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);
@@ -252,7 +249,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
             return Response.badRequest("No properties for update provided.");
         }
 
-        TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
+        DeviceTokenValue tokenValue = deviceDao.getDeviceTokenValue(token);
 
         if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);
@@ -305,7 +302,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
             return Response.badRequest("No pin for update provided.");
         }
 
-        TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
+        DeviceTokenValue tokenValue = deviceDao.getDeviceTokenValue(token);
 
         if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);

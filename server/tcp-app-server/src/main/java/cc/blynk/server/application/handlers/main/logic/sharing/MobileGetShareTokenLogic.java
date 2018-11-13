@@ -44,7 +44,8 @@ public final class MobileGetShareTokenLogic {
                 ctx.writeAndFlush(energyLimit(message.id), ctx.voidPromise());
                 return;
             }
-            token = holder.tokenManager.refreshSharedToken(user, dash);
+            //todo move shared token manager away
+            token = holder.deviceDao.tokenManager.refreshSharedToken(user, dash);
             user.subtractEnergy(PRIVATE_TOKEN_PRICE);
             user.lastModifiedTs = System.currentTimeMillis();
         }

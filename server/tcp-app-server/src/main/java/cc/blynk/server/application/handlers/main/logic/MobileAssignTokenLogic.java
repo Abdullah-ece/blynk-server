@@ -1,7 +1,6 @@
 package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -34,7 +33,6 @@ public final class MobileAssignTokenLogic {
         String token = message.body;
 
         DBManager dbManager = holder.dbManager;
-        TokenManager tokenManager = holder.tokenManager;
         holder.blockingIOProcessor.executeDB(() -> {
             FlashedToken dbFlashedToken = dbManager.selectFlashedToken(token);
 
@@ -64,7 +62,7 @@ public final class MobileAssignTokenLogic {
                 return;
             }
 
-            tokenManager.assignNewToken(user.orgId, user.email, device, token);
+            holder.deviceDao.tokenManager.assignNewToken(user.orgId, user.email, device, token);
 
             ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
         });

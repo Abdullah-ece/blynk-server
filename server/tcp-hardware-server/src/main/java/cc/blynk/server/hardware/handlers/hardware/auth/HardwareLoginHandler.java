@@ -2,8 +2,8 @@ package cc.blynk.server.hardware.handlers.hardware.auth;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
+import cc.blynk.server.core.dao.DeviceTokenValue;
 import cc.blynk.server.core.dao.TemporaryTokenValue;
-import cc.blynk.server.core.dao.TokenValue;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.dto.DeviceDTO;
@@ -108,7 +108,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, LoginMessage message) {
         String token = message.body.trim();
-        TokenValue tokenValue = holder.tokenManager.getTokenValueByToken(token);
+        DeviceTokenValue tokenValue = holder.deviceDao.getDeviceTokenValue(token);
 
         if (tokenValue == null) {
             //token should always be 32 chars and shouldn't contain invalid nil char

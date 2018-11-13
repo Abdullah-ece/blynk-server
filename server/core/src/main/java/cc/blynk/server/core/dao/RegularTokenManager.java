@@ -17,7 +17,7 @@ class RegularTokenManager {
 
     private static final Logger log = LogManager.getLogger(RegularTokenManager.class);
 
-    final ConcurrentHashMap<String, TokenValue> cache;
+    final ConcurrentHashMap<String, DeviceTokenValue> cache;
 
     RegularTokenManager(Collection<Organization> orgs) {
         ///in average user has 2 devices
@@ -25,7 +25,7 @@ class RegularTokenManager {
         for (Organization org : orgs) {
             for (Device device : org.devices) {
                 if (device.token != null) {
-                    cache.put(device.token, new TokenValue(org.id, device));
+                    cache.put(device.token, new DeviceTokenValue(org.id, device));
                 }
             }
         }
@@ -37,7 +37,7 @@ class RegularTokenManager {
 
         //assign new token
         device.token = newToken;
-        TokenValue tokenValue = new TokenValue(orgId, device);
+        DeviceTokenValue tokenValue = new DeviceTokenValue(orgId, device);
         cache.put(newToken, tokenValue);
 
         log.debug("Generated token for deviceId {} is {}.", device.id, newToken);
@@ -53,7 +53,7 @@ class RegularTokenManager {
         return null;
     }
 
-    TokenValue getTokenValue(String token) {
+    DeviceTokenValue getTokenValue(String token) {
         return cache.get(token);
     }
 

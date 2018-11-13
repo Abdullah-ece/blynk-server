@@ -544,7 +544,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         newHardClient.start();
         newHardClient.send("login " + deviceFromApi.token);
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        appClient.verifyResult(TestUtil.deviceConnected(1, deviceFromApi.id));
+        appClient.verifyResult(deviceConnected(1, deviceFromApi.id));
 
         appClient.send("getWidget 1\0" + widgetId);
         deviceTiles = (DeviceTiles) JsonParser.parseWidget(appClient.getBody(2), 0);

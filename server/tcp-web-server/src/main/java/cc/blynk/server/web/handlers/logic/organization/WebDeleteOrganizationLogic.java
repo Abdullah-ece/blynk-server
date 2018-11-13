@@ -1,8 +1,8 @@
 package cc.blynk.server.web.handlers.logic.organization;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.OrganizationDao;
-import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -24,11 +24,11 @@ public class WebDeleteOrganizationLogic {
     private static final Logger log = LogManager.getLogger(WebDeleteOrganizationLogic.class);
 
     private final OrganizationDao organizationDao;
-    private final TokenManager tokenManager;
+    private final DeviceDao deviceDao;
 
     public WebDeleteOrganizationLogic(Holder holder) {
         this.organizationDao = holder.organizationDao;
-        this.tokenManager = holder.tokenManager;
+        this.deviceDao = holder.deviceDao;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
@@ -60,7 +60,7 @@ public class WebDeleteOrganizationLogic {
             return;
         }
 
-        tokenManager.deleteOrg(orgId);
+        deviceDao.deleteAllTokensForOrg(orgId);
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }

@@ -1,7 +1,6 @@
 package cc.blynk.server.hardware.handlers.hardware.auth;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.dao.TokenValue;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
@@ -101,17 +100,11 @@ public class ProvisionedHardwareFirstHandler extends SimpleChannelInboundHandler
                     device.metaFields = copyMetafields;
                     device.updateNameFromMetafields();
                     device.webDashboard = product.webDashboard.copy();
-                    holder.deviceDao.createWithPredefinedId(orgId, device);
-
-                    holder.tokenManager.updateRegularCache(
-                            device.token, new TokenValue(orgId, device));
+                    holder.deviceDao.createWithPredefinedIdAndToken(orgId, user.email, device);
 
                     for (DashBoard dash : user.profile.dashBoards) {
                         dash.addDeviceToTemplate(device, templateId);
                     }
-
-                    device.activatedBy = user.email;
-                    device.activatedAt = System.currentTimeMillis();
 
                     ChannelPipeline pipeline = ctx.pipeline();
                     pipeline.remove(this)

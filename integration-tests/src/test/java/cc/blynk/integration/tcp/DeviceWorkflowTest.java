@@ -594,7 +594,7 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
         assertNotNull(dash);
         //assertEquals(1, dash.devices.length);
 
-        assertTrue(holder.tokenManager.getTokenValueByToken(device1.token) instanceof TemporaryTokenValue);
+        assertTrue(holder.deviceDao.getDeviceTokenValue(device1.token) instanceof TemporaryTokenValue);
 
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
@@ -622,8 +622,8 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
         assertNotNull(dash);
         //assertEquals(2, dash.devices.length);
 
-        assertFalse(holder.tokenManager.getTokenValueByToken(device1.token) instanceof TemporaryTokenValue);
-        assertFalse(holder.tokenManager.clearTemporaryTokens());
+        assertFalse(holder.deviceDao.getDeviceTokenValue(device1.token) instanceof TemporaryTokenValue);
+        assertFalse(holder.deviceDao.clearTemporaryTokens());
     }
 
     @Test

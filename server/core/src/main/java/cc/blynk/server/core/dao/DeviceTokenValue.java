@@ -7,13 +7,13 @@ import cc.blynk.server.core.model.device.Device;
  * Created by Dmitriy Dumanskiy.
  * Created on 16.11.16.
  */
-public class TokenValue {
+public class DeviceTokenValue {
 
     public final int orgId;
 
     public final Device device;
 
-    public TokenValue(int orgId, Device device) {
+    public DeviceTokenValue(int orgId, Device device) {
         this.orgId = orgId;
         this.device = device;
     }

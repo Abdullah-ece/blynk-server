@@ -2,9 +2,9 @@ package cc.blynk.core.http;
 
 import cc.blynk.core.http.rest.HandlerWrapper;
 import cc.blynk.core.http.rest.URIDecoder;
+import cc.blynk.server.core.dao.DeviceDao;
+import cc.blynk.server.core.dao.DeviceTokenValue;
 import cc.blynk.server.core.dao.SessionDao;
-import cc.blynk.server.core.dao.TokenManager;
-import cc.blynk.server.core.dao.TokenValue;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.internal.ReregisterChannelUtil;
@@ -19,9 +19,9 @@ import io.netty.handler.codec.http.FullHttpResponse;
  */
 public abstract class TokenBaseHttpHandler extends BaseHttpHandler {
 
-    public TokenBaseHttpHandler(TokenManager tokenManager, SessionDao sessionDao,
+    public TokenBaseHttpHandler(DeviceDao deviceDao, SessionDao sessionDao,
                                 GlobalStats globalStats, String rootPath) {
-        super(tokenManager, sessionDao, globalStats, rootPath);
+        super(deviceDao, sessionDao, globalStats, rootPath);
     }
 
     @Override
@@ -34,7 +34,7 @@ public abstract class TokenBaseHttpHandler extends BaseHttpHandler {
         }
 
         //reregister logic
-        TokenValue tokenValue = tokenManager.getTokenValueByToken(tokenPathParam);
+        DeviceTokenValue tokenValue = deviceDao.getDeviceTokenValue(tokenPathParam);
         if (tokenValue == null) {
             log.debug("Requested token {} not found.", tokenPathParam);
             ctx.writeAndFlush(Response.badRequest("Invalid token."), ctx.voidPromise());

@@ -67,7 +67,7 @@ final class JobLauncher {
             );
         }
         scheduler.scheduleAtFixedRate(LRUCache.LOGIN_TOKENS_CACHE::clear, 1, 1, HOURS);
-        scheduler.scheduleAtFixedRate(holder.tokenManager::clearTemporaryTokens, 7, 1, DAYS);
+        scheduler.scheduleAtFixedRate(holder.deviceDao::clearTemporaryTokens, 7, 1, DAYS);
 
         //running once every 3 day
         //todo could be removed?

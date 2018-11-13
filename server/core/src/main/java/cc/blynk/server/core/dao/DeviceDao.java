@@ -51,19 +51,27 @@ public class DeviceDao {
         return deviceSequence.incrementAndGet();
     }
 
-    public Device createWithPredefinedId(int orgId, Device device) {
+    public Device createWithPredefinedIdAndToken(int orgId, String email, Device device) {
         devices.put(new DeviceKey(orgId, device.productId, device.id), device);
+        tokenManager.assignNewToken(orgId, email, device, device.token);
+        return device;
+    }
+
+    public Device createWithPredefinedId(int orgId, String email, Device device) {
+        devices.put(new DeviceKey(orgId, device.productId, device.id), device);
+        tokenManager.assignNewToken(orgId, email, device);
         return device;
     }
 
     public Device create(int orgId, String email, Device device) {
         device.id = deviceSequence.incrementAndGet();
-        tokenManager.assignNewToken(orgId, email, device);
-        return createWithPredefinedId(orgId, device);
+        return createWithPredefinedId(orgId, email, device);
     }
 
     public Device delete(int deviceId) {
-        return devices.remove(new DeviceKey(0, 0, deviceId));
+        Device device = devices.remove(new DeviceKey(0, 0, deviceId));
+        tokenManager.deleteDevice(device);
+        return device;
     }
 
     public Device getById(int deviceId) {
@@ -145,6 +153,19 @@ public class DeviceDao {
             }
         }
         return result;
+    }
+
+    public DeviceTokenValue getDeviceTokenValue(String token) {
+        return tokenManager.getTokenValueByToken(token);
+    }
+
+    public void deleteAllTokensForOrg(int orgId) {
+        tokenManager.regularTokenManager.cache.entrySet().removeIf(entry -> entry.getValue().belongsToOrg(orgId));
+    }
+
+    public boolean clearTemporaryTokens() {
+        long now = System.currentTimeMillis();
+        return tokenManager.regularTokenManager.cache.entrySet().removeIf(entry -> entry.getValue().isExpired(now));
     }
 
 }

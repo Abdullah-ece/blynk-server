@@ -4,8 +4,8 @@ import cc.blynk.core.http.rest.HandlerHolder;
 import cc.blynk.core.http.rest.HandlerWrapper;
 import cc.blynk.core.http.rest.URIDecoder;
 import cc.blynk.server.Holder;
+import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.SessionDao;
-import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.stats.GlobalStats;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -31,18 +31,18 @@ public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter {
 
     protected static final Logger log = LogManager.getLogger(BaseHttpHandler.class);
 
-    protected final TokenManager tokenManager;
+    protected final DeviceDao deviceDao;
     protected final SessionDao sessionDao;
     protected final HandlerWrapper[] handlers;
     protected final String rootPath;
 
     public BaseHttpHandler(Holder holder, String rootPath) {
-        this(holder.tokenManager, holder.sessionDao, holder.stats, rootPath);
+        this(holder.deviceDao, holder.sessionDao, holder.stats, rootPath);
     }
 
-    public BaseHttpHandler(TokenManager tokenManager, SessionDao sessionDao,
+    public BaseHttpHandler(DeviceDao deviceDao, SessionDao sessionDao,
                            GlobalStats globalStats, String rootPath) {
-        this.tokenManager = tokenManager;
+        this.deviceDao = deviceDao;
         this.sessionDao = sessionDao;
         this.rootPath = rootPath;
         this.handlers = AnnotationsProcessor.register(rootPath, this, globalStats);

@@ -6,7 +6,6 @@ import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.dao.SessionDao;
-import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
@@ -33,7 +32,6 @@ public class WebDeleteDeviceLogic {
 
     private final OrganizationDao organizationDao;
     private final DeviceDao deviceDao;
-    private final TokenManager tokenManager;
     private final SessionDao sessionDao;
     private final BlockingIOProcessor blockingIOProcessor;
     private final ReportingDiskDao reportingDiskDao;
@@ -41,7 +39,6 @@ public class WebDeleteDeviceLogic {
     public WebDeleteDeviceLogic(Holder holder) {
         this.organizationDao = holder.organizationDao;
         this.deviceDao = holder.deviceDao;
-        this.tokenManager = holder.tokenManager;
         this.sessionDao = holder.sessionDao;
         this.blockingIOProcessor = holder.blockingIOProcessor;
         this.reportingDiskDao = holder.reportingDiskDao;
@@ -75,7 +72,6 @@ public class WebDeleteDeviceLogic {
 
         dash.eraseWidgetValuesForDevice(deviceId);
         deviceDao.delete(deviceId);
-        tokenManager.deleteDevice(device);
         Session session = sessionDao.getOrgSession(state.orgId);
         session.closeHardwareChannelByDeviceId(deviceId);
 

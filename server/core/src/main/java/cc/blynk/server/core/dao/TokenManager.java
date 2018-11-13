@@ -20,7 +20,7 @@ public class TokenManager {
 
     private static final Logger log = LogManager.getLogger(TokenManager.class);
 
-    private final RegularTokenManager regularTokenManager;
+    public final RegularTokenManager regularTokenManager;
     private final SharedTokenManager sharedTokenManager;
     private final DBManager dbManager;
     private final String host;
@@ -35,10 +35,12 @@ public class TokenManager {
     }
 
     public void deleteDevice(Device device) {
-        String token = device.token;
-        if (token != null) {
-            regularTokenManager.deleteDeviceToken(token);
-            dbManager.removeToken(token);
+        if (device != null) {
+            String token = device.token;
+            if (token != null) {
+                regularTokenManager.deleteDeviceToken(token);
+                dbManager.removeToken(token);
+            }
         }
     }
 
@@ -46,7 +48,7 @@ public class TokenManager {
         sharedTokenManager.deleteSharedToken(sharedToken);
     }
 
-    public TokenValue getTokenValueByToken(String token) {
+    public DeviceTokenValue getTokenValueByToken(String token) {
         return regularTokenManager.getTokenValue(token);
     }
 
@@ -65,7 +67,6 @@ public class TokenManager {
     public String assignNewToken(int orgId, String email, Device device) {
         String newToken = TokenGeneratorUtil.generateNewToken();
         assignNewToken(orgId, email, device, newToken);
-        device.updatedAt = System.currentTimeMillis();
         return newToken;
     }
 
@@ -74,6 +75,7 @@ public class TokenManager {
         //device activated when new token is assigned
         device.activatedAt = System.currentTimeMillis();
         device.activatedBy = email;
+        device.updatedAt = device.activatedAt;
 
         dbManager.assignServerToToken(newToken, host, email, device.id);
         if (oldToken != null) {
@@ -87,18 +89,9 @@ public class TokenManager {
         return newToken;
     }
 
-    public void updateRegularCache(String token, TokenValue tokenValue) {
+    public void updateRegularCache(String token, DeviceTokenValue tokenValue) {
         regularTokenManager.cache.put(token,
-                new TokenValue(tokenValue.orgId, tokenValue.device));
+                new DeviceTokenValue(tokenValue.orgId, tokenValue.device));
     }
 
-    public boolean clearTemporaryTokens() {
-        long now = System.currentTimeMillis();
-        return regularTokenManager.cache.entrySet().removeIf(entry -> entry.getValue().isExpired(now));
-    }
-
-    public void deleteOrg(int orgId) {
-        //todo remove from DB?
-        regularTokenManager.cache.entrySet().removeIf(entry -> entry.getValue().belongsToOrg(orgId));
-    }
 }

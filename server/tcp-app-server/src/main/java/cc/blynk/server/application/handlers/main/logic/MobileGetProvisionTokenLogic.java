@@ -37,7 +37,7 @@ public final class MobileGetProvisionTokenLogic {
         temporaryDevice.id = holder.deviceDao.getId();
 
         log.debug("Getting provision token for deviceId {}.", temporaryDevice.id);
-        holder.tokenManager.assignTempToken(new TemporaryTokenValue(user.orgId, user, temporaryDevice));
+        holder.deviceDao.tokenManager.assignTempToken(new TemporaryTokenValue(user.orgId, user, temporaryDevice));
 
         if (ctx.channel().isWritable()) {
             ctx.writeAndFlush(makeASCIIStringMessage(GET_PROVISION_TOKEN,

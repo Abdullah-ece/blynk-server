@@ -1,8 +1,8 @@
 package cc.blynk.server.hardware.handlers.hardware.logic;
 
+import cc.blynk.server.core.dao.DeviceDao;
+import cc.blynk.server.core.dao.DeviceTokenValue;
 import cc.blynk.server.core.dao.SessionDao;
-import cc.blynk.server.core.dao.TokenManager;
-import cc.blynk.server.core.dao.TokenValue;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.hardware.internal.BridgeForwardMessage;
@@ -37,12 +37,12 @@ public class BridgeLogic {
 
     private static final Logger log = LogManager.getLogger(BridgeLogic.class);
     private final SessionDao sessionDao;
-    private final TokenManager tokenManager;
-    private Map<String, TokenValue> sendToMap;
+    private final DeviceDao deviceDao;
+    private Map<String, DeviceTokenValue> sendToMap;
 
-    public BridgeLogic(SessionDao sessionDao, TokenManager tokenManager) {
+    public BridgeLogic(SessionDao sessionDao, DeviceDao deviceDao) {
         this.sessionDao = sessionDao;
-        this.tokenManager = tokenManager;
+        this.deviceDao = deviceDao;
     }
 
     private static boolean isInit(String body) {
@@ -76,7 +76,7 @@ public class BridgeLogic {
             //sendToMap may be already initialized, so checking it first.
             var tokenValue = sendToMap.get(token);
             if (tokenValue == null) {
-                tokenValue = tokenManager.getTokenValueByToken(token);
+                tokenValue = deviceDao.getDeviceTokenValue(token);
                 if (tokenValue == null) {
                     log.debug("Token {} for bridge command does not exists.", token);
                     ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());

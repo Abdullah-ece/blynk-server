@@ -47,7 +47,8 @@ public final class MobileDeleteDashLogic {
 
         holder.timerWorker.deleteTimers(state.orgId, state.user.email, dash);
         holder.reportScheduler.cancelStoredFuture(user, dashId);
-        holder.tokenManager.deleteSharedToken(dash.sharedToken);
+        //todo move shared token manager away
+        holder.deviceDao.tokenManager.deleteSharedToken(dash.sharedToken);
 
         user.profile.dashBoards = ArrayUtil.remove(user.profile.dashBoards, index, DashBoard.class);
     }

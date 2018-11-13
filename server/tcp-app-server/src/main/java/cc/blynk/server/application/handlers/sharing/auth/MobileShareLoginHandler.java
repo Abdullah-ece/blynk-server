@@ -66,7 +66,8 @@ public class MobileShareLoginHandler extends SimpleChannelInboundHandler<ShareLo
         ///.trim() is not used for back compatibility
         String userName = email.toLowerCase();
 
-        SharedTokenValue tokenValue = holder.tokenManager.getUserBySharedToken(token);
+        //todo move shared token manager away
+        SharedTokenValue tokenValue = holder.deviceDao.tokenManager.getUserBySharedToken(token);
 
         if (tokenValue == null || !tokenValue.user.email.equals(userName)) {
             log.debug("Share token is invalid. User : {}, token {}, {}",

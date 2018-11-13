@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
  * Created by Dmitriy Dumanskiy.
  * Created on 16.11.16.
  */
-public final class TemporaryTokenValue extends TokenValue {
+public final class TemporaryTokenValue extends DeviceTokenValue {
 
     private static final long EXPIRATION_PERIOD = TimeUnit.DAYS.toMillis(7);
     private final long created;

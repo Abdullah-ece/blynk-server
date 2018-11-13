@@ -38,7 +38,6 @@ public final class MobileDeleteDeviceLogic {
             dash.eraseWidgetValuesForDevice(deviceId);
         }
         user.profile.deleteDeviceFromTags(deviceId);
-        holder.tokenManager.deleteDevice(device);
         holder.deviceDao.delete(device.id);
         Session session = holder.sessionDao.getOrgSession(state.orgId);
         session.closeHardwareChannelByDeviceId(deviceId);
