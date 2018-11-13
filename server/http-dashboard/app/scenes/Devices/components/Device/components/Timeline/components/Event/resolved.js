@@ -12,7 +12,7 @@ class Resolved extends React.Component {
 
   render() {
 
-    const resolvedTime = getCalendarFormatDate(this.props.event.resolvedAt);
+    const resolvedTime = getCalendarFormatDate(this.props.event.resolvedAt, true);
 
     const time = getCalendarFormatDate(this.props.event.ts, true);
 
