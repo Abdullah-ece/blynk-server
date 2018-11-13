@@ -70,19 +70,11 @@ public class WebCreateDeviceLogic {
         }
 
         Organization org = organizationDao.getOrgByIdOrThrow(orgId);
-        Product product = org.getProduct(newDevice.productId);
-        if (product == null) {
-            log.error("Product with passed id {} not exists for org {}.", newDevice.productId, orgId);
-            ctx.writeAndFlush(json(message.id, "Product with passed id not exists."), ctx.voidPromise());
-            return;
-        }
-
-        newDevice.metaFields = product.copyMetaFields();
-        newDevice.webDashboard = product.webDashboard.copy();
-
+        organizationDao.assignToOrgAndAddDevice(org, newDevice);
         deviceDao.create(orgId, user.email, newDevice);
 
         if (ctx.channel().isWritable()) {
+            Product product = org.getProduct(newDevice.productId);
             String deviceString = new DeviceDTO(newDevice, product, org.name).toString();
             ctx.writeAndFlush(makeUTF8StringMessage(message.command, message.id, deviceString), ctx.voidPromise());
         }

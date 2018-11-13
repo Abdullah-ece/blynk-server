@@ -241,12 +241,13 @@ public class OrganizationDao {
         }
 
         if (product == null) {
-            log.error("Product with passed id {} not exists for org {}.", newDevice.productId, org.id);
+            log.error("Product for new device with id {} not exists for orgId {}.", newDevice.productId, org.id);
             throw new ProductNotFoundException("Product with passed id not exists.");
         }
 
         newDevice.metaFields = product.copyMetaFields();
         newDevice.webDashboard = product.webDashboard.copy();
+        org.addDevice(newDevice);
     }
 
     private static Organization getOrgById(List<Organization> orgs, int id) {

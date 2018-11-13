@@ -200,6 +200,11 @@ public class Organization {
         return null;
     }
 
+    public void addDevice(Device device) {
+        this.devices = ArrayUtil.add(this.devices, device, Device.class);
+        this.lastModifiedTs = System.currentTimeMillis();
+    }
+
     @Override
     public String toString() {
         return JsonParser.toJson(this);

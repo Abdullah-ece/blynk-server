@@ -45,7 +45,6 @@ public final class MobileCreateDeviceLogic {
         holder.organizationDao.assignToOrgAndAddDevice(orgId, newDevice);
         holder.deviceDao.create(orgId, user.email, newDevice);
 
-        user.lastModifiedTs = System.currentTimeMillis();
         log.debug("Device for orgId {} created {}.", orgId, newDevice);
 
         if (ctx.channel().isWritable()) {

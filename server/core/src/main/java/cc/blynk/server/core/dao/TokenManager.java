@@ -65,6 +65,7 @@ public class TokenManager {
     public String assignNewToken(int orgId, String email, Device device) {
         String newToken = TokenGeneratorUtil.generateNewToken();
         assignNewToken(orgId, email, device, newToken);
+        device.updatedAt = System.currentTimeMillis();
         return newToken;
     }
 
