@@ -186,13 +186,13 @@ class Base extends React.Component {
                   {this.getChildrenByType(Preview.displayName)}
                 </Col>
                 {this.props.tools && (
-                  <Col span={1} className="product-events-event-tools">
+                  <div className="product-metadata-item-tools">
                     <DragHandler/>
 
                     {!isEventPristine(this.props.field) && this.toolsPopconfirmDeleteButton() || this.toolsDeleteButton()}
 
                     {this.toolsCloneButton()}
-                  </Col>
+                  </div>
                 )}
               </Row>
               <Row gutter={8}>
