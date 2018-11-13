@@ -23,6 +23,9 @@ public final class MobileSetWidgetPropertyLogic {
 
     private static final Logger log = LogManager.getLogger(MobileSetWidgetPropertyLogic.class);
 
+    private MobileSetWidgetPropertyLogic() {
+    }
+
     public static void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
         var splitBody = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
 

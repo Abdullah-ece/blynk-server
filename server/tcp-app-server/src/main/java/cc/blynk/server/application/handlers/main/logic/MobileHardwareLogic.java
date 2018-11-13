@@ -102,10 +102,11 @@ public class MobileHardwareLogic extends BaseProcessorHandler {
             target = deviceDao.getById(targetId);
         } else if (targetId < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
             target = user.profile.getTagById(targetId);
-        } else {
+        }
+        //else {
             //means widget assigned to device selector widget.
             //target = dash.getDeviceSelector(targetId);
-        }
+        //}
 
         if (target == null) {
             log.debug("No assigned target id for received command.");
