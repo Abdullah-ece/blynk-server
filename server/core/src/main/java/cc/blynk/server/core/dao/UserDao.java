@@ -157,7 +157,7 @@ public class UserDao {
             for (Device device : clonedDash.devices) {
                 device.erase();
                 String token = TokenGeneratorUtil.generateNewToken();
-                tokenManager.assignToken(newUser, clonedDash, device, token);
+                tokenManager.assignNewToken(newUser, clonedDash, device, token);
             }
         }
         */

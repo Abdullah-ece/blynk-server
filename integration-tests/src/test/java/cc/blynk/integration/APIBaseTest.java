@@ -21,7 +21,6 @@ import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.MobileAndHttpsServer;
 import cc.blynk.utils.SHA256Util;
-import cc.blynk.utils.TokenGeneratorUtil;
 import cc.blynk.utils.properties.ServerProperties;
 import org.apache.http.Header;
 import org.apache.http.NameValuePair;
@@ -121,8 +120,7 @@ public abstract class APIBaseTest extends CounterBase {
 
         Device device = new Device();
         device.name = "Default Device";
-        this.token = TokenGeneratorUtil.generateNewToken();
-        holder.tokenManager.assignToken(org.id, regularUser.email, device, token);
+        this.token = holder.tokenManager.assignNewToken(org.id, regularUser.email, device);
         holder.deviceDao.createWithPredefinedId(org.id, device);
     }
 

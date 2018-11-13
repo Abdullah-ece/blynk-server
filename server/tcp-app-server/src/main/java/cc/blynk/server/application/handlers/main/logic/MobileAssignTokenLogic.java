@@ -64,7 +64,7 @@ public final class MobileAssignTokenLogic {
                 return;
             }
 
-            tokenManager.assignToken(user.orgId, user.email, device, token);
+            tokenManager.assignNewToken(user.orgId, user.email, device, token);
 
             ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
         });

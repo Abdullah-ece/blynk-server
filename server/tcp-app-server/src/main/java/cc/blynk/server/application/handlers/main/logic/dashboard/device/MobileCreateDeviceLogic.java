@@ -6,7 +6,6 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.utils.TokenGeneratorUtil;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -46,8 +45,7 @@ public final class MobileCreateDeviceLogic {
         holder.organizationDao.assignToOrgAndAddDevice(orgId, newDevice);
         holder.deviceDao.create(orgId, newDevice);
 
-        String newToken = TokenGeneratorUtil.generateNewToken();
-        holder.tokenManager.assignToken(orgId, user.email, newDevice, newToken);
+        holder.tokenManager.assignNewToken(orgId, user.email, newDevice);
 
         user.lastModifiedTs = System.currentTimeMillis();
         log.debug("Device for orgId {} created {}.", orgId, newDevice);

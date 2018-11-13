@@ -62,7 +62,13 @@ public class TokenManager {
                 temporaryTokenValue.user.email, temporaryTokenValue.device.id, newToken);
     }
 
-    public void assignToken(int orgId, String email, Device device, String newToken) {
+    public String assignNewToken(int orgId, String email, Device device) {
+        String newToken = TokenGeneratorUtil.generateNewToken();
+        assignNewToken(orgId, email, device, newToken);
+        return newToken;
+    }
+
+    public void assignNewToken(int orgId, String email, Device device, String newToken) {
         String oldToken = regularTokenManager.assignToken(orgId, device, newToken);
         //device activated when new token is assigned
         device.activatedAt = System.currentTimeMillis();
@@ -72,12 +78,6 @@ public class TokenManager {
         if (oldToken != null) {
             dbManager.removeToken(oldToken);
         }
-    }
-
-    public String refreshToken(int orgId, String email, Device device) {
-        String newToken = TokenGeneratorUtil.generateNewToken();
-        assignToken(orgId, email, device, newToken);
-        return newToken;
     }
 
     public String refreshSharedToken(User user, DashBoard dash) {

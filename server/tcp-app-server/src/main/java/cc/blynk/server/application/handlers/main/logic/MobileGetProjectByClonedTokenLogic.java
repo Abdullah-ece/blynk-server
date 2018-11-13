@@ -126,7 +126,7 @@ public class MobileGetProjectByClonedTokenLogic {
         if (newDash.devices != null) {
             for (Device device : newDash.devices) {
                 String token = TokenGeneratorUtil.generateNewToken();
-                tokenManager.assignToken(user, newDash, device, token);
+                tokenManager.assignNewToken(user, newDash, device, token);
             }
         }
         */

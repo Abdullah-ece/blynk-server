@@ -36,7 +36,7 @@ public class AssignTokenTest extends SingleServerInstancePerTestWithDB {
 
     @Test
     public void testNoTokenExists() throws Exception {
-        clientPair.appClient.send("assignToken 1\0" + "123");
+        clientPair.appClient.send("assignNewToken 1\0" + "123");
         clientPair.appClient.verifyResult(notAllowed(1));
     }
 
@@ -48,10 +48,10 @@ public class AssignTokenTest extends SingleServerInstancePerTestWithDB {
         list[0] = flashedToken;
         holder.dbManager.insertFlashedTokens(list);
 
-        clientPair.appClient.send("assignToken 1\0" + flashedToken.token);
+        clientPair.appClient.send("assignNewToken 1\0" + flashedToken.token);
         clientPair.appClient.verifyResult(ok(1));
 
-        clientPair.appClient.send("assignToken 1\0" + flashedToken.token);
+        clientPair.appClient.send("assignNewToken 1\0" + flashedToken.token);
         clientPair.appClient.verifyResult(notAllowed(2));
     }
 
@@ -63,7 +63,7 @@ public class AssignTokenTest extends SingleServerInstancePerTestWithDB {
         list[0] = flashedToken;
         holder.dbManager.insertFlashedTokens(list);
 
-        clientPair.appClient.send("assignToken 1\0" + flashedToken.token);
+        clientPair.appClient.send("assignNewToken 1\0" + flashedToken.token);
         clientPair.appClient.verifyResult(ok(1));
 
         TestHardClient hardClient2 = new TestHardClient("localhost", properties.getHttpPort());

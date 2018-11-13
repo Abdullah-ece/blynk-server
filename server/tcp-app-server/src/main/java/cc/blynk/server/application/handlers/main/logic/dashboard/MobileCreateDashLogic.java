@@ -90,7 +90,7 @@ public final class MobileCreateDashLogic {
                 if (generateTokensForDevices) {
                     holder.organizationDao.assignToOrgAndAddDevice(org, device);
                     String token = TokenGeneratorUtil.generateNewToken();
-                    holder.tokenManager.assignToken(user, newDash, device, token);
+                    holder.tokenManager.assignNewToken(user, newDash, device, token);
                 }
             }
         }

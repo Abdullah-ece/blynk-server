@@ -37,7 +37,6 @@ import cc.blynk.server.db.ReportingDBManager;
 import cc.blynk.server.db.model.LogEvent;
 import cc.blynk.server.db.model.LogEventCountKey;
 import cc.blynk.utils.StringUtils;
-import cc.blynk.utils.TokenGeneratorUtil;
 import cc.blynk.utils.http.MediaType;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -107,8 +106,7 @@ public class DevicesHandler extends BaseHttpHandler {
         newDevice.webDashboard = product.webDashboard.copy();
 
         deviceDao.create(orgId, newDevice);
-        String newToken = TokenGeneratorUtil.generateNewToken();
-        tokenManager.assignToken(orgId, user.email, newDevice, newToken);
+        tokenManager.assignNewToken(orgId, user.email, newDevice);
 
         user.lastModifiedTs = System.currentTimeMillis();
 
