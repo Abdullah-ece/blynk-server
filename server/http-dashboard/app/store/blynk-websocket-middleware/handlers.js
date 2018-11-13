@@ -240,7 +240,7 @@ export const Handlers = (params) => {
 
   };
 
-  const apiCallHandler = ({ msgId, previousAction, promiseResolve }) => {
+  const apiCallHandler = ({ msgId, previousAction, message, promiseResolve }) => {
 
     const body = decodeBody(dataView);
 
@@ -252,7 +252,7 @@ export const Handlers = (params) => {
       });
 
     store.dispatch({
-      type: `${previousAction.type}_SUCCESS`,
+      type: message || `${previousAction.type}_SUCCESS`,
       payload: {
         data: JSON.parse(body)
       },

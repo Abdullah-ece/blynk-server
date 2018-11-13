@@ -595,6 +595,12 @@ export default function Devices(state = initialState, action) {
 
       }, state);
 
+    case "API_DEVICE_CREATE_SUCCESS":
+      return {
+        ...state,
+        devices: [...state.devices, action.payload.data]
+      };
+
     case "API_DEVICE_DASHBOARD_FETCH_SUCCESS":
 
       const dashboard = {

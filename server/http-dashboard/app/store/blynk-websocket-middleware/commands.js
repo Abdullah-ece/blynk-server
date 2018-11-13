@@ -399,6 +399,14 @@ export const blynkWsMessage = (params) => {
       previousAction: message,
     });
 
+  } else if (command === API_COMMANDS.CREATE_DEVICE) {
+    handlers.ApiCallHandler({
+      msgId: ++MSG_ID,
+      previousAction: message && message.previousAction,
+      message: 'API_DEVICE_CREATE_SUCCESS',
+      promiseResolve: message && message.promiseResolve,
+    });
+
   } else if (API_COMMANDS_CODES_ARRAY.indexOf(command) >= 0) {
 
     handlers.ApiCallHandler({
