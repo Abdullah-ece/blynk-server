@@ -4,6 +4,7 @@ import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.Device;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static cc.blynk.integration.TestUtil.b;
@@ -18,6 +19,7 @@ import static org.mockito.Mockito.verify;
 public class HardwareEmulatorTest {
 
     @Test
+    @Ignore
     public void connectHardwareWithProvisionTokenOnTheLocalhost() throws Exception {
         String host = "localhost";
         String user = "admin@blynk.cc";
