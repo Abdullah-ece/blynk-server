@@ -4,7 +4,6 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.TokenManager;
-import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.dto.DeviceDTO;
@@ -70,21 +69,6 @@ public class WebCreateDeviceLogic {
         if (newDevice.isNotValid()) {
             log.error("WebCreate device for {} has wrong name or board. {}", user.email, newDevice);
             ctx.writeAndFlush(json(message.id, "Device has no name or board type selected."), ctx.voidPromise());
-            return;
-        }
-
-        //default dash for all devices...
-        //todo fix
-        if (user.profile.dashBoards.length == 0) {
-            user.profile.dashBoards = new DashBoard[] {
-                    new DashBoard()
-            };
-        }
-        DashBoard dash = user.profile.dashBoards[0];
-
-        if (dash == null) {
-            log.error("User {} has no dashboards.", user.email);
-            ctx.writeAndFlush(json(message.id, "Dash not exists."), ctx.voidPromise());
             return;
         }
 
