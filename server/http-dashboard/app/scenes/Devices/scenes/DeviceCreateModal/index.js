@@ -129,17 +129,17 @@ class DeviceCreateModalScene extends React.Component {
     }
   }
 
-  shouldComponentUpdate(nextProps) {
-    return (
-      !_.isEqual(this.props.visible, nextProps.visible) ||
-      !_.isEqual(this.props.organizations, nextProps.organizations) ||
-      !_.isEqual(this.props.organization, nextProps.organization) ||
-      !_.isEqual(this.props.account, nextProps.account) ||
-      !_.isEqual(this.props.products, nextProps.products) ||
-      !_.isEqual(this.props.errors, nextProps.errors) ||
-      !_.isEqual(this.props.formValues, nextProps.formValues)
-    );
-  }
+  // shouldComponentUpdate(nextProps) {
+  //   return (
+  //     !_.isEqual(this.props.visible, nextProps.visible) ||
+  //     !_.isEqual(this.props.organizations, nextProps.organizations) ||
+  //     !_.isEqual(this.props.organization, nextProps.organization) ||
+  //     !_.isEqual(this.props.account, nextProps.account) ||
+  //     !_.isEqual(this.props.products, nextProps.products) ||
+  //     !_.isEqual(this.props.errors, nextProps.errors) ||
+  //     !_.isEqual(this.props.formValues, nextProps.formValues)
+  //   );
+  // }
 
   SETUP_PRODUCT_KEY = 'SETUP_NEW_PRODUCT';
 
@@ -158,12 +158,14 @@ class DeviceCreateModalScene extends React.Component {
   handleSubmit() {
 
     const createDevice = (productId) => {
+      this.setState({ loading: true });
+
       return this.props.createDevice({
         orgId: this.props.formValues.orgId
       }, {
         ...this.props.formValues,
         productId: productId || this.props.formValues.productId,
-        status   : STATUS.OFFLINE
+        status: STATUS.OFFLINE
       }).then((response) => {
         this.props.fetchDevices({
           orgId: this.props.account.orgId
@@ -173,7 +175,13 @@ class DeviceCreateModalScene extends React.Component {
           } else {
             this.handleCancelClick();
           }
+        }).catch((err) => {
+          console.error(err);
+          this.setState({ loading: false });
         });
+      }).catch((err) => {
+        console.error(err);
+        this.setState({ loading: false });
       });
     };
 
@@ -181,21 +189,28 @@ class DeviceCreateModalScene extends React.Component {
 
       if (this.props.formValues.productId === this.SETUP_PRODUCT_KEY) {
         this.props.createProduct({
-          orgId  : this.props.organization.id,
+          orgId: this.props.organization.id,
           product: {
-            "name"          : `New Product ${_.random(1, 999999999)}`,
-            "boardType"     : this.props.formValues.boardType,
+            "name": `New Product ${_.random(1, 999999999)}`,
+            "boardType": this.props.formValues.boardType,
             "connectionType": this.props.formValues.connectionType,
           }
         }).then((response) => {
-          createDevice(response.payload.data.id).then(() => resolve());
+          createDevice(response.payload.data.id).then(() => {
+            this.setState({ loading: false });
+            resolve();
+          });
         });
       } else {
-        createDevice().then(() => resolve());
+        createDevice().then(() => {
+          this.setState({ loading: false });
+          resolve();
+        });
       }
 
     });
   }
+
   handleProductSelect(productId) {
 
     const getProductDefaultName = (product) => {
@@ -253,6 +268,7 @@ class DeviceCreateModalScene extends React.Component {
         handleSubmit={this.handleSubmit}
         initialValues={initialValues}
         onProductSelect={this.handleProductSelect}
+        loading={this.state.loading}
       />
     );
   }
