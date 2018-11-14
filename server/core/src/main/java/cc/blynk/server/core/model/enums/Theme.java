@@ -7,11 +7,10 @@ package cc.blynk.server.core.model.enums;
  */
 public enum Theme {
 
-    blynk,
     Blynk,
     BlynkLight,
     SparkFun,
-    AppTheme, //should be removed in future
+    AppTheme,
     CustomTheme, //should be removed in future
     AppExport //should be removed in future
 
