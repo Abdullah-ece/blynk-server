@@ -70,6 +70,7 @@ public class WebDeleteDeviceLogic {
         //todo fix
         DashBoard dash = user.profile.dashBoards[0];
 
+        log.debug("Deleting device {} for orgId {}.", deviceId, orgId);
         dash.eraseWidgetValuesForDevice(deviceId);
         deviceDao.delete(deviceId);
         Session session = sessionDao.getOrgSession(state.orgId);

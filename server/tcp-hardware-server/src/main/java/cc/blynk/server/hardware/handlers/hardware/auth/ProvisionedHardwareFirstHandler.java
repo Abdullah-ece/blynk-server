@@ -126,14 +126,15 @@ public class ProvisionedHardwareFirstHandler extends SimpleChannelInboundHandler
                             device.id, product.id, templateId);
                     device.productId = product.id;
                     device.hardwareInfo = hardwareInfo;
-                    MetaField[] copyMetafields = product.copyMetaFields();
+
+                    holder.organizationDao.assignToOrgAndAddDevice(org, device);
                     if (templateId != null) {
-                        setTemplateIdInMeta(copyMetafields, templateId);
-                        setDeviceOwnerInMeta(copyMetafields, user.email);
+                        MetaField[] metaFields = device.metaFields;
+                        setTemplateIdInMeta(metaFields, templateId);
+                        setDeviceOwnerInMeta(metaFields, user.email);
+                        device.metaFields = metaFields;
                     }
-                    device.metaFields = copyMetafields;
                     device.updateNameFromMetafields();
-                    device.webDashboard = product.webDashboard.copy();
                     holder.deviceDao.createWithPredefinedIdAndToken(orgId, user.email, device);
 
                     for (DashBoard dash : user.profile.dashBoards) {

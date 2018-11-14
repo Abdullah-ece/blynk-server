@@ -190,7 +190,7 @@ public class ReportingDiskDao implements Closeable {
     }
 
     public int delete(int deviceId, String[] pins) throws IOException {
-        log.debug("Removing selected pin data for deviceId {}.", deviceId);
+        log.debug("Deleting selected pin data for deviceId {}.", deviceId);
         Path userReportingPath = getDeviceFolderPath(deviceId);
 
         int count = 0;
@@ -211,7 +211,7 @@ public class ReportingDiskDao implements Closeable {
     }
 
     public int delete(int deviceId) throws IOException {
-        log.debug("Removing all pin data for deviceId {}.", deviceId);
+        log.debug("Deleting all pin data for deviceId {}.", deviceId);
         Path userReportingPath = getDeviceFolderPath(deviceId);
 
         int count = 0;
@@ -222,7 +222,7 @@ public class ReportingDiskDao implements Closeable {
     }
 
     public void delete(int deviceId, PinType pinType, short pin) {
-        log.debug("Removing {}{} pin data for deviceId {}.", pinType.pintTypeChar, pin, deviceId);
+        log.debug("Deleting {}{} pin data for deviceId {}.", pinType.pintTypeChar, pin, deviceId);
         String userReportingDir = getDeviceFolderPath(deviceId).toString();
 
         for (GraphGranularityType reportGranularity : GraphGranularityType.values()) {
