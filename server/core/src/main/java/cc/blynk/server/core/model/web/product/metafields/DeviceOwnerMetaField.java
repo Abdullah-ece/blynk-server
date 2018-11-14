@@ -39,4 +39,11 @@ public class DeviceOwnerMetaField extends TextMetaField {
                 icon, value);
     }
 
+    public MetaField copy(String predefinedValue) {
+        return new DeviceOwnerMetaField(id, name, roleIds,
+                includeInProvision, isMandatory, isDefault,
+                icon, predefinedValue);
+    }
+
+
 }

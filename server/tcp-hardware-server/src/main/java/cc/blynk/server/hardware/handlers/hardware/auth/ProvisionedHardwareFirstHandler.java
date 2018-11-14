@@ -8,6 +8,7 @@ import cc.blynk.server.core.model.device.HardwareInfo;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
+import cc.blynk.server.core.model.web.product.metafields.DeviceOwnerMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TemplateIdMetaField;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.hardware.internal.ProvisionedDeviceAddedMessage;
@@ -49,6 +50,38 @@ public class ProvisionedHardwareFirstHandler extends SimpleChannelInboundHandler
         this.orgId = orgId;
         this.user = user;
         this.device = device;
+    }
+
+    private static void setDeviceOwnerInMeta(MetaField[] metaFields, String email) {
+        for (int i = 0; i < metaFields.length; i++) {
+            MetaField metaField = metaFields[i];
+            if (metaField instanceof DeviceOwnerMetaField) {
+                DeviceOwnerMetaField deviceOwnerMetaField = (DeviceOwnerMetaField) metaField;
+                metaFields[i] = deviceOwnerMetaField.copy(email);
+                return;
+            }
+        }
+    }
+
+    private void getProductAndOrgByTemplateId(String templateId) {
+        for (Organization tempOrg : holder.organizationDao.organizations.values()) {
+            Product productWithTemplate = tempOrg.getProductByTemplateId(templateId);
+            if (productWithTemplate != null) {
+                this.org = tempOrg;
+                this.product = productWithTemplate;
+            }
+        }
+    }
+
+    private static void setTemplateIdInMeta(MetaField[] metaFields, String templateId) {
+        for (int i = 0; i < metaFields.length; i++) {
+            MetaField metaField = metaFields[i];
+            if (metaField instanceof TemplateIdMetaField) {
+                TemplateIdMetaField templateIdMetaField = (TemplateIdMetaField) metaField;
+                metaFields[i] = templateIdMetaField.copy(templateId);
+                return;
+            }
+        }
     }
 
     @Override
@@ -96,6 +129,7 @@ public class ProvisionedHardwareFirstHandler extends SimpleChannelInboundHandler
                     MetaField[] copyMetafields = product.copyMetaFields();
                     if (templateId != null) {
                         setTemplateIdInMeta(copyMetafields, templateId);
+                        setDeviceOwnerInMeta(copyMetafields, user.email);
                     }
                     device.metaFields = copyMetafields;
                     device.updateNameFromMetafields();
@@ -115,27 +149,6 @@ public class ProvisionedHardwareFirstHandler extends SimpleChannelInboundHandler
             }
         } else {
             log.warn("Expecting only internal command here for user {}", user.email);
-        }
-    }
-
-    private void getProductAndOrgByTemplateId(String templateId) {
-        for (Organization tempOrg : holder.organizationDao.organizations.values()) {
-            Product productWithTemplate = tempOrg.getProductByTemplateId(templateId);
-            if (productWithTemplate != null) {
-                this.org = tempOrg;
-                this.product = productWithTemplate;
-            }
-        }
-    }
-
-    private static void setTemplateIdInMeta(MetaField[] metaFields, String templateId) {
-        for (int i = 0; i < metaFields.length; i++) {
-            MetaField metaField = metaFields[i];
-            if (metaField instanceof TemplateIdMetaField) {
-                TemplateIdMetaField templateIdMetaField = (TemplateIdMetaField) metaField;
-                metaFields[i] = templateIdMetaField.copy(templateId);
-                return;
-            }
         }
     }
 
