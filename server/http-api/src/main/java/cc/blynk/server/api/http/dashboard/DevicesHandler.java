@@ -287,9 +287,6 @@ public class DevicesHandler extends BaseHttpHandler {
             return badRequest();
         }
         dash.eraseWidgetValuesForDevice(deviceId);
-
-        deviceDao.tokenManager.deleteDevice(device);
-
         user.lastModifiedTs = System.currentTimeMillis();
 
         return ok();

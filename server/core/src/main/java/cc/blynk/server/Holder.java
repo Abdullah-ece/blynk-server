@@ -2,11 +2,12 @@ package cc.blynk.server;
 
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.DeviceDao;
+import cc.blynk.server.core.dao.DeviceTokenManager;
 import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.dao.SessionDao;
-import cc.blynk.server.core.dao.TokenManager;
+import cc.blynk.server.core.dao.SharedTokenManager;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.web.Organization;
@@ -88,6 +89,8 @@ public class Holder {
 
     public final TokensPool tokensPool;
 
+    public final SharedTokenManager sharedTokenManager;
+
     public Holder(ServerProperties serverProperties, MailProperties mailProperties,
                   SmsProperties smsProperties, GCMProperties gcmProperties,
                   TwitterProperties twitterProperties,
@@ -123,8 +126,10 @@ public class Holder {
 
         this.organizationDao = new OrganizationDao(fileManager, userDao);
         Collection<Organization> orgs = organizationDao.organizations.values();
-        TokenManager tokenManager = new TokenManager(orgs, userDao.users.values(), dbManager, serverProperties.host);
+        Collection<User> users = userDao.users.values();
+        DeviceTokenManager tokenManager = new DeviceTokenManager(orgs, dbManager, serverProperties.host);
         this.deviceDao = new DeviceDao(orgs, tokenManager);
+        this.sharedTokenManager = new SharedTokenManager(users);
 
         this.stats = new GlobalStats();
         this.reportingDiskDao = new ReportingDiskDao(serverProperties.getReportingFolder(),
@@ -185,8 +190,10 @@ public class Holder {
 
         this.organizationDao = new OrganizationDao(fileManager, userDao);
         Collection<Organization> orgs = organizationDao.organizations.values();
-        TokenManager tokenManager = new TokenManager(orgs, userDao.users.values(), dbManager, serverProperties.host);
+        Collection<User> users = userDao.users.values();
+        DeviceTokenManager tokenManager = new DeviceTokenManager(orgs, dbManager, serverProperties.host);
         this.deviceDao = new DeviceDao(orgs, tokenManager);
+        this.sharedTokenManager = new SharedTokenManager(users);
 
         this.stats = new GlobalStats();
         this.reportingDiskDao = new ReportingDiskDao(serverProperties.getReportingFolder(),

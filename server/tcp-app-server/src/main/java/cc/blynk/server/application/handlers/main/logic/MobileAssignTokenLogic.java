@@ -62,7 +62,7 @@ public final class MobileAssignTokenLogic {
                 return;
             }
 
-            holder.deviceDao.tokenManager.assignNewToken(user.orgId, user.email, device, token);
+            holder.deviceDao.assignNewToken(user.orgId, user.email, device, token);
 
             ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
         });

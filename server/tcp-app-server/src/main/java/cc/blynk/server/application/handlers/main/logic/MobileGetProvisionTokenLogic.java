@@ -1,7 +1,6 @@
 package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.dao.TemporaryTokenValue;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
@@ -37,7 +36,7 @@ public final class MobileGetProvisionTokenLogic {
         temporaryDevice.id = holder.deviceDao.getId();
 
         log.debug("Getting provision token for deviceId {}.", temporaryDevice.id);
-        holder.deviceDao.tokenManager.assignTempToken(new TemporaryTokenValue(user.orgId, user, temporaryDevice));
+        holder.deviceDao.assignTempToken(user.orgId, user, temporaryDevice);
 
         if (ctx.channel().isWritable()) {
             ctx.writeAndFlush(makeASCIIStringMessage(GET_PROVISION_TOKEN,

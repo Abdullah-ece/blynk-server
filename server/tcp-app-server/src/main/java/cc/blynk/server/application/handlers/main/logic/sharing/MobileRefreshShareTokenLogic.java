@@ -42,8 +42,7 @@ public final class MobileRefreshShareTokenLogic {
         User user = state.user;
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
-        //todo move shared token manager away
-        String token = holder.deviceDao.tokenManager.refreshSharedToken(user, dash);
+        String token = holder.sharedTokenManager.refreshSharedToken(user, dash);
 
         //todo move to session class?
         Session session = holder.sessionDao.getOrgSession(state.orgId);

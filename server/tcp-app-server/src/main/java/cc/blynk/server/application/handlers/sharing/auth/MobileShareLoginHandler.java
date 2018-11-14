@@ -67,7 +67,7 @@ public class MobileShareLoginHandler extends SimpleChannelInboundHandler<ShareLo
         String userName = email.toLowerCase();
 
         //todo move shared token manager away
-        SharedTokenValue tokenValue = holder.deviceDao.tokenManager.getUserBySharedToken(token);
+        SharedTokenValue tokenValue = holder.sharedTokenManager.getUserByToken(token);
 
         if (tokenValue == null || !tokenValue.user.email.equals(userName)) {
             log.debug("Share token is invalid. User : {}, token {}, {}",

@@ -1,5 +1,6 @@
 package cc.blynk.server.core.dao;
 
+import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.exceptions.DeviceNotFoundException;
 import cc.blynk.server.core.model.web.Organization;
@@ -29,9 +30,9 @@ public class DeviceDao {
 
     public final ConcurrentMap<DeviceKey, Device> devices;
     private final AtomicInteger deviceSequence;
-    public final TokenManager tokenManager;
+    private final DeviceTokenManager deviceTokenManager;
 
-    public DeviceDao(Collection<Organization> orgs, TokenManager tokenManager) {
+    public DeviceDao(Collection<Organization> orgs, DeviceTokenManager deviceTokenManager) {
         devices = new ConcurrentHashMap<>();
 
         int maxDeviceId = 0;
@@ -43,7 +44,7 @@ public class DeviceDao {
         }
 
         this.deviceSequence = new AtomicInteger(maxDeviceId);
-        this.tokenManager = tokenManager;
+        this.deviceTokenManager = deviceTokenManager;
         log.info("Devices count is {}, sequence is {}", devices.size(), deviceSequence.get());
     }
 
@@ -51,15 +52,14 @@ public class DeviceDao {
         return deviceSequence.incrementAndGet();
     }
 
-    public Device createWithPredefinedIdAndToken(int orgId, String email, Device device) {
+    public void createWithPredefinedIdAndToken(int orgId, String email, Device device) {
         devices.put(new DeviceKey(orgId, device.productId, device.id), device);
-        tokenManager.assignNewToken(orgId, email, device, device.token);
-        return device;
+        deviceTokenManager.assignNewToken(orgId, email, device, device.token);
     }
 
     public Device createWithPredefinedId(int orgId, String email, Device device) {
         devices.put(new DeviceKey(orgId, device.productId, device.id), device);
-        tokenManager.assignNewToken(orgId, email, device);
+        deviceTokenManager.assignNewToken(orgId, email, device);
         return device;
     }
 
@@ -70,7 +70,7 @@ public class DeviceDao {
 
     public Device delete(int deviceId) {
         Device device = devices.remove(new DeviceKey(0, 0, deviceId));
-        tokenManager.deleteDevice(device);
+        deviceTokenManager.deleteDevice(device);
         return device;
     }
 
@@ -156,16 +156,27 @@ public class DeviceDao {
     }
 
     public DeviceTokenValue getDeviceTokenValue(String token) {
-        return tokenManager.getTokenValueByToken(token);
+        return deviceTokenManager.getTokenValueByToken(token);
     }
 
     public void deleteAllTokensForOrg(int orgId) {
-        tokenManager.regularTokenManager.cache.entrySet().removeIf(entry -> entry.getValue().belongsToOrg(orgId));
+        deviceTokenManager.cache.entrySet().removeIf(entry -> entry.getValue().belongsToOrg(orgId));
     }
 
     public boolean clearTemporaryTokens() {
         long now = System.currentTimeMillis();
-        return tokenManager.regularTokenManager.cache.entrySet().removeIf(entry -> entry.getValue().isExpired(now));
+        return deviceTokenManager.cache.entrySet().removeIf(entry -> entry.getValue().isExpired(now));
     }
 
+    public String assignNewToken(int orgId, String email, Device device) {
+        return deviceTokenManager.assignNewToken(orgId, email, device);
+    }
+
+    public void assignNewToken(int orgId, String email, Device device, String newToken) {
+        deviceTokenManager.assignNewToken(orgId, email, device, newToken);
+    }
+
+    public void assignTempToken(int orgId, User user, Device tempDevice) {
+        deviceTokenManager.assignTempToken(new TemporaryTokenValue(orgId, user, tempDevice));
+    }
 }
