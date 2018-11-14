@@ -14,6 +14,7 @@ import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.WebDashboard;
+import cc.blynk.server.core.model.web.product.metafields.DeviceNameMetaField;
 import cc.blynk.server.core.model.web.product.metafields.MeasurementUnit;
 import cc.blynk.server.core.model.web.product.metafields.MeasurementUnitMetaField;
 import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
@@ -755,7 +756,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertEquals("Jopa", numberMetaField.name);
         assertEquals(1, numberMetaField.roleIds[0]);
         assertEquals(123D, numberMetaField.value, 0.1);
-        TextMetaField textMetaField = (TextMetaField) metaFields[1];
+        DeviceNameMetaField textMetaField = (DeviceNameMetaField) metaFields[1];
         assertEquals(2, textMetaField.id);
         assertEquals("Device Name", textMetaField.name);
         assertEquals(1, textMetaField.roleIds[0]);
@@ -770,7 +771,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         metaFields = device.metaFields;
         assertNotNull(metaFields);
         assertEquals(2, metaFields.length);
-        assertEquals("Updated Name", ((TextMetaField) metaFields[1]).value);
+        assertEquals("Updated Name", ((DeviceNameMetaField) metaFields[1]).value);
 
         client.getDevice(orgId, createdDevice.id);
         device = client.parseDevice(3);

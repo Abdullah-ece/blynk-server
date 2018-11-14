@@ -10,7 +10,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Created by Dmitriy Dumanskiy.
  * Created on 04.04.17.
  */
-public class TemplateIdMetaField extends ListMetaField {
+public class TemplateIdMetaField extends MetaField {
+
+    public final String[] options;
+
+    public final String selectedOption;
 
     @JsonCreator
     public TemplateIdMetaField(@JsonProperty("id") int id,
@@ -22,7 +26,9 @@ public class TemplateIdMetaField extends ListMetaField {
                                @JsonProperty("icon") String icon,
                                @JsonProperty("options") String[] options,
                                @JsonProperty("selectedOption") String selectedOption) {
-        super(id, name, roleIds, includeInProvision, isMandatory, isDefault, icon, options, selectedOption);
+        super(id, name, roleIds, includeInProvision, isMandatory, isDefault, icon);
+        this.options = options;
+        this.selectedOption = selectedOption;
     }
 
     public boolean containsTemplate(String templateId) {
@@ -31,6 +37,21 @@ public class TemplateIdMetaField extends ListMetaField {
 
     @Override
     public MetaField copy() {
+        return new TemplateIdMetaField(id, name, roleIds,
+                includeInProvision, isMandatory, isDefault,
+                icon, options, selectedOption);
+    }
+
+    @Override
+    public MetaField copySpecificFieldsOnly(MetaField metaField) {
+        TemplateIdMetaField listMetaField = (TemplateIdMetaField) metaField;
+        return new TemplateIdMetaField(id, metaField.name, metaField.roleIds,
+                metaField.includeInProvision, metaField.isMandatory, metaField.isDefault,
+                metaField.icon,
+                listMetaField.options, selectedOption);
+    }
+
+    public MetaField copy(String selectedOption) {
         return new TemplateIdMetaField(id, name, roleIds,
                 includeInProvision, isMandatory, isDefault,
                 icon, options, selectedOption);

@@ -10,7 +10,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Created by Dmitriy Dumanskiy.
  * Created on 04.04.17.
  */
-public class DeviceOwnerMetaField extends TextMetaField {
+public class DeviceOwnerMetaField extends MetaField {
+
+    public final String value;
 
     @JsonCreator
     public DeviceOwnerMetaField(@JsonProperty("id") int id,
@@ -21,7 +23,8 @@ public class DeviceOwnerMetaField extends TextMetaField {
                                 @JsonProperty("isDefault") boolean isDefault,
                                 @JsonProperty("icon") String icon,
                                 @JsonProperty("value") String value) {
-        super(id, name, roleIds, includeInProvision, isMandatory, isDefault, icon, value);
+        super(id, name, roleIds, includeInProvision, isMandatory, isDefault, icon);
+        this.value = value;
     }
 
     @Override
@@ -30,6 +33,17 @@ public class DeviceOwnerMetaField extends TextMetaField {
         if (isEmptyValue()) {
             throw new IllegalCommandBodyException("Device owner metafield value is empty.");
         }
+    }
+
+    private boolean isEmptyValue() {
+        return this.value == null || this.value.isEmpty();
+    }
+
+    @Override
+    public MetaField copySpecificFieldsOnly(MetaField metaField) {
+        return new DeviceOwnerMetaField(id, metaField.name, metaField.roleIds,
+                metaField.includeInProvision, metaField.isMandatory, metaField.isDefault,
+                metaField.icon, value);
     }
 
     @Override
