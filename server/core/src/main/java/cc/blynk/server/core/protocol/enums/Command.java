@@ -178,6 +178,7 @@ public final class Command {
             Map.entry(REDEEM, "Redeem"),
             Map.entry(DEVICE_CONNECTED, "HardwareConnected"),
             Map.entry(REGISTER, "Register"),
+            Map.entry(DASH_SYNC, "DashSync"),
             Map.entry(LOGIN, "Login"),
             Map.entry(HARDWARE_LOGIN, "LoginHardware"),
             Map.entry(LOGOUT, "Logout"),
