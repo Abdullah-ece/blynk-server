@@ -298,7 +298,7 @@ public final class TestUtil {
                 createDeviceOwnerMeta(deviceOwnerMetaField.id, deviceOwnerMetaField.name, user, true));
         //appClient.verifyResult(ok(6 + profile.dashBoards.length + expectedSyncCommandsCount));
 
-        appClient.getDevices(dashId);
+        appClient.getDevices();
         Device[] devices = appClient.parseDevices(7 + profile.dashBoards.length );
         Device latestOne = devices[devices.length - 1];
         String token = latestOne.token;

@@ -77,6 +77,10 @@ public class TestAppClient extends BaseTestAppClient {
         return JsonParser.parseDevice(getBody(expectedMessageOrder), 0);
     }
 
+    public void getDevices() {
+        send("getDevices");
+    }
+
     public void getDevices(int dashId) {
         send("getDevices " + dashId);
     }

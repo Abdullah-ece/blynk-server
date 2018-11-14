@@ -19,9 +19,11 @@ import cc.blynk.server.core.model.enums.Theme;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
+import cc.blynk.server.core.model.web.product.metafields.DeviceNameMetaField;
+import cc.blynk.server.core.model.web.product.metafields.DeviceOwnerMetaField;
 import cc.blynk.server.core.model.web.product.metafields.DeviceReferenceMetaField;
-import cc.blynk.server.core.model.web.product.metafields.ListMetaField;
 import cc.blynk.server.core.model.web.product.metafields.MeasurementUnit;
+import cc.blynk.server.core.model.web.product.metafields.TemplateIdMetaField;
 import cc.blynk.server.core.model.widgets.outputs.ValueDisplay;
 import cc.blynk.server.core.model.widgets.outputs.graph.FontSize;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
@@ -42,6 +44,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.List;
 
 import static cc.blynk.integration.APIBaseTest.createDeviceNameMeta;
+import static cc.blynk.integration.APIBaseTest.createDeviceOwnerMeta;
 import static cc.blynk.integration.APIBaseTest.createMeasurementMeta;
 import static cc.blynk.integration.APIBaseTest.createNumberMeta;
 import static cc.blynk.integration.APIBaseTest.createTemplateIdMeta;
@@ -355,6 +358,15 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         assertEquals("My New Device", deviceDTOS[0].name);
     }
 
+    private static Device getDeviceById(Device[] devices, int id) {
+        for (Device device : devices) {
+            if (device.id == id) {
+                return device;
+            }
+        }
+        return null;
+    }
+
     @Test
     public void testProvisionFlow() throws Exception {
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
@@ -373,8 +385,9 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         Product product2 = new Product();
         product2.name = "My product2";
         product2.metaFields = new MetaField[] {
+                createDeviceOwnerMeta(1, "Device owner", "test@gmail.com", true),
                 createDeviceNameMeta(2, "Device Name", "My Default device Name", true),
-                createTemplateIdMeta(3, "Template Id", "TMPL0001")
+                createTemplateIdMeta(3, "Template Id", "TMPL0001", true)
         };
         client.createProduct(orgId, product2);
         Product fromApiProduct2 = client.parseProduct(2);
@@ -411,10 +424,34 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         Device provisionedDevice = appClient.parseDevice(4);
         assertNotNull(provisionedDevice);
         assertNotNull(provisionedDevice.metaFields);
-        assertEquals(1, provisionedDevice.metaFields.length);
+        assertEquals(3, provisionedDevice.metaFields.length);
         assertEquals(fromApiProduct2.id, provisionedDevice.productId);
         assertNotNull(provisionedDevice.hardwareInfo);
         assertEquals("TMPL0001", provisionedDevice.hardwareInfo.templateId);
+
+        DeviceOwnerMetaField deviceOwnerMetaField = (DeviceOwnerMetaField) provisionedDevice.metaFields[0];
+        assertEquals(1, deviceOwnerMetaField.id);
+        assertEquals("Device owner", deviceOwnerMetaField.name);
+        //expecting email of the user who provisioning the device
+        assertEquals(getUserName(), deviceOwnerMetaField.value);
+
+        DeviceNameMetaField deviceNameMetaField = (DeviceNameMetaField) provisionedDevice.metaFields[1];
+        assertEquals(2, deviceNameMetaField.id);
+        assertEquals("Device Name", deviceNameMetaField.name);
+        assertEquals("My Default device Name", deviceNameMetaField.value);
+
+        TemplateIdMetaField templateIdMetaField = (TemplateIdMetaField) provisionedDevice.metaFields[2];
+        assertEquals(3, templateIdMetaField.id);
+        assertEquals("Template Id", templateIdMetaField.name);
+        assertEquals("TMPL0001", templateIdMetaField.options[0]);
+
+        //apps call get devices and not getDevice method
+        //so we have to make sure that provisioned device is returned
+        appClient.getDevices();
+        Device[] allDevices = appClient.parseDevices(5);
+        assertNotNull(allDevices);
+        provisionedDevice = getDeviceById(allDevices, deviceFromApi.id);
+        assertNotNull(provisionedDevice);
 
         newHardClient.stop();
         appClient.reset();
@@ -534,8 +571,8 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         Device webDevice = client.parseDevice(1);
         MetaField templateIdMeta = webDevice.findMetaFieldById(3);
         assertNotNull(templateIdMeta);
-        assertTrue(templateIdMeta instanceof ListMetaField);
-        assertEquals("TMPL0001", ((ListMetaField) templateIdMeta).selectedOption);
+        assertTrue(templateIdMeta instanceof TemplateIdMetaField);
+        assertEquals("TMPL0001", ((TemplateIdMetaField) templateIdMeta).selectedOption);
 
         newHardClient.stop();
         appClient.reset();
