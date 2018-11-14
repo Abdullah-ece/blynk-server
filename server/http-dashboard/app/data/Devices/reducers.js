@@ -138,7 +138,7 @@ const getFieldsForDevicesList = (device) => ({
   //get location metafield to be able group devices list by location
   metaFields: getLocationMetaFieldOnly(device.metaFields),
   createdAt: device.createdAt,
-  dataReceivedAt: device.dataReceivedAt,
+  lastReportedAt: device.lastReportedAt,
   status: device.status,
 });
 

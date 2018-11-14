@@ -37,7 +37,7 @@ class DeviceInfo extends React.Component {
 
   render() {
 
-    let time = this.props.device.dataReceivedAt;
+    let time = this.props.device.lastReportedAt;
     let disconnectTime = this.props.device.disconnectTime;
     let metadataUpdatedAt = this.props.device.metadataUpdatedAt;
 

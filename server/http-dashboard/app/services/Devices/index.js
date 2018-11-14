@@ -544,13 +544,13 @@ export const DEVICES_SORT = {
   LAST_REPORTED_ASC: {
     key: 'LAST_REPORTED_ASC',
     compare: (a, b) => {
-      return a.dataReceivedAt === b.dataReceivedAt ? sortByProp(a,b,'id') : sortByProp(a, b, 'dataReceivedAt', true);
+      return a.lastReportedAt === b.lastReportedAt ? sortByProp(a,b,'id') : sortByProp(a, b, 'lastReportedAt', true);
     }
   },
   LAST_REPORTED_DESC: {
     key: 'LAST_REPORTED_DESC',
     compare: (a, b) => {
-      return a.dataReceivedAt === b.dataReceivedAt ? sortByProp(a,b,'id') : sortByProp(a, b, 'dataReceivedAt', false);
+      return a.lastReportedAt === b.lastReportedAt ? sortByProp(a,b,'id') : sortByProp(a, b, 'lastReportedAt', false);
     },
   },
 
