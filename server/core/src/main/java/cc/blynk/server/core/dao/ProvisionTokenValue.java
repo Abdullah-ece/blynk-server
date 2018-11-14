@@ -10,13 +10,13 @@ import java.util.concurrent.TimeUnit;
  * Created by Dmitriy Dumanskiy.
  * Created on 16.11.16.
  */
-public final class TemporaryTokenValue extends DeviceTokenValue {
+public final class ProvisionTokenValue extends DeviceTokenValue {
 
     private static final long EXPIRATION_PERIOD = TimeUnit.DAYS.toMillis(7);
     private final long created;
     public final User user;
 
-    public TemporaryTokenValue(int orgId, User user, Device device) {
+    public ProvisionTokenValue(int orgId, User user, Device device) {
         super(orgId, device);
         this.user = user;
         this.created = System.currentTimeMillis();

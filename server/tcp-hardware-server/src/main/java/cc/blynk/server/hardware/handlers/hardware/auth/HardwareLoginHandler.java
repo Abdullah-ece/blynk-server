@@ -3,7 +3,7 @@ package cc.blynk.server.hardware.handlers.hardware.auth;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.DeviceTokenValue;
-import cc.blynk.server.core.dao.TemporaryTokenValue;
+import cc.blynk.server.core.dao.ProvisionTokenValue;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.dto.DeviceDTO;
@@ -128,10 +128,10 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         if (tokenValue.isTemporary()) {
             //this is special case for provisioned devices, we adding additional
             //handler in order to add product to the device
-            TemporaryTokenValue temporaryTokenValue = (TemporaryTokenValue) tokenValue;
+            ProvisionTokenValue provisionTokenValue = (ProvisionTokenValue) tokenValue;
             ctx.pipeline().addBefore("H_Login", "HHProvisionedHardwareFirstHandler",
                     new ProvisionedHardwareFirstHandler(holder,
-                            orgId, temporaryTokenValue.user, device));
+                            orgId, provisionTokenValue.user, device));
             ctx.writeAndFlush(ok(message.id));
             return;
         }

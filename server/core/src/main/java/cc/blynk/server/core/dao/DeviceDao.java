@@ -177,6 +177,6 @@ public class DeviceDao {
     }
 
     public void assignTempToken(int orgId, User user, Device tempDevice) {
-        deviceTokenManager.assignTempToken(new TemporaryTokenValue(orgId, user, tempDevice));
+        deviceTokenManager.assignTempToken(new ProvisionTokenValue(orgId, user, tempDevice));
     }
 }

@@ -60,12 +60,12 @@ public class DeviceTokenManager {
         return cache.get(token);
     }
 
-    void assignTempToken(TemporaryTokenValue temporaryTokenValue) {
+    void assignTempToken(ProvisionTokenValue provisionTokenValue) {
         String newToken = TokenGeneratorUtil.generateNewToken();
-        temporaryTokenValue.device.token = newToken;
-        cache.put(newToken, temporaryTokenValue);
-        log.debug("Generated temp token for orgId {} user {}, deviceId {} is {}.",
-                temporaryTokenValue.orgId, temporaryTokenValue.user.email, temporaryTokenValue.device.id, newToken);
+        provisionTokenValue.device.token = newToken;
+        cache.put(newToken, provisionTokenValue);
+        log.debug("Generated provision token for orgId {} user {}, deviceId {} is {}.",
+                provisionTokenValue.orgId, provisionTokenValue.user.email, provisionTokenValue.device.id, newToken);
     }
 
     String assignNewToken(int orgId, String email, Device device) {

@@ -2,8 +2,8 @@ package cc.blynk.integration.tcp;
 
 import cc.blynk.integration.SingleServerInstancePerTest;
 import cc.blynk.integration.model.tcp.TestHardClient;
+import cc.blynk.server.core.dao.ProvisionTokenValue;
 import cc.blynk.server.core.dao.ReportingDiskDao;
-import cc.blynk.server.core.dao.TemporaryTokenValue;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.Device;
@@ -594,7 +594,7 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
         assertNotNull(dash);
         //assertEquals(1, dash.devices.length);
 
-        assertTrue(holder.deviceDao.getDeviceTokenValue(device1.token) instanceof TemporaryTokenValue);
+        assertTrue(holder.deviceDao.getDeviceTokenValue(device1.token) instanceof ProvisionTokenValue);
 
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
@@ -622,7 +622,7 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
         assertNotNull(dash);
         //assertEquals(2, dash.devices.length);
 
-        assertFalse(holder.deviceDao.getDeviceTokenValue(device1.token) instanceof TemporaryTokenValue);
+        assertFalse(holder.deviceDao.getDeviceTokenValue(device1.token) instanceof ProvisionTokenValue);
         assertFalse(holder.deviceDao.clearTemporaryTokens());
     }
 
