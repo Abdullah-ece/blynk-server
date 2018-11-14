@@ -25,12 +25,15 @@ import cc.blynk.server.core.model.web.product.metafields.AddressMetaField;
 import cc.blynk.server.core.model.web.product.metafields.ContactMetaField;
 import cc.blynk.server.core.model.web.product.metafields.CoordinatesMetaField;
 import cc.blynk.server.core.model.web.product.metafields.CostMetaField;
+import cc.blynk.server.core.model.web.product.metafields.DeviceNameMetaField;
+import cc.blynk.server.core.model.web.product.metafields.DeviceOwnerMetaField;
 import cc.blynk.server.core.model.web.product.metafields.LocationMetaField;
 import cc.blynk.server.core.model.web.product.metafields.MeasurementUnit;
 import cc.blynk.server.core.model.web.product.metafields.MeasurementUnitMetaField;
 import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
 import cc.blynk.server.core.model.web.product.metafields.RangeTimeMetaField;
 import cc.blynk.server.core.model.web.product.metafields.SwitchMetaField;
+import cc.blynk.server.core.model.web.product.metafields.TemplateIdMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TimeMetaField;
 import cc.blynk.server.core.model.widgets.Widget;
@@ -47,8 +50,11 @@ import java.util.Currency;
 import java.util.Date;
 
 import static cc.blynk.integration.APIBaseTest.createContactMeta;
+import static cc.blynk.integration.APIBaseTest.createDeviceNameMeta;
+import static cc.blynk.integration.APIBaseTest.createDeviceOwnerMeta;
 import static cc.blynk.integration.APIBaseTest.createMeasurementMeta;
 import static cc.blynk.integration.APIBaseTest.createNumberMeta;
+import static cc.blynk.integration.APIBaseTest.createTemplateIdMeta;
 import static cc.blynk.integration.APIBaseTest.createTextMeta;
 import static cc.blynk.integration.TestUtil.createWebLabelWidget;
 import static cc.blynk.integration.TestUtil.createWebSliderWidget;
@@ -561,7 +567,10 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         product.boardType = "ESP8266";
         product.connectionType = ConnectionType.WI_FI;
         product.metaFields = new MetaField[] {
-                createTextMeta(1, "My test metafield", "Default Device")
+                createDeviceNameMeta(1, "Device name", "Default name", true),
+                createDeviceOwnerMeta(2, "Device owner", "admin@blynk.cc", true),
+                createTemplateIdMeta(3, "Template Id", "TMPL0001"),
+                createContactMeta(4, "Contact", "icon")
         };
 
         client.createProduct(orgId, product);
@@ -577,49 +586,87 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertNotNull(newDevice);
         assertEquals("My New Device", newDevice.name);
         assertNotNull(newDevice.metaFields);
-        assertEquals(1, newDevice.metaFields.length);
-        TextMetaField textMetaField = (TextMetaField) newDevice.metaFields[0];
-        assertEquals(1, textMetaField.id);
-        assertEquals("My test metafield", textMetaField.name);
-        assertEquals(1, textMetaField.roleIds[0]);
-        assertEquals("Default Device", textMetaField.value);
+        assertEquals(4, newDevice.metaFields.length);
 
-        newDevice.metaFields[0] = createTextMeta(textMetaField.id, textMetaField.name, "My updated value");
+        DeviceNameMetaField deviceNameMetaField = (DeviceNameMetaField) newDevice.metaFields[0];
+        assertEquals(1, deviceNameMetaField.id);
+        assertEquals("Device name", deviceNameMetaField.name);
+        assertEquals(1, deviceNameMetaField.roleIds[0]);
+        assertEquals("Default name", deviceNameMetaField.value);
+
+        DeviceOwnerMetaField deviceOwnerMetaField = (DeviceOwnerMetaField) newDevice.metaFields[1];
+        assertEquals(2, deviceOwnerMetaField.id);
+        assertEquals("Device owner", deviceOwnerMetaField.name);
+        assertEquals(1, deviceOwnerMetaField.roleIds[0]);
+        assertEquals("admin@blynk.cc", deviceOwnerMetaField.value);
+
+        TemplateIdMetaField templateIdMetaField = (TemplateIdMetaField) newDevice.metaFields[2];
+        assertEquals(3, templateIdMetaField.id);
+        assertEquals("Template Id", templateIdMetaField.name);
+        assertEquals(1, templateIdMetaField.roleIds[0]);
+        assertEquals("TMPL0001", templateIdMetaField.options[0]);
+
+        ContactMetaField contactMetaField = (ContactMetaField) newDevice.metaFields[3];
+        assertEquals(4, contactMetaField.id);
+        assertEquals("Contact", contactMetaField.name);
+        assertEquals(1, contactMetaField.roleIds[0]);
+        assertEquals("icon", contactMetaField.icon);
+
+        newDevice.metaFields[0] = createDeviceNameMeta(1, "Device name 2", "Updated device name", true);
 
         client.updateDevice(orgId, newDevice);
         newDevice = client.parseDevice(3);
         assertNotNull(newDevice);
         assertEquals("My New Device", newDevice.name);
         assertNotNull(newDevice.metaFields);
-        assertEquals(1, newDevice.metaFields.length);
-        textMetaField = (TextMetaField) newDevice.metaFields[0];
-        assertEquals(1, textMetaField.id);
-        assertEquals("My test metafield", textMetaField.name);
-        assertEquals(1, textMetaField.roleIds[0]);
-        assertEquals("My updated value", textMetaField.value);
+        assertEquals(4, newDevice.metaFields.length);
+        deviceNameMetaField = (DeviceNameMetaField) newDevice.metaFields[0];
+        assertEquals(1, deviceNameMetaField.id);
+        assertEquals("Device name 2", deviceNameMetaField.name);
+        assertEquals(1, deviceNameMetaField.roleIds[0]);
+        assertEquals("Updated device name", deviceNameMetaField.value);
 
         fromApiProduct.metaFields = new MetaField[] {
-                product.metaFields[0],
-                createNumberMeta(2, "New metafield", 123)
+                createDeviceNameMeta(1, "Device name 2", "Updated device name", true),
+                createDeviceOwnerMeta(2, "Device owner", "admin@blynk.cc", true),
+                createTemplateIdMeta(3, "Template Id", "TMPL0001"),
+                createContactMeta(4, "Contact", "icon"),
+                createNumberMeta(5, "New metafield", 123)
         };
 
         client.updateDevicesMeta(orgId, fromApiProduct);
         fromApiProduct = client.parseProduct(4);
-        assertEquals(2, fromApiProduct.metaFields.length);
+        assertEquals(5, fromApiProduct.metaFields.length);
 
         client.getDevice(orgId, newDevice.id);
         newDevice = client.parseDevice(5);
-        assertEquals("My New Device", newDevice.name);
-        assertNotNull(newDevice.metaFields);
-        assertEquals(2, newDevice.metaFields.length);
-        textMetaField = (TextMetaField) newDevice.metaFields[0];
-        assertEquals(1, textMetaField.id);
-        assertEquals("My test metafield", textMetaField.name);
-        assertEquals(1, textMetaField.roleIds[0]);
-        assertEquals("My updated value", textMetaField.value);
 
-        NumberMetaField numberMetaField = (NumberMetaField) newDevice.metaFields[1];
-        assertEquals(2, numberMetaField.id);
+        deviceNameMetaField = (DeviceNameMetaField) newDevice.metaFields[0];
+        assertEquals(1, deviceNameMetaField.id);
+        assertEquals("Device name 2", deviceNameMetaField.name);
+        assertEquals(1, deviceNameMetaField.roleIds[0]);
+        assertEquals("Updated device name", deviceNameMetaField.value);
+
+        deviceOwnerMetaField = (DeviceOwnerMetaField) newDevice.metaFields[1];
+        assertEquals(2, deviceOwnerMetaField.id);
+        assertEquals("Device owner", deviceOwnerMetaField.name);
+        assertEquals(1, deviceOwnerMetaField.roleIds[0]);
+        assertEquals("admin@blynk.cc", deviceOwnerMetaField.value);
+
+        templateIdMetaField = (TemplateIdMetaField) newDevice.metaFields[2];
+        assertEquals(3, templateIdMetaField.id);
+        assertEquals("Template Id", templateIdMetaField.name);
+        assertEquals(1, templateIdMetaField.roleIds[0]);
+        assertEquals("TMPL0001", templateIdMetaField.options[0]);
+
+        contactMetaField = (ContactMetaField) newDevice.metaFields[3];
+        assertEquals(4, contactMetaField.id);
+        assertEquals("Contact", contactMetaField.name);
+        assertEquals(1, contactMetaField.roleIds[0]);
+        assertEquals("icon", contactMetaField.icon);
+
+        NumberMetaField numberMetaField = (NumberMetaField) newDevice.metaFields[4];
+        assertEquals(5, numberMetaField.id);
         assertEquals("New metafield", numberMetaField.name);
         assertEquals(1, numberMetaField.roleIds[0]);
         assertEquals(123, numberMetaField.value, 0.1);
