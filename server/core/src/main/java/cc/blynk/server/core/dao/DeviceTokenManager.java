@@ -64,8 +64,8 @@ public class DeviceTokenManager {
         String newToken = TokenGeneratorUtil.generateNewToken();
         temporaryTokenValue.device.token = newToken;
         cache.put(newToken, temporaryTokenValue);
-        log.debug("Generated temp token for user {}, deviceId {} is {}.",
-                temporaryTokenValue.user.email, temporaryTokenValue.device.id, newToken);
+        log.debug("Generated temp token for orgId {} user {}, deviceId {} is {}.",
+                temporaryTokenValue.orgId, temporaryTokenValue.user.email, temporaryTokenValue.device.id, newToken);
     }
 
     String assignNewToken(int orgId, String email, Device device) {
@@ -96,7 +96,7 @@ public class DeviceTokenManager {
         DeviceTokenValue tokenValue = new DeviceTokenValue(orgId, device);
         cache.put(newToken, tokenValue);
 
-        log.debug("Generated token for deviceId {} is {}.", device.id, newToken);
+        log.debug("Generated token for orgId {} deviceId {} is {}.", orgId, device.id, newToken);
 
         return oldToken;
     }
