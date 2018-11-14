@@ -13,9 +13,8 @@
         sudo apt-get dist-upgrade
         sudo apt-get autoremove --purge
 
-        sudo add-apt-repository ppa:linuxuprising/java
-        sudo apt-get update
-        sudo apt-get install oracle-java10-installer
+        sudo apt-get purge oracle-java10-installer
+        sudo apt-get purge oracle-java9-installer
 
         sudo add-apt-repository ppa:openjdk-r/ppa \
         && sudo apt-get update -q \
