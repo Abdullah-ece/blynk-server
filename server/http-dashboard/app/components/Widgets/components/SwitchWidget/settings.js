@@ -48,10 +48,15 @@ import {bindActionCreators} from 'redux';
 
 import './styles.less';
 import {WIDGETS_SWITCH_LABEL_ALIGNMENT} from "services/Widgets/index";
+import {FORMS} from "services/Products";
 
 @connect((state, ownProps) => ({
   formValues: getFormValues(ownProps.form)(state) || {},
-  dataStreams: state.Product.edit.dataStreams.fields || [],
+  dataStreams: (() => {
+    const formValues = getFormValues(FORMS.PRODUCTS_PRODUCT_MANAGE)(state);
+
+    return (formValues && formValues.dataStreams || []);
+  })(),
 }), (dispatch) => ({
   changeForm: bindActionCreators(change, dispatch),
   resetForm: bindActionCreators(reset, dispatch),
@@ -202,24 +207,18 @@ class SwitchSettings extends React.Component {
 
     const onChange = (value) => {
 
-      if(!value)
-        return props.changeForm(this.props.form, 'sources.0.dataStream', null);
-
       const getStreamByPin = (pin) => {
         return _.find(props.dataStreams, (stream) => {
-          return parseInt(stream.values.pin) === parseInt(pin);
+          return parseInt(stream.pin) === parseInt(pin);
         });
       };
 
       let dataStream = getStreamByPin(value);
 
       if(!dataStream)
-        return props.changeForm(this.props.form, 'sources.0.dataStream', {
-          pin: value,
-          pinType: "VIRTUAL",
-        });
+        return props.changeForm(this.props.form, 'sources.0.dataStream', null);
 
-      props.changeForm(this.props.form, 'sources.0.dataStream', dataStream.values);
+      props.changeForm(this.props.form, 'sources.0.dataStream', dataStream);
 
     };
 
@@ -275,18 +274,13 @@ class SwitchSettings extends React.Component {
   getSourceOptions() {
     const dataStreamsOptions = [];
 
-    const pinsDescribedOnDataStreams = [];
-
     this.props.dataStreams.forEach((stream) => {
 
-      // collect streams described on Data Streams
-
       dataStreamsOptions.push({
-        key: `${stream.values.pin}`,
-        value: `${stream.values.label}`,
+        key: `${stream.pin}`,
+        value: stream.label,
       });
 
-      pinsDescribedOnDataStreams.push(stream.values.pin);
 
       /* Uncomment when need tableDescription fields listed on Dropdown */
 
@@ -303,20 +297,9 @@ class SwitchSettings extends React.Component {
 
     });
 
-    // Collect other PIN's from 0 to 255 except already existed on Data Streams
-
-    for(let i = 0; i <= 255; i++) {
-
-      if(pinsDescribedOnDataStreams.indexOf(i) >= 0)
-        continue;
-
-      dataStreamsOptions.push({
-        key: `${i}`,
-        value: `V${i}`,
-      });
-    }
-
-    return dataStreamsOptions;
+    return {
+      'Data Streams': dataStreamsOptions
+    };
   }
 
   switchComponent(props) {
@@ -359,7 +342,7 @@ class SwitchSettings extends React.Component {
               <Item label="Target" offset="large">
                 <Field name="sources.0.dataStream"
                        style={{width: '100%'}}
-                       placeholder="Choose Target"
+                       placeholder="Choose Source"
                        validate={[Validation.Rules.required]}
                        component={this.sourceMultipleSelectComponent}
                        values={sourcesOptions}
@@ -368,8 +351,8 @@ class SwitchSettings extends React.Component {
                        changeForm={this.props.changeForm}
                        form={this.props.form}
                        filterOption={this.simpleMatch}
-                       notFoundContent={sourcesOptions.length > 0 ?
-                         "No DataStreams or PINs match search":"Create at least one DataStream"}
+                       notFoundContent={sourcesOptions["Data Streams"].length > 0 ?
+                         "No DataStreams to match search" : "Create at least one DataStream"}
                 />
               </Item>
 
