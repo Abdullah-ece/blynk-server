@@ -32,7 +32,7 @@ public class WebGetProductsLogic {
     public void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         User user = state.user;
         int orgId;
-        if (message.body.isEmpty() == 0) {
+        if (message.body.isEmpty()) {
             orgId = user.orgId;
         } else {
             orgId = Integer.parseInt(message.body);
