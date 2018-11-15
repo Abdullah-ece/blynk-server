@@ -1,19 +1,29 @@
 package cc.blynk.server.web.handlers.logic.product;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.OrganizationDao;
+import cc.blynk.server.core.dao.ReportingDiskDao;
+import cc.blynk.server.core.dao.SessionDao;
+import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
+import cc.blynk.utils.IntArray;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.List;
+
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 import static cc.blynk.server.internal.WebByteBufUtil.json;
+import static cc.blynk.utils.StringUtils.split2;
 
 /**
  * The Blynk Project.
@@ -26,14 +36,32 @@ public class WebDeleteProductLogic {
 
     private final OrganizationDao organizationDao;
     private final DeviceDao deviceDao;
+    private final SessionDao sessionDao;
+    private final BlockingIOProcessor blockingIOProcessor;
+    private final ReportingDiskDao reportingDiskDao;
+    private final UserDao userDao;
 
     public WebDeleteProductLogic(Holder holder) {
         this.organizationDao = holder.organizationDao;
         this.deviceDao = holder.deviceDao;
+        this.sessionDao = holder.sessionDao;
+        this.blockingIOProcessor = holder.blockingIOProcessor;
+        this.reportingDiskDao = holder.reportingDiskDao;
+        this.userDao = holder.userDao;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
-        int productId = Integer.parseInt(message.body);
+        String[] split = split2(message.body);
+
+        int productId;
+        int orgId;
+        if (split.length == 1) {
+            orgId = state.orgId;
+            productId = Integer.parseInt(message.body);
+        } else {
+            orgId = Integer.parseInt(split[0]);
+            productId = Integer.parseInt(split[1]);
+        }
 
         User user = state.user;
 
@@ -46,16 +74,34 @@ public class WebDeleteProductLogic {
             return;
         }
 
-        if (deviceDao.productHasDevices(productId)) {
-            log.error("{} not allowed to remove product {} with devices.", user.email, productId);
-            ctx.writeAndFlush(json(message.id, "You are not allowed to remove product with devices."),
-                    ctx.voidPromise());
-            return;
+        //todo check access
+        Organization org = organizationDao.getOrgById(orgId);
+        List<Device> devicesToRemove = deviceDao.getAllByProductId(productId);
+        IntArray intArray = new IntArray();
+        for (Device device : devicesToRemove) {
+            int deviceId = device.id;
+            log.trace("{} deleting deviceId {} for orgId {} and product {}.", user.email, deviceId, org.id, productId);
+            deviceDao.delete(deviceId);
+            intArray.add(deviceId);
         }
 
-        //todo for now we just allow to remove from user org
-        Organization org = organizationDao.getOrgById(user.orgId);
+        int[] deviceIds = intArray.toArray();
+        Session session = sessionDao.getOrgSession(org.id);
+        session.closeHardwareChannelByDeviceId(deviceIds);
+        blockingIOProcessor.executeHistory(() -> {
+            try {
+                reportingDiskDao.delete(deviceIds);
+            } catch (Exception e) {
+                log.warn("Error removing device data. Reason : {}.", e.getMessage());
+            }
+        });
+
         boolean isRemoved = org.deleteProduct(productId);
+
+        List<User> users = userDao.getAllUsersByOrgId(orgId);
+        for (User tempUser : users) {
+            tempUser.deleteDevice(deviceIds);
+        }
 
         if (isRemoved) {
             log.debug("Product {} successfully deleted for {}", productId, user.email);

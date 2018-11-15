@@ -11,6 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
+import static cc.blynk.utils.StringUtils.split2;
 
 /**
  * The Blynk Project.
@@ -26,10 +27,18 @@ public final class WebGetProductLogic {
 
     public static void messageReceived(Holder holder,
                                        ChannelHandlerContext ctx, User user, StringMessage message) {
-        int productId = Integer.parseInt(message.body);
+        String[] split = split2(message.body);
 
-        //todo for now taking product only from user organization
-        int orgId = user.orgId;
+        int orgId;
+        int productId;
+        if (split.length == 2) {
+            orgId = Integer.parseInt(split[0]);
+            productId = Integer.parseInt(split[1]);
+        } else {
+            orgId = user.orgId;
+            productId = Integer.parseInt(split[0]);
+        }
+
         Organization organization = holder.organizationDao.getOrgById(orgId);
 
         if (organization == null) {
@@ -37,7 +46,7 @@ public final class WebGetProductLogic {
             throw new JsonException(message.id, "Cannot find organization.");
         }
 
-        Product product = holder.organizationDao.getProductById(productId);
+        Product product = organization.getProductOrThrow(productId);
 
         if (product == null) {
             log.error("Cannot find product with id {} for org {} and user {}",

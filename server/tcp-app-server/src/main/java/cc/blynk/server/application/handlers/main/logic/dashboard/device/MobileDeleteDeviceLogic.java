@@ -1,7 +1,6 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard.device;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
@@ -34,15 +33,10 @@ public final class MobileDeleteDeviceLogic {
         Device device = holder.deviceDao.getByIdOrThrow(deviceId);
         log.debug("Deleting device with id {}.", deviceId);
 
-        for (DashBoard dash : user.profile.dashBoards) {
-            dash.eraseWidgetValuesForDevice(deviceId);
-        }
-        user.profile.deleteDeviceFromTags(deviceId);
         holder.deviceDao.delete(device.id);
         Session session = holder.sessionDao.getOrgSession(state.orgId);
         session.closeHardwareChannelByDeviceId(deviceId);
-
-        user.lastModifiedTs = System.currentTimeMillis();
+        user.deleteDevice(deviceId);
 
         holder.blockingIOProcessor.executeHistory(() -> {
             try {

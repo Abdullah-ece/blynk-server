@@ -135,9 +135,11 @@ public class OrganizationDao {
     private Map<Integer, Integer> productDeviceCount() {
         Map<Integer, Integer> productIdCount =  new HashMap<>();
         for (Organization org : organizations.values()) {
-            for (Device device : org.devices) {
-                Integer count = productIdCount.getOrDefault(device.productId, 0);
-                productIdCount.put(device.productId, count + 1);
+            for (Product product : org.products) {
+                for (Device device : product.devices) {
+                    Integer count = productIdCount.getOrDefault(device.productId, 0);
+                    productIdCount.put(device.productId, count + 1);
+                }
             }
         }
         return productIdCount;
@@ -166,7 +168,9 @@ public class OrganizationDao {
         int[] orgIds = orgListToIdList(getOrgsByParentId(orgId));
         for (int tmpOrgId : orgIds) {
             Organization org = organizations.get(tmpOrgId);
-            result.addAll(Arrays.asList(org.devices));
+            for (Product product : org.products) {
+                result.addAll(Arrays.asList(product.devices));
+            }
         }
         return result;
     }
@@ -224,12 +228,12 @@ public class OrganizationDao {
         return organizations.values();
     }
 
-    public void assignToOrgAndAddDevice(int orgId, Device newDevice) {
+    public Product assignToOrgAndAddDevice(int orgId, Device newDevice) {
         Organization org = getOrgByIdOrThrow(orgId);
-        assignToOrgAndAddDevice(org, newDevice);
+        return assignToOrgAndAddDevice(org, newDevice);
     }
 
-    public void assignToOrgAndAddDevice(Organization org, Device newDevice) {
+    public Product assignToOrgAndAddDevice(Organization org, Device newDevice) {
         //todo temp solution
         Product product;
         if (newDevice.productId == -1) {
@@ -247,7 +251,8 @@ public class OrganizationDao {
 
         newDevice.metaFields = product.copyMetaFields();
         newDevice.webDashboard = product.webDashboard.copy();
-        org.addDevice(newDevice);
+        product.addDevice(newDevice);
+        return product;
     }
 
     private static Organization getOrgById(List<Organization> orgs, int id) {

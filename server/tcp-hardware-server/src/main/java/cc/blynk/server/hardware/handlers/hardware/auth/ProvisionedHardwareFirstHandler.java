@@ -135,7 +135,7 @@ public class ProvisionedHardwareFirstHandler extends SimpleChannelInboundHandler
                         device.metaFields = metaFields;
                     }
                     device.updateNameFromMetafields();
-                    holder.deviceDao.createWithPredefinedIdAndToken(orgId, user.email, device);
+                    holder.deviceDao.createWithPredefinedIdAndToken(orgId, user.email, product, device);
 
                     for (DashBoard dash : user.profile.dashBoards) {
                         dash.addDeviceToTemplate(device, templateId);

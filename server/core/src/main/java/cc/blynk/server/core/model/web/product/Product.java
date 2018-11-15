@@ -2,16 +2,19 @@ package cc.blynk.server.core.model.web.product;
 
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.device.ConnectionType;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.events.Event;
 import cc.blynk.server.core.model.web.product.metafields.TemplateIdMetaField;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
+import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.utils.ArrayUtil;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_DATA_STREAMS;
+import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_DEVICES;
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_EVENTS;
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_META_FIELDS;
 
@@ -49,6 +52,8 @@ public class Product {
     public WebDashboard webDashboard = new WebDashboard();
 
     public volatile OtaProgress otaProgress;
+
+    public volatile Device[] devices = EMPTY_DEVICES;
 
     public int deviceCount;
 
@@ -154,6 +159,26 @@ public class Product {
 
     private Event[] copyEvents() {
         return ArrayUtil.copy(events, Event.class);
+    }
+
+    public void addDevice(Device device) {
+        this.devices = ArrayUtil.add(this.devices, device, Device.class);
+        this.lastModifiedTs = System.currentTimeMillis();
+    }
+
+    public void deleteDevice(int deviceId) {
+        int index = getDeviceIndex(deviceId);
+        this.devices = ArrayUtil.remove(this.devices, index, Device.class);
+    }
+
+    private int getDeviceIndex(int id) {
+        Device[] devices = this.devices;
+        for (int i = 0; i < devices.length; i++) {
+            if (devices[i].id == id) {
+                return i;
+            }
+        }
+        throw new IllegalCommandException("Device with passed id not found.");
     }
 
     @Override

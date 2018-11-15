@@ -4,6 +4,7 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.exceptions.DeviceNotFoundException;
 import cc.blynk.server.core.model.web.Organization;
+import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -37,9 +38,11 @@ public class DeviceDao {
 
         int maxDeviceId = 0;
         for (Organization org : orgs) {
-            for (Device device : org.devices) {
-                maxDeviceId = Math.max(maxDeviceId, device.id);
-                devices.put(new DeviceKey(org.id, device.productId, device.id), device);
+            for (Product product : org.products) {
+                for (Device device : product.devices) {
+                    maxDeviceId = Math.max(maxDeviceId, device.id);
+                    devices.put(new DeviceKey(org.id, product.id, device.id), device);
+                }
             }
         }
 
@@ -52,24 +55,25 @@ public class DeviceDao {
         return deviceSequence.incrementAndGet();
     }
 
-    public void createWithPredefinedIdAndToken(int orgId, String email, Device device) {
+    public void createWithPredefinedIdAndToken(int orgId, String email, Product product, Device device) {
         devices.put(new DeviceKey(orgId, device.productId, device.id), device);
-        deviceTokenManager.assignNewToken(orgId, email, device, device.token);
+        deviceTokenManager.assignNewToken(orgId, email, product, device, device.token);
     }
 
-    public Device createWithPredefinedId(int orgId, String email, Device device) {
+    public Device createWithPredefinedId(int orgId, String email, Product product, Device device) {
         devices.put(new DeviceKey(orgId, device.productId, device.id), device);
-        deviceTokenManager.assignNewToken(orgId, email, device);
+        deviceTokenManager.assignNewToken(orgId, email, product, device);
         return device;
     }
 
-    public Device create(int orgId, String email, Device device) {
+    public Device create(int orgId, String email, Product product, Device device) {
         device.id = deviceSequence.incrementAndGet();
-        return createWithPredefinedId(orgId, email, device);
+        return createWithPredefinedId(orgId, email, product, device);
     }
 
     public Device delete(int deviceId) {
         Device device = devices.remove(new DeviceKey(0, 0, deviceId));
+        //also removes deivce from the product
         deviceTokenManager.deleteDevice(device);
         return device;
     }
@@ -168,12 +172,12 @@ public class DeviceDao {
         return deviceTokenManager.cache.entrySet().removeIf(entry -> entry.getValue().isExpired(now));
     }
 
-    public String assignNewToken(int orgId, String email, Device device) {
-        return deviceTokenManager.assignNewToken(orgId, email, device);
+    public String assignNewToken(int orgId, String email, Product product, Device device) {
+        return deviceTokenManager.assignNewToken(orgId, email, product, device);
     }
 
-    public void assignNewToken(int orgId, String email, Device device, String newToken) {
-        deviceTokenManager.assignNewToken(orgId, email, device, newToken);
+    public void assignNewToken(int orgId, String email, Product product, Device device, String newToken) {
+        deviceTokenManager.assignNewToken(orgId, email, product, device, newToken);
     }
 
     public void assignTempToken(int orgId, User user, Device tempDevice) {

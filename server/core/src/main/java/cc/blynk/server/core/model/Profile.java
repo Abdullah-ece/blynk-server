@@ -70,12 +70,6 @@ public class Profile {
         return null;
     }
 
-    public void deleteDeviceFromTags(int deviceId) {
-        for (Tag tag : this.tags) {
-            tag.deleteDevice(deviceId);
-        }
-    }
-
     public void cleanPinStorageForTileTemplate(DeviceDao deviceDao, DashBoard dash, TileTemplate tileTemplate,
                                                boolean removeProperties) {
         for (int deviceId : tileTemplate.deviceIds) {
@@ -173,6 +167,12 @@ public class Profile {
             }
         }
         return null;
+    }
+
+    public void deleteDeviceFromTags(int deviceId) {
+        for (Tag tag : this.tags) {
+            tag.deleteDevice(deviceId);
+        }
     }
 
     @Override

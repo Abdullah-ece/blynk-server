@@ -87,14 +87,6 @@ public class DevicesHandler extends BaseHttpHandler {
 
         organizationDao.hasAccess(user, orgId);
 
-        //default dash for all devices...
-        DashBoard dash = user.profile.dashBoards[0];
-
-        if (dash == null) {
-            log.error("Dash with orgId = {} not exists.", orgId);
-            return badRequest();
-        }
-
         Organization org = organizationDao.getOrgByIdOrThrow(orgId);
         Product product = org.getProduct(newDevice.productId);
         if (product == null) {
@@ -105,7 +97,7 @@ public class DevicesHandler extends BaseHttpHandler {
         newDevice.metaFields = product.copyMetaFields();
         newDevice.webDashboard = product.webDashboard.copy();
 
-        deviceDao.create(orgId, user.email, newDevice);
+        deviceDao.create(orgId, user.email, product, newDevice);
 
         user.lastModifiedTs = System.currentTimeMillis();
 

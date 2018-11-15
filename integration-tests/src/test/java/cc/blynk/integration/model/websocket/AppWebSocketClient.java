@@ -172,6 +172,10 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         send("webGetProducts");
     }
 
+    public void getProduct(int orgId, int productId) {
+        send("webGetProduct " + orgId + StringUtils.BODY_SEPARATOR_STRING + productId);
+    }
+
     public void getProduct(int productId) {
         send("webGetProduct " + productId);
     }

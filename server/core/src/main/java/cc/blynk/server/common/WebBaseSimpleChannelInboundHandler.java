@@ -34,7 +34,7 @@ public abstract class WebBaseSimpleChannelInboundHandler<I, T> extends BaseSimpl
                 log.debug("Error processing request. Reason : {}", bse.getMessage());
                 ctx.writeAndFlush(WebByteBufUtil.json(getMsgId(msg), bse.getMessage()), ctx.voidPromise());
             } catch (Exception e) {
-                log.debug("Unexpected error. {}", e);
+                log.debug("Unexpected error.", e);
                 ctx.writeAndFlush(WebByteBufUtil.json(getMsgId(msg), e.getMessage()), ctx.voidPromise());
             } finally {
                 ReferenceCountUtil.release(msg);

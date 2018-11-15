@@ -3,6 +3,7 @@ package cc.blynk.server.application.handlers.main.logic;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.model.FlashedToken;
@@ -62,7 +63,8 @@ public final class MobileAssignTokenLogic {
                 return;
             }
 
-            holder.deviceDao.assignNewToken(user.orgId, user.email, device, token);
+            Product product = holder.organizationDao.getProductById(device.productId);
+            holder.deviceDao.assignNewToken(user.orgId, user.email, product, device, token);
 
             ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
         });

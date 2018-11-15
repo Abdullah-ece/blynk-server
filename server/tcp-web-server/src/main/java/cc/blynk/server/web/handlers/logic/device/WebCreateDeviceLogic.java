@@ -70,11 +70,10 @@ public class WebCreateDeviceLogic {
         }
 
         Organization org = organizationDao.getOrgByIdOrThrow(orgId);
-        organizationDao.assignToOrgAndAddDevice(org, newDevice);
-        deviceDao.create(orgId, user.email, newDevice);
+        Product product = organizationDao.assignToOrgAndAddDevice(org, newDevice);
+        deviceDao.create(orgId, user.email, product, newDevice);
 
         if (ctx.channel().isWritable()) {
-            Product product = org.getProduct(newDevice.productId);
             String deviceString = new DeviceDTO(newDevice, product, org.name).toString();
             ctx.writeAndFlush(makeUTF8StringMessage(message.command, message.id, deviceString), ctx.voidPromise());
         }

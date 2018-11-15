@@ -1,6 +1,7 @@
 package cc.blynk.server.core.dao;
 
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.web.product.Product;
 
 /**
  * The Blynk Project.
@@ -11,10 +12,13 @@ public class DeviceTokenValue {
 
     public final int orgId;
 
+    public final Product product;
+
     public final Device device;
 
-    public DeviceTokenValue(int orgId, Device device) {
+    public DeviceTokenValue(int orgId, Product product, Device device) {
         this.orgId = orgId;
+        this.product = product;
         this.device = device;
     }
 

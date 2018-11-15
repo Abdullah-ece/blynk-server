@@ -2,6 +2,7 @@ package cc.blynk.server.core.dao;
 
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.web.Organization;
+import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.utils.TokenGeneratorUtil;
 import org.apache.logging.log4j.LogManager;
@@ -28,9 +29,11 @@ public class DeviceTokenManager {
         ///in average user has 2 devices
         this.cache = new ConcurrentHashMap<>(orgs.size() == 0 ? 16 : orgs.size() * 2);
         for (Organization org : orgs) {
-            for (Device device : org.devices) {
-                if (device.token != null) {
-                    cache.put(device.token, new DeviceTokenValue(org.id, device));
+            for (Product product : org.products) {
+                for (Device device : product.devices) {
+                    if (device.token != null) {
+                        cache.put(device.token, new DeviceTokenValue(org.id, product, device));
+                    }
                 }
             }
         }
@@ -42,18 +45,13 @@ public class DeviceTokenManager {
         if (device != null) {
             String token = device.token;
             if (token != null) {
-                deleteDeviceToken(token);
+                DeviceTokenValue deviceTokenValue = cache.remove(token);
+                if (deviceTokenValue != null && deviceTokenValue.product != null) {
+                    deviceTokenValue.product.deleteDevice(device.id);
+                }
                 dbManager.removeToken(token);
             }
         }
-    }
-
-    private String deleteDeviceToken(String deviceToken) {
-        if (deviceToken != null) {
-            cache.remove(deviceToken);
-            return deviceToken;
-        }
-        return null;
     }
 
     DeviceTokenValue getTokenValueByToken(String token) {
@@ -68,14 +66,14 @@ public class DeviceTokenManager {
                 provisionTokenValue.orgId, provisionTokenValue.user.email, provisionTokenValue.device.id, newToken);
     }
 
-    String assignNewToken(int orgId, String email, Device device) {
+    String assignNewToken(int orgId, String email, Product product, Device device) {
         String newToken = TokenGeneratorUtil.generateNewToken();
-        assignNewToken(orgId, email, device, newToken);
+        assignNewToken(orgId, email, product, device, newToken);
         return newToken;
     }
 
-    void assignNewToken(int orgId, String email, Device device, String newToken) {
-        String oldToken = assignToken(orgId, device, newToken);
+    void assignNewToken(int orgId, String email, Product product, Device device, String newToken) {
+        String oldToken = assignToken(orgId, product, device, newToken);
         //device activated when new token is assigned
         device.activatedAt = System.currentTimeMillis();
         device.activatedBy = email;
@@ -87,18 +85,20 @@ public class DeviceTokenManager {
         }
     }
 
-    private String assignToken(int orgId, Device device, String newToken) {
+    private String assignToken(int orgId, Product product, Device device, String newToken) {
         // Clean old token from cache if exists.
-        String oldToken = deleteDeviceToken(device.token);
+        if (device.token != null) {
+            cache.remove(device.token);
+        }
 
         //assign new token
         device.token = newToken;
-        DeviceTokenValue tokenValue = new DeviceTokenValue(orgId, device);
+        DeviceTokenValue tokenValue = new DeviceTokenValue(orgId, product, device);
         cache.put(newToken, tokenValue);
 
         log.debug("Generated token for orgId {} deviceId {} is {}.", orgId, device.id, newToken);
 
-        return oldToken;
+        return device.token;
     }
 
 }

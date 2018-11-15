@@ -183,6 +183,20 @@ public class User {
         this.lastModifiedTs = System.currentTimeMillis();
     }
 
+    public void deleteDevice(int... deviceIds) {
+        for (int deviceId : deviceIds) {
+            deleteDevice(deviceId);
+        }
+        this.lastModifiedTs = System.currentTimeMillis();
+    }
+
+    private void deleteDevice(int deviceId) {
+        for (DashBoard dash : profile.dashBoards) {
+            dash.eraseWidgetValuesForDevice(deviceId);
+        }
+        profile.deleteDeviceFromTags(deviceId);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

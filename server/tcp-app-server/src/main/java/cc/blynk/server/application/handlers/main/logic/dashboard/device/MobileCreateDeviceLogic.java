@@ -4,6 +4,7 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import io.netty.channel.ChannelHandlerContext;
@@ -42,8 +43,8 @@ public final class MobileCreateDeviceLogic {
         }
 
         int orgId = user.orgId;
-        holder.organizationDao.assignToOrgAndAddDevice(orgId, newDevice);
-        holder.deviceDao.create(orgId, user.email, newDevice);
+        Product product = holder.organizationDao.assignToOrgAndAddDevice(orgId, newDevice);
+        holder.deviceDao.create(orgId, user.email, product, newDevice);
 
         log.debug("Device for orgId {} created {}.", orgId, newDevice);
 

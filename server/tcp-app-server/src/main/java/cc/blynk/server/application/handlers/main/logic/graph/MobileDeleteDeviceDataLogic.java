@@ -9,6 +9,8 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Arrays;
+
 import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 
@@ -43,9 +45,9 @@ public final class MobileDeleteDeviceDataLogic {
     private static void delete(Holder holder, Channel channel, int msgId, int... deviceIds) {
         holder.blockingIOProcessor.executeHistory(() -> {
             try {
-                for (int deviceId : deviceIds) {
-                    int removedCounter = holder.reportingDiskDao.delete(deviceId);
-                    log.debug("Removed {} files for deviceId {}", removedCounter, deviceId);
+                holder.reportingDiskDao.delete(deviceIds);
+                if (log.isDebugEnabled()) {
+                    log.debug("Removed all files for deviceIds {}", Arrays.toString(deviceIds));
                 }
                 channel.writeAndFlush(ok(msgId), channel.voidPromise());
             } catch (Exception e) {

@@ -210,15 +210,21 @@ public class ReportingDiskDao implements Closeable {
         return count;
     }
 
-    public int delete(int deviceId) throws IOException {
-        log.debug("Deleting all pin data for deviceId {}.", deviceId);
+    public void delete(int[] deviceIds) throws IOException {
+        for (int deviceId : deviceIds) {
+            delete(deviceId);
+        }
+    }
+
+    public boolean delete(int deviceId) throws IOException {
         Path userReportingPath = getDeviceFolderPath(deviceId);
 
-        int count = 0;
         if (Files.exists(userReportingPath)) {
+            log.debug("Deleting all pin data for deviceId {}.", deviceId);
             FileUtils.deleteDirectory(userReportingPath);
+            return true;
         }
-        return count;
+        return false;
     }
 
     public void delete(int deviceId, PinType pinType, short pin) {

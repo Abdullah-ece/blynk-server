@@ -17,7 +17,8 @@ public final class ProvisionTokenValue extends DeviceTokenValue {
     public final User user;
 
     public ProvisionTokenValue(int orgId, User user, Device device) {
-        super(orgId, device);
+        //for provisioned device product defined during first connect of the device
+        super(orgId, null, device);
         this.user = user;
         this.created = System.currentTimeMillis();
     }

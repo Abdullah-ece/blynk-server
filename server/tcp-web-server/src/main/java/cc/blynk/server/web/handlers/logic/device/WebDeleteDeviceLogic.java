@@ -6,7 +6,6 @@ import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.dao.SessionDao;
-import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
@@ -66,13 +65,9 @@ public class WebDeleteDeviceLogic {
             return;
         }
 
-        //default dash for all devices...
-        //todo fix
-        DashBoard dash = user.profile.dashBoards[0];
-
         log.debug("Deleting device {} for orgId {}.", deviceId, orgId);
-        dash.eraseWidgetValuesForDevice(deviceId);
         deviceDao.delete(deviceId);
+        user.deleteDevice(deviceId);
         Session session = sessionDao.getOrgSession(state.orgId);
         session.closeHardwareChannelByDeviceId(deviceId);
 
@@ -83,7 +78,6 @@ public class WebDeleteDeviceLogic {
                 log.warn("Error removing device data. Reason : {}.", e.getMessage());
             }
         });
-        state.user.lastModifiedTs = dash.updatedAt;
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }
 

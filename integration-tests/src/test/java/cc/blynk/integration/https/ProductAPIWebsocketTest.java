@@ -6,6 +6,7 @@ import cc.blynk.server.api.http.dashboard.dto.OrganizationDTO;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.dto.DeviceDTO;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.SortOrder;
 import cc.blynk.server.core.model.serialization.JsonParser;
@@ -82,7 +83,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
     public void getNonExistingProduct() throws Exception {
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
         client.getProduct(1333);
-        client.verifyResult(webJson(1, "Cannot find product with passed id."));
+        client.verifyResult(webJson(1, "Product with passed id 1333 not exists."));
     }
 
     @Test
@@ -535,7 +536,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
     }
 
     @Test
-    public void cantDeleteProductWithDevices() throws Exception {
+    public void canDeleteProductWithDevices() throws Exception {
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
 
         Product product = new Product();
@@ -553,8 +554,58 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         Device createdDevice = client.parseDevice(2);
         assertNotNull(createdDevice);
 
+        client.getDevices(orgId);
+        DeviceDTO[] devices = client.parseDevicesDTO(3);
+        assertNotNull(devices);
+        assertEquals(2, devices.length);
+
         client.deleteProduct(fromApiProduct.id);
-        client.verifyResult(webJson(3, "You are not allowed to remove product with devices."));
+        client.verifyResult(ok(4));
+
+        client.getDevices(orgId);
+        devices = client.parseDevicesDTO(5);
+        assertNotNull(devices);
+        assertEquals(1, devices.length);
+    }
+
+
+    @Test
+    public void canDeleteProductWithDevices2() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+
+        Product product = new Product();
+        product.name = "createProductAndDelete";
+
+        client.createProduct(orgId, product);
+        Product fromApiProduct = client.parseProduct(1);
+        assertNotNull(fromApiProduct);
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.productId = fromApiProduct.id;
+
+        client.createDevice(orgId, newDevice);
+        Device createdDevice = client.parseDevice(2);
+        assertNotNull(createdDevice);
+
+        client.getDevices(orgId);
+        DeviceDTO[] devices = client.parseDevicesDTO(3);
+        assertNotNull(devices);
+        assertEquals(2, devices.length);
+
+        client.deleteDevice(orgId, createdDevice.id);
+        client.verifyResult(ok(4));
+
+        client.getProduct(orgId, fromApiProduct.id);
+        fromApiProduct = client.parseProduct(5);
+        assertNotNull(fromApiProduct);
+        assertNotNull(product.devices);
+        assertEquals(0, product.devices.length);
+
+        client.getDevices(orgId);
+        devices = client.parseDevicesDTO(6);
+        assertNotNull(devices);
+        assertEquals(1, devices.length);
     }
 
     @Test
@@ -1064,7 +1115,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertNotNull(fromApiProduct.webDashboard.widgets[0]);
         assertEquals("4444", fromApiProduct.webDashboard.widgets[0].label);
 
-        client.getProduct(fromApiOrg.products[0].id);
+        client.getProduct(fromApiOrg.id, fromApiOrg.products[0].id);
         Product subProduct = client.parseProduct(4);
         assertNotNull(subProduct);
         assertEquals("Updated Name", subProduct.name);
@@ -1164,7 +1215,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertNotNull(fromApiProduct.metaFields);
         assertEquals("My test metafield 2", fromApiProduct.metaFields[0].name);
 
-        client.getProduct(fromApiSubOrg.products[0].id);
+        client.getProduct(fromApiSubOrg.id, fromApiSubOrg.products[0].id);
         Product subProduct = client.parseProduct(5);
         assertNotNull(subProduct);
         assertEquals("Updated Name", subProduct.name);

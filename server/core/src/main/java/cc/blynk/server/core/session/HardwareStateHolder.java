@@ -1,6 +1,7 @@
 package cc.blynk.server.core.session;
 
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.utils.ArrayUtil;
 
 /**
  * The Blynk Project.
@@ -27,6 +28,10 @@ public final class HardwareStateHolder  {
 
     public boolean isSameDevice(int deviceId) {
         return device.id == deviceId;
+    }
+
+    public boolean contains(int[] devicesIds) {
+        return ArrayUtil.contains(devicesIds, device.id);
     }
 
 }

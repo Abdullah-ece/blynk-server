@@ -9,6 +9,7 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
+import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.metafields.ContactMetaField;
 import cc.blynk.server.core.model.web.product.metafields.DeviceNameMetaField;
 import cc.blynk.server.core.model.web.product.metafields.DeviceOwnerMetaField;
@@ -120,7 +121,8 @@ public abstract class APIBaseTest extends CounterBase {
 
         Device device = new Device();
         device.name = "Default Device";
-        this.token = holder.deviceDao.createWithPredefinedId(org.id, regularUser.email, device).token;
+        Product product = org.products[0];
+        this.token = holder.deviceDao.createWithPredefinedId(org.id, regularUser.email, product, device).token;
     }
 
     @After

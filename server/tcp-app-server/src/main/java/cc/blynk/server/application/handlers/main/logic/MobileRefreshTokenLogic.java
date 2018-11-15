@@ -4,6 +4,7 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.mobile.MobileStateHolder;
 import io.netty.channel.ChannelHandlerContext;
@@ -35,7 +36,8 @@ public final class MobileRefreshTokenLogic {
             return;
         }
 
-        String token = holder.deviceDao.assignNewToken(user.orgId, user.email, device);
+        Product product = holder.organizationDao.getProductById(device.productId);
+        String token = holder.deviceDao.assignNewToken(user.orgId, user.email, product, device);
 
         Session session = holder.sessionDao.getOrgSession(state.orgId);
         session.closeHardwareChannelByDeviceId(deviceId);

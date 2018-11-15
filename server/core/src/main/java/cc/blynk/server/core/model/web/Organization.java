@@ -1,6 +1,5 @@
 package cc.blynk.server.core.model.web;
 
-import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.exceptions.ProductNotFoundException;
 import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
@@ -10,7 +9,6 @@ import cc.blynk.utils.ArrayUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_DEVICES;
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_INTS;
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_PRODUCTS;
 import static cc.blynk.utils.ArrayUtil.remove;
@@ -51,8 +49,6 @@ public class Organization {
     public volatile int[] selectedProducts = EMPTY_INTS;
 
     public volatile int parentId = SUPER_ORG_PARENT_ID;
-
-    public volatile Device[] devices = EMPTY_DEVICES;
 
     public Role[] roles;
 
@@ -97,10 +93,11 @@ public class Organization {
     }
 
     public boolean deleteProduct(int productId) {
-        for (int i = 0; i < products.length; i++) {
-            if (products[i].id == productId) {
-                products = remove(products, i, Product.class);
-                lastModifiedTs = System.currentTimeMillis();
+        Product[] localProducts = this.products;
+        for (int i = 0; i < localProducts.length; i++) {
+            if (localProducts[i].id == productId) {
+                this.products = remove(localProducts, i, Product.class);
+                this.lastModifiedTs = System.currentTimeMillis();
                 return true;
             }
         }
@@ -198,11 +195,6 @@ public class Organization {
             }
         }
         return null;
-    }
-
-    public void addDevice(Device device) {
-        this.devices = ArrayUtil.add(this.devices, device, Device.class);
-        this.lastModifiedTs = System.currentTimeMillis();
     }
 
     @Override

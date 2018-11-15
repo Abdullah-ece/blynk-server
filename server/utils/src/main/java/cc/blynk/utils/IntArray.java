@@ -25,6 +25,21 @@ public class IntArray {
         this.elementData = EMPTY;
     }
 
+    public int size() {
+        return size;
+    }
+
+    public void add(int e) {
+        add(e, elementData, size);
+    }
+
+    public int[] toArray() {
+        if (size == 0) {
+            return EMPTY;
+        }
+        return Arrays.copyOf(elementData, size);
+    }
+
     private static int hugeCapacity(int minCapacity) {
         if (minCapacity < 0) { // overflow
             throw new OutOfMemoryError();
@@ -32,14 +47,6 @@ public class IntArray {
         return (minCapacity > MAX_ARRAY_SIZE)
                 ? Integer.MAX_VALUE
                 : MAX_ARRAY_SIZE;
-    }
-
-    public int size() {
-        return size;
-    }
-
-    public void add(int e) {
-        add(e, elementData, size);
     }
 
     private void add(int e, int[] elementData, int s) {
@@ -74,12 +81,5 @@ public class IntArray {
         return (newCapacity - MAX_ARRAY_SIZE <= 0)
                 ? newCapacity
                 : hugeCapacity(minCapacity);
-    }
-
-    public int[] toArray() {
-        if (size == 0) {
-            return EMPTY;
-        }
-        return Arrays.copyOf(elementData, size);
     }
 }
