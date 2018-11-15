@@ -7,13 +7,14 @@ import {fromJS} from 'immutable';
 import {Unit, FORMS, isDataStreamPristine, getNextId} from "services/Products";
 import {SortableContainer, SortableElement} from 'react-sortable-hoc';
 import _ from 'lodash';
-import {change, getFormSyncErrors} from 'redux-form';
+import {change, getFormSyncErrors, getFormValues} from 'redux-form';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 
 @connect((state) => ({
+  formValues: getFormValues(FORMS.PRODUCTS_PRODUCT_MANAGE)(state),
   formSyncErrors: fromJS(getFormSyncErrors(FORMS.PRODUCTS_PRODUCT_MANAGE)(state) || {})
 }), (dispatch) => ({
   changeForm: bindActionCreators(change, dispatch)
@@ -21,6 +22,7 @@ import {bindActionCreators} from 'redux';
 class List extends React.Component {
 
   static propTypes = {
+    formValues: PropTypes.object,
     fields: PropTypes.object,
 
     formSyncErrors: PropTypes.object,
@@ -38,7 +40,7 @@ class List extends React.Component {
     // this.handleChangeField = this.handleChangeField.bind(this);
     this.handleDeleteField = this.handleDeleteField.bind(this);
     this.addDataStreamsField = this.addDataStreamsField.bind(this);
-
+    this.handleChange = this.handleChange.bind(this);
   }
 
 
@@ -114,6 +116,7 @@ class List extends React.Component {
       field: field,
       fieldSyncErrors: fieldSyncErrors,
       isDirty: !isDataStreamPristine(field),
+      onChange: this.handleChange,
       name: name,
     };
 
@@ -168,6 +171,32 @@ class List extends React.Component {
   //
   //   return errors;
   // }
+
+  handleChange(dataStream) {
+
+    // update all widgets which have updated dataStream to keep all consistent
+
+    let widgets = this.props.formValues.webDashboard.widgets;
+
+    widgets = widgets.map((widget) => ({
+      ...widget,
+      sources: widget.sources.map((source) => {
+        if(source && source.dataStream && Number(source.dataStream.id) === Number(dataStream.id)) {
+          return {
+            ...source,
+            dataStream: {
+              ...dataStream
+            }
+          };
+        }
+        return source;
+      })
+    }));
+
+    this.props.changeForm(FORMS.PRODUCTS_PRODUCT_MANAGE, 'webDashboard.widgets', widgets);
+
+    // [0].sources[0].dataStream
+  }
 
   handleDeleteField(id) {
 

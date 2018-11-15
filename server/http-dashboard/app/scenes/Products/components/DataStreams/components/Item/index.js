@@ -23,7 +23,7 @@ class DataStreamItem extends React.Component {
     children: PropTypes.any,
     onDelete: PropTypes.func,
     onClone: PropTypes.func,
-    onChange: PropTypes.func,
+    onPinChange: PropTypes.func,
   };
 
   constructor(props) {
@@ -32,6 +32,7 @@ class DataStreamItem extends React.Component {
     this.markAsActive = this.markAsActive.bind(this);
     this.handleCancelDelete = this.handleCancelDelete.bind(this);
     this.handleConfirmDelete = this.handleConfirmDelete.bind(this);
+    this.handlePinChange = this.handlePinChange.bind(this);
 
     this.state = {
       isActive: false
@@ -49,6 +50,10 @@ class DataStreamItem extends React.Component {
 
   markAsActive() {
     this.setState({isActive: true});
+  }
+
+  handlePinChange(event, value) {
+    this.props.onPinChange(value);
   }
 
   preview() {
@@ -104,7 +109,7 @@ class DataStreamItem extends React.Component {
     });
 
     return (
-      <Scroll.Element name={this.props.field.name}>
+      <Scroll.Element name={this.props.field.get('name')}>
         <div className={itemClasses}>
           <Row gutter={8}>
             <Col span={13}>
@@ -119,6 +124,7 @@ class DataStreamItem extends React.Component {
                 <MetadataFormSelect name={`${this.props.name}.pin`}
                                     onFocus={this.markAsActive}
                                     onBlur={this.handleCancelDelete}
+                                    onChange={this.handlePinChange}
                                     type="text"
                                     placeholder="Pin"
                                     dropdownClassName="product-metadata-item-unit-dropdown"

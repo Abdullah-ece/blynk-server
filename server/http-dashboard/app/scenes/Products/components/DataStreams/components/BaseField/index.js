@@ -33,6 +33,12 @@ class BaseField extends React.Component {
     this.onBlur = this.onBlur.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
     this.handleClone = this.handleClone.bind(this);
+
+    this.handlePinChange = this.handlePinChange.bind(this);
+    this.handleLabelChange = this.handleLabelChange.bind(this);
+    this.handleUnitsChange = this.handleUnitsChange.bind(this);
+    this.handleMinChange = this.handleMinChange.bind(this);
+    this.handleMaxChange = this.handleMaxChange.bind(this);
   }
 
   state = {
@@ -153,6 +159,41 @@ class BaseField extends React.Component {
     };
   }
 
+  handlePinChange(pin) {
+    this.props.onChange({
+      ...this.props.field.toJS(),
+      pin: Number(pin),
+    });
+  }
+
+  handleLabelChange(event, value) {
+    this.props.onChange({
+      ...this.props.field.toJS(),
+      label: value,
+    });
+  }
+
+  handleUnitsChange(event, value) {
+    this.props.onChange({
+      ...this.props.field.toJS(),
+      units: value,
+    });
+  }
+
+  handleMinChange(event, value) {
+    this.props.onChange({
+      ...this.props.field.toJS(),
+      min: Number(value),
+    });
+  }
+
+  handleMaxChange(event, value) {
+    this.props.onChange({
+      ...this.props.field.toJS(),
+      max: Number(value),
+    });
+  }
+
   component() {
     return (
       <FormItem offset={false}>
@@ -164,24 +205,24 @@ class BaseField extends React.Component {
         </FormItem.TitleGroup>
         <FormItem.Content>
           <Input.Group compact>
-            <MetadataFormField onFocus={this.onFocus} onBlur={this.onBlur} validateOnBlur={true}
+            <MetadataFormField onChange={this.handleLabelChange} onFocus={this.onFocus} onBlur={this.onBlur} validateOnBlur={true}
                                name={`${this.props.name}.label`} type="text" placeholder="Field Name"
                                style={{width: '40%'}} className={`datastream-name-field-${this.props.field.get('id')}`}
                                validate={[
               Validation.Rules.metafieldName,
               Validation.Rules.required
             ]}/>
-            <MetadataFormSelect style={{width: '20%'}} onFocus={this.onFocus} onBlur={this.onBlur}
+            <MetadataFormSelect onChange={this.handleUnitsChange} style={{width: '20%'}} onFocus={this.onFocus} onBlur={this.onBlur}
                                 name={`${this.props.name}.units`} type="text" placeholder="Choose"
                                 dropdownClassName="product-metadata-item-unit-dropdown"
                                 values={this.Unit}
                                 validate={[Validation.Rules.required]}/>
 
-            <MetadataFormField style={{width: '20%'}} onFocus={this.onFocus} onBlur={this.onBlur}
+            <MetadataFormField onChange={this.handleMinChange} style={{width: '20%'}} onFocus={this.onFocus} onBlur={this.onBlur}
                                name={`${this.props.name}.min`} type="text" placeholder="Min" validate={[
               Validation.Rules.number
             ]}/>
-            <MetadataFormField style={{width: '20%'}} onFocus={this.onFocus} onBlur={this.onBlur}
+            <MetadataFormField onChange={this.handleMaxChange} style={{width: '20%'}} onFocus={this.onFocus} onBlur={this.onBlur}
                                name={`${this.props.name}.max`} type="text" placeholder="Max" validate={[
               Validation.Rules.number
             ]}/>
@@ -197,6 +238,7 @@ class BaseField extends React.Component {
         preview={this.getPreviewValues()}
         onChange={this.props.onChange}
         onDelete={this.handleDelete}
+        onPinChange={this.handlePinChange}
         onClone={this.handleClone}
         field={this.props.field}
         isDirty={this.props.isDirty}
