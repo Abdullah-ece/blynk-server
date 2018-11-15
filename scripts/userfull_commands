@@ -26,7 +26,7 @@ SELECT nspname || '.' || relname AS "relation",
 
 
 Copy file to clipboard:
-  cat ./admin@blynk.cc.user | xclip -i -selection clipboard
+  cat ./data/admin@blynk.cc.user | xclip -i -selection clipboard
 
 Insert from clipboard:
-  xclip -selection clipboard -o > admin@blynk.cc.user
+  xclip -selection clipboard -o > ./data/admin@blynk.cc.user
