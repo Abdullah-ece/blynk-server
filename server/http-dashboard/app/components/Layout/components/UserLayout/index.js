@@ -124,11 +124,8 @@ class UserLayout extends React.Component {
 
   AccountMenu() {
 
-    const menuItemActive = [this.context.router.getCurrentLocation().pathname];
-
     return (
-      <Menu className="user-layout-profile-dropdown-menu" onClick={this.handleClick.bind(this)}
-            defaultSelectedKeys={menuItemActive}>
+      <Menu className="user-layout-profile-dropdown-menu" onClick={this.handleClick.bind(this)}>
         <Menu.ItemGroup title="Profile">
           <Menu.Item key="/user-profile/account-settings">
             <LinearIcon type="user"/> My Profile
@@ -205,8 +202,8 @@ class UserLayout extends React.Component {
               )}
             </Menu>
             <div className="user-layout-left-navigation-profile">
-              <Dropdown overlay={this.AccountMenu()} trigger={['click']} placement="topLeft">
-                <Avatar size="large" icon="user" className="user-layout-left-navigation-profile-button"/>
+              <Dropdown overlay={this.AccountMenu()} trigger={['hover']} placement="topLeft" className="my-custom-dropdown">
+                  <Avatar size="large" icon="user" className="user-layout-left-navigation-profile-button"/>
               </Dropdown>
               <div>
                 {!this.state.collapsed && this.props.Account.name}
