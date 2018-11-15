@@ -33,6 +33,12 @@ class Info extends React.Component {
 
     this.invalid = false;
 
+    this.fetchUploadToken = this.fetchUploadToken.bind(this);
+
+    this.fetchUploadToken();
+  }
+
+  fetchUploadToken() {
     this.props.secureTokenForUploadFetch();
   }
 
@@ -50,8 +56,10 @@ class Info extends React.Component {
   handleInfoFileChange(valueChanger, info) {
     const status = info.file.status;
     if (status === 'done') {
+      this.fetchUploadToken();
       valueChanger(info.file.response);
     } else if (status === 'error') {
+      this.fetchUploadToken();
       message.error(`${info.file.name} file upload failed.`);
     }
   }
