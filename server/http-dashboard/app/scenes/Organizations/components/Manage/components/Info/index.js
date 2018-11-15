@@ -25,16 +25,22 @@ class Info extends React.Component {
   constructor(props) {
     super(props);
 
-    this.props.secureTokenForUploadFetch();
+    this.fetchToken = this.fetchToken.bind(this);
+
+    this.fetchToken();
   }
 
   componentWillMount() {
+    this.fetchToken();
+  }
+
+  fetchToken() {
     this.props.secureTokenForUploadFetch();
   }
 
   render() {
     return (
-      <Form secureUploadToken={this.props.secureUploadToken} organizationName={this.props.organizationName} canCreateOrgs={this.props.canCreateOrgs}/>
+      <Form fetchToken={this.fetchToken} secureUploadToken={this.props.secureUploadToken} organizationName={this.props.organizationName} canCreateOrgs={this.props.canCreateOrgs}/>
     );
   }
 

@@ -15,6 +15,8 @@ class Form extends React.Component {
 
     secureUploadToken: PropTypes.string,
 
+    fetchToken: PropTypes.func,
+
     canCreateOrgs: PropTypes.bool,
   };
 
@@ -35,8 +37,10 @@ class Form extends React.Component {
     const handleComponentChange = (info) => {
       const status = info.file.status;
       if (status === 'done') {
+        this.props.fetchToken();
         input.onChange(info.file.response);
       } else if (status === 'error') {
+        this.props.fetchToken();
         message.error(`${info.file.name} file upload failed.`);
       }
     };
