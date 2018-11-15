@@ -30,8 +30,14 @@ public class WebGetProductsLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
-        int orgId = Integer.parseInt(message.body);
         User user = state.user;
+        int orgId;
+        if (message.body.isEmpty() == 0) {
+            orgId = user.orgId;
+        } else {
+            orgId = Integer.parseInt(message.body);
+        }
+
         Organization organization = organizationDao.getOrgByIdOrThrow(orgId);
 
         if (organization == null) {
