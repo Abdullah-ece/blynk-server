@@ -38,15 +38,15 @@ class Info extends React.Component {
     this.fetchUploadToken();
   }
 
-  fetchUploadToken() {
-    this.props.secureTokenForUploadFetch();
-  }
-
   componentWillReceiveProps(props) {
     if (this.invalid !== props.invalid) {
       this.props.updateInfoInvalidFlag(props.invalid);
       this.invalid = props.invalid;
     }
+  }
+
+  fetchUploadToken() {
+    this.props.secureTokenForUploadFetch();
   }
 
   hardware = AVAILABLE_HARDWARE_TYPES;
