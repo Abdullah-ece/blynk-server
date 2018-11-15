@@ -400,10 +400,9 @@ export const blynkWsMessage = (params) => {
     });
 
   } else if (command === API_COMMANDS.CREATE_DEVICE) {
-    handlers.ApiCallHandler({
+    handlers.DeviceCreateHandler({
       msgId: ++MSG_ID,
       previousAction: message && message.previousAction,
-      message: 'API_DEVICE_CREATE_SUCCESS',
       promiseResolve: message && message.promiseResolve,
     });
 

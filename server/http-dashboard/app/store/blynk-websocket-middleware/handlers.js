@@ -240,7 +240,7 @@ export const Handlers = (params) => {
 
   };
 
-  const apiCallHandler = ({ msgId, previousAction, message, promiseResolve }) => {
+  const deviceCreateHandler = ({ msgId, previousAction, promiseResolve }) => {
 
     const body = decodeBody(dataView);
 
@@ -252,7 +252,39 @@ export const Handlers = (params) => {
       });
 
     store.dispatch({
-      type: message || `${previousAction.type}_SUCCESS`,
+      type: 'API_DEVICE_CREATE_SUCCESS',
+      payload: {
+        data: JSON.parse(body)
+      },
+      meta: {
+        previousAction: previousAction
+      }
+    });
+
+    promiseResolve({
+      payload: {
+        data: JSON.parse(body)
+      },
+      meta: {
+        previousAction: previousAction
+      }
+    });
+
+  };
+
+  const apiCallHandler = ({ msgId, previousAction, promiseResolve }) => {
+
+    const body = decodeBody(dataView);
+
+    if (options.isDebugMode)
+      options.debug("blynkWsMessage ApiCall", action, {
+        command     : command,
+        msgId       : msgId,
+        body: body
+      });
+
+    store.dispatch({
+      type: `${previousAction.type}_SUCCESS`,
       payload: {
         data: JSON.parse(body)
       },
@@ -479,6 +511,7 @@ export const Handlers = (params) => {
     DeviceDisconnectHandler: deviceDisconnectHandler,
     AppSyncHandler: appSyncHandler,
     ChartDataHandler: chartDataHandler,
+    DeviceCreateHandler: deviceCreateHandler,
     NoDataHandler: noDataHandler,
     UnknownCommandHandler: unknownCommandHandler,
   };
