@@ -20,6 +20,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler.handleGeneralException;
+import static cc.blynk.server.core.session.mobile.OsType.WEB_SOCKET;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 import static cc.blynk.server.internal.WebByteBufUtil.json;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
@@ -95,7 +96,7 @@ public class WebAppLoginHandler extends SimpleChannelInboundHandler<LoginMessage
         DefaultChannelPipeline pipeline = (DefaultChannelPipeline) ctx.pipeline();
         cleanPipeline(pipeline);
 
-        WebAppStateHolder appStateHolder = new WebAppStateHolder(user.orgId, user);
+        WebAppStateHolder appStateHolder = new WebAppStateHolder(user.orgId, user, new Version(WEB_SOCKET, 41));
         pipeline.addLast("AWebAppHandler", new WebAppHandler(holder, appStateHolder));
 
         Channel channel = ctx.channel();

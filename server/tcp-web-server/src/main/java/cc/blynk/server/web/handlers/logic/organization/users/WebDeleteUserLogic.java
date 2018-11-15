@@ -2,10 +2,12 @@ package cc.blynk.server.web.handlers.logic.organization.users;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.FileManager;
+import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
 import cc.blynk.server.db.DBManager;
@@ -33,12 +35,14 @@ public final class WebDeleteUserLogic {
     private final FileManager fileManager;
     private final DBManager dbManager;
     private final SessionDao sessionDao;
+    private final OrganizationDao organizationDao;
 
     public WebDeleteUserLogic(Holder holder) {
         this.userDao = holder.userDao;
         this.fileManager = holder.fileManager;
         this.dbManager = holder.dbManager;
         this.sessionDao = holder.sessionDao;
+        this.organizationDao = holder.organizationDao;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
@@ -52,12 +56,6 @@ public final class WebDeleteUserLogic {
         }
 
         //todo check user has access to modify the org
-        //if (!user.isAdmin()) {
-        //    log.error("Non admin {} tries to remove users.", user.email);
-        //    ctx.writeAndFlush(json(message.id, "Only admin allowed to remove users."), ctx.voidPromise());
-        //    return;
-        //}
-
         int orgId = Integer.parseInt(split[0]);
         String[] emailsToDelete = JsonParser.readAny(split[1], String[].class);
 
@@ -67,20 +65,24 @@ public final class WebDeleteUserLogic {
             return;
         }
 
+        String superAdminEmail = userDao.getSuperAdmin().email;
         for (String emailToDelete : emailsToDelete) {
             User userToDelete = userDao.getByName(emailToDelete);
-            if (userToDelete != null) {
+            if (userToDelete != null && userToDelete.orgId == orgId) {
                 if (userToDelete.isSuperAdmin()) {
                     log.error("{} tries to remove super admin.", user.email);
                     ctx.writeAndFlush(json(message.id, "You can't remove superadmin."), ctx.voidPromise());
                     return;
                 }
-                if (userToDelete.orgId == orgId) {
-                    log.info("Deleting {} user for {}.", emailToDelete, user.email);
-                    userDao.delete(emailToDelete);
-                    fileManager.delete(emailToDelete);
-                    dbManager.deleteUser(emailToDelete);
-                    sessionDao.deleteUser(orgId, emailToDelete);
+
+                log.info("Deleting {} user for {}.", emailToDelete, user.email);
+                userDao.delete(emailToDelete);
+                fileManager.delete(emailToDelete);
+                dbManager.deleteUser(emailToDelete);
+                sessionDao.deleteUser(orgId, emailToDelete);
+                Organization org = organizationDao.getOrgById(user.orgId);
+                if (org != null) {
+                    org.reassignOwner(emailToDelete, superAdminEmail);
                 }
             }
         }

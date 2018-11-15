@@ -1,10 +1,13 @@
 package cc.blynk.server.core.model.web;
 
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.exceptions.ProductNotFoundException;
 import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.utils.ArrayUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +22,8 @@ import static cc.blynk.utils.ArrayUtil.remove;
  * Created on 04.04.17.
  */
 public class Organization {
+
+    private static final Logger log = LogManager.getLogger(Organization.class);
 
     public static final int SUPER_ORG_PARENT_ID = -1;
 
@@ -195,6 +200,18 @@ public class Organization {
             }
         }
         return null;
+    }
+
+    public void reassignOwner(String oldOwner, String newOwner) {
+        for (Product product : this.products) {
+            for (Device device : product.devices) {
+                if (device.hasOwner(oldOwner)) {
+                    if (device.reassignOwner(oldOwner, newOwner)) {
+                        log.trace("Device owner {} of device {} is reassigned to {}.", oldOwner, device.id, newOwner);
+                    }
+                }
+            }
+        }
     }
 
     @Override

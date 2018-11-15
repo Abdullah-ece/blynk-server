@@ -8,6 +8,7 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.auth.UserStatus;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.protocol.model.messages.web.WebLoginViaInviteMessage;
+import cc.blynk.server.core.session.mobile.OsType;
 import cc.blynk.server.core.session.mobile.Version;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
 import cc.blynk.server.internal.ReregisterChannelUtil;
@@ -108,7 +109,7 @@ public class WebAppLoginViaInviteHandler extends SimpleChannelInboundHandler<Web
         DefaultChannelPipeline pipeline = (DefaultChannelPipeline) ctx.pipeline();
         cleanPipeline(pipeline);
 
-        WebAppStateHolder appStateHolder = new WebAppStateHolder(user.orgId, user);
+        WebAppStateHolder appStateHolder = new WebAppStateHolder(user.orgId, user, new Version(OsType.WEB_SOCKET, 41));
         pipeline.addLast("AWebAppHandler", new WebAppHandler(holder, appStateHolder));
 
         Channel channel = ctx.channel();

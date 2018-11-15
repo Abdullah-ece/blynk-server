@@ -16,6 +16,7 @@ import cc.blynk.server.core.model.web.product.metafields.DeviceNameMetaField;
 import cc.blynk.server.core.model.web.product.metafields.DeviceOwnerMetaField;
 import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
+import cc.blynk.utils.ArrayUtil;
 import com.fasterxml.jackson.annotation.JsonView;
 import io.netty.channel.Channel;
 
@@ -349,13 +350,32 @@ public class Device implements Target {
     }
 
     public boolean hasOwner(String ownerEmail) {
-        for (MetaField metaField : metaFields) {
+        int index = getOwnerMetaFieldIndex(ownerEmail);
+        return index != -1;
+    }
+
+    private int getOwnerMetaFieldIndex(String ownerEmail) {
+        MetaField[] localMetaFields = this.metaFields;
+        for (int i = 0; i < localMetaFields.length; i++) {
+            MetaField metaField = localMetaFields[i];
             if (metaField instanceof DeviceOwnerMetaField) {
                 DeviceOwnerMetaField deviceOwnerMetaField = (DeviceOwnerMetaField) metaField;
                 if (ownerEmail.equals(deviceOwnerMetaField.value)) {
-                    return true;
+                    return i;
                 }
             }
+        }
+        return -1;
+    }
+
+    public boolean reassignOwner(String oldOwner, String newOwner) {
+        int index = getOwnerMetaFieldIndex(oldOwner);
+        if (index != -1) {
+            DeviceOwnerMetaField prevDeviceOwner = (DeviceOwnerMetaField) this.metaFields[index];
+            MetaField deviceOwnerMetaField = prevDeviceOwner.copy(newOwner);
+            this.metaFields = ArrayUtil.copyAndReplace(this.metaFields, deviceOwnerMetaField, index);
+            this.updatedAt = System.currentTimeMillis();
+            return true;
         }
         return false;
     }

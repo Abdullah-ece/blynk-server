@@ -42,9 +42,11 @@ import cc.blynk.server.core.model.widgets.web.WebSlider;
 import cc.blynk.server.core.model.widgets.web.WebSource;
 import cc.blynk.server.core.model.widgets.web.WebSwitch;
 import cc.blynk.server.core.model.widgets.web.label.WebLabel;
+import cc.blynk.utils.SHA256Util;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Currency;
@@ -60,6 +62,7 @@ import static cc.blynk.integration.APIBaseTest.createTextMeta;
 import static cc.blynk.integration.TestUtil.createWebLabelWidget;
 import static cc.blynk.integration.TestUtil.createWebSliderWidget;
 import static cc.blynk.integration.TestUtil.createWebSwitchWidget;
+import static cc.blynk.integration.TestUtil.defaultClient;
 import static cc.blynk.integration.TestUtil.loggedDefaultClient;
 import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.integration.TestUtil.webJson;
@@ -70,6 +73,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.verify;
 
 /**
  * The Blynk Project.
@@ -567,7 +573,6 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertNotNull(devices);
         assertEquals(1, devices.length);
     }
-
 
     @Test
     public void canDeleteProductWithDevices2() throws Exception {
@@ -1232,6 +1237,67 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertEquals(1, createdSubDevice.metaFields.length);
         assertNotNull(createdSubDevice.metaFields);
         assertEquals("My test metafield 2", createdSubDevice.metaFields[0].name);
-
     }
+
+    @Test
+    public void deviceOwnershipTransferredAfterUserIsRemoved() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+
+        //create product
+        Product product = new Product();
+        product.name = "createProduct";
+        product.metaFields = new MetaField[] {
+                createDeviceOwnerMeta(1, "Device Owner", "fake@blynk.cc", true)
+        };
+        client.createProduct(orgId, product);
+        Product fromApiProduct = client.parseProduct(1);
+        assertNotNull(fromApiProduct);
+
+        //invite and login new user
+        String invitedUser = "invited@blynk.cc";
+        client.inviteUser(orgId, "invited@blynk.cc", "Dmitriy", 3);
+        client.verifyResult(ok(2));
+        ArgumentCaptor<String> bodyArgumentCapture = ArgumentCaptor.forClass(String.class);
+        verify(holder.mailWrapper, timeout(1000).times(1)).sendHtml(eq(invitedUser),
+                eq("Invitation to Blynk Inc. dashboard."), bodyArgumentCapture.capture());
+        String body = bodyArgumentCapture.getValue();
+        String token = body.substring(body.indexOf("token=") + 6, body.indexOf("&"));
+        String passHash = SHA256Util.makeHash("123", invitedUser);
+        AppWebSocketClient client2 = defaultClient();
+        client2.start();
+        client2.loginViaInvite(token, passHash);
+        client2.verifyResult(ok(1));
+
+        //create new device
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.productId = fromApiProduct.id;
+        client.createDevice(orgId, newDevice);
+        Device createdDevice = client.parseDevice(3);
+        assertNotNull(createdDevice);
+        assertNotNull(createdDevice.metaFields);
+        assertEquals(1, createdDevice.metaFields.length);
+
+        //update owner
+        client.updateDeviceMetafield(createdDevice.id, createDeviceOwnerMeta(1, "Device Owner", invitedUser, true));
+        client.verifyResult(ok(4));
+
+        client.getDevice(orgId, createdDevice.id);
+        createdDevice = client.parseDevice(5);
+        assertNotNull(createdDevice);
+        assertNotNull(createdDevice.metaFields);
+        assertEquals(1, createdDevice.metaFields.length);
+        assertEquals(invitedUser, ((DeviceOwnerMetaField) createdDevice.metaFields[0]).value);
+
+        client.deleteUser(orgId, invitedUser);
+        client.verifyResult(ok(6));
+
+        client.getDevice(orgId, createdDevice.id);
+        createdDevice = client.parseDevice(7);
+        assertNotNull(createdDevice);
+        assertNotNull(createdDevice.metaFields);
+        assertEquals(1, createdDevice.metaFields.length);
+        assertEquals("super@blynk.cc", ((DeviceOwnerMetaField) createdDevice.metaFields[0]).value);
+    }
+
 }

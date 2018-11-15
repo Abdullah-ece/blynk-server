@@ -64,6 +64,7 @@ public class SessionDao {
 
     public void deleteUser(int orgId, String email) {
         closeAppChannelsByUser(orgId, email);
+        closeWebChannelsByUser(orgId, email);
         for (Map.Entry<String, User> entry : httpSession.entrySet()) {
             User user = entry.getValue();
             if (user.email.equals(email)) {
@@ -76,7 +77,22 @@ public class SessionDao {
     public void closeAppChannelsByUser(int orgId, String email) {
         Session session = orgSession.get(orgId);
         if (session != null) {
-            session.appChannels.removeIf(channel -> StateHolderUtil.isSameEmail(channel, email));
+            session.appChannels.forEach(channel -> {
+                if (StateHolderUtil.isSameEmail(channel, email)) {
+                    channel.close();
+                }
+            });
+        }
+    }
+
+    private void closeWebChannelsByUser(int orgId, String email) {
+        Session session = orgSession.get(orgId);
+        if (session != null) {
+            session.webChannels.forEach(channel -> {
+                if (StateHolderUtil.isSameEmail(channel, email)) {
+                    channel.close();
+                }
+            });
         }
     }
 

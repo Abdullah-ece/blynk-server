@@ -55,6 +55,7 @@ import io.netty.handler.ssl.SslProvider;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 
 import java.net.URI;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Random;
 
@@ -264,6 +265,11 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         send("webGetOrgLocations " + orgId);
     }
 
+    public void deleteUser(int orgId, String... users) {
+        send("webDeleteUser " + orgId + StringUtils.BODY_SEPARATOR_STRING
+                + JsonParser.valueToJsonAsString(Arrays.asList(users)));
+    }
+
     public void getTimeline(int orgId, int deviceId,
                             EventType eventType, Boolean isResolved,
                             long form, long to,
@@ -318,6 +324,10 @@ public final class AppWebSocketClient extends BaseTestAppClient {
 
     public MetaField parseMetafield(int expectedMessageOrder) throws Exception {
         return JsonParser.parseMetafield(getBody(expectedMessageOrder), 0);
+    }
+
+    public String parseString(int expectedMessageOrder) throws Exception {
+        return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), String.class);
     }
 
     public Token parseToken(int expectedMessageOrder) throws Exception {
