@@ -156,7 +156,7 @@ public class Holder {
         this.textHolder = new TextHolder(gcmProperties);
 
         this.reportScheduler = new ReportScheduler(
-                1, serverProperties.getHttpsServerUrl(), mailWrapper, reportingDiskDao, userDao.users, deviceDao);
+                1, serverProperties.httpsServerUrl, mailWrapper, reportingDiskDao, userDao.users, deviceDao);
 
         String contactEmail = serverProperties.getProperty("contact.email", mailProperties.getSMTPUsername());
         this.sslContextHolder = new SslContextHolder(props, contactEmail);
@@ -216,7 +216,7 @@ public class Holder {
         this.textHolder = new TextHolder(new GCMProperties(Collections.emptyMap()));
 
         this.reportScheduler = new ReportScheduler(
-                1, serverProperties.getHttpsServerUrl(), mailWrapper, reportingDiskDao, userDao.users, deviceDao);
+                1, serverProperties.httpsServerUrl, mailWrapper, reportingDiskDao, userDao.users, deviceDao);
 
         this.sslContextHolder = new SslContextHolder(props, "test@blynk.cc");
         this.tokensPool = new TokensPool(serverProperties.getReportingFolder());

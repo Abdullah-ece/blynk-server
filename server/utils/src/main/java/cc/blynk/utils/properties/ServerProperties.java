@@ -29,6 +29,8 @@ public class ServerProperties extends BaseProperties {
     public final String productName;
     public final String region;
     public final String host;
+    public final String httpServerUrl;
+    public final String httpsServerUrl;
 
     public ServerProperties(Map<String, String> cmdProperties, String serverConfig) {
         super(cmdProperties, serverConfig);
@@ -37,6 +39,8 @@ public class ServerProperties extends BaseProperties {
         this.productName = getProductName();
         this.region = getRegion();
         this.host = getServerHost();
+        this.httpServerUrl = getHttpServerUrl();
+        this.httpsServerUrl = getHttpsServerUrl();
     }
 
     public ServerProperties(Map<String, String> cmdProperties) {
@@ -131,22 +135,22 @@ public class ServerProperties extends BaseProperties {
     }
 
     public String getDeviceUrl() {
-        return getHttpsServerUrl() + "/dashboard/devices/";
+        return httpsServerUrl + "/dashboard/devices/";
     }
 
     public String getInviteUrl() {
-        return getHttpsServerUrl() + "/dashboard/invite?token=";
+        return httpsServerUrl + "/dashboard/invite?token=";
     }
 
-    public String getHttpsServerUrl() {
+    private String getHttpsServerUrl() {
         String httpPort = getHttpsPortAsString();
         return "https://" + getServerHost() + (httpPort.isEmpty() ? "" : (":" + httpPort));
 
     }
 
-    public String getHttpServerUrl() {
+    private String getHttpServerUrl() {
         String httpPort = getHttpPortAsString();
-        return "http://" + getServerHost() + (httpPort.isEmpty() ? "" : (":" + httpPort)) + "/";
+        return "http://" + getServerHost() + (httpPort.isEmpty() ? "" : (":" + httpPort));
     }
 
 }

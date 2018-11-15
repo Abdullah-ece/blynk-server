@@ -109,7 +109,7 @@ public final class BlynkInternalLogic {
                             device.firmwareUploadFailure();
                         } else {
                             StringMessage msg = makeASCIIStringMessage(BLYNK_INTERNAL, 7777,
-                                    OTAInfo.makeHardwareBody(holder.props.getHttpServerUrl(),
+                                    OTAInfo.makeHardwareBody(holder.props.httpServerUrl,
                                             device.deviceOtaInfo.pathToFirmware, device.id));
                             ctx.write(msg, ctx.voidPromise());
                             device.requestSent();

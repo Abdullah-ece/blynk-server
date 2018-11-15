@@ -59,7 +59,7 @@ public final class WebInviteUserLogic {
         this.mailWrapper = holder.mailWrapper;
         this.productName = holder.props.productName;
         this.inviteURL = holder.props.getInviteUrl();
-        this.httpsServerUrl = holder.props.getHttpsServerUrl();
+        this.httpsServerUrl = holder.props.httpsServerUrl;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
