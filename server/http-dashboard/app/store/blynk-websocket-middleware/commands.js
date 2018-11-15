@@ -75,6 +75,22 @@ export const API_COMMANDS = {
   WEB_GET_TEMP_SECURE_TOKEN     : 131,
 };
 
+export const getCommandKeyName = (value) => {
+  for(let key in COMMANDS){
+    if(COMMANDS[key] == value){
+      return key;
+    }
+  }
+
+  for(let key in API_COMMANDS){
+    if(API_COMMANDS[key] == value){
+      return key;
+    }
+  }
+
+  return value;
+};
+
 const blynkHeader = (msg_type, msg_id) => {
   return new Uint8Array(
     [
@@ -302,7 +318,7 @@ export const blynkWsMessage = (params) => {
 
   if (options.isDebugMode)
     options.debug("blynkWsMessage", action, {
-      command: command,
+      command: getCommandKeyName(command),
       msgId  : msgId,
     });
 

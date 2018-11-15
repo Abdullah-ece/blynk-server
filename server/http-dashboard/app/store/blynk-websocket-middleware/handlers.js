@@ -13,6 +13,7 @@ import {
   getTrackDeviceId,
   getTrackOnlyByDeviceId
 } from './selectors';
+import { getCommandKeyName } from "./commands";
 
 
 const decodeBody = (dataView) => {
@@ -47,7 +48,7 @@ export const Handlers = (params) => {
 
     if (options.isDebugMode)
       options.debug("blynkWsMessage ResponseOK", action, {
-        command     : command,
+        command     : getCommandKeyName(command),
         msgId       : msgId,
         responseCode: responseCode
       });
@@ -72,7 +73,7 @@ export const Handlers = (params) => {
 
     if (options.isDebugMode)
       options.debug("blynkWsMessage Hardware", action, {
-        command     : command,
+        command     : getCommandKeyName(command),
         msgId       : msgId,
         bodyArray: bodyArray,
         trackDeviceId,
@@ -110,7 +111,7 @@ export const Handlers = (params) => {
 
     if (options.isDebugMode)
       options.debug("blynkWsMessage LogEvent", action, {
-        command     : command,
+        command     : getCommandKeyName(command),
         msgId       : msgId,
         bodyArray: bodyArray,
         deviceId,
@@ -139,7 +140,7 @@ export const Handlers = (params) => {
 
     if (options.isDebugMode)
       options.debug("blynkWsMessage LogEventResolve", action, {
-        command  : command,
+        command  : getCommandKeyName(command),
         msgId    : msgId,
         bodyArray: bodyArray,
         deviceId,
@@ -167,7 +168,7 @@ export const Handlers = (params) => {
 
     if (options.isDebugMode)
       options.debug("blynkWsMessage DeviceConnect", action, {
-        command     : command,
+        command     : getCommandKeyName(command),
         msgId       : msgId,
         bodyArray: bodyArray,
         deviceId
@@ -196,7 +197,7 @@ export const Handlers = (params) => {
 
     if (options.isDebugMode)
       options.debug("blynkWsMessage DeviceDisconnect", action, {
-        command     : command,
+        command     : getCommandKeyName(command),
         msgId       : msgId,
         bodyArray: bodyArray,
         deviceId
@@ -227,7 +228,7 @@ export const Handlers = (params) => {
 
     if (options.isDebugMode)
       options.debug("blynkWsMessage DeviceMetadataUpdate", action, {
-        command     : command,
+        command     : getCommandKeyName(command),
         msgId       : msgId,
         bodyArray: bodyArray,
         deviceId
@@ -246,7 +247,7 @@ export const Handlers = (params) => {
 
     if (options.isDebugMode)
       options.debug("blynkWsMessage ApiCall", action, {
-        command     : command,
+        command     : getCommandKeyName(command),
         msgId       : msgId,
         body: body
       });
@@ -312,7 +313,7 @@ export const Handlers = (params) => {
 
     if (options.isDebugMode)
       options.debug("blynkWsMessage AppSync", action, {
-        command     : command,
+        command     : getCommandKeyName(command),
         msgId       : msgId,
         bodyArray: bodyArray
       });
@@ -343,7 +344,7 @@ export const Handlers = (params) => {
 
     if (options.isDebugMode)
       options.debug("blynkWsMessage JsonHandler", action, {
-        command     : command,
+        command     : getCommandKeyName(command),
         msgId       : msgId,
         bodyArray: `${body}`
       });
@@ -372,7 +373,7 @@ export const Handlers = (params) => {
 
     if (options.isDebugMode)
       options.debug("blynkWsMessage ChartData NoData", action, {
-        command     : command,
+        command     : getCommandKeyName(command),
         msgId       : msgId,
         bodyArray: `${deviceId} ${pointsCount} ${JSON.stringify(points)}`
       });
@@ -486,7 +487,7 @@ export const Handlers = (params) => {
 
     if (options.isDebugMode)
       options.debug("blynkWsMessage Unknown", action, {
-        command     : command,
+        command     : getCommandKeyName(command),
         msgId       : msgId,
       });
 
