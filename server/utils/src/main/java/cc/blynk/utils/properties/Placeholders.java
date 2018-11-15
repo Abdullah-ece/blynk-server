@@ -13,7 +13,8 @@ public final class Placeholders {
     public static final String PRODUCT_NAME = "{PRODUCT_NAME}";
     public static final String DEVICE_NAME = "{DEVICE_NAME}";
     public static final String RESET_URL = "{RESET_URL}";
-    public static final String DOWNLOAD_URL = "{DOWNLOAD_URL}";
+    public static final String ORG_LOGO_URL = "{ORG_LOGO_URL}";
+    public static final String HTTPS_SERVER_URL = "{HTTPS_SERVER_URL}";
     public static final String DYNAMIC_SECTION = "{DYNAMIC_SECTION}";
     public static final String EMAIL = "{EMAIL}";
     public static final String TOKEN = "{TOKEN}";

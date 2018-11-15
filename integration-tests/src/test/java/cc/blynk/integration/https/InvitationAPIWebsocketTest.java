@@ -70,6 +70,7 @@ public class InvitationAPIWebsocketTest extends SingleServerInstancePerTestWithD
         client.verifyResult(ok(1));
 
         verify(holder.mailWrapper).sendHtml(eq("test@gmail.com"), eq("Invitation to Blynk Inc. dashboard."), contains("/dashboard/invite?token="));
+        verify(holder.mailWrapper).sendHtml(eq("test@gmail.com"), eq("Invitation to Blynk Inc. dashboard."), contains("https://localhost:10443/static/logo.png"));
     }
 
     @Test

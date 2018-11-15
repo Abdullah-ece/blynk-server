@@ -48,6 +48,7 @@ public final class WebInviteUserLogic {
     private final MailWrapper mailWrapper;
     private final String productName;
     private final String inviteURL;
+    private final String httpsServerUrl;
 
     public WebInviteUserLogic(Holder holder) {
         this.inviteTemplate = FileLoaderUtil.readInviteMailBody();
@@ -58,6 +59,7 @@ public final class WebInviteUserLogic {
         this.mailWrapper = holder.mailWrapper;
         this.productName = holder.props.productName;
         this.inviteURL = holder.props.getInviteUrl();
+        this.httpsServerUrl = holder.props.getHttpsServerUrl();
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
@@ -104,6 +106,7 @@ public final class WebInviteUserLogic {
             try {
                 tokensPool.addToken(token,  new InviteToken(userInvite.email, orgId, getAppName()));
                 String body = inviteTemplate
+                        .replace(Placeholders.ORG_LOGO_URL, httpsServerUrl + org.logoUrl)
                         .replace(Placeholders.ORGANIZATION, org.name)
                         .replace(Placeholders.PRODUCT_NAME, productName)
                         .replace("{link}", inviteURL + token + "&email="

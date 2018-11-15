@@ -36,7 +36,7 @@ public class MailWrapper {
                                 String downloadUrl,
                                 String dynamicSection) throws Exception  {
         String body = reportBody
-                .replace(Placeholders.DOWNLOAD_URL, downloadUrl)
+                .replace(Placeholders.HTTPS_SERVER_URL, downloadUrl)
                 .replace(Placeholders.DYNAMIC_SECTION, dynamicSection)
                 .replace(Placeholders.PRODUCT_NAME, productName);
         sendHtml(to, subj, body);

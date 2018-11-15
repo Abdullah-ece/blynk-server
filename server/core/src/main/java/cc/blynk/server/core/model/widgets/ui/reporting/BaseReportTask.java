@@ -48,7 +48,7 @@ public abstract class BaseReportTask implements Runnable {
 
     private final DeviceDao deviceDao;
 
-    private final String downloadUrl;
+    private final String httpsServerUrl;
 
     private static final Charset REPORT_ENCODING = UTF_16;
     private static final int size = 64 * 1024;
@@ -56,13 +56,13 @@ public abstract class BaseReportTask implements Runnable {
     protected BaseReportTask(User user, int dashId, Report report,
                              MailWrapper mailWrapper, ReportingDiskDao reportingDiskDao,
                              DeviceDao deviceDao,
-                             String downloadUrl) {
+                             String httpsServerUrl) {
         this.key = new ReportTaskKey(user, dashId, report.id);
         this.report = report;
         this.mailWrapper = mailWrapper;
         this.reportingDiskDao = reportingDiskDao;
         this.deviceDao = deviceDao;
-        this.downloadUrl = downloadUrl;
+        this.httpsServerUrl = httpsServerUrl;
     }
 
     private static String deviceAndPinFileName(String deviceName, int deviceId, ReportDataStream reportDataStream) {
@@ -87,7 +87,7 @@ public abstract class BaseReportTask implements Runnable {
     private void sendEmail(Path output) throws Exception {
         String durationLabel = report.reportType.getDurationLabel().toLowerCase();
         String subj = "Your " + durationLabel + " " + report.getReportName() + " is ready";
-        String gzipDownloadUrl = downloadUrl + output.getFileName();
+        String gzipDownloadUrl = httpsServerUrl + output.getFileName();
         String dynamicSection = report.buildDynamicSection();
         mailWrapper.sendReportEmail(report.recipients, subj, gzipDownloadUrl, dynamicSection);
     }

@@ -44,7 +44,7 @@ public class ReportScheduler extends ScheduledThreadPoolExecutor {
         setRemoveOnCancelPolicy(true);
         setExecuteExistingDelayedTasksAfterShutdownPolicy(false);
         this.map = new ConcurrentHashMap<>();
-        this.downloadUrl = downloadUrl;
+        this.downloadUrl = !downloadUrl.endsWith("/") ? downloadUrl + "/" : downloadUrl;
         this.mailWrapper = mailWrapper;
         this.reportingDao = reportingDao;
         this.deviceDao = deviceDao;

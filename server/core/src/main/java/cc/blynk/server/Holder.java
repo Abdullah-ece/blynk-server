@@ -24,7 +24,6 @@ import cc.blynk.server.notifications.twitter.TwitterWrapper;
 import cc.blynk.server.transport.TransportTypeHolder;
 import cc.blynk.server.workers.ReadingWidgetsWorker;
 import cc.blynk.server.workers.timer.TimerWorker;
-import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.properties.GCMProperties;
 import cc.blynk.utils.properties.MailProperties;
 import cc.blynk.utils.properties.ServerProperties;
@@ -82,8 +81,6 @@ public class Holder {
 
     public final Limits limits;
     public final TextHolder textHolder;
-
-    public final String downloadUrl;
 
     public final SslContextHolder sslContextHolder;
 
@@ -158,12 +155,8 @@ public class Holder {
         this.limits = new Limits(props);
         this.textHolder = new TextHolder(gcmProperties);
 
-        this.downloadUrl = FileUtils.downloadUrl(serverProperties.host,
-                props.getProperty("http.port"),
-                props.getBoolProperty("force.port.80.for.csv")
-        );
         this.reportScheduler = new ReportScheduler(
-                1, downloadUrl, mailWrapper, reportingDiskDao, userDao.users, deviceDao);
+                1, serverProperties.getHttpsServerUrl(), mailWrapper, reportingDiskDao, userDao.users, deviceDao);
 
         String contactEmail = serverProperties.getProperty("contact.email", mailProperties.getSMTPUsername());
         this.sslContextHolder = new SslContextHolder(props, contactEmail);
@@ -222,12 +215,8 @@ public class Holder {
         this.limits = new Limits(props);
         this.textHolder = new TextHolder(new GCMProperties(Collections.emptyMap()));
 
-        this.downloadUrl = FileUtils.downloadUrl(serverProperties.host,
-                props.getProperty("http.port"),
-                props.getBoolProperty("force.port.80.for.csv")
-        );
         this.reportScheduler = new ReportScheduler(
-                1, downloadUrl, mailWrapper, reportingDiskDao, userDao.users, deviceDao);
+                1, serverProperties.getHttpsServerUrl(), mailWrapper, reportingDiskDao, userDao.users, deviceDao);
 
         this.sslContextHolder = new SslContextHolder(props, "test@blynk.cc");
         this.tokensPool = new TokensPool(serverProperties.getReportingFolder());

@@ -192,24 +192,8 @@ public final class FileUtils {
         return formatter.format(Instant.ofEpochMilli(ts));
     }
 
-    public static void writeBufToCsv(BufferedWriter writer, ByteBuffer onePinData, int deviceId) throws Exception {
-        while (onePinData.remaining() > 0) {
-            double value = onePinData.getDouble();
-            long ts = onePinData.getLong();
-
-            writer.write("" + value + ',' + ts + ',' + deviceId + '\n');
-        }
-    }
-
     public static Path getUserReportDir(String email, int orgId, int reportId, String date) {
         return Paths.get(FileUtils.CSV_DIR, email + "_" + orgId + "_" + reportId + "_" + date);
-    }
-
-    public static String downloadUrl(String host, String httpPort, boolean forcePort80) {
-        if (forcePort80) {
-            return "http://" + host + "/";
-        }
-        return "http://" + host + ":" + httpPort + "/";
     }
 
     public static File getLatestFile(File[] files) {

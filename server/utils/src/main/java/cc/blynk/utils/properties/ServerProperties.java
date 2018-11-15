@@ -43,10 +43,6 @@ public class ServerProperties extends BaseProperties {
         this(cmdProperties, SERVER_PROPERTIES_FILENAME);
     }
 
-    public boolean isLocalRegion() {
-        return region.equals("local");
-    }
-
     private String getProductName() {
         return getProperty("product.name", AppNameUtil.BLYNK);
     }
@@ -103,7 +99,7 @@ public class ServerProperties extends BaseProperties {
     }
 
     public String getHttpsPortOrBlankIfDefaultAsString() {
-        if (force80Port()) {
+        if (forceRegularPort()) {
             //means default port 443 is used, so no need to attach it
             return "";
         }
@@ -114,16 +110,16 @@ public class ServerProperties extends BaseProperties {
         return ":" + httpsPort;
     }
 
-    private boolean force80Port() {
-        return getBoolProperty("force.port.80.for.csv");
+    private boolean forceRegularPort() {
+        return getBoolProperty("force.regular.port");
     }
 
-    public String getHttpsPortAsString() {
-        return force80Port() ? "443" : getProperty("https.port");
+    private String getHttpsPortAsString() {
+        return forceRegularPort() ? "" : getProperty("https.port");
     }
 
     public String getHttpPortAsString() {
-        return force80Port() ? "80" : getProperty("http.port");
+        return forceRegularPort() ? "" : getProperty("http.port");
     }
 
     public boolean getAllowStoreIp() {
@@ -135,20 +131,22 @@ public class ServerProperties extends BaseProperties {
     }
 
     public String getDeviceUrl() {
-        return "https://" + getServerHost() + "/dashboard/devices/";
-    }
-
-    public String getAdminEmail() {
-        return getProperty("admin.email", "admin@blynk.cc");
+        return getHttpsServerUrl() + "/dashboard/devices/";
     }
 
     public String getInviteUrl() {
-        return "https://" + getServerHost() + "/dashboard/invite?token=";
+        return getHttpsServerUrl() + "/dashboard/invite?token=";
+    }
+
+    public String getHttpsServerUrl() {
+        String httpPort = getHttpsPortAsString();
+        return "https://" + getServerHost() + (httpPort.isEmpty() ? "" : (":" + httpPort));
+
     }
 
     public String getHttpServerUrl() {
         String httpPort = getHttpPortAsString();
-       return "http://" + getServerHost() + (httpPort.equals("80") ? "" : (":" + httpPort));
+        return "http://" + getServerHost() + (httpPort.isEmpty() ? "" : (":" + httpPort)) + "/";
     }
 
 }
