@@ -30,8 +30,9 @@ public class WebGetProductsLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
+        int orgId = Integer.parseInt(message.body);
         User user = state.user;
-        Organization organization = organizationDao.getOrgByIdOrThrow(user.orgId);
+        Organization organization = organizationDao.getOrgByIdOrThrow(orgId);
 
         if (organization == null) {
             log.error("Cannot find org with id {} for user {}", user.orgId, user.email);

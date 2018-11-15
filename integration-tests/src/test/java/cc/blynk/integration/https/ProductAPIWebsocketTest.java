@@ -82,7 +82,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
     @Test
     public void getNonExistingProduct() throws Exception {
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
-        client.getProduct(1333);
+        client.getProduct(orgId, 1333);
         client.verifyResult(webJson(1, "Product with passed id 1333 not exists."));
     }
 
@@ -180,7 +180,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         Product fromApi = client.parseProduct(1);
         assertNotNull(fromApi);
 
-        client.getProduct(fromApi.id);
+        client.getProduct(orgId, fromApi.id);
         fromApi = client.parseProduct(2);
         assertNotNull(fromApi);
     }
@@ -475,7 +475,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
     @Test
     public void getEmptyListOfProducts() throws Exception {
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
-        client.getProducts();
+        client.getProducts(orgId);
         Product[] fromApi = client.parseProducts(1);
         assertNotNull(fromApi);
         assertEquals(1, fromApi.length);
@@ -492,7 +492,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         Product fromApiProduct = client.parseProduct(1);
         assertNotNull(fromApiProduct);
 
-        client.getProducts();
+        client.getProducts(orgId);
         Product[] fromApiProducts = client.parseProducts(2);
         assertNotNull(fromApiProducts);
         assertEquals(2, fromApiProducts.length);
@@ -504,7 +504,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         fromApiProduct = client.parseProduct(3);
         assertNotNull(fromApiProduct);
 
-        client.getProducts();
+        client.getProducts(orgId);
         fromApiProducts = client.parseProducts(4);
         assertNotNull(fromApiProducts);
         assertEquals(3, fromApiProducts.length);
@@ -521,7 +521,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         Product fromApiProduct = client.parseProduct(1);
         assertNotNull(fromApiProduct);
 
-        client.getProducts();
+        client.getProducts(orgId);
         Product[] fromApiProducts = client.parseProducts(2);
         assertNotNull(fromApiProducts);
         assertEquals(2, fromApiProducts.length);
@@ -529,7 +529,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         client.deleteProduct(fromApiProduct.id);
         client.verifyResult(ok(3));
 
-        client.getProducts();
+        client.getProducts(orgId);
         fromApiProducts = client.parseProducts(4);
         assertNotNull(fromApiProducts);
         assertEquals(1, fromApiProducts.length);

@@ -168,16 +168,12 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         send("webUpdateDevicesMeta " + new ProductAndOrgIdDTO(orgId, product));
     }
 
-    public void getProducts() {
-        send("webGetProducts");
+    public void getProducts(int orgId) {
+        send("webGetProducts " + orgId);
     }
 
     public void getProduct(int orgId, int productId) {
         send("webGetProduct " + orgId + StringUtils.BODY_SEPARATOR_STRING + productId);
-    }
-
-    public void getProduct(int productId) {
-        send("webGetProduct " + productId);
     }
 
     public void inviteUser(int orgId, String email, String name, int roleId) {
