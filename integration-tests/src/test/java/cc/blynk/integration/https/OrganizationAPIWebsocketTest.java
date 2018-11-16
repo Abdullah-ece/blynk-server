@@ -284,7 +284,7 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
     public void get2OrgHierarchy() throws Exception {
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
 
-        Organization subOrg = new Organization("SubOrg", "Europe/Kiev", "/static/logo.png", true, orgId);
+        Organization subOrg = new Organization("SubOrg3", "Europe/Kiev", "/static/logo.png", true, orgId);
         client.createOrganization(subOrg);
         OrganizationDTO subOrgDTO = client.parseOrganizationDTO(1);
         assertNotNull(subOrgDTO);
@@ -299,7 +299,7 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
 
         OrganizationsHierarchyDTO subOrgHierarchy = organizationsHierarchyDTO.childs.iterator().next();
         assertEquals(orgId + 1, subOrgHierarchy.id);
-        assertEquals("SubOrg", subOrgHierarchy.name);
+        assertEquals("SubOrg3", subOrgHierarchy.name);
         assertNull(subOrgHierarchy.childs);
         printHierarchy(organizationsHierarchyDTO, 0);
     }
@@ -308,10 +308,10 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
     public void get3OrgHierarchySameLevel() throws Exception {
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
 
-        Organization subOrg = new Organization("SubOrg", "Europe/Kiev", "/static/logo.png", true, orgId);
+        Organization subOrg = new Organization("SubOrg2", "Europe/Kiev", "/static/logo.png", true, orgId);
         client.createOrganization(subOrg);
 
-        Organization subOrg2 = new Organization("AAA", "Europe/Kiev", "/static/logo.png", true, orgId);
+        Organization subOrg2 = new Organization("AAA2", "Europe/Kiev", "/static/logo.png", true, orgId);
         client.createOrganization(subOrg2);
 
         client.getOrganizationHierarchy();
@@ -327,12 +327,12 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
         var iterator = organizationsHierarchyDTO.childs.iterator();
         OrganizationsHierarchyDTO subOrgHierarchy = iterator.next();
         assertEquals(orgId + 2, subOrgHierarchy.id);
-        assertEquals("AAA", subOrgHierarchy.name);
+        assertEquals("AAA2", subOrgHierarchy.name);
         assertNull(subOrgHierarchy.childs);
 
         subOrgHierarchy = iterator.next();
         assertEquals(orgId + 1, subOrgHierarchy.id);
-        assertEquals("SubOrg", subOrgHierarchy.name);
+        assertEquals("SubOrg2", subOrgHierarchy.name);
         assertNull(subOrgHierarchy.childs);
     }
 
@@ -340,13 +340,13 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
     public void get5OrgHierarchySameLevel() throws Exception {
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
 
-        Organization subOrg = new Organization("SubOrg", "Europe/Kiev", "/static/logo.png", true, -1);
+        Organization subOrg = new Organization("SubOrg1", "Europe/Kiev", "/static/logo.png", true, -1);
         client.createOrganization(orgId, subOrg);
 
-        Organization subOrg2 = new Organization("AAA", "Europe/Kiev", "/static/logo.png", true, -1);
+        Organization subOrg2 = new Organization("AAA1", "Europe/Kiev", "/static/logo.png", true, -1);
         client.createOrganization(orgId, subOrg2);
 
-        Organization subOrg3 = new Organization("BBB", "Europe/Kiev", "/static/logo.png", true, -1);
+        Organization subOrg3 = new Organization("BBB1", "Europe/Kiev", "/static/logo.png", true, -1);
         client.createOrganization(orgId + 1, subOrg3);
 
         client.getOrganizationHierarchy();
@@ -362,18 +362,18 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
         var iterator = organizationsHierarchyDTO.childs.iterator();
         OrganizationsHierarchyDTO subOrgHierarchy = iterator.next();
         assertEquals(orgId + 2, subOrgHierarchy.id);
-        assertEquals("AAA", subOrgHierarchy.name);
+        assertEquals("AAA1", subOrgHierarchy.name);
         assertNull(subOrgHierarchy.childs);
 
         subOrgHierarchy = iterator.next();
         assertEquals(orgId + 1, subOrgHierarchy.id);
-        assertEquals("SubOrg", subOrgHierarchy.name);
+        assertEquals("SubOrg1", subOrgHierarchy.name);
         assertNotNull(subOrgHierarchy.childs);
         assertEquals(1, subOrgHierarchy.childs.size());
 
         subOrgHierarchy = subOrgHierarchy.childs.iterator().next();
         assertEquals(orgId + 3, subOrgHierarchy.id);
-        assertEquals("BBB", subOrgHierarchy.name);
+        assertEquals("BBB1", subOrgHierarchy.name);
         assertNull(subOrgHierarchy.childs);
     }
 
