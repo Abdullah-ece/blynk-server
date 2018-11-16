@@ -85,11 +85,8 @@ class Event extends React.Component {
   }
 
   getPreviewProps() {
-    const values = this.props.values;
     return {
-      isValid: !(this.props.fieldsErrors && this.props.fieldsErrors.eventCode),
-      isEmpty: !(this.props.fields.eventCode),
-      isTouched: ( values && values.eventCode && values.eventCode.touched)
+      isValid: true
     };
   }
 
@@ -128,7 +125,7 @@ class Event extends React.Component {
                    name={`${this.props.field.get('fieldPrefix')}.description`} type="textarea" placeholder="Event Description (optional)" rows="3"/>
           </Item>
         </Base.Content>
-        <Base.Preview /*{...this.getPreviewProps()}*/ valid={
+        <Base.Preview {...this.getPreviewProps()} valid={
           <Item label="Code Preview" offset="small">
             Blynk.logEvent("{ this.props.field.get('eventCode') }");
           </Item>
