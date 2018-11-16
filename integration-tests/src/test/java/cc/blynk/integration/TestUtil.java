@@ -6,6 +6,7 @@ import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
 import cc.blynk.server.Holder;
+import cc.blynk.server.api.http.dashboard.dto.ProductDTO;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DataStream;
@@ -21,12 +22,14 @@ import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
+import cc.blynk.server.core.model.web.product.WebDashboard;
 import cc.blynk.server.core.model.web.product.metafields.DeviceOwnerMetaField;
 import cc.blynk.server.core.model.widgets.MobileSyncWidget;
 import cc.blynk.server.core.model.widgets.web.WebLineGraph;
 import cc.blynk.server.core.model.widgets.web.WebSlider;
 import cc.blynk.server.core.model.widgets.web.WebSource;
 import cc.blynk.server.core.model.widgets.web.WebSwitch;
+import cc.blynk.server.core.model.widgets.web.WebWidget;
 import cc.blynk.server.core.model.widgets.web.label.WebLabel;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
@@ -523,5 +526,25 @@ public final class TestUtil {
                 product
         };
         return org;
+    }
+
+    public static ProductDTO updateProductName(ProductDTO productDTO, String name) {
+        Product product = productDTO.toProduct();
+        product.name = name;
+        return new ProductDTO(product);
+    }
+
+    public static ProductDTO updateProductWebDash(ProductDTO productDTO, WebWidget... widgets) {
+        Product product = productDTO.toProduct();
+        product.webDashboard = new WebDashboard(
+            widgets
+        );
+        return new ProductDTO(product);
+    }
+
+    public static ProductDTO updateProductMetafields(ProductDTO productDTO, MetaField... metaFields) {
+        Product product = productDTO.toProduct();
+        product.metaFields = metaFields;
+        return new ProductDTO(product);
     }
 }

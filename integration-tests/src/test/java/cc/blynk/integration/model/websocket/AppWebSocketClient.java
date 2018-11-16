@@ -201,12 +201,12 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         send("webLoginViaInvite " + token + BODY_SEPARATOR_STRING + passHash);
     }
 
-    public Product parseProduct(int expectedMessageOrder) throws Exception {
-        return JsonParser.parseProduct(getBody(expectedMessageOrder));
+    public ProductDTO parseProductDTO(int expectedMessageOrder) throws Exception {
+        return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), ProductDTO.class);
     }
 
-    public Product[] parseProducts(int expectedMessageOrder) throws Exception {
-        return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), Product[].class);
+    public ProductDTO[] parseProductDTOs(int expectedMessageOrder) throws Exception {
+        return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), ProductDTO[].class);
     }
 
     public void deleteProduct(int productId) {

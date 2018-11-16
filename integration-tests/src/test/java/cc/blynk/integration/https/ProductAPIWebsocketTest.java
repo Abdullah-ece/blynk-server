@@ -3,6 +3,7 @@ package cc.blynk.integration.https;
 import cc.blynk.integration.SingleServerInstancePerTestWithDBAndNewOrg;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
 import cc.blynk.server.api.http.dashboard.dto.OrganizationDTO;
+import cc.blynk.server.api.http.dashboard.dto.ProductDTO;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;
@@ -43,7 +44,6 @@ import cc.blynk.server.core.model.widgets.web.WebSource;
 import cc.blynk.server.core.model.widgets.web.WebSwitch;
 import cc.blynk.server.core.model.widgets.web.label.WebLabel;
 import cc.blynk.utils.SHA256Util;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -65,6 +65,9 @@ import static cc.blynk.integration.TestUtil.createWebSwitchWidget;
 import static cc.blynk.integration.TestUtil.defaultClient;
 import static cc.blynk.integration.TestUtil.loggedDefaultClient;
 import static cc.blynk.integration.TestUtil.ok;
+import static cc.blynk.integration.TestUtil.updateProductMetafields;
+import static cc.blynk.integration.TestUtil.updateProductName;
+import static cc.blynk.integration.TestUtil.updateProductWebDash;
 import static cc.blynk.integration.TestUtil.webJson;
 import static cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType.RAW_DATA;
 import static java.time.LocalTime.ofSecondOfDay;
@@ -183,12 +186,12 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         product.connectionType = ConnectionType.WI_FI;
 
         client.createProduct(orgId, product);
-        Product fromApi = client.parseProduct(1);
-        assertNotNull(fromApi);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
+        assertNotNull(fromApiProduct);
 
-        client.getProduct(orgId, fromApi.id);
-        fromApi = client.parseProduct(2);
-        assertNotNull(fromApi);
+        client.getProduct(orgId, fromApiProduct.id);
+        fromApiProduct = client.parseProductDTO(2);
+        assertNotNull(fromApiProduct);
     }
 
     @Test
@@ -217,13 +220,13 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         product.connectionType = ConnectionType.WI_FI;
 
         client.createProduct(orgId, product);
-        Product fromApi = client.parseProduct(1);
-        assertNotNull(fromApi);
-        assertEquals(product.name, fromApi.name);
-        assertEquals(product.description, fromApi.description);
-        assertEquals(product.boardType, fromApi.boardType);
-        assertEquals(product.connectionType, fromApi.connectionType);
-        assertEquals(0, fromApi.version);
+        ProductDTO fromApiProduct= client.parseProductDTO(1);
+        assertNotNull(fromApiProduct);
+        assertEquals(product.name, fromApiProduct.name);
+        assertEquals(product.description, fromApiProduct.description);
+        assertEquals(product.boardType, fromApiProduct.boardType);
+        assertEquals(product.connectionType, fromApiProduct.connectionType);
+        assertEquals(0, fromApiProduct.version);
 
         product.id = 1;
         product.name = "";
@@ -266,18 +269,18 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         };
 
         client.createProduct(orgId, product);
-        Product fromApi = client.parseProduct(1);
-        assertNotNull(fromApi);
-        assertEquals(product.name, fromApi.name);
-        assertEquals(product.description, fromApi.description);
-        assertEquals(product.boardType, fromApi.boardType);
-        assertEquals(product.connectionType, fromApi.connectionType);
-        assertEquals(product.logoUrl, fromApi.logoUrl);
-        assertEquals(0, fromApi.version);
-        assertNotEquals(0, fromApi.lastModifiedTs);
-        assertNotNull(fromApi.dataStreams);
-        assertNotNull(fromApi.metaFields);
-        assertEquals(11, fromApi.metaFields.length);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
+        assertNotNull(fromApiProduct);
+        assertEquals(product.name, fromApiProduct.name);
+        assertEquals(product.description, fromApiProduct.description);
+        assertEquals(product.boardType, fromApiProduct.boardType);
+        assertEquals(product.connectionType, fromApiProduct.connectionType);
+        assertEquals(product.logoUrl, fromApiProduct.logoUrl);
+        assertEquals(0, fromApiProduct.version);
+        assertNotEquals(0, fromApiProduct.lastModifiedTs);
+        assertNotNull(fromApiProduct.dataStreams);
+        assertNotNull(fromApiProduct.metaFields);
+        assertEquals(11, fromApiProduct.metaFields.length);
     }
 
     @Test
@@ -355,22 +358,22 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         });
 
         client.createProduct(orgId, product);
-        Product fromApi = client.parseProduct(1);
-        assertNotNull(fromApi);
-        assertEquals(product.name, fromApi.name);
-        assertEquals(product.description, fromApi.description);
-        assertEquals(product.boardType, fromApi.boardType);
-        assertEquals(product.connectionType, fromApi.connectionType);
-        assertEquals(product.logoUrl, fromApi.logoUrl);
-        assertEquals(0, fromApi.version);
-        assertNotEquals(0, fromApi.lastModifiedTs);
-        assertNotNull(fromApi.dataStreams);
-        assertNotNull(fromApi.metaFields);
-        assertEquals(10, fromApi.metaFields.length);
-        assertNotNull(fromApi.webDashboard);
-        assertEquals(3, fromApi.webDashboard.widgets.length);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
+        assertNotNull(fromApiProduct);
+        assertEquals(product.name, fromApiProduct.name);
+        assertEquals(product.description, fromApiProduct.description);
+        assertEquals(product.boardType, fromApiProduct.boardType);
+        assertEquals(product.connectionType, fromApiProduct.connectionType);
+        assertEquals(product.logoUrl, fromApiProduct.logoUrl);
+        assertEquals(0, fromApiProduct.version);
+        assertNotEquals(0, fromApiProduct.lastModifiedTs);
+        assertNotNull(fromApiProduct.dataStreams);
+        assertNotNull(fromApiProduct.metaFields);
+        assertEquals(10, fromApiProduct.metaFields.length);
+        assertNotNull(fromApiProduct.webDashboard);
+        assertEquals(3, fromApiProduct.webDashboard.widgets.length);
 
-        WebLabel webLabel = (WebLabel) fromApi.webDashboard.widgets[0];
+        WebLabel webLabel = (WebLabel) fromApiProduct.webDashboard.widgets[0];
         assertEquals("123", webLabel.label);
         assertEquals(1, webLabel.id);
         assertEquals(1, webLabel.x);
@@ -378,7 +381,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertEquals(10, webLabel.height);
         assertEquals(20, webLabel.width);
 
-        WebSwitch webSwitch = (WebSwitch) fromApi.webDashboard.widgets[1];
+        WebSwitch webSwitch = (WebSwitch) fromApiProduct.webDashboard.widgets[1];
         assertEquals("onLabel", webSwitch.onLabel);
         assertEquals(2, webSwitch.id);
         assertEquals(3, webSwitch.x);
@@ -386,7 +389,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertEquals(50, webSwitch.height);
         assertEquals(60, webSwitch.width);
 
-        WebSlider webSlider = (WebSlider) fromApi.webDashboard.widgets[2];
+        WebSlider webSlider = (WebSlider) fromApiProduct.webDashboard.widgets[2];
         assertEquals("Slider", webSlider.label);
         assertEquals(3, webSlider.id);
         assertEquals(3, webSlider.x);
@@ -394,7 +397,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertEquals(50, webSlider.height);
         assertEquals(60, webSlider.width);
 
-        product.id = fromApi.id;
+        product.id = fromApiProduct.id;
         product.description = "Description2";
 
         product.webDashboard = new WebDashboard(new Widget[] {
@@ -402,14 +405,14 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         });
 
         client.updateProduct(orgId, product);
-        fromApi = client.parseProduct(2);
-        assertNotNull(fromApi);
-        assertEquals(product.name, fromApi.name);
-        assertEquals(product.description, fromApi.description);
-        assertNotNull(fromApi.webDashboard);
-        assertEquals(1, fromApi.webDashboard.widgets.length);
+        fromApiProduct = client.parseProductDTO(2);
+        assertNotNull(fromApiProduct);
+        assertEquals(product.name, fromApiProduct.name);
+        assertEquals(product.description, fromApiProduct.description);
+        assertNotNull(fromApiProduct.webDashboard);
+        assertEquals(1, fromApiProduct.webDashboard.widgets.length);
 
-        webLabel = (WebLabel) fromApi.webDashboard.widgets[0];
+        webLabel = (WebLabel) fromApiProduct.webDashboard.widgets[0];
         assertEquals("updated", webLabel.label);
         assertEquals(1, webLabel.id);
         assertEquals(1, webLabel.x);
@@ -430,9 +433,9 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         product.logoUrl = "/static/logo.png";
 
         client.createProduct(orgId, product);
-        Product fromApi = client.parseProduct(1);
-        assertNotNull(fromApi);
-        assertEquals(product.name, fromApi.name);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
+        assertNotNull(fromApiProduct);
+        assertEquals(product.name, fromApiProduct.name);
 
         Product product2 = new Product();
         product2.name = "create2ProductsWithSameName";
@@ -457,34 +460,34 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         product.logoUrl = "/static/logo.png";
 
         client.createProduct(orgId, product);
-        Product fromApi = client.parseProduct(1);
-        assertNotNull(fromApi);
-        assertEquals(product.name, fromApi.name);
-        assertEquals(product.description, fromApi.description);
-        assertEquals(product.boardType, fromApi.boardType);
-        assertEquals(product.connectionType, fromApi.connectionType);
-        assertEquals(0, fromApi.version);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
+        assertNotNull(fromApiProduct);
+        assertEquals(product.name, fromApiProduct.name);
+        assertEquals(product.description, fromApiProduct.description);
+        assertEquals(product.boardType, fromApiProduct.boardType);
+        assertEquals(product.connectionType, fromApiProduct.connectionType);
+        assertEquals(0, fromApiProduct.version);
 
-        product.id = fromApi.id;
+        product.id = fromApiProduct.id;
         product.name = "Updated Name";
         product.description = "Description2";
 
         client.updateProduct(orgId, product);
-        fromApi = client.parseProduct(2);
-        assertNotNull(fromApi);
-        assertEquals(product.name, fromApi.name);
-        assertEquals(product.description, fromApi.description);
-        assertEquals("Updated Name", fromApi.name);
-        assertEquals("Description2", fromApi.description);
+        fromApiProduct = client.parseProductDTO(2);
+        assertNotNull(fromApiProduct);
+        assertEquals(product.name, fromApiProduct.name);
+        assertEquals(product.description, fromApiProduct.description);
+        assertEquals("Updated Name", fromApiProduct.name);
+        assertEquals("Description2", fromApiProduct.description);
     }
 
     @Test
     public void getEmptyListOfProducts() throws Exception {
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
         client.getProducts(orgId);
-        Product[] fromApi = client.parseProducts(1);
-        assertNotNull(fromApi);
-        assertEquals(1, fromApi.length);
+        ProductDTO[] fromApiProduct = client.parseProductDTOs(1);
+        assertNotNull(fromApiProduct);
+        assertEquals(1, fromApiProduct.length);
     }
 
     @Test
@@ -495,11 +498,11 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         product.name = "getListOfProducts";
 
         client.createProduct(orgId, product);
-        Product fromApiProduct = client.parseProduct(1);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
         client.getProducts(orgId);
-        Product[] fromApiProducts = client.parseProducts(2);
+        ProductDTO[] fromApiProducts = client.parseProductDTOs(2);
         assertNotNull(fromApiProducts);
         assertEquals(2, fromApiProducts.length);
 
@@ -507,11 +510,11 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         product2.name = "getListOfProducts2";
 
         client.createProduct(orgId, product2);
-        fromApiProduct = client.parseProduct(3);
+        fromApiProduct = client.parseProductDTO(3);
         assertNotNull(fromApiProduct);
 
         client.getProducts(orgId);
-        fromApiProducts = client.parseProducts(4);
+        fromApiProducts = client.parseProductDTOs(4);
         assertNotNull(fromApiProducts);
         assertEquals(3, fromApiProducts.length);
     }
@@ -524,11 +527,11 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         product.name = "createProductAndDelete";
 
         client.createProduct(orgId, product);
-        Product fromApiProduct = client.parseProduct(1);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
         client.getProducts(orgId);
-        Product[] fromApiProducts = client.parseProducts(2);
+        ProductDTO[] fromApiProducts = client.parseProductDTOs(2);
         assertNotNull(fromApiProducts);
         assertEquals(2, fromApiProducts.length);
 
@@ -536,7 +539,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         client.verifyResult(ok(3));
 
         client.getProducts(orgId);
-        fromApiProducts = client.parseProducts(4);
+        fromApiProducts = client.parseProductDTOs(4);
         assertNotNull(fromApiProducts);
         assertEquals(1, fromApiProducts.length);
     }
@@ -549,7 +552,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         product.name = "createProductAndDelete";
 
         client.createProduct(orgId, product);
-        Product fromApiProduct = client.parseProduct(1);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
         Device newDevice = new Device();
@@ -582,7 +585,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         product.name = "createProduct";
 
         client.createProduct(orgId, product);
-        Product fromApiProduct = client.parseProduct(1);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
         Device newDevice = new Device();
@@ -594,11 +597,10 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertNotNull(createdDevice);
 
         client.getProduct(orgId, fromApiProduct.id);
-        fromApiProduct = client.parseProduct(3);
+        fromApiProduct = client.parseProductDTO(3);
         assertNotNull(fromApiProduct);
-        //get product API should return DTO without devices
-        assertNotNull(fromApiProduct.devices);
-        assertEquals(0, fromApiProduct.devices.length);
+        assertEquals(1, fromApiProduct.deviceCount);
+        //todo check actual json
     }
 
 
@@ -610,7 +612,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         product.name = "createProductAndDelete";
 
         client.createProduct(orgId, product);
-        Product fromApiProduct = client.parseProduct(1);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
         Device newDevice = new Device();
@@ -630,7 +632,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         client.verifyResult(ok(4));
 
         client.getProduct(orgId, fromApiProduct.id);
-        fromApiProduct = client.parseProduct(5);
+        fromApiProduct = client.parseProductDTO(5);
         assertNotNull(fromApiProduct);
         assertNotNull(product.devices);
         assertEquals(0, product.devices.length);
@@ -658,7 +660,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         };
 
         client.createProduct(orgId, product);
-        Product fromApiProduct = client.parseProduct(1);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
         Device newDevice = new Device();
@@ -710,16 +712,16 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertEquals(1, deviceNameMetaField.roleIds[0]);
         assertEquals("Updated device name", deviceNameMetaField.value);
 
-        fromApiProduct.metaFields = new MetaField[] {
+        fromApiProduct = updateProductMetafields(fromApiProduct,
                 createDeviceNameMeta(1, "Device name 2", "Updated device name", true),
                 createDeviceOwnerMeta(2, "Device owner", "admin@blynk.cc", true),
                 createTemplateIdMeta(3, "Template Id", "TMPL0001"),
                 createContactMeta(4, "Contact", "icon"),
                 createNumberMeta(5, "New metafield", 123)
-        };
+        );
 
         client.updateDevicesMeta(orgId, fromApiProduct);
-        fromApiProduct = client.parseProduct(4);
+        fromApiProduct = client.parseProductDTO(4);
         assertEquals(5, fromApiProduct.metaFields.length);
 
         client.getDevice(orgId, newDevice.id);
@@ -786,7 +788,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         };
 
         client.createProduct(orgId, product);
-        Product fromApiProduct = client.parseProduct(1);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
         Device newDevice = new Device();
@@ -816,7 +818,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         fromApiProduct.metaFields[2] = createContactMeta(3, "Contact", "contact_icon_2");
 
         client.updateDevicesMeta(orgId, fromApiProduct);
-        fromApiProduct = client.parseProduct(3);
+        fromApiProduct = client.parseProductDTO(3);
         assertNotNull(fromApiProduct);
         assertEquals(3, fromApiProduct.metaFields.length);
 
@@ -874,7 +876,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         };
 
         client.createProduct(orgId, product);
-        Product fromApiProduct = client.parseProduct(1);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
         Device newDevice = new Device();
@@ -903,7 +905,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
                 null));
         client.verifyResult(ok(3));
 
-        fromApiProduct.metaFields = new MetaField[] {
+        fromApiProduct = updateProductMetafields(fromApiProduct,
                 createTextMeta(1, "My test metafield", "Default Device"),
                 new LocationMetaField(2, "Device Location", new int[]{1}, false, false, false, "icon",
                         "Warehouse 13",
@@ -921,10 +923,10 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
                         false, false,
                         null),
                 createContactMeta(4, "Contact", "contact_icon")
-        };
+        );
 
         client.updateDevicesMeta(orgId, fromApiProduct);
-        fromApiProduct = client.parseProduct(4);
+        fromApiProduct = client.parseProductDTO(4);
         assertNotNull(fromApiProduct);
         assertEquals(3, fromApiProduct.metaFields.length);
 
@@ -970,7 +972,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         };
 
         client.createProduct(orgId, product);
-        Product fromApiProduct = client.parseProduct(1);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
         Device newDevice = new Device();
@@ -996,7 +998,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
                 "Kyiv", false, "Ukraine", false, "03322", false, false);
 
         client.updateDevicesMeta(orgId, fromApiProduct);
-        fromApiProduct = client.parseProduct(3);
+        fromApiProduct = client.parseProductDTO(3);
         assertNotNull(fromApiProduct);
         assertEquals(1, fromApiProduct.metaFields.length);
 
@@ -1011,13 +1013,6 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
     }
 
     @Test
-    @Ignore
-    //todo
-    public void createProductAndDeleteRegularUserCantDelete() throws Exception {
-
-    }
-
-    @Test
     public void canDeleteProductRequest() throws Exception {
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
 
@@ -1028,7 +1023,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         product.connectionType = ConnectionType.WI_FI;
 
         client.createProduct(orgId, product);
-        Product fromApiProduct = client.parseProduct(1);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
         client.canDeleteProduct(fromApiProduct.id);
@@ -1054,27 +1049,27 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         product.name = "My product";
 
         client.createProduct(orgId, product);
-        Product fromApiProduct = client.parseProduct(1);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
         Organization organization = new Organization("Sub Org", "Some TimeZone", "/static/logo.png", false, orgId);
         organization.selectedProducts = new int[] {fromApiProduct.id};
 
         client.createOrganization(organization);
-        OrganizationDTO fromApiOrg = client.parseOrganizationDTO(2);
-        assertNotNull(fromApiOrg);
-        assertEquals(orgId, fromApiOrg.parentId);
-        assertEquals(organization.name, fromApiOrg.name);
-        assertEquals(organization.tzName, fromApiOrg.tzName);
-        assertNotNull(fromApiOrg.products);
-        assertEquals(1, fromApiOrg.products.length);
-        assertEquals(fromApiProduct.id + 1, fromApiOrg.products[0].id);
-        assertEquals(fromApiProduct.id, fromApiOrg.products[0].parentId);
+        OrganizationDTO fromApiProductOrg = client.parseOrganizationDTO(2);
+        assertNotNull(fromApiProductOrg);
+        assertEquals(orgId, fromApiProductOrg.parentId);
+        assertEquals(organization.name, fromApiProductOrg.name);
+        assertEquals(organization.tzName, fromApiProductOrg.tzName);
+        assertNotNull(fromApiProductOrg.products);
+        assertEquals(1, fromApiProductOrg.products.length);
+        assertEquals(fromApiProduct.id + 1, fromApiProductOrg.products[0].id);
+        assertEquals(fromApiProduct.id, fromApiProductOrg.products[0].parentId);
 
-        client.updateProduct(fromApiOrg.id, fromApiOrg.products[0]);
+        client.updateProduct(fromApiProductOrg.id, fromApiProductOrg.products[0]);
         client.verifyResult(webJson(3, "Sub Org can't do anything with the Product Templates created by Meta Org."));
 
-        client.deleteProduct(fromApiOrg.products[0].id);
+        client.deleteProduct(fromApiProductOrg.products[0].id);
         client.verifyResult(webJson(4, "Sub Org can't do anything with the Product Templates created by Meta Org."));
     }
 
@@ -1105,24 +1100,24 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         });
 
         client.createProduct(orgId, product);
-        Product fromApiProduct = client.parseProduct(1);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
         Organization organization = new Organization("New Sub Org", "Some TimeZone", "/static/logo.png", false, orgId);
         organization.selectedProducts = new int[] {fromApiProduct.id};
 
         client.createOrganization(organization);
-        OrganizationDTO fromApiOrg = client.parseOrganizationDTO(2);
-        assertNotNull(fromApiOrg);
-        assertEquals(orgId, fromApiOrg.parentId);
-        assertEquals(organization.name, fromApiOrg.name);
-        assertEquals(organization.tzName, fromApiOrg.tzName);
-        assertNotNull(fromApiOrg.products);
-        assertEquals(1, fromApiOrg.products.length);
-        assertEquals(fromApiProduct.id + 1, fromApiOrg.products[0].id);
-        assertEquals(fromApiProduct.id, fromApiOrg.products[0].parentId);
+        OrganizationDTO fromApiProductOrg = client.parseOrganizationDTO(2);
+        assertNotNull(fromApiProductOrg);
+        assertEquals(orgId, fromApiProductOrg.parentId);
+        assertEquals(organization.name, fromApiProductOrg.name);
+        assertEquals(organization.tzName, fromApiProductOrg.tzName);
+        assertNotNull(fromApiProductOrg.products);
+        assertEquals(1, fromApiProductOrg.products.length);
+        assertEquals(fromApiProduct.id + 1, fromApiProductOrg.products[0].id);
+        assertEquals(fromApiProduct.id, fromApiProductOrg.products[0].parentId);
 
-        fromApiProduct.name = "Updated Name";
+        fromApiProduct = updateProductName(fromApiProduct, "Updated Name");
         webLabel = new WebLabel();
         webLabel.label = "4444";
         webLabel.id = 2;
@@ -1137,19 +1132,18 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
                         null,
                         null, SortOrder.ASC, 10, false, null, false)
         };
-        fromApiProduct.webDashboard = new WebDashboard(new Widget[] {
-                webLabel
-        });
+
+        fromApiProduct = updateProductWebDash(fromApiProduct, webLabel);
 
         client.updateProduct(orgId, fromApiProduct);
-        fromApiProduct = client.parseProduct(3);
+        fromApiProduct = client.parseProductDTO(3);
         assertNotNull(fromApiProduct);
         assertEquals("Updated Name", fromApiProduct.name);
         assertNotNull(fromApiProduct.webDashboard.widgets[0]);
         assertEquals("4444", fromApiProduct.webDashboard.widgets[0].label);
 
-        client.getProduct(fromApiOrg.id, fromApiOrg.products[0].id);
-        Product subProduct = client.parseProduct(4);
+        client.getProduct(fromApiProductOrg.id, fromApiProductOrg.products[0].id);
+        ProductDTO subProduct = client.parseProductDTO(4);
         assertNotNull(subProduct);
         assertEquals("Updated Name", subProduct.name);
         assertEquals(fromApiProduct.id, subProduct.parentId);
@@ -1187,21 +1181,21 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         });
 
         client.createProduct(orgId, product);
-        Product fromApiProduct = client.parseProduct(1);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
         Organization organization = new Organization("Sub Org for test 2", "Some TimeZone", "/static/logo.png", false, orgId);
         organization.selectedProducts = new int[] {fromApiProduct.id};
 
         client.createOrganization(organization);
-        OrganizationDTO fromApiSubOrg = client.parseOrganizationDTO(2);
-        assertNotNull(fromApiSubOrg);
-        assertEquals(orgId, fromApiSubOrg.parentId);
-        assertEquals(organization.name, fromApiSubOrg.name);
-        assertEquals(organization.tzName, fromApiSubOrg.tzName);
-        assertNotNull(fromApiSubOrg.products);
-        assertEquals(1, fromApiSubOrg.products.length);
-        Product productInResponse = fromApiSubOrg.products[0];
+        OrganizationDTO fromApiProductSubOrg = client.parseOrganizationDTO(2);
+        assertNotNull(fromApiProductSubOrg);
+        assertEquals(orgId, fromApiProductSubOrg.parentId);
+        assertEquals(organization.name, fromApiProductSubOrg.name);
+        assertEquals(organization.tzName, fromApiProductSubOrg.tzName);
+        assertNotNull(fromApiProductSubOrg.products);
+        assertEquals(1, fromApiProductSubOrg.products.length);
+        Product productInResponse = fromApiProductSubOrg.products[0];
         assertEquals(fromApiProduct.id + 1, productInResponse.id);
         assertEquals(fromApiProduct.id, productInResponse.parentId);
         assertNotNull(productInResponse.metaFields);
@@ -1211,13 +1205,13 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         newDevice.name = "My New Device for subproduct";
         newDevice.productId = productInResponse.id;
 
-        client.createDevice(fromApiSubOrg.id, newDevice);
+        client.createDevice(fromApiProductSubOrg.id, newDevice);
         Device createdSubDevice = client.parseDevice(3);
         assertNotNull(createdSubDevice);
         assertNotNull(createdSubDevice.metaFields);
         assertEquals(1, createdSubDevice.metaFields.length);
 
-        fromApiProduct.name = "Updated Name";
+        fromApiProduct = updateProductName(fromApiProduct, "Updated Name");
         webLabel = new WebLabel();
         webLabel.label = "4444";
         webLabel.id = 2;
@@ -1232,15 +1226,13 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
                         null,
                         null, SortOrder.ASC, 10, false, null, false)
         };
-        fromApiProduct.webDashboard = new WebDashboard(new Widget[] {
-                webLabel
-        });
-        fromApiProduct.metaFields = new MetaField[] {
+        fromApiProduct = updateProductWebDash(fromApiProduct, webLabel);
+        fromApiProduct = updateProductMetafields(fromApiProduct,
                 createTextMeta(1, "My test metafield 2", "Default Device")
-        };
+        );
 
         client.updateDevicesMeta(orgId, fromApiProduct);
-        fromApiProduct = client.parseProduct(4);
+        fromApiProduct = client.parseProductDTO(4);
         assertNotNull(fromApiProduct);
         assertEquals("Updated Name", fromApiProduct.name);
         assertNotNull(fromApiProduct.webDashboard.widgets[0]);
@@ -1248,8 +1240,8 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertNotNull(fromApiProduct.metaFields);
         assertEquals("My test metafield 2", fromApiProduct.metaFields[0].name);
 
-        client.getProduct(fromApiSubOrg.id, fromApiSubOrg.products[0].id);
-        Product subProduct = client.parseProduct(5);
+        client.getProduct(fromApiProductSubOrg.id, fromApiProductSubOrg.products[0].id);
+        ProductDTO subProduct = client.parseProductDTO(5);
         assertNotNull(subProduct);
         assertEquals("Updated Name", subProduct.name);
         assertEquals(fromApiProduct.id, subProduct.parentId);
@@ -1258,7 +1250,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertNotNull(fromApiProduct.metaFields);
         assertEquals("My test metafield 2", fromApiProduct.metaFields[0].name);
 
-        client.getDevice(fromApiSubOrg.id, createdSubDevice.id);
+        client.getDevice(fromApiProductSubOrg.id, createdSubDevice.id);
         createdSubDevice = client.parseDevice(6);
         assertNotNull(createdSubDevice);
         assertNotNull(createdSubDevice.metaFields);
@@ -1278,7 +1270,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
                 createDeviceOwnerMeta(1, "Device Owner", "fake@blynk.cc", true)
         };
         client.createProduct(orgId, product);
-        Product fromApiProduct = client.parseProduct(1);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
         //invite and login new user

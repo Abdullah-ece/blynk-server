@@ -3,6 +3,7 @@ package cc.blynk.integration.https;
 import cc.blynk.integration.SingleServerInstancePerTestWithDBAndNewOrg;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
 import cc.blynk.server.api.http.dashboard.dto.OrganizationDTO;
+import cc.blynk.server.api.http.dashboard.dto.ProductDTO;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.web.Organization;
@@ -34,7 +35,7 @@ public class PermissionsTest extends SingleServerInstancePerTestWithDBAndNewOrg 
         product.name = "My product";
 
         client.createProduct(orgId, product);
-        Product fromApiProduct = client.parseProduct(1);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
         Organization organization = new Organization(
@@ -88,7 +89,7 @@ public class PermissionsTest extends SingleServerInstancePerTestWithDBAndNewOrg 
         product.name = "My product";
 
         client.createProduct(orgId, product);
-        Product fromApiProduct = client.parseProduct(1);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
         Organization organization = new Organization(

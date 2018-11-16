@@ -6,6 +6,7 @@ import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
 import cc.blynk.server.api.http.dashboard.dto.OrganizationDTO;
+import cc.blynk.server.api.http.dashboard.dto.ProductDTO;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.dto.DeviceDTO;
 import cc.blynk.server.core.model.enums.PinType;
@@ -40,6 +41,7 @@ import static cc.blynk.integration.TestUtil.illegalCommand;
 import static cc.blynk.integration.TestUtil.illegalCommandBody;
 import static cc.blynk.integration.TestUtil.loggedDefaultClient;
 import static cc.blynk.integration.TestUtil.ok;
+import static cc.blynk.integration.TestUtil.updateProductWebDash;
 import static cc.blynk.integration.TestUtil.webJson;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 import static junit.framework.TestCase.assertNull;
@@ -67,7 +69,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         };
 
         client.createProduct(orgId, product);
-        Product fromApiProduct = client.parseProduct(1);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
         Device newDevice = new Device();
@@ -120,7 +122,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         };
 
         client.createProduct(orgId, product);
-        Product fromApiProduct = client.parseProduct(1);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
         Device newDevice = new Device();
@@ -145,7 +147,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         product.name = "My product";
 
         client.createProduct(orgId, product);
-        Product fromApiProduct = client.parseProduct(1);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
         Organization organization = new Organization("My SubOrg", "Some TimeZone", "/static/logo.png", false, orgId);
@@ -194,7 +196,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         product.name = "My product";
 
         client.createProduct(orgId, product);
-        Product fromApiProduct = client.parseProduct(1);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
         Organization organization = new Organization("My Org ffff", "Some TimeZone", "/static/logo.png", false, orgId);
@@ -247,7 +249,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         };
 
         client.createProduct(orgId, product);
-        Product fromApiProduct = client.parseProduct(1);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
         Device newDevice = new Device();
@@ -297,7 +299,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         };
 
         client.createProduct(orgId, product);
-        Product fromApiProduct = client.parseProduct(1);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
         Device newDevice = new Device();
@@ -347,7 +349,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         product.logoUrl = "/logoUrl";
 
         client.createProduct(orgId, product);
-        Product fromApiProduct = client.parseProduct(1);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
         Device newDevice = new Device();
@@ -377,7 +379,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         };
 
         client.createProduct(orgId, product);
-        Product fromApiProduct = client.parseProduct(1);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
         Device newDevice = new Device();
@@ -428,7 +430,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         };
 
         client.createProduct(orgId, product);
-        Product fromApiProduct = client.parseProduct(1);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
         Device newDevice = new Device();
@@ -472,7 +474,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         };
 
         client.createProduct(orgId, product);
-        Product fromApiProduct = client.parseProduct(1);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
         Device newDevice = new Device();
@@ -532,7 +534,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         };
 
         client.createProduct(orgId, product);
-        Product fromApiProduct = client.parseProduct(1);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
         Device newDevice = new Device();
@@ -607,7 +609,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         };
 
         client.createProduct(orgId, product);
-        Product fromApiProduct = client.parseProduct(1);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
         Device newDevice = new Device();
@@ -677,7 +679,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         };
 
         client.createProduct(orgId, product);
-        Product fromApiProduct = client.parseProduct(1);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
         Device newDevice = new Device();
@@ -731,7 +733,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         };
 
         client.createProduct(orgId, product);
-        Product fromApiProduct = client.parseProduct(1);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
         Device newDevice = new Device();
@@ -790,7 +792,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         });
 
         client.createProduct(orgId, product);
-        Product fromApiProduct = client.parseProduct(1);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
         Device newDevice = new Device();
@@ -821,7 +823,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         });
 
         client.createProduct(orgId, product);
-        Product fromApiProduct = client.parseProduct(1);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
         Device newDevice = new Device();
@@ -880,7 +882,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         });
 
         client.createProduct(orgId, product);
-        Product fromApiProduct = client.parseProduct(1);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
         Device newDevice = new Device();
@@ -897,13 +899,11 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         webLabel.width = 111;
         webLabel.height = 111;
         WebLineGraph webLineGraph = createWebLineGraph(2, "graph4");
-        fromApiProduct.webDashboard = new WebDashboard(new Widget[] {
-                webLabel,
-                webLineGraph
-        });
+
+        fromApiProduct = updateProductWebDash(fromApiProduct, webLabel, webLineGraph);
 
         client.updateProduct(orgId, fromApiProduct);
-        fromApiProduct = client.parseProduct(3);
+        fromApiProduct = client.parseProductDTO(3);
         assertNotNull(fromApiProduct);
         assertEquals(product.name, fromApiProduct.name);
         assertEquals(product.description, fromApiProduct.description);

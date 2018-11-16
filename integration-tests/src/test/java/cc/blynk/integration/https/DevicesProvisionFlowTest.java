@@ -6,6 +6,7 @@ import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.integration.model.tcp.TestSslHardClient;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
+import cc.blynk.server.api.http.dashboard.dto.ProductDTO;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.Profile;
@@ -54,6 +55,7 @@ import static cc.blynk.integration.TestUtil.deviceConnected;
 import static cc.blynk.integration.TestUtil.loggedDefaultClient;
 import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.integration.TestUtil.sleep;
+import static cc.blynk.integration.TestUtil.updateProductMetafields;
 import static cc.blynk.server.core.model.device.BoardType.ESP8266;
 import static junit.framework.TestCase.assertNull;
 import static junit.framework.TestCase.assertTrue;
@@ -285,7 +287,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         };
 
         client.createProduct(orgId, product);
-        Product fromApiProduct = client.parseProduct(1);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
         Device newDevice = new Device();
@@ -319,16 +321,16 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         };
 
         client.createProduct(orgId, product);
-        Product fromApiProduct = client.parseProduct(1);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
-        fromApiProduct.metaFields = new MetaField[] {
+        fromApiProduct = updateProductMetafields(fromApiProduct,
                 createNumberMeta(1, "Jopa", 123D),
                 new DeviceReferenceMetaField(2, "Device Ref", new int[] {1}, true, true, true, null, new int[] {fromApiProduct.id}, -1L)
-        };
+        );
 
         client.updateProduct(orgId, fromApiProduct);
-        fromApiProduct = client.parseProduct(2);
+        fromApiProduct = client.parseProductDTO(2);
         assertNotNull(fromApiProduct);
 
         Device newDevice = new Device();
@@ -379,7 +381,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         };
 
         client.createProduct(orgId, product);
-        Product fromApiProduct = client.parseProduct(1);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
         Product product2 = new Product();
@@ -390,7 +392,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
                 createTemplateIdMeta(3, "Template Id", "TMPL0001", true)
         };
         client.createProduct(orgId, product2);
-        Product fromApiProduct2 = client.parseProduct(2);
+        ProductDTO fromApiProduct2 = client.parseProductDTO(2);
         assertNotNull(fromApiProduct2);
 
         Device newDevice = new Device();
@@ -475,7 +477,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         };
 
         client.createProduct(orgId, product);
-        Product fromApiProduct = client.parseProduct(1);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
         Product product2 = new Product();
@@ -485,7 +487,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
                 createTemplateIdMeta(3, "Template Id", "TMPL0001")
         };
         client.createProduct(orgId, product2);
-        Product fromApiProduct2 = client.parseProduct(2);
+        ProductDTO fromApiProduct2 = client.parseProductDTO(2);
         assertNotNull(fromApiProduct2);
 
         Device newDevice = new Device();
@@ -609,13 +611,13 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         };
 
         client.createProduct(orgId, product);
-        Product fromApiProduct = client.parseProduct(1);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
         Product product2 = new Product();
         product2.name = "My product2";
         client.createProduct(orgId, product2);
-        Product fromApiProduct2 = client.parseProduct(2);
+        ProductDTO fromApiProduct2 = client.parseProductDTO(2);
         assertNotNull(fromApiProduct2);
 
         Device newDevice = new Device();
@@ -674,7 +676,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         };
 
         client.createProduct(orgId, product);
-        Product fromApiProduct = client.parseProduct(1);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
         Product product2 = new Product();
@@ -684,7 +686,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
                 createTemplateIdMeta(3, "Template Id", "TMPL0001")
         };
         client.createProduct(orgId, product2);
-        Product fromApiProduct2 = client.parseProduct(2);
+        ProductDTO fromApiProduct2 = client.parseProductDTO(2);
         assertNotNull(fromApiProduct2);
 
         Device newDevice = new Device();
@@ -741,7 +743,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         };
 
         client.createProduct(orgId, product);
-        Product fromApiProduct = client.parseProduct(1);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
         Product product2 = new Product();
@@ -751,7 +753,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
                 createTemplateIdMeta(3, "Template Id", "TMPL0001")
         };
         client.createProduct(orgId, product2);
-        Product fromApiProduct2 = client.parseProduct(2);
+        ProductDTO fromApiProduct2 = client.parseProductDTO(2);
         assertNotNull(fromApiProduct2);
 
         Device newDevice = new Device();
