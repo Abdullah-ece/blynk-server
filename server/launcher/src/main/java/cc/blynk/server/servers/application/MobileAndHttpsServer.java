@@ -72,7 +72,7 @@ public class MobileAndHttpsServer extends BaseServer {
 
         var appChannelStateHandler = new MobileChannelStateHandler(holder.sessionDao);
         var registerHandler = new MobileRegisterHandler(holder);
-        MobileLoginHandler appLoginHandler = new MobileLoginHandler(holder);
+        var appLoginHandler = new MobileLoginHandler(holder);
         var appShareLoginHandler = new MobileShareLoginHandler(holder);
         var userNotLoggedHandler = new UserNotLoggedHandler();
         var getServerHandler = new MobileGetServerHandler(holder);

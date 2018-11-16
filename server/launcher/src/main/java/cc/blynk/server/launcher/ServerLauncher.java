@@ -149,7 +149,7 @@ public final class ServerLauncher {
 
     private static void createSuperUser(Holder holder) {
         ServerProperties props = holder.props;
-        String url = props.getAdminUrl(props.host);
+        String url = props.httpsServerUrl;
         String email = props.getProperty("admin.email", "admin@blynk.cc");
         String pass = props.getProperty("admin.pass");
 

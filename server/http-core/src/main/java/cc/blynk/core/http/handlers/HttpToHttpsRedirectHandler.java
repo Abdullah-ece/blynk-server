@@ -5,7 +5,6 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.FullHttpRequest;
-import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.util.ReferenceCountUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,10 +18,12 @@ import org.apache.logging.log4j.Logger;
 public class HttpToHttpsRedirectHandler extends ChannelInboundHandlerAdapter {
 
     private static final Logger log = LogManager.getLogger(HttpToHttpsRedirectHandler.class);
+    private final String host;
     private final String rootPath;
     private final String httpsPort;
 
-    public HttpToHttpsRedirectHandler(String rootPath, String httpsPort) {
+    public HttpToHttpsRedirectHandler(String host, String rootPath, String httpsPort) {
+        this.host = host;
         this.rootPath = rootPath;
         this.httpsPort = httpsPort;
     }
@@ -34,7 +35,8 @@ public class HttpToHttpsRedirectHandler extends ChannelInboundHandlerAdapter {
             String uri = req.uri();
             if (uri.startsWith(rootPath)) {
                 try {
-                    String redirect = "https://" + makeHost(req.headers().get(HttpHeaderNames.HOST)) + uri;
+                    String portPart = (httpsPort.isEmpty() ? "" : ":" + httpsPort);
+                    String redirect = "https://" + host + portPart + uri;
                     log.debug("Redirecting to {} from {} {}.", redirect, req.method().name(), uri);
                     ctx.writeAndFlush(Response.redirect(redirect), ctx.voidPromise());
                 } finally {
@@ -44,17 +46,4 @@ public class HttpToHttpsRedirectHandler extends ChannelInboundHandlerAdapter {
         }
     }
 
-    private String makeHost(String hostHeader) {
-        if (hostHeader == null) {
-            return "localhost";
-        }
-        if (hostHeader.contains(":")) {
-            String[] split = hostHeader.split(":");
-            hostHeader = split[0];
-        }
-        if (!httpsPort.isEmpty()) {
-            return hostHeader + httpsPort;
-        }
-        return hostHeader;
-    }
 }

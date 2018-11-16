@@ -29,8 +29,11 @@ public class ServerProperties extends BaseProperties {
     public final String productName;
     public final String region;
     public final String host;
+    public final String rootPath;
     public final String httpServerUrl;
     public final String httpsServerUrl;
+    public final String httpPort;
+    public final String httpsPort;
 
     public ServerProperties(Map<String, String> cmdProperties, String serverConfig) {
         super(cmdProperties, serverConfig);
@@ -39,6 +42,9 @@ public class ServerProperties extends BaseProperties {
         this.productName = getProductName();
         this.region = getRegion();
         this.host = getServerHost();
+        this.rootPath = getRootPath();
+        this.httpPort = getHttpPortAsString(); //blank if default port is forced
+        this.httpsPort = getHttpsPortAsString(); //blank if default port is forced
         this.httpServerUrl = getHttpServerUrl();
         this.httpsServerUrl = getHttpsServerUrl();
     }
@@ -93,11 +99,6 @@ public class ServerProperties extends BaseProperties {
         return getProperty("server.host");
     }
 
-    public String getAdminUrl(String host) {
-        String httpsPort = getHttpsPortOrBlankIfDefaultAsString();
-        return "https://" + host + httpsPort + getAdminRootPath();
-    }
-
     public boolean isDBEnabled() {
         return getBoolProperty("enable.db");
     }
@@ -135,22 +136,23 @@ public class ServerProperties extends BaseProperties {
     }
 
     public String getDeviceUrl() {
-        return httpsServerUrl + "/dashboard/devices/";
+        return httpsServerUrl + rootPath + "/devices/";
     }
 
     public String getInviteUrl() {
-        return httpsServerUrl + "/dashboard/invite?token=";
+        return httpsServerUrl + rootPath + "/invite?token=";
     }
 
     private String getHttpsServerUrl() {
-        String httpPort = getHttpsPortAsString();
-        return "https://" + getServerHost() + (httpPort.isEmpty() ? "" : (":" + httpPort));
-
+        return makeServerUrl("https://", httpsPort);
     }
 
     private String getHttpServerUrl() {
-        String httpPort = getHttpPortAsString();
-        return "http://" + getServerHost() + (httpPort.isEmpty() ? "" : (":" + httpPort));
+        return makeServerUrl("http://", httpPort);
+    }
+
+    private String makeServerUrl(String protocol, String port) {
+        return protocol + host + (port.isEmpty() ? "" : (":" + port));
     }
 
 }

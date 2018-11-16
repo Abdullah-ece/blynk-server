@@ -113,8 +113,8 @@ public abstract class BaseProperties extends Properties {
         return Long.parseLong(getProperty(propertyName));
     }
 
-    public String getAdminRootPath() {
-        return getProperty("admin.rootPath", "/admin");
+    public String getRootPath() {
+        return getProperty("web.root.path", "/dashboard");
     }
 
     public String getApiPath() {

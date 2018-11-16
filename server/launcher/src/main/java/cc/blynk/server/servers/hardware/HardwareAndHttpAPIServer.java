@@ -42,20 +42,21 @@ public class HardwareAndHttpAPIServer extends BaseServer {
         super(holder.props.getProperty("listen.address"),
                 holder.props.getIntProperty("http.port"), holder.transportTypeHolder);
 
-        LetsEncryptHandler letsEncryptHandler = new LetsEncryptHandler(holder.sslContextHolder.contentHolder);
-        HardwareLoginHandler hardwareLoginHandler = new HardwareLoginHandler(holder, port);
-        HardwareChannelStateHandler hardwareChannelStateHandler = new HardwareChannelStateHandler(holder);
-        AlreadyLoggedHandler alreadyLoggedHandler = new AlreadyLoggedHandler();
+        var letsEncryptHandler = new LetsEncryptHandler(holder.sslContextHolder.contentHolder);
+        var hardwareLoginHandler = new HardwareLoginHandler(holder, port);
+        var hardwareChannelStateHandler = new HardwareChannelStateHandler(holder);
+        var alreadyLoggedHandler = new AlreadyLoggedHandler();
         int maxWebLength = holder.limits.webRequestMaxSize;
         int hardTimeoutSecs = NumberUtil.calcHeartbeatTimeout(holder.limits.hardwareIdleTimeout);
 
-        ExternalAPIHandler externalAPIHandler = new ExternalAPIHandler(holder, "/external/api");
+        var externalAPIHandler = new ExternalAPIHandler(holder, "/external/api");
 
         //http API handlers
-        HttpToHttpsRedirectHandler httpToHttpsRedirectHandler =
-                new HttpToHttpsRedirectHandler(holder.props.getAdminRootPath(),
-                        holder.props.getHttpsPortOrBlankIfDefaultAsString());
-        NoMatchHandler noMatchHandler = new NoMatchHandler();
+        var httpToHttpsRedirectHandler =
+                new HttpToHttpsRedirectHandler(holder.props.host,
+                        holder.props.rootPath,
+                        holder.props.httpsPort);
+        var noMatchHandler = new NoMatchHandler();
 
         BaseWebSocketUnificator baseWebSocketUnificator = new BaseWebSocketUnificator() {
             @Override
