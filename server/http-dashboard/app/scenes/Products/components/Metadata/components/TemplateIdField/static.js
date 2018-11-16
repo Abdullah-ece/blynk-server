@@ -9,16 +9,17 @@ class TemplateIdField extends BaseField.Static {
 
   static propTypes = {
     name: React.PropTypes.string,
-    value: React.PropTypes.any
+    preview: React.PropTypes.any
   };
 
   getPreviewValues() {
     const name = this.props.name;
-    const value = this.props.value;
+    const value = this.props.preview.value;
 
     return {
       name: name && typeof name === 'string' ? `${name.trim()}` : null,
-      value: value && typeof value === 'string' ? value.trim() : null
+      value: value && Array.isArray(value) ? value.join(', ') :
+        value && typeof value === 'string' ? value.trim() : null
     };
   }
 
@@ -42,7 +43,7 @@ class TemplateIdField extends BaseField.Static {
               {value}
             </FieldStub>
           ))}
-          { !options.length && (
+          {!options.length && (
             <FieldStub inline={true} noValueMessage={`No Options selected`}/>
           )}
         </FormItem.Content>

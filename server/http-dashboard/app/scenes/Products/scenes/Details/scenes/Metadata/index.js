@@ -1,7 +1,11 @@
 import React from 'react';
 // import {BackTop} from 'components';
 import MetadataComponents from 'scenes/Products/components/Metadata';
-import {Metadata as MetadataFields, hardcodedRequiredMetadataFieldsNames} from 'services/Products';
+import {
+  Metadata as MetadataFields,
+  hardcodedRequiredMetadataFieldsNames
+} from 'services/Products';
+
 const {
   ItemsList, Fields: {
     ContactField,
@@ -27,7 +31,7 @@ const {
 } = MetadataComponents;
 
 const convertRoleToArr = (role) => {
-  if(Array.isArray(role)) {
+  if (Array.isArray(role)) {
     return role;
   }
 
@@ -73,7 +77,10 @@ class Metadata extends React.Component {
     if (!this.props.product.metaFields)
       return fields;
 
-    this.props.product.metaFields.filter(this.filterDynamicFields).forEach((field, key) => {
+    this.props.product.metaFields.filter(this.filterDynamicFields).forEach((
+      field,
+      key
+    ) => {
 
       const props = {
         key: key
@@ -120,6 +127,11 @@ class Metadata extends React.Component {
             name={field.name}
             value={field.value}
             units={field.units}
+            preview={{
+              name: field.name,
+              value: field.options,
+              inline: true
+            }}
             role={convertRoleToArr(field.roleIds)}
           />
         );
@@ -281,7 +293,10 @@ class Metadata extends React.Component {
 
     const elements = [];
 
-    this.props.product.metaFields.filter(this.filterStaticFields).forEach((field, key) => {
+    this.props.product.metaFields.filter(this.filterStaticFields).forEach((
+      field,
+      key
+    ) => {
 
       if (!field.name) return false;
 
@@ -342,8 +357,8 @@ class Metadata extends React.Component {
 
     return (
       <ItemsList static={true}>
-        { this.getStaticFields() }
-        { this.getFields() }
+        {this.getStaticFields()}
+        {this.getFields()}
         {/*<BackTop/>*/}
       </ItemsList>
     );
