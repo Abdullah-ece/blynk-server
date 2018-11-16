@@ -60,8 +60,8 @@ class DeviceInfo extends React.Component {
 
     return (
       <div className="device--device-info">
-        <Row className="device--device-info-details">
-          <Col span={8}>
+        <Row>
+          <Col span={6}>
             <Fieldset>
               <Fieldset.Legend>Status</Fieldset.Legend>
               <DeviceStatus status={this.getDeviceStatus()}/>
@@ -83,7 +83,7 @@ class DeviceInfo extends React.Component {
               </Fieldset>
             ) || null}
           </Col>
-          <Col span={8}>
+          <Col span={6}>
             <Fieldset>
               <Fieldset.Legend>Last Reported</Fieldset.Legend>
               {lastReported}
@@ -107,7 +107,7 @@ class DeviceInfo extends React.Component {
               </Fieldset>
             )}
           </Col>
-          <Col span={8}>
+          <Col span={12}>
 
             <DeviceDelete deviceId={this.props.device.id} onDeviceDelete={this.props.onDeviceDelete}/>
 
