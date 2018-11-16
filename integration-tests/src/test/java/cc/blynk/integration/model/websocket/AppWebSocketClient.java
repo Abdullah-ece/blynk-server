@@ -34,6 +34,7 @@ import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.web.handlers.logic.device.timeline.TimelineDTO;
 import cc.blynk.server.web.handlers.logic.device.timeline.TimelineResponseDTO;
 import cc.blynk.server.web.handlers.logic.organization.LocationDTO;
+import cc.blynk.server.web.handlers.logic.organization.OrganizationsHierarchyDTO;
 import cc.blynk.server.web.handlers.logic.organization.Token;
 import cc.blynk.utils.SHA256Util;
 import cc.blynk.utils.StringUtils;
@@ -148,6 +149,10 @@ public final class AppWebSocketClient extends BaseTestAppClient {
 
     public void resolveEvent(int deviceId, long logEventId, String comment) {
         send("resolveEvent " + deviceId + "\0" + logEventId + "\0" + comment);
+    }
+
+    public void createOrganization(int orgId, Organization organization) {
+        send("webCreateOrg " + orgId + StringUtils.BODY_SEPARATOR_STRING + organization);
     }
 
     public void createOrganization(Organization organization) {
@@ -265,6 +270,10 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         send("webGetOrg " + orgId);
     }
 
+    public void getOrganizationHierarchy() {
+        send("getOrganizationHierarchy");
+    }
+
     public void getUserOrganizations() {
         send("webGetOrgs");
     }
@@ -308,6 +317,10 @@ public final class AppWebSocketClient extends BaseTestAppClient {
 
     public User[] parseUsers(int expectedMessageOrder) throws Exception {
         return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), User[].class);
+    }
+
+    public OrganizationsHierarchyDTO parseOrganizationHierarchyDTO(int expectedMessageOrder) throws Exception {
+        return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), OrganizationsHierarchyDTO.class);
     }
 
     public OrganizationDTO parseOrganizationDTO(int expectedMessageOrder) throws Exception {

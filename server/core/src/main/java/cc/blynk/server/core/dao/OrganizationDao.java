@@ -168,7 +168,7 @@ public class OrganizationDao {
     }
 
     private void getOrgsByParentId(List<Organization> orgs, int parentId, int invocationCounter) {
-        if (invocationCounter == 50) {
+        if (invocationCounter == 1000) {
             throw new RuntimeException("Error finding organization.");
         }
         for (Organization org : organizations.values()) {

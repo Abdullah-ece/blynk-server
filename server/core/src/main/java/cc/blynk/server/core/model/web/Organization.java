@@ -147,6 +147,10 @@ public class Organization {
         return parentId > 0;
     }
 
+    public boolean isChildOf(int parentId) {
+        return this.parentId == parentId;
+    }
+
     public boolean isUpdated(long lastStart) {
         return lastStart <= lastModifiedTs || productUpdated(lastStart);
     }
@@ -217,5 +221,24 @@ public class Organization {
     @Override
     public String toString() {
         return JsonParser.toJson(this);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        Organization that = (Organization) o;
+
+        return id == that.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
     }
 }

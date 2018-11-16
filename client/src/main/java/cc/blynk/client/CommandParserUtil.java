@@ -87,6 +87,7 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICE_TIMELIN
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_METAFIELD;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORG;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORGS;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORG_HIERARCHY;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORG_USERS;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_PRODUCT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_PRODUCTS;
@@ -334,6 +335,8 @@ public final class CommandParserUtil {
                 return WEB_GET_TEMP_SECURE_TOKEN;
             case "caninviteuser" :
                 return WEB_CAN_INVITE_USER;
+            case "getorganizationhierarchy" :
+                return WEB_GET_ORG_HIERARCHY;
 
             default:
                 throw new IllegalArgumentException("Unsupported command");

@@ -35,11 +35,15 @@ public class WebCreateOrganizationLogic {
     public void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         String[] split = split2(message.body);
 
-        int orgId = state.user.orgId;
+        int orgId;
+        Organization newOrganization;
         if (split.length == 2) {
             orgId = Integer.parseInt(split[0]);
+            newOrganization = JsonParser.parseOrganization(split[1], message.id);
+        } else {
+            orgId = state.orgId;
+            newOrganization = JsonParser.parseOrganization(split[0], message.id);
         }
-        Organization newOrganization = JsonParser.parseOrganization(message.body, message.id);
 
         User user = state.user;
         if (isEmpty(newOrganization)) {

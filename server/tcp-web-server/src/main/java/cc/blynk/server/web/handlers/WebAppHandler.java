@@ -24,6 +24,7 @@ import cc.blynk.server.web.handlers.logic.organization.WebCreateOrganizationLogi
 import cc.blynk.server.web.handlers.logic.organization.WebDeleteOrganizationLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebGetOrganizationLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebGetOrganizationUsersLogic;
+import cc.blynk.server.web.handlers.logic.organization.WebGetOrganizationsHierarchyLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebGetOrganizationsLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebGetProductLocationsLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebGetTempSecureTokenLogic;
@@ -63,6 +64,7 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICE_TIMELIN
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_METAFIELD;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORG;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORGS;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORG_HIERARCHY;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORG_USERS;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_PRODUCT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_PRODUCTS;
@@ -110,6 +112,7 @@ public class WebAppHandler extends WebBaseSimpleChannelInboundHandler<StringMess
     private final WebInviteUserLogic webInviteUserLogic;
     private final WebGetDeviceTimelineLogic webGetDeviceTimelineLogic;
     private final WebDeleteDeviceLogic webDeleteDeviceLogic;
+    private final WebGetOrganizationsHierarchyLogic webGetOrganizationsHierarchyLogic;
 
     private final Holder holder;
 
@@ -139,6 +142,7 @@ public class WebAppHandler extends WebBaseSimpleChannelInboundHandler<StringMess
         this.webInviteUserLogic = new WebInviteUserLogic(holder);
         this.webGetDeviceTimelineLogic = new WebGetDeviceTimelineLogic(holder);
         this.webDeleteDeviceLogic = new WebDeleteDeviceLogic(holder);
+        this.webGetOrganizationsHierarchyLogic = new WebGetOrganizationsHierarchyLogic(holder);
 
         this.state = state;
         this.holder = holder;
@@ -252,6 +256,9 @@ public class WebAppHandler extends WebBaseSimpleChannelInboundHandler<StringMess
                 break;
             case WEB_GET_TEMP_SECURE_TOKEN :
                 WebGetTempSecureTokenLogic.messageReceived(holder, ctx, state.user, msg);
+                break;
+            case WEB_GET_ORG_HIERARCHY :
+                webGetOrganizationsHierarchyLogic.messageReceived(ctx, state, msg);
                 break;
         }
     }

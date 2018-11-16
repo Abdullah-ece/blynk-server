@@ -11,6 +11,7 @@ import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.metafields.LocationMetaField;
 import cc.blynk.server.web.handlers.logic.organization.LocationDTO;
+import cc.blynk.server.web.handlers.logic.organization.OrganizationsHierarchyDTO;
 import cc.blynk.utils.SHA256Util;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,6 +26,7 @@ import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.integration.TestUtil.webJson;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.ArgumentMatchers.eq;
@@ -265,4 +267,126 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
         appWebSocketClient.loginViaInvite(token, passHash);
         appWebSocketClient.verifyResult(webJson(1, "User not found."));
     }
+
+    @Test
+    public void getSingleOrgHierarchy() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+        client.getOrganizationHierarchy();
+        OrganizationsHierarchyDTO organizationsHierarchyDTO = client.parseOrganizationHierarchyDTO(1);
+        assertNotNull(organizationsHierarchyDTO);
+        assertEquals(orgId, organizationsHierarchyDTO.id);
+        assertEquals("Blynk Inc.", organizationsHierarchyDTO.name);
+        assertNull(organizationsHierarchyDTO.childs);
+        printHierarchy(organizationsHierarchyDTO, 0);
+    }
+
+    @Test
+    public void get2OrgHierarchy() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+
+        Organization subOrg = new Organization("SubOrg", "Europe/Kiev", "/static/logo.png", true, orgId);
+        client.createOrganization(subOrg);
+        OrganizationDTO subOrgDTO = client.parseOrganizationDTO(1);
+        assertNotNull(subOrgDTO);
+
+        client.getOrganizationHierarchy();
+        OrganizationsHierarchyDTO organizationsHierarchyDTO = client.parseOrganizationHierarchyDTO(2);
+        assertNotNull(organizationsHierarchyDTO);
+        assertEquals(orgId, organizationsHierarchyDTO.id);
+        assertEquals("Blynk Inc.", organizationsHierarchyDTO.name);
+        assertNotNull(organizationsHierarchyDTO.childs);
+        assertEquals(1, organizationsHierarchyDTO.childs.size());
+
+        OrganizationsHierarchyDTO subOrgHierarchy = organizationsHierarchyDTO.childs.iterator().next();
+        assertEquals(orgId + 1, subOrgHierarchy.id);
+        assertEquals("SubOrg", subOrgHierarchy.name);
+        assertNull(subOrgHierarchy.childs);
+        printHierarchy(organizationsHierarchyDTO, 0);
+    }
+
+    @Test
+    public void get3OrgHierarchySameLevel() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+
+        Organization subOrg = new Organization("SubOrg", "Europe/Kiev", "/static/logo.png", true, orgId);
+        client.createOrganization(subOrg);
+
+        Organization subOrg2 = new Organization("AAA", "Europe/Kiev", "/static/logo.png", true, orgId);
+        client.createOrganization(subOrg2);
+
+        client.getOrganizationHierarchy();
+        OrganizationsHierarchyDTO organizationsHierarchyDTO = client.parseOrganizationHierarchyDTO(3);
+        assertNotNull(organizationsHierarchyDTO);
+        assertEquals(orgId, organizationsHierarchyDTO.id);
+        assertEquals("Blynk Inc.", organizationsHierarchyDTO.name);
+        assertNotNull(organizationsHierarchyDTO.childs);
+        assertEquals(2, organizationsHierarchyDTO.childs.size());
+
+        printHierarchy(organizationsHierarchyDTO, 0);
+
+        var iterator = organizationsHierarchyDTO.childs.iterator();
+        OrganizationsHierarchyDTO subOrgHierarchy = iterator.next();
+        assertEquals(orgId + 2, subOrgHierarchy.id);
+        assertEquals("AAA", subOrgHierarchy.name);
+        assertNull(subOrgHierarchy.childs);
+
+        subOrgHierarchy = iterator.next();
+        assertEquals(orgId + 1, subOrgHierarchy.id);
+        assertEquals("SubOrg", subOrgHierarchy.name);
+        assertNull(subOrgHierarchy.childs);
+    }
+
+    @Test
+    public void get5OrgHierarchySameLevel() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+
+        Organization subOrg = new Organization("SubOrg", "Europe/Kiev", "/static/logo.png", true, -1);
+        client.createOrganization(orgId, subOrg);
+
+        Organization subOrg2 = new Organization("AAA", "Europe/Kiev", "/static/logo.png", true, -1);
+        client.createOrganization(orgId, subOrg2);
+
+        Organization subOrg3 = new Organization("BBB", "Europe/Kiev", "/static/logo.png", true, -1);
+        client.createOrganization(orgId + 1, subOrg3);
+
+        client.getOrganizationHierarchy();
+        OrganizationsHierarchyDTO organizationsHierarchyDTO = client.parseOrganizationHierarchyDTO(4);
+        assertNotNull(organizationsHierarchyDTO);
+        printHierarchy(organizationsHierarchyDTO, 0);
+
+        assertEquals(orgId, organizationsHierarchyDTO.id);
+        assertEquals("Blynk Inc.", organizationsHierarchyDTO.name);
+        assertNotNull(organizationsHierarchyDTO.childs);
+        assertEquals(2, organizationsHierarchyDTO.childs.size());
+
+        var iterator = organizationsHierarchyDTO.childs.iterator();
+        OrganizationsHierarchyDTO subOrgHierarchy = iterator.next();
+        assertEquals(orgId + 2, subOrgHierarchy.id);
+        assertEquals("AAA", subOrgHierarchy.name);
+        assertNull(subOrgHierarchy.childs);
+
+        subOrgHierarchy = iterator.next();
+        assertEquals(orgId + 1, subOrgHierarchy.id);
+        assertEquals("SubOrg", subOrgHierarchy.name);
+        assertNotNull(subOrgHierarchy.childs);
+        assertEquals(1, subOrgHierarchy.childs.size());
+
+        subOrgHierarchy = subOrgHierarchy.childs.iterator().next();
+        assertEquals(orgId + 3, subOrgHierarchy.id);
+        assertEquals("BBB", subOrgHierarchy.name);
+        assertNull(subOrgHierarchy.childs);
+    }
+
+    public void printHierarchy(OrganizationsHierarchyDTO organizationsHierarchyDTO, int spaces) {
+        for (int i = 0; i < spaces; i++) {
+            System.out.print("-");
+        }
+        System.out.println(organizationsHierarchyDTO.id +" " + organizationsHierarchyDTO.name);
+        if (organizationsHierarchyDTO.childs != null) {
+            for (OrganizationsHierarchyDTO child : organizationsHierarchyDTO.childs) {
+                printHierarchy(child, spaces + 4);
+            }
+        }
+    }
 }
+

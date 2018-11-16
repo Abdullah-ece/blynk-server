@@ -166,6 +166,7 @@ public final class Command {
     public static final short WEB_GET_METAFIELD = 129;
     public static final short MOBILE_GET_DEVICES_BY_REFERENCE_METAFIELD = 130;
     public static final short WEB_GET_TEMP_SECURE_TOKEN = 131;
+    public static final short WEB_GET_ORG_HIERARCHY = 132;
 
     public static final int LAST_COMMAND_INDEX = 150;
 
@@ -289,7 +290,8 @@ public final class Command {
             Map.entry(WEB_GET_DEVICE_TIMELINE, "WebGetDeviceTimeline"),
             Map.entry(WEB_DELETE_DEVICE, "WebDeleteDevice"),
             Map.entry(MOBILE_GET_DEVICES_BY_REFERENCE_METAFIELD, "GetDevicesByReferenceMetafield"),
-            Map.entry(WEB_GET_TEMP_SECURE_TOKEN, "WebGetTempSecureToken")
+            Map.entry(WEB_GET_TEMP_SECURE_TOKEN, "WebGetTempSecureToken"),
+            Map.entry(WEB_GET_ORG_HIERARCHY, "WebGetOrgHierarchy")
     );
 
     public static String getNameByValue(short val) {
