@@ -25,7 +25,7 @@ class Contact extends Base {
       data.push(`${field.lastName}`);
 
     if (field.email && field.isEmailEnabled)
-      data.push(<a href={"mailto:" + field.email}>{field.email}</a>);
+      data.push(<a className={'txt_link'} href={"mailto:" + field.email}>{field.email}</a>);
 
     if (field.phone && field.isPhoneEnabled)
       data.push(`${field.phone}`);
