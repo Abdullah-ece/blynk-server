@@ -43,13 +43,13 @@ public class WebUpdateDevicesMetaInProductLogic {
         ProductAndOrgIdDTO productAndOrgIdDTO = JsonParser.readAny(message.body, ProductAndOrgIdDTO.class);
 
         User user = state.user;
-        if (productAndOrgIdDTO == null) {
+        if (productAndOrgIdDTO == null || productAndOrgIdDTO.product == null) {
             log.error("Wrong create product command for {}.", user.email);
             ctx.writeAndFlush(json(message.id, "Wrong create product command."), ctx.voidPromise());
             return;
         }
 
-        Product updatedProduct = productAndOrgIdDTO.product;
+        Product updatedProduct = productAndOrgIdDTO.product.toProduct();
 
         if (updatedProduct == null) {
             log.error("Product is empty for {}.", user.email);

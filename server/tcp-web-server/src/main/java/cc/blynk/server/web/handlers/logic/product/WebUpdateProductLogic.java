@@ -32,13 +32,13 @@ public final class WebUpdateProductLogic {
         ProductAndOrgIdDTO productAndOrgIdDTO = JsonParser.readAny(message.body, ProductAndOrgIdDTO.class);
 
         User user = state.user;
-        if (productAndOrgIdDTO == null) {
+        if (productAndOrgIdDTO == null || productAndOrgIdDTO.product == null) {
             log.error("Couldn't parse passed product for {}.", user.email);
             ctx.writeAndFlush(json(message.id, "Couldn't parse passed product."), ctx.voidPromise());
             return;
         }
 
-        Product product = productAndOrgIdDTO.product;
+        Product product = productAndOrgIdDTO.product.toProduct();
 
         if (product == null) {
             log.error("Product is empty for {}.", user.email);

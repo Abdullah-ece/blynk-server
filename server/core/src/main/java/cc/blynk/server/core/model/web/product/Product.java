@@ -55,9 +55,7 @@ public class Product {
 
     public volatile Device[] devices = EMPTY_DEVICES;
 
-    public int deviceCount;
-
-    public volatile int version;
+    public int version;
 
     public Product() {
         this.createdAt = System.currentTimeMillis();

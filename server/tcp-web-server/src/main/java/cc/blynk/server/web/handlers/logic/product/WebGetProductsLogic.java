@@ -11,6 +11,7 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import static cc.blynk.server.api.http.dashboard.dto.ProductDTO.toDTO;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.server.internal.WebByteBufUtil.json;
 
@@ -46,8 +47,7 @@ public class WebGetProductsLogic {
             return;
         }
 
-        organizationDao.calcDeviceCount(organization);
-        String productString = JsonParser.toJson(organization.products);
+        String productString = JsonParser.toJson(toDTO(organization.products));
         if (productString == null) {
             log.error("Empty response for WebGetProductsLogic and {}.", user.email);
         } else {

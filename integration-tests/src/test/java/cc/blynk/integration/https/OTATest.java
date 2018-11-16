@@ -5,6 +5,7 @@ import cc.blynk.core.http.handlers.StaticFileHandler;
 import cc.blynk.integration.APIBaseTest;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.api.http.dashboard.dto.ProductAndOrgIdDTO;
+import cc.blynk.server.api.http.dashboard.dto.ProductDTO;
 import cc.blynk.server.api.http.dashboard.dto.StartOtaDTO;
 import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.ConnectionType;
@@ -546,7 +547,7 @@ public class OTATest extends APIBaseTest {
         };
 
         HttpPut req = new HttpPut(httpsAdminServerUrl + "/product");
-        req.setEntity(new StringEntity(new ProductAndOrgIdDTO(1, product).toString(), ContentType.APPLICATION_JSON));
+        req.setEntity(new StringEntity(new ProductAndOrgIdDTO(1, new ProductDTO(product)).toString(), ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(req)) {
             assertEquals(200, response.getStatusLine().getStatusCode());

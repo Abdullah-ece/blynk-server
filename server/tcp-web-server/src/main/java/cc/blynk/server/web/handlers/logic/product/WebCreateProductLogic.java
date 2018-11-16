@@ -41,14 +41,13 @@ public class WebCreateProductLogic {
             return;
         }
 
-        Product product = productAndOrgIdDTO.product;
-
-        if (product == null) {
+        if (productAndOrgIdDTO.product == null) {
             log.error("Product is empty {}.", user.email);
             ctx.writeAndFlush(json(message.id, "Product is empty."), ctx.voidPromise());
             return;
         }
 
+        Product product = productAndOrgIdDTO.product.toProduct();
         product.validate();
 
         Organization organization = organizationDao.getOrgById(productAndOrgIdDTO.orgId);

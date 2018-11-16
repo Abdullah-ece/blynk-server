@@ -38,8 +38,6 @@ public class WebGetOrganizationsLogic {
                 .filter(org -> org.id != user.orgId && org.parentId == user.orgId)
                 .collect(Collectors.toList());
 
-        organizationDao.calcDeviceCount(orgs);
-
         if (ctx.channel().isWritable()) {
             String orgString = JsonParser.toJson(orgs);
             ctx.writeAndFlush(

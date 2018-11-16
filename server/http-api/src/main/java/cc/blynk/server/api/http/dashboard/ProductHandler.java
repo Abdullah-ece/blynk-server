@@ -19,9 +19,7 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.exceptions.ForbiddenWebException;
 import cc.blynk.server.core.model.exceptions.WebException;
 import cc.blynk.server.core.model.web.Organization;
-import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
-import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.http.MediaType;
 import io.netty.channel.ChannelHandler;
 
@@ -59,8 +57,6 @@ public class ProductHandler extends BaseHttpHandler {
             return badRequest();
         }
 
-        organizationDao.calcDeviceCount(organization);
-
         return ok(organization.products);
     }
 
@@ -94,12 +90,11 @@ public class ProductHandler extends BaseHttpHandler {
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Path("")
     public Response create(ProductAndOrgIdDTO productAndOrgIdDTO) {
-        Product product = productAndOrgIdDTO.product;
-
-        if (product == null) {
+        if (productAndOrgIdDTO.product == null) {
             log.error("Product is empty.");
             return badRequest("Product is empty.");
         }
+        Product product = productAndOrgIdDTO.product.toProduct();
 
         product.validate();
 
@@ -128,12 +123,11 @@ public class ProductHandler extends BaseHttpHandler {
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Path("")
     public Response updateProduct(ProductAndOrgIdDTO productAndOrgIdDTO) {
-        Product updatedProduct = productAndOrgIdDTO.product;
-
-        if (updatedProduct == null) {
-            log.error("No product for update.");
-            return badRequest();
+        if (productAndOrgIdDTO.product == null) {
+            log.error("Product is empty.");
+            return badRequest("Product is empty.");
         }
+        Product updatedProduct = productAndOrgIdDTO.product.toProduct();
 
         updatedProduct.validate();
 
@@ -158,42 +152,6 @@ public class ProductHandler extends BaseHttpHandler {
         }
 
         existingProduct.update(updatedProduct);
-
-        return ok(existingProduct);
-    }
-
-    @POST
-    @Consumes(value = MediaType.APPLICATION_JSON)
-    @Path("/updateDevices")
-    public Response updateProductAndDevices(@ContextUser User user, ProductAndOrgIdDTO productAndOrgIdDTO) {
-        Product updatedProduct = productAndOrgIdDTO.product;
-        if (updatedProduct == null) {
-            log.error("No product for update.");
-            return badRequest();
-        }
-
-        Product existingProduct = organizationDao.getProductOrThrow(productAndOrgIdDTO.orgId, updatedProduct.id);
-
-        updatedProduct.validate();
-
-        existingProduct.update(updatedProduct);
-
-        List<Device> devices = deviceDao.getAllByProductId(updatedProduct.id);
-        long now = System.currentTimeMillis();
-        for (Device device : devices) {
-            device.updateMetaFields(updatedProduct.metaFields);
-
-            MetaField[] addedMetaFields = ArrayUtil.substruct(updatedProduct.metaFields, device.metaFields)
-                    .toArray(new MetaField[0]);
-            device.addMetaFields(addedMetaFields);
-
-            MetaField[] deletedMetaFields = ArrayUtil.substruct(device.metaFields, updatedProduct.metaFields)
-                    .toArray(new MetaField[0]);
-            device.deleteMetaFields(deletedMetaFields);
-
-            device.metadataUpdatedAt = now;
-            device.metadataUpdatedBy = user.email;
-        }
 
         return ok(existingProduct);
     }

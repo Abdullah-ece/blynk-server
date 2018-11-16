@@ -1,7 +1,6 @@
 package cc.blynk.server.api.http.dashboard.dto;
 
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.core.model.web.product.Product;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -14,11 +13,11 @@ public class ProductAndOrgIdDTO {
 
     public final int orgId;
 
-    public final Product product;
+    public final ProductDTO product;
 
     @JsonCreator
     public ProductAndOrgIdDTO(@JsonProperty("orgId") int orgId,
-                              @JsonProperty("product") Product product) {
+                              @JsonProperty("product") ProductDTO product) {
         this.orgId = orgId;
         this.product = product;
     }

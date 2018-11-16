@@ -118,33 +118,6 @@ public class OrganizationDao {
         }
     }
 
-    public void calcDeviceCount(List<Organization> orgs) {
-        for (Organization org : orgs) {
-            calcDeviceCount(org);
-        }
-    }
-
-    public void calcDeviceCount(Organization org) {
-        Map<Integer, Integer> productIdCount = productDeviceCount();
-        productIdCount = attachChildCounter(productIdCount);
-        for (Product product : org.products) {
-            product.deviceCount = productIdCount.getOrDefault(product.id, 0);
-        }
-    }
-
-    private Map<Integer, Integer> productDeviceCount() {
-        Map<Integer, Integer> productIdCount =  new HashMap<>();
-        for (Organization org : organizations.values()) {
-            for (Product product : org.products) {
-                for (Device device : product.devices) {
-                    Integer count = productIdCount.getOrDefault(device.productId, 0);
-                    productIdCount.put(device.productId, count + 1);
-                }
-            }
-        }
-        return productIdCount;
-    }
-
     /*
      This is special case. Some products may have child products and
      thus we need to add child counters to such products.

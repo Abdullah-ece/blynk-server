@@ -19,6 +19,7 @@ import cc.blynk.integration.model.tcp.BaseTestAppClient;
 import cc.blynk.server.Limits;
 import cc.blynk.server.api.http.dashboard.dto.OrganizationDTO;
 import cc.blynk.server.api.http.dashboard.dto.ProductAndOrgIdDTO;
+import cc.blynk.server.api.http.dashboard.dto.ProductDTO;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.dto.DeviceDTO;
@@ -157,15 +158,26 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         send("webCanDeleteProduct " + productId);
     }
 
+    //todo remove in future
     public void createProduct(int orgId, Product product) {
+        createProduct(orgId, new ProductDTO(product));
+    }
+    public void updateProduct(int orgId, Product product) {
+        updateProduct(orgId, new ProductDTO(product));
+    }
+    public void updateDevicesMeta(int orgId, Product product) {
+        updateDevicesMeta(orgId, new ProductDTO(product));
+    }
+
+    public void createProduct(int orgId, ProductDTO product) {
         send("webCreateProduct " + new ProductAndOrgIdDTO(orgId, product));
     }
 
-    public void updateProduct(int orgId, Product product) {
+    public void updateProduct(int orgId, ProductDTO product) {
         send("webUpdateProduct " + new ProductAndOrgIdDTO(orgId, product));
     }
 
-    public void updateDevicesMeta(int orgId, Product product) {
+    public void updateDevicesMeta(int orgId, ProductDTO product) {
         send("webUpdateDevicesMeta " + new ProductAndOrgIdDTO(orgId, product));
     }
 
