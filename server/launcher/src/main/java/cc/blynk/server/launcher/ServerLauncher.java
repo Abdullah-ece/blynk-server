@@ -29,6 +29,7 @@ import cc.blynk.server.core.model.web.product.metafields.DeviceNameMetaField;
 import cc.blynk.server.core.model.web.product.metafields.DeviceOwnerMetaField;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.web.WebSource;
+import cc.blynk.server.core.model.widgets.web.label.ColorSet;
 import cc.blynk.server.core.model.widgets.web.label.WebLabel;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.MobileAndHttpsServer;
@@ -229,6 +230,11 @@ public final class ServerLauncher {
         webLabel.y = 0;
         webLabel.height = 1;
         webLabel.width = 2;
+        webLabel.colorsSet = new ColorSet[] {
+                new ColorSet(0, 30, "23be1b", "fff", null),
+                new ColorSet(31, 60, "eb7a21", "fff", null),
+                new ColorSet(61, 100, "da1d4e", "fff", null)
+        };
         webLabel.sources = new WebSource[] {
                 new WebSource("some Label", "#334455",
                         false, RAW_DATA, new DataStream((byte) 0, PinType.VIRTUAL),
