@@ -127,6 +127,7 @@ class Metadata extends React.Component {
             name={field.name}
             value={field.value}
             units={field.units}
+            options={field.options}
             preview={{
               name: field.name,
               value: field.options,
