@@ -1,6 +1,7 @@
 package cc.blynk.server.web.handlers.logic.product;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.api.http.dashboard.dto.ProductDTO;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
@@ -60,7 +61,7 @@ public final class WebGetProductLogic {
         }
 
         if (ctx.channel().isWritable()) {
-            String productString = product.toString();
+            String productString = new ProductDTO(product).toString();
             StringMessage response = makeUTF8StringMessage(message.command, message.id, productString);
             ctx.writeAndFlush(response, ctx.voidPromise());
         }

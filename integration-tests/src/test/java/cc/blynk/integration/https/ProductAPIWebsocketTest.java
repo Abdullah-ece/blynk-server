@@ -575,6 +575,34 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
     }
 
     @Test
+    public void testDevicesForProductNotReturned() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+
+        Product product = new Product();
+        product.name = "createProduct";
+
+        client.createProduct(orgId, product);
+        Product fromApiProduct = client.parseProduct(1);
+        assertNotNull(fromApiProduct);
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.productId = fromApiProduct.id;
+
+        client.createDevice(orgId, newDevice);
+        Device createdDevice = client.parseDevice(2);
+        assertNotNull(createdDevice);
+
+        client.getProduct(orgId, fromApiProduct.id);
+        fromApiProduct = client.parseProduct(3);
+        assertNotNull(fromApiProduct);
+        //get product API should return DTO without devices
+        assertNotNull(fromApiProduct.devices);
+        assertEquals(0, fromApiProduct.devices.length);
+    }
+
+
+    @Test
     public void canDeleteProductWithDevices2() throws Exception {
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
 
