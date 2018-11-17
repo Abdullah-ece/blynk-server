@@ -25,7 +25,7 @@ public class Organization {
 
     private static final Logger log = LogManager.getLogger(Organization.class);
 
-    public static final int SUPER_ORG_PARENT_ID = -1;
+    public static final int NO_PARENT_ID = -1;
 
     public int id;
 
@@ -53,7 +53,7 @@ public class Organization {
 
     public volatile int[] selectedProducts = EMPTY_INTS;
 
-    public volatile int parentId = SUPER_ORG_PARENT_ID;
+    public volatile int parentId = NO_PARENT_ID;
 
     public Role[] roles;
 
@@ -162,10 +162,6 @@ public class Organization {
             }
         }
         return false;
-    }
-
-    public boolean hasParentOrg() {
-        return parentId != SUPER_ORG_PARENT_ID;
     }
 
     public boolean isEmptyName() {

@@ -4,7 +4,6 @@ import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.Unit;
-import cc.blynk.server.core.model.web.product.Product;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -37,7 +36,7 @@ public class OrganizationDTO {
 
     public final long lastModifiedTs;
 
-    public final Product[] products;
+    public final ProductDTO[] products;
 
     public final int[] selectedProducts;
 
@@ -59,7 +58,7 @@ public class OrganizationDTO {
                            @JsonProperty("primaryColor") String primaryColor,
                            @JsonProperty("secondaryColor") String secondaryColor,
                            @JsonProperty("lastModifiedTs") long lastModifiedTs,
-                           @JsonProperty("products") Product[] products,
+                           @JsonProperty("products") ProductDTO[] products,
                            @JsonProperty("selectedProducts") int[] selectedProducts,
                            @JsonProperty("parentId") int parentId,
                            @JsonProperty("parentOrgName") String parentOrgName,
@@ -92,13 +91,17 @@ public class OrganizationDTO {
         this.primaryColor = org.primaryColor;
         this.secondaryColor = org.secondaryColor;
         this.lastModifiedTs = org.lastModifiedTs;
-        this.products = org.products;
+        this.products = ProductDTO.toDTO(org.products);
         this.canCreateOrgs = org.canCreateOrgs;
         this.isActive = org.isActive;
         this.selectedProducts = org.selectedProducts;
         this.parentId = org.parentId;
         this.parentOrgName = parentOrgName;
         this.roles = org.roles;
+    }
+
+    public OrganizationDTO(Organization org) {
+        this(org, null);
     }
 
     @Override

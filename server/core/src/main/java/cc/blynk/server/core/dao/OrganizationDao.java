@@ -21,6 +21,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static cc.blynk.server.core.model.web.Organization.NO_PARENT_ID;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -59,7 +61,7 @@ public class OrganizationDao {
      */
     public Organization getSuperOrgOrThrow() {
         for (Organization org : organizations.values()) {
-            if (org.parentId == Organization.SUPER_ORG_PARENT_ID) {
+            if (org.parentId == NO_PARENT_ID) {
                 return org;
             }
         }
@@ -336,6 +338,16 @@ public class OrganizationDao {
             log.error("User {} tries to access device he has no access.", user.email);
             throw new ForbiddenWebException("You have no access to this device.");
         }
+    }
+
+    public String getParentOrgName(int parentOrgId) {
+        if (parentOrgId != NO_PARENT_ID) {
+            Organization parentOrg = getOrgById(parentOrgId);
+            if (parentOrg != null && parentOrg.name != null) {
+                return parentOrg.name;
+            }
+        }
+        return null;
     }
 
 }

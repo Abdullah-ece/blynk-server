@@ -1195,7 +1195,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertEquals(organization.tzName, fromApiProductSubOrg.tzName);
         assertNotNull(fromApiProductSubOrg.products);
         assertEquals(1, fromApiProductSubOrg.products.length);
-        Product productInResponse = fromApiProductSubOrg.products[0];
+        ProductDTO productInResponse = fromApiProductSubOrg.products[0];
         assertEquals(fromApiProduct.id + 1, productInResponse.id);
         assertEquals(fromApiProduct.id, productInResponse.parentId);
         assertNotNull(productInResponse.metaFields);

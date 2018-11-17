@@ -1,10 +1,10 @@
 package cc.blynk.server.web.handlers.logic.organization;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.api.http.dashboard.dto.OrganizationDTO;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
 import io.netty.channel.ChannelHandlerContext;
@@ -33,9 +33,10 @@ public class WebGetOrganizationsLogic {
 
     public void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         User user = state.user;
-        List<Organization> orgs = organizationDao.getAll(user)
+        List<OrganizationDTO> orgs = organizationDao.getAll(user)
                 .stream()
                 .filter(org -> org.id != user.orgId && org.parentId == user.orgId)
+                .map(OrganizationDTO::new)
                 .collect(Collectors.toList());
 
         if (ctx.channel().isWritable()) {

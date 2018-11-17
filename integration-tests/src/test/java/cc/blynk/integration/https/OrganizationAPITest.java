@@ -58,7 +58,7 @@ import java.util.List;
 
 import static cc.blynk.integration.TestUtil.consumeText;
 import static cc.blynk.integration.TestUtil.getDefaultHttpsClient;
-import static cc.blynk.server.core.model.web.Organization.SUPER_ORG_PARENT_ID;
+import static cc.blynk.server.core.model.web.Organization.NO_PARENT_ID;
 import static java.time.LocalTime.ofSecondOfDay;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -429,7 +429,7 @@ public class OrganizationAPITest extends APIBaseTest {
     public void createOrganization() throws Exception {
         login(admin.email, admin.pass);
 
-        Organization organization = new Organization("My Org", "Some TimeZone", "/static/logo.png", false, SUPER_ORG_PARENT_ID);
+        Organization organization = new Organization("My Org", "Some TimeZone", "/static/logo.png", false, NO_PARENT_ID);
 
         HttpPut req = new HttpPut(httpsAdminServerUrl + "/organization");
         req.setEntity(new StringEntity(organization.toString(), ContentType.APPLICATION_JSON));
@@ -448,7 +448,7 @@ public class OrganizationAPITest extends APIBaseTest {
     public void organizationListReturnsOnlySubOrganizations() throws Exception {
         login(admin.email, admin.pass);
 
-        Organization organization = new Organization("My Org", "Some TimeZone", "/static/logo.png", false, SUPER_ORG_PARENT_ID);
+        Organization organization = new Organization("My Org", "Some TimeZone", "/static/logo.png", false, NO_PARENT_ID);
 
         HttpPut req = new HttpPut(httpsAdminServerUrl + "/organization");
         req.setEntity(new StringEntity(organization.toString(), ContentType.APPLICATION_JSON));
@@ -481,7 +481,7 @@ public class OrganizationAPITest extends APIBaseTest {
     public void organizationListReturnsOnlySubOrganizations2() throws Exception {
         login(admin.email, admin.pass);
 
-        Organization organization = new Organization("My Org", "Some TimeZone", "/static/logo.png", false, SUPER_ORG_PARENT_ID);
+        Organization organization = new Organization("My Org", "Some TimeZone", "/static/logo.png", false, NO_PARENT_ID);
 
         HttpPut req = new HttpPut(httpsAdminServerUrl + "/organization");
         req.setEntity(new StringEntity(organization.toString(), ContentType.APPLICATION_JSON));
@@ -537,7 +537,7 @@ public class OrganizationAPITest extends APIBaseTest {
     public void doNotAllowCreateOrganizationForSubOrgThatDoesntSupportThis() throws Exception {
         login(admin.email, admin.pass);
 
-        Organization organization = new Organization("My Org", "Some TimeZone", "/static/logo.png", false, SUPER_ORG_PARENT_ID);
+        Organization organization = new Organization("My Org", "Some TimeZone", "/static/logo.png", false, NO_PARENT_ID);
         organization.canCreateOrgs = false;
 
         HttpPut req = new HttpPut(httpsAdminServerUrl + "/organization");
@@ -567,7 +567,7 @@ public class OrganizationAPITest extends APIBaseTest {
 
         login(newHttpClient, httpsAdminServerUrl, newadmin.email, newadmin.pass);
 
-        organization = new Organization("My Org 2 ", "Some TimeZone", "/static/logo.png", false, SUPER_ORG_PARENT_ID);
+        organization = new Organization("My Org 2 ", "Some TimeZone", "/static/logo.png", false, NO_PARENT_ID);
 
         req = new HttpPut(httpsAdminServerUrl + "/organization");
         req.setEntity(new StringEntity(organization.toString(), ContentType.APPLICATION_JSON));
@@ -685,7 +685,7 @@ public class OrganizationAPITest extends APIBaseTest {
             assertNotNull(fromApi.webDashboard);
         }
 
-        Organization organization = new Organization("My Org", "Some TimeZone", "/static/logo.png", false, SUPER_ORG_PARENT_ID);
+        Organization organization = new Organization("My Org", "Some TimeZone", "/static/logo.png", false, NO_PARENT_ID);
         organization.selectedProducts = new int[]{1};
 
         req = new HttpPut(httpsAdminServerUrl + "/organization");
@@ -723,7 +723,7 @@ public class OrganizationAPITest extends APIBaseTest {
             assertArrayEquals(product.webDashboard.widgets, productFromApi.webDashboard.widgets);
         }
 
-        Organization organization2 = new Organization("My Org2", "Some TimeZone", "/static/logo.png", false, SUPER_ORG_PARENT_ID);
+        Organization organization2 = new Organization("My Org2", "Some TimeZone", "/static/logo.png", false, NO_PARENT_ID);
         organization2.selectedProducts = new int[]{1};
 
         req = new HttpPut(httpsAdminServerUrl + "/organization");
@@ -805,7 +805,7 @@ public class OrganizationAPITest extends APIBaseTest {
             assertEquals(2, fromApi.id);
         }
 
-        Organization organization = new Organization("My Org", "Some TimeZone", "/static/logo.png", false, SUPER_ORG_PARENT_ID);
+        Organization organization = new Organization("My Org", "Some TimeZone", "/static/logo.png", false, NO_PARENT_ID);
         organization.selectedProducts = new int[]{1};
 
         HttpPut createOrgReq = new HttpPut(httpsAdminServerUrl + "/organization");
@@ -934,7 +934,7 @@ public class OrganizationAPITest extends APIBaseTest {
             assertEquals(2, fromApi.id);
         }
 
-        Organization organization = new Organization("My Org", "Some TimeZone", "/static/logo.png", false, SUPER_ORG_PARENT_ID);
+        Organization organization = new Organization("My Org", "Some TimeZone", "/static/logo.png", false, NO_PARENT_ID);
         organization.selectedProducts = new int[]{1, 2};
 
         HttpPut createOrgReq = new HttpPut(httpsAdminServerUrl + "/organization");
@@ -1037,7 +1037,7 @@ public class OrganizationAPITest extends APIBaseTest {
             assertEquals(1, fromApi.id);
         }
 
-        Organization organization = new Organization("Sub Org", "Some TimeZone", "/static/logo.png", false, SUPER_ORG_PARENT_ID);
+        Organization organization = new Organization("Sub Org", "Some TimeZone", "/static/logo.png", false, NO_PARENT_ID);
         organization.selectedProducts = new int[]{1};
 
         req = new HttpPut(httpsAdminServerUrl + "/organization");
@@ -1102,7 +1102,7 @@ public class OrganizationAPITest extends APIBaseTest {
             assertEquals(1, fromApi.id);
         }
 
-        Organization organization = new Organization("Sub Org", "Some TimeZone", "/static/logo.png", false, SUPER_ORG_PARENT_ID);
+        Organization organization = new Organization("Sub Org", "Some TimeZone", "/static/logo.png", false, NO_PARENT_ID);
         organization.selectedProducts = new int[]{1};
 
         req = new HttpPut(httpsAdminServerUrl + "/organization");
@@ -1121,7 +1121,7 @@ public class OrganizationAPITest extends APIBaseTest {
             assertEquals(2, productFromApi.id);
         }
 
-        Organization organization2 = new Organization("Sub Org 2", "Some TimeZone", "/static/logo.png", false, SUPER_ORG_PARENT_ID);
+        Organization organization2 = new Organization("Sub Org 2", "Some TimeZone", "/static/logo.png", false, NO_PARENT_ID);
         organization2.selectedProducts = new int[]{1};
 
         req = new HttpPut(httpsAdminServerUrl + "/organization");

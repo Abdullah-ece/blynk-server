@@ -51,7 +51,7 @@ import java.security.Security;
 import java.util.HashMap;
 import java.util.Map;
 
-import static cc.blynk.server.core.model.web.Organization.SUPER_ORG_PARENT_ID;
+import static cc.blynk.server.core.model.web.Organization.NO_PARENT_ID;
 import static cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType.RAW_DATA;
 
 /**
@@ -200,7 +200,7 @@ public final class ServerLauncher {
     private static Organization createDefaultOrgData(Holder holder) {
         System.out.println("Creating default organization structure.");
         Organization superOrg = new Organization("Blynk", "Europe/Kiev",
-                "/static/logo.png", true, SUPER_ORG_PARENT_ID, true,
+                "/static/logo.png", true, NO_PARENT_ID, true,
                 new Role(Role.SUPER_ADMIN_ROLE_ID, "Super Admin", 0b11111111111111111111),
                 new Role(1, "Admin", 0b11111111111111111111),
                 new Role(2, "Staff", 0b11111111111111111111),

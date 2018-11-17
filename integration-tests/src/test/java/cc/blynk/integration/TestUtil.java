@@ -69,7 +69,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import static cc.blynk.integration.APIBaseTest.createDeviceNameMeta;
 import static cc.blynk.integration.APIBaseTest.createDeviceOwnerMeta;
-import static cc.blynk.server.core.model.web.Organization.SUPER_ORG_PARENT_ID;
+import static cc.blynk.server.core.model.web.Organization.NO_PARENT_ID;
 import static cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType.RAW_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.BLYNK_INTERNAL;
 import static cc.blynk.server.core.protocol.enums.Command.BRIDGE;
@@ -509,7 +509,7 @@ public final class TestUtil {
     }
 
     public static Organization createDefaultOrg() {
-        Organization org = new Organization("Blynk Inc.", "Europe/Kiev", "/static/logo.png", true, SUPER_ORG_PARENT_ID,
+        Organization org = new Organization("Blynk Inc.", "Europe/Kiev", "/static/logo.png", true, NO_PARENT_ID,
                 new Role(Role.SUPER_ADMIN_ROLE_ID, "Super Admin", 0b11111111111111111111),
                 new Role(1, "Admin", 0b11111111111111111111),
                 new Role(2, "Staff", 0b11111111111111111111),

@@ -44,13 +44,7 @@ public class WebGetOrganizationLogic {
             }
         }
 
-        String parentOrgName = null;
-        if (organization.hasParentOrg()) {
-            Organization parentOrg = organizationDao.getOrgById(organization.parentId);
-            if (parentOrg != null && parentOrg.name != null) {
-                parentOrgName = parentOrg.name;
-            }
-        }
+        String parentOrgName = organizationDao.getParentOrgName(organization.parentId);
 
         if (ctx.channel().isWritable()) {
             String orgString = new OrganizationDTO(organization, parentOrgName).toString();
