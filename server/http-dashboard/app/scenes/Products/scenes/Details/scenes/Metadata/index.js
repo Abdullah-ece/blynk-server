@@ -305,7 +305,8 @@ class Metadata extends React.Component {
         key: key,
         name: field.name,
         value: field.value,
-        role: convertRoleToArr(field.roleIds)
+        role: convertRoleToArr(field.roleIds),
+        icon: field.icon
       };
 
       if (field.name && field.name === hardcodedRequiredMetadataFieldsNames.LocationName) {

@@ -62,7 +62,7 @@ class NoDevices extends React.Component {
           </div>
           <div className="devices-no-items-action">
             <Link to="/products/create">
-              <Button icon="plus" type="primary">Create New Product</Button>
+              <Button icon="plus" type="primary">New Product</Button>
             </Link>
           </div>
         </div>

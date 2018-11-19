@@ -25,7 +25,7 @@ export default class ProductsList extends React.Component {
         <MainLayout.Header title="Products" options={this.props.canCreateProducts && (
           <div>
             <Link to="/products/create">
-              <Button icon="plus" type="primary">Create New Product</Button>
+              <Button icon="plus" type="primary">New Product</Button>
             </Link>
           </div>
         ) || null}/>
