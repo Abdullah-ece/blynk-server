@@ -2,7 +2,9 @@ package cc.blynk.integration.https;
 
 import cc.blynk.integration.SingleServerInstancePerTestWithDBAndNewOrg;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
+import cc.blynk.server.api.http.dashboard.dto.OrganizationDTO;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.utils.SHA256Util;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -56,21 +58,21 @@ public class InvitationAPIWebsocketTest extends SingleServerInstancePerTestWithD
     @Test
     public void canInviteExistingPending() throws Exception {
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
-        client.inviteUser(orgId, "test@gmail.com", "Dmitriy", 3);
+        client.inviteUser(orgId, "test1@gmail.com", "Dmitriy", 3);
         client.verifyResult(ok(1));
 
-        client.canInviteUser("test@gmail.com");
-        client.verifyResult(webJson(2, "Invitation for test@gmail.com was already sent."));
+        client.canInviteUser("test1@gmail.com");
+        client.verifyResult(webJson(2, "Invitation for test1@gmail.com was already sent."));
     }
 
     @Test
     public void sendInvitationFromRegularUser() throws Exception {
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
-        client.inviteUser(orgId, "test@gmail.com", "Dmitriy", 3);
+        client.inviteUser(orgId, "test2@gmail.com", "Dmitriy", 3);
         client.verifyResult(ok(1));
 
-        verify(holder.mailWrapper).sendHtml(eq("test@gmail.com"), eq("Invitation to Blynk Inc. dashboard."), contains("/dashboard/invite?token="));
-        verify(holder.mailWrapper).sendHtml(eq("test@gmail.com"), eq("Invitation to Blynk Inc. dashboard."), contains("https://localhost:10443/static/logo.png"));
+        verify(holder.mailWrapper).sendHtml(eq("test2@gmail.com"), eq("Invitation to Blynk Inc. dashboard."), contains("/dashboard/invite?token="));
+        verify(holder.mailWrapper).sendHtml(eq("test2@gmail.com"), eq("Invitation to Blynk Inc. dashboard."), contains("https://localhost:10443/static/logo.png"));
     }
 
     @Test
@@ -123,6 +125,115 @@ public class InvitationAPIWebsocketTest extends SingleServerInstancePerTestWithD
         assertEquals("Dmitriy", user.name);
         assertEquals(3, user.roleId);
         assertEquals(orgId, user.orgId);
+
+        appWebSocketClient = defaultClient();
+        appWebSocketClient.start();
+        appWebSocketClient.loginViaInvite(token, passHash);
+        appWebSocketClient.verifyResult(webJson(1, "Invitation expired or was used already."));
+
+        newHttpClient.close();
+    }
+
+    @Test
+    public void invitationFullFromSubOrgFlowNoIcon() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+
+        Organization subOrg = new Organization("SubOrg1", "Europe/Kiev", null, true, -1);
+        client.createOrganization(orgId, subOrg);
+        OrganizationDTO subOrgDTO = client.parseOrganizationDTO(1);
+
+        client.inviteUser(subOrgDTO.id, "test3@gmail.com", "Dmitriy", 3);
+        client.verifyResult(ok(2));
+
+        ArgumentCaptor<String> bodyArgumentCapture = ArgumentCaptor.forClass(String.class);
+        verify(holder.mailWrapper, timeout(1000).times(1)).sendHtml(eq("test3@gmail.com"),
+                eq("Invitation to SubOrg1 dashboard."), bodyArgumentCapture.capture());
+        String body = bodyArgumentCapture.getValue();
+
+        String token = body.substring(body.indexOf("token=") + 6, body.indexOf("&"));
+        assertEquals(32, token.length());
+
+        verify(holder.mailWrapper).sendHtml(eq("test3@gmail.com"), eq("Invitation to SubOrg1 dashboard."), contains("https://localhost:10443/static/logo.png"));
+        verify(holder.mailWrapper).sendHtml(eq("test3@gmail.com"),
+                eq("Invitation to SubOrg1 dashboard."), contains("/dashboard/invite?token="));
+
+        HttpGet inviteGet = new HttpGet("https://localhost:" + properties.getHttpsPort() + "/dashboard" + "/invite?token=" + token);
+
+        //we don't need cookie from initial login here
+        CloseableHttpClient newHttpClient = getDefaultHttpsClient();
+
+        try (CloseableHttpResponse response = newHttpClient.execute(inviteGet)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        String passHash = SHA256Util.makeHash("123", "test3@gmail.com");
+        AppWebSocketClient appWebSocketClient = defaultClient();
+        appWebSocketClient.start();
+        appWebSocketClient.loginViaInvite(token, passHash);
+        appWebSocketClient.verifyResult(ok(1));
+
+        appWebSocketClient.getAccount();
+        User user = appWebSocketClient.parseAccount(2);
+        assertNotNull(user);
+        assertEquals("test3@gmail.com", user.email);
+        assertEquals("Dmitriy", user.name);
+        assertEquals(3, user.roleId);
+        assertEquals(subOrgDTO.id, user.orgId);
+
+        appWebSocketClient = defaultClient();
+        appWebSocketClient.start();
+        appWebSocketClient.loginViaInvite(token, passHash);
+        appWebSocketClient.verifyResult(webJson(1, "Invitation expired or was used already."));
+
+        newHttpClient.close();
+    }
+
+    @Test
+    public void invitationFullFromSubOrgFlowWithAnotherIcon() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+
+        Organization subOrg = new Organization("SubOrg2", "Europe/Kiev", "/static/123.png", true, -1);
+        client.createOrganization(orgId, subOrg);
+        OrganizationDTO subOrgDTO = client.parseOrganizationDTO(1);
+
+        client.inviteUser(subOrgDTO.id, "test4@gmail.com", "Dmitriy", 3);
+        client.verifyResult(ok(2));
+
+        ArgumentCaptor<String> bodyArgumentCapture = ArgumentCaptor.forClass(String.class);
+        verify(holder.mailWrapper, timeout(1000).times(1)).sendHtml(eq("test4@gmail.com"),
+                eq("Invitation to SubOrg2 dashboard."), bodyArgumentCapture.capture());
+        String body = bodyArgumentCapture.getValue();
+
+        String token = body.substring(body.indexOf("token=") + 6, body.indexOf("&"));
+        assertEquals(32, token.length());
+
+        verify(holder.mailWrapper).sendHtml(eq("test4@gmail.com"), eq("Invitation to SubOrg2 dashboard."),
+                contains("https://localhost:10443/static/123.png"));
+        verify(holder.mailWrapper).sendHtml(eq("test4@gmail.com"),
+                eq("Invitation to SubOrg2 dashboard."), contains("/dashboard/invite?token="));
+
+        HttpGet inviteGet = new HttpGet("https://localhost:" + properties.getHttpsPort() + "/dashboard" + "/invite?token=" + token);
+
+        //we don't need cookie from initial login here
+        CloseableHttpClient newHttpClient = getDefaultHttpsClient();
+
+        try (CloseableHttpResponse response = newHttpClient.execute(inviteGet)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        String passHash = SHA256Util.makeHash("123", "test4@gmail.com");
+        AppWebSocketClient appWebSocketClient = defaultClient();
+        appWebSocketClient.start();
+        appWebSocketClient.loginViaInvite(token, passHash);
+        appWebSocketClient.verifyResult(ok(1));
+
+        appWebSocketClient.getAccount();
+        User user = appWebSocketClient.parseAccount(2);
+        assertNotNull(user);
+        assertEquals("test4@gmail.com", user.email);
+        assertEquals("Dmitriy", user.name);
+        assertEquals(3, user.roleId);
+        assertEquals(subOrgDTO.id, user.orgId);
 
         appWebSocketClient = defaultClient();
         appWebSocketClient.start();

@@ -62,6 +62,13 @@ public final class WebInviteUserLogic {
         this.httpsServerUrl = holder.props.httpsServerUrl;
     }
 
+    private static String getLogoOrDefault(Organization org) {
+        if (org.logoUrl == null || org.logoUrl.isEmpty()) {
+            return "/static/logo.png";
+        }
+        return org.logoUrl;
+    }
+
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
         String[] split = split2(message.body);
 
@@ -106,7 +113,7 @@ public final class WebInviteUserLogic {
             try {
                 tokensPool.addToken(token,  new InviteToken(userInvite.email, orgId, getAppName()));
                 String body = inviteTemplate
-                        .replace(Placeholders.ORG_LOGO_URL, httpsServerUrl + org.logoUrl)
+                        .replace(Placeholders.ORG_LOGO_URL, httpsServerUrl + getLogoOrDefault(org))
                         .replace(Placeholders.ORGANIZATION, org.name)
                         .replace(Placeholders.PRODUCT_NAME, productName)
                         .replace("{link}", inviteURL + token + "&email="
