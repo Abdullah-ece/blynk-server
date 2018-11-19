@@ -122,6 +122,34 @@ class UserLayout extends React.Component {
     });
   }
 
+  OrgSelection() {
+
+    return (
+      <Menu className="user-layout--organization-select" onClick={this.handleClick.bind(this)}>
+        <Menu.ItemGroup title="Main Organization" className="user-layout--organization-select--meta-org">
+          <Menu.Item key="/user-profile/account-settings">
+            Raypak
+          </Menu.Item>
+        </Menu.ItemGroup>
+        <Menu.Divider/>
+        <Menu.ItemGroup title="Sub Organizations">
+          <Menu.Item key="/user-profile/organization-settings" className="user-layout--organization-select--org-level-1">
+            Acme
+          </Menu.Item>
+          <Menu.Item key="/user-profile/organization-settings-2" className="user-layout--organization-select--org-level-2">
+            Heat and Warm
+          </Menu.Item>
+          <Menu.Item key="/user-profile/organization-settings-3" className="user-layout--organization-select--org-level-3">
+            Heat and Warm
+          </Menu.Item>
+          <Menu.Item key="/user-profile/organization-settings-4" className="user-layout--organization-select--org-level-1 user-layout--organization-select--org-active">
+            Acme
+          </Menu.Item>
+        </Menu.ItemGroup>
+      </Menu>
+    );
+  }
+
   AccountMenu() {
 
     return (
@@ -170,9 +198,12 @@ class UserLayout extends React.Component {
             onMouseOut={this.handleMouseLeave}
           >
             <div className="user-layout-left-navigation-company-logo">
-              <Link to="/">
-                <img src={this.props.Organization.logoUrl} alt=""/>
-              </Link>
+              <Dropdown overlayClassName={`user-layout--organization-select--overlay ${this.state.collapsed ? '' : 'user-layout--organization-select--overlay--open'}`} overlay={this.OrgSelection()} trigger={['hover']} placement="topLeft"
+                        className="my-custom-dropdown">
+                <Link to="/">
+                  <img src={this.props.Organization.logoUrl} alt=""/>
+                </Link>
+              </Dropdown>
             </div>
             <div className={`user-layout-left-navigation-collapse-btn`}>
               <Icon type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'} onClick={this.toggleCollapsed}/>
@@ -202,7 +233,7 @@ class UserLayout extends React.Component {
               )}
             </Menu>
             <div className="user-layout-left-navigation-profile">
-              <Dropdown overlay={this.AccountMenu()} trigger={['hover']} placement="topLeft" className="my-custom-dropdown">
+              <Dropdown overlayClassName={`user-layout-left-navigation-profile--overlay ${this.state.collapsed ? '': 'user-layout-left-navigation-profile--overlay--open'}`} overlay={this.AccountMenu()} trigger={['hover']} placement="topLeft" className="my-custom-dropdown">
                   <Avatar size="large" icon="user" className="user-layout-left-navigation-profile-button"/>
               </Dropdown>
               <div>

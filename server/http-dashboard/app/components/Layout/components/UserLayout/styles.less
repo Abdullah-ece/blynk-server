@@ -6,6 +6,70 @@
   justify-content: flex-start;
 }
 
+.user-layout--organization-select--overlay {
+  left: 80px !important;
+
+  &.user-layout--organization-select--overlay--open {
+    left: 206px !important;
+  }
+}
+
+.user-layout-left-navigation-profile--overlay--open {
+  left: 208px !important;
+  margin-top: -8px !important;
+  padding-top: 48px;
+}
+.user-layout-left-navigation-profile--overlay {
+  left: 80px !important;
+  .ant-dropdown-menu {
+    margin-top: 48px !important;
+  }
+}
+
+.user-layout--organization-select {
+
+  .ant-dropdown-menu-item-group-title {
+    font-size: 16px;
+    padding: 8px 16px;
+  }
+  .ant-dropdown-menu-item {
+    padding: 8px 16px;
+    font-weight: 400 !important;
+  }
+
+  .user-layout--organization-select--meta-org {
+    .ant-dropdown-menu-item {
+      .font-book-h3;
+      color: @color-dark-grey-75;
+    }
+  }
+  .user-layout--organization-select--org-active {
+    color: @color-primary !important;
+  }
+  .user-layout--organization-select--org-level-1 {
+    font-weight: 500 !important;
+  }
+
+  .user-layout--organization-select--org-level-2 {
+    padding-left: 24px !important;
+  }
+  .user-layout--organization-select--org-level-3 {
+    padding-left: 32px !important;
+  }
+  .user-layout--organization-select--org-level-4 {
+    padding-left: 40px !important;
+  }
+  .user-layout--organization-select--org-level-5 {
+    padding-left: 48px !important;
+  }
+  .user-layout--organization-select--org-level-6 {
+    padding-left: 56px !important;
+  }
+  .user-layout--organization-select--org-level-7 {
+    padding-left: 64px !important;
+  }
+}
+
 // element to prevent overlap because left-navigation
 // uses position: fixed
 .user-layout-left-navigation-stack {
