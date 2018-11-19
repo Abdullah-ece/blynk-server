@@ -9,9 +9,9 @@ import cc.blynk.server.core.protocol.exceptions.NoDataException;
 import cc.blynk.server.core.reporting.GraphPinRequest;
 import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
 import cc.blynk.server.core.reporting.raw.BaseReportingKey;
-import cc.blynk.server.core.reporting.raw.GraphValue;
 import cc.blynk.server.core.reporting.raw.RawDataCacheForGraphProcessor;
 import cc.blynk.server.core.reporting.raw.RawDataProcessor;
+import cc.blynk.server.db.dao.RawEntry;
 import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.NumberUtil;
 import org.apache.logging.log4j.LogManager;
@@ -259,15 +259,15 @@ public class ReportingDiskDao implements Closeable {
             return;
         }
 
-        BaseReportingKey key = new BaseReportingKey(orgId, deviceId, pinType, pin);
+        BaseReportingKey key = new BaseReportingKey(deviceId, pinType, pin);
         averageAggregator.collect(key, ts, doubleVal);
         if (device.webDashboard.needRawDataForGraph(pin, pinType) /* || dash.needRawDataForGraph(pin, pinType)*/) {
-            rawDataCacheForGraphProcessor.collect(key, new GraphValue(doubleVal, ts));
+            rawDataCacheForGraphProcessor.collect(key, new RawEntry(ts, doubleVal));
         }
     }
 
 
-    public byte[][] getReportingData(int orgId, GraphPinRequest[] requestedPins) throws NoDataException {
+    public byte[][] getReportingData(GraphPinRequest[] requestedPins) throws NoDataException {
         byte[][] values = new byte[requestedPins.length][];
 
         for (int i = 0; i < requestedPins.length; i++) {
@@ -276,7 +276,7 @@ public class ReportingDiskDao implements Closeable {
             if (graphPinRequest.isValid()) {
                 ByteBuffer byteBuffer = graphPinRequest.isLiveData()
                         //live graph data is not on disk but in memory
-                        ? rawDataCacheForGraphProcessor.getLiveGraphData(orgId, graphPinRequest)
+                        ? rawDataCacheForGraphProcessor.getLiveGraphData(graphPinRequest)
                         : getByteBufferFromDisk(graphPinRequest);
                 values[i] = byteBuffer == null ? EMPTY_BYTES : byteBuffer.array();
             } else {

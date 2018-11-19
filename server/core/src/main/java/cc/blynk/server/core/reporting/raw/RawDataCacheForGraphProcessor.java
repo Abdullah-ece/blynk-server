@@ -1,11 +1,15 @@
 package cc.blynk.server.core.reporting.raw;
 
 import cc.blynk.server.core.reporting.GraphPinRequest;
+import cc.blynk.server.core.reporting.WebGraphRequest;
+import cc.blynk.server.db.dao.RawEntry;
 import cc.blynk.utils.structure.LimitedArrayDeque;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.nio.ByteBuffer;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static cc.blynk.utils.FileUtils.SIZE_OF_REPORT_ENTRY;
@@ -23,14 +27,14 @@ public class RawDataCacheForGraphProcessor {
 
     private static final int GRAPH_CACHE_SIZE = 60;
 
-    public final ConcurrentHashMap<BaseReportingKey, LimitedArrayDeque<GraphValue>> rawStorage;
+    public final ConcurrentHashMap<BaseReportingKey, LimitedArrayDeque<RawEntry>> rawStorage;
 
     public RawDataCacheForGraphProcessor() {
         rawStorage = new ConcurrentHashMap<>();
     }
 
-    public void collect(BaseReportingKey baseReportingKey, GraphValue graphCacheValue) {
-        LimitedArrayDeque<GraphValue> cache = rawStorage.get(baseReportingKey);
+    public void collect(BaseReportingKey baseReportingKey, RawEntry graphCacheValue) {
+        LimitedArrayDeque<RawEntry> cache = rawStorage.get(baseReportingKey);
         if (cache == null) {
             cache = new LimitedArrayDeque<>(GRAPH_CACHE_SIZE);
             rawStorage.put(baseReportingKey, cache);
@@ -38,8 +42,24 @@ public class RawDataCacheForGraphProcessor {
         cache.add(graphCacheValue);
     }
 
-    public ByteBuffer getLiveGraphData(int orgId, GraphPinRequest graphPinRequest) {
-        LimitedArrayDeque<GraphValue> cache = rawStorage.get(new BaseReportingKey(orgId, graphPinRequest));
+    public Collection<RawEntry> getLiveGraphData(WebGraphRequest webGraphRequest) {
+        Collection<RawEntry> entries = rawStorage.get(
+                new BaseReportingKey(webGraphRequest.deviceId, webGraphRequest.pinType, webGraphRequest.pin));
+        if (entries == null) {
+            return Collections.emptyList();
+        }
+        return entries;
+    }
+
+    //todo remove
+    public ByteBuffer getLiveGraphData(GraphPinRequest graphPinRequest) {
+        LimitedArrayDeque<RawEntry> cache = rawStorage.get(
+                new BaseReportingKey(
+                        graphPinRequest.deviceId,
+                        graphPinRequest.pinType,
+                        graphPinRequest.pin
+                )
+        );
 
         if (cache != null && cache.size() > graphPinRequest.skipCount) {
             return toByteBuffer(cache, graphPinRequest.count, graphPinRequest.skipCount);
@@ -48,7 +68,7 @@ public class RawDataCacheForGraphProcessor {
         return null;
     }
 
-    private ByteBuffer toByteBuffer(LimitedArrayDeque<GraphValue> cache, int count, int skipCount) {
+    private ByteBuffer toByteBuffer(LimitedArrayDeque<RawEntry> cache, int count, int skipCount) {
         int size = cache.size();
         int expectedMinimumLength = count + skipCount;
         int diff = size - expectedMinimumLength;
@@ -62,12 +82,12 @@ public class RawDataCacheForGraphProcessor {
 
         int i = 0;
         int counter = 0;
-        for (GraphValue graphValue : cache) {
+        for (RawEntry rawEntry : cache) {
             if (startReadIndex <= i && counter < expectedResultSize) {
                 counter++;
-                byteBuffer.putDouble(graphValue.value)
-                        .putLong(graphValue.ts);
-                log.trace("Returning point value {}, ts : {}", graphValue.value, graphValue.ts);
+                byteBuffer.putDouble(rawEntry.value)
+                        .putLong(rawEntry.ts);
+                log.trace("Returning point value {}, ts : {}", rawEntry.value, rawEntry.ts);
             }
             i++;
         }

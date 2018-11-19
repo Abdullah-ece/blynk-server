@@ -3,7 +3,7 @@ package cc.blynk.server.db;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.model.web.product.EventType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
-import cc.blynk.server.core.reporting.GraphPinRequest;
+import cc.blynk.server.core.reporting.WebGraphRequest;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
 import cc.blynk.server.core.stats.model.Stat;
@@ -117,9 +117,9 @@ public class ReportingDBManager implements Closeable {
         }
     }
 
-    public List<RawEntry> getReportingDataByTs(GraphPinRequest graphPinRequest) throws Exception {
+    public List<RawEntry> getReportingDataByTs(WebGraphRequest webGraphRequest) throws Exception {
         if (isDBEnabled()) {
-            return reportingDBDao.getReportingDataByTs(graphPinRequest);
+            return reportingDBDao.getReportingDataByTs(webGraphRequest);
         }
         return Collections.emptyList();
     }

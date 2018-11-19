@@ -29,6 +29,7 @@ import cc.blynk.server.core.model.web.UserInviteDTO;
 import cc.blynk.server.core.model.web.product.EventType;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
+import cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.web.handlers.logic.device.timeline.TimelineDTO;
@@ -361,6 +362,16 @@ public final class AppWebSocketClient extends BaseTestAppClient {
 
     public void send(String line) {
         send(produceWebSocketFrame(produceMessageBaseOnUserInput(line, ++msgId)));
+    }
+
+    public void getGraphData(int deviceId, long widgetId, GraphPeriod graphPeriod) {
+        send("getenhanceddata " + deviceId + BODY_SEPARATOR_STRING + widgetId + BODY_SEPARATOR_STRING + graphPeriod);
+    }
+
+    public void getGraphDataCustom(int deviceId, long widgetId, long from, long to) {
+        send("getenhanceddata " + deviceId + BODY_SEPARATOR_STRING
+                + widgetId + BODY_SEPARATOR_STRING + GraphPeriod.CUSTOM
+                + BODY_SEPARATOR_STRING + from + BODY_SEPARATOR_STRING + to);
     }
 
 }

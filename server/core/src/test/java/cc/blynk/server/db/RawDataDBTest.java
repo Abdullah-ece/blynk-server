@@ -67,7 +67,7 @@ public class RawDataDBTest {
                 reportingDBManager.reportingDBDao.getRawData(dataQueryRequest);
         assertNotNull(result);
         RawEntry entry = result.get(0);
-        assertEquals(System.currentTimeMillis(), entry.getKey(), 5000);
+        assertEquals(System.currentTimeMillis(), entry.getTs(), 5000);
         assertEquals(123, entry.getValue(), 0.0001);
     }
 
@@ -93,15 +93,15 @@ public class RawDataDBTest {
         Iterator<RawEntry> iterator = result.iterator();
         RawEntry entry = iterator.next();
 
-        assertEquals(System.currentTimeMillis(), entry.getKey(), 1000);
+        assertEquals(System.currentTimeMillis(), entry.getTs(), 1000);
         assertEquals(123, entry.getValue(), 0.0001);
 
         entry = iterator.next();
-        assertEquals(System.currentTimeMillis(), entry.getKey(), 1000);
+        assertEquals(System.currentTimeMillis(), entry.getTs(), 1000);
         assertEquals(124, entry.getValue(), 0.0001);
 
         entry = iterator.next();
-        assertEquals(System.currentTimeMillis(), entry.getKey(), 1000);
+        assertEquals(System.currentTimeMillis(), entry.getTs(), 1000);
         assertEquals(125.25, entry.getValue(), 0.0001);
 
         //test limit
@@ -113,7 +113,7 @@ public class RawDataDBTest {
 
         iterator = result.iterator();
         entry = iterator.next();
-        assertEquals(System.currentTimeMillis(), entry.getKey(), 1000);
+        assertEquals(System.currentTimeMillis(), entry.getTs(), 1000);
         assertEquals(125.25, entry.getValue(), 0.0001);
 
         //test offset
@@ -125,7 +125,7 @@ public class RawDataDBTest {
 
         iterator = result.iterator();
         entry = iterator.next();
-        assertEquals(System.currentTimeMillis(), entry.getKey(), 1000);
+        assertEquals(System.currentTimeMillis(), entry.getTs(), 1000);
         assertEquals(123, entry.getValue(), 0.0001);
     }
 }

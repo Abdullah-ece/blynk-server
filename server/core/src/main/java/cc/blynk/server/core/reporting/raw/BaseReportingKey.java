@@ -1,7 +1,6 @@
 package cc.blynk.server.core.reporting.raw;
 
 import cc.blynk.server.core.model.enums.PinType;
-import cc.blynk.server.core.reporting.GraphPinRequest;
 
 import java.io.Serializable;
 
@@ -12,19 +11,11 @@ import java.io.Serializable;
  */
 public final class BaseReportingKey implements Serializable {
 
-    public final int orgId;
     public final int deviceId;
     public final PinType pinType;
     public final short pin;
 
-    BaseReportingKey(int orgId, GraphPinRequest graphPinRequest) {
-        this(orgId,
-             graphPinRequest.deviceId,
-             graphPinRequest.pinType, graphPinRequest.pin);
-    }
-
-    public BaseReportingKey(int orgId, int deviceId, PinType pinType, short pin) {
-        this.orgId = orgId;
+    public BaseReportingKey(int deviceId, PinType pinType, short pin) {
         this.deviceId = deviceId;
         this.pinType = pinType;
         this.pin = pin;
@@ -47,16 +38,12 @@ public final class BaseReportingKey implements Serializable {
         if (pin != that.pin) {
             return false;
         }
-        if (orgId != that.orgId) {
-            return false;
-        }
         return pinType == that.pinType;
     }
 
     @Override
     public int hashCode() {
-        int result = orgId;
-        result = 31 * result + deviceId;
+        int result = deviceId;
         result = 31 * result + (pinType != null ? pinType.hashCode() : 0);
         result = 31 * result + (int) pin;
         return result;

@@ -329,7 +329,7 @@ public class ExternalAPITest extends APIBaseTest {
     public void testPutExtraWithNoWidget() throws Exception {
         HttpPut request = new HttpPut(httpsServerUrl + token + "/extra/pin/v10");
         request.setHeader("Content-Type", ContentType.APPLICATION_JSON.toString());
-        request.setEntity(new StringEntity("[{\"timestamp\" : 123, \"value\":\"100\"}]", ContentType.APPLICATION_JSON));
+        request.setEntity(new StringEntity("[{\"ts\" : 123, \"value\":\"100\"}]", ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());

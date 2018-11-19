@@ -20,7 +20,7 @@ public final class AggregationKey implements Serializable {
     public final long ts;
 
     public AggregationKey(int orgId, int deviceId, PinType pinType, short pin, long ts) {
-        this(new BaseReportingKey(orgId, deviceId, pinType, pin), ts);
+        this(new BaseReportingKey(deviceId, pinType, pin), ts);
     }
 
     public AggregationKey(BaseReportingKey baseReportingKey, long ts) {
@@ -34,10 +34,6 @@ public final class AggregationKey implements Serializable {
 
     public boolean isOutdated(long nowTruncatedToPeriod) {
         return ts < nowTruncatedToPeriod;
-    }
-
-    public int getOrgId() {
-        return baseReportingKey.orgId;
     }
 
     public int getDeviceId() {

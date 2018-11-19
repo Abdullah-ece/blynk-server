@@ -6,7 +6,7 @@ import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod;
 import cc.blynk.server.core.model.widgets.web.FieldType;
 import cc.blynk.server.core.model.widgets.web.SelectedColumn;
-import cc.blynk.server.core.reporting.GraphPinRequest;
+import cc.blynk.server.core.reporting.WebGraphRequest;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
 import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
@@ -115,21 +115,21 @@ public class ReportingDBDao {
         this.ds = ds;
     }
 
-    public List<RawEntry> getReportingDataByTs(GraphPinRequest graphPinRequest) throws Exception {
+    public List<RawEntry> getReportingDataByTs(WebGraphRequest webGraphRequest) throws Exception {
         List<RawEntry> result;
         try (Connection connection = ds.getConnection()) {
             DSLContext create = DSL.using(connection, POSTGRES_9_4);
 
             result = create.select(field("ts"), field("value"))
-                    .from(getTableByGranularity(graphPinRequest.type))
-                    .where(TableDescriptor.DEVICE_ID.eq(graphPinRequest.deviceId)
-                            .and(TableDescriptor.PIN.eq((int) graphPinRequest.pin))
-                            .and(TableDescriptor.PIN_TYPE.eq(graphPinRequest.pinType.ordinal()))
+                    .from(getTableByGranularity(webGraphRequest.type))
+                    .where(TableDescriptor.DEVICE_ID.eq(webGraphRequest.deviceId)
+                            .and(TableDescriptor.PIN.eq((int) webGraphRequest.pin))
+                            .and(TableDescriptor.PIN_TYPE.eq(webGraphRequest.pinType.ordinal()))
                             .and(TableDescriptor.TS
-                                    .betweenSymmetric(new Timestamp(graphPinRequest.from))
-                                    .and(new Timestamp(graphPinRequest.to))))
+                                    .betweenSymmetric(new Timestamp(webGraphRequest.from))
+                                    .and(new Timestamp(webGraphRequest.to))))
                     .orderBy(TableDescriptor.TS.asc())
-                    .limit(graphPinRequest.count)
+                    .limit(webGraphRequest.count)
                     .fetchInto(RawEntry.class);
 
             connection.commit();

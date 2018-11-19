@@ -6,7 +6,7 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod;
-import cc.blynk.server.core.reporting.GraphPinRequest;
+import cc.blynk.server.core.reporting.WebGraphRequest;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
 import cc.blynk.server.db.dao.RawEntry;
@@ -65,7 +65,7 @@ public class ReportingDBTest {
     @Test
     public void testSelectFromEmptyReportingAverageTable() throws Exception {
         DataStream dataStream = new DataStream((byte) 1, VIRTUAL);
-        GraphPinRequest graphPinRequest = new GraphPinRequest(0, 0, dataStream, GraphPeriod.N_DAY,
+        WebGraphRequest graphPinRequest = new WebGraphRequest(0, dataStream, GraphPeriod.N_DAY,
                 0, AggregationFunctionType.AVG, 0L, 1L);
         List<RawEntry> rawEntries = reportingDBManager.reportingDBDao.getReportingDataByTs(graphPinRequest);
         assertNotNull(rawEntries);
@@ -84,12 +84,12 @@ public class ReportingDBTest {
         reportingDBManager.reportingDBDao.insert(data, GraphGranularityType.MINUTE);
 
         DataStream dataStream = new DataStream((byte) 1, VIRTUAL);
-        GraphPinRequest graphPinRequest = new GraphPinRequest(1, 1, dataStream, GraphPeriod.TWELVE_HOURS,
+        WebGraphRequest graphPinRequest = new WebGraphRequest(1, dataStream, GraphPeriod.TWELVE_HOURS,
                 0, AggregationFunctionType.AVG, System.currentTimeMillis() - 61000, System.currentTimeMillis());
         List<RawEntry> rawEntries = reportingDBManager.reportingDBDao.getReportingDataByTs(graphPinRequest);
         assertNotNull(rawEntries);
         assertEquals(1, rawEntries.size());
-        assertEquals(System.currentTimeMillis(), rawEntries.get(0).getKey(), 5000);
+        assertEquals(System.currentTimeMillis(), rawEntries.get(0).getTs(), 5000);
         assertEquals(1, rawEntries.get(0).getValue(), 0.001D);
     }
 

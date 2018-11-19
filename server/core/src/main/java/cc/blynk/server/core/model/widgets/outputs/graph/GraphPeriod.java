@@ -43,17 +43,15 @@ public enum GraphPeriod {
 
     public final int numberOfPoints;
     public final GraphGranularityType granularityType;
+    public final long millis;
 
     GraphPeriod(int numberOfPoints, GraphGranularityType granularityType) {
         this.numberOfPoints = numberOfPoints;
         this.granularityType = granularityType;
+        this.millis = numberOfPoints * getMillisForGranularity(granularityType);
     }
 
-    public long millis() {
-        return numberOfPoints * getMillisForGranularity();
-    }
-
-    private long getMillisForGranularity() {
+    private static long getMillisForGranularity(GraphGranularityType granularityType) {
         switch (granularityType) {
             case MINUTE:
                 return 60 * 1000L;

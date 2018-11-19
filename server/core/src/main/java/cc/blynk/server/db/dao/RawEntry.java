@@ -9,17 +9,21 @@ import java.sql.Timestamp;
  */
 public class RawEntry {
 
-    private final long key;
+    public final long ts;
 
-    private final double value;
+    public final double value;
 
-    public RawEntry(Timestamp key, double value) {
-        this.key = key.getTime();
+    public RawEntry(long ts, double value) {
+        this.ts = ts;
         this.value = value;
     }
 
-    public long getKey() {
-        return key;
+    public RawEntry(Timestamp ts, double value) {
+        this(ts.getTime(), value);
+    }
+
+    public long getTs() {
+        return ts;
     }
 
     public double getValue() {

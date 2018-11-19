@@ -106,7 +106,7 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
     }
 
     /**
-     * When file timestamp is the same as what the browser is sending up, send a "304 Not Modified"
+     * When file ts is the same as what the browser is sending up, send a "304 Not Modified"
      *
      * @param ctx
      *            Context

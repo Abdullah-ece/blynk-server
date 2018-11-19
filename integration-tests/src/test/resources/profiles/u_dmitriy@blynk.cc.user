@@ -13,7 +13,7 @@
          {
             "id":79780619,
             "name":"Blynk",
-            "timestamp":1450970049,
+            "ts":1450970049,
             "devices" : [{"id":0, "token":"1bd322be8fb24f3691b4724332e708e9", "boardType":"ESP8266"}],
             "widgets":[
                {
@@ -421,7 +421,7 @@
          {
             "id":698702475,
             "name":"A",
-            "timestamp":1449678105,
+            "ts":1449678105,
             "devices" : [{"id":0, "token":"cd2f5a62151e4fa2a6ae8ea506b6e15c", "boardType":"ESP8266"}],
             "widgets":[
                {
@@ -576,7 +576,7 @@
          {
             "id":698702476,
             "name":"infoPoint",
-            "timestamp":1449678105,
+            "ts":1449678105,
             "devices" : [{"id":0, "token":"f77d5ece132f4ac880d7c028d1200792", "boardType":"ESP8266"}],
             "widgets":[
                {
@@ -633,7 +633,7 @@
          },
          {
             "id":698702477,
-            "timestamp":1450882233,
+            "ts":1450882233,
             "devices" : [{"id":0, "token":"7b0a3a61322e41a5b50589cf52d775d1", "boardType":"ESP8266"}],
             "widgets":[
                {

@@ -7,7 +7,6 @@ import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
 import cc.blynk.server.api.http.dashboard.dto.ProductAndOrgIdDTO;
 import cc.blynk.server.api.http.dashboard.dto.ProductDTO;
-import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;
@@ -20,6 +19,7 @@ import cc.blynk.server.core.model.web.product.WebDashboard;
 import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
+import cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod;
 import cc.blynk.server.core.model.widgets.web.WebLineGraph;
 import cc.blynk.server.core.model.widgets.web.WebSource;
 import cc.blynk.server.core.model.widgets.web.WebSwitch;
@@ -30,7 +30,6 @@ import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
-import cc.blynk.utils.FileUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -58,6 +57,7 @@ import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.integration.TestUtil.webJson;
 import static cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType.AVG;
 import static cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType.RAW_DATA;
+import static cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod.LIVE;
 import static cc.blynk.server.core.reporting.average.AverageAggregatorProcessor.MINUTE;
 import static cc.blynk.server.internal.CommonByteBufUtil.deviceNotInNetwork;
 import static org.junit.Assert.assertEquals;
@@ -88,6 +88,10 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         Path userReportFolder = Paths.get(tempDir, "data", "1");
         org.apache.commons.io.FileUtils.deleteDirectory(userReportFolder.toFile());
         Files.createDirectories(userReportFolder);
+        //clean everything just in case
+        holder.reportingDBManager.executeSQL("DELETE FROM reporting_average_minute");
+        holder.reportingDBManager.executeSQL("DELETE FROM reporting_average_hourly");
+        holder.reportingDBManager.executeSQL("DELETE FROM reporting_average_daily");
     }
 
     @After
@@ -407,16 +411,25 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         appWebSocketClient.verifyResult(ok(1));
         appWebSocketClient.reset();
 
-        Path pinReportingDataPath = Paths.get(tempDir, "data", "1",
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (byte) 3, GraphGranularityType.DAILY));
-        Path pinReportingDataPath2 = Paths.get(tempDir, "data", "1",
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (byte) 4, GraphGranularityType.DAILY));
+        long now = System.currentTimeMillis();
+        AggregationValue aggregationValue = new AggregationValue();
+        aggregationValue.update(1.11D);
+        AggregationKey aggregationKey1 = new AggregationKey(regularUser.orgId, 1, PinType.VIRTUAL, (byte) 3, (now - 180_000) / MINUTE);
+        Map<AggregationKey, AggregationValue> data = new HashMap<>();
+        data.put(aggregationKey1, aggregationValue);
 
-        FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
-        FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
-        FileUtils.write(pinReportingDataPath2, 1.33D, 3333333);
+        AggregationValue aggregationValue2 = new AggregationValue();
+        aggregationValue2.update(1.22D);
+        AggregationKey aggregationKey2 = new AggregationKey(regularUser.orgId, 1, PinType.VIRTUAL, (byte) 3, (now - 120_000) / MINUTE);
+        data.put(aggregationKey2, aggregationValue2);
 
-        appWebSocketClient.send("getenhanceddata 1" + b(" 432 N_MONTH"));
+        AggregationValue aggregationValue3 = new AggregationValue();
+        aggregationValue3.update(1.33D);
+        AggregationKey aggregationKey3 = new AggregationKey(regularUser.orgId, 1, PinType.VIRTUAL, (byte) 4, (now - 60_000) / MINUTE);
+        data.put(aggregationKey3, aggregationValue3);
+        holder.reportingDBManager.reportingDBDao.insert(data, GraphGranularityType.MINUTE);
+
+        appWebSocketClient.getGraphData(1, 432, GraphPeriod.DAY);
 
         BinaryMessage graphDataResponse = appWebSocketClient.getBinaryBody();
         assertNotNull(graphDataResponse);
@@ -426,12 +439,12 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         assertEquals(1, bb.getInt());
         assertEquals(2, bb.getInt());
         assertEquals(1.11D, bb.getDouble(), 0.1);
-        assertEquals(1111111, bb.getLong());
+        assertEquals(aggregationKey1.getTs(GraphGranularityType.MINUTE), bb.getLong());
         assertEquals(1.22D, bb.getDouble(), 0.1);
-        assertEquals(2222222, bb.getLong());
+        assertEquals(aggregationKey2.getTs(GraphGranularityType.MINUTE), bb.getLong());
         assertEquals(1, bb.getInt());
         assertEquals(1.33D, bb.getDouble(), 0.1);
-        assertEquals(3333333, bb.getLong());
+        assertEquals(aggregationKey3.getTs(GraphGranularityType.MINUTE), bb.getLong());
 
     }
 
@@ -467,7 +480,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         appWebSocketClient.reset();
 
         newHardClient.send("hardware vw 3 123");
-        appWebSocketClient.send("getenhanceddata 1" + b(" 432 LIVE"));
+        appWebSocketClient.getGraphData(1, 432, LIVE);
 
         BinaryMessage graphDataResponse = appWebSocketClient.getBinaryBody();
         assertNotNull(graphDataResponse);
@@ -482,9 +495,6 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
 
     @Test
     public void getCustomWebGraphData() throws Exception {
-        //clean everything just in case
-        holder.reportingDBManager.executeSQL("DELETE FROM reporting_average_minute");
-
         login(regularUser.email, regularUser.pass);
         Device newDevice = new Device();
         newDevice.name = "My New Device";
