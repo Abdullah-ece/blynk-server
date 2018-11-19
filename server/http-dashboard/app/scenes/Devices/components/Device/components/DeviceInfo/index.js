@@ -60,7 +60,7 @@ class DeviceInfo extends React.Component {
 
     return (
       <div className="device--device-info">
-        <Row>
+        <Row className="device--device-info-details">
           <Col span={6}>
             <Fieldset>
               <Fieldset.Legend>Status</Fieldset.Legend>
