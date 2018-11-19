@@ -1,9 +1,9 @@
 import React from 'react';
-import {Row, Col} from 'antd';
+import { Row, Col } from 'antd';
 import FormItem from 'components/FormItem';
 import Preview from 'scenes/Products/components/Preview';
 import classnames from 'classnames';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import LinearIcon from "components/LinearIcon";
 
 @connect((state) => ({
@@ -49,13 +49,15 @@ class MetadataItemStatic extends React.Component {
       <div className={itemClasses}>
         <Row gutter={0}>
           <Col span={2} className="product-metadata-item--icon-select-section">
-            <LinearIcon type={this.props.icon}/>
+            <div className="product-metadata-item--icon-selected">
+              <LinearIcon type={this.props.icon || 'cube'}/>
+            </div>
           </Col>
           <Col span={12}>
-            { this.props.children }
+            {this.props.children}
           </Col>
           <Col span={6} offset={1}>
-            { this.preview() }
+            {this.preview()}
           </Col>
         </Row>
         <Row>
@@ -68,7 +70,9 @@ class MetadataItemStatic extends React.Component {
                   this.props.roles.filter((role) => (
                     (this.props.role || []).indexOf(Number(role.id)) !== -1
                   )).map((role) => (
-                    <div className="product-metadata-static-field product-metadata-static-field-inline" key={role.id}>
+                    <div
+                      className="product-metadata-static-field product-metadata-static-field-inline"
+                      key={role.id}>
                       {role.name}
                     </div>
                   ))
