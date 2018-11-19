@@ -5,7 +5,8 @@ import Metadata from 'scenes/Products/components/Metadata';
 class BaseFieldStatic extends React.Component {
 
   static propTypes = {
-    role: React.PropTypes.array
+    role: React.PropTypes.array,
+    icon: React.PropTypes.string
   };
 
   constructor(props) {
@@ -21,9 +22,8 @@ class BaseFieldStatic extends React.Component {
   render() {
 
     const {Item} = Metadata;
-
     return (
-      <Item.Static preview={this.getPreviewValues()} role={this.props.role}>
+      <Item.Static preview={this.getPreviewValues()} role={this.props.role} icon={this.props.icon}>
         { this.component() }
       </Item.Static>
     );
