@@ -158,14 +158,17 @@ class WidgetEditable extends React.Component {
       <div className="widgets--widget-tools"
            onMouseDown={preventDragNDrop}
            onMouseUp={preventDragNDrop}>
-
-        <Popconfirm title="Are you sure you want to delete this widget"
-                    okText="Yes"
-                    cancelText="No"
-                    onConfirm={this.handleWidgetDelete}
-                    overlayClassName="danger">
-          <Button icon="delete" size="small"/>
-        </Popconfirm>
+        {
+          this.props.meta.pristine ?
+            <Popconfirm title="Are you sure you want to delete this widget"
+                        okText="Yes"
+                        cancelText="No"
+                        onConfirm={this.handleWidgetDelete}
+                        overlayClassName="danger">
+              <Button icon="delete" size="small"/>
+            </Popconfirm> :
+            <Button icon="delete" size="small" onClick={this.handleWidgetDelete}/>
+        }
 
         <Button icon="copy" size="small" onClick={this.handleWidgetClone}/>
 
