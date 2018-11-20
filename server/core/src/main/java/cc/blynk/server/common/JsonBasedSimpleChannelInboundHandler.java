@@ -11,9 +11,9 @@ import io.netty.util.ReferenceCountUtil;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/3/2015.
  */
-public abstract class WebBaseSimpleChannelInboundHandler<I, T> extends BaseSimpleChannelInboundHandler<I, T> {
+public abstract class JsonBasedSimpleChannelInboundHandler<I, T> extends BaseSimpleChannelInboundHandler<I, T> {
 
-    public WebBaseSimpleChannelInboundHandler(Class<I> type) {
+    public JsonBasedSimpleChannelInboundHandler(Class<I> type) {
         super(type);
     }
 

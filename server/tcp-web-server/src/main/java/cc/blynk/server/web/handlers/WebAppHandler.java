@@ -2,7 +2,7 @@ package cc.blynk.server.web.handlers;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.logic.MobileLogoutLogic;
-import cc.blynk.server.common.WebBaseSimpleChannelInboundHandler;
+import cc.blynk.server.common.JsonBasedSimpleChannelInboundHandler;
 import cc.blynk.server.common.handlers.logic.PingLogic;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
@@ -85,7 +85,7 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_USER_INFO;
  * Created on 2/1/2015.
  *
  */
-public class WebAppHandler extends WebBaseSimpleChannelInboundHandler<StringMessage, WebAppStateHolder> {
+public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMessage, WebAppStateHolder> {
 
     public final WebAppStateHolder state;
     private final WebAppHardwareLogic webAppHardwareLogic;
