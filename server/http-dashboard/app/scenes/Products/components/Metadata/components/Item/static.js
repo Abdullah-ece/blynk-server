@@ -54,32 +54,34 @@ class MetadataItemStatic extends React.Component {
             </div>
           </Col>
           <Col span={12}>
-            {this.props.children}
+            <Row>
+              {this.props.children}
+            </Row>
+            <Row className="product-metadata-static-permissions">
+              <Col span={4}>
+                <FormItem offset={false}>
+                  <FormItem.Title>Who can edit</FormItem.Title>
+                  <FormItem.Content>
+
+                    {
+                      this.props.roles.filter((role) => (
+                        (this.props.role || []).indexOf(Number(role.id)) !== -1
+                      )).map((role) => (
+                        <div
+                          className="product-metadata-static-field product-metadata-static-field-inline"
+                          key={role.id}>
+                          {role.name}
+                        </div>
+                      ))
+                    }
+
+                  </FormItem.Content>
+                </FormItem>
+              </Col>
+            </Row>
           </Col>
           <Col span={6} offset={1}>
             {this.preview()}
-          </Col>
-        </Row>
-        <Row>
-          <Col span={4}>
-            <FormItem offset={false}>
-              <FormItem.Title>Who can edit</FormItem.Title>
-              <FormItem.Content>
-
-                {
-                  this.props.roles.filter((role) => (
-                    (this.props.role || []).indexOf(Number(role.id)) !== -1
-                  )).map((role) => (
-                    <div
-                      className="product-metadata-static-field product-metadata-static-field-inline"
-                      key={role.id}>
-                      {role.name}
-                    </div>
-                  ))
-                }
-
-              </FormItem.Content>
-            </FormItem>
           </Col>
         </Row>
       </div>
