@@ -66,7 +66,17 @@ class OTAScene extends React.Component {
       status        : PropTypes.oneOf(['ONLINE', 'OFFLINE']), // use this for column "status" and display like a green / gray dot
       disconnectTime: PropTypes.number, // display "Was online N days ago" when user do mouseover the gray dot (idea is to display last time when device was online if it's offline right now)
       hardwareInfo  : PropTypes.shape({
-        version: PropTypes.string
+         version          : PropTypes.string,
+         blynkVersion     : PropTypes.string,
+         boardType        : PropTypes.string,
+         cpuType          : PropTypes.string,
+         connectionType   : PropTypes.string,
+         build            : PropTypes.string,
+         templateId       : PropTypes.string,
+         heartbeatInterval: PropTypes.number,
+         buffIn           :PropTypes.number,
+         lastLoggedIP     : PropTypes.string,
+         connectTime      : PropTypes.number
       }),
       deviceOtaInfo: PropTypes.shape({
         otaInitiatedBy: PropTypes.string,

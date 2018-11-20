@@ -106,6 +106,66 @@ class DeviceInfo extends React.Component {
                 {this.props.device.hardwareInfo.version}
               </Fieldset>
             )}
+            {this.props.device.hardwareInfo && this.props.device.hardwareInfo.blynkVersion && (
+              <Fieldset>
+                <Fieldset.Legend>Blynk version</Fieldset.Legend>
+                {this.props.device.hardwareInfo.blynkVersion}
+              </Fieldset>
+            )}
+            {this.props.device.hardwareInfo && this.props.device.hardwareInfo.boardType && (
+              <Fieldset>
+                <Fieldset.Legend>Board Type</Fieldset.Legend>
+                {this.props.device.hardwareInfo.boardType}
+              </Fieldset>
+            )}
+            {this.props.device.hardwareInfo && this.props.device.hardwareInfo.cpuType && (
+              <Fieldset>
+                <Fieldset.Legend>CPU Type</Fieldset.Legend>
+                {this.props.device.hardwareInfo.cpuType}
+              </Fieldset>
+            )}
+            {this.props.device.hardwareInfo && this.props.device.hardwareInfo.connectionType && (
+              <Fieldset>
+                <Fieldset.Legend>Connection Type</Fieldset.Legend>
+                {this.props.device.hardwareInfo.connectionType}
+              </Fieldset>
+            )}
+            {this.props.device.hardwareInfo && this.props.device.hardwareInfo.build && (
+              <Fieldset>
+              <Fieldset.Legend>Build</Fieldset.Legend>
+              {this.props.device.hardwareInfo.build}
+              </Fieldset>
+            )}
+            {this.props.device.hardwareInfo && this.props.device.hardwareInfo.templateId && (
+              <Fieldset>
+                <Fieldset.Legend>Template Id</Fieldset.Legend>
+                {this.props.device.hardwareInfo.templateId}
+              </Fieldset>
+            )}
+            {this.props.device.hardwareInfo && this.props.device.hardwareInfo.heartbeatInterval && (
+              <Fieldset>
+                <Fieldset.Legend>Heartbeat Interval</Fieldset.Legend>
+                {this.props.device.hardwareInfo.heartbeatInterval}
+              </Fieldset>
+            )}
+            {this.props.device.hardwareInfo && this.props.device.hardwareInfo.buffIn && (
+              <Fieldset>
+                <Fieldset.Legend>Buff In</Fieldset.Legend>
+                {this.props.device.hardwareInfo.buffIn}
+              </Fieldset>
+            )}
+            {this.props.device.hardwareInfo && this.props.device.hardwareInfo.lastLoggedIP && (
+              <Fieldset>
+              <Fieldset.Legend>IP</Fieldset.Legend>
+              {this.props.device.hardwareInfo.lastLoggedIP}
+              </Fieldset>
+            )}
+            {this.props.device.hardwareInfo && this.props.device.hardwareInfo.connectTime && (
+              <Fieldset>
+                <Fieldset.Legend>Connect time</Fieldset.Legend>
+                {this.props.device.hardwareInfo.connectTime}
+              </Fieldset>
+            )}
           </Col>
           <Col span={12}>
 
