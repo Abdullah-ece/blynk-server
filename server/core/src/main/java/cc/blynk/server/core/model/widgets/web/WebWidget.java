@@ -57,7 +57,9 @@ public abstract class WebWidget extends Widget {
             WebWidget oldWebWidget = (WebWidget) oldWidget;
             for (WebSource oldSource : oldWebWidget.sources) {
                 DataStream oldDataStream = oldSource.dataStream;
-                updateIfSame(0, oldDataStream.pin, oldDataStream.pinType, oldDataStream.value);
+                if (oldDataStream != null) {
+                    updateIfSame(0, oldDataStream.pin, oldDataStream.pinType, oldDataStream.value);
+                }
             }
         }
     }
