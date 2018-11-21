@@ -14,7 +14,6 @@ public final class Response {
     public static final int OK = 200;
     public static final int QUOTA_LIMIT = 1;
     public static final int ILLEGAL_COMMAND = 2;
-    public static final int USER_NOT_REGISTERED = 3;
     public static final int USER_ALREADY_REGISTERED = 4;
     public static final int USER_NOT_AUTHENTICATED = 5;
     public static final int NOT_ALLOWED = 6;
@@ -30,10 +29,6 @@ public final class Response {
     public static final int NO_DATA = 17;
     public static final int SERVER_ERROR = 19;
     public static final int ENERGY_LIMIT = 21;
-    public static final int FACEBOOK_USER_LOGIN_WITH_PASS = 22;
-
-    public static final int PRODUCT_NOT_EXISTS = 31;
-    public static final int WEB_JSON_RESPONSE = 32;
 
     //all this code just to make logging more user-friendly
     private final static Map<Integer, String> valuesName = ReflectionUtil.generateMapOfValueNameInteger(Response.class);
