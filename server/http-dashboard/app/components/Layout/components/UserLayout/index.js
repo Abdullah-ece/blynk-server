@@ -111,7 +111,9 @@ class UserLayout extends React.Component {
   }
 
   handleOrgSelect(e) {
-    this.props.selectOrgId(e.key);
+    this.props.selectOrgId({
+      orgId: e.key
+    });
   }
 
   currentActivePage(state) {
