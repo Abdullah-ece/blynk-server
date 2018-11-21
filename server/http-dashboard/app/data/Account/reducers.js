@@ -7,16 +7,30 @@ const initialState = {
   credentials: {
     username: null,
     password: null,
-  }
+  },
+  selectedOrgId: null,
 };
 
 export default function Account(state = initialState, action) {
   switch (action.type) {
 
-    case "API_ACCOUNT_SUCCESS":
+    case "SELECT_ORG_ID":
       return {
         ...state,
-        ...action.payload.data
+        selectedOrgId: action.value,
+      };
+
+    case "API_ACCOUNT_SUCCESS":
+
+      let selectedOrgId = state.selectedOrgId;
+
+      if(selectedOrgId === null)
+        selectedOrgId = action.payload.data.orgId;
+
+      return {
+        ...state,
+        ...action.payload.data,
+        selectedOrgId: selectedOrgId,
       };
 
     case "API_LOGOUT_SUCCESS":

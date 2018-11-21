@@ -1,12 +1,15 @@
 import {OrganizationFetch} from "data/Organization/actions";
-import {OrganizationsFetch} from "data/Organizations/actions";
+import {
+  OrganizationsFetch,
+  OrganizationsHierarchyFetch
+} from "data/Organizations/actions";
 import React from 'react';
 import {Menu, Icon, Avatar, Dropdown} from 'antd';
 import {LinearIcon} from "components";
 import {Link} from 'react-router';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import * as AccountActions from '../../../../data/Account/actions';
+import * as AccountActions from 'data/Account/actions';
 import {blynkWsConnect, blynkWsLogin} from 'store/blynk-websocket-middleware/actions';
 import {StartLoading, FinishLoading} from 'data/PageLoading/actions';
 
@@ -14,11 +17,14 @@ import './styles.less';
 
 @connect((state) => ({
   Account     : state.Account,
-  Organization: state.Organization
+  Organization: state.Organization,
+  hierarchy   : state.Organizations.get('hierarchy'),
 }), (dispatch) => ({
+  organizationsHierarchyFetch : bindActionCreators(OrganizationsHierarchyFetch, dispatch),
   startLoading      : bindActionCreators(StartLoading, dispatch),
   finishLoading     : bindActionCreators(FinishLoading, dispatch),
   fetchAccount      : bindActionCreators(AccountActions.Account, dispatch),
+  selectOrgId       : bindActionCreators(AccountActions.AccountSelectOrgId, dispatch),
   blynkWsConnect    : bindActionCreators(blynkWsConnect, dispatch),
   blynkWsLogin      : bindActionCreators(blynkWsLogin, dispatch),
   OrganizationFetch : bindActionCreators(OrganizationFetch, dispatch),
@@ -36,12 +42,15 @@ class UserLayout extends React.Component {
     location          : React.PropTypes.object,
     fetchAccount      : React.PropTypes.func,
     blynkWsConnect    : React.PropTypes.func,
+    selectOrgId       : React.PropTypes.func,
     blynkWsLogin      : React.PropTypes.func,
     Organization      : React.PropTypes.object,
+    hierarchy         : React.PropTypes.object,
     startLoading      : React.PropTypes.func,
     finishLoading     : React.PropTypes.func,
     OrganizationFetch : React.PropTypes.func,
     OrganizationsFetch: React.PropTypes.func,
+    organizationsHierarchyFetch: React.PropTypes.func,
   };
 
   constructor(props) {
@@ -58,6 +67,10 @@ class UserLayout extends React.Component {
 
     props.fetchAccount();
 
+    props.organizationsHierarchyFetch();
+
+    this.OrgSelection = this.OrgSelection.bind(this);
+    this.handleOrgSelect = this.handleOrgSelect.bind(this);
     this.handleMouseEnter = this.handleMouseEnter.bind(this);
     this.handleMouseLeave = this.handleMouseLeave.bind(this);
   }
@@ -97,6 +110,10 @@ class UserLayout extends React.Component {
     // }
   }
 
+  handleOrgSelect(e) {
+    this.props.selectOrgId(e.key);
+  }
+
   currentActivePage(state) {
     const splitedPath = state.split('/');
 
@@ -124,28 +141,56 @@ class UserLayout extends React.Component {
 
   OrgSelection() {
 
+    const renderChild = (child, level = 1) => {
+      if(!child)
+        return null;
+
+      let children = [];
+
+      if(child && child.get('childs') && child.get('childs').map) {
+        child.get('childs').map((child) => {
+          children.push(renderChild(child, level + 1));
+        });
+      }
+
+      return [
+        <Menu.Item key={(child.get('id')).toString()} className={`user-layout--organization-select--org-level-${level} ${isActive(child.get('id'))}`}>
+          {child.get('name')}
+        </Menu.Item>,
+        children
+      ];
+    };
+
+    const currentOrgId = 1;
+
+    const hierarchy = this.props.hierarchy;
+
+    const id = hierarchy && hierarchy.get && hierarchy.get('id');
+    const name = hierarchy && hierarchy.get && hierarchy.get('name');
+    const childs = hierarchy && hierarchy.get && hierarchy.get('childs');
+
+    const isActive = (id) => {
+      if(id === currentOrgId) {
+        return 'user-layout--organization-select--org-active';
+      }
+      return '';
+    };
+
     return (
-      <Menu className="user-layout--organization-select" onClick={this.handleClick.bind(this)}>
-        <Menu.ItemGroup title="Main Organization" className="user-layout--organization-select--meta-org">
-          <Menu.Item key="/user-profile/account-settings">
-            Raypak
+      <Menu className="user-layout--organization-select" onClick={this.handleOrgSelect.bind(this)}>
+        <Menu.ItemGroup title="Main Organization" className={`user-layout--organization-select--meta-org`}>
+          <Menu.Item key={`${id}`}>
+            {name}
           </Menu.Item>
         </Menu.ItemGroup>
         <Menu.Divider/>
-        <Menu.ItemGroup title="Sub Organizations">
-          <Menu.Item key="/user-profile/organization-settings" className="user-layout--organization-select--org-level-1">
-            Acme
-          </Menu.Item>
-          <Menu.Item key="/user-profile/organization-settings-2" className="user-layout--organization-select--org-level-2">
-            Heat and Warm
-          </Menu.Item>
-          <Menu.Item key="/user-profile/organization-settings-3" className="user-layout--organization-select--org-level-3">
-            Heat and Warm
-          </Menu.Item>
-          <Menu.Item key="/user-profile/organization-settings-4" className="user-layout--organization-select--org-level-1 user-layout--organization-select--org-active">
-            Acme
-          </Menu.Item>
-        </Menu.ItemGroup>
+        { childs && childs.size && (
+          <Menu.ItemGroup title="Sub Organizations">
+            { childs.map((child) => renderChild(child)) }
+          </Menu.ItemGroup>
+        ) || (
+          null
+        )}
       </Menu>
     );
   }

@@ -21,6 +21,13 @@ export function AccountSaveCredentials({ username, password }) {
   };
 }
 
+export function AccountSelectOrgId({ orgId }) {
+  return {
+    type: 'ACCOUNT_SAVE_CREDENTIALS',
+    value: orgId
+  };
+}
+
 export function AccountClearCredentials() {
   return {
     type: 'ACCOUNT_CLEAR_CREDENTIALS',

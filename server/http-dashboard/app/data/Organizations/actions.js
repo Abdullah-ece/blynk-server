@@ -25,6 +25,17 @@ export function OrganizationsCreate(data) {
   };
 }
 
+export function OrganizationsHierarchyFetch() {
+  return {
+    type: 'API_ORGANIZATIONS_HIERARCHY_FETCH',
+    ws: {
+      request: {
+        command: API_COMMANDS.GET_ORG_HIERARCHY,
+      }
+    }
+  };
+}
+
 export function OrganizationsDetailsUpdate(details) {
   return {
     type: 'ORGANIZATIONS_DETAILS_UPDATE',

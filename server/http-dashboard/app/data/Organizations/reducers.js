@@ -37,6 +37,11 @@ const initialState = fromJS({
     userInviteLoading: false,
     userDeleteLoading: false,
     users: null
+  },
+  hierarchy: {
+    id: 0,
+    name: null,
+    childs: []
   }
 });
 
@@ -54,6 +59,9 @@ export default function Organizations(state = initialState, action) {
 
     case "ORGANIZATIONS_MANAGE_SET_ACTIVE_TAB":
       return state.setIn(['manage', 'activeTab'], action.value);
+
+    case "API_ORGANIZATIONS_HIERARCHY_FETCH_SUCCESS":
+      return state.set('hierarchy', fromJS(action.payload.data));
 
     case "ORGANIZATIONS_MANAGE_UPDATE":
       return state.set('manage', action.value);

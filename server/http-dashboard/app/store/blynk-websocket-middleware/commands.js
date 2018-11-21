@@ -50,6 +50,7 @@ export const API_COMMANDS = {
   GET_DEVICES                   : 104,
   GET_DEVICE                    : 105,
   GET_ORG                       : 106,
+  GET_ORG_HIERARCHY             : 132,
   GET_ORGS                      : 107,
   GET_ORG_USERS                 : 108,
   GET_ORG_LOCATIONS             : 109,
