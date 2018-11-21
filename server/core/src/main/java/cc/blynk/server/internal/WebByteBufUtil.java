@@ -16,6 +16,14 @@ public final class WebByteBufUtil {
         return new WebJsonMessage(msgId, message);
     }
 
+    public static WebJsonMessage quotaLimit(int msgId) {
+        return json(msgId, "Request quota limit reached.");
+    }
+
+    public static WebJsonMessage deviceNotInNetwork(int msgId) {
+        return json(msgId, "Device not in the network.");
+    }
+
     public static WebJsonMessage userHasNoAccessToOrg(int msgId) {
         return json(msgId, "User has no access to this organization.");
     }

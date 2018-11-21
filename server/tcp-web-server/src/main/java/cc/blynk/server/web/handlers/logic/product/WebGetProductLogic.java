@@ -44,7 +44,7 @@ public final class WebGetProductLogic {
 
         if (organization == null) {
             log.error("Cannot find org with id {} for user {}", user.orgId, user.email);
-            throw new JsonException(message.id, "Cannot find organization.");
+            throw new JsonException("Cannot find organization.");
         }
 
         Product product = organization.getProductOrThrow(productId);
@@ -52,12 +52,12 @@ public final class WebGetProductLogic {
         if (product == null) {
             log.error("Cannot find product with id {} for org {} and user {}",
                     productId, organization.name, user.email);
-            throw new JsonException(message.id, "Cannot find product with passed id.");
+            throw new JsonException("Cannot find product with passed id.");
         }
 
         if (!holder.organizationDao.hasAccess(user, orgId)) {
             log.error("User {} tries to access product he has no access.", user.email);
-            throw new JsonException(message.id, "User tries to access product he has no access.");
+            throw new JsonException("User tries to access product he has no access.");
         }
 
         if (ctx.channel().isWritable()) {

@@ -10,8 +10,8 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
+import static cc.blynk.server.internal.WebByteBufUtil.json;
 
 /**
  * Handler responsible for handling redeem logic. Unlocks premium content for predefined tokens.
@@ -52,7 +52,7 @@ public final class MobileRedeemLogic {
             log.debug("Error redeeming token.", e);
         }
 
-        return notAllowed(message.id);
+        return json(message.id, "Error redeeming token.");
     }
 
     private static void unlockContent(User user, int reward) {

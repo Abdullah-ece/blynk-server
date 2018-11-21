@@ -3,7 +3,7 @@ package cc.blynk.server.application.handlers.main.logic.face;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.App;
-import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
+import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.mobile.MobileStateHolder;
 import cc.blynk.server.workers.timer.TimerWorker;
@@ -35,7 +35,7 @@ public final class MobileDeleteAppLogic {
         var existingAppIndex = user.profile.getAppIndexById(id);
 
         if (existingAppIndex == -1) {
-            throw new NotAllowedException("App with passed is not exists.", message.id);
+            throw new JsonException("App with passed is not exists.");
         }
 
         var projectIds = user.profile.apps[existingAppIndex].projectIds;

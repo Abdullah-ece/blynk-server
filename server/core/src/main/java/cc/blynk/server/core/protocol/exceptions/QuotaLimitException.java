@@ -8,8 +8,4 @@ public class QuotaLimitException extends BaseServerException {
         super(message, Response.QUOTA_LIMIT);
     }
 
-    public QuotaLimitException(String message, int msgId) {
-        super(message, msgId, Response.QUOTA_LIMIT);
-    }
-
 }

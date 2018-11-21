@@ -5,6 +5,7 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.App;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.ArrayUtil;
 import io.netty.channel.ChannelHandlerContext;
@@ -13,8 +14,8 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.HashSet;
 
-import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
+import static cc.blynk.server.internal.WebByteBufUtil.json;
 
 /**
  * Update faces of related project.
@@ -50,8 +51,7 @@ public final class MobileUpdateFaceLogic {
 
         if (appIds.size() == 0) {
             log.debug("Passed dash has no childs assigned to any app.");
-            ctx.writeAndFlush(notAllowed(message.id));
-            return;
+            throw new JsonException("Passed dash has no childs assigned to any app.");
         }
 
         boolean hasFaces = false;
@@ -74,7 +74,7 @@ public final class MobileUpdateFaceLogic {
                     } catch (Exception e) {
                         log.error("Error updating face for user {}, dashId {}.",
                                 existingUser.email, existingDash.id, e);
-                        ctx.writeAndFlush(notAllowed(message.id));
+                        ctx.writeAndFlush(json(message.id, "Error updating face."));
                     }
                 }
             }
@@ -85,7 +85,7 @@ public final class MobileUpdateFaceLogic {
             ctx.writeAndFlush(ok(message.id));
         } else {
             log.info("No child faces found for update.");
-            ctx.writeAndFlush(notAllowed(message.id));
+            ctx.writeAndFlush(json(message.id, "No child faces found for update."));
         }
     }
 

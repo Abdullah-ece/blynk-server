@@ -2,10 +2,10 @@ package cc.blynk.server.core.protocol.handlers.decoders;
 
 import cc.blynk.server.Limits;
 import cc.blynk.server.core.protocol.enums.Command;
+import cc.blynk.server.core.protocol.enums.Response;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.stats.GlobalStats;
-import cc.blynk.server.core.stats.metrics.InstanceLoadMeter;
 import cc.blynk.server.internal.QuotaLimitChecker;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -25,14 +25,14 @@ import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produc
  * Created by Dmitriy Dumanskiy.
  * Created on 2/1/2015.
  */
-public class MessageDecoder extends ByteToMessageDecoder {
+public class HardwareMessageDecoder extends ByteToMessageDecoder {
 
-    private static final Logger log = LogManager.getLogger(MessageDecoder.class);
+    private static final Logger log = LogManager.getLogger(HardwareMessageDecoder.class);
 
     private final GlobalStats stats;
     private final QuotaLimitChecker limitChecker;
 
-    public MessageDecoder(GlobalStats stats, Limits limits) {
+    public HardwareMessageDecoder(GlobalStats stats, Limits limits) {
         this.stats = stats;
         this.limitChecker = new QuotaLimitChecker(limits.userQuotaLimit);
     }
@@ -49,7 +49,10 @@ public class MessageDecoder extends ByteToMessageDecoder {
         int messageId = in.readUnsignedShort();
         int codeOrLength = in.readUnsignedShort();
 
-        if (limitChecker.quotaReached(ctx, messageId)) {
+        if (limitChecker.quotaReached()) {
+            if (ctx.channel().isWritable()) {
+                ctx.channel().writeAndFlush(new ResponseMessage(messageId, Response.QUOTA_LIMIT), ctx.voidPromise());
+            }
             return;
         }
 
@@ -70,10 +73,6 @@ public class MessageDecoder extends ByteToMessageDecoder {
         stats.mark(command);
 
         out.add(message);
-    }
-
-    public InstanceLoadMeter getQuotaMeter() {
-        return limitChecker.quotaMeter;
     }
 
 }

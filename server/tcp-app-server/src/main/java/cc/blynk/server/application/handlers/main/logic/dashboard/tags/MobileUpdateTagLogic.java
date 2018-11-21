@@ -1,10 +1,9 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard.tags;
 
-import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
+import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -29,30 +28,28 @@ public final class MobileUpdateTagLogic {
         String[] split = split2(message.body);
 
         if (split.length < 2) {
-            throw new IllegalCommandException("Wrong income message format.");
+            throw new JsonException("Wrong income message format.");
         }
 
         int dashId = Integer.parseInt(split[0]);
         String tagString = split[1];
 
         if (tagString == null || tagString.isEmpty()) {
-            throw new IllegalCommandException("Income tag message is empty.");
+            throw new JsonException("Income tag message is empty.");
         }
-
-        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
         Tag newTag = JsonParser.parseTag(tagString, message.id);
 
         log.debug("Updating new tag {}.", tagString);
 
         if (newTag.isNotValid()) {
-            throw new IllegalCommandException("Income tag name is not valid.");
+            throw new JsonException("Income tag name is not valid.");
         }
 
         Tag existingTag = user.profile.getTagById(newTag.id);
 
         if (existingTag == null) {
-            throw new IllegalCommandException("Attempt to update tag with non existing id.");
+            throw new JsonException("Attempt to update tag with non existing id.");
         }
 
         existingTag.update(newTag);

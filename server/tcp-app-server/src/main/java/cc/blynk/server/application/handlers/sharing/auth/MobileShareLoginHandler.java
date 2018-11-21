@@ -10,6 +10,7 @@ import cc.blynk.server.core.dao.SharedTokenValue;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.appllication.sharing.ShareLoginMessage;
 import cc.blynk.server.core.session.mobile.Version;
 import cc.blynk.server.internal.ReregisterChannelUtil;
@@ -22,9 +23,8 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
-import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
+import static cc.blynk.server.internal.WebByteBufUtil.json;
 
 /**
  * Handler responsible for managing apps sharing login messages.
@@ -51,7 +51,7 @@ public class MobileShareLoginHandler extends SimpleChannelInboundHandler<ShareLo
 
         if (messageParts.length < 2) {
             log.error("Wrong income message format.");
-            ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(message.id, "Wrong income message format."), ctx.voidPromise());
         } else {
             //var uid = messageParts.length == 5 ? messageParts[4] : null;
             var version = messageParts.length > 3
@@ -72,8 +72,7 @@ public class MobileShareLoginHandler extends SimpleChannelInboundHandler<ShareLo
         if (tokenValue == null || !tokenValue.user.email.equals(userName)) {
             log.debug("Share token is invalid. User : {}, token {}, {}",
                     userName, token, ctx.channel().remoteAddress());
-            ctx.writeAndFlush(notAllowed(messageId), ctx.voidPromise());
-            return;
+            throw new JsonException("Share token is invalid.");
         }
 
         User user = tokenValue.user;
@@ -81,10 +80,9 @@ public class MobileShareLoginHandler extends SimpleChannelInboundHandler<ShareLo
 
         DashBoard dash = user.profile.getDashById(dashId);
         if (!dash.isShared) {
-            log.debug("Dashboard is not shared. User : {}, token {}, {}",
+            log.debug("Project is not shared. User : {}, token {}, {}",
                     userName, token, ctx.channel().remoteAddress());
-            ctx.writeAndFlush(notAllowed(messageId), ctx.voidPromise());
-            return;
+            throw new JsonException("Project is not shared.");
         }
 
         cleanPipeline(ctx.pipeline());

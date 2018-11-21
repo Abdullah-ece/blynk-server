@@ -2,7 +2,7 @@ package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
-import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
+import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.mobile.MobileStateHolder;
 import cc.blynk.server.db.DBManager;
@@ -11,8 +11,8 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
+import static cc.blynk.server.internal.WebByteBufUtil.json;
 import static cc.blynk.utils.StringUtils.split2;
 
 
@@ -87,7 +87,7 @@ public class MobilePurchaseLogic {
         var user = state.user;
 
         var energyAmountToAdd = Integer.parseInt(splitBody[0]);
-        ResponseMessage response;
+        MessageBase response;
         if (splitBody.length == 2 && isValidTransactionId(splitBody[1])) {
             double price = calcPrice(energyAmountToAdd);
             insertPurchase(user.email, energyAmountToAdd, price, splitBody[1]);
@@ -99,7 +99,7 @@ public class MobilePurchaseLogic {
                         splitBody[0], splitBody[1], user.email, state.version);
                 wasErrorPrinted = true;
             }
-            response = notAllowed(message.id);
+            response = json(message.id, "Purchase has invalid transaction id.");
         }
         ctx.writeAndFlush(response, ctx.voidPromise());
     }

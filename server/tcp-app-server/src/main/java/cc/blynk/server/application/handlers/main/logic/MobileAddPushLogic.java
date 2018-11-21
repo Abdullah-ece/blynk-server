@@ -1,5 +1,6 @@
 package cc.blynk.server.application.handlers.main.logic;
 
+import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.mobile.MobileStateHolder;
 import cc.blynk.utils.StringUtils;
@@ -7,7 +8,6 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 
 /**
@@ -36,8 +36,7 @@ public final class MobileAddPushLogic {
 
         if (notification == null) {
             log.error("No notification widget.");
-            ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
-            return;
+            throw new JsonException("No notification widget.");
         }
 
         switch (state.version.osType) {

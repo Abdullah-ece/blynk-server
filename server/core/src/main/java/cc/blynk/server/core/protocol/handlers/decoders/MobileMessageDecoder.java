@@ -6,7 +6,6 @@ import cc.blynk.server.core.protocol.exceptions.UnsupportedCommandException;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.stats.GlobalStats;
-import cc.blynk.server.core.stats.metrics.InstanceLoadMeter;
 import cc.blynk.server.internal.QuotaLimitChecker;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -19,6 +18,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.List;
 
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
+import static cc.blynk.server.internal.WebByteBufUtil.quotaLimit;
 
 /**
  * Decodes input byte array into java message.
@@ -56,7 +56,10 @@ public class MobileMessageDecoder extends ByteToMessageDecoder {
         //so it should perfectly fit int
         int codeOrLength = (int) in.readUnsignedInt();
 
-        if (limitChecker.quotaReached(ctx, messageId)) {
+        if (limitChecker.quotaReached()) {
+            if (ctx.channel().isWritable()) {
+                ctx.channel().writeAndFlush(quotaLimit(messageId), ctx.voidPromise());
+            }
             return;
         }
 
@@ -87,7 +90,4 @@ public class MobileMessageDecoder extends ByteToMessageDecoder {
         }
     }
 
-    public InstanceLoadMeter getQuotaMeter() {
-        return limitChecker.quotaMeter;
-    }
 }

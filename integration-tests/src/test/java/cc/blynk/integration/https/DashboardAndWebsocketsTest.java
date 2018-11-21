@@ -59,7 +59,6 @@ import static cc.blynk.server.core.model.widgets.outputs.graph.AggregationFuncti
 import static cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType.RAW_DATA;
 import static cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod.LIVE;
 import static cc.blynk.server.core.reporting.average.AverageAggregatorProcessor.MINUTE;
-import static cc.blynk.server.internal.CommonByteBufUtil.deviceNotInNetwork;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -323,14 +322,14 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         appClient.verifyResult(ok(1));
 
         appClient.activate(0);
-        appClient.verifyResult(deviceNotInNetwork(2));
+        appClient.verifyResult(webJson(2, "Device not in network."));
 
         appClient.send("hardware 1 vw 2 222");
         appWebSocketClient.verifyResult(appSync(3, b("1 vw 2 222")));
 
         appWebSocketClient.send("hardware 1 vw 10 100");
         appClient.verifyResult(appSync(3, b("1 vw 10 100")));
-        appClient.verifyResult(deviceNotInNetwork(3));
+        appClient.verifyResult(webJson(3, "Device not in the network."));
     }
 
     @Test

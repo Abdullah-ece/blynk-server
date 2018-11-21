@@ -37,8 +37,6 @@ import static cc.blynk.integration.APIBaseTest.createNumberMeta;
 import static cc.blynk.integration.APIBaseTest.createTextMeta;
 import static cc.blynk.integration.TestUtil.createWebLabelWidget;
 import static cc.blynk.integration.TestUtil.createWebLineGraph;
-import static cc.blynk.integration.TestUtil.illegalCommand;
-import static cc.blynk.integration.TestUtil.illegalCommandBody;
 import static cc.blynk.integration.TestUtil.loggedDefaultClient;
 import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.integration.TestUtil.updateProductWebDash;
@@ -321,7 +319,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         appClient.login(getUserName(), "1");
         appClient.verifyResult(ok(1));
         appClient.updateDeviceMetafield(device.id, updatedMetaField);
-        appClient.verifyResult(illegalCommandBody(2));
+        appClient.verifyResult(webJson(2, "Metafield is not valid. Units field is empty."));
     }
 
     @Test
@@ -718,7 +716,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
                 createTextMeta(2, "Device Name", "My Default device Name", true)
         };
         appClient.updateDeviceMetafields(createdDevice.id, metaFields);
-        appClient.verifyResult(illegalCommand(3));
+        appClient.verifyResult(webJson(3, "Metafield with passed id not found."));
     }
 
     @Test

@@ -12,8 +12,7 @@ import cc.blynk.server.core.model.widgets.ui.Tabs;
 import cc.blynk.server.core.model.widgets.ui.reporting.ReportingWidget;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
-import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
-import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
+import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.mobile.MobileStateHolder;
 import cc.blynk.server.workers.timer.TimerWorker;
@@ -42,18 +41,18 @@ public final class MobileUpdateWidgetLogic {
         String[] split = split2(message.body);
 
         if (split.length < 2) {
-            throw new IllegalCommandException("Wrong income message format.");
+            throw new JsonException("Wrong income message format.");
         }
 
         int dashId = Integer.parseInt(split[0]);
         String widgetString = split[1];
 
         if (widgetString == null || widgetString.isEmpty()) {
-            throw new IllegalCommandException("Income widget message is empty.");
+            throw new JsonException("Income widget message is empty.");
         }
 
         if (widgetString.length() > holder.limits.widgetSizeLimitBytes) {
-            throw new NotAllowedException("Widget is larger then limit.", message.id);
+            throw new JsonException("Widget is larger then limit.");
         }
 
         User user = state.user;
@@ -62,7 +61,7 @@ public final class MobileUpdateWidgetLogic {
         Widget newWidget = JsonParser.parseWidget(widgetString, message.id);
 
         if (newWidget.width < 1 || newWidget.height < 1) {
-            throw new NotAllowedException("Widget has wrong dimensions.", message.id);
+            throw new JsonException("Widget has wrong dimensions.");
         }
 
         log.debug("Updating widget {}.", widgetString);
@@ -95,11 +94,11 @@ public final class MobileUpdateWidgetLogic {
         }
 
         if (prevWidget == null) {
-            throw new IllegalCommandException("Widget with passed id not found.");
+            throw new JsonException("Widget with passed id not found.");
         }
 
         if (!prevWidget.getClass().equals(newWidget.getClass())) {
-            throw new IllegalCommandException("Widget class was changed.");
+            throw new JsonException("Widget class was changed.");
         }
 
         if (prevWidget instanceof Notification) {

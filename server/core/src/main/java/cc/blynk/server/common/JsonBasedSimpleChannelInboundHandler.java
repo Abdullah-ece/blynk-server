@@ -2,9 +2,10 @@ package cc.blynk.server.common;
 
 import cc.blynk.server.core.protocol.exceptions.BaseServerException;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
-import cc.blynk.server.internal.WebByteBufUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.ReferenceCountUtil;
+
+import static cc.blynk.server.internal.WebByteBufUtil.json;
 
 /**
  * The Blynk Project.
@@ -25,17 +26,14 @@ public abstract class JsonBasedSimpleChannelInboundHandler<I, T> extends BaseSim
                 messageReceived(ctx, (I) msg);
             } catch (NumberFormatException nfe) {
                 log.debug("Error parsing number. {}", nfe.getMessage());
-                ctx.writeAndFlush(WebByteBufUtil.json(getMsgId(msg), "Error parsing number. "
+                ctx.writeAndFlush(json(getMsgId(msg), "Error parsing number. "
                         + nfe.getMessage()), ctx.voidPromise());
-            } catch (JsonException bse) {
+            } catch (BaseServerException | JsonException bse) {
                 log.debug("Error processing request. Reason : {}", bse.getMessage());
-                ctx.writeAndFlush(WebByteBufUtil.json(bse.msgId, bse.getMessage()), ctx.voidPromise());
-            } catch (BaseServerException bse) {
-                log.debug("Error processing request. Reason : {}", bse.getMessage());
-                ctx.writeAndFlush(WebByteBufUtil.json(getMsgId(msg), bse.getMessage()), ctx.voidPromise());
+                ctx.writeAndFlush(json(getMsgId(msg), bse.getMessage()), ctx.voidPromise());
             } catch (Exception e) {
                 log.debug("Unexpected error.", e);
-                ctx.writeAndFlush(WebByteBufUtil.json(getMsgId(msg), e.getMessage()), ctx.voidPromise());
+                ctx.writeAndFlush(json(getMsgId(msg), e.getMessage()), ctx.voidPromise());
             } finally {
                 ReferenceCountUtil.release(msg);
             }

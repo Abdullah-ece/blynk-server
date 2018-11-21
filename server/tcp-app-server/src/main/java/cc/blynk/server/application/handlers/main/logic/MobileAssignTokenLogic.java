@@ -11,8 +11,8 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
+import static cc.blynk.server.internal.WebByteBufUtil.json;
 
 /**
  * Assigns static generated token to assigned device.
@@ -39,13 +39,13 @@ public final class MobileAssignTokenLogic {
 
             if (dbFlashedToken == null) {
                 log.error("{} token not exists for orgId {}.", token, user.orgId);
-                ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
+                ctx.writeAndFlush(json(message.id, "Token not exists."), ctx.voidPromise());
                 return;
             }
 
             if (dbFlashedToken.isActivated) {
                 log.error("{} token is already activated for orgId {}.", token, user.orgId);
-                ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
+                ctx.writeAndFlush(json(message.id, "Token is already activated."), ctx.voidPromise());
                 return;
             }
 
@@ -53,13 +53,13 @@ public final class MobileAssignTokenLogic {
 
             if (device == null) {
                 log.error("Device with {} id not exists in dashboards.", dbFlashedToken.deviceId);
-                ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
+                ctx.writeAndFlush(json(message.id, "Device not exists in projects anymore."), ctx.voidPromise());
                 return;
             }
 
             if (!dbManager.activateFlashedToken(token)) {
                 log.error("Error activated flashed token {}", token);
-                ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
+                ctx.writeAndFlush(json(message.id, "Error activated flashed token."), ctx.voidPromise());
                 return;
             }
 

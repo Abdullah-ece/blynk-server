@@ -1,8 +1,7 @@
 package cc.blynk.server.application.handlers.main.logic.face;
 
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
-import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
+import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.mobile.MobileStateHolder;
 import io.netty.channel.ChannelHandlerContext;
@@ -28,17 +27,17 @@ public final class MobileUpdateAppLogic {
         var appString = message.body;
 
         if (appString == null || appString.isEmpty()) {
-            throw new IllegalCommandException("Income app message is empty.");
+            throw new JsonException("Income app message is empty.");
         }
 
         if (appString.length() > maxWidgetSize) {
-            throw new NotAllowedException("App is larger then limit.", message.id);
+            throw new JsonException("App is larger then limit.");
         }
 
         var newApp = JsonParser.parseApp(appString, message.id);
 
         if (newApp.isNotValid()) {
-            throw new NotAllowedException("App is not valid.", message.id);
+            throw new JsonException("App is not valid.");
         }
 
         log.debug("Creating new app {}.", newApp);
@@ -48,7 +47,7 @@ public final class MobileUpdateAppLogic {
         var existingApp = user.profile.getAppById(newApp.id);
 
         if (existingApp == null) {
-            throw new NotAllowedException("App with passed is not exists.", message.id);
+            throw new JsonException("App with passed is not exists.");
         }
 
         existingApp.update(newApp);

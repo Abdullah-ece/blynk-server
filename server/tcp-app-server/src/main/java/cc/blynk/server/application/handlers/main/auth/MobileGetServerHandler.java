@@ -13,9 +13,8 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
-import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommandBody;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeASCIIStringMessage;
+import static cc.blynk.server.internal.WebByteBufUtil.json;
 
 
 /**
@@ -46,7 +45,7 @@ public class MobileGetServerHandler extends SimpleChannelInboundHandler<GetServe
         String[] parts = StringUtils.split2(msg.body);
 
         if (parts.length < 2) {
-            ctx.writeAndFlush(illegalCommand(msg.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(msg.id, "Wrong body command."), ctx.voidPromise());
             return;
         }
 
@@ -55,12 +54,12 @@ public class MobileGetServerHandler extends SimpleChannelInboundHandler<GetServe
         String appName = parts[1];
 
         if (appName == null || appName.isEmpty() || appName.length() > 100) {
-            ctx.writeAndFlush(illegalCommand(msg.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(msg.id, "Wrong body command."), ctx.voidPromise());
             return;
         }
 
         if (BlynkEmailValidator.isNotValidEmail(email)) {
-            ctx.writeAndFlush(illegalCommandBody(msg.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(msg.id, "Email for get server request is not valid."), ctx.voidPromise());
             return;
         }
 

@@ -12,7 +12,7 @@ import cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod;
 import cc.blynk.server.core.model.widgets.outputs.graph.Superchart;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
-import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
+import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.exceptions.NoDataException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.reporting.GraphPinRequest;
@@ -25,8 +25,7 @@ import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENHANCED_GRAPH_DATA;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeBinaryMessage;
-import static cc.blynk.server.internal.CommonByteBufUtil.noData;
-import static cc.blynk.server.internal.CommonByteBufUtil.serverError;
+import static cc.blynk.server.internal.WebByteBufUtil.json;
 import static cc.blynk.utils.ByteUtils.compress;
 import static cc.blynk.utils.StringUtils.split2Device;
 
@@ -48,7 +47,7 @@ public final class MobileGetEnhancedGraphDataLogic {
         String[] messageParts = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
 
         if (messageParts.length < 3) {
-            throw new IllegalCommandException("Wrong income message format.");
+            throw new JsonException("Wrong income message format.");
         }
 
         int targetId = -1;
@@ -79,7 +78,7 @@ public final class MobileGetEnhancedGraphDataLogic {
         }
 
         if (!(widget instanceof Superchart)) {
-            throw new IllegalCommandException("Passed wrong widget id.");
+            throw new JsonException("Passed wrong widget id.");
         }
 
         Superchart enhancedHistoryGraph = (Superchart) widget;
@@ -87,7 +86,7 @@ public final class MobileGetEnhancedGraphDataLogic {
         int numberOfStreams = enhancedHistoryGraph.dataStreams.length;
         if (numberOfStreams == 0) {
             log.debug("No data streams for enhanced graph with id {}.", widgetId);
-            ctx.writeAndFlush(noData(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(message.id, "No data streams for superchart."), ctx.voidPromise());
             return;
         }
 
@@ -137,10 +136,10 @@ public final class MobileGetEnhancedGraphDataLogic {
                     );
                 }
             } catch (NoDataException noDataException) {
-                channel.writeAndFlush(noData(msgId), channel.voidPromise());
+                channel.writeAndFlush(json(msgId, "No data."), channel.voidPromise());
             } catch (Exception e) {
                 log.error("Error reading reporting data. For user {}. Error: {}", user.email, e.getMessage());
-                channel.writeAndFlush(serverError(msgId), channel.voidPromise());
+                channel.writeAndFlush(json(msgId, "Error reading reporting data."), channel.voidPromise());
             }
         });
     }

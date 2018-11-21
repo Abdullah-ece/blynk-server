@@ -24,9 +24,9 @@ import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.DEVICE_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
-import static cc.blynk.server.internal.CommonByteBufUtil.deviceNotInNetwork;
-import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommandBody;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
+import static cc.blynk.server.internal.WebByteBufUtil.deviceNotInNetwork;
+import static cc.blynk.server.internal.WebByteBufUtil.json;
 import static cc.blynk.utils.MobileStateHolderUtil.getAppState;
 import static cc.blynk.utils.StringUtils.split2;
 import static cc.blynk.utils.StringUtils.split3;
@@ -133,7 +133,7 @@ public class MobileHardwareLogic extends BaseProcessorHandler {
 
                 if (splitBody.length < 3) {
                     log.debug("Not valid write command.");
-                    ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
+                    ctx.writeAndFlush(json(message.id, "Not valid write command format."), ctx.voidPromise());
                     return;
                 }
 
@@ -155,7 +155,7 @@ public class MobileHardwareLogic extends BaseProcessorHandler {
                 session.sendToSelectedDeviceOnWeb(DEVICE_SYNC, message.id, split[1], deviceIds);
 
                 if (session.sendMessageToHardware(HARDWARE, message.id, split[1], deviceIds)) {
-                    log.debug("No device in session.");
+                    log.debug("Device not in the network.");
                     ctx.writeAndFlush(deviceNotInNetwork(message.id), ctx.voidPromise());
                 }
 

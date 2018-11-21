@@ -9,7 +9,7 @@ import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.model.widgets.ui.Tabs;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
-import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
+import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.mobile.MobileStateHolder;
 import cc.blynk.server.workers.timer.TimerWorker;
@@ -40,7 +40,7 @@ public final class MobileDeleteWidgetLogic {
         String[] split = split2(message.body);
 
         if (split.length < 2) {
-            throw new IllegalCommandException("Wrong income message format.");
+            throw new JsonException("Wrong income message format.");
         }
 
         int dashId = Integer.parseInt(split[0]);
@@ -78,7 +78,7 @@ public final class MobileDeleteWidgetLogic {
         }
 
         if (widgetToDelete == null) {
-            throw new IllegalCommandException("Widget with passed id not found.");
+            throw new JsonException("Widget with passed id not found.");
         }
 
         user.addEnergy(widgetToDelete.getPrice());

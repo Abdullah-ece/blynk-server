@@ -5,6 +5,7 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.CopyUtil;
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.db.model.FlashedToken;
 import io.netty.channel.ChannelHandlerContext;
@@ -13,7 +14,6 @@ import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_TOKEN;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeBinaryMessage;
-import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
 
 /**
  * The Blynk Project.
@@ -37,8 +37,7 @@ public final class MobileGetProjectByTokenLogic {
 
             if (dbFlashedToken == null) {
                 log.error("{} token not exists for orgId {} for {} (GetProject).", token, user.orgId, user.email);
-                ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
-                return;
+                throw new JsonException("Clone token not exists.");
             }
 
             User publishUser = holder.userDao.getByName(dbFlashedToken.email);
@@ -49,8 +48,7 @@ public final class MobileGetProjectByTokenLogic {
 
             if (dash == null) {
                 log.error("Dash with {} id not exists in dashboards.", dbFlashedToken.dashId);
-                ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
-                return;
+                throw new JsonException("Project with passed id not exists in user profile.");
             }
 
             write(ctx, JsonParser.gzipDashRestrictive(copy), message.id);

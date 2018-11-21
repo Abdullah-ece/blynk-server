@@ -7,11 +7,8 @@ package cc.blynk.server.core.protocol.exceptions;
  */
 public class JsonException extends RuntimeException {
 
-    public final int msgId;
-
-    public JsonException(int msgId, String message) {
+    public JsonException(String message) {
         super(message, null, true, false);
-        this.msgId = msgId;
     }
 
 }

@@ -11,8 +11,8 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Arrays;
 
-import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
+import static cc.blynk.server.internal.WebByteBufUtil.json;
 
 /**
  * The Blynk Project.
@@ -52,7 +52,7 @@ public final class MobileDeleteDeviceDataLogic {
                 channel.writeAndFlush(ok(msgId), channel.voidPromise());
             } catch (Exception e) {
                 log.warn("Error removing device data. Reason : {}.", e.getMessage());
-                channel.writeAndFlush(illegalCommand(msgId), channel.voidPromise());
+                channel.writeAndFlush(json(msgId, "Error removing device data."), channel.voidPromise());
             }
         });
     }
@@ -65,7 +65,7 @@ public final class MobileDeleteDeviceDataLogic {
                 channel.writeAndFlush(ok(msgId), channel.voidPromise());
             } catch (Exception e) {
                 log.warn("Error removing device data. Reason : {}.", e.getMessage());
-                channel.writeAndFlush(illegalCommand(msgId), channel.voidPromise());
+                channel.writeAndFlush(json(msgId, "Error removing device data."), channel.voidPromise());
             }
         });
     }

@@ -21,9 +21,8 @@ import static cc.blynk.server.core.model.serialization.JsonParser.gzipDashRestri
 import static cc.blynk.server.core.model.serialization.JsonParser.gzipExportProfileDTO;
 import static cc.blynk.server.core.model.serialization.JsonParser.gzipProfile;
 import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
-import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeBinaryMessage;
-import static cc.blynk.server.internal.CommonByteBufUtil.noData;
+import static cc.blynk.server.internal.WebByteBufUtil.json;
 
 /**
  * The Blynk Project.
@@ -84,7 +83,7 @@ public final class MobileLoadProfileGzippedLogic {
                         write(ctx, gzipDashRestrictive(copyDash), msgId);
                     }
                 } catch (Exception e) {
-                    ctx.writeAndFlush(illegalCommand(msgId), ctx.voidPromise());
+                    ctx.writeAndFlush(json(msgId, "Error getting publishing profile."), ctx.voidPromise());
                     log.error("Error getting publishing profile.", e.getMessage());
                 }
             });
@@ -100,7 +99,7 @@ public final class MobileLoadProfileGzippedLogic {
 
     private static MessageBase makeResponse(byte[] data, int msgId) {
         if (data == null) {
-            return noData(msgId);
+            return json(msgId, "No data.");
         }
         return makeBinaryMessage(LOAD_PROFILE_GZIPPED, msgId, data);
     }

@@ -31,13 +31,9 @@ import org.asynchttpclient.Response;
 import static cc.blynk.server.core.protocol.enums.Command.BLYNK_INTERNAL;
 import static cc.blynk.server.core.protocol.enums.Command.OUTDATED_APP_NOTIFICATION;
 import static cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler.handleGeneralException;
-import static cc.blynk.server.internal.CommonByteBufUtil.facebookUserLoginWithPass;
-import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeASCIIStringMessage;
-import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
-import static cc.blynk.server.internal.CommonByteBufUtil.notAuthenticated;
-import static cc.blynk.server.internal.CommonByteBufUtil.notRegistered;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
+import static cc.blynk.server.internal.WebByteBufUtil.json;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
 
 
@@ -80,8 +76,8 @@ public class MobileLoginHandler extends SimpleChannelInboundHandler<LoginMessage
         String[] messageParts = message.body.split(BODY_SEPARATOR_STRING);
 
         if (messageParts.length < 2) {
-            log.error("Wrong income message format.");
-            ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
+            log.error("Wrong income message format for login. Body is too short.");
+            ctx.writeAndFlush(json(message.id, "Wrong income message format."), ctx.voidPromise());
             return;
         }
 
@@ -102,7 +98,7 @@ public class MobileLoginHandler extends SimpleChannelInboundHandler<LoginMessage
             }
         } else {
             log.error("Wrong income message format for login {}.", message.body);
-            ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(message.id, "Wrong income message format for login."), ctx.voidPromise());
         }
     }
 
@@ -116,10 +112,12 @@ public class MobileLoginHandler extends SimpleChannelInboundHandler<LoginMessage
                             String errMessage = response.getResponseBody();
                             if (errMessage != null && errMessage.contains("expired")) {
                                 log.warn("Facebook token expired for user {}.", email);
+                                ctx.writeAndFlush(json(messageId, "Facebook token expired."), ctx.voidPromise());
                             } else {
                                 log.warn("Error getting facebook token for user {}. Reason : {}", email, errMessage);
+                                ctx.writeAndFlush(json(messageId, "Error getting facebook token."), ctx.voidPromise());
                             }
-                            ctx.writeAndFlush(notAllowed(messageId), ctx.voidPromise());
+
                             return response;
                         }
 
@@ -139,7 +137,8 @@ public class MobileLoginHandler extends SimpleChannelInboundHandler<LoginMessage
                         } catch (Exception e) {
                             log.error("Error during facebook response parsing for user {}. Reason : {}",
                                     email, response.getResponseBody());
-                            ctx.writeAndFlush(notAllowed(messageId), ctx.voidPromise());
+                            ctx.writeAndFlush(json(messageId,
+                                    "Error during facebook response parsing."), ctx.voidPromise());
                         }
 
                         return response;
@@ -149,7 +148,8 @@ public class MobileLoginHandler extends SimpleChannelInboundHandler<LoginMessage
                     public void onThrowable(Throwable t) {
                         log.error("Error performing facebook request. Token {} for user {}. Reason : {}",
                                 token, email, t.getMessage());
-                        ctx.writeAndFlush(notAllowed(messageId), ctx.voidPromise());
+                        ctx.writeAndFlush(json(messageId,
+                                "Error performing facebook request."), ctx.voidPromise());
                     }
                 });
     }
@@ -159,19 +159,19 @@ public class MobileLoginHandler extends SimpleChannelInboundHandler<LoginMessage
 
         if (user == null) {
             log.warn("User '{}' not registered. {}", email, ctx.channel().remoteAddress());
-            ctx.writeAndFlush(notRegistered(msgId), ctx.voidPromise());
+            ctx.writeAndFlush(json(msgId, "User " + email + " not registered."), ctx.voidPromise());
             return;
         }
 
         if (user.pass == null) {
             log.warn("Facebook user '{}' tries to login with pass. {}", email, ctx.channel().remoteAddress());
-            ctx.writeAndFlush(facebookUserLoginWithPass(msgId), ctx.voidPromise());
+            ctx.writeAndFlush(json(msgId, "Facebook user tries to login with pass."), ctx.voidPromise());
             return;
         }
 
         if (!user.pass.equals(pass)) {
             log.warn("User '{}' credentials are wrong. {}", email, ctx.channel().remoteAddress());
-            ctx.writeAndFlush(notAuthenticated(msgId), ctx.voidPromise());
+            ctx.writeAndFlush(json(msgId, "User credentials are wrong."), ctx.voidPromise());
             return;
         }
 

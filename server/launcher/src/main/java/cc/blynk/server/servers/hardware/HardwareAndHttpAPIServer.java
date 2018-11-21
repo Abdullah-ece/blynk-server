@@ -10,10 +10,10 @@ import cc.blynk.server.api.http.dashboard.ExternalAPIHandler;
 import cc.blynk.server.api.http.handlers.BaseHttpAndBlynkUnificationHandler;
 import cc.blynk.server.api.http.handlers.BaseWebSocketUnificator;
 import cc.blynk.server.api.http.handlers.LetsEncryptHandler;
-import cc.blynk.server.common.handlers.AlreadyLoggedHandler;
-import cc.blynk.server.core.protocol.handlers.decoders.MessageDecoder;
+import cc.blynk.server.core.protocol.handlers.decoders.HardwareMessageDecoder;
 import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
 import cc.blynk.server.hardware.handlers.hardware.HardwareChannelStateHandler;
+import cc.blynk.server.hardware.handlers.hardware.auth.HardwareAlreadyLoggedHandler;
 import cc.blynk.server.hardware.handlers.hardware.auth.HardwareLoginHandler;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.utils.FileUtils;
@@ -45,7 +45,7 @@ public class HardwareAndHttpAPIServer extends BaseServer {
         var letsEncryptHandler = new LetsEncryptHandler(holder.sslContextHolder.contentHolder);
         var hardwareLoginHandler = new HardwareLoginHandler(holder, port);
         var hardwareChannelStateHandler = new HardwareChannelStateHandler(holder);
-        var alreadyLoggedHandler = new AlreadyLoggedHandler();
+        var alreadyLoggedHandler = new HardwareAlreadyLoggedHandler();
         int maxWebLength = holder.limits.webRequestMaxSize;
         int hardTimeoutSecs = NumberUtil.calcHeartbeatTimeout(holder.limits.hardwareIdleTimeout);
 
@@ -119,7 +119,8 @@ public class HardwareAndHttpAPIServer extends BaseServer {
                                         .addFirst("H_IdleStateHandler",
                                                 new IdleStateHandler(hardTimeoutSecs, 0, 0))
                                         .addLast("H_ChannelState", hardwareChannelStateHandler)
-                                        .addLast("H_MessageDecoder", new MessageDecoder(holder.stats, holder.limits))
+                                        .addLast("H_MessageDecoder",
+                                                new HardwareMessageDecoder(holder.stats, holder.limits))
                                         .addLast("H_MessageEncoder", new MessageEncoder(holder.stats))
                                         .addLast("H_Login", hardwareLoginHandler)
                                         .addLast("H_AlreadyLogged", alreadyLoggedHandler);

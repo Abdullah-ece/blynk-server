@@ -6,6 +6,7 @@ import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.db.DBManager;
@@ -20,11 +21,8 @@ import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_CLONE_CODE;
-import static cc.blynk.server.internal.CommonByteBufUtil.energyLimit;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeBinaryMessage;
-import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
-import static cc.blynk.server.internal.CommonByteBufUtil.quotaLimit;
-import static cc.blynk.server.internal.CommonByteBufUtil.serverError;
+import static cc.blynk.server.internal.WebByteBufUtil.json;
 import static cc.blynk.utils.StringUtils.split2;
 
 /**
@@ -72,7 +70,7 @@ public class MobileGetProjectByClonedTokenLogic {
                 }
                 if (json == null) {
                     log.debug("Cannot find request clone QR. {}", token);
-                    result = serverError(message.id);
+                    result = json(message.id, "Cannot find requested clone QR.");
                 } else {
                     if (newFlow) {
                         result = createDashboard(user, json, message.id);
@@ -83,7 +81,7 @@ public class MobileGetProjectByClonedTokenLogic {
                 }
             } catch (Exception e) {
                 log.error("Error getting cloned project.", e);
-                result = serverError(message.id);
+                result = json(message.id, e.getMessage());
             }
             ctx.writeAndFlush(result, ctx.voidPromise());
         });
@@ -97,14 +95,14 @@ public class MobileGetProjectByClonedTokenLogic {
         newDash.isShared = false;
 
         if (user.profile.dashBoards.length >= dashMaxLimit) {
-            log.debug("Dashboards limit reached.");
-            return quotaLimit(msgId);
+            log.debug("Projects limit reached.");
+            throw new JsonException("Projects limit reached.");
         }
 
         for (DashBoard dashBoard : user.profile.dashBoards) {
             if (dashBoard.id == newDash.id) {
-                log.debug("Dashboard already exists.");
-                return notAllowed(msgId);
+                log.debug("Project with passed already exists.");
+                throw new JsonException("Project with passed already exists.");
             }
         }
 
@@ -117,7 +115,7 @@ public class MobileGetProjectByClonedTokenLogic {
         int price = newDash.energySum();
         if (user.notEnoughEnergy(price)) {
             log.debug("Not enough energy.");
-            return energyLimit(msgId);
+            throw new JsonException("Not enough energy.");
         }
         user.subtractEnergy(price);
         user.profile.dashBoards = ArrayUtil.add(user.profile.dashBoards, newDash, DashBoard.class);

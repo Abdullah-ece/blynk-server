@@ -7,8 +7,7 @@ import cc.blynk.server.core.model.widgets.ui.reporting.BaseReportTask;
 import cc.blynk.server.core.model.widgets.ui.reporting.Report;
 import cc.blynk.server.core.model.widgets.ui.reporting.ReportScheduler;
 import cc.blynk.server.core.model.widgets.ui.reporting.ReportingWidget;
-import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
-import cc.blynk.server.core.protocol.exceptions.QuotaLimitException;
+import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -17,8 +16,8 @@ import org.apache.logging.log4j.Logger;
 import java.util.concurrent.TimeUnit;
 
 import static cc.blynk.server.core.protocol.enums.Command.EXPORT_REPORT;
-import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
+import static cc.blynk.server.internal.WebByteBufUtil.json;
 import static cc.blynk.utils.StringUtils.split2;
 
 /**
@@ -41,7 +40,7 @@ public final class MobileExportReportLogic {
         String[] split = split2(message.body);
 
         if (split.length < 2) {
-            throw new IllegalCommandException("Wrong income message format.");
+            throw new JsonException("Wrong income message format.");
         }
 
         int dashId = Integer.parseInt(split[0]);
@@ -51,23 +50,23 @@ public final class MobileExportReportLogic {
         ReportingWidget reportingWidget = dash.getReportingWidget();
 
         if (reportingWidget == null) {
-            throw new IllegalCommandException("Project has no reporting widget.");
+            throw new JsonException("Project has no reporting widget.");
         }
 
         Report report = reportingWidget.getReportById(reportId);
         if (report == null) {
-            throw new IllegalCommandException("Cannot find report with passed id.");
+            throw new JsonException("Cannot find report with passed id.");
         }
 
         if (!report.isValid()) {
             log.debug("Report is not valid {} for {}.", report, user.email);
-            throw new IllegalCommandException("Report is not valid.");
+            throw new JsonException("Report is not valid.");
         }
 
         long now = System.currentTimeMillis();
         if (report.lastReportAt + runDelay > now) {
             log.debug("Report {} trigger limit reached for {}.", report.id, user.email);
-            throw new QuotaLimitException("Report trigger limit reached.");
+            throw new JsonException("Report trigger limit reached.");
         }
 
         ReportScheduler reportScheduler = holder.reportScheduler;
@@ -86,7 +85,7 @@ public final class MobileExportReportLogic {
                     }
                 } catch (Exception e) {
                     log.debug("Error generating export report {} for {}.", report, key.user.email, e);
-                    ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
+                    ctx.writeAndFlush(json(message.id, "Error generating export report."), ctx.voidPromise());
                 }
             }
         }, 0, TimeUnit.SECONDS);

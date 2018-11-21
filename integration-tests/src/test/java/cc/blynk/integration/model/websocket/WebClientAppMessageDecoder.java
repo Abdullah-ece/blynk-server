@@ -21,6 +21,7 @@ import java.nio.charset.StandardCharsets;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENHANCED_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
+import static cc.blynk.server.internal.WebByteBufUtil.quotaLimit;
 
 /**
  * The Blynk Project.
@@ -49,7 +50,10 @@ public class WebClientAppMessageDecoder extends ChannelInboundHandlerAdapter {
                 short command = in.readUnsignedByte();
                 int messageId = in.readUnsignedShort();
 
-                if (limitChecker.quotaReached(ctx, messageId)) {
+                if (limitChecker.quotaReached()) {
+                    if (ctx.channel().isWritable()) {
+                        ctx.channel().writeAndFlush(quotaLimit(messageId), ctx.voidPromise());
+                    }
                     return;
                 }
 

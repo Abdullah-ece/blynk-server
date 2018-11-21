@@ -7,12 +7,11 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.processors.BaseProcessorHandler;
 import cc.blynk.server.core.processors.WebhookProcessor;
+import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.mobile.MobileStateHolder;
 import cc.blynk.utils.NumberUtil;
-import io.netty.channel.ChannelHandlerContext;
 
-import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
 import static cc.blynk.utils.StringUtils.split2;
 import static cc.blynk.utils.StringUtils.split3;
 
@@ -45,12 +44,11 @@ public class MobileHardwareResendFromBTLogic extends BaseProcessorHandler {
         return body.charAt(1) == 'w';
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, MobileStateHolder state, StringMessage message) {
+    public void messageReceived(MobileStateHolder state, StringMessage message) {
         //minimum command - "1-1 vw 1"
         if (message.body.length() < 8) {
             log.debug("MobileHardwareResendFromBTLogic command body too short.");
-            ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
-            return;
+            throw new JsonException("Command body too short.");
         }
 
         String[] split = split2(message.body);
@@ -63,9 +61,8 @@ public class MobileHardwareResendFromBTLogic extends BaseProcessorHandler {
             String[] splitBody = split3(split[1]);
 
             if (splitBody.length < 3 || splitBody[0].length() == 0 || splitBody[2].length() == 0) {
-                log.debug("Write command is wrong.");
-                ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
-                return;
+                log.debug("MobileHardwareResendFromBTLogic write command is wrong.");
+                throw new JsonException("Write command is wrong.");
             }
 
             PinType pinType = PinType.getPinType(splitBody[0].charAt(0));

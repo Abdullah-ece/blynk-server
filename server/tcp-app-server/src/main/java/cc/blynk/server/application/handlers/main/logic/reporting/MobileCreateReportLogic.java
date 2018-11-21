@@ -8,7 +8,7 @@ import cc.blynk.server.core.model.widgets.ui.reporting.Report;
 import cc.blynk.server.core.model.widgets.ui.reporting.ReportScheduler;
 import cc.blynk.server.core.model.widgets.ui.reporting.ReportingWidget;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
-import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
+import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.ArrayUtil;
 import io.netty.channel.ChannelHandlerContext;
@@ -16,7 +16,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.CREATE_REPORT;
-import static cc.blynk.server.internal.CommonByteBufUtil.energyLimit;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.utils.StringUtils.split2;
 
@@ -38,7 +37,7 @@ public final class MobileCreateReportLogic {
         String[] split = split2(message.body);
 
         if (split.length < 2) {
-            throw new IllegalCommandException("Wrong income message format.");
+            throw new JsonException("Wrong income message format.");
         }
 
         int reportsLimit = holder.limits.reportsLimit;
@@ -48,18 +47,18 @@ public final class MobileCreateReportLogic {
         String reportJson = split[1];
 
         if (reportJson == null || reportJson.isEmpty()) {
-            throw new IllegalCommandException("Income report message is empty.");
+            throw new JsonException("Income report message is empty.");
         }
 
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
         ReportingWidget reportingWidget = dash.getReportingWidget();
 
         if (reportingWidget == null) {
-            throw new IllegalCommandException("Project has no reporting widget.");
+            throw new JsonException("Project has no reporting widget.");
         }
 
         if (reportingWidget.reports.length >= reportsLimit) {
-            throw new IllegalCommandException("User reached reports limit.");
+            throw new JsonException("User reached reports limit.");
         }
 
         Report report = JsonParser.parseReport(reportJson, message.id);
@@ -67,14 +66,12 @@ public final class MobileCreateReportLogic {
 
         int price = Report.getPrice();
         if (user.notEnoughEnergy(price)) {
-            log.debug("Not enough energy.");
-            ctx.writeAndFlush(energyLimit(message.id), ctx.voidPromise());
-            return;
+            throw new JsonException("Not enough energy.");
         }
 
         if (!report.isValid()) {
             log.debug("Report is not valid {} for {}.", report, user.email);
-            throw new IllegalCommandException("Report is not valid.");
+            throw new JsonException("Report is not valid.");
         }
 
         if (report.isPeriodic()) {
@@ -84,7 +81,7 @@ public final class MobileCreateReportLogic {
             } catch (IllegalCommandBodyException e) {
                 //re throw, quick workaround
                 log.debug("Report has wrong configuration for {}. Report : {}", user.email, report);
-                throw new IllegalCommandBodyException(e.getMessage(), message.id);
+                throw new JsonException(e.getMessage());
             }
 
             log.info("Adding periodic report for user {} with delay {} to scheduler.",

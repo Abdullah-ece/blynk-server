@@ -6,7 +6,7 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.ui.reporting.Report;
 import cc.blynk.server.core.model.widgets.ui.reporting.ReportScheduler;
 import cc.blynk.server.core.model.widgets.ui.reporting.ReportingWidget;
-import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
+import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.ArrayUtil;
 import io.netty.channel.ChannelHandlerContext;
@@ -34,7 +34,7 @@ public final class MobileDeleteReportLogic {
         String[] split = split2(message.body);
 
         if (split.length < 2) {
-            throw new IllegalCommandException("Wrong income message format.");
+            throw new JsonException("Wrong income message format.");
         }
 
         int dashId = Integer.parseInt(split[0]);
@@ -44,12 +44,12 @@ public final class MobileDeleteReportLogic {
         ReportingWidget reportingWidget = dash.getReportingWidget();
 
         if (reportingWidget == null) {
-            throw new IllegalCommandException("Project has no reporting widget.");
+            throw new JsonException("Project has no reporting widget.");
         }
 
         int existingReportIndex = reportingWidget.getReportIndexById(reportId);
         if (existingReportIndex == -1) {
-            throw new IllegalCommandException("Cannot find report with provided id.");
+            throw new JsonException("Cannot find report with provided id.");
         }
 
         Report reportToDel = reportingWidget.reports[existingReportIndex];

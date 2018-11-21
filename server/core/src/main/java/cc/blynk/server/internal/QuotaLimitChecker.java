@@ -1,12 +1,8 @@
 package cc.blynk.server.internal;
 
-import cc.blynk.server.core.protocol.enums.Response;
 import cc.blynk.server.core.stats.metrics.InstanceLoadMeter;
-import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import static cc.blynk.server.internal.CommonByteBufUtil.makeResponse;
 
 /**
  * The Blynk Project.
@@ -34,24 +30,21 @@ public class QuotaLimitChecker {
         this.quotaMeter = new InstanceLoadMeter();
     }
 
-    public boolean quotaReached(ChannelHandlerContext ctx, int msgId) {
+    public boolean quotaReached() {
         if (quotaMeter.getOneMinuteRate() > userQuotaLimit) {
-            sendErrorResponseIfTicked(ctx, msgId);
+            sendErrorResponseIfTicked();
             return true;
         }
         quotaMeter.mark();
         return false;
     }
 
-    private void sendErrorResponseIfTicked(ChannelHandlerContext ctx, int msgId) {
+    private void sendErrorResponseIfTicked() {
         long now = System.currentTimeMillis();
         //once a minute sending user response message in case limit is exceeded constantly
         if (lastQuotaExceededTime + USER_QUOTA_LIMIT_WARN_PERIOD < now) {
             lastQuotaExceededTime = now;
             log.debug("User has exceeded message quota limit.");
-            if (ctx.channel().isWritable()) {
-                ctx.channel().writeAndFlush(makeResponse(msgId, Response.QUOTA_LIMIT), ctx.voidPromise());
-            }
         }
     }
 

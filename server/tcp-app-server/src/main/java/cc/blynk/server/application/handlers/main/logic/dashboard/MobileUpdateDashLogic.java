@@ -4,8 +4,7 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
-import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
+import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.mobile.MobileStateHolder;
 import cc.blynk.server.workers.timer.TimerWorker;
@@ -34,18 +33,18 @@ public final class MobileUpdateDashLogic {
         String dashString = message.body;
 
         if (dashString == null || dashString.isEmpty()) {
-            throw new IllegalCommandException("Income create dash message is empty.");
+            throw new JsonException("Income create dash message is empty.");
         }
 
         if (dashString.length() > holder.limits.profileSizeLimitBytes) {
-            throw new NotAllowedException("User dashboard is larger then limit.", message.id);
+            throw new JsonException("User dashboard is larger then limit.");
         }
 
         log.debug("Trying to parse user dash : {}", dashString);
         DashBoard updatedDash = JsonParser.parseDashboard(dashString, message.id);
 
         if (updatedDash == null) {
-            throw new IllegalCommandException("Project parsing error.");
+            throw new JsonException("Project parsing error.");
         }
 
         log.debug("Saving dashboard.");

@@ -10,7 +10,7 @@ import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
 import cc.blynk.server.core.model.widgets.outputs.graph.Superchart;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
-import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
+import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.Channel;
@@ -18,8 +18,8 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
+import static cc.blynk.server.internal.WebByteBufUtil.json;
 import static cc.blynk.utils.StringUtils.split2Device;
 
 /**
@@ -40,7 +40,7 @@ public final class MobileDeleteEnhancedGraphDataLogic {
         String[] messageParts = StringUtils.split3(message.body);
 
         if (messageParts.length < 2) {
-            throw new IllegalCommandException("Wrong income message format.");
+            throw new JsonException("Wrong income message format.");
         }
 
         String[] dashIdAndDeviceId = split2Device(messageParts[0]);
@@ -95,7 +95,7 @@ public final class MobileDeleteEnhancedGraphDataLogic {
                 channel.writeAndFlush(ok(msgId), channel.voidPromise());
             } catch (Exception e) {
                 log.debug("Error removing enhanced graph data. Reason : {}.", e.getMessage());
-                channel.writeAndFlush(illegalCommand(msgId), channel.voidPromise());
+                channel.writeAndFlush(json(msgId, "Error removing enhanced graph data."), channel.voidPromise());
             }
         });
     }

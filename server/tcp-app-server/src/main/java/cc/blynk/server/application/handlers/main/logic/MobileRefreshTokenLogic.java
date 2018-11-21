@@ -10,7 +10,6 @@ import cc.blynk.server.core.session.mobile.MobileStateHolder;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.REFRESH_TOKEN;
-import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommandBody;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 
 /**
@@ -29,12 +28,7 @@ public final class MobileRefreshTokenLogic {
         int deviceId = Integer.parseInt(message.body);
         User user = state.user;
 
-        Device device = holder.deviceDao.getById(deviceId);
-
-        if (device == null) {
-            ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
-            return;
-        }
+        Device device = holder.deviceDao.getByIdOrThrow(deviceId);
 
         Product product = holder.organizationDao.getProductById(device.productId);
         String token = holder.deviceDao.assignNewToken(user.orgId, user.email, product, device);

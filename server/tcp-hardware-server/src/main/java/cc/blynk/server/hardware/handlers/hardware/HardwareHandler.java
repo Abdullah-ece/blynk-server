@@ -3,6 +3,7 @@ package cc.blynk.server.hardware.handlers.hardware;
 import cc.blynk.server.Holder;
 import cc.blynk.server.common.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.common.handlers.logic.PingLogic;
+import cc.blynk.server.core.protocol.exceptions.BaseServerException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.hardware.handlers.hardware.logic.BlynkInternalLogic;
@@ -17,6 +18,7 @@ import cc.blynk.server.hardware.handlers.hardware.logic.SmsLogic;
 import cc.blynk.server.hardware.handlers.hardware.logic.TwitLogic;
 import cc.blynk.server.hardware.internal.BridgeForwardMessage;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.util.ReferenceCountUtil;
 
 import static cc.blynk.server.core.protocol.enums.Command.BLYNK_INTERNAL;
 import static cc.blynk.server.core.protocol.enums.Command.BRIDGE;
@@ -31,6 +33,8 @@ import static cc.blynk.server.core.protocol.enums.Command.PUSH_NOTIFICATION;
 import static cc.blynk.server.core.protocol.enums.Command.SET_WIDGET_PROPERTY;
 import static cc.blynk.server.core.protocol.enums.Command.SMS;
 import static cc.blynk.server.core.protocol.enums.Command.TWEET;
+import static cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler.handleBaseServerException;
+import static cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler.handleGeneralException;
 import static cc.blynk.server.internal.CommonByteBufUtil.alreadyRegistered;
 import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
 
@@ -64,6 +68,25 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
 
         this.email = new MailLogic(holder);
         this.push = new PushLogic(holder.gcmWrapper, holder.limits.notificationPeriodLimitSec);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public void channelRead(ChannelHandlerContext ctx, Object msg) {
+        if (type.isInstance(msg)) {
+            try {
+                messageReceived(ctx, (StringMessage) msg);
+            } catch (NumberFormatException nfe) {
+                log.debug("Error parsing number. {}", nfe.getMessage());
+                ctx.writeAndFlush(illegalCommand(getMsgId(msg)), ctx.voidPromise());
+            } catch (BaseServerException bse) {
+                handleBaseServerException(ctx, bse, getMsgId(msg));
+            } catch (Exception e) {
+                handleGeneralException(ctx, e);
+            } finally {
+                ReferenceCountUtil.release(msg);
+            }
+        }
     }
 
     @Override

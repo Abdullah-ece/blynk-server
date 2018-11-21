@@ -4,13 +4,12 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
+import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommandBody;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 
 /**
@@ -29,7 +28,7 @@ public final class MobileUpdateDeviceLogic {
         String deviceString = message.body;
 
         if (deviceString == null || deviceString.isEmpty()) {
-            throw new IllegalCommandException("Income device message is empty.");
+            throw new JsonException("Income device message is empty.");
         }
 
         Device newDevice = JsonParser.parseDevice(deviceString, message.id);
@@ -38,15 +37,14 @@ public final class MobileUpdateDeviceLogic {
         log.trace(deviceString);
 
         if (newDevice.isNotValid()) {
-            throw new IllegalCommandException("Income device message is not valid.");
+            throw new JsonException("Income device message is not valid.");
         }
 
         Device existingDevice = holder.deviceDao.getById(newDevice.id);
 
         if (existingDevice == null) {
             log.debug("Attempt to update device with non existing id.");
-            ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
-            return;
+            throw new JsonException("Attempt to update device with non existing id.");
         }
 
         existingDevice.updateFromMobile(newDevice);

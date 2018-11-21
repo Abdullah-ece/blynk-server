@@ -1,7 +1,7 @@
-package cc.blynk.server.common.handlers;
+package cc.blynk.server.hardware.handlers.hardware.auth;
 
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
-import cc.blynk.server.core.protocol.model.messages.appllication.RegisterMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -9,7 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler.handleGeneralException;
-import static cc.blynk.server.internal.WebByteBufUtil.json;
+import static cc.blynk.server.internal.CommonByteBufUtil.alreadyRegistered;
 
 /**
  * The Blynk Project.
@@ -17,19 +17,22 @@ import static cc.blynk.server.internal.WebByteBufUtil.json;
  * Created on 2/1/2015.
  */
 @ChannelHandler.Sharable
-public class UserNotLoggedHandler extends SimpleChannelInboundHandler<MessageBase> {
+public class HardwareAlreadyLoggedHandler extends SimpleChannelInboundHandler<MessageBase> {
 
-    private static final Logger log = LogManager.getLogger(Logger.class);
+    private static final Logger log = LogManager.getLogger(HardwareAlreadyLoggedHandler.class);
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, MessageBase msg) {
-        log.debug("User not logged. {}. Closing.", ctx.channel().remoteAddress());
-        if (msg instanceof RegisterMessage) {
+        if (msg instanceof LoginMessage) {
             if (ctx.channel().isWritable()) {
-                ctx.writeAndFlush(json(msg.id, "User already logged in."), ctx.voidPromise());
+                ctx.writeAndFlush(alreadyRegistered(msg.id), ctx.voidPromise());
             }
+        } else {
+            if (log.isDebugEnabled()) {
+                log.debug("Hardware not logged. {}. Closing.", ctx.channel().remoteAddress());
+            }
+            ctx.close();
         }
-        ctx.close();
     }
 
     @Override

@@ -16,9 +16,9 @@ import org.apache.logging.log4j.Logger;
 import java.util.List;
 
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
-import static cc.blynk.server.internal.CommonByteBufUtil.deviceNotInNetwork;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
+import static cc.blynk.server.internal.WebByteBufUtil.deviceNotInNetwork;
 import static cc.blynk.utils.MobileStateHolderUtil.getAppState;
 
 /**
@@ -57,7 +57,7 @@ public final class MobileActivateDashboardLogic {
                 String pmBody = dash.buildPMMessage(device.id);
                 if (pmBody == null) {
                     if (!session.isHardwareConnected(device.id)) {
-                        log.debug("No device in session.");
+                        log.debug("Device not in the network.");
                         if (ctx.channel().isWritable() && !dash.isNotificationsOff) {
                             ctx.write(deviceNotInNetwork(PIN_MODE_MSG_ID), ctx.voidPromise());
                         }
@@ -65,7 +65,7 @@ public final class MobileActivateDashboardLogic {
                 } else {
                     if (device.fitsBufferSize(pmBody.length())) {
                         if (session.sendMessageToHardware(HARDWARE, PIN_MODE_MSG_ID, pmBody, device.id)) {
-                            log.debug("No device in session.");
+                            log.debug("Device not in the network.");
                             if (ctx.channel().isWritable() && !dash.isNotificationsOff) {
                                 ctx.write(deviceNotInNetwork(PIN_MODE_MSG_ID), ctx.voidPromise());
                             }
@@ -79,7 +79,7 @@ public final class MobileActivateDashboardLogic {
 
             ctx.write(ok(message.id), ctx.voidPromise());
         } else {
-            log.debug("No device in session.");
+            log.debug("Device not in the network.");
             if (dash.isNotificationsOff) {
                 ctx.write(ok(message.id), ctx.voidPromise());
             } else {

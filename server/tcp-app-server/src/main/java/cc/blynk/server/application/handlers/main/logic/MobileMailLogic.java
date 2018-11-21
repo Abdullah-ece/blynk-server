@@ -8,6 +8,7 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
+import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.utils.StringUtils;
@@ -19,9 +20,8 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
-import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommandBody;
-import static cc.blynk.server.internal.CommonByteBufUtil.notificationError;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
+import static cc.blynk.server.internal.WebByteBufUtil.json;
 
 /**
  * Sends email from application.
@@ -68,8 +68,7 @@ public class MobileMailLogic {
 
                     if (device == null || device.token == null) {
                         log.debug("Wrong device id.");
-                        ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
-                        return;
+                        throw new JsonException("Wrong device id.");
                     }
 
                     makeSingleTokenEmail(ctx, dash, device, user.email, message.id);
@@ -148,9 +147,7 @@ public class MobileMailLogic {
                 channel.writeAndFlush(ok(msgId), channel.voidPromise());
             } catch (Exception e) {
                 log.error("Error sending email auth token to user : {}. Error: {}", to, e.getMessage());
-                if (channel.isActive() && channel.isWritable()) {
-                    channel.writeAndFlush(notificationError(msgId), channel.voidPromise());
-                }
+                channel.writeAndFlush(json(msgId, "Error sending email auth token."), channel.voidPromise());
             }
         });
     }

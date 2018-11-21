@@ -11,7 +11,7 @@ import cc.blynk.server.application.handlers.main.logic.graph.MobileDeleteDeviceD
 import cc.blynk.server.application.handlers.main.logic.graph.MobileGetEnhancedGraphDataLogic;
 import cc.blynk.server.application.handlers.sharing.auth.MobileShareStateHolder;
 import cc.blynk.server.application.handlers.sharing.logic.MobileShareHardwareLogic;
-import cc.blynk.server.common.BaseSimpleChannelInboundHandler;
+import cc.blynk.server.common.JsonBasedSimpleChannelInboundHandler;
 import cc.blynk.server.common.handlers.logic.PingLogic;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import io.netty.channel.ChannelHandlerContext;
@@ -33,7 +33,7 @@ import static cc.blynk.server.core.protocol.enums.Command.PING;
  * Created on 2/1/2015.
  *
  */
-public class MobileShareHandler extends BaseSimpleChannelInboundHandler<StringMessage, MobileShareStateHolder> {
+public class MobileShareHandler extends JsonBasedSimpleChannelInboundHandler<StringMessage, MobileShareStateHolder> {
 
     public final MobileShareStateHolder state;
     private final Holder holder;

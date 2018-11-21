@@ -1,14 +1,12 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard.widget.tile;
 
-import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
-import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
-import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
+import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.mobile.MobileStateHolder;
 import cc.blynk.utils.ArrayUtil;
@@ -31,12 +29,11 @@ public final class MobileCreateTileTemplateLogic {
     private MobileCreateTileTemplateLogic() {
     }
 
-    public static void messageReceived(Holder holder,
-                                       ChannelHandlerContext ctx, MobileStateHolder state, StringMessage message) {
+    public static void messageReceived(ChannelHandlerContext ctx, MobileStateHolder state, StringMessage message) {
         String[] split = split3(message.body);
 
         if (split.length < 3) {
-            throw new IllegalCommandException("Wrong income message format.");
+            throw new JsonException("Wrong income message format.");
         }
 
         int dashId = Integer.parseInt(split[0]);
@@ -44,7 +41,7 @@ public final class MobileCreateTileTemplateLogic {
         String tileTemplateString = split[2];
 
         if (tileTemplateString == null || tileTemplateString.isEmpty()) {
-            throw new IllegalCommandException("Income tile template message is empty.");
+            throw new JsonException("Income tile template message is empty.");
         }
 
         User user = state.user;
@@ -52,7 +49,7 @@ public final class MobileCreateTileTemplateLogic {
         Widget widget = dash.getWidgetByIdOrThrow(widgetId);
 
         if (!(widget instanceof DeviceTiles)) {
-            throw new IllegalCommandException("Income widget id is not DeviceTiles.");
+            throw new JsonException("Income widget id is not DeviceTiles.");
         }
 
         DeviceTiles deviceTiles = (DeviceTiles) widget;
@@ -65,7 +62,7 @@ public final class MobileCreateTileTemplateLogic {
 
         for (TileTemplate tileTemplate : deviceTiles.templates) {
             if (tileTemplate.id == newTileTemplate.id) {
-                throw new NotAllowedException("tile template with same id already exists.", message.id);
+                throw new JsonException("tile template with same id already exists.");
             }
         }
 

@@ -1,4 +1,4 @@
-package cc.blynk.server.common.handlers;
+package cc.blynk.server.application.handlers.main.auth;
 
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
@@ -9,7 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler.handleGeneralException;
-import static cc.blynk.server.internal.CommonByteBufUtil.alreadyRegistered;
+import static cc.blynk.server.internal.WebByteBufUtil.json;
 
 /**
  * The Blynk Project.
@@ -17,15 +17,15 @@ import static cc.blynk.server.internal.CommonByteBufUtil.alreadyRegistered;
  * Created on 2/1/2015.
  */
 @ChannelHandler.Sharable
-public class AlreadyLoggedHandler extends SimpleChannelInboundHandler<MessageBase> {
+public class MobileAlreadyLoggedHandler extends SimpleChannelInboundHandler<MessageBase> {
 
-    private static final Logger log = LogManager.getLogger(AlreadyLoggedHandler.class);
+    private static final Logger log = LogManager.getLogger(MobileAlreadyLoggedHandler.class);
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, MessageBase msg) {
         if (msg instanceof LoginMessage) {
             if (ctx.channel().isWritable()) {
-                ctx.writeAndFlush(alreadyRegistered(msg.id), ctx.voidPromise());
+                ctx.writeAndFlush(json(msg.id, "Account is already registered."), ctx.voidPromise());
             }
         } else {
             if (log.isDebugEnabled()) {

@@ -15,6 +15,7 @@ import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.processors.BaseProcessorHandler;
 import cc.blynk.server.core.processors.WebhookProcessor;
+import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.NumberUtil;
 import io.netty.channel.Channel;
@@ -24,10 +25,8 @@ import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.DEVICE_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
-import static cc.blynk.server.internal.CommonByteBufUtil.deviceNotInNetwork;
-import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommandBody;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
-import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
+import static cc.blynk.server.internal.WebByteBufUtil.deviceNotInNetwork;
 import static cc.blynk.utils.StringUtils.split2;
 import static cc.blynk.utils.StringUtils.split2Device;
 import static cc.blynk.utils.StringUtils.split3;
@@ -84,8 +83,7 @@ public class MobileShareHardwareLogic extends BaseProcessorHandler {
 
         if (!dash.isShared) {
             log.debug("Dashboard is not shared. User : {}, {}", user.email, ctx.channel().remoteAddress());
-            ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
-            return;
+            throw new JsonException("Dashboard is not shared.");
         }
 
         //sending message only if widget assigned to device or tag has assigned devices
@@ -122,8 +120,7 @@ public class MobileShareHardwareLogic extends BaseProcessorHandler {
 
                 if (splitBody.length < 3) {
                     log.debug("Not valid write command.");
-                    ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
-                    return;
+                    throw new JsonException("Not valid write command.");
                 }
 
                 PinType pinType = PinType.getPinType(splitBody[0].charAt(0));
@@ -152,7 +149,7 @@ public class MobileShareHardwareLogic extends BaseProcessorHandler {
 
                 if (session.sendMessageToHardware(HARDWARE, message.id, split[1], deviceIds)
                         && !dash.isNotificationsOff) {
-                    log.debug("No device in session.");
+                    log.debug("Device not in the network.");
                     ctx.writeAndFlush(deviceNotInNetwork(message.id), ctx.voidPromise());
                 }
 

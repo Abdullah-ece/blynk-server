@@ -5,7 +5,7 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.Product;
-import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
+import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -31,7 +31,7 @@ public final class MobileCreateDeviceLogic {
         String deviceString = message.body;
 
         if (deviceString == null || deviceString.isEmpty()) {
-            throw new IllegalCommandException("Income device message is empty.");
+            throw new JsonException("Income device message is empty.");
         }
 
         Device newDevice = JsonParser.parseDevice(deviceString, message.id);
@@ -39,7 +39,7 @@ public final class MobileCreateDeviceLogic {
         log.debug("Creating new device {}.", deviceString);
 
         if (newDevice.isNotValid()) {
-            throw new IllegalCommandException("Income device message is not valid.");
+            throw new JsonException("Income device message is not valid.");
         }
 
         int orgId = user.orgId;

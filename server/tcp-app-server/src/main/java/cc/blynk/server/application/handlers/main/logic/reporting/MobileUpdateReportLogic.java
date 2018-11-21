@@ -9,7 +9,7 @@ import cc.blynk.server.core.model.widgets.ui.reporting.ReportResult;
 import cc.blynk.server.core.model.widgets.ui.reporting.ReportScheduler;
 import cc.blynk.server.core.model.widgets.ui.reporting.ReportingWidget;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
-import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
+import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.ArrayUtil;
 import io.netty.channel.ChannelHandlerContext;
@@ -38,28 +38,28 @@ public final class MobileUpdateReportLogic {
         String[] split = split2(message.body);
 
         if (split.length < 2) {
-            throw new IllegalCommandException("Wrong income message format.");
+            throw new JsonException("Wrong income message format.");
         }
 
         int dashId = Integer.parseInt(split[0]);
         String reportJson = split[1];
 
         if (reportJson == null || reportJson.isEmpty()) {
-            throw new IllegalCommandException("Income report message is empty.");
+            throw new JsonException("Income report message is empty.");
         }
 
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
         ReportingWidget reportingWidget = dash.getReportingWidget();
 
         if (reportingWidget == null) {
-            throw new IllegalCommandException("Project has no reporting widget.");
+            throw new JsonException("Project has no reporting widget.");
         }
 
         Report report = JsonParser.parseReport(reportJson, message.id);
 
         int existingReportIndex = reportingWidget.getReportIndexById(report.id);
         if (existingReportIndex == -1) {
-            throw new IllegalCommandException("Cannot find report with provided id.");
+            throw new JsonException("Cannot find report with provided id.");
         }
 
         ReportScheduler reportScheduler = holder.reportScheduler;
@@ -73,7 +73,7 @@ public final class MobileUpdateReportLogic {
 
         if (!report.isValid()) {
             log.debug("Report is not valid {} for {}.", report, user.email);
-            throw new IllegalCommandException("Report is not valid.");
+            throw new JsonException("Report is not valid.");
         }
 
         if (report.isPeriodic()) {
@@ -83,7 +83,7 @@ public final class MobileUpdateReportLogic {
             } catch (IllegalCommandBodyException e) {
                 //re throw, quick workaround
                 log.debug("Report has wrong configuration for {}. Report : {}", user.email, report);
-                throw new IllegalCommandBodyException(e.getMessage(), message.id);
+                throw new JsonException(e.getMessage());
             }
 
             log.info("Adding periodic report for user {} with delay {} to scheduler.",

@@ -9,6 +9,7 @@ import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod;
 import cc.blynk.server.core.model.widgets.web.BaseWebGraph;
 import cc.blynk.server.core.model.widgets.web.WebSource;
+import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.exceptions.NoDataException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.reporting.WebGraphRequest;
@@ -44,7 +45,6 @@ import static cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod.TWELV
 import static cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod.TWO_DAYS;
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENHANCED_GRAPH_DATA;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeBinaryMessage;
-import static cc.blynk.server.internal.CommonByteBufUtil.noData;
 import static cc.blynk.server.internal.WebByteBufUtil.json;
 import static cc.blynk.utils.ByteUtils.REPORTING_RECORD_SIZE_BYTES;
 
@@ -125,8 +125,7 @@ public class WebGetGraphDataLogic {
         int numberOfStreams = baseWebGraph.sources.length;
         if (numberOfStreams == 0) {
             log.debug("No data streams for web graph with id {} for deviceId {}.", widgetId, deviceId);
-            ctx.writeAndFlush(noData(message.id), ctx.voidPromise());
-            return;
+            throw new JsonException("No data streams for web graph.");
         }
 
         int i = 0;
@@ -190,7 +189,7 @@ public class WebGetGraphDataLogic {
                     );
                 }
             } catch (NoDataException noDataException) {
-                channel.writeAndFlush(noData(msgId), channel.voidPromise());
+                channel.writeAndFlush(json(msgId, "No data."), channel.voidPromise());
             } catch (Exception e) {
                 log.error("Error reading reporting data. For user {}. Error: {}", user.email, e.getMessage());
                 channel.writeAndFlush(json(msgId, "Error reading reporting data."), channel.voidPromise());

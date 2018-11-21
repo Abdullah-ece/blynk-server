@@ -9,6 +9,7 @@ import cc.blynk.server.core.model.auth.App;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.ProvisionType;
+import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.model.FlashedToken;
@@ -26,9 +27,8 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
-import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommandBody;
-import static cc.blynk.server.internal.CommonByteBufUtil.notificationError;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
+import static cc.blynk.server.internal.WebByteBufUtil.json;
 
 /**
  * Sends email from application.
@@ -67,15 +67,13 @@ public final class MobileMailQRsLogic {
 
         if (app == null) {
             log.debug("App with passed id not found.");
-            ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
-            return;
+            throw new JsonException("App with passed id not found.");
         }
 
         List<Device> deviceList = deviceDao.getDevicesOwnedByUser(user.email);
         if (app.provisionType == ProvisionType.STATIC && deviceList.size() == 0) {
             log.debug("No devices in project.");
-            ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
-            return;
+            throw new JsonException("No devices in project.");
         }
 
         log.debug("Sending app preview email to {}, provision type {}", user.email, app.provisionType);
@@ -100,7 +98,7 @@ public final class MobileMailQRsLogic {
                     FlashedToken flashedToken = new FlashedToken(to, newToken, publishAppId, dash.id, -1);
 
                     if (!dbManager.insertFlashedTokens(flashedToken)) {
-                        throw new Exception("App Publishing Preview requires enabled DB.");
+                        throw new JsonException("App Publishing Preview requires enabled DB.");
                     }
 
                     String finalBody = textHolder.dynamicMailBody
@@ -110,7 +108,7 @@ public final class MobileMailQRsLogic {
                     channel.writeAndFlush(ok(msgId), channel.voidPromise());
                 } catch (Exception e) {
                     log.error("Error sending dynamic email from application. For user {}. Error: ", to, e);
-                    channel.writeAndFlush(notificationError(msgId), channel.voidPromise());
+                    channel.writeAndFlush(json(msgId, e.getMessage()), channel.voidPromise());
                 }
             });
         } else {
@@ -130,7 +128,7 @@ public final class MobileMailQRsLogic {
                     channel.writeAndFlush(ok(msgId), channel.voidPromise());
                 } catch (Exception e) {
                     log.error("Error sending static email from application. For user {}. Reason: {}", to, e);
-                    channel.writeAndFlush(notificationError(msgId), channel.voidPromise());
+                    channel.writeAndFlush(json(msgId, e.getMessage()), channel.voidPromise());
                 }
             });
         }
@@ -151,7 +149,7 @@ public final class MobileMailQRsLogic {
         }
 
         if (!dbManager.insertFlashedTokens(flashedTokens)) {
-            throw new Exception("App Publishing Preview requires enabled DB.");
+            throw new JsonException("App Publishing Preview requires enabled DB.");
         }
 
         return qrHolders;

@@ -9,8 +9,7 @@ import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
-import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
-import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
+import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.mobile.MobileStateHolder;
 import cc.blynk.server.workers.timer.TimerWorker;
@@ -20,7 +19,6 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.internal.CommonByteBufUtil.energyLimit;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 
 /**
@@ -41,7 +39,7 @@ public final class MobileCreateWidgetLogic {
         String[] split = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
 
         if (split.length < 2) {
-            throw new IllegalCommandException("Wrong income message format.");
+            throw new JsonException("Wrong income message format.");
         }
 
         int dashId = Integer.parseInt(split[0]);
@@ -60,11 +58,11 @@ public final class MobileCreateWidgetLogic {
         }
 
         if (widgetString == null || widgetString.isEmpty()) {
-            throw new IllegalCommandException("Income widget message is empty.");
+            throw new JsonException("Income widget message is empty.");
         }
 
         if (widgetString.length() > holder.limits.widgetSizeLimitBytes) {
-            throw new NotAllowedException("Widget is larger then limit.", message.id);
+            throw new JsonException("Widget is larger then limit.");
         }
 
         User user = state.user;
@@ -73,19 +71,19 @@ public final class MobileCreateWidgetLogic {
         Widget newWidget = JsonParser.parseWidget(widgetString, message.id);
 
         if (newWidget.width < 1 || newWidget.height < 1) {
-            throw new NotAllowedException("Widget has wrong dimensions.", message.id);
+            throw new JsonException("Widget has wrong dimensions.");
         }
 
         log.debug("Creating new widget {} for dashId {}.", widgetString, dashId);
 
         for (Widget widget : dash.widgets) {
             if (widget.id == newWidget.id) {
-                throw new NotAllowedException("Widget with same id already exists.", message.id);
+                throw new JsonException("Widget with same id already exists.");
             }
             if (widget instanceof DeviceTiles) {
                 Widget widgetInTiles = ((DeviceTiles) widget).getWidgetById(newWidget.id);
                 if (widgetInTiles != null) {
-                    throw new NotAllowedException("Widget with same id already exists.", message.id);
+                    throw new JsonException("Widget with same id already exists.");
                 }
             }
         }
@@ -93,8 +91,7 @@ public final class MobileCreateWidgetLogic {
         int price = newWidget.getPrice();
         if (user.notEnoughEnergy(price)) {
             log.debug("Not enough energy.");
-            ctx.writeAndFlush(energyLimit(message.id), ctx.voidPromise());
-            return;
+            throw new JsonException("Not enough energy.");
         }
         user.subtractEnergy(price);
 

@@ -17,6 +17,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
+import static cc.blynk.server.internal.WebByteBufUtil.quotaLimit;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
@@ -45,8 +46,10 @@ public class WSMessageDecoder extends ChannelInboundHandlerAdapter {
                 short command = in.readUnsignedByte();
                 int messageId = in.readUnsignedShort();
 
-                if (limitChecker.quotaReached(ctx, messageId)) {
-                    log.trace("Message quota reached.");
+                if (limitChecker.quotaReached()) {
+                    if (ctx.channel().isWritable()) {
+                        ctx.channel().writeAndFlush(quotaLimit(messageId), ctx.voidPromise());
+                    }
                     return;
                 }
 

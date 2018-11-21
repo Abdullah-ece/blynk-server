@@ -23,10 +23,8 @@ import net.glxn.qrgen.javase.QRCode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
-import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
-import static cc.blynk.server.internal.CommonByteBufUtil.serverError;
+import static cc.blynk.server.internal.WebByteBufUtil.json;
 
 @ChannelHandler.Sharable
 public class MobileResetPasswordHandler extends SimpleChannelInboundHandler<ResetPasswordMessage> {
@@ -66,7 +64,7 @@ public class MobileResetPasswordHandler extends SimpleChannelInboundHandler<Rese
             case "start" :
                 if (messageParts.length < 3) {
                     log.debug("Wrong income message format.");
-                    ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
+                    ctx.writeAndFlush(json(message.id, "Wrong income message format."), ctx.voidPromise());
                     return;
                 }
                 sendResetEMail(ctx, messageParts[1], messageParts[2], message.id);
@@ -74,7 +72,7 @@ public class MobileResetPasswordHandler extends SimpleChannelInboundHandler<Rese
             case "verify" :
                 if (messageParts.length < 2) {
                     log.debug("Wrong income message format.");
-                    ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
+                    ctx.writeAndFlush(json(message.id, "Wrong income message format."), ctx.voidPromise());
                     return;
                 }
                 verifyToken(ctx, messageParts[1], message.id);
@@ -82,7 +80,7 @@ public class MobileResetPasswordHandler extends SimpleChannelInboundHandler<Rese
             case "reset" :
                 if (messageParts.length < 3) {
                     log.debug("Wrong income message format.");
-                    ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
+                    ctx.writeAndFlush(json(message.id, "Wrong income message format."), ctx.voidPromise());
                     return;
                 }
                 reset(ctx, messageParts[1], messageParts[2], message.id);
@@ -94,13 +92,13 @@ public class MobileResetPasswordHandler extends SimpleChannelInboundHandler<Rese
         ResetPassToken resetPassToken = tokensPool.getResetPassToken(token);
         if (resetPassToken == null) {
             log.warn("Invalid token for reset pass {}", token);
-            ctx.writeAndFlush(notAllowed(msgId), ctx.voidPromise());
+            ctx.writeAndFlush(json(msgId, "Invalid token for reset password."), ctx.voidPromise());
         } else {
             String email = resetPassToken.email;
             User user = userDao.getByName(email);
             if (user == null) {
-                log.warn("User is not exists anymore. {}", resetPassToken);
-                ctx.writeAndFlush(serverError(msgId), ctx.voidPromise());
+                log.warn("User not exists anymore. {}", resetPassToken);
+                ctx.writeAndFlush(json(msgId, "User not exists anymore."), ctx.voidPromise());
                 return;
             }
             user.resetPass(passHash);
@@ -122,7 +120,7 @@ public class MobileResetPasswordHandler extends SimpleChannelInboundHandler<Rese
         BaseToken tokenBase = tokensPool.getBaseToken(token);
         if (tokenBase == null) {
             log.warn("Invalid token for reset pass {}", token);
-            ctx.writeAndFlush(notAllowed(msgId), ctx.voidPromise());
+            ctx.writeAndFlush(json(msgId, "Invalid token for reset password."), ctx.voidPromise());
         } else {
             ctx.writeAndFlush(ok(msgId), ctx.voidPromise());
         }
@@ -132,23 +130,23 @@ public class MobileResetPasswordHandler extends SimpleChannelInboundHandler<Rese
         String trimmedEmail = inEMail.trim().toLowerCase();
 
         if (BlynkEmailValidator.isNotValidEmail(trimmedEmail)) {
-            log.debug("Wrong income email for reset pass.");
-            ctx.writeAndFlush(illegalCommand(msgId), ctx.voidPromise());
+            log.debug("Wrong income email for reset password.");
+            ctx.writeAndFlush(json(msgId, "Wrong income email for reset password."), ctx.voidPromise());
             return;
         }
 
         User user = userDao.getByName(trimmedEmail);
 
         if (user == null) {
-            log.debug("User does not exists.");
-            ctx.writeAndFlush(illegalCommand(msgId), ctx.voidPromise());
+            log.debug("User doesn't exist.");
+            ctx.writeAndFlush(json(msgId, "User doesn't exist."), ctx.voidPromise());
             return;
         }
 
         if (tokensPool.hasResetToken(trimmedEmail, appName)) {
             tokensPool.cleanupOldTokens();
             log.warn("Reset code was already generated.");
-            ctx.writeAndFlush(notAllowed(msgId), ctx.voidPromise());
+            ctx.writeAndFlush(json(msgId, "Reset code was already generated."), ctx.voidPromise());
             return;
         }
 
@@ -171,7 +169,7 @@ public class MobileResetPasswordHandler extends SimpleChannelInboundHandler<Rese
                 ctx.writeAndFlush(ok(msgId), ctx.voidPromise());
             } catch (Exception e) {
                 log.error("Error sending mail for {}. Reason : {}", trimmedEmail, e.getMessage());
-                ctx.writeAndFlush(serverError(msgId), ctx.voidPromise());
+                ctx.writeAndFlush(json(msgId, "Error sending mail."), ctx.voidPromise());
             }
         });
     }

@@ -1,11 +1,10 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard.tags;
 
-import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
+import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -31,30 +30,28 @@ public final class MobileCreateTagLogic {
         String[] split = split2(message.body);
 
         if (split.length < 2) {
-            throw new IllegalCommandException("Wrong income message format.");
+            throw new JsonException("Wrong income message format.");
         }
 
         int dashId = Integer.parseInt(split[0]);
         String deviceString = split[1];
 
         if (deviceString == null || deviceString.isEmpty()) {
-            throw new IllegalCommandException("Income tag message is empty.");
+            throw new JsonException("Income tag message is empty.");
         }
 
         Profile profile = user.profile;
-        DashBoard dash = profile.getDashByIdOrThrow(dashId);
-
         Tag newTag = JsonParser.parseTag(deviceString, message.id);
 
         log.debug("Creating new tag {}.", newTag);
 
         if (newTag.isNotValid()) {
-            throw new IllegalCommandException("Income tag name is not valid.");
+            throw new JsonException("Income tag name is not valid.");
         }
 
         for (Tag tag : profile.tags) {
             if (tag.id == newTag.id || tag.name.equals(newTag.name)) {
-                throw new IllegalCommandException("Tag with same id/name already exists.");
+                throw new JsonException("Tag with same id/name already exists.");
             }
         }
 

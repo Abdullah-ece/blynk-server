@@ -6,8 +6,7 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.MetaField;
-import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
-import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
+import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.mobile.MobileStateHolder;
 import io.netty.channel.ChannelHandlerContext;
@@ -43,7 +42,7 @@ public final class MobileUpdateDeviceMetafieldLogic {
 
         if (split.length < 2) {
             log.error("Body '{}' is wrong for update metafield for {}", message.body, user.email);
-            throw new IllegalCommandException("Wrong income message format for update metafield.");
+            throw new JsonException("Wrong income message format for update metafield.");
         }
 
         int deviceId = Integer.parseInt(split[0]);
@@ -58,7 +57,7 @@ public final class MobileUpdateDeviceMetafieldLogic {
         } else {
             metaFields = JsonParser.readAny(metafieldString, MetaField[].class);
             if (metaFields == null) {
-                throw new IllegalCommandBodyException("Error parsing metafields batch.");
+                throw new JsonException("Error parsing metafields batch.");
             }
         }
 

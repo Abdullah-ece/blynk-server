@@ -14,7 +14,7 @@ import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_CLONE_CODE;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeASCIIStringMessage;
-import static cc.blynk.server.internal.CommonByteBufUtil.serverError;
+import static cc.blynk.server.internal.WebByteBufUtil.json;
 
 /**
  * The Blynk Project.
@@ -49,11 +49,11 @@ public final class MobileGetCloneCodeLogic {
                     result = makeASCIIStringMessage(GET_CLONE_CODE, message.id, qrToken);
                 } else {
                     log.error("Creating clone project failed for {}", user.email);
-                    result = serverError(message.id);
+                    result = json(message.id, "Creating clone project failed.");
                 }
             } catch (Exception e) {
                 log.error("Error cloning project.", e);
-                result = serverError(message.id);
+                result = json(message.id, "Error cloning project.");
             }
             ctx.writeAndFlush(result, ctx.voidPromise());
         });

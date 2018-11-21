@@ -20,13 +20,13 @@ import cc.blynk.server.api.http.handlers.BaseHttpAndBlynkUnificationHandler;
 import cc.blynk.server.api.http.handlers.BaseWebSocketUnificator;
 import cc.blynk.server.application.handlers.main.MobileChannelStateHandler;
 import cc.blynk.server.application.handlers.main.MobileResetPasswordHandler;
+import cc.blynk.server.application.handlers.main.auth.MobileAlreadyLoggedHandler;
 import cc.blynk.server.application.handlers.main.auth.MobileGetServerHandler;
 import cc.blynk.server.application.handlers.main.auth.MobileLoginHandler;
 import cc.blynk.server.application.handlers.main.auth.MobileRegisterHandler;
 import cc.blynk.server.application.handlers.sharing.auth.MobileShareLoginHandler;
-import cc.blynk.server.common.handlers.AlreadyLoggedHandler;
 import cc.blynk.server.common.handlers.UserNotLoggedHandler;
-import cc.blynk.server.core.protocol.handlers.decoders.MessageDecoder;
+import cc.blynk.server.core.protocol.handlers.decoders.HardwareMessageDecoder;
 import cc.blynk.server.core.protocol.handlers.decoders.MobileMessageDecoder;
 import cc.blynk.server.core.protocol.handlers.decoders.WSMessageDecoder;
 import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
@@ -109,7 +109,7 @@ public class MobileAndHttpsServer extends BaseServer {
         var devicesHandler = new DevicesHandler(holder, apiPath);
         var dataHandler = new DataHandler(holder, apiPath);
         var productHandler = new ProductHandler(holder, apiPath);
-        var alreadyLoggedHandler = new AlreadyLoggedHandler();
+        var mobileAlreadyLoggedHandler = new MobileAlreadyLoggedHandler();
         int hardTimeoutSecs = NumberUtil.calcHeartbeatTimeout(holder.limits.hardwareIdleTimeout);
         var otaHandler = new OTAHandler(holder, apiPath);
 
@@ -225,10 +225,10 @@ public class MobileAndHttpsServer extends BaseServer {
                                 .addFirst("H_IdleStateHandler",
                                         new IdleStateHandler(hardTimeoutSecs, 0, 0))
                                 .addLast("H_ChannelState", hardwareChannelStateHandler)
-                                .addLast("H_MessageDecoder", new MessageDecoder(holder.stats, holder.limits))
+                                .addLast("H_MessageDecoder", new HardwareMessageDecoder(holder.stats, holder.limits))
                                 .addLast("H_MessageEncoder", new MessageEncoder(holder.stats))
                                 .addLast("H_Login", hardwareLoginHandler)
-                                .addLast("H_AlreadyLogged", alreadyLoggedHandler);
+                                .addLast("H_AlreadyLogged", mobileAlreadyLoggedHandler);
                     }
                 });
             }

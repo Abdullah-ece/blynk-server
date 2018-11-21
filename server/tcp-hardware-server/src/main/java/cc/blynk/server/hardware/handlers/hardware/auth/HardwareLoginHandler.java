@@ -9,6 +9,7 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.dto.DeviceDTO;
 import cc.blynk.server.core.model.web.product.EventType;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
+import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.db.DBManager;
@@ -33,8 +34,9 @@ import static cc.blynk.server.core.protocol.enums.Command.CONNECT_REDIRECT;
 import static cc.blynk.server.core.protocol.enums.Command.DEVICE_CONNECTED;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_LOG_EVENT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_CREATE_DEVICE;
-import static cc.blynk.server.internal.CommonByteBufUtil.invalidToken;
+import static cc.blynk.server.core.protocol.enums.Response.INVALID_TOKEN;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeASCIIStringMessage;
+import static cc.blynk.server.internal.CommonByteBufUtil.makeResponse;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 import static cc.blynk.server.internal.CommonByteBufUtil.serverError;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
@@ -209,5 +211,10 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         }
         ctx.writeAndFlush(response, ctx.voidPromise());
     }
+
+    private static ResponseMessage invalidToken(int msgId) {
+        return makeResponse(msgId, INVALID_TOKEN);
+    }
+
 
 }

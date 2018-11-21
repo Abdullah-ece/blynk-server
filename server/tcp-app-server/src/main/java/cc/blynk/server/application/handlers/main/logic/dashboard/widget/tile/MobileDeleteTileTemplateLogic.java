@@ -6,7 +6,7 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
-import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
+import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.mobile.MobileStateHolder;
 import cc.blynk.utils.ArrayUtil;
@@ -34,7 +34,7 @@ public final class MobileDeleteTileTemplateLogic {
         String[] split = split3(message.body);
 
         if (split.length < 2) {
-            throw new IllegalCommandException("Wrong income message format.");
+            throw new JsonException("Wrong income message format.");
         }
 
         int dashId = Integer.parseInt(split[0]);
@@ -46,7 +46,7 @@ public final class MobileDeleteTileTemplateLogic {
         Widget widget = dash.getWidgetByIdOrThrow(widgetId);
 
         if (!(widget instanceof DeviceTiles)) {
-            throw new IllegalCommandException("Income widget id is not DeviceTiles.");
+            throw new JsonException("Income widget id is not DeviceTiles.");
         }
 
         DeviceTiles deviceTiles = (DeviceTiles) widget;

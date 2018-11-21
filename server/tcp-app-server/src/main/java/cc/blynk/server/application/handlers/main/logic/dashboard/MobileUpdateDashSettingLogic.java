@@ -4,8 +4,7 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DashboardSettings;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
-import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
+import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.mobile.MobileStateHolder;
 import cc.blynk.utils.StringUtils;
@@ -33,18 +32,18 @@ public final class MobileUpdateDashSettingLogic {
         String[] split = StringUtils.split2(message.body);
 
         if (split.length < 2) {
-            throw new IllegalCommandException("Wrong income message format.");
+            throw new JsonException("Wrong income message format.");
         }
 
         int dashId = Integer.parseInt(split[0]);
         String dashSettingsString = split[1];
 
         if (dashSettingsString == null || dashSettingsString.isEmpty()) {
-            throw new IllegalCommandException("Income dash settings message is empty.");
+            throw new JsonException("Income dash settings message is empty.");
         }
 
         if (dashSettingsString.length() > settingsSizeLimit) {
-            throw new NotAllowedException("User dashboard setting message is larger then limit.", message.id);
+            throw new JsonException("User dashboard setting message is larger then limit.");
         }
 
         log.debug("Trying to parse project settings : {}", dashSettingsString);

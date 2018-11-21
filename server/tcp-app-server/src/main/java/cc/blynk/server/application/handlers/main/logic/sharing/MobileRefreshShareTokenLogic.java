@@ -5,7 +5,7 @@ import cc.blynk.server.application.handlers.sharing.auth.MobileShareStateHolder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
+import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.mobile.MobileStateHolder;
 import io.netty.channel.Channel;
@@ -14,7 +14,7 @@ import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.REFRESH_SHARE_TOKEN;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
-import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
+import static cc.blynk.server.internal.WebByteBufUtil.json;
 import static cc.blynk.utils.MobileStateHolderUtil.getShareState;
 
 /**
@@ -36,7 +36,7 @@ public final class MobileRefreshShareTokenLogic {
         try {
             dashId = Integer.parseInt(dashBoardIdString);
         } catch (NumberFormatException ex) {
-            throw new NotAllowedException("Dash board id not valid. Id : " + dashBoardIdString, message.id);
+            throw new JsonException("Project id not valid.");
         }
 
         User user = state.user;
@@ -49,7 +49,7 @@ public final class MobileRefreshShareTokenLogic {
         for (Channel appChannel : session.appChannels) {
             MobileShareStateHolder localState = getShareState(appChannel);
             if (localState != null && localState.dashId == dashId) {
-                appChannel.writeAndFlush(notAllowed(message.id))
+                appChannel.writeAndFlush(json(message.id, "Shared token was refreshed."))
                           .addListener(ChannelFutureListener.CLOSE);
             }
         }

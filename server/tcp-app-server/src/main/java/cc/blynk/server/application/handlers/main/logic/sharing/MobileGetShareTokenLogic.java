@@ -3,12 +3,11 @@ package cc.blynk.server.application.handlers.main.logic.sharing;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
+import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_SHARE_TOKEN;
-import static cc.blynk.server.internal.CommonByteBufUtil.energyLimit;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 
 /**
@@ -32,7 +31,7 @@ public final class MobileGetShareTokenLogic {
         try {
             dashId = Integer.parseInt(dashBoardIdString);
         } catch (NumberFormatException ex) {
-            throw new NotAllowedException("Dash board id not valid. Id : " + dashBoardIdString, message.id);
+            throw new JsonException("Project id is not valid.");
         }
 
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
@@ -41,8 +40,7 @@ public final class MobileGetShareTokenLogic {
         //if token not exists. generate new one
         if (token == null) {
             if (user.notEnoughEnergy(PRIVATE_TOKEN_PRICE)) {
-                ctx.writeAndFlush(energyLimit(message.id), ctx.voidPromise());
-                return;
+                throw new JsonException("Not enough energy.");
             }
             token = holder.sharedTokenManager.refreshSharedToken(user, dash);
             user.subtractEnergy(PRIVATE_TOKEN_PRICE);

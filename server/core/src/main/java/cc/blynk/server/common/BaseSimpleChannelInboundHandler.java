@@ -1,16 +1,12 @@
 package cc.blynk.server.common;
 
-import cc.blynk.server.core.protocol.exceptions.BaseServerException;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.util.ReferenceCountUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler.handleBaseServerException;
 import static cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler.handleGeneralException;
-import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
 
 /**
  * The Blynk Project.
@@ -27,30 +23,11 @@ public abstract class BaseSimpleChannelInboundHandler<I, T> extends ChannelInbou
         this.type = type;
     }
 
-    static int getMsgId(Object o) {
+    protected static int getMsgId(Object o) {
         if (o instanceof MessageBase) {
             return ((MessageBase) o).id;
         }
         return 0;
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public void channelRead(ChannelHandlerContext ctx, Object msg) {
-        if (type.isInstance(msg)) {
-            try {
-                messageReceived(ctx, (I) msg);
-            } catch (NumberFormatException nfe) {
-                log.debug("Error parsing number. {}", nfe.getMessage());
-                ctx.writeAndFlush(illegalCommand(getMsgId(msg)), ctx.voidPromise());
-            } catch (BaseServerException bse) {
-                handleBaseServerException(ctx, bse, getMsgId(msg));
-            } catch (Exception e) {
-                handleGeneralException(ctx, e);
-            } finally {
-                ReferenceCountUtil.release(msg);
-            }
-        }
     }
 
     /**

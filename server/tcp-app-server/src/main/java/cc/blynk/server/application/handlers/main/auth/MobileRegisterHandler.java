@@ -15,10 +15,8 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.internal.CommonByteBufUtil.alreadyRegistered;
-import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
-import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
+import static cc.blynk.server.internal.WebByteBufUtil.json;
 
 /**
  * Process register message.
@@ -53,7 +51,7 @@ public class MobileRegisterHandler extends SimpleChannelInboundHandler<RegisterM
     protected void channelRead0(ChannelHandlerContext ctx, RegisterMessage message) {
         if (registrationLimitChecker.isLimitReached()) {
             log.error("Register Handler. Registration limit reached. {}", message);
-            ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(message.id, "Registration limit reached."), ctx.voidPromise());
             return;
         }
 
@@ -62,7 +60,7 @@ public class MobileRegisterHandler extends SimpleChannelInboundHandler<RegisterM
         //expecting message with 2 parts at least.
         if (messageParts.length < 3) {
             log.error("Register Handler. Wrong income message format. {}", message);
-            ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(message.id, "Wrong income message format for register."), ctx.voidPromise());
             return;
         }
 
@@ -76,13 +74,13 @@ public class MobileRegisterHandler extends SimpleChannelInboundHandler<RegisterM
 
         if (BlynkEmailValidator.isNotValidEmail(email)) {
             log.error("Register Handler. Wrong email: {}", email);
-            ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(message.id, "Email is not valid."), ctx.voidPromise());
             return;
         }
 
         if (userDao.isUserExists(email)) {
             log.warn("User with email {} already exists.", email);
-            ctx.writeAndFlush(alreadyRegistered(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(message.id, "User is already registered."), ctx.voidPromise());
             return;
         }
 

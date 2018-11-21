@@ -6,8 +6,10 @@ import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
+import cc.blynk.server.internal.WebByteBufUtil;
 import cc.blynk.utils.NumberUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -16,8 +18,6 @@ import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.DEVICE_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
-import static cc.blynk.server.internal.CommonByteBufUtil.deviceNotInNetwork;
-import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommandBody;
 import static cc.blynk.utils.StringUtils.split2;
 import static cc.blynk.utils.StringUtils.split3;
 
@@ -61,8 +61,7 @@ public class WebAppHardwareLogic {
 
         if (splitBody.length < 3) {
             log.debug("Not valid write command.");
-            ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
-            return;
+            throw new JsonException("Not valid write command.");
         }
 
         PinType pinType = PinType.getPinType(splitBody[0].charAt(0));
@@ -81,8 +80,8 @@ public class WebAppHardwareLogic {
         session.sendToSelectedDeviceOnWeb(channel, DEVICE_SYNC, message.id, split[1], deviceId);
 
         if (session.sendMessageToHardware(HARDWARE, message.id, split[1], deviceId)) {
-            log.debug("No device in session.");
-            ctx.writeAndFlush(deviceNotInNetwork(message.id), ctx.voidPromise());
+            log.debug("Device not in the network.");
+            ctx.writeAndFlush(WebByteBufUtil.deviceNotInNetwork(message.id), ctx.voidPromise());
         }
     }
 

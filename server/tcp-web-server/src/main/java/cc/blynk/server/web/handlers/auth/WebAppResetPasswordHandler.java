@@ -25,7 +25,6 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
-import static cc.blynk.server.internal.CommonByteBufUtil.serverError;
 import static cc.blynk.server.internal.WebByteBufUtil.json;
 
 
@@ -191,7 +190,7 @@ public class WebAppResetPasswordHandler extends SimpleChannelInboundHandler<Rese
                 ctx.writeAndFlush(ok(msgId), ctx.voidPromise());
             } catch (Exception e) {
                 log.info("Error sending mail for {}. Reason : {}", trimmedEmail, e.getMessage());
-                ctx.writeAndFlush(serverError(msgId), ctx.voidPromise());
+                ctx.writeAndFlush(json(msgId, "Error sending mail for reset password."), ctx.voidPromise());
             }
         });
     }

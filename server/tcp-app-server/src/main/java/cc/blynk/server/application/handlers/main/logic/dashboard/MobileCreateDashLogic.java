@@ -4,9 +4,7 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
-import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
-import cc.blynk.server.core.protocol.exceptions.QuotaLimitException;
+import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.mobile.MobileStateHolder;
 import cc.blynk.utils.ArrayUtil;
@@ -15,7 +13,6 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.internal.CommonByteBufUtil.energyLimit;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 
 /**
@@ -43,11 +40,11 @@ public final class MobileCreateDashLogic {
         }
 
         if (dashString == null || dashString.isEmpty()) {
-            throw new IllegalCommandException("Income create dash message is empty.");
+            throw new JsonException("Income create dash message is empty.");
         }
 
         if (dashString.length() > holder.limits.profileSizeLimitBytes) {
-            throw new NotAllowedException("User dashboard is larger then limit.", message.id);
+            throw new JsonException("User dashboard is larger then limit.");
         }
 
         log.debug("Trying to parse user newDash : {}", dashString);
@@ -55,12 +52,12 @@ public final class MobileCreateDashLogic {
 
         User user = state.user;
         if (user.profile.dashBoards.length >= holder.limits.dashboardsLimit) {
-            throw new QuotaLimitException("Dashboards limit reached.", message.id);
+            throw new JsonException("Dashboards limit reached.");
         }
 
         for (DashBoard dashBoard : user.profile.dashBoards) {
             if (dashBoard.id == newDash.id) {
-                throw new NotAllowedException("Dashboard already exists.", message.id);
+                throw new JsonException("Dashboard already exists.");
             }
         }
 
@@ -73,8 +70,7 @@ public final class MobileCreateDashLogic {
         int price = newDash.energySum();
         if (user.notEnoughEnergy(price)) {
             log.debug("Not enough energy.");
-            ctx.writeAndFlush(energyLimit(message.id), ctx.voidPromise());
-            return;
+            throw new JsonException("Not enough energy.");
         }
         user.subtractEnergy(price);
         user.profile.dashBoards = ArrayUtil.add(user.profile.dashBoards, newDash, DashBoard.class);
