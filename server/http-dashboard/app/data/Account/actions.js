@@ -23,7 +23,7 @@ export function AccountSaveCredentials({ username, password }) {
 
 export function AccountSelectOrgId({ orgId }) {
   return {
-    type: 'ACCOUNT_SAVE_CREDENTIALS',
+    type: 'SELECT_ORG_ID',
     value: orgId
   };
 }
