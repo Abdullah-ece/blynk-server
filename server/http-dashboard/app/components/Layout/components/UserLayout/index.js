@@ -163,7 +163,7 @@ class UserLayout extends React.Component {
       ];
     };
 
-    const currentOrgId = 1;
+    const currentOrgId = this.props.Account.selectedOrgId;
 
     const hierarchy = this.props.hierarchy;
 
@@ -172,7 +172,7 @@ class UserLayout extends React.Component {
     const childs = hierarchy && hierarchy.get && hierarchy.get('childs');
 
     const isActive = (id) => {
-      if(id === currentOrgId) {
+      if(Number(id) === Number(currentOrgId)) {
         return 'user-layout--organization-select--org-active';
       }
       return '';
