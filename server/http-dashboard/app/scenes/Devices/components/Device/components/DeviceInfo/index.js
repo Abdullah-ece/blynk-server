@@ -8,7 +8,7 @@ import {
   DeviceMetadata, /*BackTop*/
 } from 'components';
 import { Metadata } from 'services/Products';
-import _ from 'lodash';
+// import _ from 'lodash';
 import { getCalendarFormatDate } from 'services/Date';
 import { DeviceDelete } from 'scenes/Devices/scenes';
 import './styles.less';
