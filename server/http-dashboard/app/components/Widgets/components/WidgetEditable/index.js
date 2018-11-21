@@ -28,6 +28,7 @@ class WidgetEditable extends React.Component {
     }),
 
     loading: PropTypes.bool,
+    meta: PropTypes.object,
 
     history: PropTypes.object,
 
