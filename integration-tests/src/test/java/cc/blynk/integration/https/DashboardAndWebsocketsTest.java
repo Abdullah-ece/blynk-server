@@ -322,7 +322,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         appClient.verifyResult(ok(1));
 
         appClient.activate(0);
-        appClient.verifyResult(webJson(2, "Device not in network."));
+        appClient.verifyResult(webJson(2, "Device not in the network."));
 
         appClient.send("hardware 1 vw 2 222");
         appWebSocketClient.verifyResult(appSync(3, b("1 vw 2 222")));
