@@ -69,7 +69,7 @@ public class WebCreateOrganizationLogic {
             return;
         }
 
-        newOrganization.roles = parentOrg.copyRolesExceptSuperAdminRole();
+        newOrganization.roles = Organization.createDefaultRoles(false);
         if (newOrganization.roles.length == 0) {
             log.debug("Parent org {} cannot has 0 roles.", orgId);
             ctx.writeAndFlush(json(message.id, "Parent organization has 0 roles."), ctx.voidPromise());

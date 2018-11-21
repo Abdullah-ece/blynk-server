@@ -9,9 +9,6 @@ import cc.blynk.utils.ArrayUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_INTS;
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_PRODUCTS;
 import static cc.blynk.utils.ArrayUtil.remove;
@@ -183,16 +180,6 @@ public class Organization {
         return lastRole == null ? 1 : lastRole.id;
     }
 
-    public Role[] copyRolesExceptSuperAdminRole() {
-        List<Role> copy = new ArrayList<>();
-        for (Role role : roles) {
-            if (!role.isSuperAdmin()) {
-                copy.add(role.copy());
-            }
-        }
-        return copy.toArray(new Role[0]);
-    }
-
     public Product getProductByTemplateId(String templateId) {
         for (Product product : this.products) {
             if (product.containsTemplateId(templateId)) {
@@ -211,6 +198,23 @@ public class Organization {
                     }
                 }
             }
+        }
+    }
+
+    public static Role[] createDefaultRoles(boolean withSuperAdmin) {
+        if (withSuperAdmin) {
+            return new Role[] {
+                    new Role(Role.SUPER_ADMIN_ROLE_ID, "Super Admin", 0b11111111111111111111),
+                    new Role(1, "Admin", 0b11111111111111111111),
+                    new Role(2, "Staff", 0b11111111111111111111),
+                    new Role(3, "User", 0b11111111111111111111)
+            };
+        } else {
+            return new Role[] {
+                    new Role(1, "Admin", 0b11111111111111111111),
+                    new Role(2, "Staff", 0b11111111111111111111),
+                    new Role(3, "User", 0b11111111111111111111)
+            };
         }
     }
 
