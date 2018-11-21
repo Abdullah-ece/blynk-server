@@ -1,10 +1,16 @@
 import React from 'react';
-import {Row, Col} from 'antd';
-import {Fieldset, DeviceStatus, DeviceAuthToken, Section, DeviceMetadata, /*BackTop*/} from 'components';
-import {Metadata} from 'services/Products';
+import { Row, Col } from 'antd';
+import {
+  Fieldset,
+  DeviceStatus,
+  DeviceAuthToken,
+  Section,
+  DeviceMetadata, /*BackTop*/
+} from 'components';
+import { Metadata } from 'services/Products';
 import _ from 'lodash';
-import {getCalendarFormatDate} from 'services/Date';
-import {DeviceDelete} from 'scenes/Devices/scenes';
+import { getCalendarFormatDate } from 'services/Date';
+import { DeviceDelete } from 'scenes/Devices/scenes';
 import './styles.less';
 
 class DeviceInfo extends React.Component {
@@ -16,9 +22,19 @@ class DeviceInfo extends React.Component {
     account: React.PropTypes.object,
   };
 
-  shouldComponentUpdate(nextProps) {
-    return !(_.isEqual(nextProps.device, this.props.device));
+  constructor(props){
+    super(props);
+
+    this.showMore = this.showMore.bind(this);
+
+    this.state = {
+      showMore: false
+    };
   }
+
+  // shouldComponentUpdate(nextProps) {
+  //   return !(_.isEqual(nextProps.device, this.props.device));
+  // }
 
   getDeviceStatus() {
     if (!this.props.device || !this.props.device.status)
@@ -29,6 +45,10 @@ class DeviceInfo extends React.Component {
     } else if (this.props.device && this.props.device.status === 'ONLINE') {
       return 'online';
     }
+  }
+
+  showMore() {
+    this.setState({ showMore: !this.state.showMore });
   }
 
   onChange(metadata) {
@@ -91,7 +111,8 @@ class DeviceInfo extends React.Component {
             {this.props.device.metadataUpdatedAt && metadataUpdatedAt > 0 && (
               <Fieldset>
                 <Fieldset.Legend>Latest Metadata update</Fieldset.Legend>
-                {metadataUpdatedTime} <br/> by {this.props.device.metadataUpdatedBy}
+                {metadataUpdatedTime}
+                <br/> by {this.props.device.metadataUpdatedBy}
               </Fieldset>
             ) || null}
             {this.props.device.orgName && (
@@ -106,61 +127,64 @@ class DeviceInfo extends React.Component {
                 {this.props.device.hardwareInfo.version}
               </Fieldset>
             )}
-            {this.props.device.hardwareInfo && this.props.device.hardwareInfo.blynkVersion && (
+            <Fieldset>
+              <a href="#" onClick={this.showMore}>{this.state && this.state.showMore? 'Show less' : 'Show more'}</a>
+            </Fieldset>
+            {this.state.showMore && this.props.device.hardwareInfo && this.props.device.hardwareInfo.blynkVersion && (
               <Fieldset>
                 <Fieldset.Legend>Blynk version</Fieldset.Legend>
                 {this.props.device.hardwareInfo.blynkVersion}
               </Fieldset>
             )}
-            {this.props.device.hardwareInfo && this.props.device.hardwareInfo.boardType && (
+            {this.state.showMore && this.props.device.hardwareInfo && this.props.device.hardwareInfo.boardType && (
               <Fieldset>
                 <Fieldset.Legend>Board Type</Fieldset.Legend>
                 {this.props.device.hardwareInfo.boardType}
               </Fieldset>
             )}
-            {this.props.device.hardwareInfo && this.props.device.hardwareInfo.cpuType && (
+            {this.state.showMore && this.props.device.hardwareInfo && this.props.device.hardwareInfo.cpuType && (
               <Fieldset>
                 <Fieldset.Legend>CPU Type</Fieldset.Legend>
                 {this.props.device.hardwareInfo.cpuType}
               </Fieldset>
             )}
-            {this.props.device.hardwareInfo && this.props.device.hardwareInfo.connectionType && (
+            {this.state.showMore && this.props.device.hardwareInfo && this.props.device.hardwareInfo.connectionType && (
               <Fieldset>
                 <Fieldset.Legend>Connection Type</Fieldset.Legend>
                 {this.props.device.hardwareInfo.connectionType}
               </Fieldset>
             )}
-            {this.props.device.hardwareInfo && this.props.device.hardwareInfo.build && (
+            {this.state.showMore && this.props.device.hardwareInfo && this.props.device.hardwareInfo.build && (
               <Fieldset>
-              <Fieldset.Legend>Build</Fieldset.Legend>
-              {this.props.device.hardwareInfo.build}
+                <Fieldset.Legend>Build</Fieldset.Legend>
+                {this.props.device.hardwareInfo.build}
               </Fieldset>
             )}
-            {this.props.device.hardwareInfo && this.props.device.hardwareInfo.templateId && (
+            {this.state.showMore && this.props.device.hardwareInfo && this.props.device.hardwareInfo.templateId && (
               <Fieldset>
                 <Fieldset.Legend>Template Id</Fieldset.Legend>
                 {this.props.device.hardwareInfo.templateId}
               </Fieldset>
             )}
-            {this.props.device.hardwareInfo && this.props.device.hardwareInfo.heartbeatInterval && (
+            {this.state.showMore && this.props.device.hardwareInfo && this.props.device.hardwareInfo.heartbeatInterval && (
               <Fieldset>
                 <Fieldset.Legend>Heartbeat Interval</Fieldset.Legend>
                 {this.props.device.hardwareInfo.heartbeatInterval}
               </Fieldset>
             )}
-            {this.props.device.hardwareInfo && this.props.device.hardwareInfo.buffIn && (
+            {this.state.showMore && this.props.device.hardwareInfo && this.props.device.hardwareInfo.buffIn && (
               <Fieldset>
                 <Fieldset.Legend>Buff In</Fieldset.Legend>
                 {this.props.device.hardwareInfo.buffIn}
               </Fieldset>
             )}
-            {this.props.device.hardwareInfo && this.props.device.hardwareInfo.lastLoggedIP && (
+            {this.state.showMore && this.props.device.hardwareInfo && this.props.device.hardwareInfo.lastLoggedIP && (
               <Fieldset>
-              <Fieldset.Legend>IP</Fieldset.Legend>
-              {this.props.device.hardwareInfo.lastLoggedIP}
+                <Fieldset.Legend>IP</Fieldset.Legend>
+                {this.props.device.hardwareInfo.lastLoggedIP}
               </Fieldset>
             )}
-            {this.props.device.hardwareInfo && this.props.device.hardwareInfo.connectTime && (
+            {this.state.showMore && this.props.device.hardwareInfo && this.props.device.hardwareInfo.connectTime && (
               <Fieldset>
                 <Fieldset.Legend>Connect time</Fieldset.Legend>
                 {this.props.device.hardwareInfo.connectTime}
@@ -169,7 +193,8 @@ class DeviceInfo extends React.Component {
           </Col>
           <Col span={12}>
 
-            <DeviceDelete deviceId={this.props.device.id} onDeviceDelete={this.props.onDeviceDelete}/>
+            <DeviceDelete deviceId={this.props.device.id}
+                          onDeviceDelete={this.props.onDeviceDelete}/>
 
             <div className="device--device-info-logo">
               {this.props.device.productLogoUrl && (
