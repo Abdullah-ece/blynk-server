@@ -17,7 +17,7 @@ import {
 } from 'data/Widgets/actions';
 
 @connect((state, ownProps) => ({
-  orgId: parseInt(state.Account.orgId || 0),
+  orgId: parseInt(state.Account.selectedOrgId || 0),
   devicesList: state.Widgets.getIn(['settingsModal', 'previewAvailableDevices', 'list']),
   devicesLoading: state.Widgets.getIn(['settingsModal', 'previewAvailableDevices', 'loading']),
   devicePreviewData: state.Widgets.getIn(['settingsModal', 'previewData', ownProps.widgetId, 'data']) || fromJS([]),

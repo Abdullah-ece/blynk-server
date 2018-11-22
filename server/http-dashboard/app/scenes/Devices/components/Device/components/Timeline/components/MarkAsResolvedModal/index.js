@@ -52,7 +52,7 @@ class MarkAsResolvedModal extends React.Component {
       loading: true
     });
     this.props.resolve({
-      orgId: this.props.account.orgId,
+      orgId: this.props.account.selectedOrgId,
       deviceId: this.props.deviceId,
       eventId: this.props.event.id,
       comment: this.props.formValues && this.props.formValues.comment || ''

@@ -169,7 +169,7 @@ class DeviceCreateModalScene extends React.Component {
         status: STATUS.OFFLINE
       }).then((response) => {
         this.props.fetchDevices({
-          orgId: this.props.account.orgId
+          orgId: this.props.account.selectedOrgId
         }).then(() => {
           if (response.payload.data && response.payload.data.id) {
             this.redirectToNewDevice(response.payload.data.id);

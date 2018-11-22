@@ -28,7 +28,7 @@ import {
 // import {message} from 'antd';
 
 @connect((state, OwnProps) => ({
-  orgId: state.Account.orgId,
+  orgId: state.Account.selectedOrgId,
   devices: state.Product.OTADevices.data,
   devicesLoading: state.Product.OTADevices.loading,
   selectedDevicesIds: state.Product.OTADevices.selectedDevicesIds,

@@ -38,6 +38,7 @@ const {TabPane} = Tabs;
 import './styles.less';
 
 @connect((state) => ({
+  account: state.Account,
   list: state.Organizations.get('list') || null,
   details: state.Organizations.get('details'),
   admins: state.Organizations.get('adminsEdit') || null,
@@ -62,6 +63,7 @@ class Details extends React.Component {
     admins: PropTypes.instanceOf(Map),
     details: PropTypes.instanceOf(Map),
 
+    account: PropTypes.object,
     params: PropTypes.object,
 
     resetForm: PropTypes.func,
@@ -127,7 +129,9 @@ class Details extends React.Component {
 
     return Promise.all([
       this.props.OrganizationsFetch(),
-      this.props.fetchProducts(),
+      this.props.fetchProducts({
+        orgId: this.props.account.selectedOrgId,
+      }),
       this.props.OrganizationsUsersFetch({id: this.props.params.id})
     ]).then(() => {
       setTimeout(() => {

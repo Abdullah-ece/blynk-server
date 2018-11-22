@@ -83,7 +83,7 @@ import PropTypes from 'prop-types';
       }
     })(),
 
-    orgId: state.Account.orgId,
+    orgId: state.Account.selectedOrgId,
 
 //     formValues: fromJS(getFormValues(FORMS.PRODUCTS_PRODUCT_MANAGE)(state) || {}),
 //     formSyncErrors: fromJS(getFormSyncErrors(FORMS.PRODUCTS_PRODUCT_MANAGE)(state) || {}),

@@ -37,6 +37,7 @@ import {
 import './styles.less';
 
 @connect((state) => ({
+  account: state.Account,
   manage: state.Organizations.get('manage'),
   products: fromJS(state.Product.products),
   activeTab: state.Organizations.getIn(['manage', 'activeTab']),
@@ -63,6 +64,7 @@ class Create extends React.Component {
   };
 
   static propTypes = {
+    account: PropTypes.object,
     setTab: PropTypes.func,
     submitForm: PropTypes.func,
     destroyForm: PropTypes.func,
@@ -95,7 +97,9 @@ class Create extends React.Component {
   }
 
   componentWillMount() {
-    this.props.fetchProducts();
+    this.props.fetchProducts({
+      orgId: this.props.account.selectedOrgId
+    });
 
     this.props.initializeForm(Manage.FORM_NAME, {
       name: 'New Organization',

@@ -17,7 +17,7 @@ import {WidgetStatic} from "components/Widgets";
 import {blynkWsChartDataFetch} from 'store/blynk-websocket-middleware/actions';
 
 @connect((state) => ({
-  orgId: state.Organization.id,
+  orgId: state.Account.selectedOrgId,
   dashboard: state.Devices.deviceDashboard,
   loading: state.Devices.deviceDashboardLoading,
   timeFilter: getFormValues(DEVICE_DASHBOARD_TIME_FILTERING_FORM_NAME)(state)

@@ -123,6 +123,8 @@ class UserLayout extends React.Component {
     this.props.selectOrgId({
       orgId: e.key
     });
+
+    this.context.router.push('/devices');
   }
 
   currentActivePage(state) {

@@ -10,7 +10,7 @@ import {ProductsPreloadFetch} from "data/Product/api";
 import FullSizeLoading from 'scenes/FullSizeLoading';
 
 @connect((state) => ({
-  orgId: state.Account.orgId,
+  orgId: state.Account.selectedOrgId,
   productsLoading: state.Product.productsPreloadLoading,
   organizationsLoading: state.Organization.organizationPreloadLoading,
   Organization: state.Organization,

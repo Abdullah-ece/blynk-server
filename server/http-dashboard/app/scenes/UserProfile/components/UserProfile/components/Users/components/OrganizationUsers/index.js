@@ -105,7 +105,7 @@ class OrganizationUsers extends React.Component {
         if(record.status === 'Pending') {
 
           const user = {
-            orgId: this.props.Account.orgId,
+            orgId: this.props.Account.selectedOrgId,
             name: record.name,
             email: record.email,
             roleId: record.roleId,
@@ -131,8 +131,8 @@ class OrganizationUsers extends React.Component {
       });
     };
 
-    this.props.OrganizationUsersDelete(this.props.Account.orgId, this.state.selectedRows).then(() => {
-      this.props.OrganizationUsersFetch({id: this.props.Account.orgId}).then(() => {
+    this.props.OrganizationUsersDelete(this.props.Account.selectedOrgId, this.state.selectedRows).then(() => {
+      this.props.OrganizationUsersFetch({id: this.props.Account.selectedOrgId}).then(() => {
         initState();
       });
     }).catch((err) => {
@@ -148,13 +148,13 @@ class OrganizationUsers extends React.Component {
     const hide = message.loading('Updating user role', 0);
     const resetUsersList = () => {
       this.props.OrganizationUsersFetch({
-        id: this.props.Account.orgId
+        id: this.props.Account.selectedOrgId
       }).then(() => {
         hide();
       });
     };
 
-    this.props.OrganizationUpdateUser(this.props.Account.orgId, Object.assign({}, user, {
+    this.props.OrganizationUpdateUser(this.props.Account.selectedOrgId, Object.assign({}, user, {
       roleId: role
     })).then(() => {
       resetUsersList();

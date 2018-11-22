@@ -19,7 +19,7 @@ import {Grids} from 'components';
 import {WidgetEditable} from "components/Widgets";
 
 @connect((state) => ({
-  orgId: Number(state.Account.orgId),
+  orgId: Number(state.Account.selectedOrgId),
   // devicesListForPreview: fromJS(state.Product.dashboardPreview.devicesList || []),
   // devicePreviewId: Number(state.Product.dashboardPreview.selectedDeviceId),
   // devicesLoading: state.Devices.devicesLoading,

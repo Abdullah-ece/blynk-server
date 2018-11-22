@@ -58,7 +58,7 @@ class Timeline extends React.Component {
     this.props.fetchTimeline({
       ...params,
       deviceId: this.props.params.id,
-      orgId: this.props.account.orgId
+      orgId: this.props.account.selectedOrgId
     }).then(() => {
       this.setState({
         loading: false,

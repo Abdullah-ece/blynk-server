@@ -48,6 +48,7 @@ import {
 import AdminsEditScene from "../AdminsEdit/index";
 
 @connect((state) => ({
+  account: state.Account,
   list: state.Organizations.get('list'),
   admins: state.Organizations.get('adminsEdit'),
   manage: state.Organizations.get('manage'),
@@ -101,6 +102,7 @@ class Edit extends React.Component {
     OrganizationUsersDelete: PropTypes.func,
     OrganizationsDetailsUpdate: PropTypes.func,
 
+    account: PropTypes.object,
     params: PropTypes.object,
 
     admins: PropTypes.instanceOf(Map),
@@ -153,7 +155,9 @@ class Edit extends React.Component {
 
     const loadProducts = () => {
       if (!this.props.products)
-        return this.props.fetchProducts();
+        return this.props.fetchProducts({
+          orgId: this.props.account.selectedOrgid,
+        });
 
       return new Promise((resolve) => resolve(this.props.products.toJS()));
     };

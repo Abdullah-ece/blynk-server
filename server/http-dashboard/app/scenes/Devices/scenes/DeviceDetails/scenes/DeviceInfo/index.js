@@ -38,7 +38,9 @@ class DeviceInfoScene extends React.Component {
   }
 
   componentWillMount() {
-    this.props.fetchProducts();
+    this.props.fetchProducts({
+      orgId: this.props.account.selectedOrgId
+    });
   }
 
   handleMetadataChange(values) {

@@ -61,7 +61,7 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
     organization: fromJS(state.Organization),
 
     // organization: fromJS(state.Organization),
-    orgId: state.Account.orgId,
+    orgId: state.Account.selectedOrgId,
     // product: state.Product.edit,
     // products: state.Product.products,
     // Organization: state.Organization,
@@ -193,7 +193,7 @@ class Create extends React.Component {
     });
 
     this.props.fetchProducts({
-      id: this.props.orgId
+      orgId: this.props.orgId
     });
 
     //

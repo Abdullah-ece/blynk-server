@@ -23,7 +23,7 @@ import {displayError} from "services/ErrorHandling";
 
 @connect((state) => ({
   device: state.Devices.deviceDetails,
-  orgId: state.Account.orgId,
+  orgId: state.Account.selectedOrgId,
   productId: state.Devices.deviceDetails.productId,
   // deviceDetails: state.Devices.get('deviceDetails'),
 }), (dispatch) => ({
