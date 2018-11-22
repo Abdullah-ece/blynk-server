@@ -37,9 +37,7 @@ class Header extends React.Component {
   constructor(props) {
     super(props);
 
-    props.OrganizationFetch({
-      id: props.Account.orgId
-    });
+    this.fetchData();
 
     this.state = {
       current: props.location.pathname
@@ -49,6 +47,17 @@ class Header extends React.Component {
   componentWillReceiveProps(props) {
     this.setState({
       current: props.location.pathname
+    });
+  }
+
+  componentDidUpdate(prevProps) {
+    if(prevProps.Account.selectedOrgId !== this.props.Account.selectedOrgId)
+      this.fetchData();
+  }
+
+  fetchData() {
+    this.props.OrganizationFetch({
+      id: this.props.Account.selectedOrgId,
     });
   }
 

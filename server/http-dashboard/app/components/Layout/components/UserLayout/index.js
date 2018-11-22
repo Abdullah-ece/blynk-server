@@ -61,9 +61,7 @@ class UserLayout extends React.Component {
       current  : props.location.pathname
     };
 
-    props.OrganizationFetch({
-      id: props.Account.orgId
-    });
+    this.fetchData();
 
     props.fetchAccount();
 
@@ -87,6 +85,17 @@ class UserLayout extends React.Component {
   componentWillReceiveProps(props) {
     this.setState({
       current: props.location.pathname
+    });
+  }
+
+  componentDidUpdate(prevProps) {
+    if(prevProps.Account.selectedOrgId !== this.props.Account.selectedOrgId)
+      this.fetchData();
+  }
+
+  fetchData() {
+    this.props.OrganizationFetch({
+      id: this.props.Account.selectedOrgId
     });
   }
 
