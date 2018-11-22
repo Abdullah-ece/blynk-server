@@ -120,10 +120,17 @@ public abstract class MetaField implements CopyObject<MetaField> {
         return null;
     }
 
-    public void validate() {
+    /**
+     * Validate must have fields like "name".
+     */
+    public void basicValidate() {
         if (name == null || name.isEmpty()) {
             throw new IllegalCommandBodyException("Metafield is not valid. Name is empty.");
         }
+    }
+
+    public void validateAll() {
+        basicValidate();
     }
 
     @Override

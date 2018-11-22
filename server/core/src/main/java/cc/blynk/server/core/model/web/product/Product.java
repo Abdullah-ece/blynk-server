@@ -138,7 +138,7 @@ public class Product {
             throw new IllegalCommandBodyException("Product name is empty.");
         }
         for (MetaField metaField : metaFields) {
-            metaField.validate();
+            metaField.basicValidate();
         }
     }
 

@@ -44,8 +44,8 @@ public class MeasurementUnitMetaField extends MetaField {
     }
 
     @Override
-    public void validate() {
-        super.validate();
+    public void basicValidate() {
+        super.basicValidate();
         if (units == null) {
             throw new IllegalCommandBodyException("Metafield is not valid. Units field is empty.");
         }

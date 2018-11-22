@@ -28,8 +28,8 @@ public class DeviceOwnerMetaField extends MetaField {
     }
 
     @Override
-    public void validate() {
-        super.validate();
+    public void validateAll() {
+        super.validateAll();
         if (isEmptyValue()) {
             throw new IllegalCommandBodyException("Device owner metafield value is empty.");
         }

@@ -28,8 +28,8 @@ public class DeviceNameMetaField extends MetaField {
     }
 
     @Override
-    public void validate() {
-        super.validate();
+    public void validateAll() {
+        super.validateAll();
         if (isEmptyValue()) {
             throw new IllegalCommandBodyException("Device name metafield value is empty.");
         }

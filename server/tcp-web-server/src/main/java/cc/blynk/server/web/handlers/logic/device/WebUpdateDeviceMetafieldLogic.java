@@ -63,7 +63,7 @@ public final class WebUpdateDeviceMetafieldLogic {
         }
 
         for (MetaField metaField : metaFields) {
-            metaField.validate();
+            metaField.validateAll();
         }
 
         Device device = holder.deviceDao.getByIdOrThrow(deviceId);
