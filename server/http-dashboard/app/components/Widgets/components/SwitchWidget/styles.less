@@ -21,10 +21,13 @@
     width: 56px;
     height: 28px;
     margin: 0 4px;
+    min-width: 56px;
+
     &:after {
       width: 24px;
       height: 24px;
     }
+
     &.ant-switch-checked {
       &:after {
         margin-left: -25px;
@@ -39,7 +42,7 @@
 
   &.widgets--widget-switch--label-alignment-left .widgets--widget-switch-wrapper {
     flex-direction: row-reverse;
-    justify-content: flex-end;
+    //justify-content: flex-end;
   }
 
   &.widgets--widget-switch--label-alignment-right .widgets--widget-switch-wrapper {
@@ -61,6 +64,7 @@
     height: 100%;
     display: flex;
     align-items: center;
+
     .widgets--widget-switch-wrapper {
       width: 100%;
     }
@@ -70,4 +74,5 @@
 .widgets--widget-switch--label {
   font-size: @style-font-size-4;
   margin: 0 4px;
+  overflow: hidden;
 }

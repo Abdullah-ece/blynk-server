@@ -14,7 +14,18 @@ export const ACTIONS = {
   'BLYNK_WS_DEVICE_CONNECT'         : 'BLYNK_WS_DEVICE_CONNECT',
   'BLYNK_WS_DEVICE_DISCONNECT'      : 'BLYNK_WS_DEVICE_DISCONNECT',
   'BLYNK_WS_LOGIN_VIA_INVITE'       : 'BLYNK_WS_LOGIN_VIA_INVITE',
+  'BLYNK_WS_DEVICE_CREATED'         : 'BLYNK_WS_DEVICE_CREATED',
 };
+
+export const blynkWsDeviceCreated = (body, previousAction) => ({
+  type: ACTIONS.BLYNK_WS_DEVICE_CREATED,
+  payload: {
+    data: JSON.parse(body)
+  },
+  meta: {
+    previousAction: previousAction
+  }
+});
 
 // export const blynkWsAddMessageToHistory = (message = {}) => {
 export const blynkWsRequest = (message = {}) => {

@@ -7,6 +7,7 @@ import {
   blynkWsDeviceDisconnect,
   blynkChartDataResponse,
   blynkWsDeviceMetadataUpdate,
+  blynkWsDeviceCreated,
 } from './actions';
 
 import {
@@ -252,15 +253,7 @@ export const Handlers = (params) => {
         body: body
       });
 
-    store.dispatch({
-      type: 'API_DEVICE_CREATE_SUCCESS',
-      payload: {
-        data: JSON.parse(body)
-      },
-      meta: {
-        previousAction: previousAction
-      }
-    });
+    store.dispatch(blynkWsDeviceCreated(body, previousAction));
 
     promiseResolve({
       payload: {

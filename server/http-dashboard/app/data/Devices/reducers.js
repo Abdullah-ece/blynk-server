@@ -595,7 +595,7 @@ export default function Devices(state = initialState, action) {
 
       }, state);
 
-    case "API_DEVICE_CREATE_SUCCESS":
+    case "BLYNK_WS_DEVICE_CREATED":
       return {
         ...state,
         devices: [...state.devices, action.payload.data]
