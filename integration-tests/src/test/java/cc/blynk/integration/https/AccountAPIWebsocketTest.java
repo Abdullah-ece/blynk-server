@@ -15,6 +15,7 @@ import static cc.blynk.integration.TestUtil.defaultClient;
 import static cc.blynk.integration.TestUtil.loggedDefaultClient;
 import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.integration.TestUtil.sleep;
+import static cc.blynk.integration.TestUtil.webJson;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -93,6 +94,34 @@ public class AccountAPIWebsocketTest extends APIBaseTest {
         assertNotNull(updatedUser);
         assertEquals("admin@blynk.cc", updatedUser.email);
         assertEquals( "123@123.com",  updatedUser.name);
+    }
+
+    @Test
+    public void updateOwnProfileWorksOnlyForName() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(admin);
+
+        User user = new User();
+        user.name = "123@123.com";
+        user.roleId = 100;
+        user.email = "1333@123.com";
+
+        client.updateAccount(user);
+        client.getAccount();
+        User updatedUser = client.parseAccount(2);
+        assertNotNull(updatedUser);
+        assertEquals("123@123.com",  updatedUser.name);
+        assertEquals("admin@blynk.cc", updatedUser.email);
+        assertEquals(0, updatedUser.roleId);
+    }
+
+    @Test
+    public void updateOwnProfileInvalidName() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(admin);
+        User user = new User();
+        user.name = "";
+
+        client.updateAccount(user);
+        client.verifyResult(webJson(1, "Account info is not valid."));
     }
 
     @Test

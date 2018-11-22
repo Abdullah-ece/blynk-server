@@ -28,7 +28,7 @@ public class User {
     public volatile String pass;
 
     @JsonView(View.WebUser.class)
-    public int roleId;
+    public volatile int roleId;
 
     //key fields
     @JsonView(View.WebUser.class)
@@ -146,16 +146,6 @@ public class User {
 
     public boolean isSuperAdmin() {
         return roleId == Role.SUPER_ADMIN_ROLE_ID;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-        this.lastModifiedTs = System.currentTimeMillis();
-    }
-
-    public void setRole(int roleId) {
-        this.roleId = roleId;
-        this.lastModifiedTs = System.currentTimeMillis();
     }
 
     public boolean isUpdated(long lastStart) {
