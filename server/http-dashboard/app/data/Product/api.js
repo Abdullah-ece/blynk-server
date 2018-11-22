@@ -24,12 +24,13 @@ export function ProductsPreloadFetch() {
   };
 }
 
-export function ProductsFetch() {
+export function ProductsFetch({ orgId }) {
   return {
     type: 'API_PRODUCTS_FETCH',
     ws: {
       request: {
-        command: API_COMMANDS.GET_PRODUCTS
+        command: API_COMMANDS.GET_PRODUCTS,
+        query: [orgId]
       }
     }
   };
@@ -45,6 +46,7 @@ export function ProductFetch(data) {
       request: {
         command: API_COMMANDS.GET_PRODUCT,
         query: [
+          data.orgId,
           data.id,
         ],
       }

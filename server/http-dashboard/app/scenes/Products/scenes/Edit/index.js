@@ -44,6 +44,8 @@ import PropTypes from 'prop-types';
 @connect((state, ownProps) => {
   return {
 
+    account: state.Account,
+
     isMetadataFirstTime: state.Storage.products.metadataFirstTime,
 
     formSyncErrors:  fromJS(getFormSyncErrors(FORMS.PRODUCTS_PRODUCT_MANAGE)(state) || {}),
@@ -135,6 +137,8 @@ class Edit extends React.Component {
 
     isMetadataFirstTime: PropTypes.bool,
 
+    account: PropTypes.object,
+
     orgId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 
     formSyncErrors: PropTypes.instanceOf(Map),
@@ -186,7 +190,7 @@ class Edit extends React.Component {
   componentWillMount() {
 
     this.props.fetchProducts({
-      id: this.props.orgId
+      orgId: this.props.account.selectedOrgId,
     });
 
     // const checkForPermission = (org) => {

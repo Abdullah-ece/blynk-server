@@ -9,6 +9,7 @@ import ProductsList from './scenes/List';
 import NoProducts from './scenes/NoProducts';
 
 @connect((state) => ({
+  account: state.Account,
   Product: state.Product,
   Organization: state.Organization
 }), (dispatch) => {
@@ -23,6 +24,7 @@ class ProductsIndex extends React.Component {
   };
 
   static propTypes = {
+    account: React.PropTypes.object,
     location: React.PropTypes.object,
     ProductsFetch: React.PropTypes.func,
     Product: React.PropTypes.object,
@@ -34,7 +36,7 @@ class ProductsIndex extends React.Component {
   }
 
   componentWillMount() {
-    this.props.ProductsFetch();
+    this.fetchData();
     // if (this.props.Organization && !this.props.Organization.canCreateOrgs) {
     //   this.context.router.push('/dashboard');
     // }
@@ -50,6 +52,18 @@ class ProductsIndex extends React.Component {
       message.success('Product cloned successfully');
       this.context.router.push('/products');
     }
+  }
+
+  componentDidUpdate(prevProps) {
+    if(prevProps.account.selectedOrgId !== this.props.account.selectedOrgId) {
+      this.fetchData();
+    }
+  }
+
+  fetchData() {
+    this.props.ProductsFetch({
+      orgId: this.props.account.selectedOrgId,
+    });
   }
 
   render() {

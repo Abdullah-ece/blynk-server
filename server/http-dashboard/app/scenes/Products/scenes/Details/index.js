@@ -13,11 +13,13 @@ import {connect}                from 'react-redux';
 import {bindActionCreators}     from 'redux';
 import _                        from 'lodash';
 import {TABS}                   from 'services/Products';
+import {displayError}           from 'services/ErrorHandling';
 import './styles.less';
 
 import {MainLayout} from 'components';
 
 @connect((state) => ({
+  account: state.Account,
   Product: state.Product.products,
   canEditProduct: state.Organization && state.Organization.parentId && state.Organization.parentId === -1,
 }), (dispatch) => ({
@@ -32,6 +34,8 @@ class ProductDetails extends React.Component {
 
     params: React.PropTypes.object,
     location: React.PropTypes.object,
+
+    account: React.PropTypes.object,
 
     Product: React.PropTypes.array,
 
@@ -66,9 +70,14 @@ class ProductDetails extends React.Component {
       }
     }
 
-    this.props.FetchAll();
+    this.props.FetchAll({
+      orgId: this.props.account.selectedOrgId
+    }).catch((err) => {
+      displayError(err, message.error);
+    });
 
     this.props.Fetch({
+      orgId: this.props.account.selectedOrgId,
       id: this.props.params.id
     }).then(() => {
       const product = _.find(this.props.Product, {
@@ -80,6 +89,8 @@ class ProductDetails extends React.Component {
         showDeleteModal: false,
         enteringEditMode: false,
       });
+    }).catch((err) => {
+      displayError(err, message.error);
     });
   }
 
