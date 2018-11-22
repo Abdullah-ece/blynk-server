@@ -39,12 +39,6 @@ class Devices extends React.Component {
     this.fetchData();
   }
 
-  componentDidUpdate(prevProps) {
-    if(prevProps.account.selectedOrgId !== this.props.account.selectedOrgId) {
-      this.fetchData();
-    }
-  }
-
   shouldComponentUpdate(nextProps) {
     return (
       !_.isEqual(nextProps.params, this.props.params) ||
@@ -53,6 +47,12 @@ class Devices extends React.Component {
       !_.isEqual(nextProps.loading, this.props.productsLoading) ||
       !_.isEqual(nextProps.orgId, this.props.orgId)
     );
+  }
+
+  componentDidUpdate(prevProps) {
+    if(prevProps.account.selectedOrgId !== this.props.account.selectedOrgId) {
+      this.fetchData();
+    }
   }
 
   fetchData() {
