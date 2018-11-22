@@ -95,7 +95,7 @@ public class WebAppLoginViaInviteHandler extends SimpleChannelInboundHandler<Web
         user.status = UserStatus.Active;
         Organization org = holder.organizationDao.getOrgById(user.orgId);
         org.isActive = true;
-        Role role = org.getRoleByIdOrThrow(user.orgId);
+        Role role = org.getRoleByIdOrThrow(user.roleId);
 
         Version version = messageParts.length > 3
                 ? new Version(messageParts[2], messageParts[3])
