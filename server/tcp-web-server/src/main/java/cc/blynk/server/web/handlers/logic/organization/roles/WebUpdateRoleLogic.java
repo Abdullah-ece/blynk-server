@@ -21,11 +21,11 @@ import static cc.blynk.utils.StringUtils.split2;
  * Created by Dmitriy Dumanskiy.
  * Created on 22.11.18.
  */
-public class WebEditRoleLogic implements PermissionBasedLogic {
+public class WebUpdateRoleLogic implements PermissionBasedLogic {
 
     private final OrganizationDao organizationDao;
 
-    public WebEditRoleLogic(Holder holder) {
+    public WebUpdateRoleLogic(Holder holder) {
         this.organizationDao = holder.organizationDao;
     }
 

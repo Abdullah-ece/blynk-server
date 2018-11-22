@@ -31,8 +31,8 @@ import cc.blynk.server.web.handlers.logic.organization.WebGetTempSecureTokenLogi
 import cc.blynk.server.web.handlers.logic.organization.WebUpdateOrganizationLogic;
 import cc.blynk.server.web.handlers.logic.organization.roles.WebCreateRoleLogic;
 import cc.blynk.server.web.handlers.logic.organization.roles.WebDeleteRoleLogic;
-import cc.blynk.server.web.handlers.logic.organization.roles.WebEditRoleLogic;
 import cc.blynk.server.web.handlers.logic.organization.roles.WebGetRolesLogic;
+import cc.blynk.server.web.handlers.logic.organization.roles.WebUpdateRoleLogic;
 import cc.blynk.server.web.handlers.logic.organization.users.WebCanInviteUserLogic;
 import cc.blynk.server.web.handlers.logic.organization.users.WebDeleteUserLogic;
 import cc.blynk.server.web.handlers.logic.organization.users.WebInviteUserLogic;
@@ -122,7 +122,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
     private final WebDeleteDeviceLogic webDeleteDeviceLogic;
     private final WebGetOrganizationsHierarchyLogic webGetOrganizationsHierarchyLogic;
     private final WebCreateRoleLogic webCreateRoleLogic;
-    private final WebEditRoleLogic webEditRoleLogic;
+    private final WebUpdateRoleLogic webUpdateRoleLogic;
     private final WebGetRolesLogic webGetRolesLogic;
     private final WebDeleteRoleLogic webDeleteRoleLogic;
 
@@ -156,7 +156,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
         this.webDeleteDeviceLogic = new WebDeleteDeviceLogic(holder);
         this.webGetOrganizationsHierarchyLogic = new WebGetOrganizationsHierarchyLogic(holder);
         this.webCreateRoleLogic = new WebCreateRoleLogic(holder);
-        this.webEditRoleLogic = new WebEditRoleLogic(holder);
+        this.webUpdateRoleLogic = new WebUpdateRoleLogic(holder);
         this.webGetRolesLogic = new WebGetRolesLogic(holder);
         this.webDeleteRoleLogic = new WebDeleteRoleLogic(holder);
 
@@ -280,7 +280,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
                 webCreateRoleLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_UPDATE_ROLE:
-                webEditRoleLogic.messageReceived(ctx, state, msg);
+                webUpdateRoleLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_DELETE_ROLE :
                 webDeleteRoleLogic.messageReceived(ctx, state, msg);
