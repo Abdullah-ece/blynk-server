@@ -21,22 +21,22 @@ import static cc.blynk.utils.StringUtils.split2;
  * Created by Dmitriy Dumanskiy.
  * Created on 22.11.18.
  */
-public class WebCreateRoleLogic implements PermissionBasedLogic {
+public class WebEditRoleLogic implements PermissionBasedLogic {
 
     private final OrganizationDao organizationDao;
 
-    public WebCreateRoleLogic(Holder holder) {
+    public WebEditRoleLogic(Holder holder) {
         this.organizationDao = holder.organizationDao;
     }
 
     @Override
     public boolean hasPermission(Role role) {
-        return role.canCreateRole();
+        return role.canEditRole();
     }
 
     @Override
     public int getPermission() {
-        return PermissionsTable.ROLE_CREATE;
+        return PermissionsTable.ROLE_EDIT;
     }
 
     @Override
@@ -44,7 +44,7 @@ public class WebCreateRoleLogic implements PermissionBasedLogic {
         String[] messageParts = split2(message.body);
 
         if (messageParts.length != 2) {
-            throw new JsonException("Create role command body is wrong.");
+            throw new JsonException("Update role command body is wrong.");
         }
 
         int orgId = Integer.parseInt(messageParts[0]);
@@ -53,11 +53,10 @@ public class WebCreateRoleLogic implements PermissionBasedLogic {
             throw new JsonException("Could not parse the role.");
         }
 
+        log.debug("{} updates role {} for orgId {}.", state.user.email, roleDTO, orgId);
         Organization org = organizationDao.getOrgByIdOrThrow(orgId);
-
-        log.debug("{} creates new role {} for {}.", state.user.email, roleDTO, orgId);
-        Role role = new Role(org.getIdForRole(), roleDTO.name, roleDTO.permissions1, roleDTO.permissions2);
-        org.addRole(role);
+        Role role = roleDTO.toRole();
+        org.updateRole(role);
 
         if (ctx.channel().isWritable()) {
             String roleString = role.toString();

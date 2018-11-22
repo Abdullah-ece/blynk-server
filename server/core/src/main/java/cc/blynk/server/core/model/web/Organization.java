@@ -227,9 +227,14 @@ public class Organization {
         return role;
     }
 
-    public void addRole(Role role) {
-        this.roles = ArrayUtil.add(this.roles, role, Role.class);
-        this.lastModifiedTs = System.currentTimeMillis();
+    private int getRoleIndexOrThrow(int id) {
+        Role[] roles = this.roles;
+        for (int i = 0; i < roles.length; i++) {
+            if (roles[i].id == id) {
+                return i;
+            }
+        }
+        throw new JsonException("Cannot find role with passed id.");
     }
 
     public int getIdForRole() {
@@ -238,6 +243,23 @@ public class Organization {
             max = Math.max(max, role.id);
         }
         return max + 1;
+    }
+
+    public void addRole(Role role) {
+        this.roles = ArrayUtil.add(this.roles, role, Role.class);
+        this.lastModifiedTs = System.currentTimeMillis();
+    }
+
+    public void updateRole(Role roleDTO) {
+        int index = getRoleIndexOrThrow(roleDTO.id);
+        this.roles = ArrayUtil.copyAndReplace(this.roles, roleDTO, index);
+        this.lastModifiedTs = System.currentTimeMillis();
+    }
+
+    public void deleteRole(int roleId) {
+        int index = getRoleIndexOrThrow(roleId);
+        this.roles = ArrayUtil.remove(this.roles, index, Role.class);
+        this.lastModifiedTs = System.currentTimeMillis();
     }
 
     @Override

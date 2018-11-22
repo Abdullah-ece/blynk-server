@@ -168,6 +168,9 @@ public final class Command {
     public static final short WEB_GET_TEMP_SECURE_TOKEN = 131;
     public static final short WEB_GET_ORG_HIERARCHY = 132;
     public static final short WEB_CREATE_ROLE = 133;
+    public static final short WEB_UPDATE_ROLE = 134;
+    public static final short WEB_GET_ROLES = 135;
+    public static final short WEB_DELETE_ROLE = 136;
 
     public static final int LAST_COMMAND_INDEX = 150;
 
@@ -293,7 +296,10 @@ public final class Command {
             Map.entry(MOBILE_GET_DEVICES_BY_REFERENCE_METAFIELD, "GetDevicesByReferenceMetafield"),
             Map.entry(WEB_GET_TEMP_SECURE_TOKEN, "WebGetTempSecureToken"),
             Map.entry(WEB_GET_ORG_HIERARCHY, "WebGetOrgHierarchy"),
-            Map.entry(WEB_CREATE_ROLE, "WebCreateRole")
+            Map.entry(WEB_CREATE_ROLE, "WebCreateRole"),
+            Map.entry(WEB_UPDATE_ROLE, "WebUpdateRole"),
+            Map.entry(WEB_GET_ROLES, "WebGetRole"),
+            Map.entry(WEB_DELETE_ROLE, "WebDeleteRole")
     );
 
     public static String getNameByValue(short val) {

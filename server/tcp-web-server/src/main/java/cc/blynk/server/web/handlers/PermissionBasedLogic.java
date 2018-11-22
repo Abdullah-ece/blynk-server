@@ -5,8 +5,12 @@ import cc.blynk.server.core.protocol.exceptions.NoPermissionException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
 import io.netty.channel.ChannelHandlerContext;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public interface PermissionBasedLogic {
+
+    Logger log = LogManager.getLogger(PermissionBasedLogic.class);
 
     boolean hasPermission(Role role);
 

@@ -1,10 +1,14 @@
 package cc.blynk.server.core.model.permissions;
 
+import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.utils.CopyObject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ROLE_CREATE;
+import static cc.blynk.server.core.model.permissions.PermissionsTable.ROLE_DELETE;
+import static cc.blynk.server.core.model.permissions.PermissionsTable.ROLE_EDIT;
+import static cc.blynk.server.core.model.permissions.PermissionsTable.ROLE_VIEW;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.SUB_ORG_VIEW;
 
 public class Role implements CopyObject<Role> {
@@ -39,16 +43,37 @@ public class Role implements CopyObject<Role> {
         return (permissionGroup & permission) == permission;
     }
 
+    public boolean canViewRole() {
+        return hasPermission(permissionGroup1, ROLE_VIEW);
+    }
+
     public boolean canCreateRole() {
         return hasPermission(permissionGroup1, ROLE_CREATE);
+    }
+
+    public boolean canEditRole() {
+        return hasPermission(permissionGroup1, ROLE_EDIT);
+    }
+
+    public boolean canDeleteRole() {
+        return hasPermission(permissionGroup1, ROLE_DELETE);
     }
 
     public boolean hasSubOrgAccess() {
         return hasPermission(permissionGroup1, SUB_ORG_VIEW);
     }
 
+    public Role copy(int id) {
+        return new Role(id, name, permissionGroup1, permissionGroup2);
+    }
+
     @Override
     public Role copy() {
         return new Role(id, name, permissionGroup1, permissionGroup2);
+    }
+
+    @Override
+    public String toString() {
+        return JsonParser.toJson(this);
     }
 }

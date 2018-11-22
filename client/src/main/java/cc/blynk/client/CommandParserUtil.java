@@ -76,9 +76,11 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_CAN_INVITE_USER;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_CREATE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_CREATE_ORG;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_CREATE_PRODUCT;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_CREATE_ROLE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_DELETE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_DELETE_ORG;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_DELETE_PRODUCT;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_DELETE_ROLE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_DELETE_USER;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ACCOUNT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICE;
@@ -92,6 +94,7 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORG_USERS;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_PRODUCT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_PRODUCTS;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_PRODUCT_LOCATIONS;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ROLES;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_TEMP_SECURE_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_INVITE_USER;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_LOGIN_VIA_INVITE;
@@ -101,6 +104,7 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_DEVICES_MET
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_DEVICE_METAFIELD;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_ORG;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_PRODUCT;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_ROLE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_USER_INFO;
 
 /**
@@ -337,6 +341,14 @@ public final class CommandParserUtil {
                 return WEB_CAN_INVITE_USER;
             case "getorganizationhierarchy" :
                 return WEB_GET_ORG_HIERARCHY;
+            case "webcreaterole" :
+                return WEB_CREATE_ROLE;
+            case "webdeleterole" :
+                return WEB_DELETE_ROLE;
+            case "webupdaterole" :
+                return WEB_UPDATE_ROLE;
+            case "webgetroles" :
+                return WEB_GET_ROLES;
 
             default:
                 throw new IllegalArgumentException("Unsupported command");

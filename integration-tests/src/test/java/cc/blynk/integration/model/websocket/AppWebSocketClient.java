@@ -20,6 +20,7 @@ import cc.blynk.server.Limits;
 import cc.blynk.server.api.http.dashboard.dto.OrganizationDTO;
 import cc.blynk.server.api.http.dashboard.dto.ProductAndOrgIdDTO;
 import cc.blynk.server.api.http.dashboard.dto.ProductDTO;
+import cc.blynk.server.api.http.dashboard.dto.RoleDTO;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.dto.DeviceDTO;
@@ -215,6 +216,14 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), ProductDTO[].class);
     }
 
+    public RoleDTO parseRoleDTO(int expectedMessageOrder) throws Exception {
+        return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), RoleDTO.class);
+    }
+
+    public RoleDTO[] parseRoleDTOs(int expectedMessageOrder) throws Exception {
+        return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), RoleDTO[].class);
+    }
+
     public void deleteProduct(int productId) {
         send("webDeleteProduct " + productId);
     }
@@ -310,6 +319,22 @@ public final class AppWebSocketClient extends BaseTestAppClient {
 
     public void getTempSecureToken() {
         send("webGetTempSecureToken");
+    }
+
+    public void createRole(int orgId, RoleDTO roleDTO) {
+        send("webCreateRole " + orgId + BODY_SEPARATOR_STRING + roleDTO.toString());
+    }
+
+    public void updateRole(int orgId, RoleDTO roleDTO) {
+        send("webUpdateRole " + orgId + BODY_SEPARATOR_STRING + roleDTO.toString());
+    }
+
+    public void deleteRole(int orgId, int roleId) {
+        send("webDeleteRole " + orgId + BODY_SEPARATOR_STRING + roleId);
+    }
+
+    public void getRoles(int orgId) {
+        send("webGetRoles " + orgId);
     }
 
     public TimelineResponseDTO parseTimelineResponse(int expectedMessageOrder) throws Exception {
