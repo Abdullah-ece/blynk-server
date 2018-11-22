@@ -30,11 +30,9 @@ import static cc.blynk.server.internal.WebByteBufUtil.json;
 import static cc.blynk.utils.StringUtils.split2;
 
 /**
- *
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 3/7/2018.
- *
  */
 public final class WebInviteUserLogic {
 

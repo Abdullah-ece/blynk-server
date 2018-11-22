@@ -15,11 +15,9 @@ import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 import static cc.blynk.server.internal.WebByteBufUtil.json;
 
 /**
- *
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 3/7/2018.
- *
  */
 public final class WebCanInviteUserLogic {
 
