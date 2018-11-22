@@ -56,6 +56,11 @@ public class OrganizationDao {
         log.info("Organization sequence number is {}", largestOrgSequenceNumber);
     }
 
+    public Role getRole(int orgId, int roleId) {
+        Organization org = getOrgByIdOrThrow(orgId);
+        return org.getRoleByIdOrThrow(roleId);
+    }
+
     /**
      * Super org is initially created organization
      */

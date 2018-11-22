@@ -5,6 +5,7 @@ import cc.blynk.server.application.handlers.main.auth.MobileGetServerHandler;
 import cc.blynk.server.common.handlers.UserNotLoggedHandler;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
 import cc.blynk.server.core.session.mobile.Version;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
@@ -73,7 +74,8 @@ public class WebAppLoginHandler extends SimpleChannelInboundHandler<LoginMessage
         blynkLogin(ctx, message.id, email, messageParts[1], version);
     }
 
-    private void blynkLogin(ChannelHandlerContext ctx, int msgId, String email, String pass,
+    private void blynkLogin(ChannelHandlerContext ctx, int msgId,
+                            String email, String pass,
                             Version version) {
         User user = holder.userDao.getByName(email);
 
@@ -96,7 +98,8 @@ public class WebAppLoginHandler extends SimpleChannelInboundHandler<LoginMessage
         DefaultChannelPipeline pipeline = (DefaultChannelPipeline) ctx.pipeline();
         cleanPipeline(pipeline);
 
-        WebAppStateHolder appStateHolder = new WebAppStateHolder(user.orgId, user, new Version(WEB_SOCKET, 41));
+        Role role = holder.organizationDao.getRole(user.orgId, user.roleId);
+        WebAppStateHolder appStateHolder = new WebAppStateHolder(user.orgId, user, role, new Version(WEB_SOCKET, 41));
         pipeline.addLast("AWebAppHandler", new WebAppHandler(holder, appStateHolder));
 
         Channel channel = ctx.channel();

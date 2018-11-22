@@ -40,7 +40,7 @@ public class PermissionsTest extends SingleServerInstancePerTestWithDBAndNewOrg 
 
         Organization organization = new Organization(
                 "My Org ffff", "Some TimeZone", "/static/logo.png", false, orgId,
-                new Role(1, "Admin", 0b11111111111111111111));
+                new Role(1, "Admin", 0b11111111111111111111, 0));
         organization.selectedProducts = new int[] {fromApiProduct.id};
 
         client.createOrganization(organization);
@@ -94,7 +94,7 @@ public class PermissionsTest extends SingleServerInstancePerTestWithDBAndNewOrg 
 
         Organization organization = new Organization(
                 "SubOrg1", "Some TimeZone", "/static/logo.png", true, orgId,
-                new Role(1, "Admin", 0b11111111111111111111));
+                new Role(1, "Admin", 0b11111111111111111111, 0));
         organization.selectedProducts = new int[] {fromApiProduct.id};
 
         client.createOrganization(organization);
@@ -114,7 +114,7 @@ public class PermissionsTest extends SingleServerInstancePerTestWithDBAndNewOrg 
 
         Organization organization2 = new Organization(
                 "SubOrg2", "Some TimeZone", "/static/logo.png", true, fromApiOrg.id,
-                new Role(1, "Admin", 0b11111111111111111111));
+                new Role(1, "Admin", 0b11111111111111111111, 0));
 
         AppWebSocketClient subUserClient = loggedDefaultClient(subOrgUser1, "1");
         subUserClient.createOrganization(organization2);

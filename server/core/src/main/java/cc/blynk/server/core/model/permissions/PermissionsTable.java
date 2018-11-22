@@ -1,28 +1,80 @@
 package cc.blynk.server.core.model.permissions;
 
-public final class PermissionsTable {
+import java.util.HashMap;
+import java.util.Map;
 
-    public static final long PRODUCT_VIEW =   0b1;
-    public static final long PRODUCT_EDIT =   0b10;
-    public static final long PRODUCT_DELETE = 0b100;
+public abstract class PermissionsTable {
 
-    public static final long DEVICE_VIEW =    0b1_000;
-    public static final long DEVICE_EDIT =    0b10_000;
-    public static final long DEVICE_DELETE =  0b100_000;
+     public static int ORG_CREATE =             0b1;
+     public static int ORG_VIEW =               0b10;
+     public static int ORG_EDIT =               0b100;
+     public static int ORG_DELETE =             0b1000;
 
-    public static final long STATS_VIEW   =   0b1_000_000;
-    public static final long STATS_EDIT   =   0b10_000_000;
-    public static final long STATS_DELETE =   0b100_000_000;
+     public static int SUB_ORG_CREATE =         0b10000;
+     public static int SUB_ORG_VIEW =           0b100000;
+     public static int SUB_ORG_EDIT =           0b1000000;
+     public static int SUB_ORG_DELETE =         0b10000000;
 
-    public static final long SUB_ORG_VIEW =   0b1_000_000_000;
-    public static final long SUB_ORG_EDIT =   0b10_000_000_000;
-    public static final long SUB_ORG_DELETE = 0b100_000_000_000;
+     public static int ORG_INVITE_USER =        0b100000000;
+     public static int ORG_VIEW_USER =          0b1000000000;
+     public static int ORG_EDIT_USER =          0b10000000000;
+     public static int ORG_DELETE_USER =        0b100000000000;
 
-    public static final long ORG_VIEW =       0b1_000_000_000_000;
-    public static final long ORG_EDIT =       0b10_000_000_000_000;
-    public static final long ORG_DELETE =     0b100_000_000_000_000;
+     public static int PRODUCT_CREATE =         0b1000000000000;
+     public static int PRODUCT_VIEW =           0b10000000000000;
+     public static int PRODUCT_EDIT =           0b100000000000000;
+     public static int PRODUCT_DELETE =         0b1000000000000000;
 
-    private PermissionsTable() {
-    }
+     public static int ROLE_CREATE =            0b10000000000000000;
+     public static int ROLE_VIEW =              0b100000000000000000;
+     public static int ROLE_EDIT =              0b1000000000000000000;
+     public static int ROLE_DELETE =            0b10000000000000000000;
+
+     public static int ORG_DEVICE_CREATE =      0b100000000000000000000;
+     public static int ORG_DEVICE_VIEW =        0b1000000000000000000000;
+     public static int ORG_DEVICE_EDIT =        0b10000000000000000000000;
+     public static int ORG_DEVICE_DELETE =      0b100000000000000000000000;
+     public static int ORG_DEVICE_SHARE =       0b1000000000000000000000000;
+
+     public static int OWN_DEVICE_CREATE =      0b10000000000000000000000000;
+     public static int OWN_DEVICE_VIEW =        0b100000000000000000000000000;
+     public static int OWN_DEVICE_EDIT =        0b1000000000000000000000000000;
+     public static int OWN_DEVICE_DELETE =      0b10000000000000000000000000000;
+     public static int OWN_DEVICE_SHARE =       0b100000000000000000000000000000;
+
+    public static Map<Integer, String> PERMISSION_NAMES = new HashMap<>() {
+        {
+            put(ORG_CREATE, "create organization");
+            put(ORG_VIEW, "view organization");
+            put(ORG_EDIT, "edit organization");
+            put(ORG_DELETE, "delete organization");
+            put(SUB_ORG_CREATE, "create sub organization");
+            put(SUB_ORG_VIEW, "view sub organization");
+            put(SUB_ORG_EDIT, "edit sub organization");
+            put(SUB_ORG_DELETE, "delete sub organization");
+            put(ORG_INVITE_USER, "invite user");
+            put(ORG_VIEW_USER, "view user");
+            put(ORG_EDIT_USER, "edit user");
+            put(ORG_DELETE_USER, "delete user");
+            put(PRODUCT_CREATE, "create product");
+            put(PRODUCT_VIEW, "view product");
+            put(PRODUCT_EDIT, "edit product");
+            put(PRODUCT_DELETE, "delete product");
+            put(ROLE_CREATE, "create role");
+            put(ROLE_VIEW, "view role");
+            put(ROLE_EDIT, "edit role");
+            put(ROLE_DELETE, "delete role");
+            put(ORG_DEVICE_CREATE, "create device");
+            put(ORG_DEVICE_VIEW, "view device");
+            put(ORG_DEVICE_EDIT, "edit device");
+            put(ORG_DEVICE_DELETE, "delete device");
+            put(ORG_DEVICE_SHARE, "share device");
+            put(OWN_DEVICE_CREATE, "create own device");
+            put(OWN_DEVICE_VIEW, "view own device");
+            put(OWN_DEVICE_EDIT, "edit own device");
+            put(OWN_DEVICE_DELETE, "delete own device");
+            put(OWN_DEVICE_SHARE, "share own device");
+        }
+    };
 
 }

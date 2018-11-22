@@ -29,6 +29,7 @@ import cc.blynk.server.web.handlers.logic.organization.WebGetOrganizationsLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebGetProductLocationsLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebGetTempSecureTokenLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebUpdateOrganizationLogic;
+import cc.blynk.server.web.handlers.logic.organization.roles.WebCreateRoleLogic;
 import cc.blynk.server.web.handlers.logic.organization.users.WebCanInviteUserLogic;
 import cc.blynk.server.web.handlers.logic.organization.users.WebDeleteUserLogic;
 import cc.blynk.server.web.handlers.logic.organization.users.WebInviteUserLogic;
@@ -113,6 +114,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
     private final WebGetDeviceTimelineLogic webGetDeviceTimelineLogic;
     private final WebDeleteDeviceLogic webDeleteDeviceLogic;
     private final WebGetOrganizationsHierarchyLogic webGetOrganizationsHierarchyLogic;
+    private final WebCreateRoleLogic webCreateRoleLogic;
 
     private final Holder holder;
 
@@ -143,6 +145,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
         this.webGetDeviceTimelineLogic = new WebGetDeviceTimelineLogic(holder);
         this.webDeleteDeviceLogic = new WebDeleteDeviceLogic(holder);
         this.webGetOrganizationsHierarchyLogic = new WebGetOrganizationsHierarchyLogic(holder);
+        this.webCreateRoleLogic = new WebCreateRoleLogic(holder);
 
         this.state = state;
         this.holder = holder;

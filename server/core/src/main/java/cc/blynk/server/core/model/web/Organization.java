@@ -5,6 +5,7 @@ import cc.blynk.server.core.model.exceptions.ProductNotFoundException;
 import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.Product;
+import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.utils.ArrayUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -165,13 +166,30 @@ public class Organization {
         return name == null || name.isEmpty();
     }
 
+    public static Role[] createDefaultRoles(boolean withSuperAdmin) {
+        if (withSuperAdmin) {
+            return new Role[] {
+                    new Role(Role.SUPER_ADMIN_ROLE_ID, "Super Admin", 0b11111111111111111111, 0),
+                    new Role(1, "Admin", 0b11111111111111111111, 0),
+                    new Role(2, "Staff", 0b11111111111111111111, 0),
+                    new Role(3, "User", 0b11111111111111111111, 0)
+            };
+        } else {
+            return new Role[] {
+                    new Role(1, "Admin", 0b11111111111111111111, 0),
+                    new Role(2, "Staff", 0b11111111111111111111, 0),
+                    new Role(3, "User", 0b11111111111111111111, 0)
+            };
+        }
+    }
+
     public Role getRoleById(int id) {
         for (Role role : roles) {
             if (role.id == id) {
                 return role;
             }
         }
-        throw new RuntimeException("Role with passed id not found.");
+        return null;
     }
 
     //todo fix it. for now taking last one
@@ -201,21 +219,25 @@ public class Organization {
         }
     }
 
-    public static Role[] createDefaultRoles(boolean withSuperAdmin) {
-        if (withSuperAdmin) {
-            return new Role[] {
-                    new Role(Role.SUPER_ADMIN_ROLE_ID, "Super Admin", 0b11111111111111111111),
-                    new Role(1, "Admin", 0b11111111111111111111),
-                    new Role(2, "Staff", 0b11111111111111111111),
-                    new Role(3, "User", 0b11111111111111111111)
-            };
-        } else {
-            return new Role[] {
-                    new Role(1, "Admin", 0b11111111111111111111),
-                    new Role(2, "Staff", 0b11111111111111111111),
-                    new Role(3, "User", 0b11111111111111111111)
-            };
+    public Role getRoleByIdOrThrow(int id) {
+        Role role = getRoleById(id);
+        if (role == null) {
+            throw new JsonException("Role with passed id not found.");
         }
+        return role;
+    }
+
+    public void addRole(Role role) {
+        this.roles = ArrayUtil.add(this.roles, role, Role.class);
+        this.lastModifiedTs = System.currentTimeMillis();
+    }
+
+    public int getIdForRole() {
+        int max = 0;
+        for (Role role : roles) {
+            max = Math.max(max, role.id);
+        }
+        return max + 1;
     }
 
     @Override

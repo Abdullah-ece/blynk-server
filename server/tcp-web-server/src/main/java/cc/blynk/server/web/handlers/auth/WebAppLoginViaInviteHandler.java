@@ -6,6 +6,7 @@ import cc.blynk.server.common.handlers.UserNotLoggedHandler;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.auth.UserStatus;
+import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.protocol.model.messages.web.WebLoginViaInviteMessage;
 import cc.blynk.server.core.session.mobile.OsType;
@@ -94,6 +95,7 @@ public class WebAppLoginViaInviteHandler extends SimpleChannelInboundHandler<Web
         user.status = UserStatus.Active;
         Organization org = holder.organizationDao.getOrgById(user.orgId);
         org.isActive = true;
+        Role role = org.getRoleByIdOrThrow(user.orgId);
 
         Version version = messageParts.length > 3
                 ? new Version(messageParts[2], messageParts[3])
@@ -102,14 +104,16 @@ public class WebAppLoginViaInviteHandler extends SimpleChannelInboundHandler<Web
         holder.userDao.createProjectForExportedApp(holder.timerWorker,
                 user, inviteToken.appName, message.id);
 
-        login(ctx, message.id, user, version, token);
+        login(ctx, message.id, user, role, version, token);
     }
 
-    private void login(ChannelHandlerContext ctx, int messageId, User user, Version version, String token) {
+    private void login(ChannelHandlerContext ctx, int messageId,
+                       User user, Role role, Version version, String token) {
         DefaultChannelPipeline pipeline = (DefaultChannelPipeline) ctx.pipeline();
         cleanPipeline(pipeline);
 
-        WebAppStateHolder appStateHolder = new WebAppStateHolder(user.orgId, user, new Version(OsType.WEB_SOCKET, 41));
+        WebAppStateHolder appStateHolder = new WebAppStateHolder(user.orgId,
+                user, role, new Version(OsType.WEB_SOCKET, 41));
         pipeline.addLast("AWebAppHandler", new WebAppHandler(holder, appStateHolder));
 
         Channel channel = ctx.channel();
