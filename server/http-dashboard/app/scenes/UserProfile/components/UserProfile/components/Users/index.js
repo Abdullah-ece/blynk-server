@@ -22,13 +22,13 @@ class Users extends Component {
 
   handleInviteSubmit(values) {
     return this.props.onOrganizationSendInvite({
-      id: this.props.Account.orgId,
+      id: this.props.Account.selectedOrgId,
       email: values.email,
       name: values.name,
       roleId: Number(values.role),
     }).then(() => {
       this.props.onOrganizationUsersFetch({
-        id: this.props.Account.orgId
+        id: this.props.Account.selectedOrgId
       });
       this.props.onResetForm('OrganizationSettingsInviteUsersForm');
       this.showInviteSuccess();

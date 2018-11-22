@@ -43,7 +43,7 @@ class OrganizationUsers extends React.Component {
     super(props);
 
     this.props.OrganizationUsersFetch({
-      id: this.props.Account.orgId
+      id: this.props.Account.selectedOrgId
     });
 
     this.state = {
