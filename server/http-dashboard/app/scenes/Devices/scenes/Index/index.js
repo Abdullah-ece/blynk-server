@@ -13,6 +13,7 @@ import {message} from "antd";
   productsCount: state.Product.products && state.Product.products.length,
   devices: state.Devices.devices,
   organization: state.Organization,
+  account: state.Account,
 }), (dispatch) => ({
   fetchDevices: bindActionCreators(DevicesFetch, dispatch),
   deviceDelete: bindActionCreators(DeviceDelete, dispatch),
@@ -33,6 +34,7 @@ class Devices extends React.Component {
 
     productsCount: PropTypes.number,
 
+    account     : PropTypes.object,
     location    : PropTypes.object,
     params      : PropTypes.object,
     organization: PropTypes.object,
@@ -91,7 +93,7 @@ class Devices extends React.Component {
       this.redirectToDeviceId(sortedDevices[0].id);
     }
     this.props.deviceDelete(deviceId, this.props.organization.id).then(() => {
-      this.props.fetchDevices({orgId: this.props.organization.id});
+      this.props.fetchDevices({orgId: this.props.account.selectedOrgId});
     }).catch((err) => {
       displayError(err, message.error);
     });

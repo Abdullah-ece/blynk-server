@@ -17,6 +17,7 @@ import {ProductsPreloadFetch} from "data/Product/api";
   productsLoading: state.Product.productsPreloadLoading,
   devicesLoading: state.Devices.devicesPreloadLoading,
   orgId: state.Account.orgId,
+  account: state.Account,
 }), (dispatch) => ({
   fetchDevices: bindActionCreators(PreloadDevicesFetch, dispatch),
   fetchProducts: bindActionCreators(ProductsPreloadFetch, dispatch),
@@ -24,6 +25,7 @@ import {ProductsPreloadFetch} from "data/Product/api";
 class Devices extends React.Component {
 
   static propTypes = {
+    account      : PropTypes.object,
     params       : PropTypes.object,
     location     : PropTypes.object,
     fetchDevices : PropTypes.func,
@@ -34,10 +36,13 @@ class Devices extends React.Component {
   };
 
   componentWillMount() {
-    this.props.fetchDevices({
-      orgId: this.props.orgId
-    });
-    this.props.fetchProducts();
+    this.fetchData();
+  }
+
+  componentDidUpdate(prevProps) {
+    if(prevProps.account.selectedOrgId !== this.props.account.selectedOrgId) {
+      this.fetchData();
+    }
   }
 
   shouldComponentUpdate(nextProps) {
@@ -48,6 +53,13 @@ class Devices extends React.Component {
       !_.isEqual(nextProps.loading, this.props.productsLoading) ||
       !_.isEqual(nextProps.orgId, this.props.orgId)
     );
+  }
+
+  fetchData() {
+    this.props.fetchDevices({
+      orgId: this.props.account.selectedOrgId
+    });
+    this.props.fetchProducts();
   }
 
   render() {
