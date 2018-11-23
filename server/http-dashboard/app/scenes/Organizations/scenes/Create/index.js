@@ -1,6 +1,6 @@
-import React                  from 'react';
-import {connect}              from 'react-redux';
-import {bindActionCreators}   from 'redux';
+import React from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import {
   initialize,
   destroy,
@@ -11,28 +11,29 @@ import {
   getFormValues,
   registerField,
   SubmissionError
-}              from 'redux-form';
-import {Map, List, fromJS}    from 'immutable';
-import PropTypes              from 'prop-types';
-import {ProductsFetch}        from 'data/Product/api';
-import {Manage}               from 'services/Organizations';
+} from 'redux-form';
+import { Map, List, fromJS } from 'immutable';
+import PropTypes from 'prop-types';
+import { ProductsFetch } from 'data/Product/api';
+import { Manage } from 'services/Organizations';
 
 import {
   OrganizationsManageSetActiveTab,
   OrganizationsManageUpdate,
   OrganizationsCreate,
-  OrganizationsFetch
-}                             from 'data/Organizations/actions';
+  OrganizationsFetch,
+  OrganizationsHierarchyFetch
+} from 'data/Organizations/actions';
 
 import {
   OrganizationSendInvite
-}                             from 'data/Organization/actions';
+} from 'data/Organization/actions';
 
-import {message} from 'antd';
+import { message } from 'antd';
 
 import {
   Create as OrganizationCreate
-}                             from 'scenes/Organizations/components';
+} from 'scenes/Organizations/components';
 
 import './styles.less';
 
@@ -54,6 +55,7 @@ import './styles.less';
   fetchProducts: bindActionCreators(ProductsFetch, dispatch),
   initializeForm: bindActionCreators(initialize, dispatch),
   OrganizationsFetch: bindActionCreators(OrganizationsFetch, dispatch),
+  OrganizationsHierarchyFetch: bindActionCreators(OrganizationsHierarchyFetch, dispatch),
   OrganizationsCreate: bindActionCreators(OrganizationsCreate, dispatch),
   OrganizationSendInvite: bindActionCreators(OrganizationSendInvite, dispatch),
 }))
@@ -75,6 +77,7 @@ class Create extends React.Component {
     OrganizationsFetch: PropTypes.func,
     OrganizationsCreate: PropTypes.func,
     OrganizationSendInvite: PropTypes.func,
+    OrganizationsHierarchyFetch: PropTypes.func,
 
     formErrors: PropTypes.instanceOf(Map),
     formAsyncErrors: PropTypes.instanceOf(Map),
@@ -146,21 +149,29 @@ class Create extends React.Component {
         ...this.props.formValues.toJS()
       }).then((organization) => {
         this.props.OrganizationsFetch().then(() => {
-          const promises = [];
-          this.props.formValues.get('admins').forEach((admin) => {
-            promises.push(this.props.OrganizationSendInvite({...admin.toJS(), id: organization.payload.data.id}));
-          });
-          Promise.all(promises).then(() => {
-            resolve();
+          this.props.OrganizationsHierarchyFetch().then(() => {
+            const promises = [];
+            this.props.formValues.get('admins').forEach((admin) => {
+              promises.push(this.props.OrganizationSendInvite({
+                ...admin.toJS(),
+                id: organization.payload.data.id
+              }));
+            });
+            Promise.all(promises).then(() => {
+              resolve();
+            }).catch((response) => {
+              message.error((
+                <span>An Error occurred while sending the invites for admins. <br/>You can resend invites on Organization Users page</span>), 5);
+              reject({ invites: response });
+            });
           }).catch((response) => {
-            message.error((<span>An Error occurred while sending the invites for admins. <br/>You can resend invites on Organization Users page</span>), 5);
-            reject({invites: response});
+            reject({ orgFetch: response });
           });
         }).catch((response) => {
-          reject({orgFetch: response});
+          reject({ orgFetch: response });
         });
       }).catch((response) => {
-        reject({orgCreate: response});
+        reject({ orgCreate: response });
       });
     })).catch((err) => {
 
