@@ -72,6 +72,17 @@ public class RoleAPIWebsocketTest extends APIBaseTest {
     }
 
     @Test
+    public void getRole() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(admin);
+
+        client.getRole(admin.orgId, 1);
+        RoleDTO roleDTOs = client.parseRoleDTO(1);
+        assertNotNull(roleDTOs);
+        assertEquals(1, roleDTOs.id);
+        assertEquals("Admin", roleDTOs.name);
+    }
+
+    @Test
     public void checkOnlyDefaultRolesAreCreated() throws Exception {
         AppWebSocketClient client = loggedDefaultClient(admin);
 

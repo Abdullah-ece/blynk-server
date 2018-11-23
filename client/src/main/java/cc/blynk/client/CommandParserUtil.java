@@ -94,6 +94,7 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORG_USERS;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_PRODUCT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_PRODUCTS;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_PRODUCT_LOCATIONS;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ROLE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ROLES;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_TEMP_SECURE_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_INVITE_USER;
@@ -349,6 +350,8 @@ public final class CommandParserUtil {
                 return WEB_UPDATE_ROLE;
             case "webgetroles" :
                 return WEB_GET_ROLES;
+            case "webgetrole" :
+                return WEB_GET_ROLE;
 
             default:
                 throw new IllegalArgumentException("Unsupported command");

@@ -31,6 +31,7 @@ import cc.blynk.server.web.handlers.logic.organization.WebGetTempSecureTokenLogi
 import cc.blynk.server.web.handlers.logic.organization.WebUpdateOrganizationLogic;
 import cc.blynk.server.web.handlers.logic.organization.roles.WebCreateRoleLogic;
 import cc.blynk.server.web.handlers.logic.organization.roles.WebDeleteRoleLogic;
+import cc.blynk.server.web.handlers.logic.organization.roles.WebGetRoleLogic;
 import cc.blynk.server.web.handlers.logic.organization.roles.WebGetRolesLogic;
 import cc.blynk.server.web.handlers.logic.organization.roles.WebUpdateRoleLogic;
 import cc.blynk.server.web.handlers.logic.organization.users.WebCanInviteUserLogic;
@@ -75,6 +76,7 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORG_USERS;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_PRODUCT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_PRODUCTS;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_PRODUCT_LOCATIONS;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ROLE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ROLES;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_TEMP_SECURE_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_INVITE_USER;
@@ -125,6 +127,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
     private final WebUpdateRoleLogic webUpdateRoleLogic;
     private final WebGetRolesLogic webGetRolesLogic;
     private final WebDeleteRoleLogic webDeleteRoleLogic;
+    private final WebGetRoleLogic webGetRoleLogic;
 
     private final Holder holder;
 
@@ -159,6 +162,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
         this.webUpdateRoleLogic = new WebUpdateRoleLogic(holder);
         this.webGetRolesLogic = new WebGetRolesLogic(holder);
         this.webDeleteRoleLogic = new WebDeleteRoleLogic(holder);
+        this.webGetRoleLogic = new WebGetRoleLogic(holder);
 
         this.state = state;
         this.holder = holder;
@@ -287,6 +291,9 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
                 break;
             case WEB_GET_ROLES:
                 webGetRolesLogic.messageReceived(ctx, state, msg);
+                break;
+            case WEB_GET_ROLE :
+                webGetRoleLogic.messageReceived(ctx, state, msg);
                 break;
         }
     }

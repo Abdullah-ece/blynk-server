@@ -169,8 +169,9 @@ public final class Command {
     public static final short WEB_GET_ORG_HIERARCHY = 132;
     public static final short WEB_CREATE_ROLE = 133;
     public static final short WEB_UPDATE_ROLE = 134;
-    public static final short WEB_GET_ROLES = 135;
-    public static final short WEB_DELETE_ROLE = 136;
+    public static final short WEB_GET_ROLE = 135;
+    public static final short WEB_GET_ROLES = 136;
+    public static final short WEB_DELETE_ROLE = 137;
 
     public static final int LAST_COMMAND_INDEX = 150;
 
@@ -298,7 +299,8 @@ public final class Command {
             Map.entry(WEB_GET_ORG_HIERARCHY, "WebGetOrgHierarchy"),
             Map.entry(WEB_CREATE_ROLE, "WebCreateRole"),
             Map.entry(WEB_UPDATE_ROLE, "WebUpdateRole"),
-            Map.entry(WEB_GET_ROLES, "WebGetRole"),
+            Map.entry(WEB_GET_ROLES, "WebGetRoles"),
+            Map.entry(WEB_GET_ROLE, "WebGetRole"),
             Map.entry(WEB_DELETE_ROLE, "WebDeleteRole")
     );
 

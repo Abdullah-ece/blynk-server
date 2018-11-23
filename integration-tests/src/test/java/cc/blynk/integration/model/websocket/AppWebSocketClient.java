@@ -333,6 +333,10 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         send("webGetRoles " + orgId);
     }
 
+    public void getRole(int orgId, int roleId) {
+        send("webGetRole " + orgId + BODY_SEPARATOR_STRING + roleId);
+    }
+
     public TimelineResponseDTO parseTimelineResponse(int expectedMessageOrder) throws Exception {
         return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), TimelineResponseDTO.class);
     }
