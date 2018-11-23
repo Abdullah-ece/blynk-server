@@ -5,7 +5,7 @@ import './styles.less';
 class DeviceDelete extends Component {
   static propTypes = {
     deviceId: React.PropTypes.number,
-    orgId: React.PropTypes.number,
+    orgId: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.number]),
     onDelete: React.PropTypes.func,
   };
   constructor(props) {

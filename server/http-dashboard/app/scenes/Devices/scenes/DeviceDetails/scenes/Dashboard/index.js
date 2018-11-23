@@ -34,7 +34,7 @@ class DashboardScene extends React.Component {
     params    : PropTypes.object,
     timeFilter: PropTypes.object,
 
-    orgId: PropTypes.number,
+    orgId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 
     loading: PropTypes.bool,
 

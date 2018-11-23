@@ -16,7 +16,7 @@ import PropTypes from 'prop-types';
 class DeviceNameScene extends React.Component {
 
   static propTypes = {
-    orgId: PropTypes.number,
+    orgId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 
     device: PropTypes.object,
 

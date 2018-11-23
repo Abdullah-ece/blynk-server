@@ -135,7 +135,7 @@ class OTAScene extends React.Component {
 
     selectedDevicesIds: PropTypes.arrayOf(PropTypes.number),
 
-    orgId: PropTypes.number,
+    orgId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 
     devicesLoading: PropTypes.bool,
 

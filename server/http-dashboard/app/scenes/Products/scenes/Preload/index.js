@@ -26,7 +26,7 @@ class ProductsPreload extends React.Component {
 
   static propTypes = {
     children: PropTypes.any,
-    orgId: PropTypes.number,
+    orgId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     fetchOrganization: PropTypes.func,
     fetchProduct: PropTypes.func,
     productsLoading: PropTypes.bool,

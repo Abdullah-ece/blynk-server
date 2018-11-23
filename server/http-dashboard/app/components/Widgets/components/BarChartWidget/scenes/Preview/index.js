@@ -34,7 +34,7 @@ export default class PreviewScene extends React.Component {
     devicesList: PropTypes.instanceOf(List),
     devicePreviewData: PropTypes.instanceOf(List),
 
-    orgId: PropTypes.number,
+    orgId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     widgetId: PropTypes.number,
 
     devicesLoading: PropTypes.bool,

@@ -40,7 +40,7 @@ class AdminTableList extends React.Component {
     updateSortInfo: PropTypes.func,
     updateSelectedRows: PropTypes.func,
 
-    orgId: PropTypes.number,
+    orgId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 
     loading: PropTypes.bool,
   };

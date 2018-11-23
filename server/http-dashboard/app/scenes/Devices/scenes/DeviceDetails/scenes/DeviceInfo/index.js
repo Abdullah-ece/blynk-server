@@ -22,7 +22,7 @@ class DeviceInfoScene extends React.Component {
     account: PropTypes.object,
     device: PropTypes.object,
 
-    orgId: PropTypes.number,
+    orgId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 
     fetchDevice: PropTypes.func,
     fetchDevices: PropTypes.func,

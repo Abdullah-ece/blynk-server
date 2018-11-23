@@ -47,7 +47,7 @@ class DeviceDetailsScene extends React.Component {
     params: PropTypes.object,
     location: PropTypes.object,
     //
-    orgId: PropTypes.number,
+    orgId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     productId: PropTypes.number,
     //
     fetchDeviceDetails: PropTypes.func,

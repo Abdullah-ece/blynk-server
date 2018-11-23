@@ -48,7 +48,7 @@ class AdminsEditScene extends React.Component {
 
     allowResendInvite: PropTypes.bool,
 
-    orgId: PropTypes.number,
+    orgId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 
     resetForm: PropTypes.func,
     OrganizationSendInvite: PropTypes.func,
