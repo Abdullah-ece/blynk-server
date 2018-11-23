@@ -2,6 +2,8 @@ package cc.blynk.server.internal;
 
 import cc.blynk.server.core.protocol.model.messages.WebJsonMessage;
 
+import static cc.blynk.server.core.protocol.enums.Response.DEVICE_NOT_IN_NETWORK;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -21,7 +23,7 @@ public final class WebByteBufUtil {
     }
 
     public static WebJsonMessage deviceNotInNetwork(int msgId) {
-        return json(msgId, "Device not in the network.");
+        return  new WebJsonMessage(msgId, "Device not in the network.", DEVICE_NOT_IN_NETWORK);
     }
 
     public static WebJsonMessage userHasNoAccessToOrg(int msgId) {

@@ -14,19 +14,31 @@ public class WebJsonMessage extends MessageBase {
 
     public final String message;
 
+    public final int code;
+
+    public WebJsonMessage(int id, String message, int code) {
+        super(id, WEB_JSON);
+        this.message = message;
+        this.code = code;
+    }
+
     public WebJsonMessage(int messageId, String message) {
         super(messageId, WEB_JSON);
         this.message = message;
+        this.code = 0;
+    }
+
+    public static String toJson(String message, int code) {
+        if (code == 0) {
+            return "{\"error\":{\"message\":\"" + message + "\"}}";
+        }
+        return "{\"error\":{\"message\":\"" + message + "\",\"code\":" + code + "}}";
     }
 
     @Override
     public byte[] getBytes() {
         //do not use json here as it is very simple structure
-        return toJson(message).getBytes(UTF_8);
-    }
-
-    public static String toJson(String message) {
-        return "{\"error\":{\"message\":\"" + message + "\"}}";
+        return toJson(message, code).getBytes(UTF_8);
     }
 
     @Override

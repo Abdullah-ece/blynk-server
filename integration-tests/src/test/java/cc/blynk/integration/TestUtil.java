@@ -228,7 +228,11 @@ public final class TestUtil {
     }
 
     public static MessageBase webJson(int msgId, String message) {
-        return new WebJsonMessage(msgId, WebJsonMessage.toJson(message));
+        return new WebJsonMessage(msgId, WebJsonMessage.toJson(message, 0));
+    }
+
+    public static MessageBase webJson(int msgId, String message, int code) {
+        return new WebJsonMessage(msgId, WebJsonMessage.toJson(message, code));
     }
 
     public static StringMessage createDevice(int msgId, String body) {

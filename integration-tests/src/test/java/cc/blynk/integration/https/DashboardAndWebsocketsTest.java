@@ -24,6 +24,7 @@ import cc.blynk.server.core.model.widgets.web.WebLineGraph;
 import cc.blynk.server.core.model.widgets.web.WebSource;
 import cc.blynk.server.core.model.widgets.web.WebSwitch;
 import cc.blynk.server.core.model.widgets.web.label.WebLabel;
+import cc.blynk.server.core.protocol.enums.Response;
 import cc.blynk.server.core.protocol.model.messages.BinaryMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.core.reporting.average.AggregationKey;
@@ -322,14 +323,14 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         appClient.verifyResult(ok(1));
 
         appClient.activate(0);
-        appClient.verifyResult(webJson(2, "Device not in the network."));
+        appClient.verifyResult(webJson(2, "Device not in the network.", Response.DEVICE_NOT_IN_NETWORK));
 
         appClient.send("hardware 1 vw 2 222");
         appWebSocketClient.verifyResult(appSync(3, b("1 vw 2 222")));
 
         appWebSocketClient.send("hardware 1 vw 10 100");
         appClient.verifyResult(appSync(3, b("1 vw 10 100")));
-        appClient.verifyResult(webJson(3, "Device not in the network."));
+        appClient.verifyResult(webJson(3, "Device not in the network.", Response.DEVICE_NOT_IN_NETWORK));
     }
 
     @Test
