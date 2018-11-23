@@ -63,13 +63,12 @@ public class ProvisionedHardwareFirstHandler extends SimpleChannelInboundHandler
         }
     }
 
-    private void getProductAndOrgByTemplateId(String templateId) {
-        for (Organization tempOrg : holder.organizationDao.organizations.values()) {
-            Product productWithTemplate = tempOrg.getProductByTemplateId(templateId);
-            if (productWithTemplate != null) {
-                this.org = tempOrg;
-                this.product = productWithTemplate;
-            }
+    private void getProductAndOrgByTemplateId(int orgId, String templateId) {
+        Organization tempOrg = holder.organizationDao.getOrgByIdOrThrow(orgId);
+        Product productWithTemplate = tempOrg.getProductByTemplateId(templateId);
+        if (productWithTemplate != null) {
+            this.org = tempOrg;
+            this.product = productWithTemplate;
         }
     }
 
@@ -113,7 +112,7 @@ public class ProvisionedHardwareFirstHandler extends SimpleChannelInboundHandler
                         log.warn("No templateId from hardware. Getting first product (id={}) "
                                 + "for provisioned device {}.", product.id, device.id);
                     } else {
-                        getProductAndOrgByTemplateId(templateId);
+                        getProductAndOrgByTemplateId(orgId, templateId);
                         if (product == null) {
                             org = holder.organizationDao.getOrgByIdOrThrow(orgId);
                             product = org.getFirstProduct();
