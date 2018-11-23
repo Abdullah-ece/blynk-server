@@ -151,7 +151,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         Organization organization = new Organization("My SubOrg", "Some TimeZone", "/static/logo.png", false, orgId);
         organization.selectedProducts = new int[] {fromApiProduct.id};
 
-        client.createOrganization(organization);
+        client.createOrganization(orgId, organization);
         OrganizationDTO fromApi = client.parseOrganizationDTO(2);
         assertNotNull(fromApi);
         assertEquals(orgId, fromApi.parentId);
@@ -200,7 +200,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         Organization organization = new Organization("My Org ffff", "Some TimeZone", "/static/logo.png", false, orgId);
         organization.selectedProducts = new int[] {fromApiProduct.id};
 
-        client.createOrganization(organization);
+        client.createOrganization(orgId, organization);
         OrganizationDTO fromApi = client.parseOrganizationDTO(2);
         assertNotNull(fromApi);
         assertEquals(orgId, fromApi.parentId);

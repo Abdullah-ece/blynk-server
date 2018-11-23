@@ -225,8 +225,8 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
         assertNotNull(organizationDTO);
         assertEquals(orgId, organizationDTO.id);
 
-        Organization subOrg = new Organization("SubOrg", "Europe/Kiev", "/static/logo.png", true, organizationDTO.id);
-        client.createOrganization(subOrg);
+        Organization subOrg = new Organization("SubOrg000", "Europe/Kiev", "/static/logo.png", true, organizationDTO.id);
+        client.createOrganization(orgId, subOrg);
         OrganizationDTO subOrgDTO = client.parseOrganizationDTO(2);
         assertNotNull(subOrgDTO);
         assertEquals(organizationDTO.id, subOrgDTO.parentId);
@@ -244,7 +244,7 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
         assertEquals(orgId, organizationDTO.id);
 
         Organization subOrg = new Organization("SubOrg", "Europe/Kiev", "/static/logo.png", true, organizationDTO.id);
-        client.createOrganization(subOrg);
+        client.createOrganization(orgId, subOrg);
         OrganizationDTO subOrgDTO = client.parseOrganizationDTO(2);
         assertNotNull(subOrgDTO);
 
@@ -285,7 +285,7 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
 
         Organization subOrg = new Organization("SubOrg3", "Europe/Kiev", "/static/logo.png", true, orgId);
-        client.createOrganization(subOrg);
+        client.createOrganization(orgId, subOrg);
         OrganizationDTO subOrgDTO = client.parseOrganizationDTO(1);
         assertNotNull(subOrgDTO);
 
@@ -309,10 +309,10 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
 
         Organization subOrg = new Organization("SubOrg2", "Europe/Kiev", "/static/logo.png", true, orgId);
-        client.createOrganization(subOrg);
+        client.createOrganization(orgId, subOrg);
 
         Organization subOrg2 = new Organization("AAA2", "Europe/Kiev", "/static/logo.png", true, orgId);
-        client.createOrganization(subOrg2);
+        client.createOrganization(orgId, subOrg2);
 
         client.getOrganizationHierarchy();
         OrganizationsHierarchyDTO organizationsHierarchyDTO = client.parseOrganizationHierarchyDTO(3);
@@ -387,6 +387,33 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
                 printHierarchy(child, spaces + 4);
             }
         }
+    }
+
+    @Test
+    public void createSubOrgOfSubOrg() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+        client.getOrganization(orgId);
+        OrganizationDTO organizationDTO = client.parseOrganizationDTO(1);
+        assertNotNull(organizationDTO);
+        assertEquals(orgId, organizationDTO.id);
+
+        Organization subOrg = new Organization("SubOrg111", "Europe/Kiev", "/static/logo.png", true, organizationDTO.id);
+        client.createOrganization(organizationDTO.id, subOrg);
+        OrganizationDTO subOrgDTO = client.parseOrganizationDTO(2);
+        assertNotNull(subOrgDTO);
+        assertEquals(organizationDTO.id, subOrgDTO.parentId);
+        assertNotNull(subOrgDTO.roles);
+        assertEquals(3, subOrgDTO.roles.length);
+        assertEquals(1, subOrgDTO.roles[0].id);
+
+        Organization subOrg2 = new Organization("SubOrg222", "Europe/Kiev", "/static/logo.png", true, subOrgDTO.id);
+        client.createOrganization(subOrgDTO.id, subOrg2);
+        OrganizationDTO subOrgDTO2 = client.parseOrganizationDTO(3);
+        assertNotNull(subOrgDTO2);
+        assertEquals(subOrgDTO.id, subOrgDTO2.parentId);
+        assertNotNull(subOrgDTO2.roles);
+        assertEquals(3, subOrgDTO2.roles.length);
+        assertEquals(1, subOrgDTO2.roles[0].id);
     }
 }
 
