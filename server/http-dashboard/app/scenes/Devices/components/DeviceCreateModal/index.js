@@ -68,8 +68,8 @@ class DeviceCreateModal extends React.Component {
       }));
     }
 
-    if (this.props.formValues && this.props.formValues.orgId && this.props.organizations) {
-      if (Number(this.props.formValues.orgId) === Number(this.props.organization.id)) {
+    if (this.props.formValues && this.props.account.selectedOrgId && this.props.organizations) {
+      if (Number(this.props.account.selectedOrgId) === Number(this.props.organization.id)) {
 
         products = this.props.products.map((product) => ({
           key  : String(product.id),
@@ -79,7 +79,7 @@ class DeviceCreateModal extends React.Component {
       } else if (this.props.formValues) {
 
         let selectedOrgIndex = _.findIndex(this.props.organizations, (org) => (
-          Number(org.id) === Number(this.props.formValues.orgId)
+          Number(org.id) === Number(this.props.account.selectedOrgId)
         ));
 
         if (selectedOrgIndex && this.props.organizations[selectedOrgIndex]) {
@@ -92,7 +92,7 @@ class DeviceCreateModal extends React.Component {
       }
     }
 
-    if (this.props.formValues && this.props.organization.parentId === -1 && Number(this.props.organization.id) === Number(this.props.formValues.orgId)) {
+    if (this.props.formValues && this.props.organization.parentId === -1 && Number(this.props.organization.id) === Number(this.props.account.selectedOrgId)) {
       products.unshift({
         key  : SETUP_PRODUCT_KEY,
         value: 'New product'
@@ -126,7 +126,7 @@ class DeviceCreateModal extends React.Component {
               </Item>
             </Col>
           </Row>
-          {this.props.formValues && this.props.formValues.orgId && (
+          {this.props.formValues && this.props.account.selectedOrgId && (
             <Row>
               <Col span={24}>
                 <Item label="Product Template" offset="large">
