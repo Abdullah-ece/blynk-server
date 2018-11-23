@@ -302,7 +302,7 @@ export const blynkWsTrackDevice = (params) => {
 };
 
 export const blynkWsMessage = (params) => {
-
+  
   const {action, options, store} = params;
 
   const dataView = new DataView(action.value.data);
@@ -321,6 +321,7 @@ export const blynkWsMessage = (params) => {
     options.debug("blynkWsMessage", action, {
       command: getCommandKeyName(command),
       msgId  : msgId,
+      body: dataView.body
     });
 
   let handlers = Handlers({
