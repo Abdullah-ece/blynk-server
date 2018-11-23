@@ -4,6 +4,8 @@ import PropTypes from 'prop-types';
 import {
   DeviceCreateModal
 } from 'scenes/Devices/components';
+import {displayError} from "services/ErrorHandling";
+import {message} from "antd";
 
 import {STATUS, SETUP_PRODUCT_KEY} from 'services/Devices';
 
@@ -162,7 +164,7 @@ class DeviceCreateModalScene extends React.Component {
       this.setState({ loading: true });
 
       return this.props.createDevice({
-        orgId: this.props.formValues.orgId
+        orgId: this.props.account.selectedOrgId
       }, {
         ...this.props.formValues,
         productId: productId || this.props.formValues.productId,
@@ -177,12 +179,12 @@ class DeviceCreateModalScene extends React.Component {
             this.handleCancelClick();
           }
         }).catch((err) => {
-          console.error(err);
           this.setState({ loading: false });
+          displayError(err, message.error);
         });
       }).catch((err) => {
-        console.error(err);
         this.setState({ loading: false });
+        displayError(err, message.error);
       });
     };
 
@@ -249,7 +251,8 @@ class DeviceCreateModalScene extends React.Component {
       organization,
       formValues,
       products,
-      errors
+      errors,
+      account
     } = this.props;
 
     const initialValues = {
@@ -263,6 +266,7 @@ class DeviceCreateModalScene extends React.Component {
         visible={visible}
         formValues={formValues}
         products={products}
+        account={account}
         organizations={organizations}
         organization={organization}
         onClose={this.handleClose}
