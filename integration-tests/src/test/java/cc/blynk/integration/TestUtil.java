@@ -514,10 +514,10 @@ public final class TestUtil {
 
     public static Organization createDefaultOrg() {
         Organization org = new Organization("Blynk Inc.", "Europe/Kiev", "/static/logo.png", true, NO_PARENT_ID,
-                new Role(Role.SUPER_ADMIN_ROLE_ID, "Super Admin", 0b11111111111111111111, 0),
-                new Role(1, "Admin", 0b11111111111111111111, 0),
-                new Role(2, "Staff", 0b11111111111111111111, 0),
-                new Role(3, "User", 0b11111111111111111111, 0)
+                new Role(Role.SUPER_ADMIN_ROLE_ID, "Super Admin", 0b11111111111111111111111111111111, 0),
+                new Role(1, "Admin", 0b11111111111111111111111111111111, 0),
+                new Role(2, "Staff", 0b11111111111111111111111111111111, 0),
+                new Role(3, "User", 0b11111111111111111111111111111111, 0)
         );
         Product product = new Product();
         product.name = "Default Product";

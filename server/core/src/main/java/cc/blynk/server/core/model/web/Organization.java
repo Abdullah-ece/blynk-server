@@ -1,6 +1,7 @@
 package cc.blynk.server.core.model.web;
 
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.dto.DeviceDTO;
 import cc.blynk.server.core.model.exceptions.ProductNotFoundException;
 import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
@@ -9,6 +10,9 @@ import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.utils.ArrayUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_INTS;
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_PRODUCTS;
@@ -169,16 +173,16 @@ public class Organization {
     public static Role[] createDefaultRoles(boolean withSuperAdmin) {
         if (withSuperAdmin) {
             return new Role[] {
-                    new Role(Role.SUPER_ADMIN_ROLE_ID, "Super Admin", 0b11111111111111111111, 0),
-                    new Role(1, "Admin", 0b11111111111111111111, 0),
-                    new Role(2, "Staff", 0b11111111111111111111, 0),
-                    new Role(3, "User", 0b11111111111111111111, 0)
+                    new Role(Role.SUPER_ADMIN_ROLE_ID, "Super Admin", 0b11111111111111111111111111111111, 0),
+                    new Role(1, "Admin", 0b11111111111111111111111111111111, 0),
+                    new Role(2, "Staff", 0b11111111111111111111111111111111, 0),
+                    new Role(3, "User", 0b11111111111111111111111111111111, 0)
             };
         } else {
             return new Role[] {
-                    new Role(1, "Admin", 0b11111111111111111111, 0),
-                    new Role(2, "Staff", 0b11111111111111111111, 0),
-                    new Role(3, "User", 0b11111111111111111111, 0)
+                    new Role(1, "Admin", 0b11111111111111111111111111111111, 0),
+                    new Role(2, "Staff", 0b11111111111111111111111111111111, 0),
+                    new Role(3, "User", 0b11111111111111111111111111111111, 0)
             };
         }
     }
@@ -217,6 +221,28 @@ public class Organization {
                 }
             }
         }
+    }
+
+    public List<DeviceDTO> getAllDeviceDTOs() {
+        var result = new ArrayList<DeviceDTO>();
+        for (Product product : products) {
+            for (Device device : product.devices) {
+                result.add(new DeviceDTO(device, product, name));
+            }
+        }
+        return result;
+    }
+
+    public List<DeviceDTO> getDevicesByOwnerDTOs(String ownerEmail) {
+        var result = new ArrayList<DeviceDTO>();
+        for (Product product : products) {
+            for (Device device : product.devices) {
+                if (device.hasOwner(ownerEmail)) {
+                    result.add(new DeviceDTO(device, product, name));
+                }
+            }
+        }
+        return result;
     }
 
     public Role getRoleByIdOrThrow(int id) {

@@ -5,6 +5,7 @@ import cc.blynk.utils.CopyObject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_DEVICE_VIEW;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ROLE_CREATE;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ROLE_DELETE;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ROLE_EDIT;
@@ -41,6 +42,10 @@ public class Role implements CopyObject<Role> {
 
     private static boolean hasPermission(int permissionGroup, int permission) {
         return (permissionGroup & permission) == permission;
+    }
+
+    public boolean canViewOrgDevices() {
+        return hasPermission(permissionGroup1, ORG_DEVICE_VIEW);
     }
 
     public boolean canViewRole() {
