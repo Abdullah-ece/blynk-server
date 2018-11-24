@@ -96,7 +96,6 @@ class DeviceCreateModalScene extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log(nextProps, this.props);
     if (nextProps && nextProps.formValues && nextProps.formValues.productId !== this.state.productId) {
       this.setState({
         productId: nextProps.formValues.productId
@@ -124,12 +123,12 @@ class DeviceCreateModalScene extends React.Component {
       }
     }
 
-    if (this.props.formValues && this.props.formValues.orgId && Number(this.props.formValues.orgId) !== Number(nextProps.formValues.orgId)) {
+    if (this.props.formValues && this.props.account.selectedOrgId && Number(this.props.account.selectedOrgId) !== Number(nextProps.account.selectedOrgId)) {
       this.props.change('DeviceCreate', 'productId', '');
     }
 
-    if (this.props.formValues && !nextProps.formValues.orgId) {
-      this.props.change('DeviceCreate','orgId', this.props.organization.id);
+    if (this.props.organization.id != nextProps.organization.id) {
+      this.props.change('DeviceCreate','orgId', nextProps.organization.id);
     }
   }
 

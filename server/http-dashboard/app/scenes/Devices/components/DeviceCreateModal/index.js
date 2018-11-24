@@ -100,7 +100,7 @@ class DeviceCreateModal extends React.Component {
     }
 
     const isAdvancedOptionShouldBeDisplayed = this.props.formValues && this.props.formValues.productId === SETUP_PRODUCT_KEY;
-    console.log(organizations)
+
     return (
       <Modal title="New Device"
              visible={this.props.visible}
