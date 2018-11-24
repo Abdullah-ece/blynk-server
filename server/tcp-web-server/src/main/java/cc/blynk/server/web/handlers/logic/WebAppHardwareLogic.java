@@ -68,7 +68,6 @@ public class WebAppHardwareLogic {
         short pin = NumberUtil.parsePin(splitBody[1]);
         String value = splitBody[2];
 
-        device.update(pin, pinType, value);
         device.updateValue(pin, pinType, value);
 
         Channel channel = ctx.channel();

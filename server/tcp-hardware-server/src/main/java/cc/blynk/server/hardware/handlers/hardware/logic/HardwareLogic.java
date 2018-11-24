@@ -79,7 +79,6 @@ public class HardwareLogic extends BaseProcessorHandler {
 
             reportingDao.process(orgId, device, pin, pinType, value, now);
             device.updateValue(pin, pinType, value, now);
-            device.update(pin, pinType, value);
 
             Session session = sessionDao.getOrgSession(orgId);
 
