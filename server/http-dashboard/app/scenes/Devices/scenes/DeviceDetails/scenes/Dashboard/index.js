@@ -1,20 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {connect} from 'react-redux';
-import {Icon} from 'antd';
-import {bindActionCreators} from 'redux';
-import {WIDGET_TYPES} from 'services/Widgets';
-import {Grids} from "components";
+import { connect } from 'react-redux';
+import { Icon } from 'antd';
+import { bindActionCreators } from 'redux';
+import { WIDGET_TYPES } from 'services/Widgets';
+import { Grids } from "components";
 import {
   DEVICE_DASHBOARD_TIME_FILTERING_FORM_NAME,
   TIMELINE_TIME_FILTERS
 } from 'services/Devices';
-import {getFormValues} from 'redux-form';
+import { getFormValues } from 'redux-form';
 import {
   DeviceDashboardFetch
 } from 'data/Devices/api';
-import {WidgetStatic} from "components/Widgets";
-import {blynkWsChartDataFetch} from 'store/blynk-websocket-middleware/actions';
+import { WidgetStatic } from "components/Widgets";
+import { blynkWsChartDataFetch } from 'store/blynk-websocket-middleware/actions';
 
 @connect((state) => ({
   orgId: state.Account.selectedOrgId,
@@ -31,14 +31,14 @@ class DashboardScene extends React.Component {
     dashboard: PropTypes.shape({
       widgets: PropTypes.array,
     }),
-    params    : PropTypes.object,
+    params: PropTypes.object,
     timeFilter: PropTypes.object,
 
     orgId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 
     loading: PropTypes.bool,
 
-    fetchDeviceDashboard    : PropTypes.func,
+    fetchDeviceDashboard: PropTypes.func,
     fetchDeviceDashboardData: PropTypes.func,
   };
 
@@ -51,23 +51,24 @@ class DashboardScene extends React.Component {
   componentDidMount() {
     // loading dash widgets
     if (this.props.orgId) {
-      this.fetchDashboard().then(this.fetchDashboardData);
+      this.fetchDashboard().then(this.fetchDashboardData).catch(
+        err => console.error(err));
     }
   }
 
   componentDidUpdate(prevProps) {
     // check props to make new fetch
-    if(prevProps.params.id !== this.props.params.id && this.props.orgId)
+    if (prevProps.params.id !== this.props.params.id && this.props.orgId)
       this.fetchDashboard().then(this.fetchDashboardData);
 
-    if(!prevProps.orgId && this.props.orgId) {
+    if (!prevProps.orgId && this.props.orgId) {
       this.fetchDashboard().then(this.fetchDashboardData);
     }
 
-    if(prevProps.timeFilter.time !== this.props.timeFilter.time)
+    if (prevProps.timeFilter.time !== this.props.timeFilter.time)
       this.fetchDashboardData();
 
-    if(prevProps.timeFilter.customTime[0] !== this.props.timeFilter.customTime[0] || prevProps.timeFilter.customTime[1] !== this.props.timeFilter.customTime[1])
+    if (prevProps.timeFilter.customTime[0] !== this.props.timeFilter.customTime[0] || prevProps.timeFilter.customTime[1] !== this.props.timeFilter.customTime[1])
       this.fetchDashboardData();
 
   }
@@ -109,12 +110,12 @@ class DashboardScene extends React.Component {
 
   render() {
 
-    if(this.props.loading)
+    if (this.props.loading)
       return (
         <Icon type="loading" className="devices--device-dashboard-loading"/>
       );
 
-    if(this.props.dashboard && ((!this.props.dashboard.widgets) || (!this.props.dashboard.widgets.length))) {
+    if (this.props.dashboard && ((!this.props.dashboard.widgets) || (!this.props.dashboard.widgets.length))) {
       return (
         <div className="product-no-fields">No Dashboard widgets</div>
       );
@@ -131,7 +132,8 @@ class DashboardScene extends React.Component {
     ));
 
     return (
-      <Grids.GridStatic deviceId={Number(this.props.params.id)} widgets={widgets} webDashboard={this.props.dashboard}/>
+      <Grids.GridStatic deviceId={Number(this.props.params.id)}
+                        widgets={widgets} webDashboard={this.props.dashboard}/>
     );
   }
 

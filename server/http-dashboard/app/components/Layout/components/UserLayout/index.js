@@ -89,8 +89,10 @@ class UserLayout extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if(prevProps.Account.selectedOrgId !== this.props.Account.selectedOrgId)
+    if(prevProps.Account.selectedOrgId !== this.props.Account.selectedOrgId) {
       this.fetchData();
+      this.context.router.push('/devices');
+    }
   }
 
   fetchData() {
@@ -123,8 +125,6 @@ class UserLayout extends React.Component {
     this.props.selectOrgId({
       orgId: e.key
     });
-
-    this.context.router.push('/devices');
   }
 
   currentActivePage(state) {

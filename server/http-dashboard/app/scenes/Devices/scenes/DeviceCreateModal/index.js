@@ -96,12 +96,13 @@ class DeviceCreateModalScene extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    console.log(nextProps, this.props);
     if (nextProps && nextProps.formValues && nextProps.formValues.productId !== this.state.productId) {
       this.setState({
         productId: nextProps.formValues.productId
       });
 
-      const product = _.find(this.props.products, (product) => {
+      const product = _.find(this.props.organization.products, (product) => {
         return Number(product.id) === Number(nextProps.formValues.productId);
       });
 
@@ -131,18 +132,6 @@ class DeviceCreateModalScene extends React.Component {
       this.props.change('DeviceCreate','orgId', this.props.organization.id);
     }
   }
-
-  // shouldComponentUpdate(nextProps) {
-  //   return (
-  //     !_.isEqual(this.props.visible, nextProps.visible) ||
-  //     !_.isEqual(this.props.organizations, nextProps.organizations) ||
-  //     !_.isEqual(this.props.organization, nextProps.organization) ||
-  //     !_.isEqual(this.props.account, nextProps.account) ||
-  //     !_.isEqual(this.props.products, nextProps.products) ||
-  //     !_.isEqual(this.props.errors, nextProps.errors) ||
-  //     !_.isEqual(this.props.formValues, nextProps.formValues)
-  //   );
-  // }
 
   SETUP_PRODUCT_KEY = 'SETUP_NEW_PRODUCT';
 
@@ -230,9 +219,9 @@ class DeviceCreateModalScene extends React.Component {
 
     if(productId !== SETUP_PRODUCT_KEY) {
 
-      const currentProduct = getProductById(this.props.products, this.props.formValues.productId);
+      const currentProduct = getProductById(this.props.organization.products, this.props.formValues.productId);
 
-      const nextProduct = getProductById(this.props.products, productId);
+      const nextProduct = getProductById(this.props.organization.products, productId);
 
       if(this.props.formValues.name && this.props.formValues.productId) {
         if(currentProduct && getProductDefaultName(currentProduct) === this.props.formValues.name) {
@@ -250,7 +239,6 @@ class DeviceCreateModalScene extends React.Component {
       organizations,
       organization,
       formValues,
-      products,
       errors,
       account
     } = this.props;
@@ -265,7 +253,7 @@ class DeviceCreateModalScene extends React.Component {
         errors={errors}
         visible={visible}
         formValues={formValues}
-        products={products}
+        products={organization.products}
         account={account}
         organizations={organizations}
         organization={organization}
