@@ -48,7 +48,7 @@ public final class WebGetDevicesLogic {
             return;
         }
 
-        Organization org = organizationDao.getOrgById(orgId);
+        Organization org = organizationDao.getOrgByIdOrThrow(orgId);
 
         String devicesJson;
         List<DeviceDTO> deviceDTOs;
