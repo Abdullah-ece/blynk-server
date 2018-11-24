@@ -24,7 +24,7 @@ public class AccountDTO {
 
     public boolean isNotValid() {
         return name == null || name.isEmpty() || name.trim().isEmpty()
-                || roleId <= 0;
+                || roleId < 0;
     }
 
     @Override
