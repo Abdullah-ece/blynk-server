@@ -39,7 +39,7 @@ import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_WIDGETS;
  * Date: 21.11.13
  * Time: 13:04
  */
-public class DashBoard {
+public class DashBoard implements UpdateInterface {
 
     private static final Logger log = LogManager.getLogger(DashBoard.class);
 
@@ -90,7 +90,8 @@ public class DashBoard {
         return parentId != IS_PARENT_DASH;
     }
 
-    public boolean updateWidgets(int deviceId, short pin, PinType type, String value) {
+    @Override
+    public boolean updateWidgetsValue(int deviceId, short pin, PinType type, String value) {
         boolean hasWidget = false;
         for (Widget widget : widgets) {
             if (widget.updateIfSame(deviceId, pin, type, value)) {

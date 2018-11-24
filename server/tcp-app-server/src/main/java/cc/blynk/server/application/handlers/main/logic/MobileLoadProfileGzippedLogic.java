@@ -3,7 +3,9 @@ package cc.blynk.server.application.handlers.main.logic;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.ExportAppProfileDTO;
+import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -15,6 +17,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static cc.blynk.server.core.model.serialization.JsonParser.gzipDash;
 import static cc.blynk.server.core.model.serialization.JsonParser.gzipDashRestrictive;
@@ -39,21 +42,20 @@ public final class MobileLoadProfileGzippedLogic {
 
     public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
                                        MobileStateHolder state, StringMessage message) {
-        //load all
         int msgId = message.id;
 
+        //load all
+        List<Device> devices = holder.deviceDao.getDevicesOwnedByUser(state.user.email);
         if (message.body.length() == 0) {
-            DashBoard[] dashBoards = state.user.profile.dashBoards;
-
             //special case for the super admin in exported app, as admin can have parent and
             //child projects within same account, so we have to filter dashes for exported app
             if (state.user.isSuperAdmin() && state.version.isExportApp()) {
                 log.debug("Filtering dashboards for super admin {} and exported app {}.",
                         state.user.email, state.version);
-                dashBoards = filter(dashBoards);
+                List<DashBoard> dashBoards = fillWithValues(devices, filter(state.user.profile.dashBoards));
                 write(ctx, gzipExportProfileDTO(new ExportAppProfileDTO(dashBoards)), msgId);
             } else {
-                write(ctx, gzipProfile(state.user.profile), msgId);
+                write(ctx, gzipProfile(fillWithValues(devices, state.user.profile)), msgId);
             }
             return;
         }
@@ -63,7 +65,7 @@ public final class MobileLoadProfileGzippedLogic {
             //load specific by id
             int dashId = Integer.parseInt(message.body);
             DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
-            write(ctx, gzipDash(dash), msgId);
+            write(ctx, gzipDash(fillWithValues(devices, dash)), msgId);
         } else {
             String token = parts[0];
             int dashId = Integer.parseInt(parts[1]);
@@ -79,6 +81,7 @@ public final class MobileLoadProfileGzippedLogic {
                         //todo ugly. but ok for now
                         String copyString = JsonParser.toJsonRestrictiveDashboard(dash);
                         DashBoard copyDash = JsonParser.parseDashboard(copyString, msgId);
+                        //still need this, as dash may be with values from prev operations
                         copyDash.eraseWidgetValues();
                         write(ctx, gzipDashRestrictive(copyDash), msgId);
                     }
@@ -90,9 +93,34 @@ public final class MobileLoadProfileGzippedLogic {
         }
     }
 
+    private static Profile fillWithValues(List<Device> userOwnedDevices, Profile profile) {
+        for (Device device : userOwnedDevices) {
+            for (DashBoard dashBoard : profile.dashBoards) {
+                device.fillMobileDashboardValues(dashBoard);
+            }
+        }
+        return profile;
+    }
+
+    private static DashBoard fillWithValues(List<Device> userOwnedDevices, DashBoard dashBoard) {
+        for (Device device : userOwnedDevices) {
+            device.fillMobileDashboardValues(dashBoard);
+        }
+        return dashBoard;
+    }
+
+    private static List<DashBoard> fillWithValues(List<Device> userOwnedDevices, List<DashBoard> dashBoards) {
+        for (Device device : userOwnedDevices) {
+            for (DashBoard dashBoard : dashBoards) {
+                device.fillMobileDashboardValues(dashBoard);
+            }
+        }
+        return dashBoards;
+    }
+
     public static void write(ChannelHandlerContext ctx, byte[] data, int msgId) {
         if (ctx.channel().isWritable()) {
-            var outputMsg = makeResponse(data, msgId);
+            MessageBase outputMsg = makeResponse(data, msgId);
             ctx.writeAndFlush(outputMsg, ctx.voidPromise());
         }
     }
@@ -104,14 +132,14 @@ public final class MobileLoadProfileGzippedLogic {
         return makeBinaryMessage(LOAD_PROFILE_GZIPPED, msgId, data);
     }
 
-    private static DashBoard[] filter(DashBoard[] dashBoards) {
+    private static List<DashBoard> filter(DashBoard[] dashBoards) {
         var copy = new ArrayList<DashBoard>();
         for (DashBoard dash : dashBoards) {
             if (dash.isChild()) {
                 copy.add(dash);
             }
         }
-        return copy.toArray(new DashBoard[0]);
+        return copy;
     }
 
 }

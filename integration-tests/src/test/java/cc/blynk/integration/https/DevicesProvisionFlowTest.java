@@ -28,6 +28,7 @@ import cc.blynk.server.core.model.web.product.metafields.TemplateIdMetaField;
 import cc.blynk.server.core.model.widgets.outputs.ValueDisplay;
 import cc.blynk.server.core.model.widgets.outputs.graph.FontSize;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
+import cc.blynk.server.core.model.widgets.ui.tiles.templates.ButtonTileTemplate;
 import cc.blynk.server.core.model.widgets.ui.tiles.templates.PageTileTemplate;
 import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
@@ -49,6 +50,7 @@ import static cc.blynk.integration.APIBaseTest.createDeviceOwnerMeta;
 import static cc.blynk.integration.APIBaseTest.createMeasurementMeta;
 import static cc.blynk.integration.APIBaseTest.createNumberMeta;
 import static cc.blynk.integration.APIBaseTest.createTemplateIdMeta;
+import static cc.blynk.integration.TestUtil.appSync;
 import static cc.blynk.integration.TestUtil.b;
 import static cc.blynk.integration.TestUtil.defaultClient;
 import static cc.blynk.integration.TestUtil.deviceConnected;
@@ -598,6 +600,128 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         assertEquals(1, deviceTiles.tiles.length);
         assertEquals(provisionedDevice.id, deviceTiles.tiles[0].deviceId);
         assertEquals(tileTemplate.id, deviceTiles.tiles[0].templateId);
+    }
+
+    @Test
+    public void testProvisionFlowWithDeviceTilesAndValuesAreFilledFromServer() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+
+        Product product = new Product();
+        product.name = "My product2";
+        product.metaFields = new MetaField[] {
+                createDeviceOwnerMeta(1, "Device Owner", getUserName(), true),
+                createDeviceNameMeta(2, "Device Name", "My Default device Name", true),
+                createTemplateIdMeta(3, "Template Id", "TMPL0001")
+        };
+        client.createProduct(orgId, product);
+        ProductDTO fromApiProduct2 = client.parseProductDTO(1);
+        assertNotNull(fromApiProduct2);
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.boardType = BoardType.ESP32_Dev_Board;
+
+        TestAppClient appClient = new TestAppClient("localhost", properties.getHttpsPort());
+        appClient.start();
+        appClient.login(getUserName(), "1");
+        appClient.verifyResult(ok(1));
+        appClient.getProvisionToken(newDevice);
+        Device deviceFromApi = appClient.parseDevice(2);
+        assertNotNull(deviceFromApi);
+        assertNotNull(deviceFromApi.token);
+
+        long widgetId = 21321;
+
+        DeviceTiles deviceTiles = new DeviceTiles();
+        deviceTiles.id = widgetId;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+        deviceTiles.color = -231;
+
+        appClient.createWidget(1, deviceTiles);
+        appClient.verifyResult(ok(3));
+
+        ButtonTileTemplate tileTemplate = new ButtonTileTemplate(1,
+                null, null, "TMPL0001", "name", "iconName", BoardType.ESP8266,
+                new DataStream((short) 1, PinType.VIRTUAL),
+                false, false, false, null, null);
+
+        appClient.createTemplate(1, widgetId, tileTemplate);
+        appClient.verifyResult(ok(4));
+
+        TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
+        newHardClient.start();
+        newHardClient.login(deviceFromApi.token);
+        verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        appClient.never(deviceConnected(1, "1-1"));
+
+        newHardClient.send("internal " + b("ver 0.3.1 tmpl TMPL0001 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
+        newHardClient.verifyResult(ok(2));
+        appClient.verifyResult(deviceConnected(2, deviceFromApi.id));
+        client.verifyResult(deviceConnected(2, deviceFromApi.id));
+
+        appClient.getDevice(deviceFromApi.id);
+        Device provisionedDevice = appClient.parseDevice(6);
+        assertNotNull(provisionedDevice);
+        assertNotNull(provisionedDevice.metaFields);
+        assertEquals(3, provisionedDevice.metaFields.length);
+        assertEquals(fromApiProduct2.id, provisionedDevice.productId);
+        assertNotNull(provisionedDevice.hardwareInfo);
+        assertEquals("TMPL0001", provisionedDevice.hardwareInfo.templateId);
+        assertEquals("iconName", provisionedDevice.iconName);
+        assertEquals(ESP8266, provisionedDevice.boardType);
+        assertEquals("My Default device Name", provisionedDevice.name);
+
+        client.reset();
+        //we need separate call here as getDevice for mobile has filtered devices
+        client.getDevice(orgId, deviceFromApi.id);
+        Device webDevice = client.parseDevice(1);
+        MetaField templateIdMeta = webDevice.findMetaFieldById(3);
+        assertNotNull(templateIdMeta);
+        assertTrue(templateIdMeta instanceof TemplateIdMetaField);
+        assertEquals("TMPL0001", ((TemplateIdMetaField) templateIdMeta).selectedOption);
+
+        newHardClient.stop();
+        appClient.reset();
+
+        newHardClient = new TestHardClient("localhost", properties.getHttpPort());
+        newHardClient.start();
+        newHardClient.login(deviceFromApi.token);
+        verify(newHardClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
+        appClient.verifyResult(deviceConnected(1, deviceFromApi.id));
+        appClient.reset();
+        client.reset();
+
+        appClient.getWidget(1, widgetId);
+        deviceTiles = (DeviceTiles) JsonParser.parseWidget(appClient.getBody(1), 0);
+        assertNotNull(deviceTiles);
+        assertEquals(widgetId, deviceTiles.id);
+        assertNotNull(deviceTiles.templates);
+        assertEquals(1, deviceTiles.templates.length);
+        assertTrue(deviceTiles.templates[0] instanceof ButtonTileTemplate);
+        ButtonTileTemplate buttonTileTemplate = (ButtonTileTemplate) deviceTiles.templates[0];
+        assertEquals("name", buttonTileTemplate.name);
+        assertEquals(1, deviceTiles.tiles.length);
+        assertEquals(provisionedDevice.id, deviceTiles.tiles[0].deviceId);
+        assertEquals(tileTemplate.id, deviceTiles.tiles[0].templateId);
+
+        client.track(provisionedDevice.id);
+        client.verifyResult(ok(1));
+
+        appClient.send("hardware " + provisionedDevice.id + " vw 1 1");
+        client.verifyResult(appSync(2, provisionedDevice.id + " vw 1 1"));
+        appClient.loadProfileGzipped();
+        Profile userProfile = appClient.parseProfile(2);
+        assertNotNull(userProfile);
+        DashBoard dashBoard = userProfile.getDashById(1);
+        assertNotNull(dashBoard);
+        deviceTiles = (DeviceTiles) dashBoard.getWidgetById(widgetId);
+        assertNotNull(deviceTiles);
+        assertNotNull(deviceTiles.tiles);
+        assertNotNull(deviceTiles.tiles[0]);
+        assertEquals("1", deviceTiles.tiles[0].dataStream.value);
     }
 
     @Test

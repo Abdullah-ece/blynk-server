@@ -1,6 +1,8 @@
 package cc.blynk.server.core.model.device;
 
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DataStream;
+import cc.blynk.server.core.model.UpdateInterface;
 import cc.blynk.server.core.model.device.ota.DeviceOtaInfo;
 import cc.blynk.server.core.model.device.ota.OTAStatus;
 import cc.blynk.server.core.model.enums.PinType;
@@ -248,10 +250,6 @@ public class Device implements Target {
         updateFromMobile(newDevice);
     }
 
-    public void updateWebDashboard(short pin, PinType type, String value) {
-        webDashboard.update(id, pin, type, value);
-    }
-
     public void disconnected() {
         this.status = Status.OFFLINE;
         this.disconnectTime = System.currentTimeMillis();
@@ -421,11 +419,19 @@ public class Device implements Target {
         pinStorage.setLastReportedAt(lastReportedAt);
     }
 
+    public void fillMobileDashboardValues(DashBoard dashBoard) {
+        fillValues(dashBoard);
+    }
+
     public void fillWebDashboardValues() {
+        fillValues(webDashboard);
+    }
+
+    private void fillValues(UpdateInterface updateInterface) {
         for (var entry : pinStorage.values.entrySet()) {
             DeviceStorageKey key = entry.getKey();
             PinStorageValue value = entry.getValue();
-            webDashboard.update(id, key.pin, key.pinType, value.lastValue());
+            updateInterface.updateWidgetsValue(id, key.pin, key.pinType, value.lastValue());
         }
     }
 
