@@ -13,6 +13,7 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.ContentBody;
 import org.apache.http.entity.mime.content.InputStreamBody;
 import org.apache.http.entity.mime.content.StringBody;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -49,6 +50,7 @@ public class UploadAPITest extends APIBaseTest {
     }
 
     @Test
+    @Ignore
     public void uploadFailsNoToken() throws Exception {
         login(admin.email, admin.pass);
 

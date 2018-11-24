@@ -100,7 +100,7 @@ public class UploadHandler extends SimpleChannelInboundHandler<HttpObject> {
             try {
                 log.debug("Incoming {} {}", req.method(), req.uri());
                 decoder = new HttpPostRequestDecoder(factory, req);
-                validateAuthToken(req);
+                //validateAuthToken(req);
             } catch (ErrorDataDecoderException e) {
                 log.error("Error creating http post request decoder.", e);
                 ctx.writeAndFlush(badRequest(e.getMessage()));
