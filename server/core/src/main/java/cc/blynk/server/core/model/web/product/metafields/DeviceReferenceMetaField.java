@@ -1,6 +1,7 @@
 package cc.blynk.server.core.model.web.product.metafields;
 
 import cc.blynk.server.core.model.web.product.MetaField;
+import cc.blynk.server.internal.EmptyArraysUtil;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -26,7 +27,7 @@ public class DeviceReferenceMetaField extends MetaField {
                                     @JsonProperty("selectedProductIds") int[] selectedProductIds,
                                     @JsonProperty("selectedDeviceId") long selectedDeviceId) {
         super(id, name, roleIds, includeInProvision, isMandatory, isDefault, icon);
-        this.selectedProductIds = selectedProductIds;
+        this.selectedProductIds = selectedProductIds == null ? EmptyArraysUtil.EMPTY_INTS : selectedProductIds;
         this.selectedDeviceId = selectedDeviceId;
     }
 
