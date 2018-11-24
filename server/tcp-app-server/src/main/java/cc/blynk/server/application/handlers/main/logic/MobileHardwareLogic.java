@@ -146,7 +146,7 @@ public class MobileHardwareLogic extends BaseProcessorHandler {
                     Device device = deviceDao.getById(deviceId);
                     if (device != null) {
                         device.updateValue(pin, pinType, value, now);
-                        device.webDashboard.update(device.id, pin, pinType, value);
+                        device.update(pin, pinType, value);
                     }
                 }
 
