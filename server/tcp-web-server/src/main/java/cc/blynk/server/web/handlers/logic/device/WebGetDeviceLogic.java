@@ -67,6 +67,7 @@ public class WebGetDeviceLogic {
             return;
         }
 
+        device.fillWebDashboardValues();
         if (ctx.channel().isWritable()) {
             String devicesString = new DeviceDTO(device, product, org.name).toString();
             ctx.writeAndFlush(

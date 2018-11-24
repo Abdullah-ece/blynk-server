@@ -17,6 +17,8 @@ public abstract class PinStorageValue {
 
     public abstract Collection<String> values();
 
+    public abstract String lastValue();
+
     public abstract void sendAppSync(Channel appChannel, int deviceId, DeviceStorageKey key);
 
 }

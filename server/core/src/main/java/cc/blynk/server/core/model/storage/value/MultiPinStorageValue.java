@@ -31,6 +31,21 @@ public class MultiPinStorageValue extends PinStorageValue {
         this.values = multiPinStorageValueType.getQueue();
     }
 
+    //todo quick temp solution
+    private static String getLastElement(Collection<String> values) {
+        Iterator<String> itr = values.iterator();
+        String lastElement = itr.next();
+        while (itr.hasNext()) {
+            lastElement = itr.next();
+        }
+        return lastElement;
+    }
+
+    @Override
+    public Collection<String> values() {
+        return values;
+    }
+
     @Override
     public void sendAppSync(Channel appChannel, int deviceId, DeviceStorageKey key) {
         if (values.size() > 0) {
@@ -39,7 +54,7 @@ public class MultiPinStorageValue extends PinStorageValue {
                 String last = null;
                 StringBuilder sb = new StringBuilder();
                 sb.append(deviceId).append(BODY_SEPARATOR)
-                        .append(key.pinTypeChar).append('m').append(BODY_SEPARATOR).append(key.pin);
+                        .append(key.pinType.pintTypeChar).append('m').append(BODY_SEPARATOR).append(key.pin);
                 while (valIterator.hasNext()) {
                     last = valIterator.next();
                     sb.append(BODY_SEPARATOR).append(last);
@@ -56,8 +71,8 @@ public class MultiPinStorageValue extends PinStorageValue {
     }
 
     @Override
-    public Collection<String> values() {
-        return values;
+    public String lastValue() {
+        return getLastElement(values);
     }
 
     @Override

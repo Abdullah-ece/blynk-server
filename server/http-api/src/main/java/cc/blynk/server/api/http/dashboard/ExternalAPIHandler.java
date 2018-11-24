@@ -348,6 +348,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
         Device device = deviceDao.getByIdOrThrow(deviceId);
 
         reportingDiskDao.process(tokenValue.orgId, device, pin, pinType, pinValue, now);
+        device.updateValue(pin, pinType, pinValue, now);
 
         String body = DataStream.makeHardwareBody(pinType, pin, pinValue);
 

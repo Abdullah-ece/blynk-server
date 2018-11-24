@@ -16,11 +16,6 @@ public final class DevicePropertyStorageKey extends DeviceStorageKey {
 
     private final WidgetProperty property;
 
-    private DevicePropertyStorageKey(char pinTypeChar, short pin, WidgetProperty property) {
-        super(pin, pinTypeChar);
-        this.property = property;
-    }
-
     public DevicePropertyStorageKey(PinType pinType, short pin, WidgetProperty property) {
         super(pin, pinType);
         this.property = property;

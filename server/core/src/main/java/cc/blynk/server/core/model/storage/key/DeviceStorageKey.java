@@ -17,20 +17,16 @@ public class DeviceStorageKey {
 
     public final short pin;
 
-    public final char pinTypeChar;
+    public final PinType pinType;
 
-    public DeviceStorageKey(short pin, char pintTypeChar) {
+    public DeviceStorageKey(short pin, PinType pintType) {
         this.pin = pin;
-        this.pinTypeChar = pintTypeChar;
-    }
-
-    public DeviceStorageKey(short pin, PinType pinType) {
-        this(pin, pinType.pintTypeChar);
+        this.pinType = pintType;
     }
 
     public boolean isSame(OnePinWidget onePinWidget) {
         return this.pin == onePinWidget.pin
-                && this.pinTypeChar == onePinWidget.pinType.pintTypeChar;
+                && this.pinType == onePinWidget.pinType;
     }
 
     public boolean isSame(MultiPinWidget multiPinWidget) {
@@ -38,7 +34,7 @@ public class DeviceStorageKey {
             return false;
         }
         for (DataStream dataStream : multiPinWidget.dataStreams) {
-            if (dataStream.isSame(this.pin, PinType.getPinType(this.pinTypeChar))) {
+            if (dataStream.isSame(this.pin, pinType)) {
                 return true;
             }
         }
@@ -46,7 +42,7 @@ public class DeviceStorageKey {
     }
 
     public String makeHardwareBody(String value) {
-        return DataStream.makeHardwareBody(pinTypeChar, pin, value);
+        return DataStream.makeHardwareBody(pinType, pin, value);
     }
 
     public short getCmdType() {
@@ -64,22 +60,20 @@ public class DeviceStorageKey {
 
         DeviceStorageKey that = (DeviceStorageKey) o;
 
-        if (pin != that.pin) {
-            return false;
-        }
-        return pinTypeChar == that.pinTypeChar;
+        if (pin != that.pin) return false;
+        return pinType == that.pinType;
     }
 
     @Override
     public int hashCode() {
         int result = (int) pin;
-        result = 31 * result + (int) pinTypeChar;
+        result = 31 * result + (pinType != null ? pinType.hashCode() : 0);
         return result;
     }
 
     @Override
     @JsonValue
     public String toString() {
-        return "" + pinTypeChar + pin;
+        return "" + pinType.pintTypeChar + pin;
     }
 }

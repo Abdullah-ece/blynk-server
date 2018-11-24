@@ -43,6 +43,11 @@ public class SinglePinStorageValue extends PinStorageValue {
     }
 
     @Override
+    public String lastValue() {
+        return value;
+    }
+
+    @Override
     public void sendAppSync(Channel appChannel, int deviceId, DeviceStorageKey key) {
         if (value != null) {
             String body = key.makeHardwareBody(value);

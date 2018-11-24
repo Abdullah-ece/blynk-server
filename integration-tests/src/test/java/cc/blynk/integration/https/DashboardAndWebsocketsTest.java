@@ -149,18 +149,15 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         appWebSocketClient.send("hardware 1 vw 1 222");
         testHardClient.verifyResult(new HardwareMessage(2, b("vw 1 222")));
 
-        HttpGet getDevice = new HttpGet(httpsAdminServerUrl + "/devices/1/1");
-        try (CloseableHttpResponse response = httpclient.execute(getDevice)) {
-            assertEquals(200, response.getStatusLine().getStatusCode());
-            String responseString = consumeText(response);
-            assertNotNull(response);
-            device = JsonParser.parseDevice(responseString, 0);
-            assertEquals("My New Device", device.name);
-            assertNotNull(device.webDashboard);
-            assertEquals(3, device.webDashboard.widgets.length);
-            WebSwitch webSwitch = (WebSwitch) device.webDashboard.widgets[0];
-            assertEquals("222", webSwitch.sources[0].dataStream.value);
-        }
+
+        appWebSocketClient.getDevice(regularUser.orgId, device.id);
+        Device deviceDTO = appWebSocketClient.parseDevice(3);
+        assertNotNull(deviceDTO);
+        assertEquals("My New Device", deviceDTO.name);
+        assertNotNull(deviceDTO.webDashboard);
+        assertEquals(3, deviceDTO.webDashboard.widgets.length);
+        WebSwitch webSwitch = (WebSwitch) deviceDTO.webDashboard.widgets[0];
+        assertEquals("222", webSwitch.sources[0].dataStream.value);
     }
 
     @Test

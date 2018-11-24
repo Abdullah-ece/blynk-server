@@ -421,6 +421,14 @@ public class Device implements Target {
         pinStorage.setLastReportedAt(lastReportedAt);
     }
 
+    public void fillWebDashboardValues() {
+        for (var entry : pinStorage.values.entrySet()) {
+            DeviceStorageKey key = entry.getKey();
+            PinStorageValue value = entry.getValue();
+            webDashboard.update(id, key.pin, key.pinType, value.lastValue());
+        }
+    }
+
     @Override
     public String toString() {
         return JsonParser.toJson(this);
