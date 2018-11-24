@@ -60,7 +60,9 @@ public class DeviceStorageKey {
 
         DeviceStorageKey that = (DeviceStorageKey) o;
 
-        if (pin != that.pin) return false;
+        if (pin != that.pin) {
+            return false;
+        }
         return pinType == that.pinType;
     }
 
