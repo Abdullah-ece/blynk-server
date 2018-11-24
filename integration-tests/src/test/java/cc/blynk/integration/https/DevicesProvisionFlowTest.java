@@ -410,7 +410,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
 
         TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
         newHardClient.start();
-        newHardClient.send("login " + deviceFromApi.token);
+        newHardClient.login(deviceFromApi.token);
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         appClient.never(deviceConnected(1, "1-1"));
 
@@ -460,7 +460,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
 
         newHardClient = new TestHardClient("localhost", properties.getHttpPort());
         newHardClient.start();
-        newHardClient.send("login " + deviceFromApi.token);
+        newHardClient.login(deviceFromApi.token);
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         appClient.verifyResult(TestUtil.deviceConnected(1, deviceFromApi.id));
     }
@@ -581,12 +581,13 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
 
         newHardClient = new TestHardClient("localhost", properties.getHttpPort());
         newHardClient.start();
-        newHardClient.send("login " + deviceFromApi.token);
-        verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        newHardClient.login(deviceFromApi.token);
+        verify(newHardClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
         appClient.verifyResult(deviceConnected(1, deviceFromApi.id));
+        appClient.reset();
 
-        appClient.send("getWidget 1\0" + widgetId);
-        deviceTiles = (DeviceTiles) JsonParser.parseWidget(appClient.getBody(2), 0);
+        appClient.getWidget(1, widgetId);
+        deviceTiles = (DeviceTiles) JsonParser.parseWidget(appClient.getBody(1), 0);
         assertNotNull(deviceTiles);
         assertEquals(widgetId, deviceTiles.id);
         assertNotNull(deviceTiles.templates);
@@ -636,7 +637,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
 
         TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
         newHardClient.start();
-        newHardClient.send("login " + deviceFromApi.token);
+        newHardClient.login(deviceFromApi.token);
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         appClient.never(deviceConnected(1, "1-1"));
 
@@ -660,7 +661,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
 
         newHardClient = new TestHardClient("localhost", properties.getHttpPort());
         newHardClient.start();
-        newHardClient.send("login " + deviceFromApi.token);
+        newHardClient.login(deviceFromApi.token);
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         appClient.verifyResult(TestUtil.deviceConnected(1, deviceFromApi.id));
     }
@@ -704,7 +705,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
 
         TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
         newHardClient.start();
-        newHardClient.send("login " + deviceFromApi.token);
+        newHardClient.login(deviceFromApi.token);
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         appClient.never(deviceConnected(1, "1-1"));
 
@@ -727,7 +728,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
 
         newHardClient = new TestHardClient("localhost", properties.getHttpPort());
         newHardClient.start();
-        newHardClient.send("login " + deviceFromApi.token);
+        newHardClient.login(deviceFromApi.token);
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         appClient.verifyResult(TestUtil.deviceConnected(1, deviceFromApi.id));
     }
@@ -771,7 +772,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
 
         TestSslHardClient newHardClient = new TestSslHardClient("localhost", properties.getHttpsPort());
         newHardClient.start();
-        newHardClient.send("login " + deviceFromApi.token);
+        newHardClient.login(deviceFromApi.token);
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         appClient.never(deviceConnected(1, "1-" + deviceFromApi.id));
 
@@ -795,7 +796,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
 
         newHardClient = new TestSslHardClient("localhost", properties.getHttpsPort());
         newHardClient.start();
-        newHardClient.send("login " + deviceFromApi.token);
+        newHardClient.login(deviceFromApi.token);
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         appClient.verifyResult(TestUtil.deviceConnected(1, deviceFromApi.id));
     }
