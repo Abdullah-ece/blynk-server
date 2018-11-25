@@ -117,12 +117,8 @@ public class OrganizationDao {
         return subProductIds.toArray();
     }
 
-    public Collection<Organization> getAll(User user) {
-        if (user.isSuperAdmin()) {
-            return organizations.values();
-        } else {
-            return getOrgsByParentId(user.orgId);
-        }
+    public Collection<Organization> getAll(int orgId) {
+        return getOrgsByParentId(orgId);
     }
 
     /*

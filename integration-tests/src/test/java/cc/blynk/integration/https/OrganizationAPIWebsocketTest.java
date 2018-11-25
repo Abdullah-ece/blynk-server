@@ -55,6 +55,86 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
     }
 
     @Test
+    public void getOrganizations() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+        client.getOrganizations();
+        OrganizationDTO[] organizationDTOs = client.parseOrganizations(1);
+        assertNotNull(organizationDTOs);
+        assertEquals(0, organizationDTOs.length);
+    }
+
+    @Test
+    public void getOrganizationsBySpecificId() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+        client.getOrganizations(orgId);
+        OrganizationDTO[] organizationDTOs = client.parseOrganizations(1);
+        assertNotNull(organizationDTOs);
+        assertEquals(0, organizationDTOs.length);
+    }
+
+    @Test
+    public void getOrganizations1SuborgOnly() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+
+        Organization subOrg = new Organization("SubOrg0001", "Europe/Kiev", "/static/logo.png", true, orgId);
+        client.createOrganization(orgId, subOrg);
+
+        client.getOrganizations();
+        OrganizationDTO[] organizationDTOs = client.parseOrganizations(2);
+        assertNotNull(organizationDTOs);
+        assertEquals(1, organizationDTOs.length);
+        OrganizationDTO organizationDTO = organizationDTOs[0];
+        assertNotNull(organizationDTO);
+        assertEquals("SubOrg0001", organizationDTO.name);
+        assertEquals(orgId, organizationDTO.parentId);
+        assertNotNull(organizationDTO.roles);
+        assertEquals(3, organizationDTO.roles.length);
+    }
+
+    @Test
+    public void getOrganizations1SuborgOnlyById() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+
+        Organization subOrg = new Organization("SubOrg0000", "Europe/Kiev", "/static/logo.png", true, orgId);
+        client.createOrganization(orgId, subOrg);
+
+        client.getOrganizations(orgId);
+        OrganizationDTO[] organizationDTOs = client.parseOrganizations(2);
+        assertNotNull(organizationDTOs);
+        assertEquals(1, organizationDTOs.length);
+        OrganizationDTO organizationDTO = organizationDTOs[0];
+        assertNotNull(organizationDTO);
+        assertEquals("SubOrg0000", organizationDTO.name);
+        assertEquals(orgId, organizationDTO.parentId);
+        assertNotNull(organizationDTO.roles);
+        assertEquals(3, organizationDTO.roles.length);
+    }
+
+    @Test
+    public void getOrganizationsForSuborgNoOrgs() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+
+        Organization subOrg = new Organization("SubOrg00000", "Europe/Kiev", "/static/logo.png", true, orgId);
+        client.createOrganization(orgId, subOrg);
+
+        client.getOrganizations(orgId);
+        OrganizationDTO[] organizationDTOs = client.parseOrganizations(2);
+        assertNotNull(organizationDTOs);
+        assertEquals(1, organizationDTOs.length);
+        OrganizationDTO organizationDTO = organizationDTOs[0];
+        assertNotNull(organizationDTO);
+        assertEquals("SubOrg00000", organizationDTO.name);
+        assertEquals(orgId, organizationDTO.parentId);
+        assertNotNull(organizationDTO.roles);
+        assertEquals(3, organizationDTO.roles.length);
+
+        client.getOrganizations(organizationDTO.id);
+        organizationDTOs = client.parseOrganizations(3);
+        assertNotNull(organizationDTOs);
+        assertEquals(0, organizationDTOs.length);
+    }
+
+    @Test
     public void getLocationsForProduct() throws Exception {
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
 

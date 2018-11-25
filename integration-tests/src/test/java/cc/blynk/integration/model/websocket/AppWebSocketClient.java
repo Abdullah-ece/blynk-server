@@ -280,8 +280,12 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         send("getOrganizationHierarchy");
     }
 
-    public void getUserOrganizations() {
+    public void getOrganizations() {
         send("webGetOrgs");
+    }
+
+    public void getOrganizations(int orgId) {
+        send("webGetOrgs " + orgId);
     }
 
     public void getOrgUsers(int orgId) {
@@ -353,8 +357,8 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), OrganizationDTO.class);
     }
 
-    public Organization[] parseOrganizations(int expectedMessageOrder) throws Exception {
-        return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), Organization[].class);
+    public OrganizationDTO[] parseOrganizations(int expectedMessageOrder) throws Exception {
+        return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), OrganizationDTO[].class);
     }
 
     public Device parseDevice(int expectedMessageOrder) throws Exception {

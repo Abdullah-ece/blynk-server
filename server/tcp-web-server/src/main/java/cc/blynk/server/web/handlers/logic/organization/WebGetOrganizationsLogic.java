@@ -32,10 +32,16 @@ public class WebGetOrganizationsLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
+        int orgId;
         User user = state.user;
-        List<OrganizationDTO> orgs = organizationDao.getAll(user)
+        if (message.body == null || message.body.isEmpty()) {
+            orgId = user.orgId;
+        } else {
+            orgId = Integer.parseInt(message.body);
+        }
+        List<OrganizationDTO> orgs = organizationDao.getAll(orgId)
                 .stream()
-                .filter(org -> org.id != user.orgId && org.parentId == user.orgId)
+                .filter(org -> org.id != orgId && org.parentId == orgId)
                 .map(OrganizationDTO::new)
                 .collect(Collectors.toList());
 
