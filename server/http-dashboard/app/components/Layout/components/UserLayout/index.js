@@ -245,6 +245,7 @@ class UserLayout extends React.Component {
   }
 
   render() {
+    const DEFAULT_LOGO = '/static/logo.png';
 
     return (
       <div className="user-layout">
@@ -259,7 +260,7 @@ class UserLayout extends React.Component {
               <Dropdown overlayClassName={`user-layout--organization-select--overlay ${this.state.collapsed ? '' : 'user-layout--organization-select--overlay--open'}`} overlay={this.OrgSelection()} trigger={['hover']} placement="topLeft"
                         className="my-custom-dropdown">
                 <Link to="/">
-                  <img src={this.props.Organization.logoUrl} alt=""/>
+                  <img src={this.props.Organization.logoUrl || DEFAULT_LOGO} alt=""/>
                 </Link>
               </Dropdown>
             </div>
