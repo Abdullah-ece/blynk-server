@@ -16,7 +16,7 @@ import {ProductsPreloadFetch} from "data/Product/api";
 @connect((state) => ({
   productsLoading: state.Product.productsPreloadLoading,
   devicesLoading: state.Devices.devicesPreloadLoading,
-  orgId: state.Account.orgId,
+  orgId: state.Account.selectedOrgId,
   account: state.Account,
 }), (dispatch) => ({
   fetchDevices: bindActionCreators(PreloadDevicesFetch, dispatch),
@@ -25,14 +25,14 @@ import {ProductsPreloadFetch} from "data/Product/api";
 class Devices extends React.Component {
 
   static propTypes = {
-    account      : PropTypes.object,
-    params       : PropTypes.object,
-    location     : PropTypes.object,
-    fetchDevices : PropTypes.func,
-    fetchProducts: PropTypes.func,
-    orgId        : PropTypes.number,
+    account             : PropTypes.object,
+    params              : PropTypes.object,
+    location            : PropTypes.object,
+    fetchDevices        : PropTypes.func,
+    fetchProducts       : PropTypes.func,
+    orgId               : PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     devicesLoading      : PropTypes.bool,
-    productsLoading      : PropTypes.bool,
+    productsLoading     : PropTypes.bool,
   };
 
   componentWillMount() {
