@@ -18,7 +18,8 @@ import {
 }                             from 'data/PageLoading/actions';
 
 @connect((state) => ({
-  list: fromJS(state.Organizations.get('list'))
+  orgId     : state.Account.selectedOrgId,
+  list        : fromJS(state.Organizations.get('list'))
 }), (dispatch) => ({
   OrganizationsFetch: bindActionCreators(OrganizationsFetch, dispatch),
   startLoading: bindActionCreators(StartLoading, dispatch),
@@ -27,6 +28,7 @@ import {
 class Index extends React.Component {
 
   static propTypes = {
+    orgId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     list: PropTypes.instanceOf(List),
     OrganizationsFetch: PropTypes.func,
     startLoading: PropTypes.func,
@@ -42,7 +44,9 @@ class Index extends React.Component {
 
   fetch() {
     this.props.startLoading();
-    this.props.OrganizationsFetch().then(() => this.props.finishLoading());
+    this.props.OrganizationsFetch({
+      orgId: this.props.orgId,
+    }).then(() => this.props.finishLoading());
   }
 
   render() {

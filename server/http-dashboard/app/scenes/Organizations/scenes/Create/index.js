@@ -148,7 +148,9 @@ class Create extends React.Component {
       this.props.OrganizationsCreate({
         ...this.props.formValues.toJS()
       }).then((organization) => {
-        this.props.OrganizationsFetch().then(() => {
+        this.props.OrganizationsFetch({
+          orgId: this.props.account.selectedOrgId
+        }).then(() => {
           this.props.OrganizationsHierarchyFetch().then(() => {
             const promises = [];
             this.props.formValues.get('admins').forEach((admin) => {

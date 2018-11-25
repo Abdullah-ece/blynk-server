@@ -91,7 +91,9 @@ class Details extends React.Component {
     };
 
     if (!this.props.list) {
-      this.props.OrganizationsFetch().then((response) => {
+      this.props.OrganizationsFetch({
+        orgId: this.props.account.selectedOrgId
+      }).then((response) => {
         redirectIfNotExist(fromJS(response.payload.data));
       });
     }
@@ -110,10 +112,6 @@ class Details extends React.Component {
     this.props.OrganizationsDetailsUpdate(
       this.props.details.set('activeTab', activeTab )
     );
-
-
-
-
   }
 
   componentWillUnmount() {
@@ -128,7 +126,9 @@ class Details extends React.Component {
     this.props.OrganizationsDetailsUpdate(this.props.details.set('loading', true));
 
     return Promise.all([
-      this.props.OrganizationsFetch(),
+      this.props.OrganizationsFetch({
+        orgId: this.props.account.selectedOrgId
+      }),
       this.props.fetchProducts({
         orgId: this.props.account.selectedOrgId,
       }),

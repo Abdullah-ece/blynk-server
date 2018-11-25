@@ -1,11 +1,17 @@
 import {API_COMMANDS} from "store/blynk-websocket-middleware/commands";
 
-export function OrganizationsFetch() {
+export function OrganizationsFetch(params) {
+  if (!params.orgId)
+    throw new Error('orgId parameter is missed');
+
   return {
     type: 'API_ORGANIZATIONS_FETCH',
     ws: {
       request: {
         command: API_COMMANDS.GET_ORGS,
+        query: [
+          params.orgId
+        ]
       }
     }
   };

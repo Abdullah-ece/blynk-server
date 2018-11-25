@@ -201,7 +201,10 @@ export const DeviceDashboardFetch = ({orgId, deviceId }) => {
   };
 };
 
-export const DeviceAvailableOrganizationsFetch = () => {
+export const DeviceAvailableOrganizationsFetch = (params) => {
+
+  if (!params.orgId)
+    throw new Error('orgId parameter is missed');
 
   return {
     type: 'API_DEVICE_AVAILABLE_ORGANIZATIONS_FETCH',
@@ -209,6 +212,9 @@ export const DeviceAvailableOrganizationsFetch = () => {
     ws: {
       request: {
         command: API_COMMANDS.GET_ORGS,
+        query: [
+          params.orgId
+        ]
       }
     }
   };

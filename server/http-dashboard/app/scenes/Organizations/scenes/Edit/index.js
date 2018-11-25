@@ -148,7 +148,9 @@ class Edit extends React.Component {
 
     const loadOrganizations = () => {
       if (!this.props.list)
-        return this.props.OrganizationsFetch();
+        return this.props.OrganizationsFetch({
+          orgId: this.props.account.selectedOrgid,
+        });
 
       return new Promise((resolve) => resolve(this.props.list.toJS()));
     };
@@ -248,7 +250,9 @@ class Edit extends React.Component {
         ...organization.toJS(),
         ...this.props.formValues.toJS(),
       }).then(() => {
-        this.props.OrganizationsFetch().then(() => {
+        this.props.OrganizationsFetch({
+          orgId: this.props.account.selectedOrgid,
+        }).then(() => {
           resolve();
         });
       }).catch((err) => {
@@ -276,7 +280,9 @@ class Edit extends React.Component {
       id: this.props.params.id
     }).then(() => {
 
-      this.props.OrganizationsFetch().then(() => {
+      this.props.OrganizationsFetch({
+        orgId: this.props.account.selectedOrgid,
+      }).then(() => {
 
         this.context.router.push('/organizations');
 

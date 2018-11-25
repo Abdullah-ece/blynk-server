@@ -96,7 +96,9 @@ class Header extends React.Component {
     if (e.key === '/organizations') {
 
       this.props.startLoading();
-      this.props.OrganizationsFetch().then(() => {
+      this.props.OrganizationsFetch({
+        id: this.props.Account.selectedOrgId,
+      }).then(() => {
         this.props.finishLoading();
         this.context.router.push(e.key);
       });
