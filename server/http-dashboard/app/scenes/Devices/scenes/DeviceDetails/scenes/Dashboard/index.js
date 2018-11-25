@@ -52,6 +52,7 @@ class DashboardScene extends React.Component {
     // loading dash widgets
     if (this.props.orgId) {
       this.fetchDashboard().then(this.fetchDashboardData).catch(
+        /* eslint-disable no-console */
         err => console.error(err));
     }
   }
