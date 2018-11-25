@@ -33,7 +33,10 @@ import static cc.blynk.server.core.protocol.enums.Command.OUTDATED_APP_NOTIFICAT
 import static cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler.handleGeneralException;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeASCIIStringMessage;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
-import static cc.blynk.server.internal.WebByteBufUtil.json;
+import static cc.blynk.server.internal.WebByteBufUtil.facebookUserLoginWithPass;
+import static cc.blynk.server.internal.WebByteBufUtil.illegalCommandBody;
+import static cc.blynk.server.internal.WebByteBufUtil.notAllowed;
+import static cc.blynk.server.internal.WebByteBufUtil.notAuthenticated;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
 
 
@@ -77,7 +80,7 @@ public class MobileLoginHandler extends SimpleChannelInboundHandler<LoginMessage
 
         if (messageParts.length < 2) {
             log.error("Wrong income message format for login. Body is too short.");
-            ctx.writeAndFlush(json(message.id, "Wrong income message format."), ctx.voidPromise());
+            ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
             return;
         }
 
@@ -98,7 +101,7 @@ public class MobileLoginHandler extends SimpleChannelInboundHandler<LoginMessage
             }
         } else {
             log.error("Wrong income message format for login {}.", message.body);
-            ctx.writeAndFlush(json(message.id, "Wrong income message format for login."), ctx.voidPromise());
+            ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
         }
     }
 
@@ -112,10 +115,11 @@ public class MobileLoginHandler extends SimpleChannelInboundHandler<LoginMessage
                             String errMessage = response.getResponseBody();
                             if (errMessage != null && errMessage.contains("expired")) {
                                 log.warn("Facebook token expired for user {}.", email);
-                                ctx.writeAndFlush(json(messageId, "Facebook token expired."), ctx.voidPromise());
+                                ctx.writeAndFlush(notAllowed(messageId, "Facebook token expired."), ctx.voidPromise());
                             } else {
                                 log.warn("Error getting facebook token for user {}. Reason : {}", email, errMessage);
-                                ctx.writeAndFlush(json(messageId, "Error getting facebook token."), ctx.voidPromise());
+                                ctx.writeAndFlush(notAllowed(messageId, "Error getting facebook token."),
+                                        ctx.voidPromise());
                             }
 
                             return response;
@@ -137,7 +141,7 @@ public class MobileLoginHandler extends SimpleChannelInboundHandler<LoginMessage
                         } catch (Exception e) {
                             log.error("Error during facebook response parsing for user {}. Reason : {}",
                                     email, response.getResponseBody());
-                            ctx.writeAndFlush(json(messageId,
+                            ctx.writeAndFlush(notAllowed(messageId,
                                     "Error during facebook response parsing."), ctx.voidPromise());
                         }
 
@@ -148,7 +152,7 @@ public class MobileLoginHandler extends SimpleChannelInboundHandler<LoginMessage
                     public void onThrowable(Throwable t) {
                         log.error("Error performing facebook request. Token {} for user {}. Reason : {}",
                                 token, email, t.getMessage());
-                        ctx.writeAndFlush(json(messageId,
+                        ctx.writeAndFlush(notAllowed(messageId,
                                 "Error performing facebook request."), ctx.voidPromise());
                     }
                 });
@@ -159,19 +163,20 @@ public class MobileLoginHandler extends SimpleChannelInboundHandler<LoginMessage
 
         if (user == null) {
             log.warn("User '{}' not registered. {}", email, ctx.channel().remoteAddress());
-            ctx.writeAndFlush(json(msgId, "User " + email + " not registered."), ctx.voidPromise());
+            ctx.writeAndFlush(notAuthenticated(msgId, "User " + email + " not registered."), ctx.voidPromise());
             return;
         }
 
         if (user.pass == null) {
             log.warn("Facebook user '{}' tries to login with pass. {}", email, ctx.channel().remoteAddress());
-            ctx.writeAndFlush(json(msgId, "Facebook user tries to login with pass."), ctx.voidPromise());
+            ctx.writeAndFlush(
+                    facebookUserLoginWithPass(msgId, "Facebook user tries to login with pass."), ctx.voidPromise());
             return;
         }
 
         if (!user.pass.equals(pass)) {
             log.warn("User '{}' credentials are wrong. {}", email, ctx.channel().remoteAddress());
-            ctx.writeAndFlush(json(msgId, "User credentials are wrong."), ctx.voidPromise());
+            ctx.writeAndFlush(notAuthenticated(msgId, "User credentials are wrong."), ctx.voidPromise());
             return;
         }
 
