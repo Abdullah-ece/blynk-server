@@ -31,10 +31,13 @@ export default function Account(state = initialState, action) {
         isLoading: true
       };
     case "API_ORGANIZATION_SUCCESS":
+      const {data} = action.payload;
+      data.products = data.products || [];
+
       return {
         ...state,
         isLoading: false,
-        ...action.payload.data
+        ...data
       };
     case "API_ORGANIZATION_USERS_SUCCESS":
       return {
