@@ -127,9 +127,11 @@ class DeviceInfo extends React.Component {
                 {this.props.device.hardwareInfo.version}
               </Fieldset>
             )}
+            {this.props.device.hardwareInfo && (
             <Fieldset>
               <a href="#" onClick={this.showMore}>{this.state && this.state.showMore? 'Show less' : 'Show more'}</a>
             </Fieldset>
+            )}
             {this.state.showMore && this.props.device.hardwareInfo && this.props.device.hardwareInfo.blynkVersion && (
               <Fieldset>
                 <Fieldset.Legend>Blynk version</Fieldset.Legend>
