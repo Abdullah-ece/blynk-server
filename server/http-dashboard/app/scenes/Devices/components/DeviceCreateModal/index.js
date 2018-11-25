@@ -82,8 +82,8 @@ class DeviceCreateModal extends React.Component {
           Number(org.id) === Number(this.props.account.selectedOrgId)
         ));
 
-        if (selectedOrgIndex && this.props.organizations[selectedOrgIndex]) {
-          products = this.props.organizations[selectedOrgIndex].map((product) => ({
+        if (selectedOrgIndex && this.props.organizations[selectedOrgIndex] && this.props.organizations[selectedOrgIndex].products) {
+          products = this.props.organizations[selectedOrgIndex].products.map((product) => ({
             key  : String(product.id),
             value: product.name
           }));

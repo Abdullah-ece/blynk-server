@@ -92,7 +92,7 @@ class DeviceCreateModalScene extends React.Component {
   };
 
   componentWillMount() {
-    this.props.fetchOrganizationsList(this.props.account.selectedOrgId);
+    this.props.fetchOrganizationsList({orgId:this.props.account.selectedOrgId});
   }
 
   componentWillReceiveProps(nextProps) {
