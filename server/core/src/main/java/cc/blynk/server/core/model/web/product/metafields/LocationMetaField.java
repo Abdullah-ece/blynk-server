@@ -144,6 +144,13 @@ public class LocationMetaField extends MetaField {
     }
 
     @Override
+    public void basicValidate() {
+        if (isLocationEnabled) {
+            super.basicValidate();
+        }
+    }
+
+    @Override
     public MetaField copySpecificFieldsOnly(MetaField metaField) {
         LocationMetaField addressMetaField = (LocationMetaField) metaField;
         return new LocationMetaField(
