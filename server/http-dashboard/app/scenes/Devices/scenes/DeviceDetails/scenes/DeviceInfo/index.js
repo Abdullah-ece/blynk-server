@@ -9,7 +9,7 @@ import {ProductsFetch} from 'data/Product/api';
 @connect((state) => ({
   device: state.Devices.deviceDetails,
   account: state.Account,
-  orgId: state.Organization.id,
+  orgId: state.Account.selectedOrgId,
 }), (dispatch) => ({
   updateDeviceMetadata: bindActionCreators(DeviceMetadataUpdate, dispatch),
   fetchDevice: bindActionCreators(DeviceDetailsFetch, dispatch),

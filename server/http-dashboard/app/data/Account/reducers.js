@@ -21,16 +21,10 @@ export default function Account(state = initialState, action) {
       };
 
     case "API_ACCOUNT_SUCCESS":
-
-      let selectedOrgId = state.selectedOrgId;
-
-      if(selectedOrgId === null)
-        selectedOrgId = action.payload.data.orgId;
-
       return {
         ...state,
         ...action.payload.data,
-        selectedOrgId: selectedOrgId,
+        selectedOrgId: action.payload.data.orgId,
       };
 
     case "API_LOGOUT_SUCCESS":

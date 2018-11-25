@@ -10,7 +10,6 @@ import {connect} from 'react-redux';
 import {filterSuperAdmin} from 'services/Roles';
 
 import {
-  OrganizationFetch,
   OrganizationUsersFetch,
   OrganizationUpdateUser,
   OrganizationUsersDelete
@@ -23,7 +22,6 @@ import {ResendInvite} from "components";
   Organization: state.Organization,
   Account: state.Account,
 }), (dispatch) => ({
-  OrganizationFetch: bindActionCreators(OrganizationFetch, dispatch),
   OrganizationUsersFetch: bindActionCreators(OrganizationUsersFetch, dispatch),
   OrganizationUpdateUser: bindActionCreators(OrganizationUpdateUser, dispatch),
   OrganizationUsersDelete: bindActionCreators(OrganizationUsersDelete, dispatch),
@@ -33,7 +31,6 @@ class OrganizationUsers extends React.Component {
   static propTypes = {
     Account: React.PropTypes.object,
     Organization: React.PropTypes.object,
-    OrganizationFetch: React.PropTypes.func,
     OrganizationUsersFetch: React.PropTypes.func,
     OrganizationUpdateUser: React.PropTypes.func,
     OrganizationUsersDelete: React.PropTypes.func
