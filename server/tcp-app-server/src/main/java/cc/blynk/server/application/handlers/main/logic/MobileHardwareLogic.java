@@ -151,6 +151,7 @@ public class MobileHardwareLogic extends BaseProcessorHandler {
 
                 //sending to shared dashes and master-master apps
                 //session.sendToSharedApps(ctx.channel(), dash.sharedToken, DEVICE_SYNC, message.id, message.body);
+                session.sendToApps(ctx.channel(), DEVICE_SYNC, message.id, message.body);
                 session.sendToSelectedDeviceOnWeb(DEVICE_SYNC, message.id, split[1], deviceIds);
 
                 if (session.sendMessageToHardware(HARDWARE, message.id, split[1], deviceIds)) {

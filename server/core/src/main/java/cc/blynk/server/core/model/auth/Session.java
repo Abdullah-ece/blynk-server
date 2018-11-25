@@ -245,6 +245,20 @@ public class Session {
         }
     }
 
+    public void sendToApps(Channel sendingChannel, short cmd, int msgId, String body) {
+        Set<Channel> targetChannels = new HashSet<>();
+        for (Channel channel : appChannels) {
+            if (channel != sendingChannel) {
+                targetChannels.add(channel);
+            }
+        }
+
+        int channelsNum = targetChannels.size();
+        if (channelsNum > 0) {
+            send(targetChannels, cmd, msgId, body);
+        }
+    }
+
     public boolean isAppConnected() {
         return appChannels.size() > 0;
     }
