@@ -137,7 +137,7 @@ class CostField extends BaseField {
                 <Input.Group compact>
 
                   <MetadataFormSelect style={{width: '50%'}} onFocus={this.onFocus} onBlur={this.onBlur}
-                                      name={`metaFields.${this.props.metaFieldKey}.currency`} type="text" placeholder="Choose" values={this.Currency}/>
+                                      name={`metaFields.${this.props.metaFieldKey}.currency`} type="text" placeholder="Choose" values={this.Currency} validate={[Validation.Rules.required]}/>
 
                   <MetadataFormNumber style={{width: '50%'}} onFocus={this.onFocus} onBlur={this.onBlur}
                                       name={`metaFields.${this.props.metaFieldKey}.price`} type="text" placeholder="--" validate={[
@@ -164,6 +164,7 @@ class CostField extends BaseField {
                   <MetadataFormSelect style={{width: '50%'}} onFocus={this.onFocus} onBlur={this.onBlur}
                                       name={`metaFields.${this.props.metaFieldKey}.units`} type="text" placeholder="--"
                                       dropdownClassName="product-metadata-item-unit-dropdown"
+                                      validate={[Validation.Rules.required]}
                                       values={this.Unit}/>
                 </Input.Group>
               </FormItem.Content>
