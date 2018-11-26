@@ -15,6 +15,8 @@ import {StartLoading, FinishLoading} from 'data/PageLoading/actions';
 
 import './styles.less';
 
+const DEFAULT_LOGO = '/static/logo.png';
+
 @connect((state) => ({
   Account     : state.Account,
   Organization: state.Organization,
@@ -58,7 +60,8 @@ class UserLayout extends React.Component {
 
     this.state = {
       collapsed: true,
-      current  : props.location.pathname
+      current  : props.location.pathname,
+      logoUrl  : props.Organization.logoUrl || DEFAULT_LOGO
     };
 
     this.fetchData();
@@ -71,6 +74,7 @@ class UserLayout extends React.Component {
     this.handleOrgSelect = this.handleOrgSelect.bind(this);
     this.handleMouseEnter = this.handleMouseEnter.bind(this);
     this.handleMouseLeave = this.handleMouseLeave.bind(this);
+    this.onImageError = this.onImageError.bind(this);
   }
 
   componentWillMount() {
@@ -84,7 +88,8 @@ class UserLayout extends React.Component {
 
   componentWillReceiveProps(props) {
     this.setState({
-      current: props.location.pathname
+      current: props.location.pathname,
+      logoUrl  : props.Organization.logoUrl || DEFAULT_LOGO
     });
   }
 
@@ -119,6 +124,10 @@ class UserLayout extends React.Component {
     // } else {
     this.context.router.push(e.key);
     // }
+  }
+
+  onImageError()  {
+    this.setState({logoUrl: DEFAULT_LOGO});
   }
 
   handleOrgSelect(e) {
@@ -245,8 +254,6 @@ class UserLayout extends React.Component {
   }
 
   render() {
-    const DEFAULT_LOGO = '/static/logo.png';
-
     return (
       <div className="user-layout">
         <div
@@ -260,7 +267,7 @@ class UserLayout extends React.Component {
               <Dropdown overlayClassName={`user-layout--organization-select--overlay ${this.state.collapsed ? '' : 'user-layout--organization-select--overlay--open'}`} overlay={this.OrgSelection()} trigger={['hover']} placement="topLeft"
                         className="my-custom-dropdown">
                 <Link to="/">
-                  <img src={this.props.Organization.logoUrl || DEFAULT_LOGO} alt=""/>
+                  <img src={this.state.logoUrl} onError={this.onImageError} alt=""/>
                 </Link>
               </Dropdown>
             </div>
