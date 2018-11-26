@@ -200,6 +200,123 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
     }
 
     @Test
+    public void fullProvisionTestAndRemoveDevice() throws Exception {
+        String superUser = "super@blynk.cc";
+        String pass = "1";
+        AppWebSocketClient client = loggedDefaultClient(superUser, pass);
+
+        Product product = new Product();
+        product.name = "My product";
+        product.metaFields = new MetaField[] {
+                createMeasurementMeta(1, "Jopa", 1, MeasurementUnit.Celsius),
+                createDeviceNameMeta(2, "Device Name", "My Default device Name", false)
+        };
+
+        client.createProduct(orgId, product);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
+        assertNotNull(fromApiProduct);
+
+        Product product2 = new Product();
+        product2.name = "My product2";
+        product2.metaFields = new MetaField[] {
+                createDeviceNameMeta(2, "Device Name", "My Default device Name", true),
+                createTemplateIdMeta(3, "Template Id", "TMPL0001")
+        };
+        client.createProduct(orgId, product2);
+        ProductDTO fromApiProduct2 = client.parseProductDTO(2);
+        assertNotNull(fromApiProduct2);
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.boardType = BoardType.ESP32_Dev_Board;
+
+        TestAppClient appClient = new TestAppClient("localhost", properties.getHttpsPort());
+        appClient.start();
+        appClient.login(getUserName(), "1");
+        appClient.verifyResult(ok(1));
+        appClient.getProvisionToken(newDevice);
+        Device deviceFromApi = appClient.parseDevice(2);
+        assertNotNull(deviceFromApi);
+        assertNotNull(deviceFromApi.token);
+
+        long widgetId = 21321;
+
+        DeviceTiles deviceTiles = new DeviceTiles();
+        deviceTiles.id = widgetId;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+        deviceTiles.color = -231;
+
+        appClient.createWidget(1, deviceTiles);
+        appClient.verifyResult(ok(3));
+
+        PageTileTemplate tileTemplate = new PageTileTemplate(1,
+                null, null, "TMPL0001", "name", "iconName", ESP8266, new DataStream((byte) 1, PinType.VIRTUAL),
+                false, null, null, null, -75056000, -231, FontSize.LARGE, false, 2);
+
+        appClient.createTemplate(1, widgetId, tileTemplate);
+        appClient.verifyResult(ok(4));
+
+        TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
+        newHardClient.start();
+        newHardClient.login(deviceFromApi.token);
+        verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        appClient.never(deviceConnected(1, "1-1"));
+
+        newHardClient.send("internal " + b("ver 0.3.1 tmpl TMPL0001 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
+        newHardClient.verifyResult(ok(2));
+        appClient.verifyResult(deviceConnected(2, deviceFromApi.id));
+        client.verifyResult(deviceConnected(2, deviceFromApi.id));
+
+        appClient.reset();
+        appClient.getDevice(deviceFromApi.id);
+        Device provisionedDevice = appClient.parseDevice(1);
+        assertNotNull(provisionedDevice);
+        assertNotNull(provisionedDevice.metaFields);
+        assertEquals(2, provisionedDevice.metaFields.length);
+        assertEquals(fromApiProduct2.id, provisionedDevice.productId);
+        assertNotNull(provisionedDevice.hardwareInfo);
+        assertEquals("TMPL0001", provisionedDevice.hardwareInfo.templateId);
+        assertEquals("iconName", provisionedDevice.iconName);
+        assertEquals(ESP8266, provisionedDevice.boardType);
+        assertEquals("My Default device Name", provisionedDevice.name);
+
+        appClient.getWidget(1, widgetId);
+        deviceTiles = (DeviceTiles) JsonParser.parseWidget(appClient.getBody(2), 0);
+        assertNotNull(deviceTiles);
+        assertEquals(widgetId, deviceTiles.id);
+        assertNotNull(deviceTiles.templates);
+        assertEquals(1, deviceTiles.templates.length);
+        assertTrue(deviceTiles.templates[0] instanceof PageTileTemplate);
+        PageTileTemplate pageTileTemplate = (PageTileTemplate) deviceTiles.templates[0];
+        assertEquals("name", pageTileTemplate.name);
+        assertEquals(1, deviceTiles.tiles.length);
+        assertEquals(provisionedDevice.id, deviceTiles.tiles[0].deviceId);
+        assertEquals(tileTemplate.id, deviceTiles.tiles[0].templateId);
+
+        //superuser removes the device
+        client.reset();
+        client.deleteDevice(orgId, deviceFromApi.id);
+        client.verifyResult(ok(1));
+
+        appClient.reset();
+        appClient.getWidget(1, widgetId);
+        deviceTiles = (DeviceTiles) JsonParser.parseWidget(appClient.getBody(1), 0);
+        assertNotNull(deviceTiles);
+        assertEquals(widgetId, deviceTiles.id);
+        assertNotNull(deviceTiles.templates);
+        assertEquals(1, deviceTiles.templates.length);
+        assertTrue(deviceTiles.templates[0] instanceof PageTileTemplate);
+        pageTileTemplate = (PageTileTemplate) deviceTiles.templates[0];
+        assertEquals("name", pageTileTemplate.name);
+        assertEquals(0, deviceTiles.tiles.length);
+
+        assertTrue(newHardClient.isClosed());
+    }
+
+    @Test
     public void fullProvisionTestForSuperAdmin() throws Exception {
         //Step 1. Create new user to be Blynk app project creator
         String superUser = "super@blynk.cc";

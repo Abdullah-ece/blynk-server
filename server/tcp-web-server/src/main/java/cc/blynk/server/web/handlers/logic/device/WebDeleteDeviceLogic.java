@@ -6,6 +6,7 @@ import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.dao.SessionDao;
+import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
@@ -32,6 +33,7 @@ public class WebDeleteDeviceLogic {
     private final OrganizationDao organizationDao;
     private final DeviceDao deviceDao;
     private final SessionDao sessionDao;
+    private final UserDao userDao;
     private final BlockingIOProcessor blockingIOProcessor;
     private final ReportingDiskDao reportingDiskDao;
 
@@ -39,6 +41,7 @@ public class WebDeleteDeviceLogic {
         this.organizationDao = holder.organizationDao;
         this.deviceDao = holder.deviceDao;
         this.sessionDao = holder.sessionDao;
+        this.userDao = holder.userDao;
         this.blockingIOProcessor = holder.blockingIOProcessor;
         this.reportingDiskDao = holder.reportingDiskDao;
     }
@@ -67,7 +70,11 @@ public class WebDeleteDeviceLogic {
 
         log.debug("Deleting device {} for orgId {}.", deviceId, orgId);
         deviceDao.delete(deviceId);
-        user.deleteDevice(deviceId);
+
+        //todo this is temp solution for now
+        for (User userTemp : userDao.users.values()) {
+            userTemp.deleteDevice(deviceId);
+        }
         Session session = sessionDao.getOrgSession(state.orgId);
         session.closeHardwareChannelByDeviceId(deviceId);
 
