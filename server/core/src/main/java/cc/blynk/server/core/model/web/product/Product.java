@@ -140,6 +140,19 @@ public class Product {
         for (MetaField metaField : metaFields) {
             metaField.basicValidate();
         }
+        checkForDuplicateTemplateId();
+    }
+
+    private void checkForDuplicateTemplateId() {
+        boolean hasAlready = false;
+        for (MetaField metaField : metaFields) {
+            if (metaField instanceof TemplateIdMetaField) {
+                if (hasAlready) {
+                    throw new IllegalCommandBodyException("Product has more than 1 TemplateId metafield.");
+                }
+                hasAlready = true;
+            }
+        }
     }
 
     public void setOtaProgress(OtaProgress otaProgress) {

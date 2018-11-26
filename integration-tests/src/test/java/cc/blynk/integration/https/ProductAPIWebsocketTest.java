@@ -319,6 +319,27 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
     }
 
     @Test
+    public void createProductWithDuplicatedTemplateIdMetafields() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+
+        Product product = new Product();
+        product.name = "createProductWithMetafields2";
+        product.description = "Description";
+        product.boardType = "ESP8266";
+        product.connectionType = ConnectionType.WI_FI;
+        product.logoUrl = "/static/logo.png";
+
+        product.metaFields = new MetaField[] {
+                createTextMeta(1, "My Farm", "Farm of Smith"),
+                createTemplateIdMeta(2, "TemplateId", "temp"),
+                createTemplateIdMeta(3, "TemplateId2", "temp2")
+        };
+
+        client.createProduct(orgId, product);
+        client.verifyResult(webJson(1, "Product has more than 1 TemplateId metafield."));
+    }
+
+    @Test
     public void createProductWithWidgets() throws Exception {
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
 
