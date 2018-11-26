@@ -33,6 +33,7 @@ export default function Account(state = initialState, action) {
     case "API_ORGANIZATION_SUCCESS":
       const {data} = action.payload;
       data.products = data.products || [];
+      data.logoUrl = data.logoUrl || '';
 
       return {
         ...state,
