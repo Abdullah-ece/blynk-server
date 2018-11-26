@@ -40,9 +40,12 @@ public class NumberMetaField extends MetaField {
 
     @Override
     public MetaField copySpecificFieldsOnly(MetaField metaField) {
+        NumberMetaField numberMetaField = (NumberMetaField) metaField;
         return new NumberMetaField(id,
-                metaField.name, metaField.roleIds, metaField.includeInProvision, metaField.isDefault,
-                metaField.isMandatory, metaField.icon, min, max, value, step);
+                numberMetaField.name, numberMetaField.roleIds,
+                numberMetaField.includeInProvision, numberMetaField.isDefault,
+                numberMetaField.isMandatory, numberMetaField.icon,
+                numberMetaField.min, numberMetaField.max, value, numberMetaField.step);
     }
 
     @Override
