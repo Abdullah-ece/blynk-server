@@ -428,7 +428,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         Device provisionedDevice = appClient.parseDevice(4);
         assertNotNull(provisionedDevice);
         assertNotNull(provisionedDevice.metaFields);
-        assertEquals(3, provisionedDevice.metaFields.length);
+        assertEquals(2, provisionedDevice.metaFields.length);
         assertEquals(fromApiProduct2.id, provisionedDevice.productId);
         assertNotNull(provisionedDevice.hardwareInfo);
         assertEquals("TMPL0001", provisionedDevice.hardwareInfo.templateId);
@@ -444,10 +444,11 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         assertEquals("Device Name", deviceNameMetaField.name);
         assertEquals("My Default device Name", deviceNameMetaField.value);
 
-        TemplateIdMetaField templateIdMetaField = (TemplateIdMetaField) provisionedDevice.metaFields[2];
-        assertEquals(3, templateIdMetaField.id);
-        assertEquals("Template Id", templateIdMetaField.name);
-        assertEquals("TMPL0001", templateIdMetaField.options[0]);
+        //should be filtered
+        //TemplateIdMetaField templateIdMetaField = (TemplateIdMetaField) provisionedDevice.metaFields[2];
+        //assertEquals(3, templateIdMetaField.id);
+        //assertEquals("Template Id", templateIdMetaField.name);
+        //assertEquals("TMPL0001", templateIdMetaField.options[0]);
 
         //apps call get devices and not getDevice method
         //so we have to make sure that provisioned device is returned
