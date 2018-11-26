@@ -99,7 +99,7 @@ public abstract class MetaField implements CopyObject<MetaField> {
     public static List<MetaField> filter(MetaField[] metaFields) {
         var resultList = new ArrayList<MetaField>();
         for (MetaField metaField : metaFields) {
-            if (metaField.includeInProvision) {
+            if (metaField.showOnMobile()) {
                 resultList.add(metaField);
             }
         }
@@ -131,6 +131,10 @@ public abstract class MetaField implements CopyObject<MetaField> {
 
     public void validateAll() {
         basicValidate();
+    }
+
+    public boolean showOnMobile() {
+        return includeInProvision;
     }
 
     @Override

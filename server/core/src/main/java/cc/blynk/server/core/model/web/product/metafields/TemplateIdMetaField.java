@@ -36,6 +36,11 @@ public class TemplateIdMetaField extends MetaField {
     }
 
     @Override
+    public boolean showOnMobile() {
+        return false;
+    }
+
+    @Override
     public MetaField copy() {
         return new TemplateIdMetaField(id, name, roleIds,
                 includeInProvision, isMandatory, isDefault,
