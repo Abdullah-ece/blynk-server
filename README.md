@@ -139,20 +139,9 @@ Go [here](https://www.google.com/settings/security/lesssecureapps) and then clic
 
 ### Install java for Ubuntu
 
-        sudo add-apt-repository ppa:linuxuprising/java
-        sudo apt-get update
-        sudo apt-get install oracle-java10-installer
-        
-or if above doesn't work:
-
-        sudo apt-add-repository ppa:webupd8team/java
-        sudo apt-get update
-        sudo apt-get install oracle-java8-installer
-        
-### Port forwarding for HTTP/S API
-
-        sudo iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 8080
-        sudo iptables -t nat -A PREROUTING -p tcp --dport 443 -j REDIRECT --to-port 9443
+        sudo add-apt-repository ppa:openjdk-r/ppa \
+        && sudo apt-get update -q \
+        && sudo apt install -y openjdk-11-jdk
 
         
 ### How Blynk Works?
