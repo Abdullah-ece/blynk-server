@@ -1,9 +1,9 @@
-import React                  from 'react';
-import {connect}              from 'react-redux';
-import {bindActionCreators}   from 'redux';
+import React from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import {
   message
-}                           from 'antd';
+} from 'antd';
 import {
   initialize,
   destroy,
@@ -15,11 +15,11 @@ import {
   registerField,
   SubmissionError,
   reset
-}                             from 'redux-form';
-import {Map, List, fromJS}    from 'immutable';
-import PropTypes              from 'prop-types';
-import {ProductsFetch}        from 'data/Product/api';
-import {Manage}               from 'services/Organizations';
+} from 'redux-form';
+import { Map, List, fromJS } from 'immutable';
+import PropTypes from 'prop-types';
+import { ProductsFetch } from 'data/Product/api';
+import { Manage } from 'services/Organizations';
 
 import {
   OrganizationsManageSetActiveTab,
@@ -30,20 +30,20 @@ import {
   OrganizationsUpdate,
   OrganizationsUsersFetch,
   OrganizationsDetailsUpdate,
-}                             from 'data/Organizations/actions';
+} from 'data/Organizations/actions';
 
 import {
   OrganizationSendInvite,
   OrganizationUsersDelete,
-}                             from 'data/Organization/actions';
+} from 'data/Organization/actions';
 
 
 import {
   Edit as OrganizationEdit
-}                             from 'scenes/Organizations/components';
+} from 'scenes/Organizations/components';
 import {
   ProductsEdit
-}                             from 'scenes/Organizations/scenes';
+} from 'scenes/Organizations/scenes';
 
 import AdminsEditScene from "../AdminsEdit/index";
 
@@ -149,7 +149,7 @@ class Edit extends React.Component {
     const loadOrganizations = () => {
       if (!this.props.list)
         return this.props.OrganizationsFetch({
-          orgId: this.props.account.selectedOrgid,
+          orgId: this.props.account.selectedOrgId,
         });
 
       return new Promise((resolve) => resolve(this.props.list.toJS()));
@@ -158,7 +158,7 @@ class Edit extends React.Component {
     const loadProducts = () => {
       if (!this.props.products)
         return this.props.fetchProducts({
-          orgId: this.props.account.selectedOrgid,
+          orgId: this.props.account.selectedOrgId,
         });
 
       return new Promise((resolve) => resolve(this.props.products.toJS()));
@@ -185,7 +185,8 @@ class Edit extends React.Component {
 
       const organizations = Array.isArray(list) ? list : list.payload.data;
 
-      const organization = organizations.find(org => org.id === Number(this.props.params.id));
+      const organization = organizations.find(
+        org => org.id === Number(this.props.params.id));
 
       if (!organization)
         this.context.router.push('/organizations?notFound=true');
@@ -200,8 +201,8 @@ class Edit extends React.Component {
         users: fromJS(users)
       });
     });
-     const activeTab =  Object.values(this.TABS).indexOf(this.props.params.tab) > -1 ?
-                                                              this.props.params.tab : this.TABS.INFO;
+    const activeTab = Object.values(this.TABS).indexOf(this.props.params.tab) > -1 ?
+      this.props.params.tab : this.TABS.INFO;
     this.props.setTab(activeTab);
   }
 
@@ -232,7 +233,7 @@ class Edit extends React.Component {
   }
 
   handleSubmitSuccess() {
-     this.context.router.push(`/organizations/${this.props.params.id}/${this.props.params.tab}`);
+    this.context.router.push(`/organizations/${this.props.params.id}/${this.props.params.tab}`);
   }
 
   handleSubmitFail() {
@@ -251,12 +252,12 @@ class Edit extends React.Component {
         ...this.props.formValues.toJS(),
       }).then(() => {
         this.props.OrganizationsFetch({
-          orgId: this.props.account.selectedOrgid,
+          orgId: this.props.account.selectedOrgId,
         }).then(() => {
           resolve();
         });
       }).catch((err) => {
-        reject({orgUpdate: err});
+        reject({ orgUpdate: err });
       });
     })).catch((err) => {
       if (err.orgUpdate) {
@@ -279,15 +280,19 @@ class Edit extends React.Component {
     this.props.OrganizationsDelete({
       id: this.props.params.id
     }).then(() => {
+      try {
+        this.props.OrganizationsFetch({
+          orgId: this.props.account.selectedOrgId,
+        }).then(() => {
+          this.context.router.push('/organizations');
 
-      this.props.OrganizationsFetch({
-        orgId: this.props.account.selectedOrgid,
-      }).then(() => {
-
-        this.context.router.push('/organizations');
-
-        this.toggleOrganizationDeleteLoading(false);
-      });
+          this.toggleOrganizationDeleteLoading(false);
+        }).catch(() => {
+          this.context.router.push('/organizations');
+        });
+      } catch (e) {
+        message.error(e && e.message || 'Cannot refetch organizations');
+      }
 
     }).catch((response) => {
       this.toggleOrganizationDeleteLoading(false);
@@ -317,7 +322,9 @@ class Edit extends React.Component {
         onDelete={this.handleOrganizationDelete}
         products={this.props.products}
         onTabChange={this.handleTabChange}
-        adminsComponent={<AdminsEditScene params={this.props.params} allowResendInvite={true} orgId={Number(this.props.params.id)}/>}
+        adminsComponent={<AdminsEditScene params={this.props.params}
+                                          allowResendInvite={true}
+                                          orgId={Number(this.props.params.id)}/>}
         productsComponent={<ProductsEdit products={this.props.products}/>}
         activeTab={this.props.activeTab}
       />
