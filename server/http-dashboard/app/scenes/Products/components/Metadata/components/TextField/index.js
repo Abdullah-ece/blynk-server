@@ -31,7 +31,7 @@ class TextField extends BaseField {
       <Row>
         <Col span={24}>
           <Form>
-            <Field title="String"
+            <Field title="Text"
                    className={`metadata-name-field-${this.props.field.get('id')} normal-offset`}
                    onFocus={this.onFocus}
                    onBlur={this.onBlur}
