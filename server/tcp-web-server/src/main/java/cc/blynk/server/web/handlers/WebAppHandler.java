@@ -13,8 +13,9 @@ import cc.blynk.server.web.handlers.logic.account.WebUpdateAccountLogic;
 import cc.blynk.server.web.handlers.logic.device.WebCreateDeviceLogic;
 import cc.blynk.server.web.handlers.logic.device.WebDeleteDeviceLogic;
 import cc.blynk.server.web.handlers.logic.device.WebGetDeviceLogic;
-import cc.blynk.server.web.handlers.logic.device.WebGetDevicesLogic;
 import cc.blynk.server.web.handlers.logic.device.WebGetMetaFieldLogic;
+import cc.blynk.server.web.handlers.logic.device.WebGetOrgDevicesLogic;
+import cc.blynk.server.web.handlers.logic.device.WebGetOwnDevicesLogic;
 import cc.blynk.server.web.handlers.logic.device.WebTrackDeviceLogic;
 import cc.blynk.server.web.handlers.logic.device.WebUpdateDeviceLogic;
 import cc.blynk.server.web.handlers.logic.device.WebUpdateDeviceMetafieldLogic;
@@ -128,6 +129,8 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
     private final WebGetRolesLogic webGetRolesLogic;
     private final WebDeleteRoleLogic webDeleteRoleLogic;
     private final WebGetRoleLogic webGetRoleLogic;
+    private final WebGetOrgDevicesLogic webGetOrgDevicesLogic;
+    private final WebGetOwnDevicesLogic webGetOwnDevicesLogic;
 
     private final Holder holder;
 
@@ -163,6 +166,8 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
         this.webGetRolesLogic = new WebGetRolesLogic(holder);
         this.webDeleteRoleLogic = new WebDeleteRoleLogic(holder);
         this.webGetRoleLogic = new WebGetRoleLogic(holder);
+        this.webGetOrgDevicesLogic = new WebGetOrgDevicesLogic(holder);
+        this.webGetOwnDevicesLogic = new WebGetOwnDevicesLogic(holder);
 
         this.state = state;
         this.holder = holder;
@@ -200,7 +205,12 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
                 webUpdateDeviceLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_GET_DEVICES :
-                WebGetDevicesLogic.messageReceived(holder, ctx, state, msg);
+                //special case, org and own device permissions are overlapped
+                if (state.role.canViewOrgDevices()) {
+                    webGetOrgDevicesLogic.messageReceived(ctx, state, msg);
+                } else {
+                    webGetOwnDevicesLogic.messageReceived(ctx, state, msg);
+                }
                 break;
             case WEB_GET_DEVICE :
                 webGetDeviceLogic.messageReceived(ctx, state, msg);
