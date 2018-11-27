@@ -157,6 +157,8 @@ export default {
   "America/Scoresbysund": "(UTC-01:00) America/Scoresbysund",
   "Atlantic/Azores": "(UTC-01:00) Atlantic/Azores",
   "Atlantic/Cape Verde": "(UTC-01:00) Atlantic/Cape Verde",
+  "Etc/UTC": "(UTC+00:00) Etc/UTC",
+  "Europe/London": "(UTC+00:00) Europe/London",
   "Arctic/Longyearbyen": "(UTC+01:00) Arctic/Longyearbyen",
   "Europe/Amsterdam": "(UTC+01:00) Europe/Amsterdam",
   "Europe/Andorra": "(UTC+01:00) Europe/Andorra",
