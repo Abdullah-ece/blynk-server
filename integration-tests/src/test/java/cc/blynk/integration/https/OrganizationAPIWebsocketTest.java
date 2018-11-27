@@ -305,7 +305,7 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
         assertNotNull(organizationDTO);
         assertEquals(orgId, organizationDTO.id);
 
-        Organization subOrg = new Organization("SubOrg000", "Europe/Kiev", "/static/logo.png", true, organizationDTO.id);
+        Organization subOrg = new Organization("1SubOrg000", "Europe/Kiev", "/static/logo.png", true, organizationDTO.id);
         client.createOrganization(orgId, subOrg);
         OrganizationDTO subOrgDTO = client.parseOrganizationDTO(2);
         assertNotNull(subOrgDTO);
