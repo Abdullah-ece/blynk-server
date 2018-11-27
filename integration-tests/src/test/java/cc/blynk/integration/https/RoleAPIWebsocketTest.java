@@ -2,8 +2,8 @@ package cc.blynk.integration.https;
 
 import cc.blynk.integration.APIBaseTest;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
-import cc.blynk.server.api.http.dashboard.dto.OrganizationDTO;
 import cc.blynk.server.api.http.dashboard.dto.RoleDTO;
+import cc.blynk.server.core.model.dto.OrganizationDTO;
 import cc.blynk.server.core.model.web.Organization;
 import org.junit.Test;
 import org.junit.runner.RunWith;

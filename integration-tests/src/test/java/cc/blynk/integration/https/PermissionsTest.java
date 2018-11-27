@@ -2,9 +2,9 @@ package cc.blynk.integration.https;
 
 import cc.blynk.integration.SingleServerInstancePerTestWithDBAndNewOrg;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
-import cc.blynk.server.api.http.dashboard.dto.OrganizationDTO;
-import cc.blynk.server.api.http.dashboard.dto.ProductDTO;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.dto.OrganizationDTO;
+import cc.blynk.server.core.model.dto.ProductDTO;
 import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;

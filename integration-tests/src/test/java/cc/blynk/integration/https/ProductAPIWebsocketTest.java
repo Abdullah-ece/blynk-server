@@ -2,12 +2,12 @@ package cc.blynk.integration.https;
 
 import cc.blynk.integration.SingleServerInstancePerTestWithDBAndNewOrg;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
-import cc.blynk.server.api.http.dashboard.dto.OrganizationDTO;
-import cc.blynk.server.api.http.dashboard.dto.ProductDTO;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.dto.DeviceDTO;
+import cc.blynk.server.core.model.dto.OrganizationDTO;
+import cc.blynk.server.core.model.dto.ProductDTO;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.SortOrder;
 import cc.blynk.server.core.model.serialization.JsonParser;

@@ -1,5 +1,6 @@
 package cc.blynk.server.api.http.dashboard.dto;
 
+import cc.blynk.server.core.model.dto.ProductDTO;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

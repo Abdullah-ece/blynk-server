@@ -2,10 +2,10 @@ package cc.blynk.integration.https;
 
 import cc.blynk.integration.SingleServerInstancePerTestWithDBAndNewOrg;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
-import cc.blynk.server.api.http.dashboard.dto.OrganizationDTO;
-import cc.blynk.server.api.http.dashboard.dto.ProductDTO;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.dto.OrganizationDTO;
+import cc.blynk.server.core.model.dto.ProductDTO;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
@@ -57,7 +57,7 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
     @Test
     public void getOrganizations() throws Exception {
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
-        client.getOrganizations();
+        client.getOrganizations(orgId);
         OrganizationDTO[] organizationDTOs = client.parseOrganizations(1);
         assertNotNull(organizationDTOs);
         assertEquals(0, organizationDTOs.length);
@@ -79,7 +79,7 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
         Organization subOrg = new Organization("SubOrg0001", "Europe/Kiev", "/static/logo.png", true, orgId);
         client.createOrganization(orgId, subOrg);
 
-        client.getOrganizations();
+        client.getOrganizations(orgId);
         OrganizationDTO[] organizationDTOs = client.parseOrganizations(2);
         assertNotNull(organizationDTOs);
         assertEquals(1, organizationDTOs.length);

@@ -1,9 +1,9 @@
 package cc.blynk.server.web.handlers.logic.organization;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.api.http.dashboard.dto.OrganizationDTO;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.dto.OrganizationDTO;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;

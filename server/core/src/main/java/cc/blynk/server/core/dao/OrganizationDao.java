@@ -2,6 +2,7 @@ package cc.blynk.server.core.dao;
 
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.dto.OrganizationDTO;
 import cc.blynk.server.core.model.exceptions.ForbiddenWebException;
 import cc.blynk.server.core.model.exceptions.OrgNotFoundException;
 import cc.blynk.server.core.model.exceptions.ProductNotFoundException;
@@ -15,9 +16,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -117,31 +116,10 @@ public class OrganizationDao {
         return subProductIds.toArray();
     }
 
-    public Collection<Organization> getAll(int orgId) {
-        return getOrgsByParentId(orgId);
-    }
-
-    /*
-     This is special case. Some products may have child products and
-     thus we need to add child counters to such products.
-     */
-    private Map<Integer, Integer> attachChildCounter(Map<Integer, Integer> productIdCount) {
-        Map<Integer, Integer> result = new HashMap<>(productIdCount);
-        for (Map.Entry<Integer, Integer> entries : productIdCount.entrySet()) {
-            Integer childProductId = entries.getKey();
-            Product childProduct = getProductById(childProductId);
-            if (childProduct != null) {
-                Integer parentCounter = result.getOrDefault(childProduct.parentId, 0);
-                result.put(childProduct.parentId, parentCounter + entries.getValue());
-            }
-        }
-        return result;
-    }
-
     public Collection<Device> getAllDevicesByOrgId(int orgId) {
         List<Device> result = new ArrayList<>();
         //getting org and all it child orgs
-        int[] orgIds = orgListToIdList(getOrgsByParentId(orgId));
+        int[] orgIds = orgListToIdList(getOrgChilds(orgId));
         for (int tmpOrgId : orgIds) {
             Organization org = organizations.get(tmpOrgId);
             for (Product product : org.products) {
@@ -160,24 +138,34 @@ public class OrganizationDao {
         return ar;
     }
 
-    private List<Organization> getOrgsByParentId(int parentId) {
+    public List<OrganizationDTO> getFirstLevelChilds(int orgId) {
+        List<OrganizationDTO> result = new ArrayList<>();
+        for (Organization org : organizations.values()) {
+            if (org.parentId == orgId) {
+                result.add(new OrganizationDTO(org));
+            }
+        }
+        return result;
+    }
+
+    public List<Organization> getOrgChilds(int orgId) {
         List<Organization> orgs = new ArrayList<>();
-        Organization org = organizations.get(parentId);
+        Organization org = organizations.get(orgId);
         if (org != null) {
             orgs.add(org);
-            getOrgsByParentId(orgs, parentId, 1);
+            getOrgChilds(orgs, orgId, 1);
         }
         return orgs;
     }
 
-    private void getOrgsByParentId(List<Organization> orgs, int parentId, int invocationCounter) {
+    private void getOrgChilds(List<Organization> orgs, int parentId, int invocationCounter) {
         if (invocationCounter == 1000) {
             throw new RuntimeException("Error finding organization.");
         }
         for (Organization org : organizations.values()) {
             if (org.parentId == parentId) {
                 orgs.add(org);
-                getOrgsByParentId(orgs, org.id, invocationCounter++);
+                getOrgChilds(orgs, org.id, invocationCounter++);
             }
         }
     }
@@ -193,7 +181,7 @@ public class OrganizationDao {
         Role userRole = userOrg.getRoleById(user.roleId);
         if (userRole.hasSubOrgAccess()) {
             //user is admin of parent org, so he can perform admin action on child org
-            List<Organization> childOrgs = getOrgsByParentId(user.orgId);
+            List<Organization> childOrgs = getOrgChilds(user.orgId);
             Organization org = getOrgById(childOrgs, orgId);
             return org != null;
         }

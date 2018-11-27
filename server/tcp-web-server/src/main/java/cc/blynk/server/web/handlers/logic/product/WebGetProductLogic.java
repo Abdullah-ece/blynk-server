@@ -1,8 +1,8 @@
 package cc.blynk.server.web.handlers.logic.product;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.api.http.dashboard.dto.ProductDTO;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.dto.ProductDTO;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.protocol.exceptions.JsonException;

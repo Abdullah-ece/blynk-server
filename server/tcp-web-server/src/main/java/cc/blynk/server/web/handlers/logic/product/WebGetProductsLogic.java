@@ -11,7 +11,7 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.api.http.dashboard.dto.ProductDTO.toDTO;
+import static cc.blynk.server.core.model.dto.ProductDTO.toDTO;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.server.internal.WebByteBufUtil.json;
 

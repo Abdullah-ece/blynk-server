@@ -2,8 +2,8 @@ package cc.blynk.integration.https;
 
 import cc.blynk.integration.SingleServerInstancePerTestWithDBAndNewOrg;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
-import cc.blynk.server.api.http.dashboard.dto.OrganizationDTO;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.dto.OrganizationDTO;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.utils.SHA256Util;
 import org.apache.http.client.methods.CloseableHttpResponse;

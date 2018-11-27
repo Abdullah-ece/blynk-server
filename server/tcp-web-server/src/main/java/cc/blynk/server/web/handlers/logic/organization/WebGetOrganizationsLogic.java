@@ -1,9 +1,8 @@
 package cc.blynk.server.web.handlers.logic.organization;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.api.http.dashboard.dto.OrganizationDTO;
 import cc.blynk.server.core.dao.OrganizationDao;
-import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.dto.OrganizationDTO;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
@@ -12,7 +11,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 
@@ -32,18 +30,8 @@ public class WebGetOrganizationsLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
-        int orgId;
-        User user = state.user;
-        if (message.body == null || message.body.isEmpty()) {
-            orgId = user.orgId;
-        } else {
-            orgId = Integer.parseInt(message.body);
-        }
-        List<OrganizationDTO> orgs = organizationDao.getAll(orgId)
-                .stream()
-                .filter(org -> org.id != orgId && org.parentId == orgId)
-                .map(OrganizationDTO::new)
-                .collect(Collectors.toList());
+        int orgId = Integer.parseInt(message.body);
+        List<OrganizationDTO> orgs = organizationDao.getFirstLevelChilds(orgId);
 
         if (ctx.channel().isWritable()) {
             String orgString = JsonParser.toJson(orgs);

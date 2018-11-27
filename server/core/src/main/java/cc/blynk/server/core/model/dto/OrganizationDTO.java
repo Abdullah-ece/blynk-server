@@ -1,4 +1,4 @@
-package cc.blynk.server.api.http.dashboard.dto;
+package cc.blynk.server.core.model.dto;
 
 import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;

@@ -2,15 +2,15 @@ package cc.blynk.integration.https;
 
 import cc.blynk.integration.APIBaseTest;
 import cc.blynk.server.api.http.dashboard.dto.EmailDTO;
-import cc.blynk.server.api.http.dashboard.dto.OrganizationDTO;
 import cc.blynk.server.api.http.dashboard.dto.ProductAndOrgIdDTO;
-import cc.blynk.server.api.http.dashboard.dto.ProductDTO;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.auth.UserStatus;
 import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.dto.OrganizationDTO;
+import cc.blynk.server.core.model.dto.ProductDTO;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
