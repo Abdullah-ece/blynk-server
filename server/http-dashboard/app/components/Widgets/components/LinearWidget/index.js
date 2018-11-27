@@ -1,14 +1,14 @@
 import React from 'react';
-import {Chart} from 'components';
+import { Chart } from 'components';
 // import Widget from '../Widget';
-import {Icon} from 'antd';
+import { Icon } from 'antd';
 import PropTypes from 'prop-types';
 import LinearWidgetSettings from './settings';
 import './styles.less';
-import {Map} from 'immutable';
+import { Map } from 'immutable';
 import moment from 'moment';
 import Canvasjs from 'canvasjs';
-import {Unit} from 'services/Products';
+import { Unit } from 'services/Products';
 import {
   CANVASJS_CHART_TYPES,
   WIDGETS_CHART_TYPES,
@@ -28,23 +28,23 @@ class LinearWidget extends React.Component {
     values: PropTypes.array,
 
     parentElementProps: PropTypes.shape({
-      id         : PropTypes.string,
-      onMouseUp  : PropTypes.func,
-      onTouchEnd : PropTypes.func,
+      id: PropTypes.string,
+      onMouseUp: PropTypes.func,
+      onTouchEnd: PropTypes.func,
       onMouseDown: PropTypes.func,
-      style      : PropTypes.object,
+      style: PropTypes.object,
     }),
 
-    tools        : PropTypes.element,
+    tools: PropTypes.element,
     settingsModal: PropTypes.element,
     resizeHandler: PropTypes.oneOfType([
       PropTypes.arrayOf(PropTypes.element),
       PropTypes.element,
     ]),
 
-    data  : PropTypes.object,
+    data: PropTypes.object,
     params: PropTypes.object,
-    name  : PropTypes.string,
+    name: PropTypes.string,
 
     deviceId: PropTypes.any,
 
@@ -64,11 +64,11 @@ class LinearWidget extends React.Component {
   };
 
   defaultToolTip = {
-    enabled:  true,
+    enabled: true,
     shared: true,
     contentFormatter: (data) => {
 
-      const getTooltipTemplate = ( legendsTemplateFn, titleTemplateFn, data) => {
+      const getTooltipTemplate = (legendsTemplateFn, titleTemplateFn, data) => {
         return `
             <div class="chart-tooltip">
               ${titleTemplateFn(data)}
@@ -81,13 +81,16 @@ class LinearWidget extends React.Component {
 
       const getLegendsTemplate = (data) => {
 
-        const getLegendTemplate = (index, name, value, color) => {
+        const getLegendTemplate = (name, value, color) => {
+          const dataSource = this.props.data.sources.filter(
+            source => source.label === name);
+
           return (
             `<div class="chart-tooltip-legends-legend">
                 <div class="chart-tooltip-legends-legend-circle" style="background: ${color}"></div>
                 <div class="chart-tooltip-legends-legend-name">${name}:</div>
                 <div class="chart-tooltip-legends-legend-value">
-                  ${String(value)} ${this.props.data.sources[index].dataStream.units ? Unit[this.props.data.sources[index].dataStream.units].abbreviation : ""}
+                  ${String(value)} ${dataSource.length && dataSource[0].dataStream.units ? Unit[dataSource[0].dataStream.units].abbreviation : ""}
                 </div>
               </div>`
           );
@@ -95,9 +98,8 @@ class LinearWidget extends React.Component {
 
         const legends = [];
 
-        data.forEach((item, index) => {
+        data.forEach((item) => {
           legends.push(getLegendTemplate(
-            index,
             item.name,
             item.y,
             item.color
@@ -122,11 +124,11 @@ class LinearWidget extends React.Component {
 
         const getFormattedValue = (format, value) => {
 
-          if(format) {
-            if(value instanceof Date)
+          if (format) {
+            if (value instanceof Date)
               return Canvasjs.formatDate(value, format);
 
-            if(!isNaN(Number(value))) {
+            if (!isNaN(Number(value))) {
               // hardcode for 0 because formatNumber doesn't work for 0
               if (Number(value) === 0)
                 return 0;
@@ -155,7 +157,7 @@ class LinearWidget extends React.Component {
     let min = new Date().getTime();
     let max = 0;
 
-    if(data && data.length) {
+    if (data && data.length) {
 
       data.forEach(item => {
 
@@ -180,7 +182,7 @@ class LinearWidget extends React.Component {
       });
     }
 
-    return [min,max];
+    return [min, max];
   }
 
   getTimeFormatForRange([dateFrom = 0, dateTo = 0]) {
@@ -229,20 +231,20 @@ class LinearWidget extends React.Component {
 
   generateData(source, index) {
 
-    if(!source.dataStream || isNaN(Number(source.dataStream.pin)))
+    if (!source.dataStream || isNaN(Number(source.dataStream.pin)))
       return null;
 
     const dataPoints = this.props.values[index].value.map((item) => {
 
       return {
-        x: moment(Number(Math.ceil(item.x/1000)*1000)).toDate(),
+        x: moment(Number(Math.ceil(item.x / 1000) * 1000)).toDate(),
         y: item.y
       };
     });
 
     let dataSource = {
       ...this.dataDefaultOptions,
-      ...(source.lineGraphType && CANVASJS_CHART_TYPES[source.lineGraphType] ? {type: CANVASJS_CHART_TYPES[source.lineGraphType]} : {type: 'line'}),
+      ...(source.lineGraphType && CANVASJS_CHART_TYPES[source.lineGraphType] ? { type: CANVASJS_CHART_TYPES[source.lineGraphType] } : { type: 'line' }),
       color: `#${source.color}` || null,
       name: source.label || null,
       yAxisMin: source.dataStream.min,
@@ -252,7 +254,7 @@ class LinearWidget extends React.Component {
       enableYAxis: source.enableYAxis === true,
     };
 
-    if(WIDGETS_CHART_TYPES.COLUMN === source.lineGraphType) {
+    if (WIDGETS_CHART_TYPES.COLUMN === source.lineGraphType) {
       dataSource = {
         ...dataSource,
         fillOpacity: 1,
@@ -271,7 +273,7 @@ class LinearWidget extends React.Component {
       return (<Icon type="loading"/>);
 
     const columnChartFirst = (a, b) => {
-      if(a.lineGraphType && b.lineGraphType) {
+      if (a.lineGraphType && b.lineGraphType) {
         return a.lineGraphType === WIDGETS_CHART_TYPES.COLUMN ? -1 : 1;
       }
 
@@ -289,15 +291,15 @@ class LinearWidget extends React.Component {
     const hiddenAxisYOptions = {
       title: '',
       tickLength: 0,
-      lineThickness:0,
-      margin:0,
+      lineThickness: 0,
+      margin: 0,
       valueFormatString: '\u0020', //space to hide values on Axis
       // valueFormatString: '', //space to hide values on Axis
     };
 
     dataSources = dataSources.map((dataSource) => {
 
-      if(dataSource.dataPoints.length === 0)
+      if (dataSource.dataPoints.length === 0)
         return false;
 
       return ({
@@ -318,20 +320,20 @@ class LinearWidget extends React.Component {
         labelFontColor: dataSource.color,
       };
 
-      if(!dataSource.enableYAxis) {
+      if (!dataSource.enableYAxis) {
         yAxis = {
           ...yAxis,
           ...hiddenAxisYOptions
         };
       }
 
-      if(!dataSource.yAxisAutoscale && !isNaN(Number(dataSource.yAxisMin)) && !isNaN(Number(dataSource.yAxisMax)) && Number(dataSource.yAxisMin) < Number(dataSource.yAxisMax)) {
+      if (!dataSource.yAxisAutoscale && !isNaN(Number(dataSource.yAxisMin)) && !isNaN(Number(dataSource.yAxisMax)) && Number(dataSource.yAxisMin) < Number(dataSource.yAxisMax)) {
         yAxis.minimum = dataSource.yAxisMin;
         yAxis.maximum = dataSource.yAxisMax;
       }
 
-      if(index % 2 !== 0) {
-        secondary = {axisYType: 'secondary'};
+      if (index % 2 !== 0) {
+        secondary = { axisYType: 'secondary' };
         axisY2.push(yAxis);
       } else {
         axisY.push(yAxis);
@@ -359,10 +361,11 @@ class LinearWidget extends React.Component {
 
     return this.renderChartByParams(config);
   }
+
   renderChartByParams(config) {
 
     const hasData = !!(config.data.reduce((acc, item) => {
-      if(Array.isArray(item.dataPoints) && acc < item.dataPoints.length)
+      if (Array.isArray(item.dataPoints) && acc < item.dataPoints.length)
         return item.dataPoints.length;
       return acc;
     }, 0));
@@ -386,15 +389,16 @@ class LinearWidget extends React.Component {
     return (
       <div {...this.props.parentElementProps} className={`widgets--widget`}>
         <div className="widgets--widget-label">
-          <Dotdotdot clamp={1}>{this.props.data.label || 'No Widget Name'}</Dotdotdot>
+          <Dotdotdot
+            clamp={1}>{this.props.data.label || 'No Widget Name'}</Dotdotdot>
           {this.props.tools}
         </div>
 
-        { /* widget content */ }
+        { /* widget content */}
 
-        { this.renderRealDataChart() }
+        {this.renderRealDataChart()}
 
-        { /* end widget content */ }
+        { /* end widget content */}
 
         {this.props.settingsModal}
         {this.props.resizeHandler}
