@@ -316,6 +316,41 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
     }
 
     @Test
+    public void createDeviceForSuborgAndCheckDeviceCount() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient("super@blynk.cc", "1");
+        client.getOrganization(orgId);
+        OrganizationDTO organizationDTO = client.parseOrganizationDTO(1);
+        assertNotNull(organizationDTO);
+        assertEquals(orgId, organizationDTO.id);
+
+        Organization subOrg = new Organization("SubOrg000", "Europe/Kiev", "/static/logo.png", true, organizationDTO.id);
+        subOrg.selectedProducts = new int[] {organizationDTO.products[0].id};
+        client.createOrganization(orgId, subOrg);
+        OrganizationDTO subOrgDTO = client.parseOrganizationDTO(2);
+        assertNotNull(subOrgDTO);
+        assertEquals(organizationDTO.id, subOrgDTO.parentId);
+        assertNotNull(subOrgDTO.roles);
+        assertEquals(3, subOrgDTO.roles.length);
+        assertEquals(1, subOrgDTO.roles[0].id);
+        assertNotNull(subOrgDTO.products);
+        assertEquals(1, subOrgDTO.products.length);
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.productId = subOrgDTO.products[0].id;
+
+        client.createDevice(subOrgDTO.id, newDevice);
+        newDevice = client.parseDevice(3);
+        assertNotNull(newDevice);
+
+        client.getOrganizations(orgId);
+        OrganizationDTO[] orgs = client.parseOrganizations(4);
+        assertNotNull(orgs);
+        assertEquals(1, orgs.length);
+        assertEquals(1, orgs[0].products[0].deviceCount);
+    }
+
+    @Test
     public void userAreRemovedWithOrganization() throws Exception {
         AppWebSocketClient client = loggedDefaultClient("super@blynk.cc", "1");
         client.getOrganization(orgId);
