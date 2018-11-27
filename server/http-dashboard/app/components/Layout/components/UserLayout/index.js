@@ -263,7 +263,7 @@ class UserLayout extends React.Component {
             onMouseOver={this.handleMouseEnter}
             onMouseOut={this.handleMouseLeave}
           >
-            <div className="user-layout-left-navigation-company-logo">
+            <div className={this.state.collapsed ? 'user-layout-left-navigation-fold-company-logo' : 'user-layout-left-navigation-unfold-company-logo'}>
               <Dropdown overlayClassName={`user-layout--organization-select--overlay ${this.state.collapsed ? '' : 'user-layout--organization-select--overlay--open'}`} overlay={this.OrgSelection()} trigger={['hover']} placement="topLeft"
                         className="my-custom-dropdown">
                 <Link to="/">
