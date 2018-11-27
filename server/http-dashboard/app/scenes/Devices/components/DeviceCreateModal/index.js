@@ -110,7 +110,7 @@ class DeviceCreateModal extends React.Component {
              footer={[
                <Button key="cancel" type="default" size="default"
                        onClick={this.handleClose}>Cancel</Button>,
-               <Button key="save" type="primary" size="default" disabled={!!this.props.errors && !this.props.loading}
+               <Button key="save" type="primary" size="default" disabled={(!!this.props.errors && !this.props.loading) || !this.props.products.length}
                        loading={this.props.loading}
                        onClick={this.props.handleSubmit}>
                  Create
