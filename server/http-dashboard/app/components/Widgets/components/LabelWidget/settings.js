@@ -361,7 +361,7 @@ class LabelWidgetSettings extends React.Component {
 
       dataStreamsOptions.push({
         key: `${stream.pin}`,
-        value: stream.label,
+        value: `${stream.label} (V${stream.pin})`,
       });
 
 

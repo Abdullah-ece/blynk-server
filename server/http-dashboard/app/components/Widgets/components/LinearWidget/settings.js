@@ -185,7 +185,7 @@ class LinearWidgetSettings extends React.Component {
     const dataStreams = this.props.dataStreams.filter(dataStream => dataStream.has('label') && dataStream.get('label').length)
       .map((dataStream) => (fromJS({
         key: String(dataStream.get('pin')),
-        value: dataStream.get('label'),
+        value: `${dataStream.get('label')} (V${dataStream.get('pin')})`,
         values: dataStream,
       })));
 

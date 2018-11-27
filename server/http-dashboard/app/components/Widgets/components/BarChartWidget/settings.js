@@ -262,14 +262,14 @@ class BarChartSettings extends React.Component {
 
       dataStreamsOptions.push({
         key: `${stream.pin}`,
-        value: stream.label,
+        value: `${stream.label} (V${stream.pin})`,
       });
 
       if (stream.tableDescriptor && stream.tableDescriptor.columns) {
         stream.tableDescriptor.columns.forEach((column) => {
           dataStreamsOptions.push({
             key: `${stream.pin}|${column.label}`,
-            value: `-- ${column.label}`,
+            value: `-- ${stream.label} (V${stream.pin})`,
           });
         });
       }
