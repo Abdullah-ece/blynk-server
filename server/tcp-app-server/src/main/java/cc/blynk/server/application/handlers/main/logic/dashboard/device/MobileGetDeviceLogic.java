@@ -2,7 +2,7 @@ package cc.blynk.server.application.handlers.main.logic.dashboard.device;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.model.dto.DeviceDTO;
+import cc.blynk.server.core.model.dto.DeviceMobileDTO;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -34,12 +34,12 @@ public final class MobileGetDeviceLogic {
 
         Product product = holder.organizationDao.getProductByIdOrThrow(device.productId);
 
-        DeviceDTO deviceDTO;
+        DeviceMobileDTO deviceDTO;
         if (needMetaFilter) {
             MetaField[] filtered = MetaField.filter(device.metaFields).toArray(new MetaField[0]);
-            deviceDTO = new DeviceDTO(device, product, filtered);
+            deviceDTO = new DeviceMobileDTO(device, product, filtered);
         } else {
-            deviceDTO = new DeviceDTO(device, product);
+            deviceDTO = new DeviceMobileDTO(device, product);
         }
 
         log.debug("Returning deviceId {} for mobile app.", device.id);

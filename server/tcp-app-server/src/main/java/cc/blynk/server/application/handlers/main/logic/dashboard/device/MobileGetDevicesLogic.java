@@ -3,7 +3,7 @@ package cc.blynk.server.application.handlers.main.logic.dashboard.device;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.model.device.DeviceStatusDTO;
+import cc.blynk.server.core.model.dto.DeviceStatusDTO;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import io.netty.channel.ChannelHandlerContext;

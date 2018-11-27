@@ -1,4 +1,10 @@
-package cc.blynk.server.core.model.device;
+package cc.blynk.server.core.model.dto;
+
+import cc.blynk.server.core.model.device.BoardType;
+import cc.blynk.server.core.model.device.ConnectionType;
+import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.device.HardwareInfo;
+import cc.blynk.server.core.model.device.Status;
 
 import java.util.List;
 
