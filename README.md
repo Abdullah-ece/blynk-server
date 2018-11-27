@@ -39,9 +39,11 @@ Local server uses by default self-generated certificates, so you have to disable
 Go to [create_schema.sql](server/core/src/main/resources/create_schema.sql) , press "Raw"      
 Copy URL with a token from the browser, then download a file with:
         
-        wget <paste copied url here>
+        wget -O create_schema.sql <paste copied url here>
         
 Repeat the same for the file [reporting_schema.sql](server/core/src/main/resources/reporting_schema.sql)
+
+        wget -O reporting_schema.sql <paste copied url here>
 
 #### 3. Move create_schema.sql and reporting_schema.sql to temp folder (to avoid permission problems)
 
