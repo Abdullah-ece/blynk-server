@@ -33,7 +33,6 @@ CREATE TABLE blynk_default (
 create index on blynk_default (device_id, pin, pin_type, created);
 
 CREATE TABLE reporting_raw_data (
-  project_id int4,
   device_id int4,
   pin int2,
   pinType char,
@@ -41,37 +40,34 @@ CREATE TABLE reporting_raw_data (
   stringValue text,
   doubleValue float8,
 
-  PRIMARY KEY (project_id, device_id, pin, pinType, ts)
+  PRIMARY KEY (device_id, pin, pinType, ts)
 );
 
 CREATE TABLE reporting_average_minute (
-  project_id int4,
   device_id int8,
   pin int2,
   pin_type int2,
   ts timestamp with time zone,
   value float8,
-  PRIMARY KEY (project_id, device_id, pin, pin_type, ts)
+  PRIMARY KEY (device_id, pin, pin_type, ts)
 );
 
 CREATE TABLE reporting_average_hourly (
-  project_id int4,
   device_id int8,
   pin int2,
   pin_type int2,
   ts timestamp with time zone,
   value float8,
-  PRIMARY KEY (project_id, device_id, pin, pin_type, ts)
+  PRIMARY KEY (device_id, pin, pin_type, ts)
 );
 
 CREATE TABLE reporting_average_daily (
-  project_id int4,
   device_id int8,
   pin int2,
   pin_type int2,
   ts timestamp with time zone,
   value float8,
-  PRIMARY KEY (project_id, device_id, pin, pin_type, ts)
+  PRIMARY KEY (device_id, pin, pin_type, ts)
 );
 
 CREATE TABLE reporting_app_stat_minute (
