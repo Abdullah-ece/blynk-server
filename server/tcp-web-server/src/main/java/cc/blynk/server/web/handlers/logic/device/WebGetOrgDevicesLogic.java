@@ -16,7 +16,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
-import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_DEVICE_VIEW;
+import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_DEVICES_VIEW;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.server.internal.WebByteBufUtil.userHasNoAccessToOrg;
 import static cc.blynk.utils.StringUtils.split2;
@@ -43,7 +43,7 @@ public final class WebGetOrgDevicesLogic implements PermissionBasedLogic {
 
     @Override
     public int getPermission() {
-        return ORG_DEVICE_VIEW;
+        return ORG_DEVICES_VIEW;
     }
 
     @Override

@@ -30,17 +30,17 @@ public abstract class PermissionsTable {
      public static int ROLE_EDIT =              0b1000000000000000000;
      public static int ROLE_DELETE =            0b10000000000000000000;
 
-     public static int ORG_DEVICE_CREATE =      0b100000000000000000000;
-     public static int ORG_DEVICE_VIEW =        0b1000000000000000000000;
-     public static int ORG_DEVICE_EDIT =        0b10000000000000000000000;
-     public static int ORG_DEVICE_DELETE =      0b100000000000000000000000;
-     public static int ORG_DEVICE_SHARE =       0b1000000000000000000000000;
+     public static int ORG_DEVICES_CREATE =     0b100000000000000000000;
+     public static int ORG_DEVICES_VIEW =       0b1000000000000000000000;
+     public static int ORG_DEVICES_EDIT =       0b10000000000000000000000;
+     public static int ORG_DEVICES_DELETE =     0b100000000000000000000000;
+     public static int ORG_DEVICES_SHARE =      0b1000000000000000000000000;
 
-     public static int OWN_DEVICE_CREATE =      0b10000000000000000000000000;
-     public static int OWN_DEVICE_VIEW =        0b100000000000000000000000000;
-     public static int OWN_DEVICE_EDIT =        0b1000000000000000000000000000;
-     public static int OWN_DEVICE_DELETE =      0b10000000000000000000000000000;
-     public static int OWN_DEVICE_SHARE =       0b100000000000000000000000000000;
+     public static int OWN_DEVICES_CREATE =     0b10000000000000000000000000;
+     public static int OWN_DEVICES_VIEW =       0b100000000000000000000000000;
+     public static int OWN_DEVICES_EDIT =       0b1000000000000000000000000000;
+     public static int OWN_DEVICES_DELETE =     0b10000000000000000000000000000;
+     public static int OWN_DEVICES_SHARE =      0b100000000000000000000000000000;
 
     public static Map<Integer, String> PERMISSION_NAMES = new HashMap<>() {
         {
@@ -64,16 +64,16 @@ public abstract class PermissionsTable {
             put(ROLE_VIEW, "view role");
             put(ROLE_EDIT, "edit role");
             put(ROLE_DELETE, "delete role");
-            put(ORG_DEVICE_CREATE, "create device");
-            put(ORG_DEVICE_VIEW, "view device");
-            put(ORG_DEVICE_EDIT, "edit device");
-            put(ORG_DEVICE_DELETE, "delete device");
-            put(ORG_DEVICE_SHARE, "share device");
-            put(OWN_DEVICE_CREATE, "create own device");
-            put(OWN_DEVICE_VIEW, "view own device");
-            put(OWN_DEVICE_EDIT, "edit own device");
-            put(OWN_DEVICE_DELETE, "delete own device");
-            put(OWN_DEVICE_SHARE, "share own device");
+            put(ORG_DEVICES_CREATE, "create org devices");
+            put(ORG_DEVICES_VIEW, "view org devices");
+            put(ORG_DEVICES_EDIT, "edit org devices");
+            put(ORG_DEVICES_DELETE, "delete org devices");
+            put(ORG_DEVICES_SHARE, "share org devices");
+            put(OWN_DEVICES_CREATE, "create own devices");
+            put(OWN_DEVICES_VIEW, "view own devices");
+            put(OWN_DEVICES_EDIT, "edit own devices");
+            put(OWN_DEVICES_DELETE, "delete own devices");
+            put(OWN_DEVICES_SHARE, "share own devices");
         }
     };
 
