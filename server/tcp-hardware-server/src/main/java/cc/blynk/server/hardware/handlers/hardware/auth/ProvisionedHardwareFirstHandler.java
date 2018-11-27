@@ -108,7 +108,19 @@ public class ProvisionedHardwareFirstHandler extends SimpleChannelInboundHandler
 
                     if (templateId == null) {
                         org = holder.organizationDao.getOrgByIdOrThrow(orgId);
-                        product = org.getFirstProduct();
+
+                        //special temporary hotfix https://github.com/blynkkk/dash/issues/1765
+                        if ("0.7.0".equals(hardwareInfo.blynkVersion)) {
+                            String productName = "Airius Fan";
+                            product = org.getProductByName(productName);
+                            if (product == null) {
+                                log.error("Didn't find product by name {} for orgId={}.", productName, orgId);
+                            }
+                        }
+                        if (product == null) {
+                            product = org.getFirstProduct();
+                        }
+
                         log.warn("No templateId from hardware. Getting first product (id={}) "
                                 + "for provisioned device {}.", product.id, device.id);
                     } else {

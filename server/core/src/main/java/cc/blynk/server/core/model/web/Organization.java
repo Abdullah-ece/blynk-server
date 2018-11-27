@@ -288,6 +288,15 @@ public class Organization {
         this.lastModifiedTs = System.currentTimeMillis();
     }
 
+    public Product getProductByName(String name) {
+        for (Product product : products) {
+            if (name.equals(product.name)) {
+                return product;
+            }
+        }
+        return null;
+    }
+
     @Override
     public String toString() {
         return JsonParser.toJson(this);
