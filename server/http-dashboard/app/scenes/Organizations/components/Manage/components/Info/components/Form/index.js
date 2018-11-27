@@ -1,12 +1,12 @@
-import React                      from 'react';
-import {Input, Item, Switch}      from "components/UI";
-import Validation                 from 'services/Validation';
-import {Row, Col, message}        from 'antd';
+import React from 'react';
+import { Input, Item, Switch } from "components/UI";
+import Validation from 'services/Validation';
+import { Row, Col, message } from 'antd';
 import {
   Field as FormField
-}                                 from 'redux-form';
-import ImageUploader              from 'components/ImageUploader';
-import PropTypes                  from 'prop-types';
+} from 'redux-form';
+import ImageUploader from 'components/ImageUploader';
+import PropTypes from 'prop-types';
 
 class Form extends React.Component {
 
@@ -23,39 +23,6 @@ class Form extends React.Component {
   constructor(props) {
     super(props);
 
-    this.logoComponent = this.logoComponent.bind(this);
-  }
-
-  logoComponent({input, meta: {error, touched}}) {
-
-    const fileProps = {
-      data: {
-        token: this.props.secureUploadToken
-      }
-    };
-
-    const handleComponentChange = (info) => {
-      const status = info.file.status;
-      if (status === 'done') {
-        this.props.fetchToken();
-        input.onChange(info.file.response);
-      } else if (status === 'error') {
-        this.props.fetchToken();
-        message.error(`${info.file.name} file upload failed.`);
-      }
-    };
-
-    return (
-      <ImageUploader text={() => (<span>Upload Logo (optional)<br/><br/></span>)}
-                     logo={input.value}
-                     error={error}
-                     fileProps={fileProps}
-                     touched={touched}
-                     hint={() => (
-                       <span>Upload from computer or drag-n-drop<br/>.png or .jpg, min 500x500px</span>
-                     )}
-                     onChange={handleComponentChange}/>
-    );
   }
 
   render() {
@@ -64,11 +31,13 @@ class Form extends React.Component {
         <Col span={15}>
 
           <Item label="Name" offset="medium">
-            <Input name="name" placeholder="Name" validate={[Validation.Rules.required]}/>
+            <Input name="name" placeholder="Name"
+                   validate={[Validation.Rules.required]}/>
           </Item>
 
           <Item label="Description" offset="normal">
-            <Input name="description" type="textarea" rows="5" placeholder="Description (optional)"/>
+            <Input name="description" type="textarea" rows="5"
+                   placeholder="Description (optional)"/>
           </Item>
 
           <Item>
@@ -80,7 +49,37 @@ class Form extends React.Component {
         <Col span={9}>
           <div className="organizations-create-drag-and-drop">
             <FormField name="logoUrl"
-                       component={this.logoComponent}/>
+                       component={({ input, meta: { error, touched } }) => {
+                         const fileProps = {
+                           data: {
+                             token: this.props.secureUploadToken
+                           }
+                         };
+
+                         const handleComponentChange = (info) => {
+                           const status = info.file.status;
+                           if (status === 'done') {
+                             this.props.fetchToken();
+                             input.onChange(info.file.response);
+                           } else if (status === 'error') {
+                             this.props.fetchToken();
+                             message.error(`${info.file.name} file upload failed.`);
+                           }
+                         };
+
+                         return (
+                           <ImageUploader text={() => (
+                             <span>Upload Logo (optional)<br/><br/></span>)}
+                                          logo={input.value}
+                                          error={error}
+                                          fileProps={fileProps}
+                                          touched={touched}
+                                          hint={() => (
+                                            <span>Upload from computer or drag-n-drop<br/>.png or .jpg, min 500x500px</span>
+                                          )}
+                                          onChange={handleComponentChange}/>
+                         );
+                       }}/>
           </div>
         </Col>
       </Row>
