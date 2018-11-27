@@ -1,39 +1,39 @@
-import React                from 'react';
-import {MainLayout}         from 'components';
-import {connect}            from 'react-redux';
-import {ProductsFetch}      from 'data/Product/api';
+import React from 'react';
+import { MainLayout } from 'components';
+import { connect } from 'react-redux';
+import { ProductsFetch } from 'data/Product/api';
 import {
   Button,
   Tabs,
-}                           from 'antd';
-import PropTypes            from 'prop-types';
+} from 'antd';
+import PropTypes from 'prop-types';
 import {
   Map,
   List,
   fromJS
-}                           from 'immutable';
-import {bindActionCreators} from 'redux';
-import {reset}              from 'redux-form';
+} from 'immutable';
+import { bindActionCreators } from 'redux';
+import { reset } from 'redux-form';
 import {
   OrganizationsDetailsUpdate,
   OrganizationsFetch,
   OrganizationsUsersFetch,
   OrganizationsDelete,
-}                           from 'data/Organizations/actions';
+} from 'data/Organizations/actions';
 
 import {
   OrganizationUsersDelete,
   OrganizationSendInvite
-}                           from 'data/Organization/actions';
+} from 'data/Organization/actions';
 
 import {
   Info,
   Products
-}                           from './components';
+} from './components';
 
 import AdminsEditScene from "../AdminsEdit";
 
-const {TabPane} = Tabs;
+const { TabPane } = Tabs;
 
 import './styles.less';
 
@@ -107,10 +107,10 @@ class Details extends React.Component {
     if (this.props.list)
       redirectIfNotExist(this.props.list);
 
-    const activeTab =  Object.values(this.TABS).indexOf(this.props.params.tab) > -1 ?
-                                                              this.props.params.tab : this.TABS.INFO;
+    const activeTab = Object.values(this.TABS).indexOf(this.props.params.tab) > -1 ?
+      this.props.params.tab : this.TABS.INFO;
     this.props.OrganizationsDetailsUpdate(
-      this.props.details.set('activeTab', activeTab )
+      this.props.details.set('activeTab', activeTab)
     );
   }
 
@@ -122,7 +122,6 @@ class Details extends React.Component {
   }
 
   handleOrganizationEdit() {
-
     this.props.OrganizationsDetailsUpdate(this.props.details.set('loading', true));
 
     return Promise.all([
@@ -132,7 +131,7 @@ class Details extends React.Component {
       this.props.fetchProducts({
         orgId: this.props.account.selectedOrgId,
       }),
-      this.props.OrganizationsUsersFetch({id: this.props.params.id})
+      this.props.OrganizationsUsersFetch({ id: this.props.params.id })
     ]).then(() => {
       setTimeout(() => {
         this.props.OrganizationsDetailsUpdate(this.props.details.set('loading', false));
@@ -149,6 +148,12 @@ class Details extends React.Component {
   };
 
   handleTabChange(tab) {
+    if (tab === this.TABS.PRODUCTS) {
+      this.props.OrganizationsFetch({
+        orgId: this.props.account.selectedOrgId
+      })
+    }
+    
     this.props.OrganizationsDetailsUpdate(
       this.props.details.set('activeTab', tab)
     );
@@ -163,18 +168,20 @@ class Details extends React.Component {
     if (!this.props.admins.get('users'))
       return null;
 
-    const organization = this.props.list.find(org => org.get('id') === Number(this.props.params.id));
+    const organization = this.props.list.find(
+      org => org.get('id') === Number(this.props.params.id));
 
     if (!organization)
       return null;
-    const activeTab =  Object.values(this.TABS).indexOf(this.props.params.tab) > -1 ?
-                                                              this.props.params.tab : this.TABS.INFO;
+    const activeTab = Object.values(this.TABS).indexOf(this.props.params.tab) > -1 ?
+      this.props.params.tab : this.TABS.INFO;
     return (
       <MainLayout>
         <MainLayout.Header title={organization.get('name')}
                            options={(
                              <div>
-                               <Button type="primary" loading={this.props.details.get('loading')}
+                               <Button type="primary"
+                                       loading={this.props.details.get('loading')}
                                        onClick={this.handleOrganizationEdit}>Edit</Button>
                              </div>
                            )}/>
@@ -193,13 +200,16 @@ class Details extends React.Component {
             <TabPane tab="Products"
                      key={this.TABS.PRODUCTS}>
               <div className="organizations-manage-tab-wrapper">
-                <Products products={organization.get('products')} companyName={organization.get('name')}/>
+                <Products products={organization.get('products')}
+                          companyName={organization.get('name')}/>
               </div>
             </TabPane>
             <TabPane tab="Admins"
                      key={this.TABS.ADMINS}>
               <div className="organizations-manage-tab-wrapper">
-                <AdminsEditScene params={this.props.params} allowResendInvite={true} orgId={Number(this.props.params.id)}/>
+                <AdminsEditScene params={this.props.params}
+                                 allowResendInvite={true}
+                                 orgId={Number(this.props.params.id)}/>
               </div>
             </TabPane>
           </Tabs>
