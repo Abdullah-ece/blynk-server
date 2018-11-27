@@ -177,10 +177,10 @@ class List extends React.Component {
     // update all widgets which have updated dataStream to keep all consistent
 
     let widgets = this.props.formValues.webDashboard.widgets;
-
+    
     widgets = widgets.map((widget) => ({
       ...widget,
-      sources: widget.sources.map((source) => {
+      sources: widget.sources ? widget.sources.map((source) => {
         if(source && source.dataStream && Number(source.dataStream.id) === Number(dataStream.id)) {
           return {
             ...source,
@@ -190,7 +190,7 @@ class List extends React.Component {
           };
         }
         return source;
-      })
+      }) : []
     }));
 
     this.props.changeForm(FORMS.PRODUCTS_PRODUCT_MANAGE, 'webDashboard.widgets', widgets);
