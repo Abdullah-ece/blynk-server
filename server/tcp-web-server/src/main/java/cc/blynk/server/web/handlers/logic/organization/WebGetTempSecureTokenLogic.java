@@ -6,8 +6,6 @@ import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.internal.token.UploadTempToken;
 import cc.blynk.utils.TokenGeneratorUtil;
 import io.netty.channel.ChannelHandlerContext;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.internal.CommonByteBufUtil.makeASCIIStringMessage;
 
@@ -19,8 +17,6 @@ import static cc.blynk.server.internal.CommonByteBufUtil.makeASCIIStringMessage;
  */
 public final class WebGetTempSecureTokenLogic {
 
-    private static final Logger log = LogManager.getLogger(WebGetTempSecureTokenLogic.class);
-
     private WebGetTempSecureTokenLogic() {
     }
 
@@ -29,7 +25,7 @@ public final class WebGetTempSecureTokenLogic {
         holder.tokensPool.addToken(tokenString, new UploadTempToken(user.email));
 
         if (ctx.channel().isWritable()) {
-            Token token = new Token(tokenString);
+            TokenDTO token = new TokenDTO(tokenString);
             ctx.writeAndFlush(
                     makeASCIIStringMessage(msg.command, msg.id, token.toString()),
                     ctx.voidPromise());

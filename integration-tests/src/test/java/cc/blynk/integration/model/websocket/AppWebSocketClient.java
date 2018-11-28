@@ -37,7 +37,7 @@ import cc.blynk.server.web.handlers.logic.device.timeline.TimelineDTO;
 import cc.blynk.server.web.handlers.logic.device.timeline.TimelineResponseDTO;
 import cc.blynk.server.web.handlers.logic.organization.LocationDTO;
 import cc.blynk.server.web.handlers.logic.organization.OrganizationsHierarchyDTO;
-import cc.blynk.server.web.handlers.logic.organization.Token;
+import cc.blynk.server.web.handlers.logic.organization.TokenDTO;
 import cc.blynk.utils.SHA256Util;
 import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.properties.ServerProperties;
@@ -381,8 +381,8 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), String.class);
     }
 
-    public Token parseToken(int expectedMessageOrder) throws Exception {
-        return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), Token.class);
+    public TokenDTO parseToken(int expectedMessageOrder) throws Exception {
+        return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), TokenDTO.class);
     }
 
     public void send(String line) {
