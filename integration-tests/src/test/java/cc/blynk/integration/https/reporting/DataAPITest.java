@@ -16,7 +16,6 @@ import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.WebDashboard;
 import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
-import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.web.WebSource;
 import cc.blynk.server.core.model.widgets.web.label.WebLabel;
@@ -289,7 +288,8 @@ public class DataAPITest extends APIBaseTest {
         product.connectionType = ConnectionType.WI_FI;
         product.metaFields = new MetaField[] {
                 new NumberMetaField(1, "Jopa", new int[] {2}, false, false, false, null, 0, 1000, 123D, 1),
-                new TextMetaField(2, "Device Name", new int[] {1}, false, false, true, null, "My Default device Name")
+                createDeviceNameMeta(2, "Devie name", "123", true),
+                createDeviceOwnerMeta(3, "Owner", "123", true)
         };
 
         WebLabel webLabel = new WebLabel();

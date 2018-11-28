@@ -30,6 +30,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.List;
 
 import static cc.blynk.integration.APIBaseTest.createContactMeta;
+import static cc.blynk.integration.APIBaseTest.createDeviceNameMeta;
+import static cc.blynk.integration.APIBaseTest.createDeviceOwnerMeta;
 import static cc.blynk.integration.APIBaseTest.createNumberMeta;
 import static cc.blynk.integration.APIBaseTest.createTextMeta;
 import static cc.blynk.integration.TestUtil.b;
@@ -759,6 +761,8 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         product.connectionType = ConnectionType.WI_FI;
         product.metaFields = new MetaField[] {
                 createNumberMeta(1, "Jopa", 123D),
+                createDeviceOwnerMeta(2, "owner", "owner", true),
+                createDeviceNameMeta(3, "anme", "name", true),
                 createContactMeta(6, "Farm of Smith"),
                 createTextMeta(7, "Device Owner", "owner@blynk.cc")
         };

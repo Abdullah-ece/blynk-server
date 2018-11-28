@@ -120,7 +120,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
             assertEquals(1, device.id);
             assertNotNull(device.token);
             assertNotNull(device.metaFields);
-            assertEquals(2, device.metaFields.length);
+            assertEquals(3, device.metaFields.length);
             NumberMetaField numberMetaField = (NumberMetaField) device.metaFields[0];
             assertEquals("Jopa", numberMetaField.name);
             assertEquals(1, numberMetaField.roleIds[0]);
@@ -181,7 +181,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
             assertEquals(1, device.id);
             assertNotNull(device.token);
             assertNotNull(device.metaFields);
-            assertEquals(2, device.metaFields.length);
+            assertEquals(3, device.metaFields.length);
             NumberMetaField numberMetaField = (NumberMetaField) device.metaFields[0];
             assertEquals("Jopa", numberMetaField.name);
             assertEquals(1, numberMetaField.roleIds[0]);
@@ -720,7 +720,8 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         product.connectionType = ConnectionType.WI_FI;
         product.metaFields = new MetaField[] {
                 createNumberMeta(1, "Jopa", 123D),
-                createTextMeta(2, "Device Name", "My Default device Name")
+                createDeviceNameMeta(2, "Device Name", "My Default device Name", true),
+                createDeviceOwnerMeta(3, "Device Owner", null, true)
         };
 
         WebSwitch webSwitch = new WebSwitch();

@@ -542,8 +542,8 @@ public class OTATest extends APIBaseTest {
         product.logoUrl = "/logoUrl";
         product.connectionType = ConnectionType.WI_FI;
         product.metaFields = new MetaField[] {
-                createNumberMeta(1, "Jopa", 123D),
-                createTextMeta(2, "Device Name", "My Default device Name"),
+                createDeviceNameMeta(1, "Device Name", "My Default device Name", true),
+                createDeviceOwnerMeta(2, "Device Owner", "Device owner", true)
         };
 
         HttpPut req = new HttpPut(httpsAdminServerUrl + "/product");

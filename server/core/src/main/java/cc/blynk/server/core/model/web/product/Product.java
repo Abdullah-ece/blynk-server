@@ -5,6 +5,8 @@ import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.events.Event;
+import cc.blynk.server.core.model.web.product.metafields.DeviceNameMetaField;
+import cc.blynk.server.core.model.web.product.metafields.DeviceOwnerMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TemplateIdMetaField;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
@@ -141,6 +143,22 @@ public class Product {
             metaField.basicValidate();
         }
         checkForDuplicateTemplateId();
+        if (!hasMetafield(DeviceNameMetaField.class)) {
+            throw new IllegalCommandBodyException("Product has no device name metafield.");
+        }
+
+        if (!hasMetafield(DeviceOwnerMetaField.class)) {
+            throw new IllegalCommandBodyException("Product has no device owner metafield.");
+        }
+    }
+
+    private boolean hasMetafield(Class<?> type) {
+        for (MetaField metaField : metaFields) {
+            if (type.isInstance(metaField)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void checkForDuplicateTemplateId() {

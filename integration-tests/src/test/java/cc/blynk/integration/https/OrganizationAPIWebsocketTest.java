@@ -18,6 +18,8 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static cc.blynk.integration.APIBaseTest.createDeviceNameMeta;
+import static cc.blynk.integration.APIBaseTest.createDeviceOwnerMeta;
 import static cc.blynk.integration.APIBaseTest.createNumberMeta;
 import static cc.blynk.integration.APIBaseTest.createTextMeta;
 import static cc.blynk.integration.TestUtil.defaultClient;
@@ -157,7 +159,9 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
                         false, null,
                         false, null,
                         false, false,
-                        null)
+                        null),
+                createDeviceNameMeta(4, "namne", "name", true),
+                createDeviceOwnerMeta(5, "owner", "owner", true)
         };
 
         client.createProduct(orgId, product);
@@ -221,7 +225,9 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
                         false, null,
                         false, null,
                         false, false,
-                        null)
+                        null),
+                createDeviceNameMeta(4, "namne", "name", true),
+                createDeviceOwnerMeta(5, "owner", "owner", true)
         };
 
         client.createProduct(orgId, product);

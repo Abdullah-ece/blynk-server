@@ -48,7 +48,6 @@ import java.util.List;
 import static cc.blynk.integration.APIBaseTest.createDeviceNameMeta;
 import static cc.blynk.integration.APIBaseTest.createDeviceOwnerMeta;
 import static cc.blynk.integration.APIBaseTest.createMeasurementMeta;
-import static cc.blynk.integration.APIBaseTest.createNumberMeta;
 import static cc.blynk.integration.APIBaseTest.createTemplateIdMeta;
 import static cc.blynk.integration.TestUtil.appSync;
 import static cc.blynk.integration.TestUtil.b;
@@ -208,8 +207,8 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         Product product = new Product();
         product.name = "My product";
         product.metaFields = new MetaField[] {
-                createMeasurementMeta(1, "Jopa", 1, MeasurementUnit.Celsius),
-                createDeviceNameMeta(2, "Device Name", "My Default device Name", false)
+                createDeviceOwnerMeta(1, "Device Name", null, true),
+                createDeviceNameMeta(2, "Device Name", "My Default device Name", true)
         };
 
         client.createProduct(orgId, product);
@@ -219,6 +218,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         Product product2 = new Product();
         product2.name = "My product2";
         product2.metaFields = new MetaField[] {
+                createDeviceOwnerMeta(1, "Device Name", null, true),
                 createDeviceNameMeta(2, "Device Name", "My Default device Name", true),
                 createTemplateIdMeta(3, "Template Id", "TMPL0001")
         };
@@ -275,7 +275,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         Device provisionedDevice = appClient.parseDevice(1);
         assertNotNull(provisionedDevice);
         assertNotNull(provisionedDevice.metaFields);
-        assertEquals(2, provisionedDevice.metaFields.length);
+        assertEquals(3, provisionedDevice.metaFields.length);
         assertEquals(fromApiProduct2.id, provisionedDevice.productId);
         assertNotNull(provisionedDevice.hardwareInfo);
         assertEquals("TMPL0001", provisionedDevice.hardwareInfo.templateId);
@@ -401,7 +401,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         Product product = new Product();
         product.name = "My product";
         product.metaFields = new MetaField[] {
-                createNumberMeta(1, "Jopa", 123D),
+                createDeviceOwnerMeta(1, "Device Name", null, true),
                 createDeviceNameMeta(2, "Device Name", "My Default device Name", false)
         };
 
@@ -435,8 +435,9 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         Product product = new Product();
         product.name = "My product";
         product.metaFields = new MetaField[] {
-                createNumberMeta(1, "Jopa", 123D),
-                new DeviceReferenceMetaField(2, "Device Ref", new int[] {1}, true, true, true, null, null, -1L)
+                createDeviceOwnerMeta(1, "Device Name", null, true),
+                new DeviceReferenceMetaField(2, "Device Ref", new int[] {1}, true, true, true, null, null, -1L),
+                createDeviceNameMeta(3, "Device Name", "111", true)
         };
 
         client.createProduct(orgId, product);
@@ -444,8 +445,9 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         assertNotNull(fromApiProduct);
 
         fromApiProduct = updateProductMetafields(fromApiProduct,
-                createNumberMeta(1, "Jopa", 123D),
-                new DeviceReferenceMetaField(2, "Device Ref", new int[] {1}, true, true, true, null, new int[] {fromApiProduct.id}, -1L)
+                createDeviceOwnerMeta(1, "Device Name", null, true),
+                new DeviceReferenceMetaField(2, "Device Ref", new int[] {1}, true, true, true, null, new int[] {fromApiProduct.id}, -1L),
+                createDeviceNameMeta(3, "Device Name", "111", true)
         );
 
         client.updateProduct(orgId, fromApiProduct);
@@ -468,8 +470,8 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         Device device = appClient.parseDevice(2);
         MetaField[] metaFields = device.metaFields;
         assertNotNull(metaFields);
-        assertEquals(1, metaFields.length);
-        MetaField metaField = metaFields[0];
+        assertEquals(3, metaFields.length);
+        MetaField metaField = metaFields[1];
         assertTrue(metaField instanceof DeviceReferenceMetaField);
 
         appClient.getDevicesByReferenceMetafield(createdDevice.id, metaField.id);
@@ -495,7 +497,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         Product product = new Product();
         product.name = "My product";
         product.metaFields = new MetaField[] {
-                createMeasurementMeta(1, "Jopa", 1, MeasurementUnit.Celsius),
+                createDeviceOwnerMeta(1, "Device Name", null, true),
                 createDeviceNameMeta(2, "Device Name", "My Default device Name", false)
         };
 
@@ -593,7 +595,8 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         product.name = "My product";
         product.metaFields = new MetaField[] {
                 createMeasurementMeta(1, "Jopa", 1, MeasurementUnit.Celsius),
-                createDeviceNameMeta(2, "Device Name", "My Default device Name", false)
+                createDeviceNameMeta(2, "Device Name", "My Default device Name", false),
+                createDeviceOwnerMeta(3, "Device Owner", null, false)
         };
 
         client.createProduct(orgId, product);
@@ -603,6 +606,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         Product product2 = new Product();
         product2.name = "My product2";
         product2.metaFields = new MetaField[] {
+                createDeviceOwnerMeta(1, "Device Name", null, true),
                 createDeviceNameMeta(2, "Device Name", "My Default device Name", true),
                 createTemplateIdMeta(3, "Template Id", "TMPL0001")
         };
@@ -667,7 +671,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         Device createdDeviceFromTheProvision = JsonParser.parseDevice(response, -1);
         assertNotNull(createdDeviceFromTheProvision);
         assertNotNull(createdDeviceFromTheProvision.metaFields);
-        assertEquals(2, createdDeviceFromTheProvision.metaFields.length);
+        assertEquals(3, createdDeviceFromTheProvision.metaFields.length);
         assertEquals(fromApiProduct2.id, createdDeviceFromTheProvision.productId);
         assertNotNull(createdDeviceFromTheProvision.hardwareInfo);
         assertEquals("TMPL0001", createdDeviceFromTheProvision.hardwareInfo.templateId);
@@ -679,7 +683,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         Device provisionedDevice = appClient.parseDevice(6);
         assertNotNull(provisionedDevice);
         assertNotNull(provisionedDevice.metaFields);
-        assertEquals(2, provisionedDevice.metaFields.length);
+        assertEquals(3, provisionedDevice.metaFields.length);
         assertEquals(fromApiProduct2.id, provisionedDevice.productId);
         assertNotNull(provisionedDevice.hardwareInfo);
         assertEquals("TMPL0001", provisionedDevice.hardwareInfo.templateId);
@@ -849,6 +853,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         Product product = new Product();
         product.name = "My product";
         product.metaFields = new MetaField[] {
+                createDeviceOwnerMeta(1, "Device Name", null, true),
                 createDeviceNameMeta(2, "Device Name", "My Default device Name", true),
                 createTemplateIdMeta(3, "Template Id", "TMPL0002")
         };
@@ -859,6 +864,10 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
 
         Product product2 = new Product();
         product2.name = "My product2";
+        product2.metaFields = new MetaField[] {
+                createDeviceOwnerMeta(1, "Device Name", null, true),
+                createDeviceNameMeta(2, "Device Name", "My Default device Name", true)
+        };
         client.createProduct(orgId, product2);
         ProductDTO fromApiProduct2 = client.parseProductDTO(2);
         assertNotNull(fromApiProduct2);
@@ -915,6 +924,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         Product product = new Product();
         product.name = "My product";
         product.metaFields = new MetaField[] {
+                createDeviceOwnerMeta(1, "Device Name", null, true),
                 createDeviceNameMeta(2, "Device Name", "My Default device Name", true),
         };
 
@@ -925,6 +935,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         Product product2 = new Product();
         product2.name = "My product2";
         product2.metaFields = new MetaField[] {
+                createDeviceOwnerMeta(1, "Device Name", null, true),
                 createDeviceNameMeta(2, "Device Name", "My Default device Name", true),
                 createTemplateIdMeta(3, "Template Id", "TMPL0001")
         };
@@ -982,6 +993,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         Product product = new Product();
         product.name = "My product";
         product.metaFields = new MetaField[] {
+                createDeviceOwnerMeta(1, "Device Name", null, true),
                 createDeviceNameMeta(2, "Device Name", "My Default device Name", true),
         };
 
@@ -992,6 +1004,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         Product product2 = new Product();
         product2.name = "My product2";
         product2.metaFields = new MetaField[] {
+                createDeviceOwnerMeta(1, "Device Name", null, true),
                 createDeviceNameMeta(2, "Device Name", "My Default device Name", true),
                 createTemplateIdMeta(3, "Template Id", "TMPL0001")
         };

@@ -7,12 +7,15 @@ import cc.blynk.server.core.model.dto.OrganizationDTO;
 import cc.blynk.server.core.model.dto.ProductDTO;
 import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.web.Organization;
+import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.utils.SHA256Util;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static cc.blynk.integration.APIBaseTest.createDeviceNameMeta;
+import static cc.blynk.integration.APIBaseTest.createDeviceOwnerMeta;
 import static cc.blynk.integration.TestUtil.loggedDefaultClient;
 import static cc.blynk.integration.TestUtil.webJson;
 import static org.junit.Assert.assertEquals;
@@ -33,6 +36,10 @@ public class PermissionsTest extends SingleServerInstancePerTestWithDBAndNewOrg 
 
         Product product = new Product();
         product.name = "My product";
+        product.metaFields = new MetaField[] {
+                createDeviceNameMeta(1, "namne", "name", true),
+                createDeviceOwnerMeta(2, "owner", "owner", true)
+        };
 
         client.createProduct(orgId, product);
         ProductDTO fromApiProduct = client.parseProductDTO(1);
@@ -67,7 +74,7 @@ public class PermissionsTest extends SingleServerInstancePerTestWithDBAndNewOrg 
         assertNotNull(createdDevice);
         assertEquals("My New Device", createdDevice.name);
         assertNotNull(createdDevice.metaFields);
-        assertEquals(0, createdDevice.metaFields.length);
+        assertEquals(2, createdDevice.metaFields.length);
         assertEquals(System.currentTimeMillis(), createdDevice.activatedAt, 5000);
         assertEquals("super@blynk.cc", createdDevice.activatedBy);
 
@@ -87,6 +94,10 @@ public class PermissionsTest extends SingleServerInstancePerTestWithDBAndNewOrg 
 
         Product product = new Product();
         product.name = "My product";
+        product.metaFields = new MetaField[] {
+                createDeviceNameMeta(1, "namne", "name", true),
+                createDeviceOwnerMeta(2, "owner", "owner", true)
+        };
 
         client.createProduct(orgId, product);
         ProductDTO fromApiProduct = client.parseProductDTO(1);
