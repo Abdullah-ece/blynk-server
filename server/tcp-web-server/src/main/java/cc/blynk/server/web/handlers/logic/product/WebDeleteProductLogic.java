@@ -10,10 +10,12 @@ import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
+import cc.blynk.server.web.handlers.PermissionBasedLogic;
 import cc.blynk.utils.IntArray;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -21,6 +23,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
+import static cc.blynk.server.core.model.permissions.PermissionsTable.PRODUCT_DELETE;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 import static cc.blynk.server.internal.WebByteBufUtil.json;
 import static cc.blynk.utils.StringUtils.split2;
@@ -30,7 +33,7 @@ import static cc.blynk.utils.StringUtils.split2;
  * Created by Dmitriy Dumanskiy.
  * Created on 13.04.18.
  */
-public class WebDeleteProductLogic {
+public class WebDeleteProductLogic implements PermissionBasedLogic {
 
     private static final Logger log = LogManager.getLogger(WebDeleteProductLogic.class);
 
@@ -50,7 +53,18 @@ public class WebDeleteProductLogic {
         this.userDao = holder.userDao;
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
+    @Override
+    public boolean hasPermission(Role role) {
+        return role.canDeleteProduct();
+    }
+
+    @Override
+    public int getPermission() {
+        return PRODUCT_DELETE;
+    }
+
+    @Override
+    public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         String[] split = split2(message.body);
 
         int productId;

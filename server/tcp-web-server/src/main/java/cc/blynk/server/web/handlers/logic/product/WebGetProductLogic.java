@@ -1,16 +1,21 @@
 package cc.blynk.server.web.handlers.logic.product;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.dto.ProductDTO;
+import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.core.session.web.WebAppStateHolder;
+import cc.blynk.server.web.handlers.PermissionBasedLogic;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import static cc.blynk.server.core.model.permissions.PermissionsTable.PRODUCT_VIEW;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.utils.StringUtils.split2;
 
@@ -19,17 +24,31 @@ import static cc.blynk.utils.StringUtils.split2;
  * Created by Dmitriy Dumanskiy.
  * Created on 13.04.18.
  */
-public final class WebGetProductLogic {
+public final class WebGetProductLogic implements PermissionBasedLogic {
 
     private static final Logger log = LogManager.getLogger(WebGetProductLogic.class);
 
-    private WebGetProductLogic() {
+    private final OrganizationDao organizationDao;
+
+    public WebGetProductLogic(Holder holder) {
+        this.organizationDao = holder.organizationDao;
     }
 
-    public static void messageReceived(Holder holder,
-                                       ChannelHandlerContext ctx, User user, StringMessage message) {
+    @Override
+    public boolean hasPermission(Role role) {
+        return role.canViewProduct();
+    }
+
+    @Override
+    public int getPermission() {
+        return PRODUCT_VIEW;
+    }
+
+    @Override
+    public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         String[] split = split2(message.body);
 
+        User user = state.user;
         int orgId;
         int productId;
         if (split.length == 2) {
@@ -40,7 +59,7 @@ public final class WebGetProductLogic {
             productId = Integer.parseInt(split[0]);
         }
 
-        Organization organization = holder.organizationDao.getOrgById(orgId);
+        Organization organization = organizationDao.getOrgById(orgId);
 
         if (organization == null) {
             log.error("Cannot find org with id {} for user {}", user.orgId, user.email);
@@ -55,7 +74,7 @@ public final class WebGetProductLogic {
             throw new JsonException("Cannot find product with passed id.");
         }
 
-        if (!holder.organizationDao.hasAccess(user, orgId)) {
+        if (!organizationDao.hasAccess(user, orgId)) {
             log.error("User {} tries to access product he has no access.", user.email);
             throw new JsonException("User tries to access product he has no access.");
         }

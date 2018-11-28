@@ -2,16 +2,20 @@ package cc.blynk.server.web.handlers.logic.product;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.dashboard.dto.ProductAndOrgIdDTO;
+import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
+import cc.blynk.server.web.handlers.PermissionBasedLogic;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import static cc.blynk.server.core.model.permissions.PermissionsTable.PRODUCT_EDIT;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.server.internal.WebByteBufUtil.json;
 
@@ -20,15 +24,28 @@ import static cc.blynk.server.internal.WebByteBufUtil.json;
  * Created by Dmitriy Dumanskiy.
  * Created on 13.04.18.
  */
-public final class WebEditProductLogic {
+public final class WebEditProductLogic implements PermissionBasedLogic {
 
     private static final Logger log = LogManager.getLogger(WebEditProductLogic.class);
 
-    private WebEditProductLogic() {
+    private final OrganizationDao organizationDao;
+
+    public WebEditProductLogic(Holder holder) {
+        this.organizationDao = holder.organizationDao;
     }
 
-    public static void messageReceived(Holder holder,
-                                       ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
+    @Override
+    public boolean hasPermission(Role role) {
+        return role.canEditProduct();
+    }
+
+    @Override
+    public int getPermission() {
+        return PRODUCT_EDIT;
+    }
+
+    @Override
+    public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         ProductAndOrgIdDTO productAndOrgIdDTO = JsonParser.readAny(message.body, ProductAndOrgIdDTO.class);
 
         User user = state.user;
@@ -56,7 +73,7 @@ public final class WebEditProductLogic {
             return;
         }
 
-        Organization organization = holder.organizationDao.getOrgByIdOrThrow(productAndOrgIdDTO.orgId);
+        Organization organization = organizationDao.getOrgByIdOrThrow(productAndOrgIdDTO.orgId);
 
         if (organization.isSubOrg()) {
             log.error("User {} can't update products for sub organizations.", user.email);
@@ -74,9 +91,9 @@ public final class WebEditProductLogic {
         Product existingProduct = organization.getProductOrThrow(product.id);
         existingProduct.update(product);
 
-        int[] subProductIds = holder.organizationDao.subProductIds(productAndOrgIdDTO.orgId, product.id);
+        int[] subProductIds = organizationDao.subProductIds(productAndOrgIdDTO.orgId, product.id);
         for (int productId : subProductIds) {
-            Product subProduct = holder.organizationDao.getProductById(productId);
+            Product subProduct = organizationDao.getProductById(productId);
             if (subProduct != null) {
                 subProduct.update(product);
             }

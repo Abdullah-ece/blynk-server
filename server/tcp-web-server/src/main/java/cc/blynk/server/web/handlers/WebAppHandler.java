@@ -129,6 +129,8 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
     private final WebDeleteRoleLogic webDeleteRoleLogic;
     private final WebGetRoleLogic webGetRoleLogic;
     private final WebGetOrgDevicesLogic webGetOrgDevicesLogic;
+    private final WebGetProductLogic webGetProductLogic;
+    private final WebEditProductLogic webEditProductLogic;
 
     private final Holder holder;
 
@@ -165,6 +167,8 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
         this.webDeleteRoleLogic = new WebDeleteRoleLogic(holder);
         this.webGetRoleLogic = new WebGetRoleLogic(holder);
         this.webGetOrgDevicesLogic = new WebGetOrgDevicesLogic(holder);
+        this.webGetProductLogic = new WebGetProductLogic(holder);
+        this.webEditProductLogic = new WebEditProductLogic(holder);
 
         this.state = state;
         this.holder = holder;
@@ -226,13 +230,13 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
                 webCreateProductLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_GET_PRODUCT :
-                WebGetProductLogic.messageReceived(holder, ctx, state.user, msg);
+                webGetProductLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_GET_PRODUCTS :
                 webGetProductsLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_UPDATE_PRODUCT :
-                WebEditProductLogic.messageReceived(holder, ctx, state, msg);
+                webEditProductLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_DELETE_PRODUCT :
                 webDeleteProductLogic.messageReceived(ctx, state, msg);

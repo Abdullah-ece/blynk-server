@@ -4,15 +4,18 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.dashboard.dto.ProductAndOrgIdDTO;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
+import cc.blynk.server.web.handlers.PermissionBasedLogic;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import static cc.blynk.server.core.model.permissions.PermissionsTable.PRODUCT_CREATE;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.server.internal.WebByteBufUtil.json;
 
@@ -21,7 +24,7 @@ import static cc.blynk.server.internal.WebByteBufUtil.json;
  * Created by Dmitriy Dumanskiy.
  * Created on 13.04.18.
  */
-public class WebCreateProductLogic {
+public class WebCreateProductLogic implements PermissionBasedLogic {
 
     private static final Logger log = LogManager.getLogger(WebCreateProductLogic.class);
 
@@ -31,7 +34,18 @@ public class WebCreateProductLogic {
         this.organizationDao = holder.organizationDao;
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
+    @Override
+    public boolean hasPermission(Role role) {
+        return role.canCreateProduct();
+    }
+
+    @Override
+    public int getPermission() {
+        return PRODUCT_CREATE;
+    }
+
+    @Override
+    public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         ProductAndOrgIdDTO productAndOrgIdDTO = JsonParser.readAny(message.body, ProductAndOrgIdDTO.class);
 
         User user = state.user;
