@@ -20,11 +20,11 @@ import static cc.blynk.server.internal.WebByteBufUtil.json;
  * Created by Dmitriy Dumanskiy.
  * Created on 13.04.18.
  */
-public final class WebUpdateProductLogic {
+public final class WebEditProductLogic {
 
-    private static final Logger log = LogManager.getLogger(WebUpdateProductLogic.class);
+    private static final Logger log = LogManager.getLogger(WebEditProductLogic.class);
 
-    private WebUpdateProductLogic() {
+    private WebEditProductLogic() {
     }
 
     public static void messageReceived(Holder holder,

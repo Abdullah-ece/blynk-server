@@ -24,14 +24,14 @@ import static cc.blynk.server.internal.WebByteBufUtil.userHasNoAccessToOrg;
  * Created by Dmitriy Dumanskiy.
  * Created on 13.04.18.
  */
-public class WebUpdateOrganizationLogic {
+public class WebEditOrganizationLogic {
 
-    private static final Logger log = LogManager.getLogger(WebUpdateOrganizationLogic.class);
+    private static final Logger log = LogManager.getLogger(WebEditOrganizationLogic.class);
 
     private final OrganizationDao organizationDao;
     private final DeviceDao deviceDao;
 
-    public WebUpdateOrganizationLogic(Holder holder) {
+    public WebEditOrganizationLogic(Holder holder) {
         this.organizationDao = holder.organizationDao;
         this.deviceDao = holder.deviceDao;
     }

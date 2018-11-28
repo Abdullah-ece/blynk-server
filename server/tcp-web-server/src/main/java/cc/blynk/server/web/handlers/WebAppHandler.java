@@ -22,12 +22,12 @@ import cc.blynk.server.web.handlers.logic.device.timeline.WebGetDeviceTimelineLo
 import cc.blynk.server.web.handlers.logic.device.timeline.WebResolveLogEventLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebCreateOrganizationLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebDeleteOrganizationLogic;
+import cc.blynk.server.web.handlers.logic.organization.WebEditOrganizationLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebGetOrganizationLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebGetOrganizationsHierarchyLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebGetOrganizationsLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebGetProductLocationsLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebGetTempSecureTokenLogic;
-import cc.blynk.server.web.handlers.logic.organization.WebUpdateOrganizationLogic;
 import cc.blynk.server.web.handlers.logic.organization.roles.WebCreateRoleLogic;
 import cc.blynk.server.web.handlers.logic.organization.roles.WebDeleteRoleLogic;
 import cc.blynk.server.web.handlers.logic.organization.roles.WebEditRoleLogic;
@@ -41,10 +41,10 @@ import cc.blynk.server.web.handlers.logic.organization.users.WebInviteUserLogic;
 import cc.blynk.server.web.handlers.logic.product.WebCanDeleteProductLogic;
 import cc.blynk.server.web.handlers.logic.product.WebCreateProductLogic;
 import cc.blynk.server.web.handlers.logic.product.WebDeleteProductLogic;
+import cc.blynk.server.web.handlers.logic.product.WebEditProductLogic;
 import cc.blynk.server.web.handlers.logic.product.WebGetProductLogic;
 import cc.blynk.server.web.handlers.logic.product.WebGetProductsLogic;
 import cc.blynk.server.web.handlers.logic.product.WebUpdateDevicesMetaInProductLogic;
-import cc.blynk.server.web.handlers.logic.product.WebUpdateProductLogic;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENHANCED_GRAPH_DATA;
@@ -116,7 +116,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
     private final WebEditUserInfoLogic webEditUserInfoLogic;
     private final WebDeleteUserLogic webDeleteUserLogic;
     private final WebCreateOrganizationLogic webCreateOrganizationLogic;
-    private final WebUpdateOrganizationLogic webUpdateOrganizationLogic;
+    private final WebEditOrganizationLogic webEditOrganizationLogic;
     private final WebDeleteOrganizationLogic webDeleteOrganizationLogic;
     private final WebCanDeleteProductLogic webCanDeleteProductLogic;
     private final WebInviteUserLogic webInviteUserLogic;
@@ -152,7 +152,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
         this.webEditUserInfoLogic = new WebEditUserInfoLogic(holder);
         this.webDeleteUserLogic = new WebDeleteUserLogic(holder);
         this.webCreateOrganizationLogic = new WebCreateOrganizationLogic(holder);
-        this.webUpdateOrganizationLogic = new WebUpdateOrganizationLogic(holder);
+        this.webEditOrganizationLogic = new WebEditOrganizationLogic(holder);
         this.webDeleteOrganizationLogic = new WebDeleteOrganizationLogic(holder);
         this.webCanDeleteProductLogic = new WebCanDeleteProductLogic(holder);
         this.webInviteUserLogic = new WebInviteUserLogic(holder);
@@ -232,7 +232,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
                 webGetProductsLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_UPDATE_PRODUCT :
-                WebUpdateProductLogic.messageReceived(holder, ctx, state, msg);
+                WebEditProductLogic.messageReceived(holder, ctx, state, msg);
                 break;
             case WEB_DELETE_PRODUCT :
                 webDeleteProductLogic.messageReceived(ctx, state, msg);
@@ -250,7 +250,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
                 webCreateOrganizationLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_UPDATE_ORG :
-                webUpdateOrganizationLogic.messageReceived(ctx, state, msg);
+                webEditOrganizationLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_DELETE_ORG :
                 webDeleteOrganizationLogic.messageReceived(ctx, state, msg);
