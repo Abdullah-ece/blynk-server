@@ -294,7 +294,7 @@ class Metadata extends React.Component {
 
     const elements = [];
 
-    this.props.product.metaFields.filter(this.filterStaticFields).forEach((
+    this.props.product.metaFields ? this.props.product.metaFields.filter(this.filterStaticFields).forEach((
       field,
       key
     ) => {
@@ -345,7 +345,7 @@ class Metadata extends React.Component {
         );
       }
 
-    });
+    }) : [];
 
     return elements;
 
