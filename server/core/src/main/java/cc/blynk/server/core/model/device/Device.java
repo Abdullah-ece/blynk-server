@@ -3,6 +3,7 @@ package cc.blynk.server.core.model.device;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.UpdateInterface;
+import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.ota.DeviceOtaInfo;
 import cc.blynk.server.core.model.device.ota.OTAStatus;
 import cc.blynk.server.core.model.enums.PinType;
@@ -345,6 +346,10 @@ public class Device implements Target {
             return bodySize <= DEFAULT_HARDWARE_BUFFER_SIZE;
         }
         return bodySize + 5 <= hardwareInfo.buffIn;
+    }
+
+    public boolean hasOwner(User user) {
+        return hasOwner(user.email);
     }
 
     public boolean hasOwner(String ownerEmail) {

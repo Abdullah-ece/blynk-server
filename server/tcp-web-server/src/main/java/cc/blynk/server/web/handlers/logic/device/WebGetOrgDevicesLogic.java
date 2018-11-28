@@ -31,9 +31,11 @@ public final class WebGetOrgDevicesLogic implements PermissionBasedLogic {
     private static final Logger log = LogManager.getLogger(WebGetOrgDevicesLogic.class);
 
     private final OrganizationDao organizationDao;
+    private final WebGetOwnDevicesLogic wegGetOwnDevicesHandler;
 
     public WebGetOrgDevicesLogic(Holder holder) {
         this.organizationDao = holder.organizationDao;
+        this.wegGetOwnDevicesHandler = new WebGetOwnDevicesLogic(holder);
     }
 
     @Override
@@ -47,8 +49,8 @@ public final class WebGetOrgDevicesLogic implements PermissionBasedLogic {
     }
 
     @Override
-    public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
-        String[] split = split2(message.body);
+    public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage msg) {
+        String[] split = split2(msg.body);
 
         int orgId = Integer.parseInt(split[0]);
 
@@ -56,7 +58,7 @@ public final class WebGetOrgDevicesLogic implements PermissionBasedLogic {
         User user = state.user;
         if (!organizationDao.hasAccess(user, orgId)) {
             log.error("User {} not allowed to access orgId {}", user.email, orgId);
-            ctx.writeAndFlush(userHasNoAccessToOrg(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(userHasNoAccessToOrg(msg.id), ctx.voidPromise());
             return;
         }
 
@@ -67,8 +69,12 @@ public final class WebGetOrgDevicesLogic implements PermissionBasedLogic {
 
         if (ctx.channel().isWritable()) {
             ctx.writeAndFlush(
-                    makeUTF8StringMessage(message.command, message.id, devicesJson), ctx.voidPromise());
+                    makeUTF8StringMessage(msg.command, msg.id, devicesJson), ctx.voidPromise());
         }
     }
 
+    @Override
+    public void noPermissionAction(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage msg) {
+        wegGetOwnDevicesHandler.messageReceived(ctx, state, msg);
+    }
 }

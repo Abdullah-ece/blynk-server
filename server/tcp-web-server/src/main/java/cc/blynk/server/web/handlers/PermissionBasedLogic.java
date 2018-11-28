@@ -16,11 +16,23 @@ public interface PermissionBasedLogic {
 
     int getPermission();
 
-    default void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
-        if (!hasPermission(state.role)) {
-            throw new NoPermissionException(state.user.email, getPermission());
+    default void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage msg) {
+        if (hasPermission(state.role)) {
+            messageReceived0(ctx, state, msg);
+        } else {
+            noPermissionAction(ctx, state, msg);
         }
-        messageReceived0(ctx, state, message);
+    }
+
+    /**
+     * Used when API handler should behave differently when 2 permissions overlap.
+     * For example, VIEW_ORG_DEVICES permission overlap VIEW_OWN_DEVICES,
+     * so when getDevices command comes we have to check first for overlapping permission
+     * and if user have overlapping permission VIEW_ORG_DEVICES - return all devices for this org
+     * if user doesn't have VIEW_ORG_DEVICES - return devices based on VIEW_OWN_DEVICES
+     */
+    default void noPermissionAction(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage msg) {
+        throw new NoPermissionException(state.user.email, getPermission());
     }
 
     void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message);

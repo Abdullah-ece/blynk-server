@@ -23,6 +23,7 @@ public final class WebTrackDeviceLogic {
     }
 
     public static void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
+        //todo security check
         int deviceId = Integer.parseInt(message.body);
         state.selectedDeviceId = deviceId;
         log.debug("Selecting webapp device {} for {}.", deviceId, state.user.email);

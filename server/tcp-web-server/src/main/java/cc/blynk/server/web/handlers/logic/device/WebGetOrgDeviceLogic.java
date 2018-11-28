@@ -6,14 +6,17 @@ import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.dto.DeviceDTO;
+import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
+import cc.blynk.server.web.handlers.PermissionBasedLogic;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_DEVICES_VIEW;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.server.internal.WebByteBufUtil.json;
 import static cc.blynk.server.internal.WebByteBufUtil.userHasNoAccessToOrg;
@@ -24,19 +27,37 @@ import static cc.blynk.utils.StringUtils.split2;
  * Created by Dmitriy Dumanskiy.
  * Created on 13.04.18.
  */
-public class WebGetDeviceLogic {
+public class WebGetOrgDeviceLogic implements PermissionBasedLogic {
 
-    private static final Logger log = LogManager.getLogger(WebGetDeviceLogic.class);
+    private static final Logger log = LogManager.getLogger(WebGetOrgDeviceLogic.class);
 
     private final OrganizationDao organizationDao;
     private final DeviceDao deviceDao;
+    private final WebGetOwnDeviceLogic webGetOwnDeviceLogic;
 
-    public WebGetDeviceLogic(Holder holder) {
+    public WebGetOrgDeviceLogic(Holder holder) {
         this.organizationDao = holder.organizationDao;
         this.deviceDao = holder.deviceDao;
+        this.webGetOwnDeviceLogic = new WebGetOwnDeviceLogic(holder);
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
+    @Override
+    public boolean hasPermission(Role role) {
+        return role.canViewOrgDevices();
+    }
+
+    @Override
+    public int getPermission() {
+        return ORG_DEVICES_VIEW;
+    }
+
+    @Override
+    public void noPermissionAction(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage msg) {
+        webGetOwnDeviceLogic.messageReceived(ctx, state, msg);
+    }
+
+    @Override
+    public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         String[] split = split2(message.body);
 
         int orgId = Integer.parseInt(split[0]);

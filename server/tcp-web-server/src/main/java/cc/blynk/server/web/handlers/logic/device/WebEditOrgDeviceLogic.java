@@ -3,19 +3,21 @@ package cc.blynk.server.web.handlers.logic.device;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.OrganizationDao;
-import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.dto.DeviceDTO;
+import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
+import cc.blynk.server.web.handlers.PermissionBasedLogic;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_DEVICES_EDIT;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.server.internal.WebByteBufUtil.json;
 import static cc.blynk.server.internal.WebByteBufUtil.productNotExists;
@@ -27,19 +29,37 @@ import static cc.blynk.utils.StringUtils.split2;
  * Created by Dmitriy Dumanskiy.
  * Created on 13.04.18.
  */
-public class WebUpdateDeviceLogic {
+public class WebEditOrgDeviceLogic implements PermissionBasedLogic {
 
-    private static final Logger log = LogManager.getLogger(WebUpdateDeviceLogic.class);
+    private static final Logger log = LogManager.getLogger(WebEditOrgDeviceLogic.class);
 
     private final DeviceDao deviceDao;
     private final OrganizationDao organizationDao;
+    private final WebEditOwnDeviceLogic webEditOwnDeviceLogic;
 
-    public WebUpdateDeviceLogic(Holder holder) {
+    public WebEditOrgDeviceLogic(Holder holder) {
         this.deviceDao = holder.deviceDao;
         this.organizationDao = holder.organizationDao;
+        this.webEditOwnDeviceLogic = new WebEditOwnDeviceLogic(holder);
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
+    @Override
+    public boolean hasPermission(Role role) {
+        return role.canEditOrgDevice();
+    }
+
+    @Override
+    public int getPermission() {
+        return ORG_DEVICES_EDIT;
+    }
+
+    @Override
+    public void noPermissionAction(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage msg) {
+        webEditOwnDeviceLogic.messageReceived(ctx, state, msg);
+    }
+
+    @Override
+    public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         String[] split = split2(message.body);
 
         int orgId = Integer.parseInt(split[0]);
@@ -63,15 +83,6 @@ public class WebUpdateDeviceLogic {
         if (newDevice.isNotValid()) {
             log.error("WebUpdate device for {} has wrong name or board. {}", user.email, newDevice);
             ctx.writeAndFlush(json(message.id, "Device has no name or board type selected."), ctx.voidPromise());
-            return;
-        }
-
-        //default dash for all devices...
-        DashBoard dash = user.profile.dashBoards[0];
-
-        if (dash == null) {
-            log.error("Dash with id = {} not exists.", dash.id);
-            ctx.writeAndFlush(json(message.id, "Dash not exists."), ctx.voidPromise());
             return;
         }
 

@@ -10,12 +10,16 @@ import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.permissions.Role;
+import cc.blynk.server.core.protocol.exceptions.NoPermissionException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
+import cc.blynk.server.web.handlers.PermissionBasedLogic;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import static cc.blynk.server.core.model.permissions.PermissionsTable.OWN_DEVICES_DELETE;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 import static cc.blynk.server.internal.WebByteBufUtil.json;
 import static cc.blynk.server.internal.WebByteBufUtil.userHasNoAccessToOrg;
@@ -26,9 +30,9 @@ import static cc.blynk.utils.StringUtils.split2;
  * Created by Dmitriy Dumanskiy.
  * Created on 13.04.18.
  */
-public class WebDeleteDeviceLogic {
+public class WebDeleteOwnDeviceLogic implements PermissionBasedLogic {
 
-    private static final Logger log = LogManager.getLogger(WebDeleteDeviceLogic.class);
+    private static final Logger log = LogManager.getLogger(WebDeleteOwnDeviceLogic.class);
 
     private final OrganizationDao organizationDao;
     private final DeviceDao deviceDao;
@@ -37,7 +41,7 @@ public class WebDeleteDeviceLogic {
     private final BlockingIOProcessor blockingIOProcessor;
     private final ReportingDiskDao reportingDiskDao;
 
-    public WebDeleteDeviceLogic(Holder holder) {
+    public WebDeleteOwnDeviceLogic(Holder holder) {
         this.organizationDao = holder.organizationDao;
         this.deviceDao = holder.deviceDao;
         this.sessionDao = holder.sessionDao;
@@ -46,7 +50,18 @@ public class WebDeleteDeviceLogic {
         this.reportingDiskDao = holder.reportingDiskDao;
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
+    @Override
+    public boolean hasPermission(Role role) {
+        return role.canDeleteOwnDevice();
+    }
+
+    @Override
+    public int getPermission() {
+        return OWN_DEVICES_DELETE;
+    }
+
+    @Override
+    public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         String[] split = split2(message.body);
 
         int orgId = Integer.parseInt(split[0]);
@@ -66,6 +81,11 @@ public class WebDeleteDeviceLogic {
             log.error("Device {} not found for {}.", deviceId, user.email);
             ctx.writeAndFlush(json(message.id, "Device not found."), ctx.voidPromise());
             return;
+        }
+
+        if (!device.hasOwner(state.user.email)) {
+            log.error("User {} is not owner of requested deviceId {}.", user.email, deviceId);
+            throw new NoPermissionException("User is not owner of requested device.", getPermission());
         }
 
         log.debug("Deleting device {} for orgId {}.", deviceId, orgId);
