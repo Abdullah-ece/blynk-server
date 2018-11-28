@@ -8,8 +8,8 @@ import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
 import cc.blynk.server.web.handlers.logic.WebAppHardwareLogic;
 import cc.blynk.server.web.handlers.logic.WebGetGraphDataLogic;
+import cc.blynk.server.web.handlers.logic.account.WebEditAccountLogic;
 import cc.blynk.server.web.handlers.logic.account.WebGetAccountLogic;
-import cc.blynk.server.web.handlers.logic.account.WebUpdateAccountLogic;
 import cc.blynk.server.web.handlers.logic.device.WebCreateDeviceLogic;
 import cc.blynk.server.web.handlers.logic.device.WebDeleteOrgDeviceLogic;
 import cc.blynk.server.web.handlers.logic.device.WebEditOrgDeviceLogic;
@@ -23,7 +23,6 @@ import cc.blynk.server.web.handlers.logic.device.timeline.WebResolveLogEventLogi
 import cc.blynk.server.web.handlers.logic.organization.WebCreateOrganizationLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebDeleteOrganizationLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebGetOrganizationLogic;
-import cc.blynk.server.web.handlers.logic.organization.WebGetOrganizationUsersLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebGetOrganizationsHierarchyLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebGetOrganizationsLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebGetProductLocationsLogic;
@@ -31,13 +30,14 @@ import cc.blynk.server.web.handlers.logic.organization.WebGetTempSecureTokenLogi
 import cc.blynk.server.web.handlers.logic.organization.WebUpdateOrganizationLogic;
 import cc.blynk.server.web.handlers.logic.organization.roles.WebCreateRoleLogic;
 import cc.blynk.server.web.handlers.logic.organization.roles.WebDeleteRoleLogic;
+import cc.blynk.server.web.handlers.logic.organization.roles.WebEditRoleLogic;
 import cc.blynk.server.web.handlers.logic.organization.roles.WebGetRoleLogic;
 import cc.blynk.server.web.handlers.logic.organization.roles.WebGetRolesLogic;
-import cc.blynk.server.web.handlers.logic.organization.roles.WebUpdateRoleLogic;
 import cc.blynk.server.web.handlers.logic.organization.users.WebCanInviteUserLogic;
 import cc.blynk.server.web.handlers.logic.organization.users.WebDeleteUserLogic;
+import cc.blynk.server.web.handlers.logic.organization.users.WebEditUserInfoLogic;
+import cc.blynk.server.web.handlers.logic.organization.users.WebGetOrgUsersLogic;
 import cc.blynk.server.web.handlers.logic.organization.users.WebInviteUserLogic;
-import cc.blynk.server.web.handlers.logic.organization.users.WebUpdateUserInfoLogic;
 import cc.blynk.server.web.handlers.logic.product.WebCanDeleteProductLogic;
 import cc.blynk.server.web.handlers.logic.product.WebCreateProductLogic;
 import cc.blynk.server.web.handlers.logic.product.WebDeleteProductLogic;
@@ -105,7 +105,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
     private final WebGetOrgDeviceLogic webGetOrgDeviceLogic;
     private final WebGetOrganizationLogic webGetOrganizationLogic;
     private final WebGetOrganizationsLogic webGetOrganizationsLogic;
-    private final WebGetOrganizationUsersLogic webGetOrganizationUsersLogic;
+    private final WebGetOrgUsersLogic webGetOrgUsersLogic;
     private final WebGetProductLocationsLogic webGetProductLocationsLogic;
     private final WebCanInviteUserLogic canInviteUserLogic;
     private final WebCreateProductLogic webCreateProductLogic;
@@ -113,7 +113,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
     private final WebDeleteProductLogic webDeleteProductLogic;
     private final WebEditOrgDeviceLogic webEditOrgDeviceLogic;
     private final WebUpdateDevicesMetaInProductLogic webUpdateDevicesMetaInProductLogic;
-    private final WebUpdateUserInfoLogic webUpdateUserInfoLogic;
+    private final WebEditUserInfoLogic webEditUserInfoLogic;
     private final WebDeleteUserLogic webDeleteUserLogic;
     private final WebCreateOrganizationLogic webCreateOrganizationLogic;
     private final WebUpdateOrganizationLogic webUpdateOrganizationLogic;
@@ -124,7 +124,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
     private final WebDeleteOrgDeviceLogic webDeleteOrgDeviceLogic;
     private final WebGetOrganizationsHierarchyLogic webGetOrganizationsHierarchyLogic;
     private final WebCreateRoleLogic webCreateRoleLogic;
-    private final WebUpdateRoleLogic webUpdateRoleLogic;
+    private final WebEditRoleLogic webEditRoleLogic;
     private final WebGetRolesLogic webGetRolesLogic;
     private final WebDeleteRoleLogic webDeleteRoleLogic;
     private final WebGetRoleLogic webGetRoleLogic;
@@ -141,7 +141,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
         this.webGetOrgDeviceLogic = new WebGetOrgDeviceLogic(holder);
         this.webGetOrganizationLogic = new WebGetOrganizationLogic(holder);
         this.webGetOrganizationsLogic = new WebGetOrganizationsLogic(holder);
-        this.webGetOrganizationUsersLogic = new WebGetOrganizationUsersLogic(holder);
+        this.webGetOrgUsersLogic = new WebGetOrgUsersLogic(holder);
         this.webGetProductLocationsLogic = new WebGetProductLocationsLogic(holder);
         this.canInviteUserLogic = new WebCanInviteUserLogic(holder);
         this.webCreateProductLogic = new WebCreateProductLogic(holder);
@@ -149,7 +149,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
         this.webDeleteProductLogic = new WebDeleteProductLogic(holder);
         this.webEditOrgDeviceLogic = new WebEditOrgDeviceLogic(holder);
         this.webUpdateDevicesMetaInProductLogic = new WebUpdateDevicesMetaInProductLogic(holder);
-        this.webUpdateUserInfoLogic = new WebUpdateUserInfoLogic(holder);
+        this.webEditUserInfoLogic = new WebEditUserInfoLogic(holder);
         this.webDeleteUserLogic = new WebDeleteUserLogic(holder);
         this.webCreateOrganizationLogic = new WebCreateOrganizationLogic(holder);
         this.webUpdateOrganizationLogic = new WebUpdateOrganizationLogic(holder);
@@ -160,7 +160,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
         this.webDeleteOrgDeviceLogic = new WebDeleteOrgDeviceLogic(holder);
         this.webGetOrganizationsHierarchyLogic = new WebGetOrganizationsHierarchyLogic(holder);
         this.webCreateRoleLogic = new WebCreateRoleLogic(holder);
-        this.webUpdateRoleLogic = new WebUpdateRoleLogic(holder);
+        this.webEditRoleLogic = new WebEditRoleLogic(holder);
         this.webGetRolesLogic = new WebGetRolesLogic(holder);
         this.webDeleteRoleLogic = new WebDeleteRoleLogic(holder);
         this.webGetRoleLogic = new WebGetRoleLogic(holder);
@@ -178,7 +178,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
                 WebGetAccountLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_UPDATE_ACCOUNT:
-                WebUpdateAccountLogic.messageReceived(ctx, state, msg);
+                WebEditAccountLogic.messageReceived(ctx, state, msg);
                 break;
             case HARDWARE :
                 webAppHardwareLogic.messageReceived(ctx, state, msg);
@@ -214,7 +214,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
                 webGetOrganizationsLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_GET_ORG_USERS :
-                webGetOrganizationUsersLogic.messageReceived(ctx, state, msg);
+                webGetOrgUsersLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_GET_PRODUCT_LOCATIONS:
                 webGetProductLocationsLogic.messageReceived(ctx, state, msg);
@@ -241,7 +241,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
                 webUpdateDevicesMetaInProductLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_UPDATE_USER_INFO :
-                webUpdateUserInfoLogic.messageReceived(ctx, state, msg);
+                webEditUserInfoLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_DELETE_USER :
                 webDeleteUserLogic.messageReceived(ctx, state, msg);
@@ -259,7 +259,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
                 webCanDeleteProductLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_INVITE_USER :
-                webInviteUserLogic.messageReceived(ctx, state.user, msg);
+                webInviteUserLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_UPDATE_DEVICE_METAFIELD :
                 WebUpdateDeviceMetafieldLogic.messageReceived(holder, ctx, state, msg);
@@ -286,7 +286,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
                 webCreateRoleLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_UPDATE_ROLE:
-                webUpdateRoleLogic.messageReceived(ctx, state, msg);
+                webEditRoleLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_DELETE_ROLE :
                 webDeleteRoleLogic.messageReceived(ctx, state, msg);

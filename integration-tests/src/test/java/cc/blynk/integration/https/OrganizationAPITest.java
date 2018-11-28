@@ -155,7 +155,7 @@ public class OrganizationAPITest extends APIBaseTest {
     public void canInviteUser() throws Exception {
         login(admin.email, admin.pass);
 
-        HttpPost req = new HttpPost(httpsAdminServerUrl + "/organization/1/canInviteUser");
+        HttpPost req = new HttpPost(httpsAdminServerUrl + "/organization/1/canInviteUsers");
         req.setEntity(new StringEntity(new EmailDTO("xxx@gmail.com").toString(), ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(req)) {

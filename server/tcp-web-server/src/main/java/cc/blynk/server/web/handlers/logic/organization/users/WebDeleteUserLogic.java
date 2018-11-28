@@ -6,16 +6,18 @@ import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
 import cc.blynk.server.db.DBManager;
-import cc.blynk.server.web.handlers.logic.organization.WebGetOrganizationUsersLogic;
+import cc.blynk.server.web.handlers.PermissionBasedLogic;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_DELETE_USERS;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 import static cc.blynk.server.internal.WebByteBufUtil.json;
 import static cc.blynk.utils.StringUtils.split2;
@@ -25,9 +27,9 @@ import static cc.blynk.utils.StringUtils.split2;
  * Created by Dmitriy Dumanskiy.
  * Created on 3/7/2018.
  */
-public final class WebDeleteUserLogic {
+public final class WebDeleteUserLogic implements PermissionBasedLogic {
 
-    private static final Logger log = LogManager.getLogger(WebGetOrganizationUsersLogic.class);
+    private static final Logger log = LogManager.getLogger(WebGetOrgUsersLogic.class);
 
     private final UserDao userDao;
     private final FileManager fileManager;
@@ -43,7 +45,18 @@ public final class WebDeleteUserLogic {
         this.organizationDao = holder.organizationDao;
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
+    @Override
+    public boolean hasPermission(Role role) {
+        return role.canDeleteOrgUsers();
+    }
+
+    @Override
+    public int getPermission() {
+        return ORG_DELETE_USERS;
+    }
+
+    @Override
+    public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         String[] split = split2(message.body);
 
         User user = state.user;

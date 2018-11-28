@@ -5,15 +5,17 @@ import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.UserInviteDTO;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.core.session.web.WebAppStateHolder;
 import cc.blynk.server.internal.token.InviteToken;
 import cc.blynk.server.internal.token.TokensPool;
 import cc.blynk.server.notifications.mail.MailWrapper;
-import cc.blynk.server.web.handlers.logic.organization.WebGetOrganizationUsersLogic;
+import cc.blynk.server.web.handlers.PermissionBasedLogic;
 import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.FileLoaderUtil;
 import cc.blynk.utils.TokenGeneratorUtil;
@@ -25,6 +27,7 @@ import org.apache.logging.log4j.Logger;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
+import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_INVITE_USERS;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 import static cc.blynk.server.internal.WebByteBufUtil.json;
 import static cc.blynk.utils.StringUtils.split2;
@@ -34,9 +37,9 @@ import static cc.blynk.utils.StringUtils.split2;
  * Created by Dmitriy Dumanskiy.
  * Created on 3/7/2018.
  */
-public final class WebInviteUserLogic {
+public final class WebInviteUserLogic implements PermissionBasedLogic {
 
-    private static final Logger log = LogManager.getLogger(WebGetOrganizationUsersLogic.class);
+    private static final Logger log = LogManager.getLogger(WebGetOrgUsersLogic.class);
 
     private final String inviteTemplate;
     private final OrganizationDao organizationDao;
@@ -60,6 +63,16 @@ public final class WebInviteUserLogic {
         this.httpsServerUrl = holder.props.httpsServerUrl;
     }
 
+    @Override
+    public boolean hasPermission(Role role) {
+        return role.canInviteOrgUsers();
+    }
+
+    @Override
+    public int getPermission() {
+        return ORG_INVITE_USERS;
+    }
+
     private static String getLogoOrDefault(Organization org) {
         if (org.logoUrl == null || org.logoUrl.isEmpty()) {
             return "/static/logo.png";
@@ -67,7 +80,8 @@ public final class WebInviteUserLogic {
         return org.logoUrl;
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
+    @Override
+    public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         String[] split = split2(message.body);
 
         int orgId = Integer.parseInt(split[0]);
@@ -79,6 +93,7 @@ public final class WebInviteUserLogic {
             return;
         }
 
+        User user = state.user;
         Organization org = organizationDao.getOrgById(orgId);
 
         if (org == null) {

@@ -7,17 +7,17 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_CREATE;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_DELETE;
-import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_DELETE_USER;
+import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_DELETE_USERS;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_DEVICES_CREATE;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_DEVICES_DELETE;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_DEVICES_EDIT;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_DEVICES_SHARE;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_DEVICES_VIEW;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_EDIT;
-import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_EDIT_USER;
-import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_INVITE_USER;
+import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_EDIT_USERS;
+import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_INVITE_USERS;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_VIEW;
-import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_VIEW_USER;
+import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_VIEW_USERS;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.OWN_DEVICES_CREATE;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.OWN_DEVICES_DELETE;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.OWN_DEVICES_EDIT;
@@ -103,20 +103,20 @@ public class Role implements CopyObject<Role> {
     }
 
     //user group
-    public boolean canViewUser() {
-        return hasPermission1(ORG_VIEW_USER);
+    public boolean canViewOrgUsers() {
+        return hasPermission1(ORG_VIEW_USERS);
     }
 
-    public boolean canInviteUser() {
-        return hasPermission1(ORG_INVITE_USER);
+    public boolean canInviteOrgUsers() {
+        return hasPermission1(ORG_INVITE_USERS);
     }
 
-    public boolean canEditUser() {
-        return hasPermission1(ORG_EDIT_USER);
+    public boolean canEditOrgUsers() {
+        return hasPermission1(ORG_EDIT_USERS);
     }
 
-    public boolean canDeleteUser() {
-        return hasPermission1(ORG_DELETE_USER);
+    public boolean canDeleteOrgUsers() {
+        return hasPermission1(ORG_DELETE_USERS);
     }
 
     //product group

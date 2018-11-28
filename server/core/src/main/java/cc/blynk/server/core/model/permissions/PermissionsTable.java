@@ -15,10 +15,10 @@ public abstract class PermissionsTable {
      public static int SUB_ORG_EDIT =           0b1000000;
      public static int SUB_ORG_DELETE =         0b10000000;
 
-     public static int ORG_INVITE_USER =        0b100000000;
-     public static int ORG_VIEW_USER =          0b1000000000;
-     public static int ORG_EDIT_USER =          0b10000000000;
-     public static int ORG_DELETE_USER =        0b100000000000;
+     public static int ORG_INVITE_USERS =       0b100000000;
+     public static int ORG_VIEW_USERS =         0b1000000000;
+     public static int ORG_EDIT_USERS =         0b10000000000;
+     public static int ORG_DELETE_USERS =       0b100000000000;
 
      public static int PRODUCT_CREATE =         0b1000000000000;
      public static int PRODUCT_VIEW =           0b10000000000000;
@@ -52,10 +52,10 @@ public abstract class PermissionsTable {
             put(SUB_ORG_VIEW, "view sub organization");
             put(SUB_ORG_EDIT, "edit sub organization");
             put(SUB_ORG_DELETE, "delete sub organization");
-            put(ORG_INVITE_USER, "invite user");
-            put(ORG_VIEW_USER, "view user");
-            put(ORG_EDIT_USER, "edit user");
-            put(ORG_DELETE_USER, "delete user");
+            put(ORG_INVITE_USERS, "invite user");
+            put(ORG_VIEW_USERS, "view user");
+            put(ORG_EDIT_USERS, "edit user");
+            put(ORG_DELETE_USERS, "delete user");
             put(PRODUCT_CREATE, "create product");
             put(PRODUCT_VIEW, "view product");
             put(PRODUCT_EDIT, "edit product");

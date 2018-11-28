@@ -4,13 +4,15 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.auth.UserStatus;
+import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
-import cc.blynk.server.web.handlers.logic.organization.WebGetOrganizationUsersLogic;
+import cc.blynk.server.web.handlers.PermissionBasedLogic;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_INVITE_USERS;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 import static cc.blynk.server.internal.WebByteBufUtil.json;
 
@@ -19,9 +21,9 @@ import static cc.blynk.server.internal.WebByteBufUtil.json;
  * Created by Dmitriy Dumanskiy.
  * Created on 3/7/2018.
  */
-public final class WebCanInviteUserLogic {
+public final class WebCanInviteUserLogic implements PermissionBasedLogic {
 
-    private static final Logger log = LogManager.getLogger(WebGetOrganizationUsersLogic.class);
+    private static final Logger log = LogManager.getLogger(WebGetOrgUsersLogic.class);
 
     private final UserDao userDao;
 
@@ -29,7 +31,18 @@ public final class WebCanInviteUserLogic {
         this.userDao = holder.userDao;
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
+    @Override
+    public boolean hasPermission(Role role) {
+        return role.canInviteOrgUsers();
+    }
+
+    @Override
+    public int getPermission() {
+        return ORG_INVITE_USERS;
+    }
+
+    @Override
+    public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         String userEMailToInvite = message.body;
 
         User userToInvite = userDao.getByName(userEMailToInvite);
