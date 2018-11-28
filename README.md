@@ -1,5 +1,5 @@
 ## Requirements
-- Install java:
+- Install java 11:
   - [Ubuntu java installation instruction](#install-java-for-ubuntu).
   - For Windows download Java [here](https://www.oracle.com/technetwork/java/javase/downloads/jdk11-downloads-5066655.html) and install.
 - Install the latest [maven build tool](https://maven.apache.org/download.cgi);
