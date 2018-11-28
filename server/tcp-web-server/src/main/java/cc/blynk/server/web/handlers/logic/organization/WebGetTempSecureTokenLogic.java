@@ -4,6 +4,7 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.internal.token.UploadTempToken;
+import cc.blynk.server.web.handlers.logic.organization.dto.TokenDTO;
 import cc.blynk.utils.TokenGeneratorUtil;
 import io.netty.channel.ChannelHandlerContext;
 

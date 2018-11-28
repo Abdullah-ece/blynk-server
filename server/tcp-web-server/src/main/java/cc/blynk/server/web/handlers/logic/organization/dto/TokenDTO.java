@@ -1,4 +1,4 @@
-package cc.blynk.server.web.handlers.logic.organization;
+package cc.blynk.server.web.handlers.logic.organization.dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

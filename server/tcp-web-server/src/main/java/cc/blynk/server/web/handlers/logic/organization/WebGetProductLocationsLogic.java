@@ -10,6 +10,7 @@ import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.metafields.LocationMetaField;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
+import cc.blynk.server.web.handlers.logic.organization.dto.LocationDTO;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;

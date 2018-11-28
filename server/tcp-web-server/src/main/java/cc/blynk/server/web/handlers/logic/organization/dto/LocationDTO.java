@@ -1,4 +1,4 @@
-package cc.blynk.server.web.handlers.logic.organization;
+package cc.blynk.server.web.handlers.logic.organization.dto;
 
 import cc.blynk.server.core.model.web.product.metafields.LocationMetaField;
 import com.fasterxml.jackson.annotation.JsonCreator;
