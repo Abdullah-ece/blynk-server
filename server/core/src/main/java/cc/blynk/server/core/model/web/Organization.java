@@ -153,13 +153,13 @@ public class Organization {
         return this.parentId == parentId;
     }
 
-    public boolean isUpdated(long lastStart) {
-        return lastStart <= lastModifiedTs || productUpdated(lastStart);
+    public boolean isUpdatedSince(long lastStart) {
+        return lastStart <= this.lastModifiedTs || productsUpdated(lastStart);
     }
 
-    private boolean productUpdated(long lastStart) {
+    private boolean productsUpdated(long lastStart) {
         for (Product product : products) {
-            if (lastStart <= product.lastModifiedTs) {
+            if (product.isUpdatedSince(lastStart)) {
                 return true;
             }
         }

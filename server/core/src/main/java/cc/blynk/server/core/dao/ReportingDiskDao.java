@@ -237,17 +237,17 @@ public class ReportingDiskDao implements Closeable {
         }
     }
 
-    public void process(int orgId, Device device, short pin, PinType pinType, String value, long ts) {
+    public void process(Device device, short pin, PinType pinType, String value, long ts) {
         try {
             double doubleVal = NumberUtil.parseDouble(value);
-            process(orgId, device, pin, pinType, value, ts, doubleVal);
+            process(device, pin, pinType, value, ts, doubleVal);
         } catch (Exception e) {
             //just in case
             log.trace("Error collecting reporting entry.");
         }
     }
 
-    private void process(int orgId, Device device, short pin, PinType pinType,
+    private void process(Device device, short pin, PinType pinType,
                          String value, long ts, double doubleVal) {
         int deviceId = device.id;
         if (enableRawDbDataStore) {

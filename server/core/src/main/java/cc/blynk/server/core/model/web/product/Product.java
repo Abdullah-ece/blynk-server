@@ -210,6 +210,18 @@ public class Product {
         throw new IllegalCommandException("Device with passed id not found.");
     }
 
+    public boolean isUpdatedSince(long lastStart) {
+        if (lastStart <= this.lastModifiedTs) {
+            return true;
+        }
+        for (Device device : devices) {
+            if (device.isUpdatedSince(lastStart)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

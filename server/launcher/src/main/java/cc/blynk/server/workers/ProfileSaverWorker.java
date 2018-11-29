@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.Closeable;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Background thread that once a minute stores all user DB to disk in case profile was changed since last saving.
@@ -63,7 +64,7 @@ public class ProfileSaverWorker implements Runnable, Closeable {
 
     private void saveOrgs(boolean isFancy) {
         log.debug("Starting saving organization db.");
-        ArrayList<Organization> orgs = saveModifiedOrgs(isFancy);
+        List<Organization> orgs = saveModifiedOrgs(isFancy);
         log.debug("Saving organization db finished. Modified {} organizations.", orgs.size());
 
     }
@@ -98,11 +99,11 @@ public class ProfileSaverWorker implements Runnable, Closeable {
         }
     }
 
-    private ArrayList<Organization> saveModifiedOrgs(boolean isFancy) {
-        ArrayList<Organization> orgs = new ArrayList<>();
+    private List<Organization> saveModifiedOrgs(boolean isFancy) {
+        var orgs = new ArrayList<Organization>();
 
         for (Organization org : organizationDao.organizations.values()) {
-            if (org.isUpdated(lastStart)) {
+            if (org.isUpdatedSince(lastStart)) {
                 try {
                     fileManager.override(org, isFancy);
                     orgs.add(org);

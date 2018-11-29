@@ -192,8 +192,10 @@ public class Device implements Target {
             }
         }
 
+        long now = System.currentTimeMillis();
         this.metaFields = localCopy;
-        this.metadataUpdatedAt = System.currentTimeMillis();
+        this.metadataUpdatedAt = now;
+        this.updatedAt = now;
     }
 
     public void updateNameFromMetafields() {
@@ -438,6 +440,10 @@ public class Device implements Target {
             PinStorageValue value = entry.getValue();
             updateInterface.updateWidgetsValue(id, key.pin, key.pinType, value.lastValue());
         }
+    }
+
+    public boolean isUpdatedSince(long lastStart) {
+        return lastStart <= this.updatedAt || lastStart <= this.pinStorage.lastReportedAt;
     }
 
     @Override

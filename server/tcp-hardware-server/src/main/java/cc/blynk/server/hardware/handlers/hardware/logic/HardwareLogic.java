@@ -74,10 +74,10 @@ public class HardwareLogic extends BaseProcessorHandler {
             PinType pinType = PinType.getPinType(splitBody[0].charAt(0));
             short pin = NumberUtil.parsePin(splitBody[1]);
             String value = splitBody[2];
-            long now = System.currentTimeMillis();
             int deviceId = device.id;
 
-            reportingDao.process(orgId, device, pin, pinType, value, now);
+            long now = System.currentTimeMillis();
+            reportingDao.process(device, pin, pinType, value, now);
             device.updateValue(pin, pinType, value, now);
 
             Session session = sessionDao.getOrgSession(orgId);
