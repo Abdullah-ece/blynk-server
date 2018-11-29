@@ -8,7 +8,9 @@
 Blynk has a bunch of integration tests that require DB, so you have to skip tests during build.
 - Build the project with : ```mvn clean install -Dmaven.test.skip=true```
 
-## Turn off chrome https warning on localhost
+## Turn off https warning on localhost
+
+### For Chrome
 
 Local server uses by default self-generated certificates, so you have to disable tls/ssl on the localhost for your browser:
 
@@ -17,6 +19,14 @@ Local server uses by default self-generated certificates, so you have to disable
         chrome://flags/#allow-insecure-localhost
 
 - You should see highlighted text saying: "Allow invalid certificates for resources loaded from localhost". Click enable.
+
+### For Firefox
+
+- Pain firefox
+
+        about:config
+
+- Find ```network.websocket.allowInsecureFromHTTPS``` and double click on it.
 
 
 ## Installing DB
