@@ -339,6 +339,7 @@ class LocationField extends BaseField {
         },
         {
           label: `Country`,
+          isLocationAutocomplete: true,
           names: [
             `metaFields.${this.props.metaFieldKey}.isCountryEnabled`,
             `metaFields.${this.props.metaFieldKey}.country`
