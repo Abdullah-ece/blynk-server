@@ -92,8 +92,14 @@ You should see next output:
 #### Quit
 
         \q
-               
-Now start your server and you should see next text in ```postgres.log``` file : 
+          
+#### Run
+
+Now start your server, go to server/launcher/target and run:
+
+         java -jar webdash-x.xx.x-SNAPSHOT.jar -dataFolder <path to your data folder>
+
+You should see next text in ```postgres.log``` file : 
 
         2017-03-02 16:17:18.367 - DB url : jdbc:postgresql://localhost:5432/blynk?tcpKeepAlive=true&socketTimeout=150
         2017-03-02 16:17:18.367 - DB user : test
