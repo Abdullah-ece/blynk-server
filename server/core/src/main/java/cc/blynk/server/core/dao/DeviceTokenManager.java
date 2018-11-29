@@ -88,8 +88,9 @@ public class DeviceTokenManager {
 
     private String assignToken(int orgId, Product product, Device device, String newToken) {
         // Clean old token from cache if exists.
-        if (device.token != null) {
-            cache.remove(device.token);
+        String oldToken = device.token;
+        if (oldToken != null) {
+            cache.remove(oldToken);
         }
 
         //assign new token
@@ -99,7 +100,7 @@ public class DeviceTokenManager {
 
         log.debug("Generated token for orgId {} deviceId {} is {}.", orgId, device.id, newToken);
 
-        return device.token;
+        return oldToken;
     }
 
 }

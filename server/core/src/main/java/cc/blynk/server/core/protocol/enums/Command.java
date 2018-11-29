@@ -172,6 +172,7 @@ public final class Command {
     public static final short WEB_GET_ROLE = 135;
     public static final short WEB_GET_ROLES = 136;
     public static final short WEB_DELETE_ROLE = 137;
+    public static final short WEB_SET_AUTH_TOKEN = 138;
 
     public static final int LAST_COMMAND_INDEX = 150;
 
@@ -301,7 +302,8 @@ public final class Command {
             Map.entry(WEB_UPDATE_ROLE, "WebUpdateRole"),
             Map.entry(WEB_GET_ROLES, "WebGetRoles"),
             Map.entry(WEB_GET_ROLE, "WebGetRole"),
-            Map.entry(WEB_DELETE_ROLE, "WebDeleteRole")
+            Map.entry(WEB_DELETE_ROLE, "WebDeleteRole"),
+            Map.entry(WEB_SET_AUTH_TOKEN, "WebSetAuthToken")
     );
 
     public static String getNameByValue(short val) {

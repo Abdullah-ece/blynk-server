@@ -16,6 +16,7 @@ import cc.blynk.server.web.handlers.logic.device.WebEditOrgDeviceLogic;
 import cc.blynk.server.web.handlers.logic.device.WebGetMetaFieldLogic;
 import cc.blynk.server.web.handlers.logic.device.WebGetOrgDeviceLogic;
 import cc.blynk.server.web.handlers.logic.device.WebGetOrgDevicesLogic;
+import cc.blynk.server.web.handlers.logic.device.WebSetAuthTokenForDeviceLogic;
 import cc.blynk.server.web.handlers.logic.device.WebTrackDeviceLogic;
 import cc.blynk.server.web.handlers.logic.device.WebUpdateDeviceMetafieldLogic;
 import cc.blynk.server.web.handlers.logic.device.timeline.WebGetDeviceTimelineLogic;
@@ -80,6 +81,7 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ROLE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ROLES;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_TEMP_SECURE_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_INVITE_USER;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_SET_AUTH_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_ACCOUNT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_DEVICES_META_IN_PRODUCT;
@@ -131,6 +133,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
     private final WebGetOrgDevicesLogic webGetOrgDevicesLogic;
     private final WebGetProductLogic webGetProductLogic;
     private final WebEditProductLogic webEditProductLogic;
+    private final WebSetAuthTokenForDeviceLogic webSetAuthTokenForDeviceLogic;
 
     private final Holder holder;
 
@@ -169,6 +172,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
         this.webGetOrgDevicesLogic = new WebGetOrgDevicesLogic(holder);
         this.webGetProductLogic = new WebGetProductLogic(holder);
         this.webEditProductLogic = new WebEditProductLogic(holder);
+        this.webSetAuthTokenForDeviceLogic = new WebSetAuthTokenForDeviceLogic(holder);
 
         this.state = state;
         this.holder = holder;
@@ -295,11 +299,14 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
             case WEB_DELETE_ROLE :
                 webDeleteRoleLogic.messageReceived(ctx, state, msg);
                 break;
-            case WEB_GET_ROLES:
+            case WEB_GET_ROLES :
                 webGetRolesLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_GET_ROLE :
                 webGetRoleLogic.messageReceived(ctx, state, msg);
+                break;
+            case WEB_SET_AUTH_TOKEN :
+                webSetAuthTokenForDeviceLogic.messageReceived(ctx, state, msg);
                 break;
         }
     }

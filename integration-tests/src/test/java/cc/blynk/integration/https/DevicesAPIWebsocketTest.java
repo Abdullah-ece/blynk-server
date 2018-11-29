@@ -25,6 +25,7 @@ import cc.blynk.server.core.model.widgets.web.WebSource;
 import cc.blynk.server.core.model.widgets.web.label.WebLabel;
 import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.utils.TokenGeneratorUtil;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,6 +38,7 @@ import static cc.blynk.integration.APIBaseTest.createNumberMeta;
 import static cc.blynk.integration.APIBaseTest.createTextMeta;
 import static cc.blynk.integration.TestUtil.createWebLabelWidget;
 import static cc.blynk.integration.TestUtil.createWebLineGraph;
+import static cc.blynk.integration.TestUtil.invalidToken;
 import static cc.blynk.integration.TestUtil.loggedDefaultClient;
 import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.integration.TestUtil.updateProductWebDash;
@@ -899,6 +901,83 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertEquals(1, webLabel.sources[0].dataStream.pin);
         assertEquals(PinType.VIRTUAL, webLabel.sources[0].dataStream.pinType);
         assertEquals("121", webLabel.sources[0].dataStream.value);
+    }
+
+    @Test
+    public void testSetAuthTokenWorks() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+
+        Product product = new Product();
+        product.name = "My product";
+        product.metaFields = new MetaField[] {
+                createDeviceNameMeta(1, "Device Name", "My Default device Name", true),
+                createDeviceOwnerMeta(2, "Device Owner", null, true)
+        };
+        product.webDashboard = new WebDashboard(new Widget[] {
+                createWebLabelWidget(1, "123")
+        });
+
+        client.createProduct(orgId, product);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
+        assertNotNull(fromApiProduct);
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.productId = fromApiProduct.id;
+
+        client.createDevice(orgId, newDevice);
+        Device createdDevice = client.parseDevice(2);
+        assertNotNull(createdDevice);
+
+        assertNotNull(createdDevice.token);
+        String token = createdDevice.token;
+        assertEquals("My New Device", createdDevice.name);
+        assertEquals(System.currentTimeMillis(), createdDevice.activatedAt, 5000);
+        assertEquals(getUserName(), createdDevice.activatedBy);
+        assertNotNull(createdDevice.webDashboard);
+        assertEquals(1, createdDevice.webDashboard.widgets.length);
+        assertTrue(createdDevice.webDashboard.widgets[0] instanceof WebLabel);
+        WebLabel webLabel = (WebLabel) createdDevice.webDashboard.widgets[0];
+        assertEquals("123", webLabel.label);
+        assertEquals(1, webLabel.sources[0].dataStream.pin);
+        assertEquals(PinType.VIRTUAL, webLabel.sources[0].dataStream.pinType);
+        assertNull(webLabel.sources[0].dataStream.value);
+
+        TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
+        newHardClient.start();
+        newHardClient.send("login " + token);
+        newHardClient.verifyResult(ok(1));
+        client.verifyResult(TestUtil.deviceConnected(1, createdDevice.id));
+
+        String newToken = TokenGeneratorUtil.generateNewToken();
+        client.setAuthToken(orgId, createdDevice.id, newToken);
+        client.verifyResult(ok(3));
+
+        //after token was changed, expecting existing hard connection to be closed
+        assertTrue(newHardClient.isClosed());
+
+        newHardClient = new TestHardClient("localhost", properties.getHttpPort());
+        newHardClient.start();
+        newHardClient.send("login " + token);
+        newHardClient.verifyResult(invalidToken(1));
+
+        newHardClient.send("login " + newToken);
+        newHardClient.verifyResult(ok(2));
+        client.verifyResult(TestUtil.deviceConnected(2, createdDevice.id));
+
+        client.reset();
+        client.getDevice(orgId, createdDevice.id);
+        Device updatedDevice = client.parseDevice(1);
+        assertNotNull(updatedDevice);
+        assertEquals(createdDevice.id, updatedDevice.id);
+        assertEquals(newToken, updatedDevice.token);
+    }
+
+    @Test
+    public void testSetInvalidAuthToken() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+        client.setAuthToken(orgId, 1, "123");
+        client.verifyResult(webJson(1, "Set auth token is not valid. Token is empty or length is not 32 chars."));
     }
 
     @Test

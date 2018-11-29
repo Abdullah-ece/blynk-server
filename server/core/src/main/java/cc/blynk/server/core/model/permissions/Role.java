@@ -31,6 +31,7 @@ import static cc.blynk.server.core.model.permissions.PermissionsTable.ROLE_CREAT
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ROLE_DELETE;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ROLE_EDIT;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ROLE_VIEW;
+import static cc.blynk.server.core.model.permissions.PermissionsTable.SET_AUTH_TOKEN;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.SUB_ORG_CREATE;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.SUB_ORG_DELETE;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.SUB_ORG_EDIT;
@@ -193,6 +194,10 @@ public class Role implements CopyObject<Role> {
 
     public boolean canShareOwnDevice() {
         return hasPermission1(OWN_DEVICES_SHARE);
+    }
+
+    public boolean canSetAuthToken() {
+        return hasPermission1(SET_AUTH_TOKEN);
     }
 
     /**

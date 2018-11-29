@@ -37,6 +37,7 @@ import cc.blynk.server.web.handlers.logic.device.timeline.TimelineDTO;
 import cc.blynk.server.web.handlers.logic.device.timeline.TimelineResponseDTO;
 import cc.blynk.server.web.handlers.logic.organization.dto.LocationDTO;
 import cc.blynk.server.web.handlers.logic.organization.dto.OrganizationsHierarchyDTO;
+import cc.blynk.server.web.handlers.logic.organization.dto.SetAuthTokenDTO;
 import cc.blynk.server.web.handlers.logic.organization.dto.TokenDTO;
 import cc.blynk.utils.SHA256Util;
 import cc.blynk.utils.StringUtils;
@@ -335,6 +336,10 @@ public final class AppWebSocketClient extends BaseTestAppClient {
 
     public void getRole(int orgId, int roleId) {
         send("webGetRole " + orgId + BODY_SEPARATOR_STRING + roleId);
+    }
+
+    public void setAuthToken(int orgId, int deviceId, String newToken) {
+        send("setAuthToken " + JsonParser.toJson(new SetAuthTokenDTO(orgId, deviceId, newToken)));
     }
 
     public TimelineResponseDTO parseTimelineResponse(int expectedMessageOrder) throws Exception {
