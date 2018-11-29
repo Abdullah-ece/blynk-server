@@ -85,6 +85,16 @@ public class ExternalAPITest extends APIBaseTest {
     }
 
     @Test
+    public void testGetDeviceJson() throws Exception {
+        HttpGet request = new HttpGet(httpsServerUrl + token + "/id");
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(400, response.getStatusLine().getStatusCode());
+            assertEquals("{\"error\":{\"message\":\"Requested pin doesn't exist in the app.\"}}", consumeText(response));
+        }
+    }
+
+    @Test
     public void testGetWringPin() throws Exception {
         HttpGet request = new HttpGet(httpsServerUrl + token + "/get/v256");
 

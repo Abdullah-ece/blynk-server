@@ -89,6 +89,7 @@ public final class JsonParser {
     private static final ObjectWriter exportAppProfileDTOWriter = MAPPER.writerFor(ExportAppProfileDTO.class);
     private static final ObjectWriter dashboardWriter = MAPPER.writerFor(DashBoard.class);
     private static final ObjectWriter deviceWriter = MAPPER.writerFor(Device.class);
+    private static final ObjectWriter deviceFancyWriter = init().writerWithDefaultPrettyPrinter().forType(Device.class);
     private static final ObjectWriter productWriter = MAPPER.writerFor(Product.class);
     private static final ObjectWriter appWriter = MAPPER.writerFor(App.class);
     private static final ObjectWriter reportWriter = MAPPER.writerFor(Report.class);
@@ -186,6 +187,13 @@ public final class JsonParser {
     }
 
     public static String toJson(Device device) {
+        return toJson(device, false);
+    }
+
+    public static String toJson(Device device, boolean fancy) {
+        if (fancy) {
+            return toJson(deviceFancyWriter, device);
+        }
         return toJson(deviceWriter, device);
     }
 

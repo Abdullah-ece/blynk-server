@@ -179,6 +179,10 @@ public final class Response extends DefaultFullHttpResponse {
         return ok(JsonParser.toJson(device));
     }
 
+    public static Response ok(Device device, boolean fancy) {
+        return ok(JsonParser.toJson(device, fancy));
+    }
+
     public static Response ok(DashBoard dashBoard) {
         return ok(JsonParser.toJson(dashBoard));
     }

@@ -151,7 +151,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
         }
 
         Device device = tokenValue.device;
-        return ok(device);
+        return ok(device, true);
     }
 
     @GET
