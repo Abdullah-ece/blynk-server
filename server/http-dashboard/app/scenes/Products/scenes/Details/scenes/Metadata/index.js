@@ -54,6 +54,7 @@ class Metadata extends React.Component {
       hardcodedRequiredMetadataFieldsNames.Manufacturer,
       hardcodedRequiredMetadataFieldsNames.ModelName,
       hardcodedRequiredMetadataFieldsNames.TimezoneOfTheDevice,
+      hardcodedRequiredMetadataFieldsNames.TemplateId,
     ];
     return hardcodedNames.indexOf(field.name) !== -1;
   }
@@ -66,6 +67,7 @@ class Metadata extends React.Component {
       hardcodedRequiredMetadataFieldsNames.Manufacturer,
       hardcodedRequiredMetadataFieldsNames.ModelName,
       hardcodedRequiredMetadataFieldsNames.TimezoneOfTheDevice,
+      hardcodedRequiredMetadataFieldsNames.TemplateId,
     ];
     return hardcodedNames.indexOf(field.name) === -1;
   }
@@ -342,6 +344,12 @@ class Metadata extends React.Component {
       if (field.name && field.name === hardcodedRequiredMetadataFieldsNames.TimezoneOfTheDevice) {
         elements.push(
           <TimezoneOfDeviceField.Static {...props}/>
+        );
+      }
+
+      if (field.name && field.name === hardcodedRequiredMetadataFieldsNames.TemplateId) {
+        elements.push(
+          <TemplateIdField.Static {...props}/>
         );
       }
 

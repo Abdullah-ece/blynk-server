@@ -50,10 +50,10 @@ export default class AddMetadataFields extends Base {
       type: Metadata.Fields.LIST,
       title: 'List',
     },
-    {
-      type: Metadata.Fields.TEMPLATE_ID,
-      title: 'Template Id',
-    }
+    // {
+    //   type: Metadata.Fields.TEMPLATE_ID,
+    //   title: 'Template Id',
+    // }
   ];
 
   typesPredefinedValues = {

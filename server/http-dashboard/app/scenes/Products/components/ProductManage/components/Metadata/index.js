@@ -376,7 +376,7 @@ class ProductMetadata extends React.Component {
         field: field,
         tools: false,
       };
-
+      console.log(field.toJS())
       if (field.get('type') === MetadataService.Fields.LOCATION && field.get('isDefault') === true) {
         elements.push(
           <MetadataFields.LocationField {...props}/>
@@ -410,6 +410,12 @@ class ProductMetadata extends React.Component {
       if (field.get('name') === hardcodedRequiredMetadataFieldsNames.TimezoneOfTheDevice && field.get('isDefault') === true) {
         elements.push(
           <MetadataFields.TimezoneOfDeviceField {...props}/>
+        );
+      }
+
+      if (field.get('type') === hardcodedRequiredMetadataFieldsNames.TemplateId && field.get('isDefault') === true) {
+        elements.push(
+          <MetadataFields.TemplateIdField {...props}/>
         );
       }
 

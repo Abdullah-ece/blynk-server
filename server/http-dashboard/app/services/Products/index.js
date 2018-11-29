@@ -128,7 +128,8 @@ export const hardcodedRequiredMetadataFieldsNames = {
   DeviceOwner: 'Device Owner',
   Manufacturer: 'Manufacturer',
   ModelName: 'Model Name',
-  TimezoneOfTheDevice: 'Device Timezone'
+  TimezoneOfTheDevice: 'Device Timezone',
+  TemplateId: 'TemplateId',
 };
 
 export const hardcodedRequiredMetadataFieldsNamesList = [
@@ -136,7 +137,8 @@ export const hardcodedRequiredMetadataFieldsNamesList = [
   hardcodedRequiredMetadataFieldsNames.DeviceOwner,
   hardcodedRequiredMetadataFieldsNames.Manufacturer,
   hardcodedRequiredMetadataFieldsNames.ModelName,
-  hardcodedRequiredMetadataFieldsNames.TimezoneOfTheDevice
+  hardcodedRequiredMetadataFieldsNames.TimezoneOfTheDevice,
+  hardcodedRequiredMetadataFieldsNames.TemplateId
 ];
 
 export const filterMetadataFields = (fields, filterHardcoded = true) => {
@@ -237,6 +239,16 @@ export const getHardcodedRequiredMetadataFields = ({timezoneDefaultValue, manufa
       isDefault: true,
       ...MetadataInitialValues,
       [MetadataIconFieldName]: 'e8e8',
+      hardcoded: true,
+    },
+    {
+      id: 7,
+      type: Metadata.Fields.TEMPLATE_ID,
+      name: hardcodedRequiredMetadataFieldsNames.TemplateId,
+      roleIds: [],
+      isDefault: true,
+      ...MetadataInitialValues,
+      [MetadataIconFieldName]: 'e6b3',
       hardcoded: true,
     }
   ];
@@ -504,6 +516,7 @@ export const prepareProductForEdit = (data) => {
           hardcodedRequiredMetadataFieldsNames.Manufacturer,
           hardcodedRequiredMetadataFieldsNames.ModelName,
           hardcodedRequiredMetadataFieldsNames.TimezoneOfTheDevice,
+          hardcodedRequiredMetadataFieldsNames.TemplateId,
         ];
 
         if (field.type === Metadata.Fields.CONTACT) {
