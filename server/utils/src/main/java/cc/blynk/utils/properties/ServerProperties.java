@@ -155,4 +155,11 @@ public class ServerProperties extends BaseProperties {
         return protocol + host + (port.isEmpty() ? "" : (":" + port));
     }
 
+    public String getServerUrl(boolean isSecure) {
+        if (isSecure) {
+            return httpsServerUrl;
+        }
+        return httpServerUrl;
+    }
+
 }

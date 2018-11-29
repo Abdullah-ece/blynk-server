@@ -108,9 +108,10 @@ public final class BlynkInternalLogic {
                             log.warn("OTA limit reached for deviceId {}.", device.id);
                             device.firmwareUploadFailure();
                         } else {
-                            StringMessage msg = makeASCIIStringMessage(BLYNK_INTERNAL, 7777,
-                                    OTAInfo.makeHardwareBody(holder.props.httpServerUrl,
-                                            device.deviceOtaInfo.pathToFirmware, device.id));
+                            String serverUrl = holder.props.getServerUrl(device.deviceOtaInfo.isSecure);
+                            String body = OTAInfo.makeHardwareBody(serverUrl,
+                                    device.deviceOtaInfo.pathToFirmware, device.id);
+                            StringMessage msg = makeASCIIStringMessage(BLYNK_INTERNAL, 7777, body);
                             ctx.write(msg, ctx.voidPromise());
                             device.requestSent();
                         }

@@ -32,6 +32,8 @@ public class DeviceOtaInfo {
 
     public final int attemptsLimit;
 
+    public final boolean isSecure;
+
     @JsonCreator
     public DeviceOtaInfo(@JsonProperty("otaStartedBy") String otaStartedBy,
                          @JsonProperty("otaStartedAt") long otaStartedAt,
@@ -43,7 +45,8 @@ public class DeviceOtaInfo {
                          @JsonProperty("buildDate") String buildDate,
                          @JsonProperty("otaStatus") OTAStatus otaStatus,
                          @JsonProperty("attempts") int attempts,
-                         @JsonProperty("attemptsLimit") int attemptsLimit) {
+                         @JsonProperty("attemptsLimit") int attemptsLimit,
+                         @JsonProperty("isSecure") boolean isSecure) {
         this.otaStartedBy = otaStartedBy;
         this.otaStartedAt = otaStartedAt;
         this.requestSentAt = requestSentAt;
@@ -55,6 +58,7 @@ public class DeviceOtaInfo {
         this.otaStatus = otaStatus;
         this.attempts = attempts;
         this.attemptsLimit = attemptsLimit;
+        this.isSecure = isSecure;
     }
 
     public boolean isLimitReached() {

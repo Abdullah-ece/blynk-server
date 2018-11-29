@@ -11,7 +11,6 @@ import cc.blynk.core.http.annotation.Path;
 import cc.blynk.core.http.annotation.PathParam;
 import cc.blynk.core.http.annotation.QueryParam;
 import cc.blynk.server.Holder;
-import cc.blynk.server.api.http.dashboard.dto.StartOtaDTO;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.SessionDao;
@@ -21,6 +20,7 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.ota.DeviceOtaInfo;
 import cc.blynk.server.core.model.device.ota.OTAStatus;
+import cc.blynk.server.core.model.dto.OtaDTO;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.FirmwareInfo;
 import cc.blynk.server.core.model.web.product.OtaProgress;
@@ -30,6 +30,7 @@ import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.http.MediaType;
+import cc.blynk.utils.properties.ServerProperties;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 
@@ -56,7 +57,7 @@ public class OTAHandler extends BaseHttpHandler {
     private final DeviceDao deviceDao;
     private final SessionDao sessionDao;
     private final String staticFilesFolder;
-    private final String serverHostUrl;
+    private final ServerProperties props;
 
     public OTAHandler(Holder holder, String rootPath) {
         super(holder, rootPath);
@@ -64,8 +65,7 @@ public class OTAHandler extends BaseHttpHandler {
         this.deviceDao = holder.deviceDao;
         this.sessionDao = holder.sessionDao;
         this.staticFilesFolder = holder.props.jarPath;
-        String httpPort = holder.props.getHttpPortAsString();
-        this.serverHostUrl = "http://" + holder.props.host + (httpPort.isEmpty() ? "" : (":" + httpPort));
+        this.props = holder.props;
     }
 
     @GET
@@ -91,7 +91,7 @@ public class OTAHandler extends BaseHttpHandler {
     @POST
     @Path("/start")
     @Consumes(value = MediaType.APPLICATION_JSON)
-    public Response startOTA(@ContextUser User user, StartOtaDTO startOtaDTO) {
+    public Response startOTA(@ContextUser User user, OtaDTO otaDTO) {
         Organization organization = organizationDao.getOrgByIdOrThrow(user.orgId);
 
         if (organization == null) {
@@ -99,55 +99,53 @@ public class OTAHandler extends BaseHttpHandler {
             return badRequest();
         }
 
-        if (startOtaDTO == null || startOtaDTO.isNotValid()) {
-            log.error("Wrong data for OTA start {}.", startOtaDTO);
+        if (otaDTO == null || otaDTO.isNotValid()) {
+            log.error("Wrong data for OTA start {}.", otaDTO);
             return badRequest("Wrong data for OTA start.");
         }
 
         //todo add tes for filter
-        List<Device> filteredDevices = deviceDao.getByProductIdAndFilter(startOtaDTO.productId, startOtaDTO.deviceIds);
+        List<Device> filteredDevices = deviceDao.getByProductIdAndFilter(otaDTO.productId, otaDTO.deviceIds);
         if (filteredDevices.size() == 0) {
-            log.error("No devices for provided productId {}", startOtaDTO.productId);
-            return badRequest("No devices for provided productId " + startOtaDTO.productId);
+            log.error("No devices for provided productId {}", otaDTO.productId);
+            return badRequest("No devices for provided productId " + otaDTO.productId);
         }
 
-        log.info("Initiating OTA for {}. {}", user.email, startOtaDTO);
+        log.info("Initiating OTA for {}. {}", user.email, otaDTO);
 
-        if (startOtaDTO.checkBoardType) {
+        if (otaDTO.checkBoardType) {
             for (Device device : filteredDevices) {
-                if (device.boardType == null || !device.boardType.label.equals(startOtaDTO.firmwareInfo.boardType)) {
+                if (device.boardType == null || !device.boardType.label.equals(otaDTO.firmwareInfo.boardType)) {
                     log.error("Device {} ({}) with id {} does't correspond to firmware {}.",
-                            device.name, device.boardType, device.id, startOtaDTO.firmwareInfo.boardType);
+                            device.name, device.boardType, device.id, otaDTO.firmwareInfo.boardType);
                     return badRequest(device.name + " board type doesn't correspond to firmware board type.");
                 }
             }
         }
 
         long now = System.currentTimeMillis();
-        Product product = organizationDao.getProductByIdOrThrow(startOtaDTO.productId);
-        product.setOtaProgress(new OtaProgress(startOtaDTO.title,
-                startOtaDTO.pathToFirmware, startOtaDTO.firmwareOriginalFileName,
-                now, -1,
-                startOtaDTO.deviceIds, startOtaDTO.firmwareInfo, startOtaDTO.attemptsLimit));
+        Product product = organizationDao.getProductByIdOrThrow(otaDTO.productId);
+        product.setOtaProgress(new OtaProgress(otaDTO, now));
 
         for (Device device : filteredDevices) {
             DeviceOtaInfo deviceOtaInfo = new DeviceOtaInfo(user.email, now,
                     -1L, -1L, -1L, -1L,
-                    startOtaDTO.pathToFirmware, startOtaDTO.firmwareInfo.buildDate,
-                    OTAStatus.STARTED, 0, startOtaDTO.attemptsLimit);
+                    otaDTO.pathToFirmware, otaDTO.firmwareInfo.buildDate,
+                    OTAStatus.STARTED, 0, otaDTO.attemptsLimit, otaDTO.isSecure);
             device.setDeviceOtaInfo(deviceOtaInfo);
         }
 
         Session session = sessionDao.getOrgSession(user.orgId);
+        String serverUrl = props.getServerUrl(otaDTO.isSecure);
         if (session != null) {
             for (Channel channel : session.hardwareChannels) {
                 HardwareStateHolder hardwareState = getHardState(channel);
                 if (hardwareState != null
-                        && ArrayUtil.contains(startOtaDTO.deviceIds, hardwareState.device.id)
+                        && ArrayUtil.contains(otaDTO.deviceIds, hardwareState.device.id)
                         && channel.isWritable()) {
-                    StringMessage msg = makeASCIIStringMessage(BLYNK_INTERNAL, 7777,
-                            OTAInfo.makeHardwareBody(serverHostUrl,
-                                    startOtaDTO.pathToFirmware, hardwareState.device.id));
+
+                    String body = OTAInfo.makeHardwareBody(serverUrl, otaDTO.pathToFirmware, hardwareState.device.id);
+                    StringMessage msg = makeASCIIStringMessage(BLYNK_INTERNAL, 7777, body);
                     channel.writeAndFlush(msg, channel.voidPromise());
                     hardwareState.device.requestSent();
                 }
@@ -160,7 +158,7 @@ public class OTAHandler extends BaseHttpHandler {
     @POST
     @Path("/stop")
     @Consumes(value = MediaType.APPLICATION_JSON)
-    public Response stopOTA(@ContextUser User user, StartOtaDTO startOtaDTO) {
+    public Response stopOTA(@ContextUser User user, OtaDTO otaDTO) {
         Organization organization = organizationDao.getOrgByIdOrThrow(user.orgId);
 
         if (organization == null) {
@@ -168,18 +166,18 @@ public class OTAHandler extends BaseHttpHandler {
             return badRequest();
         }
 
-        if (startOtaDTO == null || startOtaDTO.isDevicesEmpty()) {
-            log.error("No devices to stop OTA. {}.", startOtaDTO);
+        if (otaDTO == null || otaDTO.isDevicesEmpty()) {
+            log.error("No devices to stop OTA. {}.", otaDTO);
             return badRequest("No devices to stop OTA..");
         }
 
-        List<Device> filteredDevices = deviceDao.getByProductIdAndFilter(startOtaDTO.productId, startOtaDTO.deviceIds);
+        List<Device> filteredDevices = deviceDao.getByProductIdAndFilter(otaDTO.productId, otaDTO.deviceIds);
         if (filteredDevices.size() == 0) {
-            log.error("No devices for provided productId {}", startOtaDTO.productId);
-            return badRequest("No devices for provided productId " + startOtaDTO.productId);
+            log.error("No devices for provided productId {}", otaDTO.productId);
+            return badRequest("No devices for provided productId " + otaDTO.productId);
         }
 
-        log.info("Stopping OTA for {}. {}", user.email, startOtaDTO);
+        log.info("Stopping OTA for {}. {}", user.email, otaDTO);
 
         for (Device device : filteredDevices) {
             if (device.deviceOtaInfo != null && device.deviceOtaInfo.otaStatus != OTAStatus.SUCCESS
@@ -188,7 +186,7 @@ public class OTAHandler extends BaseHttpHandler {
             }
         }
 
-        Product product = organizationDao.getProductByIdOrThrow(startOtaDTO.productId);
+        Product product = organizationDao.getProductByIdOrThrow(otaDTO.productId);
         product.setOtaProgress(null);
 
         return ok();
