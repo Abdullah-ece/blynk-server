@@ -139,6 +139,21 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
     }
 
     @GET
+    @Path("/{token}/id")
+    @Metric(HTTP_IS_HARDWARE_CONNECTED)
+    public Response getDeviceId(@PathParam("token") String token) {
+        DeviceTokenValue tokenValue = deviceDao.getDeviceTokenValue(token);
+
+        if (tokenValue == null) {
+            log.debug("Requested token {} not found.", token);
+            return Response.badRequest("Invalid token.");
+        }
+
+        int deviceId = tokenValue.device.id;
+        return ok(deviceId);
+    }
+
+    @GET
     @Path("/{token}/get/{pin}")
     @Metric(HTTP_GET_PIN_DATA)
     public Response getWidgetPinDataNew(@PathParam("token") String token,
