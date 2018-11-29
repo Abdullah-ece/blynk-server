@@ -92,12 +92,12 @@ class DeviceCreateModal extends React.Component {
       }
     }
 
-    if (this.props.formValues && this.props.organization.parentId === -1 && Number(this.props.organization.id) === Number(this.props.account.selectedOrgId)) {
-      products.unshift({
-        key  : SETUP_PRODUCT_KEY,
-        value: 'New product'
-      });
-    }
+    // if (this.props.formValues && this.props.organization.parentId === -1 && Number(this.props.organization.id) === Number(this.props.account.selectedOrgId)) {
+    //   products.unshift({
+    //     key  : SETUP_PRODUCT_KEY,
+    //     value: 'New product'
+    //   });
+    // }
 
     const isAdvancedOptionShouldBeDisplayed = this.props.formValues && this.props.formValues.productId === SETUP_PRODUCT_KEY;
 
