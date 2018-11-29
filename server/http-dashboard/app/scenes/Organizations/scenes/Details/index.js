@@ -151,7 +151,7 @@ class Details extends React.Component {
     if (tab === this.TABS.PRODUCTS) {
       this.props.OrganizationsFetch({
         orgId: this.props.account.selectedOrgId
-      })
+      });
     }
     
     this.props.OrganizationsDetailsUpdate(
