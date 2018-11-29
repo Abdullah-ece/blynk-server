@@ -133,6 +133,7 @@ public final class Command {
     public static final short HTTP_STOP_OTA = 92;
     public static final short HTTP_CLONE = 93;
     public static final short HTTP_TOTAL = 94;
+    public static final short HTTP_GET_DEVICE = 95;
 
     public static final short WEB_JSON = 99;
     public static final short WEB_GET_ACCOUNT = 100;
@@ -264,6 +265,7 @@ public final class Command {
             Map.entry(HTTP_GET_HISTORY_DATA, "HttpGetHistoryData"),
             Map.entry(HTTP_START_OTA, "HttpStartOTA"),
             Map.entry(HTTP_TOTAL, "HttpTotal"),
+            Map.entry(HTTP_GET_DEVICE, "HttpGetDevice"),
             Map.entry(WEB_SOCKETS, "WebSockets"),
             Map.entry(EVENTOR, "Eventor"),
             Map.entry(WEB_HOOKS, "WebHooks"),

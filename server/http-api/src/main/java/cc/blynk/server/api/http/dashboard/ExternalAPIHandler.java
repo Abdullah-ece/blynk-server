@@ -43,6 +43,7 @@ import static cc.blynk.core.http.Response.ok;
 import static cc.blynk.core.http.Response.serverError;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_LOG_EVENT;
+import static cc.blynk.server.core.protocol.enums.Command.HTTP_GET_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.HTTP_GET_PIN_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.HTTP_IS_HARDWARE_CONNECTED;
 import static cc.blynk.server.core.protocol.enums.Command.HTTP_UPDATE_PIN_DATA;
@@ -140,8 +141,8 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
 
     @GET
     @Path("/{token}/id")
-    @Metric(HTTP_IS_HARDWARE_CONNECTED)
-    public Response getDeviceId(@PathParam("token") String token) {
+    @Metric(HTTP_GET_DEVICE)
+    public Response getDeviceJson(@PathParam("token") String token) {
         DeviceTokenValue tokenValue = deviceDao.getDeviceTokenValue(token);
 
         if (tokenValue == null) {
@@ -149,8 +150,8 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
             return Response.badRequest("Invalid token.");
         }
 
-        int deviceId = tokenValue.device.id;
-        return ok(deviceId);
+        Device device = tokenValue.device;
+        return ok(device);
     }
 
     @GET
