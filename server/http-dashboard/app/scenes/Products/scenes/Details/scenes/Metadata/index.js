@@ -349,7 +349,14 @@ class Metadata extends React.Component {
 
       if (field.name && field.name === hardcodedRequiredMetadataFieldsNames.TemplateId) {
         elements.push(
-          <TemplateIdField.Static {...props}/>
+          <TemplateIdField.Static {...props}
+                                  units={field.units}
+                                  options={field.options}
+                                  preview={{
+                                    name: field.name,
+                                    value: field.options,
+                                    inline: true
+                                  }}/>
         );
       }
 
