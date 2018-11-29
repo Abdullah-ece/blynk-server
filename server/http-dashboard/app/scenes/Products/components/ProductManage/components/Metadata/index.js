@@ -325,7 +325,7 @@ class ProductMetadata extends React.Component {
     const oldIndex = originalIndex + 1;
 
     if(newIndex !== oldIndex)
-      this.props.fields.swap(newIndex, oldIndex);
+      this.props.fields.move(newIndex, oldIndex);
 
   }
 
@@ -458,7 +458,7 @@ class ProductMetadata extends React.Component {
 
     const dynamicMetaFields = this.getDynamicMetaFields();
 
-    this.props.fields.swap(dynamicMetaFields.get(params.oldIndex).get('metaFieldKey'), dynamicMetaFields.get(params.newIndex).get('metaFieldKey'));
+    this.props.fields.move(dynamicMetaFields.get(params.oldIndex).get('metaFieldKey'), dynamicMetaFields.get(params.newIndex).get('metaFieldKey'));
   }
 
   render() {

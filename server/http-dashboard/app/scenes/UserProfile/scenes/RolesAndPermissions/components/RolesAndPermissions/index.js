@@ -223,7 +223,7 @@ class RolesAndPermissions extends React.Component {
     };
 
     const handleSortEnd = ({oldIndex, newIndex}) => {
-      fields.swap(oldIndex, newIndex);
+      fields.move(oldIndex, newIndex);
     };
 
     const handleRemove = (index) => {

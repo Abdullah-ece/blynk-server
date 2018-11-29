@@ -172,7 +172,7 @@ class List extends React.Component {
     const oldIndex = originalIndex + 1;
 
     if (newIndex !== oldIndex)
-      this.props.fields.swap(newIndex, oldIndex);
+      this.props.fields.move(newIndex, oldIndex);
 
   }
 
@@ -279,7 +279,7 @@ class List extends React.Component {
       return false;
 
     let dynamicFields = this.getDynamicFields();
-    this.props.fields.swap(dynamicFields[oldIndex].get('eventKey'), dynamicFields[newIndex].get('eventKey'));
+    this.props.fields.move(dynamicFields[oldIndex].get('eventKey'), dynamicFields[newIndex].get('eventKey'));
   }
 
   getFieldsByTypes(types) {

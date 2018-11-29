@@ -272,7 +272,7 @@ class List extends React.Component {
     const oldIndex = originalIndex + 1;
 
     if(newIndex !== oldIndex)
-      this.props.fields.swap(newIndex, oldIndex);
+      this.props.fields.move(newIndex, oldIndex);
   }
 
   addDataStreamsField() {
@@ -301,7 +301,7 @@ class List extends React.Component {
     if(newIndex === oldIndex)
       return false;
 
-    this.props.fields.swap(oldIndex, newIndex);
+    this.props.fields.move(oldIndex, newIndex);
   }
 
   render() {
