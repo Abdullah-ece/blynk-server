@@ -13,7 +13,6 @@ import org.apache.logging.log4j.Logger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -29,7 +28,7 @@ public class DeviceDao {
 
     private static final Logger log = LogManager.getLogger(DeviceDao.class);
 
-    public final ConcurrentMap<DeviceKey, Device> devices;
+    public final ConcurrentMap<Integer, Device> devices;
     private final AtomicInteger deviceSequence;
     private final DeviceTokenManager deviceTokenManager;
 
@@ -41,7 +40,7 @@ public class DeviceDao {
             for (Product product : org.products) {
                 for (Device device : product.devices) {
                     maxDeviceId = Math.max(maxDeviceId, device.id);
-                    devices.put(new DeviceKey(org.id, product.id, device.id), device);
+                    devices.put(device.id, device);
                 }
             }
         }
@@ -56,12 +55,12 @@ public class DeviceDao {
     }
 
     public void createWithPredefinedIdAndToken(int orgId, String email, Product product, Device device) {
-        devices.put(new DeviceKey(orgId, device.productId, device.id), device);
+        devices.put(device.id, device);
         deviceTokenManager.assignNewToken(orgId, email, product, device, device.token);
     }
 
     public Device createWithPredefinedId(int orgId, String email, Product product, Device device) {
-        devices.put(new DeviceKey(orgId, device.productId, device.id), device);
+        devices.put(device.id, device);
         deviceTokenManager.assignNewToken(orgId, email, product, device);
         return device;
     }
@@ -72,18 +71,18 @@ public class DeviceDao {
     }
 
     public Device delete(int deviceId) {
-        Device device = devices.remove(new DeviceKey(0, 0, deviceId));
+        Device device = devices.remove(deviceId);
         //also removes deivce from the product
         deviceTokenManager.deleteDevice(device);
         return device;
     }
 
     public Device getById(int deviceId) {
-        return devices.get(new DeviceKey(0, 0, deviceId));
+        return devices.get(deviceId);
     }
 
     public Device getByIdOrThrow(int deviceId) {
-        Device device = devices.get(new DeviceKey(0, 0, deviceId));
+        Device device = devices.get(deviceId);
         if (device == null) {
             log.error("Device with id {} not found.", deviceId);
             throw new DeviceNotFoundException("Requested device not exists.");
@@ -96,8 +95,8 @@ public class DeviceDao {
     }
 
     public boolean productHasDevices(int productId) {
-        for (Map.Entry<DeviceKey, Device> entry : devices.entrySet()) {
-            Device device = entry.getValue();
+        for (var deviceEntry : devices.entrySet()) {
+            Device device = deviceEntry.getValue();
             if (device.productId == productId) {
                 return true;
             }
@@ -107,8 +106,8 @@ public class DeviceDao {
 
     public List<Device> getAllByProductId(int productId) {
         List<Device> result = new ArrayList<>();
-        for (Map.Entry<DeviceKey, Device> entry : devices.entrySet()) {
-            Device device = entry.getValue();
+        for (var deviceEntry : devices.entrySet()) {
+            Device device = deviceEntry.getValue();
             if (device.productId == productId) {
                 result.add(device);
             }
@@ -118,8 +117,8 @@ public class DeviceDao {
 
     public List<Device> getByProductIdAndFilter(int productId, int[] deviceIds) {
         List<Device> result = new ArrayList<>();
-        for (Map.Entry<DeviceKey, Device> entry : devices.entrySet()) {
-            Device device = entry.getValue();
+        for (var deviceEntry : devices.entrySet()) {
+            Device device = deviceEntry.getValue();
             if (device.productId == productId && ArrayUtil.contains(deviceIds, device.id)) {
                 result.add(device);
             }

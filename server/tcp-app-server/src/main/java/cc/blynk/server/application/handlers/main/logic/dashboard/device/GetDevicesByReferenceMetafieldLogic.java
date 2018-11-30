@@ -1,7 +1,6 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard.device;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.dao.DeviceKey;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.dto.IdNameDTO;
 import cc.blynk.server.core.model.serialization.JsonParser;
@@ -17,7 +16,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICES_BY_REFERENCE_METAFIELD;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
@@ -51,8 +49,8 @@ public final class GetDevicesByReferenceMetafieldLogic {
         DeviceReferenceMetaField deviceReferenceMetaField = (DeviceReferenceMetaField) metaField;
         List<IdNameDTO> result = new ArrayList<>();
         for (int productId : deviceReferenceMetaField.selectedProductIds) {
-            for (Map.Entry<DeviceKey, Device> entry : holder.deviceDao.devices.entrySet()) {
-                Device tempDevice = entry.getValue();
+            for (var deviceEntries : holder.deviceDao.devices.entrySet()) {
+                Device tempDevice = deviceEntries.getValue();
                 if (tempDevice.productId == productId) {
                     result.add(new IdNameDTO(tempDevice));
                 }
