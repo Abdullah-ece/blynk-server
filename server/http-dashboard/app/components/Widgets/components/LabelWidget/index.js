@@ -116,7 +116,7 @@ class LabelWidget extends React.Component {
                   className={`${valueClassName}`}>{isStringValue ? params.value : this.formatLabelValue(params.value)}</span>
               ) || (null)}
               {!params.customText && params.suffix && (
-                <span className="widgets--widget-web-label--suffix">{params.suffix || null}</span>
+                <span className="widgets--widget-web-label--suffix-label">{params.suffix || null}</span>
               )}
               {params.customText && (
                 <span className={"widgets--widget-web-label--custom-text"}>{params.customText || null}</span>
