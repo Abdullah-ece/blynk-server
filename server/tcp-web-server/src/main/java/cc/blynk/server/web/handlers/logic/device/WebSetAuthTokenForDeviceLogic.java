@@ -2,6 +2,7 @@ package cc.blynk.server.web.handlers.logic.device;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.DeviceDao;
+import cc.blynk.server.core.dao.DeviceValue;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.auth.Session;
@@ -22,6 +23,7 @@ import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.model.permissions.PermissionsTable.SET_AUTH_TOKEN;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
+import static cc.blynk.server.internal.WebByteBufUtil.json;
 import static cc.blynk.server.internal.WebByteBufUtil.userHasNoAccessToOrg;
 
 /**
@@ -75,8 +77,15 @@ public class WebSetAuthTokenForDeviceLogic implements PermissionBasedLogic {
             return;
         }
 
-        Device device = deviceDao.getByIdOrThrow(deviceId);
-        Product product = organizationDao.getProductByIdOrThrow(device.productId);
+        DeviceValue deviceValue = deviceDao.getDeviceValueById(deviceId);
+        if (deviceValue == null) {
+            log.error("Device {} not found for {}.", deviceId, user.email);
+            ctx.writeAndFlush(json(message.id, "Requested device not found."), ctx.voidPromise());
+            return;
+        }
+
+        Device device = deviceValue.device;
+        Product product = deviceValue.product;
         String newToken = setAuthTokenDTO.token;
 
         Role role = state.role;

@@ -82,7 +82,7 @@ public class PermissionsTest extends SingleServerInstancePerTestWithDBAndNewOrg 
 
         //wrong org id here
         subUserClient.getDevice(fromApiOrg.id, createdDevice.id);
-        subUserClient.verifyResult(webJson(1, "Device not found."));
+        subUserClient.verifyResult(webJson(1, "User has no access to this organization."));
 
         subUserClient.getDevice(orgId, createdDevice.id);
         subUserClient.verifyResult(webJson(2, "User has no access to this organization."));

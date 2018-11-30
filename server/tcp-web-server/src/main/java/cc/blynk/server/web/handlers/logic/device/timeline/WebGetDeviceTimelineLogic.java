@@ -3,6 +3,7 @@ package cc.blynk.server.web.handlers.logic.device.timeline;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.DeviceDao;
+import cc.blynk.server.core.dao.DeviceValue;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
@@ -56,15 +57,16 @@ public class WebGetDeviceTimelineLogic {
             return;
         }
 
-        Device device = deviceDao.getById(timelineDTO.deviceId);
-        if (device == null) {
+        DeviceValue deviceValue = deviceDao.getDeviceValueById(timelineDTO.deviceId);
+        if (deviceValue == null) {
             log.error("Device {} not found for {}.", timelineDTO.deviceId, user.email);
             ctx.writeAndFlush(json(message.id, "Requested device not found."), ctx.voidPromise());
             return;
         }
 
-       // organizationDao.verifyUserAccessToDevice(user, device);
-        Product product = organizationDao.getProductById(device.productId);
+        // organizationDao.verifyUserAccessToDevice(user, device);
+        Device device = deviceValue.device;
+        Product product = deviceValue.product;
 
         blockingIOProcessor.executeDB(() -> {
             MessageBase response;

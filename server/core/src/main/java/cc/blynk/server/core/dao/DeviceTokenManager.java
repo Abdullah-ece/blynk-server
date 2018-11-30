@@ -41,14 +41,14 @@ public class DeviceTokenManager {
         this.host = host;
     }
 
-    public void deleteDevice(Device device) {
-        if (device != null) {
+    public void deleteDevice(DeviceValue deviceValue) {
+        if (deviceValue != null) {
+            Device device = deviceValue.device;
+            Product product = deviceValue.product;
+            product.deleteDevice(device.id);
             String token = device.token;
             if (token != null) {
-                DeviceValue deviceValue = cache.remove(token);
-                if (deviceValue != null && deviceValue.product != null) {
-                    deviceValue.product.deleteDevice(device.id);
-                }
+                cache.remove(token);
                 dbManager.removeToken(token);
             }
         }

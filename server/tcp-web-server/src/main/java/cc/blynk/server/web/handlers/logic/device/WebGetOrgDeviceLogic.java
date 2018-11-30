@@ -2,6 +2,7 @@ package cc.blynk.server.web.handlers.logic.device;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.DeviceDao;
+import cc.blynk.server.core.dao.DeviceValue;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
@@ -60,19 +61,22 @@ public class WebGetOrgDeviceLogic implements PermissionBasedLogic {
     public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         String[] split = split2(message.body);
 
-        int orgId = Integer.parseInt(split[0]);
+        //todo no need?
+        //int orgId = Integer.parseInt(split[0]);
         int deviceId = Integer.parseInt(split[1]);
 
         User user = state.user;
-        Device device = deviceDao.getById(deviceId);
-        if (device == null) {
+        DeviceValue deviceValue = deviceDao.getDeviceValueById(deviceId);
+        if (deviceValue == null) {
             log.error("Device {} not found for {}.", deviceId, user.email);
             ctx.writeAndFlush(json(message.id, "Device not found."), ctx.voidPromise());
             return;
         }
 
+        int orgId = deviceValue.orgId;
+
         Organization org = organizationDao.getOrgByIdOrThrow(orgId);
-        Product product = org.getProduct(device.productId);
+        Product product = deviceValue.product;
         //this means orgId is wrong
         if (product == null) {
             log.error("Device {} not found for {}, probably wrong orgId {}.", deviceId, state.user.email, orgId);
@@ -88,6 +92,7 @@ public class WebGetOrgDeviceLogic implements PermissionBasedLogic {
             return;
         }
 
+        Device device = deviceValue.device;
         device.fillWebDashboardValues();
         if (ctx.channel().isWritable()) {
             String devicesString = new DeviceDTO(device, product, org.name).toString();

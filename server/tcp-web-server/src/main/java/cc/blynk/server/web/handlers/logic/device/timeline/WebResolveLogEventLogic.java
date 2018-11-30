@@ -3,11 +3,11 @@ package cc.blynk.server.web.handlers.logic.device.timeline;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.DeviceDao;
+import cc.blynk.server.core.dao.DeviceValue;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
@@ -56,14 +56,14 @@ public class WebResolveLogEventLogic {
         String comment = messageParts.length == 3 ? messageParts[2] : null;
 
         User user = state.user;
-        Device device = deviceDao.getById(deviceId);
-        if (device == null) {
+        DeviceValue deviceValue = deviceDao.getDeviceValueById(deviceId);
+        if (deviceValue == null) {
             log.error("Device {} not found for {}.", deviceId, user.email);
             ctx.writeAndFlush(json(message.id, "Requested device not found."), ctx.voidPromise());
             return;
         }
 
-        int orgId = organizationDao.getOrganizationIdByProductId(device.productId);
+        int orgId = deviceValue.orgId;
         if (!user.hasAccess(orgId)) {
             log.error("User {} tries to access device {} he has no access.", user.email, deviceId);
             ctx.writeAndFlush(json(message.id, "User tries to access device he has no access."), ctx.voidPromise());

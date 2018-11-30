@@ -2,6 +2,7 @@ package cc.blynk.server.web.handlers.logic.device;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.DeviceDao;
+import cc.blynk.server.core.dao.DeviceValue;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
@@ -58,26 +59,21 @@ public class WebGetOwnDeviceLogic implements PermissionBasedLogic {
         int deviceId = Integer.parseInt(split[1]);
 
         User user = state.user;
-        Device device = deviceDao.getById(deviceId);
-        if (device == null) {
+        DeviceValue deviceValue = deviceDao.getDeviceValueById(deviceId);
+        if (deviceValue == null) {
             log.error("Device {} not found for {}.", deviceId, user.email);
             ctx.writeAndFlush(json(message.id, "Device not found."), ctx.voidPromise());
             return;
         }
 
+        Device device = deviceValue.device;
         if (!device.hasOwner(state.user.email)) {
             log.error("User {} is not owner of requested deviceId {}.", user.email, deviceId);
             throw new NoPermissionException("User is not owner of requested device.", getPermission());
         }
 
         Organization org = organizationDao.getOrgByIdOrThrow(orgId);
-        Product product = org.getProduct(device.productId);
-        //this means orgId is wrong
-        if (product == null) {
-            log.error("Device {} not found for {}, probably wrong orgId {}.", deviceId, state.user.email, orgId);
-            ctx.writeAndFlush(json(message.id, "Device not found."), ctx.voidPromise());
-            return;
-        }
+        Product product = deviceValue.product;
 
         //todo refactor when permissions ready
         //todo check access for the device

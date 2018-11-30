@@ -28,7 +28,7 @@ public class DeviceDao {
 
     private static final Logger log = LogManager.getLogger(DeviceDao.class);
 
-    public final ConcurrentMap<Integer, Device> devices;
+    public final ConcurrentMap<Integer, DeviceValue> devices;
     private final AtomicInteger deviceSequence;
     private final DeviceTokenManager deviceTokenManager;
 
@@ -40,7 +40,7 @@ public class DeviceDao {
             for (Product product : org.products) {
                 for (Device device : product.devices) {
                     maxDeviceId = Math.max(maxDeviceId, device.id);
-                    devices.put(device.id, device);
+                    devices.put(device.id, new DeviceValue(org.id, product, device));
                 }
             }
         }
@@ -55,12 +55,12 @@ public class DeviceDao {
     }
 
     public void createWithPredefinedIdAndToken(int orgId, String email, Product product, Device device) {
-        devices.put(device.id, device);
+        devices.put(device.id, new DeviceValue(orgId, product, device));
         deviceTokenManager.assignNewToken(orgId, email, product, device, device.token);
     }
 
     public Device createWithPredefinedId(int orgId, String email, Product product, Device device) {
-        devices.put(device.id, device);
+        devices.put(device.id, new DeviceValue(orgId, product, device));
         deviceTokenManager.assignNewToken(orgId, email, product, device);
         return device;
     }
@@ -70,33 +70,42 @@ public class DeviceDao {
         return createWithPredefinedId(orgId, email, product, device);
     }
 
-    public Device delete(int deviceId) {
-        Device device = devices.remove(deviceId);
+    public DeviceValue delete(int deviceId) {
+        DeviceValue deviceValue = devices.remove(deviceId);
         //also removes deivce from the product
-        deviceTokenManager.deleteDevice(device);
-        return device;
+        deviceTokenManager.deleteDevice(deviceValue);
+        return deviceValue;
     }
 
     public Device getById(int deviceId) {
+        DeviceValue deviceValue = devices.get(deviceId);
+        if (deviceValue == null) {
+            return null;
+        }
+        return deviceValue.device;
+    }
+
+    public DeviceValue getDeviceValueById(int deviceId) {
         return devices.get(deviceId);
     }
 
     public Device getByIdOrThrow(int deviceId) {
-        Device device = devices.get(deviceId);
-        if (device == null) {
+        DeviceValue deviceValue = devices.get(deviceId);
+        if (deviceValue == null) {
             log.error("Device with id {} not found.", deviceId);
             throw new DeviceNotFoundException("Requested device not exists.");
         }
-        return device;
+        return deviceValue.device;
     }
 
-    public Collection<Device> getAll() {
+    public Collection<DeviceValue> getAll() {
         return devices.values();
     }
 
     public boolean productHasDevices(int productId) {
         for (var deviceEntry : devices.entrySet()) {
-            Device device = deviceEntry.getValue();
+            DeviceValue deviceValue = deviceEntry.getValue();
+            Device device = deviceValue.device;
             if (device.productId == productId) {
                 return true;
             }
@@ -107,7 +116,8 @@ public class DeviceDao {
     public List<Device> getAllByProductId(int productId) {
         List<Device> result = new ArrayList<>();
         for (var deviceEntry : devices.entrySet()) {
-            Device device = deviceEntry.getValue();
+            DeviceValue deviceValue = deviceEntry.getValue();
+            Device device = deviceValue.device;
             if (device.productId == productId) {
                 result.add(device);
             }
@@ -118,7 +128,8 @@ public class DeviceDao {
     public List<Device> getByProductIdAndFilter(int productId, int[] deviceIds) {
         List<Device> result = new ArrayList<>();
         for (var deviceEntry : devices.entrySet()) {
-            Device device = deviceEntry.getValue();
+            DeviceValue deviceValue = deviceEntry.getValue();
+            Device device = deviceValue.device;
             if (device.productId == productId && ArrayUtil.contains(deviceIds, device.id)) {
                 result.add(device);
             }
@@ -150,7 +161,8 @@ public class DeviceDao {
 
     public List<Device> getDevicesOwnedByUser(String ownerEmail) {
         List<Device> result = new ArrayList<>();
-        for (Device device : devices.values()) {
+        for (DeviceValue deviceValue : devices.values()) {
+            Device device = deviceValue.device;
             if (device.hasOwner(ownerEmail)) {
                 result.add(device);
             }
