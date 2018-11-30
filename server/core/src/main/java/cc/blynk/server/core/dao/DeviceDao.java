@@ -158,7 +158,7 @@ public class DeviceDao {
         return result;
     }
 
-    public DeviceTokenValue getDeviceTokenValue(String token) {
+    public DeviceValue getDeviceTokenValue(String token) {
         return deviceTokenManager.getTokenValueByToken(token);
     }
 

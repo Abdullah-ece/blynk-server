@@ -8,7 +8,7 @@ import cc.blynk.server.core.model.web.product.Product;
  * Created by Dmitriy Dumanskiy.
  * Created on 16.11.16.
  */
-public class DeviceTokenValue {
+public class DeviceValue {
 
     public final int orgId;
 
@@ -16,7 +16,7 @@ public class DeviceTokenValue {
 
     public final Device device;
 
-    public DeviceTokenValue(int orgId, Product product, Device device) {
+    public DeviceValue(int orgId, Product product, Device device) {
         this.orgId = orgId;
         this.product = product;
         this.device = device;

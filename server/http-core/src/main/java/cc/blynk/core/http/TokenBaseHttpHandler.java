@@ -3,7 +3,7 @@ package cc.blynk.core.http;
 import cc.blynk.core.http.rest.HandlerWrapper;
 import cc.blynk.core.http.rest.URIDecoder;
 import cc.blynk.server.core.dao.DeviceDao;
-import cc.blynk.server.core.dao.DeviceTokenValue;
+import cc.blynk.server.core.dao.DeviceValue;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.stats.GlobalStats;
@@ -34,7 +34,7 @@ public abstract class TokenBaseHttpHandler extends BaseHttpHandler {
         }
 
         //reregister logic
-        DeviceTokenValue tokenValue = deviceDao.getDeviceTokenValue(tokenPathParam);
+        DeviceValue tokenValue = deviceDao.getDeviceTokenValue(tokenPathParam);
         if (tokenValue == null) {
             log.debug("Requested token {} not found.", tokenPathParam);
             ctx.writeAndFlush(Response.badRequest("Invalid token."), ctx.voidPromise());

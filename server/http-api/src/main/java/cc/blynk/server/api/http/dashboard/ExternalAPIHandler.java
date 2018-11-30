@@ -12,7 +12,7 @@ import cc.blynk.core.http.annotation.PathParam;
 import cc.blynk.core.http.annotation.QueryParam;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
-import cc.blynk.server.core.dao.DeviceTokenValue;
+import cc.blynk.server.core.dao.DeviceValue;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.model.DataStream;
@@ -125,7 +125,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
     @Path("/{token}/isHardwareConnected")
     @Metric(HTTP_IS_HARDWARE_CONNECTED)
     public Response isHardwareConnected(@PathParam("token") String token) {
-        DeviceTokenValue tokenValue = deviceDao.getDeviceTokenValue(token);
+        DeviceValue tokenValue = deviceDao.getDeviceTokenValue(token);
 
         if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);
@@ -143,7 +143,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
     @Path("/{token}/id")
     @Metric(HTTP_GET_DEVICE)
     public Response getDeviceJson(@PathParam("token") String token) {
-        DeviceTokenValue tokenValue = deviceDao.getDeviceTokenValue(token);
+        DeviceValue tokenValue = deviceDao.getDeviceTokenValue(token);
 
         if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);
@@ -165,7 +165,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
     private Response getWidgetPinData(@PathParam("token") String token,
                                       @PathParam("pin") String pinString) {
 
-        DeviceTokenValue tokenValue = deviceDao.getDeviceTokenValue(token);
+        DeviceValue tokenValue = deviceDao.getDeviceTokenValue(token);
 
         if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);
@@ -265,7 +265,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
             return Response.badRequest("No properties for update provided.");
         }
 
-        DeviceTokenValue tokenValue = deviceDao.getDeviceTokenValue(token);
+        DeviceValue tokenValue = deviceDao.getDeviceTokenValue(token);
 
         if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);
@@ -318,7 +318,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
             return Response.badRequest("No pin for update provided.");
         }
 
-        DeviceTokenValue tokenValue = deviceDao.getDeviceTokenValue(token);
+        DeviceValue tokenValue = deviceDao.getDeviceTokenValue(token);
 
         if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);

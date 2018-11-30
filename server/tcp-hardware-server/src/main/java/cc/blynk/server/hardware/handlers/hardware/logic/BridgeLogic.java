@@ -1,7 +1,7 @@
 package cc.blynk.server.hardware.handlers.hardware.logic;
 
 import cc.blynk.server.core.dao.DeviceDao;
-import cc.blynk.server.core.dao.DeviceTokenValue;
+import cc.blynk.server.core.dao.DeviceValue;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
@@ -38,7 +38,7 @@ public class BridgeLogic {
     private static final Logger log = LogManager.getLogger(BridgeLogic.class);
     private final SessionDao sessionDao;
     private final DeviceDao deviceDao;
-    private Map<String, DeviceTokenValue> sendToMap;
+    private Map<String, DeviceValue> sendToMap;
 
     public BridgeLogic(SessionDao sessionDao, DeviceDao deviceDao) {
         this.sessionDao = sessionDao;

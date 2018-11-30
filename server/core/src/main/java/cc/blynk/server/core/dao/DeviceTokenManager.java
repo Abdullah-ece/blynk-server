@@ -20,7 +20,7 @@ public class DeviceTokenManager {
 
     private static final Logger log = LogManager.getLogger(DeviceTokenManager.class);
 
-    protected final ConcurrentHashMap<String, DeviceTokenValue> cache;
+    protected final ConcurrentHashMap<String, DeviceValue> cache;
     private final DBManager dbManager;
     private final String host;
 
@@ -32,7 +32,7 @@ public class DeviceTokenManager {
             for (Product product : org.products) {
                 for (Device device : product.devices) {
                     if (device.token != null) {
-                        cache.put(device.token, new DeviceTokenValue(org.id, product, device));
+                        cache.put(device.token, new DeviceValue(org.id, product, device));
                     }
                 }
             }
@@ -45,16 +45,16 @@ public class DeviceTokenManager {
         if (device != null) {
             String token = device.token;
             if (token != null) {
-                DeviceTokenValue deviceTokenValue = cache.remove(token);
-                if (deviceTokenValue != null && deviceTokenValue.product != null) {
-                    deviceTokenValue.product.deleteDevice(device.id);
+                DeviceValue deviceValue = cache.remove(token);
+                if (deviceValue != null && deviceValue.product != null) {
+                    deviceValue.product.deleteDevice(device.id);
                 }
                 dbManager.removeToken(token);
             }
         }
     }
 
-    DeviceTokenValue getTokenValueByToken(String token) {
+    DeviceValue getTokenValueByToken(String token) {
         return cache.get(token);
     }
 
@@ -95,7 +95,7 @@ public class DeviceTokenManager {
 
         //assign new token
         device.token = newToken;
-        DeviceTokenValue tokenValue = new DeviceTokenValue(orgId, product, device);
+        DeviceValue tokenValue = new DeviceValue(orgId, product, device);
         cache.put(newToken, tokenValue);
 
         log.debug("Generated token for orgId {} deviceId {} is {}.", orgId, device.id, newToken);
