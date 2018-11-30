@@ -74,6 +74,7 @@ export const API_COMMANDS = {
   DELETE_DEVICE                 : 128,
   LOGOUT                        : 66,
   WEB_GET_TEMP_SECURE_TOKEN     : 131,
+  WEB_SET_AUTH_TOKEN            : 138,
 };
 
 export const getCommandKeyName = (value) => {

@@ -1,4 +1,4 @@
-import {API_COMMANDS} from "store/blynk-websocket-middleware/commands";
+import { API_COMMANDS } from "store/blynk-websocket-middleware/commands";
 
 export const PreloadDevicesFetch = (data) => {
 
@@ -72,6 +72,25 @@ export const DeviceCreate = (data, device) => {
       request: {
         command: API_COMMANDS.CREATE_DEVICE,
         query: [data.orgId, JSON.stringify(device)],
+      }
+    }
+  };
+};
+
+export const SetAuthToken = (deviceId, orgId, token) => {
+  if (!orgId)
+    throw new Error('orgId parameter is missed');
+
+  return {
+    type: 'API_WEB_SET_AUTH_TOKEN',
+    ws: {
+      request: {
+        command: API_COMMANDS.WEB_SET_AUTH_TOKEN,
+        query: [
+          orgId,
+          deviceId,
+          token
+        ],
       }
     }
   };
@@ -160,7 +179,7 @@ export const DeviceDetailsFetch = (params, data) => {
     ws: {
       request: {
         command: API_COMMANDS.GET_DEVICE,
-        query: [params.orgId,data.id]
+        query: [params.orgId, data.id]
       }
     }
   };
@@ -185,9 +204,9 @@ export const DeviceDetailsUpdate = (params, data) => {
   };
 };
 
-export const DeviceDashboardFetch = ({orgId, deviceId }) => {
+export const DeviceDashboardFetch = ({ orgId, deviceId }) => {
 
-  if(!orgId)
+  if (!orgId)
     throw new Error('Parameter orgId is missed');
 
   return {
@@ -195,7 +214,7 @@ export const DeviceDashboardFetch = ({orgId, deviceId }) => {
     ws: {
       request: {
         command: API_COMMANDS.GET_DEVICE,
-        query  : [orgId, deviceId],
+        query: [orgId, deviceId],
       }
     }
   };
