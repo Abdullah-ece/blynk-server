@@ -1,10 +1,12 @@
 package cc.blynk.integration.https;
 
 import cc.blynk.integration.SingleServerInstancePerTestWithDBAndNewOrg;
+import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.dto.OrganizationDTO;
 import cc.blynk.server.core.model.web.Organization;
+import cc.blynk.server.core.protocol.enums.Response;
 import cc.blynk.utils.SHA256Util;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -63,6 +65,20 @@ public class InvitationAPIWebsocketTest extends SingleServerInstancePerTestWithD
 
         client.canInviteUser("test1@gmail.com");
         client.verifyResult(webJson(2, "Invitation for test1@gmail.com was already sent."));
+    }
+
+    @Test
+    public void testLoginWithoutPasswordSet() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+        client.inviteUser(orgId, "test1@gmail.com", "Dmitriy", 3);
+        client.verifyResult(ok(1));
+
+        TestAppClient appClient = new TestAppClient("localhost", properties);
+        appClient.start();
+        appClient.loginNoHash("test1@gmail.com", "123");
+        appClient.verifyResult(webJson(1,
+                "Account is not activated. Please set the password via the invitation link.",
+                Response.FACEBOOK_USER_LOGIN_WITH_PASS));
     }
 
     @Test

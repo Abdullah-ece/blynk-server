@@ -256,7 +256,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         appWebSocketClient.login(regularUser);
         appWebSocketClient.verifyResult(ok(1));
 
-        TestAppClient appClient = new TestAppClient("localhost", properties.getHttpsPort(), properties);
+        TestAppClient appClient = new TestAppClient("localhost", properties);
         appClient.start();
         appClient.loginNoHash(regularUser.email, regularUser.pass);
         appClient.verifyResult(ok(1));
@@ -314,7 +314,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         appWebSocketClient.track(1);
         appWebSocketClient.verifyResult(ok(2));
 
-        TestAppClient appClient = new TestAppClient("localhost", properties.getHttpsPort(), properties);
+        TestAppClient appClient = new TestAppClient("localhost", properties);
         appClient.start();
         appClient.loginNoHash(regularUser.email, regularUser.pass);
         appClient.verifyResult(ok(1));

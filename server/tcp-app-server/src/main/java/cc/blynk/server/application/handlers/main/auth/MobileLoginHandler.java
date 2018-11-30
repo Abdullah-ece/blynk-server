@@ -170,7 +170,9 @@ public class MobileLoginHandler extends SimpleChannelInboundHandler<LoginMessage
         if (user.pass == null) {
             log.warn("Facebook user '{}' tries to login with pass. {}", email, ctx.channel().remoteAddress());
             ctx.writeAndFlush(
-                    facebookUserLoginWithPass(msgId, "Facebook user tries to login with pass."), ctx.voidPromise());
+                    facebookUserLoginWithPass(msgId,
+                            "Account is not activated. Please set the password via the invitation link."),
+                    ctx.voidPromise());
             return;
         }
 
