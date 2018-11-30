@@ -102,6 +102,7 @@ public class SslContextHolder {
     }
 
     public void generateInitialCertificates(ServerProperties props) {
+        log.info("Jar path : {}", props.jarPath);
         if (isAutoGenerationEnabled && isNeedInitializeOnStart) {
             System.out.println("Generating own initial certificates...");
             try {

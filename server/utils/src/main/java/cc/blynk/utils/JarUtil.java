@@ -15,6 +15,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 
 /**
  * Utility class to work with jar file. Used in order to find all static resources
@@ -123,5 +125,32 @@ public final class JarUtil {
         } catch (Exception e) {
             return "";
         }
+    }
+
+    private static String jarPath;
+    public static String getJarPath() {
+        if (jarPath != null) {
+            return jarPath;
+        }
+        try {
+            var codeSource = JarUtil.class.getProtectionDomain().getCodeSource();
+            var jarFile = new File(codeSource.getLocation().toURI().getPath());
+            jarPath = jarFile.getParentFile().getPath();
+            return jarPath;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static Path createPIDFile() {
+        String pidFileName = "pid.server";
+        Path pathToPidFile = Paths.get(getJarPath(), pidFileName);
+        try {
+            long pid = ProcessHandle.current().pid();
+            Files.writeString(pathToPidFile, String.valueOf(pid), CREATE, TRUNCATE_EXISTING);
+        } catch (Exception e) {
+            System.out.println("Error creating " + pidFileName);
+        }
+        return pathToPidFile;
     }
 }

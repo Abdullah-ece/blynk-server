@@ -47,6 +47,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import java.io.File;
 import java.net.BindException;
+import java.nio.file.Path;
 import java.security.Security;
 import java.util.HashMap;
 import java.util.Map;
@@ -127,6 +128,9 @@ public final class ServerLauncher {
                 mailProperties, smsProperties, gcmProperties, twitterProperties,
                 restore);
 
+        System.out.println();
+        Path pathToPidFile = JarUtil.createPIDFile();
+
         BaseServer[] servers = new BaseServer[] {
                 new HardwareAndHttpAPIServer(holder),
                 new MobileAndHttpsServer(holder)
@@ -136,10 +140,10 @@ public final class ServerLauncher {
             //Launching all background jobs.
             JobLauncher.start(holder, servers);
 
-            System.out.println();
             System.out.println("Blynk Server " + JarUtil.getServerVersion() + " successfully started.");
             String path = new File(System.getProperty("logs.folder")).getAbsolutePath().replace("/./", "/");
             System.out.println("All server output is stored in folder '" + path + "' file.");
+            System.out.println("PID file created at " + pathToPidFile);
 
             holder.sslContextHolder.generateInitialCertificates(holder.props);
 

@@ -1,6 +1,7 @@
 package cc.blynk.utils.properties;
 
-import java.io.File;
+import cc.blynk.utils.JarUtil;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -23,7 +24,7 @@ public abstract class BaseProperties extends Properties {
     public final String jarPath;
 
     BaseProperties(Map<String, String> cmdProperties, String serverConfig) {
-        this.jarPath = getJarPath();
+        this.jarPath = JarUtil.getJarPath();
         var propertiesFileName = cmdProperties.get(serverConfig);
         if (propertiesFileName == null) {
             initProperties(serverConfig);
@@ -31,16 +32,6 @@ public abstract class BaseProperties extends Properties {
             initProperties(Paths.get(propertiesFileName));
         }
         putAll(cmdProperties);
-    }
-
-    private static String getJarPath() {
-        try {
-            var codeSource = BaseProperties.class.getProtectionDomain().getCodeSource();
-            var jarFile = new File(codeSource.getLocation().toURI().getPath());
-            return jarFile.getParentFile().getPath();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
     /**
