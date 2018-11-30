@@ -10,9 +10,11 @@ import java.io.Serializable;
 public final class ResetPassToken extends BaseToken implements Serializable {
 
     public final String appName;
+    public final String email;
 
     public ResetPassToken(String email, String appName) {
-        super(email, DEFAULT_EXPIRE_TIME);
+        super(DEFAULT_EXPIRE_TIME);
+        this.email = email;
         this.appName = appName;
     }
 

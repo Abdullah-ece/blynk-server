@@ -5,7 +5,6 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.exceptions.DeviceNotFoundException;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
-import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -127,10 +126,10 @@ public class DeviceDao {
 
     public List<Device> getByProductIdAndFilter(int productId, int[] deviceIds) {
         List<Device> result = new ArrayList<>();
-        for (var deviceEntry : devices.entrySet()) {
-            DeviceValue deviceValue = deviceEntry.getValue();
-            Device device = deviceValue.device;
-            if (device.productId == productId && ArrayUtil.contains(deviceIds, device.id)) {
+        for (int deviceId : deviceIds) {
+            DeviceValue deviceValue = devices.get(deviceId);
+            if (deviceValue != null && deviceValue.product.id == productId) {
+                Device device = deviceValue.device;
                 result.add(device);
             }
         }

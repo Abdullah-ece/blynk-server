@@ -12,8 +12,11 @@ public final class UploadTempToken extends BaseToken implements Serializable {
 
     private static final long UPLOAD_EXPIRE_TIME = TimeUnit.MINUTES.toMillis(5);
 
+    public final String email;
+
     public UploadTempToken(String email) {
-        super(email, UPLOAD_EXPIRE_TIME);
+        super(UPLOAD_EXPIRE_TIME);
+        this.email = email;
     }
 
     @Override

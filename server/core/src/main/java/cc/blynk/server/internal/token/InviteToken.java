@@ -11,9 +11,11 @@ public final class InviteToken extends BaseToken implements Serializable {
 
     public final int orgId;
     public final String appName;
+    public final String email;
 
     public InviteToken(String email, int orgId, String appName) {
-        super(email, DEFAULT_EXPIRE_TIME);
+        super(DEFAULT_EXPIRE_TIME);
+        this.email = email;
         this.orgId = orgId;
         this.appName = appName;
     }

@@ -17,6 +17,7 @@ import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
+import cc.blynk.utils.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -134,12 +135,16 @@ public class OTATest extends APIBaseTest {
         TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
         newHardClient.start();
         newHardClient.send("login " + newDevice.token);
-        verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        newHardClient.verifyResult(ok(1));
 
-        String firmwareDownloadUrl = "http://localhost:" + properties.getHttpPort() + pathToFirmware + "?token=1";
+        String firmwareDownloadUrl = "http://localhost:" + properties.getHttpPort() + pathToFirmware + "?token=";
         newHardClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
-        newHardClient.verifyResult(internal(7777, "ota\0" + firmwareDownloadUrl));
+
+        String s = newHardClient.getBody(2);
+        assertTrue(s.startsWith("ota\0" + firmwareDownloadUrl));
+        firmwareDownloadUrl = StringUtils.split2(s)[1];
         newHardClient.verifyResult(ok(2));
+        //newHardClient.verifyResult(internal(7777, "ota\0" + firmwareDownloadUrl));
 
         getDevices = new HttpGet(httpsAdminServerUrl + "/devices/1/1");
         try (CloseableHttpResponse response = httpclient.execute(getDevices)) {
@@ -259,12 +264,16 @@ public class OTATest extends APIBaseTest {
         TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
         newHardClient.start();
         newHardClient.send("login " + newDevice.token);
-        verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        newHardClient.verifyResult(ok(1));
 
         newHardClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
-        String firmwareDownloadUrl = "http://localhost:" + properties.getHttpPort() + pathToFirmware + "?token=1";
-        newHardClient.verifyResult(internal(7777, "ota\0" + firmwareDownloadUrl));
+        String firmwareDownloadUrl = "http://localhost:" + properties.getHttpPort() + pathToFirmware + "?token=";
         newHardClient.verifyResult(ok(2));
+
+        String s = newHardClient.getBody(2);
+        assertTrue(s.startsWith("ota\0" + firmwareDownloadUrl));
+        firmwareDownloadUrl = StringUtils.split2(s)[1];
+        //newHardClient.verifyResult(internal(7777, "ota\0" + firmwareDownloadUrl));
 
         getDevices = new HttpGet(httpsAdminServerUrl + "/devices/1/1");
         try (CloseableHttpResponse response = httpclient.execute(getDevices)) {
@@ -367,7 +376,9 @@ public class OTATest extends APIBaseTest {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
 
-        newHardClient.verifyResult(internal(7777, b("ota http://localhost:" + properties.getHttpPort()) + pathToFirmware + "?token=1"));
+        String s = newHardClient.getBody(3);
+        assertTrue(s.startsWith(b("ota http://localhost:" + properties.getHttpPort()) + pathToFirmware + "?token="));
+        //newHardClient.verifyResult(internal(7777, b("ota http://localhost:" + properties.getHttpPort()) + pathToFirmware + "?token="));
 
         HttpGet getDevices = new HttpGet(httpsAdminServerUrl + "/devices/1/1");
         try (CloseableHttpResponse response = httpclient.execute(getDevices)) {

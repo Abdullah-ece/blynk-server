@@ -36,7 +36,7 @@ public final class TokensPool implements Closeable {
     }
 
     public void addToken(String token, BaseToken baseToken) {
-        log.info("Adding {} token for {} user to the pool", baseToken.getClass().getSimpleName(), baseToken.email);
+        log.info("Adding {} {} to the pool", token, baseToken.getClass().getSimpleName());
         cleanupOldTokens();
         tokens.put(token, baseToken);
     }
@@ -51,6 +51,10 @@ public final class TokensPool implements Closeable {
 
     public ResetPassToken getResetPassToken(String token) {
         return getTokenByType(token, ResetPassToken.class);
+    }
+
+    public OTADownloadToken getOTADownloadToken(String token) {
+        return getTokenByType(token, OTADownloadToken.class);
     }
 
     @SuppressWarnings("unchecked")

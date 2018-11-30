@@ -9,8 +9,10 @@ import cc.blynk.server.core.model.device.ota.OTAStatus;
 import cc.blynk.server.core.model.widgets.others.rtc.RTC;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
+import cc.blynk.server.internal.token.OTADownloadToken;
 import cc.blynk.utils.NumberUtil;
 import cc.blynk.utils.StringUtils;
+import cc.blynk.utils.TokenGeneratorUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.timeout.IdleStateHandler;
 import org.apache.logging.log4j.LogManager;
@@ -109,8 +111,10 @@ public final class BlynkInternalLogic {
                             device.firmwareUploadFailure();
                         } else {
                             String serverUrl = holder.props.getServerUrl(device.deviceOtaInfo.isSecure);
+                            String downloadToken = TokenGeneratorUtil.generateNewToken();
+                            holder.tokensPool.addToken(downloadToken, new OTADownloadToken(device.id));
                             String body = OTAInfo.makeHardwareBody(serverUrl,
-                                    device.deviceOtaInfo.pathToFirmware, device.id);
+                                    device.deviceOtaInfo.pathToFirmware, downloadToken);
                             StringMessage msg = makeASCIIStringMessage(BLYNK_INTERNAL, 7777, body);
                             ctx.write(msg, ctx.voidPromise());
                             device.requestSent();

@@ -10,12 +10,11 @@ import java.util.concurrent.TimeUnit;
  */
 public abstract class BaseToken implements Serializable {
 
-    public final String email;
-    private final long expireAt;
     static final long DEFAULT_EXPIRE_TIME = TimeUnit.DAYS.toMillis(2);
 
-    BaseToken(String email, long tokenExpirationPeriodMillis) {
-        this.email = email;
+    private final long expireAt;
+
+    BaseToken(long tokenExpirationPeriodMillis) {
         this.expireAt = System.currentTimeMillis() + tokenExpirationPeriodMillis;
     }
 

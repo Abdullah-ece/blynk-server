@@ -111,7 +111,7 @@ public final class TestUtil {
 
     public static String getBody(SimpleClientHandler responseMock, int expectedMessageOrder) throws Exception {
         ArgumentCaptor<MessageBase> objectArgumentCaptor = ArgumentCaptor.forClass(MessageBase.class);
-        verify(responseMock, timeout(1000).times(expectedMessageOrder)).channelRead(any(), objectArgumentCaptor.capture());
+        verify(responseMock, timeout(1000).atLeast(expectedMessageOrder)).channelRead(any(), objectArgumentCaptor.capture());
         List<MessageBase> arguments = objectArgumentCaptor.getAllValues();
         MessageBase messageBase = arguments.get(expectedMessageOrder - 1);
         if (messageBase instanceof StringMessage) {

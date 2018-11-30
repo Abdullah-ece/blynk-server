@@ -2,6 +2,7 @@ package cc.blynk.server.core.model.dto;
 
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.FirmwareInfo;
+import cc.blynk.server.internal.EmptyArraysUtil;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -43,7 +44,7 @@ public class OtaDTO {
         this.productId = productId;
         this.pathToFirmware = pathToFirmware;
         this.firmwareOriginalFileName = firmwareOriginalFileName;
-        this.deviceIds = deviceIds;
+        this.deviceIds = deviceIds == null ? EmptyArraysUtil.EMPTY_INTS : deviceIds;
         this.title = title;
         this.checkBoardType = checkBoardType;
         this.firmwareInfo = firmwareInfo;

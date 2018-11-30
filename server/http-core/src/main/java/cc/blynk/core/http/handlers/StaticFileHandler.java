@@ -6,6 +6,8 @@ import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.web.product.Product;
+import cc.blynk.server.internal.token.OTADownloadToken;
+import cc.blynk.server.internal.token.TokensPool;
 import cc.blynk.utils.FileUtils;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFuture;
@@ -86,6 +88,7 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
     private final StaticFile[] staticPaths;
     private final String jarPath;
     private final DeviceDao deviceDao;
+    private final TokensPool tokensPool;
     private final OrganizationDao organizationDao;
 
     public StaticFileHandler(Holder holder, StaticFile... staticPaths) {
@@ -93,6 +96,7 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
         this.isUnpacked = holder.props.isUnpacked;
         this.jarPath = holder.props.jarPath;
         this.deviceDao = holder.deviceDao;
+        this.tokensPool = holder.tokensPool;
         this.organizationDao = holder.organizationDao;
     }
 
@@ -276,7 +280,7 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
             response.headers().set(CONNECTION, HttpHeaderValues.KEEP_ALIVE);
         }
 
-        Device device = getDevice(uriParts);
+        Device device = getDownloadingDevice(uriParts);
         if (device != null) {
             device.firmwareRequested();
             Product product = organizationDao.getProductByIdOrThrow(device.productId);
@@ -324,11 +328,16 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
         }
     }
 
-    private Device getDevice(String[] uriParts) {
+    private Device getDownloadingDevice(String[] uriParts) {
         //todo check somehow it is OTA file?
         if (uriParts.length == 2 && uriParts[1].contains("token=")) {
-            int deviceId = Integer.parseInt(uriParts[1].substring(6));
-            return deviceDao.getByIdOrThrow(deviceId);
+            String downloadToken = uriParts[1].substring(6);
+            OTADownloadToken otaDownloadToken = tokensPool.getOTADownloadToken(downloadToken);
+            if (otaDownloadToken != null) {
+                return deviceDao.getByIdOrThrow(otaDownloadToken.deviceId);
+            } else {
+                log.warn("Unexpected token for static file {}", downloadToken);
+            }
         }
         return null;
     }

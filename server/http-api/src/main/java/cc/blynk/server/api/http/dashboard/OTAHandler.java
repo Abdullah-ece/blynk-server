@@ -27,8 +27,10 @@ import cc.blynk.server.core.model.web.product.OtaProgress;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
-import cc.blynk.utils.ArrayUtil;
+import cc.blynk.server.internal.token.OTADownloadToken;
+import cc.blynk.server.internal.token.TokensPool;
 import cc.blynk.utils.FileUtils;
+import cc.blynk.utils.TokenGeneratorUtil;
 import cc.blynk.utils.http.MediaType;
 import cc.blynk.utils.properties.ServerProperties;
 import io.netty.channel.Channel;
@@ -57,6 +59,7 @@ public class OTAHandler extends BaseHttpHandler {
     private final DeviceDao deviceDao;
     private final SessionDao sessionDao;
     private final String staticFilesFolder;
+    private final TokensPool tokensPool;
     private final ServerProperties props;
 
     public OTAHandler(Holder holder, String rootPath) {
@@ -64,6 +67,7 @@ public class OTAHandler extends BaseHttpHandler {
         this.organizationDao = holder.organizationDao;
         this.deviceDao = holder.deviceDao;
         this.sessionDao = holder.sessionDao;
+        this.tokensPool = holder.tokensPool;
         this.staticFilesFolder = holder.props.jarPath;
         this.props = holder.props;
     }
@@ -141,10 +145,12 @@ public class OTAHandler extends BaseHttpHandler {
             for (Channel channel : session.hardwareChannels) {
                 HardwareStateHolder hardwareState = getHardState(channel);
                 if (hardwareState != null
-                        && ArrayUtil.contains(otaDTO.deviceIds, hardwareState.device.id)
+                        && hardwareState.contains(otaDTO.deviceIds)
                         && channel.isWritable()) {
 
-                    String body = OTAInfo.makeHardwareBody(serverUrl, otaDTO.pathToFirmware, hardwareState.device.id);
+                    String downloadToken = TokenGeneratorUtil.generateNewToken();
+                    tokensPool.addToken(downloadToken, new OTADownloadToken(hardwareState.device.id));
+                    String body = OTAInfo.makeHardwareBody(serverUrl, otaDTO.pathToFirmware, downloadToken);
                     StringMessage msg = makeASCIIStringMessage(BLYNK_INTERNAL, 7777, body);
                     channel.writeAndFlush(msg, channel.voidPromise());
                     hardwareState.device.requestSent();
