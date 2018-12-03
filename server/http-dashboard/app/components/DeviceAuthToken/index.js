@@ -1,8 +1,9 @@
 import React from 'react';
-import {Button, message} from 'antd';
+import { Button, message } from 'antd';
 import classnames from 'classnames';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import './styles.less';
+import DeviceAuthTokenModal from "./modal";
 
 class DeviceAuthToken extends React.Component {
 
@@ -54,6 +55,14 @@ class DeviceAuthToken extends React.Component {
     }
   }
 
+  getEditableComponent() {
+    return (
+      <div>
+        <DeviceAuthTokenModal form={this.props.form}/>
+      </div>
+    );
+  }
+
   render() {
 
     const className = classnames({
@@ -66,10 +75,12 @@ class DeviceAuthToken extends React.Component {
       <div className="device-auth-token"
            onMouseEnter={this.handleMouseEnter.bind(this)}
            onMouseLeave={this.handleMouseLeave.bind(this)}>
-        { this.getDeviceAuthToken() }
-        <CopyToClipboard text={this.props.authToken} onCopy={this.handleCopyClick.bind(this)}>
+        {this.getDeviceAuthToken()}
+        <CopyToClipboard text={this.props.authToken}
+                         onCopy={this.handleCopyClick.bind(this)}>
           <Button icon="copy" size="small" className={className}/>
         </CopyToClipboard>
+        <Button icon="edit" size="small" className={className}/>
       </div>
     );
   }
