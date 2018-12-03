@@ -33,7 +33,7 @@ public class CoordinatesMetaField extends MetaField {
     @Override
     public MetaField copySpecificFieldsOnly(MetaField metaField) {
         return new CoordinatesMetaField(id, metaField.name, metaField.roleIds,
-                metaField.includeInProvision, metaField.isMandatory, metaField.isDefault, icon, lat, lon);
+                metaField.includeInProvision, metaField.isMandatory, metaField.isDefault, metaField.icon, lat, lon);
     }
 
     @Override

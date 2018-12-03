@@ -52,7 +52,7 @@ public class CostMetaField extends MetaField {
     public MetaField copySpecificFieldsOnly(MetaField metaField) {
         return new CostMetaField(id, metaField.name, metaField.roleIds,
                 metaField.includeInProvision, metaField.isMandatory, metaField.isDefault,
-                icon,
+                metaField.icon,
                 currency, price, perValue, units, min, max);
     }
 

@@ -36,7 +36,7 @@ public class DeviceReferenceMetaField extends MetaField {
         DeviceReferenceMetaField deviceReferenceMetaField = (DeviceReferenceMetaField) metaField;
         return new DeviceReferenceMetaField(id, metaField.name, metaField.roleIds,
                 metaField.includeInProvision, metaField.isMandatory, metaField.isDefault,
-                icon,
+                metaField.icon,
                 deviceReferenceMetaField.selectedProductIds, selectedDeviceId);
     }
 
