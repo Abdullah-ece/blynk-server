@@ -204,7 +204,7 @@ Blynk transfers binary messages between the server and websockets (for web) with
 |                    | 1 byte        | 2 bytes       | Variable |
 
 
-When command code == 0, than message structure is next:
+When command code == 0, then message structure is next:
 
 | Websocket header   | Command       | Message Id    | Response code |
 |:------------------:|:-------------:|:-------------:|:-------------:|
