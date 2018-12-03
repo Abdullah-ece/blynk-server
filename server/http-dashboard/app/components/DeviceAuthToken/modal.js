@@ -1,14 +1,23 @@
 import React from 'react';
 import { Input as BaseInput, Icon, Form } from 'antd';
+import PropTypes from "prop-types";
 
 class DeviceAuthTokenModal extends React.Component {
+  static propTypes = {
+    icon: PropTypes.string,
+    input: PropTypes.object,
+    error: PropTypes.string,
+    type: PropTypes.string,
+    disabled: PropTypes.bool,
+    placeholder: PropTypes.string,
+  };
 
   prefix(icon) {
     return (icon ? <Icon type={icon} className="form--field-icon"/> : null);
   }
 
   render() {
-    const { placeholder, disabled, rows, input, type, icon, autoComplete, error } = this.props;
+    const { placeholder, disabled, input, type, icon, error } = this.props;
 
     let validateStatus = 'success';
     let help = '';
@@ -23,8 +32,6 @@ class DeviceAuthTokenModal extends React.Component {
                  help={help}>
         <BaseInput {...input}
                    disabled={disabled}
-                   rows={rows}
-                   autoComplete={autoComplete}
                    type={type}
                    onChange={(value) => {
                      input.onChange(value);

@@ -8,6 +8,7 @@ import { Modal } from 'components';
 import connect from "react-redux/es/connect/connect";
 import { bindActionCreators } from "redux";
 import { SetAuthToken } from 'data/Devices/api';
+import PropTypes from "prop-types";
 
 @connect((state) => ({
   account: state.Account,
@@ -18,9 +19,13 @@ import { SetAuthToken } from 'data/Devices/api';
 class DeviceAuthToken extends React.Component {
 
   static propTypes = {
-    authToken: React.PropTypes.string,
-    onCopy: React.PropTypes.func,
-    deviceId: React.PropTypes.number,
+    authToken: PropTypes.string,
+    onCopy: PropTypes.func,
+    deviceId: PropTypes.number,
+    setAuthToken: PropTypes.func,
+    orgId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    modalWrapClassName: PropTypes.string,
+    errors: PropTypes.object
   };
 
   constructor(props) {
