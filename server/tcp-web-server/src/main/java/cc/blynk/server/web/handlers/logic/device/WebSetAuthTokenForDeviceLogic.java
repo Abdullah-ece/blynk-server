@@ -93,7 +93,7 @@ public class WebSetAuthTokenForDeviceLogic implements PermissionBasedLogic {
             deviceDao.assignNewToken(user.orgId, user.email, product, device, newToken);
             log.warn("Manual setting auth token {} for device {}, orgId = {}.", newToken, deviceDao, orgId);
         } else {
-            throw new NoPermissionException("You are not allowed to set auth token.", getPermission());
+            throw new NoPermissionException("You are not allowed to set auth token.");
         }
 
         Session session = sessionDao.getOrgSession(orgId);

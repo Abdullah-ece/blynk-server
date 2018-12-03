@@ -69,7 +69,7 @@ public class WebGetOwnDeviceLogic implements PermissionBasedLogic {
         Device device = deviceValue.device;
         if (!device.hasOwner(state.user.email)) {
             log.error("User {} is not owner of requested deviceId {}.", user.email, deviceId);
-            throw new NoPermissionException("User is not owner of requested device.", getPermission());
+            throw new NoPermissionException("User is not owner of requested device.");
         }
 
         Organization org = organizationDao.getOrgByIdOrThrow(orgId);

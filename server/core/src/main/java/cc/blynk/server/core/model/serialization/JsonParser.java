@@ -9,6 +9,7 @@ import cc.blynk.server.core.model.auth.FacebookTokenResponse;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Tag;
+import cc.blynk.server.core.model.dto.OrganizationDTO;
 import cc.blynk.server.core.model.storage.value.SinglePinStorageValue;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.MetaField;
@@ -74,6 +75,7 @@ public final class JsonParser {
     private static final ObjectReader reportReader = MAPPER.readerFor(Report.class);
     private static final ObjectReader productReader = MAPPER.readerFor(Product.class);
     private static final ObjectReader metafieldReader = MAPPER.readerFor(MetaField.class);
+    private static final ObjectReader orgDTOReader = MAPPER.readerFor(OrganizationDTO.class);
 
     private static final ObjectWriter organizationFancyWriter =
             MAPPER.writerWithDefaultPrettyPrinter().forType(Organization.class);
@@ -345,7 +347,11 @@ public final class JsonParser {
     }
 
     public static MetaField parseMetafield(String json, int msgId) {
-        return parse(metafieldReader, json, "Error parsing metafield", msgId);
+        return parse(metafieldReader, json, "Error parsing metafield.", msgId);
+    }
+
+    public static OrganizationDTO parseOrgDTO(String json, int msgId) {
+        return parse(orgDTOReader, json, "Error parsing organization.", msgId);
     }
 
     private static <T> T parse(ObjectReader objectReader, String json, String errorMessage, int msgId) {

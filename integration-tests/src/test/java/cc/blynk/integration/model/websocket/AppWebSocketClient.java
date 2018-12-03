@@ -293,6 +293,10 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         send("webGetOrgLocations " + orgId);
     }
 
+    public void editOwnOrg(OrganizationDTO organizationDTO) {
+        send("webEditOwnOrg " + organizationDTO);
+    }
+
     public void deleteUser(int orgId, String... users) {
         send("webDeleteUser " + orgId + StringUtils.BODY_SEPARATOR_STRING
                 + JsonParser.valueToJsonAsString(Arrays.asList(users)));
@@ -339,7 +343,7 @@ public final class AppWebSocketClient extends BaseTestAppClient {
     }
 
     public void setAuthToken(int orgId, int deviceId, String newToken) {
-        send("setAuthToken " + JsonParser.toJson(new SetAuthTokenDTO(orgId, deviceId, newToken)));
+        send("webSetAuthToken " + JsonParser.toJson(new SetAuthTokenDTO(orgId, deviceId, newToken)));
     }
 
     public TimelineResponseDTO parseTimelineResponse(int expectedMessageOrder) throws Exception {
@@ -355,7 +359,7 @@ public final class AppWebSocketClient extends BaseTestAppClient {
     }
 
     public OrganizationDTO parseOrganizationDTO(int expectedMessageOrder) throws Exception {
-        return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), OrganizationDTO.class);
+        return JsonParser.parseOrgDTO(getBody(expectedMessageOrder), 0);
     }
 
     public OrganizationDTO[] parseOrganizations(int expectedMessageOrder) throws Exception {

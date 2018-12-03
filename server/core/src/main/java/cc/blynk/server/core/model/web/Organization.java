@@ -2,6 +2,7 @@ package cc.blynk.server.core.model.web;
 
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.dto.DeviceDTO;
+import cc.blynk.server.core.model.dto.OrganizationDTO;
 import cc.blynk.server.core.model.exceptions.ProductNotFoundException;
 import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
@@ -88,7 +89,18 @@ public class Organization {
         this.logoUrl = updatedOrganization.logoUrl;
         this.primaryColor = updatedOrganization.primaryColor;
         this.secondaryColor = updatedOrganization.secondaryColor;
-        this.products = updatedOrganization.products;
+        this.isActive = updatedOrganization.isActive;
+        this.canCreateOrgs = updatedOrganization.canCreateOrgs;
+        this.lastModifiedTs = System.currentTimeMillis();
+    }
+
+    public void update(OrganizationDTO updatedOrganization) {
+        this.name = updatedOrganization.name;
+        this.description = updatedOrganization.description;
+        this.tzName = updatedOrganization.tzName;
+        this.logoUrl = updatedOrganization.logoUrl;
+        this.primaryColor = updatedOrganization.primaryColor;
+        this.secondaryColor = updatedOrganization.secondaryColor;
         this.isActive = updatedOrganization.isActive;
         this.canCreateOrgs = updatedOrganization.canCreateOrgs;
         this.lastModifiedTs = System.currentTimeMillis();

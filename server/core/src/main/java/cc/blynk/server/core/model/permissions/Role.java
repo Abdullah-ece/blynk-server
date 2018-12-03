@@ -5,24 +5,21 @@ import cc.blynk.utils.CopyObject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_CREATE;
-import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_DELETE;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_DELETE_USERS;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_DEVICES_CREATE;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_DEVICES_DELETE;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_DEVICES_EDIT;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_DEVICES_SHARE;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_DEVICES_VIEW;
-import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_EDIT;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_EDIT_USERS;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_INVITE_USERS;
-import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_VIEW;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_VIEW_USERS;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.OWN_DEVICES_CREATE;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.OWN_DEVICES_DELETE;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.OWN_DEVICES_EDIT;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.OWN_DEVICES_SHARE;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.OWN_DEVICES_VIEW;
+import static cc.blynk.server.core.model.permissions.PermissionsTable.OWN_ORG_EDIT;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.PRODUCT_CREATE;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.PRODUCT_DELETE;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.PRODUCT_EDIT;
@@ -69,21 +66,9 @@ public class Role implements CopyObject<Role> {
         return (permissionGroup & permission) == permission;
     }
 
-    //org group
-    public boolean canViewOrg() {
-        return hasPermission1(ORG_VIEW);
-    }
-
-    public boolean canCreateOrg() {
-        return hasPermission1(ORG_CREATE);
-    }
-
-    public boolean canEditOrg() {
-        return hasPermission1(ORG_EDIT);
-    }
-
-    public boolean canDeleteOrg() {
-        return hasPermission1(ORG_DELETE);
+    //own org group
+    public boolean canEditOwnOrg() {
+        return hasPermission1(OWN_ORG_EDIT);
     }
 
     //suborg group

@@ -88,7 +88,7 @@ public class WebEditOwnDeviceLogic implements PermissionBasedLogic {
 
         if (!newDevice.hasOwner(state.user)) {
             log.error("User {} is not owner of requested deviceId {}.", user.email, newDevice.id);
-            throw new NoPermissionException("User is not owner of requested device.", getPermission());
+            throw new NoPermissionException("User is not owner of requested device.");
         }
 
         Organization org = organizationDao.getOrgByIdOrThrow(orgId);

@@ -82,6 +82,7 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_DELETE_ORG;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_DELETE_PRODUCT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_DELETE_ROLE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_DELETE_USER;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_OWN_ORG;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ACCOUNT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICES;
@@ -353,8 +354,10 @@ public final class CommandParserUtil {
                 return WEB_GET_ROLES;
             case "webgetrole" :
                 return WEB_GET_ROLE;
-            case "setauthtoken" :
+            case "websetauthtoken" :
                 return WEB_SET_AUTH_TOKEN;
+            case "webeditownorg" :
+                return WEB_EDIT_OWN_ORG;
 
             default:
                 throw new IllegalArgumentException("Unsupported command");

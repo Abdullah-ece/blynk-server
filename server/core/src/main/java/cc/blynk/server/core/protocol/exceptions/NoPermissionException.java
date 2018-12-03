@@ -9,8 +9,12 @@ import cc.blynk.server.core.model.permissions.PermissionsTable;
  */
 public class NoPermissionException extends RuntimeException {
 
+    public NoPermissionException(String msg) {
+        super(msg, null, true, false);
+    }
+
     public NoPermissionException(String email, int permission) {
-        super(buildMessage(email, permission), null, true, false);
+        this(buildMessage(email, permission));
     }
 
     private static String buildMessage(String email, int permission) {

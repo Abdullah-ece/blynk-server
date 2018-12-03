@@ -104,6 +104,10 @@ public class OrganizationDTO {
         this(org, null);
     }
 
+    public boolean isEmptyName() {
+        return name == null || name.isEmpty();
+    }
+
     @Override
     public String toString() {
         return JsonParser.toJson(this);

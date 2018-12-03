@@ -27,6 +27,7 @@ import static cc.blynk.integration.TestUtil.loggedDefaultClient;
 import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.integration.TestUtil.webJson;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -535,6 +536,86 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
         assertNotNull(subOrgDTO2.roles);
         assertEquals(3, subOrgDTO2.roles.length);
         assertEquals(1, subOrgDTO2.roles[0].id);
+    }
+
+    @Test
+    public void getEditOwnOrg() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+        client.getOrganization(orgId);
+        OrganizationDTO organizationDTO = client.parseOrganizationDTO(1);
+        assertNotNull(organizationDTO);
+        assertEquals("Blynk Inc.", organizationDTO.name);
+        assertNull(organizationDTO.description);
+        assertEquals(-1, organizationDTO.parentId);
+        assertTrue(organizationDTO.canCreateOrgs);
+        assertEquals(orgId, organizationDTO.id);
+        assertNotNull(organizationDTO.roles);
+        assertEquals(4, organizationDTO.roles.length);
+
+        OrganizationDTO organizationUpdated = new OrganizationDTO(
+                organizationDTO.id,
+                "123",
+                "124",
+                false,
+                organizationDTO.isActive,
+                organizationDTO.tzName,
+                organizationDTO.logoUrl,
+                organizationDTO.unit,
+                organizationDTO.primaryColor,
+                organizationDTO.secondaryColor,
+                organizationDTO.lastModifiedTs,
+                null,
+                null,
+                10,
+                null,
+                null);
+
+        client.editOwnOrg(organizationUpdated);
+        organizationDTO = client.parseOrganizationDTO(2);
+        assertNotNull(organizationDTO);
+        assertEquals("123", organizationDTO.name);
+        assertEquals("124", organizationDTO.description);
+        assertEquals(-1, organizationDTO.parentId);
+        assertFalse(organizationDTO.canCreateOrgs);
+        assertEquals(orgId, organizationDTO.id);
+        assertNotNull(organizationDTO.roles);
+        assertEquals(4, organizationDTO.roles.length);
+    }
+
+    @Test
+    public void getEditOwnOrgPermissionViolation() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+        client.getOrganization(orgId);
+        OrganizationDTO organizationDTO = client.parseOrganizationDTO(1);
+        assertNotNull(organizationDTO);
+        assertEquals("Blynk Inc.", organizationDTO.name);
+        assertNull(organizationDTO.description);
+        assertEquals(-1, organizationDTO.parentId);
+        assertTrue(organizationDTO.canCreateOrgs);
+        assertEquals(orgId, organizationDTO.id);
+        assertNotNull(organizationDTO.roles);
+        assertEquals(4, organizationDTO.roles.length);
+
+        OrganizationDTO organizationUpdated = new OrganizationDTO(
+                111,
+                "123",
+                "124",
+                false,
+                organizationDTO.isActive,
+                organizationDTO.tzName,
+                organizationDTO.logoUrl,
+                organizationDTO.unit,
+                organizationDTO.primaryColor,
+                organizationDTO.secondaryColor,
+                organizationDTO.lastModifiedTs,
+                null,
+                null,
+                10,
+                null,
+                null);
+
+        client.editOwnOrg(organizationUpdated);
+        client.verifyResult(webJson(2, "You can't edit another organization from this view."));
     }
 }
 

@@ -24,6 +24,7 @@ import cc.blynk.server.web.handlers.logic.device.timeline.WebResolveLogEventLogi
 import cc.blynk.server.web.handlers.logic.organization.WebCreateOrganizationLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebDeleteOrganizationLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebEditOrganizationLogic;
+import cc.blynk.server.web.handlers.logic.organization.WebEditOwnOrganizationLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebGetOrganizationLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebGetOrganizationsHierarchyLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebGetOrganizationsLogic;
@@ -65,6 +66,7 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_DELETE_ORG;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_DELETE_PRODUCT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_DELETE_ROLE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_DELETE_USER;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_OWN_ORG;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ACCOUNT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICES;
@@ -134,6 +136,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
     private final WebGetProductLogic webGetProductLogic;
     private final WebEditProductLogic webEditProductLogic;
     private final WebSetAuthTokenForDeviceLogic webSetAuthTokenForDeviceLogic;
+    private final WebEditOwnOrganizationLogic webEditOwnOrganizationLogic;
 
     private final Holder holder;
 
@@ -173,6 +176,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
         this.webGetProductLogic = new WebGetProductLogic(holder);
         this.webEditProductLogic = new WebEditProductLogic(holder);
         this.webSetAuthTokenForDeviceLogic = new WebSetAuthTokenForDeviceLogic(holder);
+        this.webEditOwnOrganizationLogic = new WebEditOwnOrganizationLogic(holder);
 
         this.state = state;
         this.holder = holder;
@@ -307,6 +311,9 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
                 break;
             case WEB_SET_AUTH_TOKEN :
                 webSetAuthTokenForDeviceLogic.messageReceived(ctx, state, msg);
+                break;
+            case WEB_EDIT_OWN_ORG :
+                webEditOwnOrganizationLogic.messageReceived(ctx, state, msg);
                 break;
         }
     }
