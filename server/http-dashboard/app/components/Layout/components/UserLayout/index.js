@@ -297,6 +297,10 @@ class UserLayout extends React.Component {
                   <span>Organizations</span>
                 </Menu.Item>
               )}
+              <Menu.Item key="/analytics">
+                <Icon type="bar-chart"/>
+                <span>Analytics</span>
+              </Menu.Item>
             </Menu>
             <div className="user-layout-left-navigation-profile">
               <Dropdown overlayClassName={`user-layout-left-navigation-profile--overlay ${this.state.collapsed ? '': 'user-layout-left-navigation-profile--overlay--open'}`} overlay={this.AccountMenu()} trigger={['hover']} placement="topLeft" className="my-custom-dropdown">

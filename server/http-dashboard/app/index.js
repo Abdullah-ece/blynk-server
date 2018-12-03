@@ -41,6 +41,7 @@ import ResetPass from './scenes/ResetPass';
 import Logout from './scenes/Logout';
 import StyleGuide from './scenes/StyleGuide';
 import * as Organizations from './scenes/Organizations';
+import * as Analytics from './scenes/Analytics';
 import Invite from './scenes/Invite';
 import {ProductsIndex, ProductCreate, ProductDetails, ProductEdit, ProductClone} from './scenes/Products';
 import UserProfile from './scenes/UserProfile';
@@ -103,6 +104,7 @@ Store().then((store) => {
                 <Route path="/devices/:id" components={Devices}/>
                 <Route path="/devices/:id/:tab" components={Devices}/>
                 <Route path="/devices/:id/create" components={Devices}/>
+                <Route path="/analytics" component={Analytics.Index}/>
                 <Route path="/organizations" component={Organizations.Index}/>
                 <Route path="/organizations/create" component={Organizations.Create}/>
                 <Route path="/organizations/create/:tab" component={Organizations.Create}/>

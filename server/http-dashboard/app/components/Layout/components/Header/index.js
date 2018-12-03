@@ -146,7 +146,7 @@ class Header extends React.Component {
               { this.props.Organization && this.props.Organization.canCreateOrgs && (
                 <Menu.Item key="/organizations">Organizations</Menu.Item>
               ) || (null)}
-              {/*<Menu.Item key="/organizations">Organizations</Menu.Item>*/}
+              <Menu.Item key="/analytics">Analytics</Menu.Item>
             </Menu>
             <div className="user-layout--header-user">
               <div className="dark user-layout--header-user-link">
