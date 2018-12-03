@@ -29,7 +29,8 @@ public class UserInviteDTO {
 
     public boolean isNotValid() {
         return email == null || email.isEmpty() || email.trim().isEmpty()
-                || roleId <= 0 || BlynkEmailValidator.isNotValidEmail(email);
+                || roleId <= 0 || (name != null && name.length() > 255)
+                || BlynkEmailValidator.isNotValidEmail(email);
     }
 
     @Override
