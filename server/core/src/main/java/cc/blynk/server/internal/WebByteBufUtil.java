@@ -6,6 +6,7 @@ import static cc.blynk.server.core.protocol.enums.Response.DEVICE_NOT_IN_NETWORK
 import static cc.blynk.server.core.protocol.enums.Response.FACEBOOK_USER_LOGIN_WITH_PASS;
 import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND_BODY;
 import static cc.blynk.server.core.protocol.enums.Response.NOT_ALLOWED;
+import static cc.blynk.server.core.protocol.enums.Response.NO_DATA;
 import static cc.blynk.server.core.protocol.enums.Response.USER_NOT_AUTHENTICATED;
 
 /**
@@ -20,6 +21,10 @@ public final class WebByteBufUtil {
 
     public static WebJsonMessage json(int msgId, String message) {
         return new WebJsonMessage(msgId, message);
+    }
+
+    public static WebJsonMessage noData(int msgId) {
+        return new WebJsonMessage(msgId, "No data.", NO_DATA);
     }
 
     public static WebJsonMessage quotaLimit(int msgId) {

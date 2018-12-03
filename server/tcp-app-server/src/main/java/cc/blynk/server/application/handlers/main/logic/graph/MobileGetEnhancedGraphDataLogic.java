@@ -15,6 +15,7 @@ import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.exceptions.NoDataException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.core.protocol.model.messages.WebJsonMessage;
 import cc.blynk.server.core.reporting.GraphPinRequest;
 import cc.blynk.server.core.session.mobile.MobileStateHolder;
 import cc.blynk.utils.StringUtils;
@@ -24,8 +25,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENHANCED_GRAPH_DATA;
+import static cc.blynk.server.core.protocol.enums.Response.SERVER_ERROR;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeBinaryMessage;
-import static cc.blynk.server.internal.WebByteBufUtil.json;
+import static cc.blynk.server.internal.WebByteBufUtil.noData;
 import static cc.blynk.utils.ByteUtils.compress;
 import static cc.blynk.utils.StringUtils.split2Device;
 
@@ -86,7 +88,7 @@ public final class MobileGetEnhancedGraphDataLogic {
         int numberOfStreams = enhancedHistoryGraph.dataStreams.length;
         if (numberOfStreams == 0) {
             log.debug("No data streams for enhanced graph with id {}.", widgetId);
-            ctx.writeAndFlush(json(message.id, "No data streams for superchart."), ctx.voidPromise());
+            ctx.writeAndFlush(noData(message.id), ctx.voidPromise());
             return;
         }
 
@@ -136,10 +138,11 @@ public final class MobileGetEnhancedGraphDataLogic {
                     );
                 }
             } catch (NoDataException noDataException) {
-                channel.writeAndFlush(json(msgId, "No data."), channel.voidPromise());
+                channel.writeAndFlush(noData(msgId), channel.voidPromise());
             } catch (Exception e) {
                 log.error("Error reading reporting data. For user {}. Error: {}", user.email, e.getMessage());
-                channel.writeAndFlush(json(msgId, "Error reading reporting data."), channel.voidPromise());
+                channel.writeAndFlush(new WebJsonMessage(msgId, "Error reading reporting data.", SERVER_ERROR),
+                        channel.voidPromise());
             }
         });
     }

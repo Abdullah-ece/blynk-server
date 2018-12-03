@@ -266,7 +266,6 @@ public class ReportingDiskDao implements Closeable {
         }
     }
 
-
     public byte[][] getReportingData(GraphPinRequest[] requestedPins) throws NoDataException {
         byte[][] values = new byte[requestedPins.length][];
 
