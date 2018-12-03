@@ -3,15 +3,17 @@ package cc.blynk.server.web.handlers.logic.organization;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
+import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
+import cc.blynk.server.web.handlers.PermissionBasedLogic;
 import io.netty.channel.ChannelHandlerContext;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
+import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_CREATE;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_PRODUCTS;
 import static cc.blynk.server.internal.WebByteBufUtil.json;
@@ -22,9 +24,7 @@ import static cc.blynk.utils.StringUtils.split2;
  * Created by Dmitriy Dumanskiy.
  * Created on 13.04.18.
  */
-public class WebCreateOrganizationLogic {
-
-    private static final Logger log = LogManager.getLogger(WebCreateOrganizationLogic.class);
+public class WebCreateOrganizationLogic implements PermissionBasedLogic {
 
     private final OrganizationDao organizationDao;
 
@@ -32,18 +32,27 @@ public class WebCreateOrganizationLogic {
         this.organizationDao = holder.organizationDao;
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
+    @Override
+    public boolean hasPermission(Role role) {
+        return role.canCreateOrg();
+    }
+
+    @Override
+    public int getPermission() {
+        return ORG_CREATE;
+    }
+
+    @Override
+    public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         String[] split = split2(message.body);
 
-        int orgId;
-        Organization newOrganization;
-        if (split.length == 2) {
-            orgId = Integer.parseInt(split[0]);
-            newOrganization = JsonParser.parseOrganization(split[1], message.id);
-        } else {
-            orgId = state.orgId;
-            newOrganization = JsonParser.parseOrganization(split[0], message.id);
+        if (split.length < 2) {
+            log.debug("Invalid create organization command. Probably orgId is missing.");
+            throw new JsonException("Invalid create organization command. Probably orgId is missing.");
         }
+
+        int orgId = Integer.parseInt(split[0]);
+        Organization newOrganization = JsonParser.parseOrganization(split[1], message.id);
 
         User user = state.user;
         if (isEmpty(newOrganization)) {

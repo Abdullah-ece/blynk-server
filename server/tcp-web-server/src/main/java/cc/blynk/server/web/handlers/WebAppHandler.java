@@ -66,6 +66,7 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_DELETE_ORG;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_DELETE_PRODUCT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_DELETE_ROLE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_DELETE_USER;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_ORG;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_OWN_ORG;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ACCOUNT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICE;
@@ -88,7 +89,6 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_ACCOUNT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_DEVICES_META_IN_PRODUCT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_DEVICE_METAFIELD;
-import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_ORG;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_PRODUCT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_ROLE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_USER_INFO;
@@ -261,7 +261,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
             case WEB_CREATE_ORG :
                 webCreateOrganizationLogic.messageReceived(ctx, state, msg);
                 break;
-            case WEB_UPDATE_ORG :
+            case WEB_EDIT_ORG:
                 webEditOrganizationLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_DELETE_ORG :

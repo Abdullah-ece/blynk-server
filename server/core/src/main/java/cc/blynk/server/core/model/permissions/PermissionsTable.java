@@ -5,15 +5,15 @@ import java.util.Map;
 
 public abstract class PermissionsTable {
 
-    //public static int OWN_ORG_CREATE =       0b1;
+    public static int ORG_SWITCH =             0b1;
     //public static int OWN_ORG_VIEW =         0b10;
     public static int OWN_ORG_EDIT =           0b100;
     //public static int OWN_ORG_DELETE =       0b1000;
 
-    public static int SUB_ORG_CREATE =         0b10000;
-    public static int SUB_ORG_VIEW =           0b100000;
-    public static int SUB_ORG_EDIT =           0b1000000;
-    public static int SUB_ORG_DELETE =         0b10000000;
+    public static int ORG_CREATE =             0b10000;
+    public static int ORG_VIEW =               0b100000;
+    public static int ORG_EDIT =               0b1000000;
+    public static int ORG_DELETE =             0b10000000;
 
     public static int ORG_INVITE_USERS =       0b100000000;
     public static int ORG_VIEW_USERS =         0b1000000000;
@@ -46,11 +46,12 @@ public abstract class PermissionsTable {
 
     public static Map<Integer, String> PERMISSION_NAMES = new HashMap<>() {
         {
+            put(ORG_SWITCH, "switch organization");
             put(OWN_ORG_EDIT, "edit own organization");
-            put(SUB_ORG_CREATE, "create sub organization");
-            put(SUB_ORG_VIEW, "view sub organization");
-            put(SUB_ORG_EDIT, "edit sub organization");
-            put(SUB_ORG_DELETE, "delete sub organization");
+            put(ORG_CREATE, "create organization");
+            put(ORG_VIEW, "view organization");
+            put(ORG_EDIT, "edit organization");
+            put(ORG_DELETE, "delete organization");
             put(ORG_INVITE_USERS, "invite user");
             put(ORG_VIEW_USERS, "view user");
             put(ORG_EDIT_USERS, "edit user");

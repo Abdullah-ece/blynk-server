@@ -179,7 +179,7 @@ public class OrganizationDao {
         }
         Organization userOrg = getOrgById(user.orgId);
         Role userRole = userOrg.getRoleById(user.roleId);
-        if (userRole.canViewSubOrg()) {
+        if (userRole.canViewOrg()) {
             //user is admin of parent org, so he can perform admin action on child org
             List<Organization> childOrgs = getOrgChilds(user.orgId);
             Organization org = getOrgById(childOrgs, orgId);

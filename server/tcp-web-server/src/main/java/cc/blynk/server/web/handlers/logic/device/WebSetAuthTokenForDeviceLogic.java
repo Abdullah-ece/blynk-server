@@ -18,8 +18,6 @@ import cc.blynk.server.core.session.web.WebAppStateHolder;
 import cc.blynk.server.web.handlers.PermissionBasedLogic;
 import cc.blynk.server.web.handlers.logic.organization.dto.SetAuthTokenDTO;
 import io.netty.channel.ChannelHandlerContext;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.model.permissions.PermissionsTable.SET_AUTH_TOKEN;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
@@ -32,8 +30,6 @@ import static cc.blynk.server.internal.WebByteBufUtil.userHasNoAccessToOrg;
  * Created on 13.04.18.
  */
 public class WebSetAuthTokenForDeviceLogic implements PermissionBasedLogic {
-
-    private static final Logger log = LogManager.getLogger(WebSetAuthTokenForDeviceLogic.class);
 
     private final DeviceDao deviceDao;
     private final OrganizationDao organizationDao;

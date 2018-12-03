@@ -147,7 +147,7 @@ public final class Command {
     public static final short WEB_GET_ORG_USERS = 108;
     public static final short WEB_GET_PRODUCT_LOCATIONS = 109;
     public static final short WEB_CAN_INVITE_USER = 110;
-    public static final short WEB_UPDATE_ORG = 111;
+    public static final short WEB_EDIT_ORG = 111;
     public static final short WEB_CREATE_PRODUCT = 112;
     public static final short WEB_UPDATE_PRODUCT = 113;
     public static final short WEB_DELETE_PRODUCT = 114;
@@ -290,7 +290,7 @@ public final class Command {
             Map.entry(WEB_UPDATE_USER_INFO, "WebUpdateUserInfo"),
             Map.entry(WEB_DELETE_USER, "WebDeleteUser"),
             Map.entry(WEB_CREATE_ORG, "WebCreateOrg"),
-            Map.entry(WEB_UPDATE_ORG, "WebUpdateOrg"),
+            Map.entry(WEB_EDIT_ORG, "WebUpdateOrg"),
             Map.entry(WEB_DELETE_ORG, "WebDeleteOrg"),
             Map.entry(WEB_CAN_DELETE_PRODUCT, "WebCanDeleteProduct"),
             Map.entry(WEB_INVITE_USER, "WebInviteUser"),

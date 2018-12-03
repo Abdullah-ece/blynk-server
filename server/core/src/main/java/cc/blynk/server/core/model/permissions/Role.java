@@ -5,14 +5,19 @@ import cc.blynk.utils.CopyObject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_CREATE;
+import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_DELETE;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_DELETE_USERS;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_DEVICES_CREATE;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_DEVICES_DELETE;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_DEVICES_EDIT;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_DEVICES_SHARE;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_DEVICES_VIEW;
+import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_EDIT;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_EDIT_USERS;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_INVITE_USERS;
+import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_SWITCH;
+import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_VIEW;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_VIEW_USERS;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.OWN_DEVICES_CREATE;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.OWN_DEVICES_DELETE;
@@ -29,10 +34,6 @@ import static cc.blynk.server.core.model.permissions.PermissionsTable.ROLE_DELET
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ROLE_EDIT;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ROLE_VIEW;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.SET_AUTH_TOKEN;
-import static cc.blynk.server.core.model.permissions.PermissionsTable.SUB_ORG_CREATE;
-import static cc.blynk.server.core.model.permissions.PermissionsTable.SUB_ORG_DELETE;
-import static cc.blynk.server.core.model.permissions.PermissionsTable.SUB_ORG_EDIT;
-import static cc.blynk.server.core.model.permissions.PermissionsTable.SUB_ORG_VIEW;
 
 public class Role implements CopyObject<Role> {
 
@@ -71,21 +72,25 @@ public class Role implements CopyObject<Role> {
         return hasPermission1(OWN_ORG_EDIT);
     }
 
-    //suborg group
-    public boolean canViewSubOrg() {
-        return hasPermission1(SUB_ORG_VIEW);
+    //org group
+    public boolean canSwitchOrg() {
+        return hasPermission1(ORG_SWITCH);
     }
 
-    public boolean canCreateSubOrg() {
-        return hasPermission1(SUB_ORG_CREATE);
+    public boolean canViewOrg() {
+        return hasPermission1(ORG_VIEW);
     }
 
-    public boolean canEditSubOrg() {
-        return hasPermission1(SUB_ORG_EDIT);
+    public boolean canCreateOrg() {
+        return hasPermission1(ORG_CREATE);
     }
 
-    public boolean canDeleteSubOrg() {
-        return hasPermission1(SUB_ORG_DELETE);
+    public boolean canEditOrg() {
+        return hasPermission1(ORG_EDIT);
+    }
+
+    public boolean canDeleteOrg() {
+        return hasPermission1(ORG_DELETE);
     }
 
     //user group

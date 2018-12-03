@@ -4,13 +4,14 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
+import cc.blynk.server.web.handlers.PermissionBasedLogic;
 import io.netty.channel.ChannelHandlerContext;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
+import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_DELETE;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 import static cc.blynk.server.internal.WebByteBufUtil.json;
 
@@ -19,9 +20,7 @@ import static cc.blynk.server.internal.WebByteBufUtil.json;
  * Created by Dmitriy Dumanskiy.
  * Created on 13.04.18.
  */
-public class WebDeleteOrganizationLogic {
-
-    private static final Logger log = LogManager.getLogger(WebDeleteOrganizationLogic.class);
+public class WebDeleteOrganizationLogic implements PermissionBasedLogic {
 
     private final OrganizationDao organizationDao;
     private final DeviceDao deviceDao;
@@ -31,7 +30,18 @@ public class WebDeleteOrganizationLogic {
         this.deviceDao = holder.deviceDao;
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
+    @Override
+    public boolean hasPermission(Role role) {
+        return role.canDeleteOrg();
+    }
+
+    @Override
+    public int getPermission() {
+        return ORG_DELETE;
+    }
+
+    @Override
+    public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         int orgId = Integer.parseInt(message.body);
 
         User user = state.user;

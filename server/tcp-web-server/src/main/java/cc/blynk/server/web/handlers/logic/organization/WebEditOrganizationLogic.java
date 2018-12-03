@@ -5,16 +5,17 @@ import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.exceptions.ForbiddenWebException;
+import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
+import cc.blynk.server.web.handlers.PermissionBasedLogic;
 import cc.blynk.utils.ArrayUtil;
 import io.netty.channel.ChannelHandlerContext;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
+import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_EDIT;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.server.internal.WebByteBufUtil.json;
 import static cc.blynk.server.internal.WebByteBufUtil.userHasNoAccessToOrg;
@@ -24,9 +25,7 @@ import static cc.blynk.server.internal.WebByteBufUtil.userHasNoAccessToOrg;
  * Created by Dmitriy Dumanskiy.
  * Created on 13.04.18.
  */
-public class WebEditOrganizationLogic {
-
-    private static final Logger log = LogManager.getLogger(WebEditOrganizationLogic.class);
+public class WebEditOrganizationLogic implements PermissionBasedLogic {
 
     private final OrganizationDao organizationDao;
     private final DeviceDao deviceDao;
@@ -36,7 +35,18 @@ public class WebEditOrganizationLogic {
         this.deviceDao = holder.deviceDao;
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
+    @Override
+    public boolean hasPermission(Role role) {
+        return role.canEditOrg();
+    }
+
+    @Override
+    public int getPermission() {
+        return ORG_EDIT;
+    }
+
+    @Override
+    public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         Organization newOrganization = JsonParser.parseOrganization(message.body, message.id);
 
         User user = state.user;

@@ -15,8 +15,6 @@ import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
 import cc.blynk.server.web.handlers.PermissionBasedLogic;
 import io.netty.channel.ChannelHandlerContext;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_DEVICES_DELETE;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
@@ -30,8 +28,6 @@ import static cc.blynk.utils.StringUtils.split2;
  * Created on 13.04.18.
  */
 public class WebDeleteOrgDeviceLogic implements PermissionBasedLogic {
-
-    private static final Logger log = LogManager.getLogger(WebDeleteOrgDeviceLogic.class);
 
     private final OrganizationDao organizationDao;
     private final DeviceDao deviceDao;

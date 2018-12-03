@@ -82,6 +82,7 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_DELETE_ORG;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_DELETE_PRODUCT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_DELETE_ROLE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_DELETE_USER;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_ORG;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_OWN_ORG;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ACCOUNT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICE;
@@ -105,7 +106,6 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_ACCOUNT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_DEVICES_META_IN_PRODUCT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_DEVICE_METAFIELD;
-import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_ORG;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_PRODUCT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_ROLE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_USER_INFO;
@@ -299,7 +299,7 @@ public final class CommandParserUtil {
             case "webcaninviteuser" :
                 return WEB_CAN_INVITE_USER;
             case "webupdateorg" :
-                return WEB_UPDATE_ORG;
+                return WEB_EDIT_ORG;
             case "webcreateproduct" :
                 return WEB_CREATE_PRODUCT;
             case "webgetproduct" :

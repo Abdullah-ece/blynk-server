@@ -2,18 +2,19 @@ package cc.blynk.server.web.handlers.logic.organization;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.OrganizationDao;
+import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
+import cc.blynk.server.web.handlers.PermissionBasedLogic;
 import cc.blynk.server.web.handlers.logic.organization.dto.OrganizationsHierarchyDTO;
 import io.netty.channel.ChannelHandlerContext;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
+import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_SWITCH;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 
 /**
@@ -21,9 +22,7 @@ import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
  * Created by Dmitriy Dumanskiy.
  * Created on 16.11.18.
  */
-public class WebGetOrganizationsHierarchyLogic {
-
-    private static final Logger log = LogManager.getLogger(WebGetOrganizationsHierarchyLogic.class);
+public class WebGetOrganizationsHierarchyLogic implements PermissionBasedLogic {
 
     private final OrganizationDao organizationDao;
     private Set<Organization> allOrgs;
@@ -33,7 +32,18 @@ public class WebGetOrganizationsHierarchyLogic {
         this.organizationDao = holder.organizationDao;
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
+    @Override
+    public boolean hasPermission(Role role) {
+        return role.canSwitchOrg();
+    }
+
+    @Override
+    public int getPermission() {
+        return ORG_SWITCH;
+    }
+
+    @Override
+    public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         Organization userOrg = organizationDao.getOrgByIdOrThrow(state.orgId);
         allOrgs = new HashSet<>(organizationDao.getAll());
         invocationCounter = 0;

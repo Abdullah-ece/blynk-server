@@ -4,13 +4,14 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.dto.OrganizationDTO;
+import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
+import cc.blynk.server.web.handlers.PermissionBasedLogic;
 import io.netty.channel.ChannelHandlerContext;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
+import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_VIEW;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.server.internal.WebByteBufUtil.userHasNoAccessToOrg;
 
@@ -19,17 +20,33 @@ import static cc.blynk.server.internal.WebByteBufUtil.userHasNoAccessToOrg;
  * Created by Dmitriy Dumanskiy.
  * Created on 13.04.18.
  */
-public class WebGetOrganizationLogic {
-
-    private static final Logger log = LogManager.getLogger(WebGetOrganizationLogic.class);
+public class WebGetOrganizationLogic implements PermissionBasedLogic {
 
     private final OrganizationDao organizationDao;
+    private final WebGetOwnOrganizationLogic webGetOwnOrganizationLogic;
 
     public WebGetOrganizationLogic(Holder holder) {
         this.organizationDao = holder.organizationDao;
+        this.webGetOwnOrganizationLogic = new WebGetOwnOrganizationLogic(holder);
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
+    @Override
+    public boolean hasPermission(Role role) {
+        return role.canViewOrg();
+    }
+
+    @Override
+    public int getPermission() {
+        return ORG_VIEW;
+    }
+
+    @Override
+    public void noPermissionAction(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage msg) {
+        webGetOwnOrganizationLogic.messageReceived(ctx, state, msg);
+    }
+
+    @Override
+    public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         int orgId = "".equals(message.body) ? state.user.orgId : Integer.parseInt(message.body);
 
         //todo refactor when permissions ready
