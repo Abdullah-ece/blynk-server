@@ -147,6 +147,9 @@ class UserLayout extends React.Component {
 
     if ('organizations' === splitedPath[1])
       return ['/organizations'];
+
+    if ('analytics' === splitedPath[1])
+      return ['/analytics'];
   }
 
   handleMouseEnter() {
@@ -281,6 +284,10 @@ class UserLayout extends React.Component {
               inlineCollapsed={this.state.collapsed}
               selectedKeys={this.currentActivePage(this.state.current)}
             >
+              <Menu.Item key="/analytics">
+                <Icon type="bar-chart"/>
+                <span>Analytics</span>
+              </Menu.Item>
               <Menu.Item key="/devices">
                 <Icon type="hdd"/>
                 <span>Devices</span>
@@ -297,10 +304,6 @@ class UserLayout extends React.Component {
                   <span>Organizations</span>
                 </Menu.Item>
               )}
-              <Menu.Item key="/analytics">
-                <Icon type="bar-chart"/>
-                <span>Analytics</span>
-              </Menu.Item>
             </Menu>
             <div className="user-layout-left-navigation-profile">
               <Dropdown overlayClassName={`user-layout-left-navigation-profile--overlay ${this.state.collapsed ? '': 'user-layout-left-navigation-profile--overlay--open'}`} overlay={this.AccountMenu()} trigger={['hover']} placement="topLeft" className="my-custom-dropdown">

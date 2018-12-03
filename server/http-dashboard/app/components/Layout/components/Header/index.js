@@ -121,6 +121,9 @@ class Header extends React.Component {
       if ('organizations' === splitedPath[i]) {
         return ['/organizations'];
       }
+      if ('analytics' === splitedPath[i]) {
+        return ['/analytics'];
+      }
     }
   }
 
@@ -139,6 +142,7 @@ class Header extends React.Component {
                   onClick={this.handleClick.bind(this)}
                   selectedKeys={this.currentActivePage(this.state.current)}>
               {/*<Menu.Item key="/dashboard">Dashboard</Menu.Item>*/}
+              <Menu.Item key="/analytics">Analytics</Menu.Item>
               <Menu.Item key="/devices">Devices</Menu.Item>
               { this.props.Organization && this.props.Organization.canCreateOrgs && (
                 <Menu.Item key="/products">Products</Menu.Item>
@@ -146,7 +150,6 @@ class Header extends React.Component {
               { this.props.Organization && this.props.Organization.canCreateOrgs && (
                 <Menu.Item key="/organizations">Organizations</Menu.Item>
               ) || (null)}
-              <Menu.Item key="/analytics">Analytics</Menu.Item>
             </Menu>
             <div className="user-layout--header-user">
               <div className="dark user-layout--header-user-link">
