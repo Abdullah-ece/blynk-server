@@ -99,7 +99,7 @@ class DeviceInfo extends React.Component {
             {this.props.device.token && (
               <Fieldset>
                 <Fieldset.Legend>Auth Token</Fieldset.Legend>
-                <DeviceAuthToken authToken={this.props.device.token}/>
+                <DeviceAuthToken authToken={this.props.device.token} deviceId={this.props.device.id}/>
               </Fieldset>
             ) || null}
           </Col>

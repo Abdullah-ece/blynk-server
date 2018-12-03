@@ -5,12 +5,22 @@ import CopyToClipboard from 'react-copy-to-clipboard';
 import './styles.less';
 import DeviceAuthTokenModal from "./modal";
 import { Modal } from 'components';
+import connect from "react-redux/es/connect/connect";
+import { bindActionCreators } from "redux";
+import { SetAuthToken } from 'data/Devices/api';
 
+@connect((state) => ({
+  account: state.Account,
+  orgId: state.Account.selectedOrgId,
+}), (dispatch) => ({
+  setAuthToken: bindActionCreators(SetAuthToken, dispatch)
+}))
 class DeviceAuthToken extends React.Component {
 
   static propTypes = {
     authToken: React.PropTypes.string,
-    onCopy: React.PropTypes.func
+    onCopy: React.PropTypes.func,
+    deviceId: React.PropTypes.number,
   };
 
   constructor(props) {
@@ -77,16 +87,16 @@ class DeviceAuthToken extends React.Component {
         error: 'Auth Token length must be 32 char long!',
         loading: false
       });
-    }
-    else {
+    } else {
       this.setState({
         error: '',
         loading: false
       });
+      
+      this.props.setAuthToken(this.props.deviceId, this.props.orgId, this.state.currentValue);
 
       this.closeModal();
     }
-    // this.onOk(this.props.values);
   }
 
   handleCancelClick() {
@@ -151,7 +161,6 @@ class DeviceAuthToken extends React.Component {
   }
 
   render() {
-
     const className = classnames({
       'device-auth-token-copy': true,
       'show': this.state.isHovered,
