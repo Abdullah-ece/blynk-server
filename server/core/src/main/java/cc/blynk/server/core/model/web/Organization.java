@@ -82,6 +82,13 @@ public class Organization {
         this.roles = roles == null ? new Role[0] : roles;
     }
 
+    public String getLogoOrDefault() {
+        if (this.logoUrl == null || this.logoUrl.isEmpty()) {
+            return "/static/logo.png";
+        }
+        return this.logoUrl;
+    }
+
     public void update(Organization updatedOrganization) {
         this.name = updatedOrganization.name;
         this.description = updatedOrganization.description;

@@ -52,6 +52,7 @@ public class WebAppResetPasswordHandler extends SimpleChannelInboundHandler<Rese
     private final String host;
     private final OrganizationDao organizationDao;
     private final String resetURL;
+    private final String httpsServerUrl;
 
     public WebAppResetPasswordHandler(Holder holder) {
         this.tokensPool = holder.tokensPool;
@@ -67,6 +68,7 @@ public class WebAppResetPasswordHandler extends SimpleChannelInboundHandler<Rese
         this.host = holder.props.getRestoreHost();
         this.organizationDao = holder.organizationDao;
         this.resetURL = "https://" + holder.props.getProperty("server.host") + "/dashboard" + "/resetPass?token=";
+        this.httpsServerUrl = holder.props.httpsServerUrl;
     }
 
     @Override
@@ -180,6 +182,7 @@ public class WebAppResetPasswordHandler extends SimpleChannelInboundHandler<Rese
             try {
                 String body = resetEmailBody
                         .replace(Placeholders.ORGANIZATION, org.name)
+                        .replace(Placeholders.ORG_LOGO_URL, httpsServerUrl + org.getLogoOrDefault())
                         .replace("{host}", host)
                         .replace("{link}", resetURL + token + "&email="
                                 + URLEncoder.encode(trimmedEmail, StandardCharsets.UTF_8));
