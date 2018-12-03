@@ -77,7 +77,8 @@ export const DeviceCreate = (data, device) => {
   };
 };
 
-export const SetAuthToken = (deviceId, orgId, token) => {
+export const SetAuthToken = (params) => {
+  const { orgId } = params;
   if (!orgId)
     throw new Error('orgId parameter is missed');
 
@@ -87,9 +88,7 @@ export const SetAuthToken = (deviceId, orgId, token) => {
       request: {
         command: API_COMMANDS.WEB_SET_AUTH_TOKEN,
         query: [
-          orgId,
-          deviceId,
-          token
+          JSON.stringify(params)
         ],
       }
     }

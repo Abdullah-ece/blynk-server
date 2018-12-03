@@ -31,6 +31,7 @@ class DeviceAuthToken extends React.Component {
     this.handleOkClick = this.handleOkClick.bind(this);
     this.onChange = this.onChange.bind(this);
     this.getEditableComponent = this.getEditableComponent.bind(this);
+    this.getDeviceAuthToken = this.getDeviceAuthToken.bind(this);
 
     if (!props.authToken) {
       throw new Error('Missing authToken parameter for DeviceAuthToken');
@@ -46,7 +47,7 @@ class DeviceAuthToken extends React.Component {
 
   componentWillReceiveProps(props) {
     this.setState({
-      currentValue: props.authToken
+      currentValue: props.authToken,
     });
   }
 
@@ -92,8 +93,12 @@ class DeviceAuthToken extends React.Component {
         error: '',
         loading: false
       });
-      
-      this.props.setAuthToken(this.props.deviceId, this.props.orgId, this.state.currentValue);
+
+      this.props.setAuthToken({
+        deviceId: this.props.deviceId,
+        orgId: this.props.orgId,
+        token: this.state.currentValue
+      });
 
       this.closeModal();
     }
@@ -110,7 +115,7 @@ class DeviceAuthToken extends React.Component {
   }
 
   getDeviceAuthToken() {
-    const lastFourDigits = this.props.authToken.substr(-4);
+    const lastFourDigits = this.state.currentValue.substr(-4);
 
     return `•••• - •••• - •••• - ${lastFourDigits}`;
   }
