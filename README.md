@@ -46,12 +46,12 @@ Local server uses by default self-generated certificates, so you have to disable
 
 #### 2. Download Blynk DB script
 
-Go to [create_schema.sql](server/core/src/main/resources/create_schema.sql) , press "Raw"      
+Go to [create_schema.sql](server/core/src/main/resources/sql/create_schema.sql) , press "Raw"
 Copy URL with a token from the browser, then download a file with:
         
         wget -O create_schema.sql <paste copied url here>
         
-Repeat the same for the file [reporting_schema.sql](server/core/src/main/resources/reporting_schema.sql)
+Repeat the same for the file [reporting_schema.sql](server/core/src/main/resources/sql/reporting_schema.sql)
 
         wget -O reporting_schema.sql <paste copied url here>
 
