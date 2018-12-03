@@ -35,7 +35,7 @@ export function OrganizationSave(data = {}) {
     type: 'API_ORGANIZATION_SAVE',
     ws: {
       request: {
-        command: API_COMMANDS.UPDATE_ORG,
+        command: API_COMMANDS.WEB_EDIT_OWN_ORG,
         query: [
           JSON.stringify(data)
         ],

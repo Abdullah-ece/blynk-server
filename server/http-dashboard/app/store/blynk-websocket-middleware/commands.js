@@ -75,6 +75,7 @@ export const API_COMMANDS = {
   LOGOUT                        : 66,
   WEB_GET_TEMP_SECURE_TOKEN     : 131,
   WEB_SET_AUTH_TOKEN            : 138,
+  WEB_EDIT_OWN_ORG              : 139,
 };
 
 export const getCommandKeyName = (value) => {
