@@ -4,6 +4,7 @@ import classnames from 'classnames';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import './styles.less';
 import DeviceAuthTokenModal from "./modal";
+import { Modal } from 'components';
 
 class DeviceAuthToken extends React.Component {
 
@@ -15,19 +16,99 @@ class DeviceAuthToken extends React.Component {
   constructor(props) {
     super(props);
 
+    this.handleCancelClick = this.handleCancelClick.bind(this);
+    this.handleEdit = this.handleEdit.bind(this);
+    this.handleOkClick = this.handleOkClick.bind(this);
+    this.onChange = this.onChange.bind(this);
+    this.getEditableComponent = this.getEditableComponent.bind(this);
+
     if (!props.authToken) {
       throw new Error('Missing authToken parameter for DeviceAuthToken');
     }
   }
 
   state = {
-    isHovered: false
+    isHovered: false,
+    editVisible: false,
+    currentValue: this.props.authToken,
+    error: '',
   };
+
+  componentWillReceiveProps(props) {
+    this.setState({
+      currentValue: props.authToken
+    });
+  }
+
+  handleEdit() {
+    this.setState({
+      editVisible: true
+    });
+  }
+
+  startLoading() {
+    this.setState({
+      loading: true
+    });
+  }
+
+  stopLoading() {
+    this.setState({
+      loading: false
+    });
+  }
+
+  onCancel() {
+    this.setState({
+      currentValue: this.props.authToken
+    });
+  }
+
+  closeModal() {
+    this.setState({
+      editVisible: false
+    });
+  }
+
+  handleOkClick() {
+    this.startLoading();
+    if (this.state.currentValue.length != 32) {
+      this.setState({
+        error: 'Auth Token length must be 32 char long!',
+        loading: false
+      });
+    }
+    else {
+      this.setState({
+        error: '',
+        loading: false
+      });
+
+      this.closeModal();
+    }
+    // this.onOk(this.props.values);
+  }
+
+  handleCancelClick() {
+    this.setState({
+      editVisible: false
+    });
+
+    if (this.onCancel) {
+      this.onCancel();
+    }
+  }
 
   getDeviceAuthToken() {
     const lastFourDigits = this.props.authToken.substr(-4);
 
     return `•••• - •••• - •••• - ${lastFourDigits}`;
+  }
+
+  onChange({ target }) {
+    this.setState({
+      currentValue: target.value
+    });
   }
 
   handleMouseEnter() {
@@ -56,9 +137,15 @@ class DeviceAuthToken extends React.Component {
   }
 
   getEditableComponent() {
+    const input = {
+      value: this.state.currentValue,
+      onChange: (value) => this.onChange(value)
+    };
+
     return (
       <div>
-        <DeviceAuthTokenModal form={this.props.form}/>
+        <DeviceAuthTokenModal placeholder="Value" name="value"
+                              input={input} error={this.state.error}/>
       </div>
     );
   }
@@ -80,7 +167,26 @@ class DeviceAuthToken extends React.Component {
                          onCopy={this.handleCopyClick.bind(this)}>
           <Button icon="copy" size="small" className={className}/>
         </CopyToClipboard>
-        <Button icon="edit" size="small" className={className}/>
+        <Button icon="edit" size="small" className={className}
+                onClick={this.handleEdit}/>
+        <Modal visible={this.state.editVisible}
+               wrapClassName={`device-metadata-modal ${this.props.modalWrapClassName || ''}`}
+               closable={false}
+               title={'Auth Token'}
+               onCancel={this.handleCancelClick}
+               footer={[
+                 <Button key="cancel" type="primary" size="default"
+                         onClick={this.handleCancelClick}>Cancel</Button>,
+                 <Button key="save" size="default"
+                         disabled={!!this.props.errors}
+                         loading={this.state.loading}
+                         onClick={this.handleOkClick}>
+                   Save
+                 </Button>,
+               ]}
+        >
+          {this.getEditableComponent()}
+        </Modal>
       </div>
     );
   }

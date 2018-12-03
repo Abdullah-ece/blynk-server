@@ -16,7 +16,7 @@ export const Messages = {
   longitude: 'Longitude is not correct',
   metafieldName: 'Field is not correct',
   eventsEventCode: 'Event code is not correct',
-  mustEqual: (n) => `Length can't be lesser or bigger then ${n}`
+  lengthMustEqual: (n) => `Length can't be lesser or bigger then ${n}`
 };
 
 const MAX_NUMBER = 999999999999999;

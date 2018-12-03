@@ -21,6 +21,7 @@ export default class Input extends React.Component {
 
   render() {
     const {placeholder, disabled, rows, input, type, icon, autoComplete} = this.props;
+
     return (
       <BaseInput {...input}
                  disabled={disabled}
