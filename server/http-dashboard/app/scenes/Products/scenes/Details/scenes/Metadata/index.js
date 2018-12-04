@@ -85,7 +85,8 @@ class Metadata extends React.Component {
     ) => {
 
       const props = {
-        key: key
+        key: key,
+        icon: field.icon
       };
 
       if (field.type === MetadataFields.Fields.TEXT) {
@@ -300,7 +301,7 @@ class Metadata extends React.Component {
       field,
       key
     ) => {
-
+      
       if (!field.name) return false;
 
       const props = {
