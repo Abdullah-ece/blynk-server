@@ -22,7 +22,7 @@ class DeviceInfo extends React.Component {
     account: React.PropTypes.object,
   };
 
-  constructor(props){
+  constructor(props) {
     super(props);
 
     this.showMore = this.showMore.bind(this);
@@ -77,7 +77,7 @@ class DeviceInfo extends React.Component {
         return metadataField.type !== Metadata.Fields.LOCATION || (metadataField.type === Metadata.Fields.LOCATION && metadataField.isLocationEnabled);
       });
     };
-
+    
     return (
       <div className="device--device-info">
         <Row className="device--device-info-details">
@@ -99,7 +99,8 @@ class DeviceInfo extends React.Component {
             {this.props.device.token && (
               <Fieldset>
                 <Fieldset.Legend>Auth Token</Fieldset.Legend>
-                <DeviceAuthToken authToken={this.props.device.token} deviceId={this.props.device.id}/>
+                <DeviceAuthToken authToken={this.props.device.token}
+                                 deviceId={this.props.device.id}/>
               </Fieldset>
             ) || null}
           </Col>
@@ -128,9 +129,10 @@ class DeviceInfo extends React.Component {
               </Fieldset>
             )}
             {this.props.device.hardwareInfo && (
-            <Fieldset>
-              <a href="#" onClick={this.showMore}>{this.state && this.state.showMore? 'Show less' : 'Show more'}</a>
-            </Fieldset>
+              <Fieldset>
+                <a href="#"
+                   onClick={this.showMore}>{this.state && this.state.showMore ? 'Show less' : 'Show more'}</a>
+              </Fieldset>
             )}
             {this.state.showMore && this.props.device.hardwareInfo && this.props.device.hardwareInfo.blynkVersion && (
               <Fieldset>
@@ -237,6 +239,12 @@ class DeviceInfo extends React.Component {
                     );
 
                   if (field.type === Metadata.Fields.EMAIL)
+                    return (
+                      <DeviceMetadata.Field {...fieldProps}>
+                        <DeviceMetadata.Text {...props}/>
+                      </DeviceMetadata.Field>
+                    );
+                  if (field.type === Metadata.Fields.DEVICE_OWNER)
                     return (
                       <DeviceMetadata.Field {...fieldProps}>
                         <DeviceMetadata.Text {...props}/>
