@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
  */
 public final class OTADownloadToken extends BaseToken implements Serializable {
 
-    private static final long DOWNLOAD_EXPIRE_TIME = TimeUnit.DAYS.toMillis(30);
+    private static final long DOWNLOAD_EXPIRE_TIME = TimeUnit.DAYS.toMillis(1);
 
     public final int deviceId;
 
