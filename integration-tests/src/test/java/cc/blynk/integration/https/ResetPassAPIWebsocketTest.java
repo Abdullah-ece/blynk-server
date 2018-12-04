@@ -19,6 +19,7 @@ import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.integration.TestUtil.webJson;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.timeout;
@@ -63,6 +64,7 @@ public class ResetPassAPIWebsocketTest extends SingleServerInstancePerTestWithDB
         assertEquals(32, token.length());
 
         verify(holder.mailWrapper).sendHtml(eq(getUserName()), eq("Reset your Blynk Inc. Dashboard password"), contains("/dashboard" + "/resetPass?token="));
+        verify(holder.mailWrapper).sendHtml(any(), any(), contains("/static/logo.png"));
 
         HttpGet inviteGet = new HttpGet("https://localhost:" + properties.getHttpsPort() + "/dashboard" + "/resetPass?token=" + token);
 

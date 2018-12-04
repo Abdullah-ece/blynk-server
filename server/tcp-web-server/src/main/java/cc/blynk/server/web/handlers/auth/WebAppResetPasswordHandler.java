@@ -116,12 +116,20 @@ public class WebAppResetPasswordHandler extends SimpleChannelInboundHandler<Rese
                 ctx.writeAndFlush(json(msgId, "User is not exists anymore."), ctx.voidPromise());
                 return;
             }
+            Organization org = organizationDao.getOrgByIdOrThrow(user.orgId);
+            if (org == null) {
+                log.info("Organization with orgId {} not found.", user.orgId);
+                ctx.writeAndFlush(json(msgId, "Organization not found."), ctx.voidPromise());
+                return;
+            }
             user.resetPass(passHash);
             tokensPool.removeToken(token);
             blockingIOProcessor.execute(() -> {
                 try {
-                    mailWrapper.sendHtml(email, resetConfirmationSubj,
-                            resetConfirmationBody.replace(Placeholders.EMAIL, email));
+                    String body = resetConfirmationBody
+                            .replace(Placeholders.ORG_LOGO_URL, httpsServerUrl + org.getLogoOrDefault())
+                            .replace(Placeholders.EMAIL, email);
+                    mailWrapper.sendHtml(email, resetConfirmationSubj, body);
                     log.debug("Confirmation {} mail sent.", email);
                 } catch (Exception e) {
                     log.error("Error sending confirmation mail for {}. Reason : {}", email, e.getMessage());

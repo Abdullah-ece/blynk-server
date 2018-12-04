@@ -2,8 +2,10 @@ package cc.blynk.server.application.handlers.main;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
+import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.protocol.model.messages.appllication.ResetPasswordMessage;
 import cc.blynk.server.internal.token.BaseToken;
 import cc.blynk.server.internal.token.ResetPassToken;
@@ -40,6 +42,8 @@ public class MobileResetPasswordHandler extends SimpleChannelInboundHandler<Rese
     private final UserDao userDao;
     private final BlockingIOProcessor blockingIOProcessor;
     private final String host;
+    private final String httpsServerUrl;
+    private final OrganizationDao organizationDao;
 
     public MobileResetPasswordHandler(Holder holder) {
         this.tokensPool = holder.tokensPool;
@@ -54,6 +58,8 @@ public class MobileResetPasswordHandler extends SimpleChannelInboundHandler<Rese
         this.userDao = holder.userDao;
         this.blockingIOProcessor = holder.blockingIOProcessor;
         this.host = holder.props.getRestoreHost();
+        this.httpsServerUrl = holder.props.httpsServerUrl;
+        this.organizationDao = holder.organizationDao;
     }
 
     @Override
@@ -101,12 +107,20 @@ public class MobileResetPasswordHandler extends SimpleChannelInboundHandler<Rese
                 ctx.writeAndFlush(json(msgId, "User not exists anymore."), ctx.voidPromise());
                 return;
             }
+            Organization org = organizationDao.getOrgByIdOrThrow(user.orgId);
+            if (org == null) {
+                log.info("Organization with orgId {} not found.", user.orgId);
+                ctx.writeAndFlush(json(msgId, "Organization not found."), ctx.voidPromise());
+                return;
+            }
             user.resetPass(passHash);
             tokensPool.removeToken(token);
             blockingIOProcessor.execute(() -> {
                 try {
-                    mailWrapper.sendHtml(email, resetConfirmationSubj,
-                            resetConfirmationBody.replace(Placeholders.EMAIL, email));
+                    String body = resetConfirmationBody
+                            .replace(Placeholders.ORG_LOGO_URL, httpsServerUrl + org.getLogoOrDefault())
+                            .replace(Placeholders.EMAIL, email);
+                    mailWrapper.sendHtml(email, resetConfirmationSubj, body);
                     log.debug("Confirmation {} mail sent.", email);
                 } catch (Exception e) {
                     log.error("Error sending confirmation mail for {}. Reason : {}", email, e.getMessage());
