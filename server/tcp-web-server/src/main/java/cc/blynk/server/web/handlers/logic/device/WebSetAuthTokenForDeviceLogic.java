@@ -86,6 +86,10 @@ public class WebSetAuthTokenForDeviceLogic implements PermissionBasedLogic {
 
         Role role = state.role;
         if (role.canEditOrgDevice() || (role.canEditOwnDevice() && device.hasOwner(state.user))) {
+            DeviceValue deviceValueForToken = deviceDao.getDeviceTokenValue(newToken);
+            if (deviceValueForToken != null) {
+                throw new NoPermissionException("This token is already used by another device.");
+            }
             deviceDao.assignNewToken(user.orgId, user.email, product, device, newToken);
             log.warn("Manual setting auth token {} for device {}, orgId = {}.", newToken, deviceDao, orgId);
         } else {
