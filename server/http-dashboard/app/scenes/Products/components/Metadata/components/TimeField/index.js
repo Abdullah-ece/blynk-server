@@ -15,7 +15,7 @@ class TimeField extends BaseField {
 
     return {
       name: name && typeof name === 'string' ? `${name.trim()}` : null,
-      value: !isNaN(Number(time)) ? `${Time.fromTimestamp(time)}` : null
+      value: !isNaN(Number(time)) ? `${Time.fromTimestamp(time)}` : '--:--'
     };
   }
 
