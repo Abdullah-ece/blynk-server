@@ -78,6 +78,7 @@ public final class WebDeleteUserLogic implements PermissionBasedLogic {
 
         String superAdminEmail = userDao.getSuperAdmin().email;
         for (String emailToDelete : emailsToDelete) {
+            emailToDelete = emailToDelete.trim().toLowerCase();
             User userToDelete = userDao.getByName(emailToDelete);
             if (userToDelete != null && userToDelete.orgId == orgId) {
                 if (userToDelete.isSuperAdmin()) {

@@ -5,6 +5,7 @@ import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.auth.UserStatus;
 import cc.blynk.server.core.model.permissions.Role;
+import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
 import cc.blynk.server.web.handlers.PermissionBasedLogic;
@@ -43,8 +44,11 @@ public final class WebCanInviteUserLogic implements PermissionBasedLogic {
 
     @Override
     public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
-        String userEMailToInvite = message.body;
+        if (message.body == null) {
+            throw new JsonException("Invalid email.");
+        }
 
+        String userEMailToInvite = message.body.trim().toLowerCase();
         User userToInvite = userDao.getByName(userEMailToInvite);
         if (userToInvite == null) {
             ctx.writeAndFlush(ok(message.id), ctx.voidPromise());

@@ -67,7 +67,7 @@ public class WebAppResetPasswordHandler extends SimpleChannelInboundHandler<Rese
         this.blockingIOProcessor = holder.blockingIOProcessor;
         this.host = holder.props.getRestoreHost();
         this.organizationDao = holder.organizationDao;
-        this.resetURL = "https://" + holder.props.getProperty("server.host") + "/dashboard" + "/resetPass?token=";
+        this.resetURL = holder.props.httpsServerUrl + "/dashboard" + "/resetPass?token=";
         this.httpsServerUrl = holder.props.httpsServerUrl;
     }
 

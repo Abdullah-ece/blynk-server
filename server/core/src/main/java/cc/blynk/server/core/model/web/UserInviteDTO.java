@@ -22,7 +22,7 @@ public class UserInviteDTO {
     public UserInviteDTO(@JsonProperty("email") String email,
                          @JsonProperty("name") String name,
                          @JsonProperty("roleIds") int roleId) {
-        this.email = email;
+        this.email = (email == null ? null : email.trim().toLowerCase());
         this.name = name;
         this.roleId = roleId;
     }
