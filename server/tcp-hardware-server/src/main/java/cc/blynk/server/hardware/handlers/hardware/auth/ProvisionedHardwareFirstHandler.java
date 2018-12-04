@@ -139,12 +139,12 @@ public class ProvisionedHardwareFirstHandler extends SimpleChannelInboundHandler
                     device.hardwareInfo = hardwareInfo;
 
                     holder.organizationDao.assignToOrgAndAddDevice(org, device);
+                    MetaField[] metaFields = device.metaFields;
                     if (templateId != null) {
-                        MetaField[] metaFields = device.metaFields;
                         setTemplateIdInMeta(metaFields, templateId);
-                        setDeviceOwnerInMeta(metaFields, user.email);
-                        device.metaFields = metaFields;
                     }
+                    setDeviceOwnerInMeta(metaFields, user.email);
+                    device.metaFields = metaFields;
                     device.updateNameFromMetafields();
                     holder.deviceDao.createWithPredefinedIdAndToken(orgId, user.email, product, device);
 
