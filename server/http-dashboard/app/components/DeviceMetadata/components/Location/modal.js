@@ -229,7 +229,7 @@ class LocationModal extends React.Component {
                     <Col span={this.props.formValues.isZipEnabled ? 11 : 24}>
 
                       <Form.Item className="normal-offset" label={"Country"}>
-                        <Field component={this.input} name={'country'} placeholder={'Country'}/>
+                        <Field component={this.addressAutocomplete} name={'country'} placeholder={'Country (start typing)'}/>
                       </Form.Item>
 
                     </Col>

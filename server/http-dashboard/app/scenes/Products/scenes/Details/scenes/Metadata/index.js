@@ -301,7 +301,7 @@ class Metadata extends React.Component {
       field,
       key
     ) => {
-      
+
       if (!field.name) return false;
 
       const props = {
