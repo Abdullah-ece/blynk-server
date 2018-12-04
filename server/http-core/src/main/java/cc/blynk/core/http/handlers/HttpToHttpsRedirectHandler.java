@@ -1,6 +1,7 @@
 package cc.blynk.core.http.handlers;
 
 import cc.blynk.core.http.Response;
+import cc.blynk.utils.properties.ServerProperties;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -18,14 +19,12 @@ import org.apache.logging.log4j.Logger;
 public class HttpToHttpsRedirectHandler extends ChannelInboundHandlerAdapter {
 
     private static final Logger log = LogManager.getLogger(HttpToHttpsRedirectHandler.class);
-    private final String host;
     private final String rootPath;
-    private final String httpsPort;
+    private final String httpsUrl;
 
-    public HttpToHttpsRedirectHandler(String host, String rootPath, String httpsPort) {
-        this.host = host;
-        this.rootPath = rootPath;
-        this.httpsPort = httpsPort;
+    public HttpToHttpsRedirectHandler(ServerProperties props) {
+        this.rootPath = props.rootPath;
+        this.httpsUrl = props.httpsServerUrl;
     }
 
     @Override
@@ -33,10 +32,9 @@ public class HttpToHttpsRedirectHandler extends ChannelInboundHandlerAdapter {
         if (msg instanceof FullHttpRequest) {
             FullHttpRequest req = (FullHttpRequest) msg;
             String uri = req.uri();
-            if (uri.startsWith(rootPath)) {
+            if ("/".equals(uri) || uri.startsWith(rootPath)) {
                 try {
-                    String portPart = (httpsPort.isEmpty() ? "" : ":" + httpsPort);
-                    String redirect = "https://" + host + portPart + uri;
+                    String redirect = httpsUrl + uri;
                     log.debug("Redirecting to {} from {} {}.", redirect, req.method().name(), uri);
                     ctx.writeAndFlush(Response.redirect(redirect), ctx.voidPromise());
                 } finally {

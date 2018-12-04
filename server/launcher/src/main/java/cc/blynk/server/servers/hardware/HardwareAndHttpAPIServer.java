@@ -52,10 +52,7 @@ public class HardwareAndHttpAPIServer extends BaseServer {
         var externalAPIHandler = new ExternalAPIHandler(holder, "/external/api");
 
         //http API handlers
-        var httpToHttpsRedirectHandler =
-                new HttpToHttpsRedirectHandler(holder.props.host,
-                        holder.props.rootPath,
-                        holder.props.httpsPort);
+        var httpToHttpsRedirectHandler = new HttpToHttpsRedirectHandler(holder.props);
         var noMatchHandler = new NoMatchHandler();
 
         BaseWebSocketUnificator baseWebSocketUnificator = new BaseWebSocketUnificator() {
