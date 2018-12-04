@@ -158,7 +158,6 @@ public class MobileResetPasswordHandler extends SimpleChannelInboundHandler<Rese
         }
 
         if (tokensPool.hasResetToken(trimmedEmail, appName)) {
-            tokensPool.cleanupOldTokens();
             log.warn("Reset code was already generated.");
             ctx.writeAndFlush(json(msgId, "Reset code was already generated."), ctx.voidPromise());
             return;

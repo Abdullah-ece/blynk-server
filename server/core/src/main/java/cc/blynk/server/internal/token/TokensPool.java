@@ -37,7 +37,6 @@ public final class TokensPool implements Closeable {
 
     public void addToken(String token, BaseToken baseToken) {
         log.info("Adding {} {} to the pool", token, baseToken.getClass().getSimpleName());
-        cleanupOldTokens();
         tokens.put(token, baseToken);
     }
 
@@ -67,7 +66,6 @@ public final class TokensPool implements Closeable {
     }
 
     public BaseToken getBaseToken(String token) {
-        cleanupOldTokens();
         return tokens.get(token);
     }
 
@@ -92,7 +90,7 @@ public final class TokensPool implements Closeable {
         return tokens.size();
     }
 
-    public void cleanupOldTokens() {
+    public void cleanupExpiredTokens() {
         long now = System.currentTimeMillis();
         tokens.entrySet().removeIf(entry -> entry.getValue().isExpired(now));
     }

@@ -280,7 +280,8 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
             response.headers().set(CONNECTION, HttpHeaderValues.KEEP_ALIVE);
         }
 
-        Device device = getDownloadingDevice(uriParts);
+        String downloadToken = parseUploadToken(uriParts);
+        Device device = getDownloadingDevice(downloadToken);
         if (device != null) {
             device.firmwareRequested();
             Product product = organizationDao.getProductByIdOrThrow(device.productId);
@@ -308,14 +309,16 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
         }
 
         if (device != null) {
-            log.debug("Adding finish upload listener for deviceId {}.", device.id);
+            int deviceId = device.id;
+            log.debug("Adding finish upload listener for deviceId {}.", deviceId);
             lastContentFuture.addListener((future) -> {
                     if (future.isSuccess()) {
-                        log.debug("Upload success for deviceId {}.", device.id);
-                        deviceDao.getByIdOrThrow(device.id).firmwareUploaded();
+                        log.debug("Upload success for deviceId {}.", deviceId);
+                        deviceDao.getByIdOrThrow(deviceId).firmwareUploaded();
+                        tokensPool.removeToken(downloadToken);
                     } else {
-                        log.debug("Upload failure for deviceId {}.", device.id);
-                        deviceDao.getByIdOrThrow(device.id).firmwareUploadFailure();
+                        log.debug("Upload failure for deviceId {}.", deviceId);
+                        deviceDao.getByIdOrThrow(deviceId).firmwareUploadFailure();
                     }
                 }
             );
@@ -328,16 +331,23 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
         }
     }
 
-    private Device getDownloadingDevice(String[] uriParts) {
-        //todo check somehow it is OTA file?
+    private Device getDownloadingDevice(String downloadToken) {
+        if (downloadToken == null) {
+            return null;
+        }
+        OTADownloadToken otaDownloadToken = tokensPool.getOTADownloadToken(downloadToken);
+        if (otaDownloadToken == null) {
+            log.warn("Unexpected token for static file {}.", downloadToken);
+            return null;
+        }
+        return deviceDao.getByIdOrThrow(otaDownloadToken.deviceId);
+    }
+
+    //todo check somehow it is OTA file?
+    //todo correctly parse url
+    private String parseUploadToken(String[] uriParts) {
         if (uriParts.length == 2 && uriParts[1].contains("token=")) {
-            String downloadToken = uriParts[1].substring(6);
-            OTADownloadToken otaDownloadToken = tokensPool.getOTADownloadToken(downloadToken);
-            if (otaDownloadToken != null) {
-                return deviceDao.getByIdOrThrow(otaDownloadToken.deviceId);
-            } else {
-                log.warn("Unexpected token for static file {}", downloadToken);
-            }
+            return uriParts[1].substring(6);
         }
         return null;
     }

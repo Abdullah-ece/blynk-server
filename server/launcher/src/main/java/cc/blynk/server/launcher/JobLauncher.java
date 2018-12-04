@@ -34,7 +34,7 @@ final class JobLauncher {
     }
 
     public static void start(Holder holder, BaseServer[] servers) {
-        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1, BlynkTPFactory.build("DataSaver"));
+        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(2, BlynkTPFactory.build("DataSaver"));
 
         long startDelay;
 
@@ -67,7 +67,8 @@ final class JobLauncher {
             );
         }
         scheduler.scheduleAtFixedRate(LRUCache.LOGIN_TOKENS_CACHE::clear, 1, 1, HOURS);
-        scheduler.scheduleAtFixedRate(holder.deviceDao::clearTemporaryTokens, 7, 1, DAYS);
+        scheduler.scheduleAtFixedRate(holder.deviceDao::clearTemporaryTokens, 1, 1, DAYS);
+        scheduler.scheduleAtFixedRate(holder.tokensPool::cleanupExpiredTokens, 1, 1, HOURS);
 
         //running once every 3 day
         //todo could be removed?
