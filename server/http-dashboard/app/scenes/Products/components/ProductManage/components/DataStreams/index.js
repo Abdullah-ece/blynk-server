@@ -1,5 +1,5 @@
 import React from 'react';
-import Scroll from 'react-scroll';
+// import Scroll from 'react-scroll';
 // import {BackTop} from 'components';
 import {AddDataStreamsFields} from 'scenes/Products/components/AddField';
 import {DataStreamsBaseField, DataStreamsItemsList} from "scenes/Products/components/DataStreams";
@@ -53,31 +53,31 @@ class List extends React.Component {
     // all new fields marked as isRecentlyCreated to be able to scroll to new element
     // after scrolled to element we should remove isRecentlyCreated to prevent scroll every update
 
-    let fields = [];
-    let shouldUpdateFields = false;
-
-    this.props.fields.getAll().forEach((field) => {
-
-      if (!field.isRecentlyCreated) {
-        return fields.push(field);
-      }
-
-      shouldUpdateFields = true;
-
-      Scroll.scroller.scrollTo(`${field.name}`, {
-        duration: 1000,
-        offset: -64,
-        smooth: "easeInOutQuint",
-      });
-
-      return fields.push({
-        ...field,
-        isRecentlyCreated: false,
-      });
-    });
-
-    if(shouldUpdateFields)
-      this.props.changeForm(FORMS.PRODUCTS_PRODUCT_MANAGE, 'dataStreams', fields);
+    // let fields = [];
+    // let shouldUpdateFields = false;
+    //
+    // this.props.fields.getAll().forEach((field) => {
+    //
+    //   if (!field.isRecentlyCreated) {
+    //     return fields.push(field);
+    //   }
+    //
+    //   shouldUpdateFields = true;
+    //
+    //   Scroll.scroller.scrollTo(`${field.name}`, {
+    //     duration: 1000,
+    //     offset: -64,
+    //     smooth: "easeInOutQuint",
+    //   });
+    //
+    //   return fields.push({
+    //     ...field,
+    //     isRecentlyCreated: false,
+    //   });
+    // });
+    //
+    // if(shouldUpdateFields)
+    //   this.props.changeForm(FORMS.PRODUCTS_PRODUCT_MANAGE, 'dataStreams', fields);
   }
 
   // componentDidUpdate() {
