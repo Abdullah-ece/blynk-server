@@ -17,14 +17,19 @@ export function OrganizationsFetch(params) {
   };
 }
 
-export function OrganizationsCreate(data) {
+export function OrganizationsCreate(params) {
+  if (!params.orgId)
+    throw new Error('orgId parameter is missed');
+
+
   return {
     type: 'API_ORGANIZATIONS_CREATE',
     ws: {
       request: {
         command: API_COMMANDS.CREATE_ORG,
         query: [
-          JSON.stringify(data)
+          params.orgId,
+          JSON.stringify(params.data)
         ],
       }
     }

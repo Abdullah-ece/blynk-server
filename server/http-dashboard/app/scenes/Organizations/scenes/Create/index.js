@@ -146,7 +146,10 @@ class Create extends React.Component {
   handleSubmit() {
     return (new Promise((resolve, reject) => {
       this.props.OrganizationsCreate({
-        ...this.props.formValues.toJS()
+        data: {
+          ...this.props.formValues.toJS()
+        },
+        orgId: this.props.account.selectedOrgId
       }).then((organization) => {
         this.props.OrganizationsFetch({
           orgId: this.props.account.selectedOrgId
