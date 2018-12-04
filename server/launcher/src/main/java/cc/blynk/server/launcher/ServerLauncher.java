@@ -154,7 +154,7 @@ public final class ServerLauncher {
     private static void createSuperUser(Holder holder) {
         ServerProperties props = holder.props;
         String url = props.httpsServerUrl;
-        String email = props.getProperty("admin.email", "admin@blynk.cc");
+        String email = props.getProperty("admin.email", "iot@blynk.cc");
         String pass = props.getProperty("admin.pass");
 
         if (!holder.userDao.isSuperAdminExists()) {
