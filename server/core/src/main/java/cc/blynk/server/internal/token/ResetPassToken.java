@@ -1,6 +1,7 @@
 package cc.blynk.server.internal.token;
 
 import java.io.Serializable;
+import java.util.concurrent.TimeUnit;
 
 /**
  * The Blynk Project.
@@ -9,11 +10,12 @@ import java.io.Serializable;
  */
 public final class ResetPassToken extends BaseToken implements Serializable {
 
+    private static final long RESET_EXPIRE_TIME = TimeUnit.DAYS.toMillis(7);
     public final String appName;
     public final String email;
 
     public ResetPassToken(String email, String appName) {
-        super(DEFAULT_EXPIRE_TIME);
+        super(RESET_EXPIRE_TIME);
         this.email = email;
         this.appName = appName;
     }
