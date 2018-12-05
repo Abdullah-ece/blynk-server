@@ -133,18 +133,12 @@ class Notifications extends React.Component {
               component={this.notificationSelect}
               onFocus={this.props.onFocus} onBlur={this.props.onBlur}/>
           </Item>
-        </FormItem>
-        <FormItem
-          visible={!!this.props.field && !!this.props.field.get('isNotificationsEnabled')}>
-          <Item label="PUSH Notifications to">
+          <Item label="PUSH Notifications to" offset="normal">
             <Field name="pushNotifications"
                    component={this.notificationSelect}
                    onFocus={this.props.onFocus} onBlur={this.props.onBlur}/>
           </Item>
-        </FormItem>
-        <FormItem
-          visible={!!this.props.field && !!this.props.field.get('isNotificationsEnabled')}>
-          <Item label="SMS Notifications to">
+          <Item label="SMS Notifications to" offset="normal">
             <Field name="smsNotifications"
                    component={this.notificationSelect}
                    onFocus={this.props.onFocus} onBlur={this.props.onBlur}/>
