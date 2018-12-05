@@ -24,10 +24,18 @@ class Notifications extends React.Component {
     });
   }
 
+  getSmsNotifications() {
+    if (!Array.isArray(this.props.fields.smsNotifications)) return [];
+    return this.props.fields.smsNotifications.map((field, key) => {
+      return <div key={key} className={`product-metadata-static-field-inline`}>{field.value}</div>;
+    });
+  }
+
   render() {
 
     const emailNotifications = this.getEmailNotifications();
     const pushNotifications = this.getPushNotifications();
+    const smsNotifications = this.getSmsNotifications();
 
     return (
       <FormItem>
@@ -38,6 +46,11 @@ class Notifications extends React.Component {
             </Item>
           )}
           {!!pushNotifications.length && (
+            <Item label="PUSH notifications to">
+              {pushNotifications}
+            </Item>
+          )}
+          {!!smsNotifications.length && (
             <Item label="PUSH notifications to">
               {pushNotifications}
             </Item>

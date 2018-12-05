@@ -1,10 +1,10 @@
 import React from 'react';
-import {Switch, Select} from 'antd';
-import {Field} from 'redux-form';
+import { Switch, Select } from 'antd';
+import { Field } from 'redux-form';
 import FormItem from 'components/FormItem';
-import {Item} from 'components/UI';
+import { Item } from 'components/UI';
 import Static from './notifications-static';
-import {List} from 'immutable';
+import { List } from 'immutable';
 import PropTypes from 'prop-types';
 
 class Notifications extends React.Component {
@@ -26,7 +26,7 @@ class Notifications extends React.Component {
 
     const getValue = () => {
 
-      if(!Array.isArray(props.input.value))
+      if (!Array.isArray(props.input.value))
         return [];
 
       return props.input.value.filter((value) => (
@@ -35,7 +35,7 @@ class Notifications extends React.Component {
     };
 
     const onChange = (value) => {
-      if(value)
+      if (value)
         value = value.map((id) => {
           const field = this.props.contactMetaFields.find((field) => Number(field.get('id')) === Number(id));
 
@@ -50,7 +50,7 @@ class Notifications extends React.Component {
     };
 
     const onBlur = (value) => {
-      if(value)
+      if (value)
         value = value.map((id) => {
           const field = this.props.contactMetaFields.find((field) => Number(field.get('id')) === Number(id));
 
@@ -77,7 +77,7 @@ class Notifications extends React.Component {
     return (
 
       <Select mode="tags"
-              style={{width: '100%'}}
+              style={{ width: '100%' }}
               onFocus={props.input.onFocus}
               onBlur={onBlur}
               value={getValue()}
@@ -107,7 +107,8 @@ class Notifications extends React.Component {
   }
 
   switcher(props) {
-    return <Switch size="small" onChange={props.input.onChange} checked={!!props.input.value}/>;
+    return <Switch size="small" onChange={props.input.onChange}
+                   checked={!!props.input.value}/>;
   }
 
   render() {
@@ -115,24 +116,39 @@ class Notifications extends React.Component {
     return (
       <FormItem>
         <Item offset="small">
-          <Field name={`${this.props.field.get('fieldPrefix')}.isNotificationsEnabled`} component={this.switcher}/>
+          <Field
+            name={`${this.props.field.get('fieldPrefix')}.isNotificationsEnabled`}
+            component={this.switcher}/>
           {this.props.field.get('isNotificationsEnabled') && (
             <span className="product-events-notifications-label">Notifications On</span>
           ) || (
             <span className="product-events-notifications-label">Notifications Off</span>
           )}
         </Item>
-        <FormItem visible={!!this.props.field && !!this.props.field.get('isNotificationsEnabled')}>
+        <FormItem
+          visible={!!this.props.field && !!this.props.field.get('isNotificationsEnabled')}>
           <Item label="E-mail to" offset="normal">
-            <Field name={`${this.props.field.get('fieldPrefix')}.emailNotifications`}
+            <Field
+              name={`${this.props.field.get('fieldPrefix')}.emailNotifications`}
+              component={this.notificationSelect}
+              onFocus={this.props.onFocus} onBlur={this.props.onBlur}/>
+          </Item>
+        </FormItem>
+        <FormItem
+          visible={!!this.props.field && !!this.props.field.get('isNotificationsEnabled')}>
+          <Item label="PUSH Notifications to">
+            <Field name="pushNotifications"
                    component={this.notificationSelect}
                    onFocus={this.props.onFocus} onBlur={this.props.onBlur}/>
           </Item>
-          {/*<Item label="PUSH Notifications to">*/}
-          {/*<Field name="pushNotifications"*/}
-          {/*component={this.notificationSelect}*/}
-          {/*onFocus={this.props.onFocus} onBlur={this.props.onBlur}/>*/}
-          {/*</Item>*/}
+        </FormItem>
+        <FormItem
+          visible={!!this.props.field && !!this.props.field.get('isNotificationsEnabled')}>
+          <Item label="SMS Notifications to">
+            <Field name="smsNotifications"
+                   component={this.notificationSelect}
+                   onFocus={this.props.onFocus} onBlur={this.props.onBlur}/>
+          </Item>
         </FormItem>
       </FormItem>
     );
