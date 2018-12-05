@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
  */
 public abstract class BaseToken implements Serializable {
 
-    static final long DEFAULT_EXPIRE_TIME = TimeUnit.DAYS.toMillis(2);
+    static final long DEFAULT_EXPIRE_TIME = TimeUnit.DAYS.toMillis(7);
 
     private final long expireAt;
 
