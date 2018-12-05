@@ -24,7 +24,8 @@ class Events extends React.Component {
             name: field.name,
             isNotificationsEnabled: field.isNotificationsEnabled,
             pushNotifications: field.pushNotifications,
-            emailNotifications: field.emailNotifications
+            emailNotifications: field.emailNotifications,
+            smsNotifications: field.smsNotifications
           }
         };
 

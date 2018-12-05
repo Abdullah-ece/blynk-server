@@ -134,12 +134,12 @@ class Notifications extends React.Component {
               onFocus={this.props.onFocus} onBlur={this.props.onBlur}/>
           </Item>
           <Item label="PUSH Notifications to" offset="normal">
-            <Field name="pushNotifications"
+            <Field name={`${this.props.field.get('fieldPrefix')}.pushNotifications`}
                    component={this.notificationSelect}
                    onFocus={this.props.onFocus} onBlur={this.props.onBlur}/>
           </Item>
           <Item label="SMS Notifications to" offset="normal">
-            <Field name="smsNotifications"
+            <Field name={`${this.props.field.get('fieldPrefix')}.smsNotifications`}
                    component={this.notificationSelect}
                    onFocus={this.props.onFocus} onBlur={this.props.onBlur}/>
           </Item>
