@@ -23,6 +23,10 @@ public enum MetadataType {
     List,
     DeviceReference,
     Location,
-    Tz
+    Tz,
+    DeviceOwner,
+    DeviceName,
+    TemplateId,
+    Image
 
 }
