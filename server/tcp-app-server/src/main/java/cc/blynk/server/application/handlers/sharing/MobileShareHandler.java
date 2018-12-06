@@ -38,12 +38,14 @@ public class MobileShareHandler extends JsonBasedSimpleChannelInboundHandler<Str
     public final MobileShareStateHolder state;
     private final Holder holder;
     private final MobileShareHardwareLogic hardwareApp;
+    private final MobileGetDevicesLogic mobileGetDevicesLogic;
 
     public MobileShareHandler(Holder holder, MobileShareStateHolder state) {
         super(StringMessage.class);
         this.state = state;
         this.holder = holder;
         this.hardwareApp = new MobileShareHardwareLogic(holder);
+        this.mobileGetDevicesLogic = new MobileGetDevicesLogic(holder);
     }
 
     @Override
@@ -63,7 +65,7 @@ public class MobileShareHandler extends JsonBasedSimpleChannelInboundHandler<Str
                 MobileGetEnhancedGraphDataLogic.messageReceived(holder, ctx, state, msg);
                 break;
             case GET_DEVICES :
-                MobileGetDevicesLogic.messageReceived(holder, ctx, state.user, msg);
+                mobileGetDevicesLogic.messageReceived(ctx, state.user, msg);
                 break;
             case PING :
                 PingLogic.messageReceived(ctx, msg.id);

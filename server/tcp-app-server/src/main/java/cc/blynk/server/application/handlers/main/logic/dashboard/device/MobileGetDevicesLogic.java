@@ -1,6 +1,8 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard.device;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.core.dao.DeviceDao;
+import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.dto.DeviceStatusDTO;
@@ -24,14 +26,18 @@ public final class MobileGetDevicesLogic {
 
     private static final Logger log = LogManager.getLogger(MobileGetDevicesLogic.class);
 
-    private MobileGetDevicesLogic() {
+    private final OrganizationDao organizationDao;
+    private final DeviceDao deviceDao;
+
+    public MobileGetDevicesLogic(Holder holder) {
+        this.organizationDao = holder.organizationDao;
+        this.deviceDao = holder.deviceDao;
     }
 
-    public static void messageReceived(Holder holder,
-                                       ChannelHandlerContext ctx, User user, StringMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
         String devicesJson;
 
-        List<Device> deviceList = holder.deviceDao.getDevicesOwnedByUser(user.email);
+        List<Device> deviceList = deviceDao.getDevicesOwnedByUser(user.email);
         if (deviceList.size() == 0) {
             log.debug("No devices for user {}-{}.", user.email, user.orgId);
             devicesJson = "[]";

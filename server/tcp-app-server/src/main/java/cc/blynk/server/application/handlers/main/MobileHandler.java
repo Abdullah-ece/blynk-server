@@ -141,6 +141,7 @@ public class MobileHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
     private MobileDeleteAppLogic deleteAppLogic;
     private MobileMailQRsLogic mailQRsLogic;
     private MobileGetProjectByClonedTokenLogic getProjectByCloneCodeLogic;
+    private MobileGetDevicesLogic mobileGetDevicesLogic;
 
     public MobileHandler(Holder holder, MobileStateHolder state) {
         super(StringMessage.class);
@@ -148,6 +149,7 @@ public class MobileHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
         this.holder = holder;
 
         this.hardwareLogic = new MobileHardwareLogic(holder);
+        this.mobileGetDevicesLogic = new MobileGetDevicesLogic(holder);
     }
 
     @Override
@@ -271,7 +273,7 @@ public class MobileHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
                 MobileDeleteDeviceLogic.messageReceived(holder, ctx, state, msg);
                 break;
             case GET_DEVICES :
-                MobileGetDevicesLogic.messageReceived(holder, ctx, state.user, msg);
+                mobileGetDevicesLogic.messageReceived(ctx, state.user, msg);
                 break;
             case MOBILE_UPDATE_DEVICE_METAFIELD:
                 MobileUpdateDeviceMetafieldLogic.messageReceived(holder, ctx, state, msg);
