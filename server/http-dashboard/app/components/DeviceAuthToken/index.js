@@ -182,7 +182,7 @@ class DeviceAuthToken extends React.Component {
            onMouseEnter={this.handleMouseEnter.bind(this)}
            onMouseLeave={this.handleMouseLeave.bind(this)}>
         {this.getDeviceAuthToken()}
-        <CopyToClipboard text={this.props.authToken}
+        <CopyToClipboard text={this.state.currentValue}
                          onCopy={this.handleCopyClick.bind(this)}>
           <Button icon="copy" size="small" className={className}/>
         </CopyToClipboard>
