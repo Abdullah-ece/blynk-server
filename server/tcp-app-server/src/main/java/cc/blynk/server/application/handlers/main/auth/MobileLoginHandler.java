@@ -10,6 +10,7 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.FacebookTokenResponse;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
 import cc.blynk.server.core.session.mobile.MobileStateHolder;
@@ -189,7 +190,8 @@ public class MobileLoginHandler extends SimpleChannelInboundHandler<LoginMessage
         var pipeline = (DefaultChannelPipeline) ctx.pipeline();
         cleanPipeline(pipeline);
 
-        var appStateHolder = new MobileStateHolder(user.orgId, user, version);
+        Role role = holder.organizationDao.getRole(user.orgId, user.roleId);
+        var appStateHolder = new MobileStateHolder(user.orgId, user, role, version);
         pipeline.addLast("AAppHandler", new MobileHandler(holder, appStateHolder));
 
         var channel = ctx.channel();

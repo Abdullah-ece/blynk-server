@@ -10,6 +10,7 @@ import cc.blynk.server.core.dao.SharedTokenValue;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.appllication.sharing.ShareLoginMessage;
 import cc.blynk.server.core.session.mobile.Version;
@@ -86,8 +87,9 @@ public class MobileShareLoginHandler extends SimpleChannelInboundHandler<ShareLo
         }
 
         cleanPipeline(ctx.pipeline());
+        Role role = holder.organizationDao.getRole(user.orgId, user.roleId);
         MobileShareStateHolder mobileShareStateHolder =
-                new MobileShareStateHolder(user.orgId, user, version, token, dashId);
+                new MobileShareStateHolder(user.orgId, user, role, version, token, dashId);
         ctx.pipeline().addLast("AAppSHareHandler", new MobileShareHandler(holder, mobileShareStateHolder));
 
         Session session = holder.sessionDao.getOrCreateSessionForOrg(

@@ -1,6 +1,7 @@
 package cc.blynk.server.core.session.mobile;
 
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.permissions.Role;
 
 /**
  * The Blynk Project.
@@ -11,11 +12,13 @@ public class MobileStateHolder {
 
     public final int orgId;
     public final User user;
+    public final Role role;
     public final Version version;
 
-    public MobileStateHolder(int orgId, User user, Version version) {
+    public MobileStateHolder(int orgId, User user, Role role, Version version) {
         this.orgId = orgId;
         this.user = user;
+        this.role = role;
         this.version = version;
     }
 
