@@ -588,6 +588,81 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
     }
 
     @Test
+    public void testProvisionedDeviceIsVisibleForOrgAdmin() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+
+        Product product = new Product();
+        product.name = "My product";
+        product.metaFields = new MetaField[] {
+                createDeviceOwnerMeta(1, "Device Name", null, true),
+                createDeviceNameMeta(2, "Device Name", "My Default device Name", false)
+        };
+
+        client.createProduct(orgId, product);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
+        assertNotNull(fromApiProduct);
+
+        Product product2 = new Product();
+        product2.name = "My product2";
+        product2.metaFields = new MetaField[] {
+                createDeviceOwnerMeta(1, "Device owner", "test@gmail.com", true),
+                createDeviceNameMeta(2, "Device Name", "My Default device Name", true),
+                createTemplateIdMeta(3, "Template Id", "TMPL0001", true)
+        };
+        client.createProduct(orgId, product2);
+        ProductDTO fromApiProduct2 = client.parseProductDTO(2);
+        assertNotNull(fromApiProduct2);
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.boardType = BoardType.ESP32_Dev_Board;
+
+        TestAppClient appClient = new TestAppClient("localhost", properties.getHttpsPort());
+        appClient.start();
+        appClient.login(getUserName(), "1");
+        appClient.verifyResult(ok(1));
+        appClient.getProvisionToken(newDevice);
+        Device deviceFromApi = appClient.parseDevice(2);
+        assertNotNull(deviceFromApi);
+        assertNotNull(deviceFromApi.token);
+
+        TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
+        newHardClient.start();
+        newHardClient.login(deviceFromApi.token);
+        verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        appClient.never(deviceConnected(1, "1-1"));
+
+        newHardClient.send("internal " + b("ver 0.3.1 tmpl TMPL0001 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
+        newHardClient.verifyResult(ok(2));
+
+        newHardClient.send("ping");
+        newHardClient.verifyResult(ok(3));
+
+        appClient.verifyResult(TestUtil.deviceConnected(2, deviceFromApi.id));
+
+        //apps call get devices and not getDevice method
+        //so we have to make sure that provisioned device is returned
+        appClient.getDevices();
+        Device[] allDevices = appClient.parseDevices(4);
+        assertNotNull(allDevices);
+        assertEquals(2, allDevices.length);
+        Device provisionedDevice = getDeviceById(allDevices, deviceFromApi.id);
+        assertNotNull(provisionedDevice);
+
+        TestAppClient superAdminClient = new TestAppClient("localhost", properties.getHttpsPort());
+        superAdminClient.start();
+        superAdminClient.login("super@blynk.cc", "1");
+        superAdminClient.verifyResult(ok(1));
+
+        superAdminClient.getDevices(orgId);
+        Device[] allDevicesForAdmin = superAdminClient.parseDevices(2);
+        assertNotNull(allDevicesForAdmin);
+        assertEquals(2, allDevicesForAdmin.length);
+        Device provisionedDeviceForAdmin = getDeviceById(allDevicesForAdmin, deviceFromApi.id);
+        assertNotNull(provisionedDeviceForAdmin);
+    }
+
+    @Test
     public void testProvisionFlowWithDeviceTiles() throws Exception {
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
 

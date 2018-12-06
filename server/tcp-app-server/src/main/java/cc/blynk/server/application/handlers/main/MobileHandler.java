@@ -29,7 +29,7 @@ import cc.blynk.server.application.handlers.main.logic.dashboard.device.GetDevic
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.MobileCreateDeviceLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.MobileDeleteDeviceLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.MobileGetDeviceLogic;
-import cc.blynk.server.application.handlers.main.logic.dashboard.device.MobileGetDevicesLogic;
+import cc.blynk.server.application.handlers.main.logic.dashboard.device.MobileGetOrgDevicesLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.MobileUpdateDeviceLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.MobileUpdateDeviceMetafieldLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.tags.MobileCreateTagLogic;
@@ -141,7 +141,7 @@ public class MobileHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
     private MobileDeleteAppLogic deleteAppLogic;
     private MobileMailQRsLogic mailQRsLogic;
     private MobileGetProjectByClonedTokenLogic getProjectByCloneCodeLogic;
-    private MobileGetDevicesLogic mobileGetDevicesLogic;
+    private MobileGetOrgDevicesLogic mobileGetOrgDevicesLogic;
 
     public MobileHandler(Holder holder, MobileStateHolder state) {
         super(StringMessage.class);
@@ -149,7 +149,7 @@ public class MobileHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
         this.holder = holder;
 
         this.hardwareLogic = new MobileHardwareLogic(holder);
-        this.mobileGetDevicesLogic = new MobileGetDevicesLogic(holder);
+        this.mobileGetOrgDevicesLogic = new MobileGetOrgDevicesLogic(holder);
     }
 
     @Override
@@ -273,7 +273,7 @@ public class MobileHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
                 MobileDeleteDeviceLogic.messageReceived(holder, ctx, state, msg);
                 break;
             case GET_DEVICES :
-                mobileGetDevicesLogic.messageReceived(ctx, state.user, msg);
+                mobileGetOrgDevicesLogic.messageReceived(ctx, state, msg);
                 break;
             case MOBILE_UPDATE_DEVICE_METAFIELD:
                 MobileUpdateDeviceMetafieldLogic.messageReceived(holder, ctx, state, msg);

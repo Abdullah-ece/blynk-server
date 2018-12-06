@@ -6,7 +6,7 @@ import cc.blynk.server.application.handlers.main.logic.DeviceSyncLogic;
 import cc.blynk.server.application.handlers.main.logic.LoadSharedProfileGzippedLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileAddPushLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileLogoutLogic;
-import cc.blynk.server.application.handlers.main.logic.dashboard.device.MobileGetDevicesLogic;
+import cc.blynk.server.application.handlers.main.logic.dashboard.device.MobileGetOrgDevicesLogic;
 import cc.blynk.server.application.handlers.main.logic.graph.MobileDeleteDeviceDataLogic;
 import cc.blynk.server.application.handlers.main.logic.graph.MobileGetEnhancedGraphDataLogic;
 import cc.blynk.server.application.handlers.sharing.auth.MobileShareStateHolder;
@@ -38,14 +38,14 @@ public class MobileShareHandler extends JsonBasedSimpleChannelInboundHandler<Str
     public final MobileShareStateHolder state;
     private final Holder holder;
     private final MobileShareHardwareLogic hardwareApp;
-    private final MobileGetDevicesLogic mobileGetDevicesLogic;
+    private final MobileGetOrgDevicesLogic mobileGetOrgDevicesLogic;
 
     public MobileShareHandler(Holder holder, MobileShareStateHolder state) {
         super(StringMessage.class);
         this.state = state;
         this.holder = holder;
         this.hardwareApp = new MobileShareHardwareLogic(holder);
-        this.mobileGetDevicesLogic = new MobileGetDevicesLogic(holder);
+        this.mobileGetOrgDevicesLogic = new MobileGetOrgDevicesLogic(holder);
     }
 
     @Override
@@ -65,7 +65,7 @@ public class MobileShareHandler extends JsonBasedSimpleChannelInboundHandler<Str
                 MobileGetEnhancedGraphDataLogic.messageReceived(holder, ctx, state, msg);
                 break;
             case GET_DEVICES :
-                mobileGetDevicesLogic.messageReceived(ctx, state.user, msg);
+                mobileGetOrgDevicesLogic.messageReceived(ctx, state, msg);
                 break;
             case PING :
                 PingLogic.messageReceived(ctx, msg.id);
