@@ -342,14 +342,15 @@ export const Handlers = (params) => {
         bodyArray: `${body}`
       });
 
-    promiseReject({
-      error: {
-        response: {
-          data: JSON.parse(body)
+    if(promiseReject) {
+      promiseReject({
+        error: {
+          response: {
+            data: JSON.parse(body)
+          }
         }
-      }
-    });
-
+      });
+    }
   };
 
   const noDataHandler = ({ msgId, previousAction }) => {

@@ -342,7 +342,7 @@ export const blynkWsMessage = (params) => {
     message = msg;
   }
 });
-
+  
   const API_COMMANDS_CODES_ARRAY = Object.keys(API_COMMANDS).map((key) => API_COMMANDS[key]);
 
   if (command === COMMANDS.RESPONSE && responseCode === RESPONSE_CODES.OK) {
@@ -408,8 +408,8 @@ export const blynkWsMessage = (params) => {
 
     handlers.JsonHandler({
       msgId         : ++MSG_ID,
-      previousAction: message.previousAction,
-      promiseReject : message.promiseReject,
+      previousAction: message && message.previousAction,
+      promiseReject : message && message.promiseReject,
     });
 
   } else if (command === COMMANDS.RESPONSE && responseCode === RESPONSE_CODES.NO_DATA) {
