@@ -46,12 +46,12 @@ class Notifications extends React.Component {
             </Item>
           )}
           {!!pushNotifications.length && (
-            <Item label="PUSH notifications to">
+            <Item label="Push notifications to">
               {pushNotifications}
             </Item>
           )}
           {!!smsNotifications.length && (
-            <Item label="SMS notifications to">
+            <Item label="SMS to">
               {pushNotifications}
             </Item>
           )}
