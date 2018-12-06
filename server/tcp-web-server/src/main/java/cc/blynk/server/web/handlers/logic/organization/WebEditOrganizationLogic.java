@@ -1,6 +1,7 @@
 package cc.blynk.server.web.handlers.logic.organization;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.core.PermissionBasedLogic;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.auth.User;
@@ -10,8 +11,7 @@ import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.core.session.web.WebAppStateHolder;
-import cc.blynk.server.core.PermissionBasedLogic;
+import cc.blynk.server.core.session.mobile.BaseUserStateHolder;
 import cc.blynk.utils.ArrayUtil;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -46,7 +46,7 @@ public class WebEditOrganizationLogic implements PermissionBasedLogic {
     }
 
     @Override
-    public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
+    public void messageReceived0(ChannelHandlerContext ctx, BaseUserStateHolder state, StringMessage message) {
         Organization newOrganization = JsonParser.parseOrganization(message.body, message.id);
 
         User user = state.user;

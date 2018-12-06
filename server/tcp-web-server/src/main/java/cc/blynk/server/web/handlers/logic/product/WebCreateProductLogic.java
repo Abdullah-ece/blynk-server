@@ -2,6 +2,7 @@ package cc.blynk.server.web.handlers.logic.product;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.dashboard.dto.ProductAndOrgIdDTO;
+import cc.blynk.server.core.PermissionBasedLogic;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.permissions.Role;
@@ -9,8 +10,7 @@ import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.core.session.web.WebAppStateHolder;
-import cc.blynk.server.core.PermissionBasedLogic;
+import cc.blynk.server.core.session.mobile.BaseUserStateHolder;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -45,7 +45,7 @@ public class WebCreateProductLogic implements PermissionBasedLogic {
     }
 
     @Override
-    public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
+    public void messageReceived0(ChannelHandlerContext ctx, BaseUserStateHolder state, StringMessage message) {
         ProductAndOrgIdDTO productAndOrgIdDTO = JsonParser.readAny(message.body, ProductAndOrgIdDTO.class);
 
         User user = state.user;

@@ -1,11 +1,11 @@
 package cc.blynk.server.web.handlers.logic.product;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.core.PermissionBasedLogic;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.core.session.web.WebAppStateHolder;
-import cc.blynk.server.core.PermissionBasedLogic;
+import cc.blynk.server.core.session.mobile.BaseUserStateHolder;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.model.permissions.PermissionsTable.PRODUCT_DELETE;
@@ -36,7 +36,7 @@ public class WebCanDeleteProductLogic implements PermissionBasedLogic {
     }
 
     @Override
-    public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
+    public void messageReceived0(ChannelHandlerContext ctx, BaseUserStateHolder state, StringMessage message) {
         int productId = Integer.parseInt(message.body);
 
         if (deviceDao.productHasDevices(productId)) {

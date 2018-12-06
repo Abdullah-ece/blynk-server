@@ -1,6 +1,7 @@
 package cc.blynk.server.web.handlers.logic.organization;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.core.PermissionBasedLogic;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.permissions.Role;
@@ -9,8 +10,7 @@ import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.core.session.web.WebAppStateHolder;
-import cc.blynk.server.core.PermissionBasedLogic;
+import cc.blynk.server.core.session.mobile.BaseUserStateHolder;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_CREATE;
@@ -43,7 +43,7 @@ public class WebCreateOrganizationLogic implements PermissionBasedLogic {
     }
 
     @Override
-    public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
+    public void messageReceived0(ChannelHandlerContext ctx, BaseUserStateHolder state, StringMessage message) {
         String[] split = split2(message.body);
 
         if (split.length < 2) {

@@ -1,6 +1,7 @@
 package cc.blynk.server.web.handlers.logic.device;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.core.PermissionBasedLogic;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.dto.DeviceDTO;
@@ -8,8 +9,7 @@ import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.core.session.web.WebAppStateHolder;
-import cc.blynk.server.core.PermissionBasedLogic;
+import cc.blynk.server.core.session.mobile.BaseUserStateHolder;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.List;
@@ -45,7 +45,7 @@ public final class WebGetOrgDevicesLogic implements PermissionBasedLogic {
     }
 
     @Override
-    public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage msg) {
+    public void messageReceived0(ChannelHandlerContext ctx, BaseUserStateHolder state, StringMessage msg) {
         String[] split = split2(msg.body);
 
         int orgId = Integer.parseInt(split[0]);
@@ -70,7 +70,7 @@ public final class WebGetOrgDevicesLogic implements PermissionBasedLogic {
     }
 
     @Override
-    public void noPermissionAction(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage msg) {
+    public void noPermissionAction(ChannelHandlerContext ctx, BaseUserStateHolder state, StringMessage msg) {
         wegGetOwnDevicesHandler.messageReceived(ctx, state, msg);
     }
 }
