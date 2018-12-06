@@ -123,6 +123,18 @@ public class Product {
         return null;
     }
 
+    public String getFirstTemplateId() {
+        for (MetaField metaField : metaFields) {
+            if (metaField instanceof TemplateIdMetaField) {
+                TemplateIdMetaField templateIdMetaField = (TemplateIdMetaField) metaField;
+                if (templateIdMetaField.options != null && templateIdMetaField.options.length > 0) {
+                    return templateIdMetaField.options[0];
+                }
+            }
+        }
+        return null;
+    }
+
     public boolean containsTemplateId(String templateId) {
         for (MetaField metaField : metaFields) {
             if (metaField instanceof TemplateIdMetaField) {

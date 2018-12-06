@@ -133,6 +133,11 @@ public class ProvisionedHardwareFirstHandler extends SimpleChannelInboundHandler
                                     device.id, templateId, product.id);
                         }
                     }
+
+                    if (templateId == null) {
+                        templateId = product.getFirstTemplateId();
+                    }
+
                     log.info("Provisioning new deviceId {}, productId {}, templId {}.",
                             device.id, product.id, templateId);
                     device.productId = product.id;
@@ -141,16 +146,15 @@ public class ProvisionedHardwareFirstHandler extends SimpleChannelInboundHandler
                     holder.organizationDao.assignToOrgAndAddDevice(org, device);
                     MetaField[] metaFields = device.metaFields;
                     if (templateId != null) {
+                        for (DashBoard dash : user.profile.dashBoards) {
+                            dash.addDeviceToTemplate(device, templateId);
+                        }
                         setTemplateIdInMeta(metaFields, templateId);
                     }
                     setDeviceOwnerInMeta(metaFields, user.email);
                     device.metaFields = metaFields;
                     device.updateNameFromMetafields();
                     holder.deviceDao.createWithPredefinedIdAndToken(orgId, user.email, product, device);
-
-                    for (DashBoard dash : user.profile.dashBoards) {
-                        dash.addDeviceToTemplate(device, templateId);
-                    }
 
                     ChannelPipeline pipeline = ctx.pipeline();
                     pipeline.remove(this)

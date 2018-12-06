@@ -363,10 +363,6 @@ public class DashBoard implements UpdateInterface {
     }
 
     public void addDeviceToTemplate(Device device, String templateId) {
-        if (templateId == null) {
-            return;
-        }
-
         DeviceTiles deviceTiles = getWidgetByType(DeviceTiles.class);
         if (deviceTiles == null) {
             log.warn("Device tiles widget not found for deviceId {}.", device.id);
