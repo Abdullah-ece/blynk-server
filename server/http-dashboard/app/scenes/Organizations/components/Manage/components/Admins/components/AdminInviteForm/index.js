@@ -1,18 +1,18 @@
-import React                from 'react';
-import {connect}            from 'react-redux';
-import {bindActionCreators} from 'redux';
+import React from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import {
   Button,
   Form
-}                           from 'antd';
-import {Manage}             from 'services/Organizations';
-import Validation           from 'services/Validation';
+} from 'antd';
+import { Manage } from 'services/Organizations';
+import Validation from 'services/Validation';
 import {
   destroy,
   reduxForm,
-}                           from 'redux-form';
-import {Input, Item}        from 'components/UI';
-import PropTypes            from 'prop-types';
+} from 'redux-form';
+import { Input, Item } from 'components/UI';
+import PropTypes from 'prop-types';
 import './styles.less';
 
 @connect(() => ({}), (dispatch) => ({
@@ -27,7 +27,7 @@ class AdminInviteForm extends React.Component {
   static propTypes = {
     destroyForm: PropTypes.func,
     handleSubmit: PropTypes.func,
-    
+
     addText: PropTypes.string,
 
     loading: PropTypes.bool,
@@ -41,14 +41,18 @@ class AdminInviteForm extends React.Component {
     return (
       <Form layout="inline" className="admin-invite-form">
         <Item label="admin name" offset="normal">
-          <Input name="name" placeholder="Admin Name" validate={[Validation.Rules.required]}/>
+          <Input name="name" placeholder="Admin Name"
+                 validate={[Validation.Rules.required,
+                   Validation.Rules.minLength(3),
+                   Validation.Rules.max(255)]}/>
         </Item>
         <Item label="Email address" offset="normal">
           <Input name="email" placeholder="Email address"
                  validateOnBlur={true}
                  validate={[
                    Validation.Rules.required,
-                   Validation.Rules.email
+                   Validation.Rules.email,
+                   Validation.Rules.max(255)
                  ]}/>
         </Item>
         <Item position="center">

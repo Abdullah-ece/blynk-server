@@ -10,6 +10,7 @@ export const Messages = {
   required: 'Field is required',
   imageRequired: 'Image is required',
   minLength: (n) => `Minimal length should be ${n} symbols`,
+  max: (n) => `Maximal length should be ${n} symbols`,
   number: 'Only numbers allowed',
   numberLong: 'Number max length is 15 symbols',
   latitude: 'Latitude is not correct',
@@ -45,7 +46,8 @@ export const Rules = {
   eventsEventCode: (value) => {
     if (!/^[a-zA-Z0-9_]{1,}$/.test(value)) return Messages.eventsEventCode;
   },
-  lengthMustEqual: (n) => (value) => !value || value.length != n ? Messages.mustEqual(n) : undefined,
+  lengthMustEqual: (n) => (value) => !value || value.length != n ? Messages.lengthMustEqual(n) : undefined,
+  max: (n) => (value) => value && value.length > n ? Messages.max(n) : undefined,
 };
 
 const Validation = {

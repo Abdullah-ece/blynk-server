@@ -40,7 +40,8 @@ class InviteUsersForm extends React.Component {
                    validate={[
                      Validation.Rules.required,
                      Validation.Rules.fullname,
-                     Validation.Rules.minLength(3)
+                     Validation.Rules.minLength(3),
+                     Validation.Rules.max(255)
                    ]}/>
 
         <FormField title="Email" type="text" name="email"
@@ -49,7 +50,8 @@ class InviteUsersForm extends React.Component {
                    placeholder="Enter email"
                    validate={[
                      Validation.Rules.required,
-                     Validation.Rules.email
+                     Validation.Rules.email,
+                     Validation.Rules.max(255)
                    ]}/>
 
         <FormSelect title="Role" type="text" name="role"
