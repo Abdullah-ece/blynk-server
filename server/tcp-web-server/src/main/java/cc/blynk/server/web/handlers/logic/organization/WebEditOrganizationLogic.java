@@ -11,7 +11,7 @@ import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
-import cc.blynk.server.web.handlers.PermissionBasedLogic;
+import cc.blynk.server.core.PermissionBasedLogic;
 import cc.blynk.utils.ArrayUtil;
 import io.netty.channel.ChannelHandlerContext;
 

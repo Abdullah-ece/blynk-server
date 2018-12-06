@@ -1,4 +1,4 @@
-package cc.blynk.server.web.handlers;
+package cc.blynk.server.core;
 
 import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.protocol.exceptions.NoPermissionException;

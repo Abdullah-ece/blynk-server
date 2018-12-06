@@ -14,7 +14,7 @@ import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.protocol.exceptions.NoPermissionException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
-import cc.blynk.server.web.handlers.PermissionBasedLogic;
+import cc.blynk.server.core.PermissionBasedLogic;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.model.permissions.PermissionsTable.OWN_DEVICES_DELETE;

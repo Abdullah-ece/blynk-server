@@ -10,7 +10,7 @@ import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
-import cc.blynk.server.web.handlers.PermissionBasedLogic;
+import cc.blynk.server.core.PermissionBasedLogic;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;

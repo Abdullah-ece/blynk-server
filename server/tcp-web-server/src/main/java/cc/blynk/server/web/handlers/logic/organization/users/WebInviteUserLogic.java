@@ -15,7 +15,7 @@ import cc.blynk.server.core.session.web.WebAppStateHolder;
 import cc.blynk.server.internal.token.InviteToken;
 import cc.blynk.server.internal.token.TokensPool;
 import cc.blynk.server.notifications.mail.MailWrapper;
-import cc.blynk.server.web.handlers.PermissionBasedLogic;
+import cc.blynk.server.core.PermissionBasedLogic;
 import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.FileLoaderUtil;
 import cc.blynk.utils.TokenGeneratorUtil;
