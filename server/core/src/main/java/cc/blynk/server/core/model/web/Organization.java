@@ -13,6 +13,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_INTS;
@@ -240,6 +241,26 @@ public class Organization {
                 }
             }
         }
+    }
+
+    public List<Device> getAllDevices() {
+        var result = new ArrayList<Device>();
+        for (Product product : products) {
+            result.addAll(Arrays.asList(product.devices));
+        }
+        return result;
+    }
+
+    public List<Device> getDevicesByOwner(String ownerEmail) {
+        var result = new ArrayList<Device>();
+        for (Product product : products) {
+            for (Device device : product.devices) {
+                if (device.hasOwner(ownerEmail)) {
+                    result.add(device);
+                }
+            }
+        }
+        return result;
     }
 
     public List<DeviceDTO> getAllDeviceDTOs() {

@@ -10,6 +10,7 @@ import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.metafields.DeviceOwnerMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TemplateIdMetaField;
+import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.hardware.internal.ProvisionedDeviceAddedMessage;
 import cc.blynk.utils.StringUtils;
@@ -146,9 +147,8 @@ public class ProvisionedHardwareFirstHandler extends SimpleChannelInboundHandler
                     holder.organizationDao.assignToOrgAndAddDevice(org, device);
                     MetaField[] metaFields = device.metaFields;
                     if (templateId != null) {
-                        for (DashBoard dash : user.profile.dashBoards) {
-                            dash.addDeviceToTemplate(device, templateId);
-                        }
+                        //setting iconName and boardType from the template
+                        setDeviceIconAndBoardNameFromDevice(templateId);
                         setTemplateIdInMeta(metaFields, templateId);
                     }
                     setDeviceOwnerInMeta(metaFields, user.email);
@@ -165,6 +165,16 @@ public class ProvisionedHardwareFirstHandler extends SimpleChannelInboundHandler
             }
         } else {
             log.warn("Expecting only internal command here for user {}", user.email);
+        }
+    }
+
+    private void setDeviceIconAndBoardNameFromDevice(String templateId) {
+        for (DashBoard dash : user.profile.dashBoards) {
+            TileTemplate tileTemplate = dash.getTileTemplate(templateId);
+            if (tileTemplate != null) {
+                device.updateFromTileTemplate(tileTemplate);
+                return;
+            }
         }
     }
 

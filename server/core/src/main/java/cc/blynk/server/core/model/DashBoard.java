@@ -6,6 +6,8 @@ import cc.blynk.server.core.model.enums.Theme;
 import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.serialization.View;
+import cc.blynk.server.core.model.storage.key.DeviceStorageKey;
+import cc.blynk.server.core.model.storage.value.PinStorageValue;
 import cc.blynk.server.core.model.widgets.DeviceCleaner;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
@@ -30,6 +32,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_WIDGETS;
@@ -39,7 +42,7 @@ import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_WIDGETS;
  * Date: 21.11.13
  * Time: 13:04
  */
-public class DashBoard implements UpdateInterface {
+public class DashBoard {
 
     private static final Logger log = LogManager.getLogger(DashBoard.class);
 
@@ -88,17 +91,6 @@ public class DashBoard implements UpdateInterface {
 
     public boolean isChild() {
         return parentId != IS_PARENT_DASH;
-    }
-
-    @Override
-    public boolean updateWidgetsValue(int deviceId, short pin, PinType type, String value) {
-        boolean hasWidget = false;
-        for (Widget widget : widgets) {
-            if (widget.updateIfSame(deviceId, pin, type, value)) {
-                hasWidget = true;
-            }
-        }
-        return hasWidget;
     }
 
     public String getNameOrEmpty() {
@@ -362,26 +354,42 @@ public class DashBoard implements UpdateInterface {
         return copy.toArray(new Widget[newWidgets.length]);
     }
 
-    public void addDeviceToTemplate(Device device, String templateId) {
+    public TileTemplate getTileTemplate(String templateId) {
         DeviceTiles deviceTiles = getWidgetByType(DeviceTiles.class);
         if (deviceTiles == null) {
-            log.warn("Device tiles widget not found for deviceId {}.", device.id);
-            return;
+            log.warn("Device tiles widget not found.");
+            return null;
         }
 
         TileTemplate tileTemplate = deviceTiles.getTileTemplateByTemplateId(templateId);
         if (tileTemplate == null) {
-            log.warn("Could not find templateId {} for deviceId {}.", templateId, device.id);
-            return;
+            log.warn("Could not find templateId {}.", templateId);
+            return null;
         }
 
-        deviceTiles.addTile(tileTemplate, device.id);
-        tileTemplate.addDeviceId(device.id);
-        device.iconName = tileTemplate.iconName;
-        if (tileTemplate.boardType != null) {
-            device.boardType = tileTemplate.boardType;
+        return tileTemplate;
+    }
+
+    public void fillValues(List<Device> devices) {
+        for (Widget widget : widgets) {
+            if (widget instanceof DeviceTiles) {
+                DeviceTiles deviceTiles = (DeviceTiles) widget;
+                deviceTiles.recreateTiles(devices);
+            }
         }
-        this.updatedAt = System.currentTimeMillis();
+        for (Device device : devices) {
+            for (var entry : device.pinStorage.values.entrySet()) {
+                DeviceStorageKey key = entry.getKey();
+                PinStorageValue value = entry.getValue();
+                updateWidgetsValue(device, key.pin, key.pinType, value.lastValue());
+            }
+        }
+    }
+
+    private void updateWidgetsValue(Device device, short pin, PinType type, String value) {
+        for (Widget widget : widgets) {
+            widget.updateIfSame(device.id, pin, type, value);
+        }
     }
 
     public Widget updateProperty(int deviceId, short pin, WidgetProperty widgetProperty, String propertyValue) {

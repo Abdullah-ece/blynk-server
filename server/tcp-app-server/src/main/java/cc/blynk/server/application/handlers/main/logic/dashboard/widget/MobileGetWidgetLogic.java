@@ -1,12 +1,22 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard.widget;
 
+import cc.blynk.server.Holder;
+import cc.blynk.server.core.dao.OrganizationDao;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.model.storage.key.DeviceStorageKey;
+import cc.blynk.server.core.model.storage.value.PinStorageValue;
+import cc.blynk.server.core.model.web.Organization;
+import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
+import cc.blynk.server.core.protocol.exceptions.NoPermissionException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.mobile.MobileStateHolder;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.List;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_WIDGET;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
@@ -21,10 +31,13 @@ public final class MobileGetWidgetLogic {
 
     private static final Logger log = LogManager.getLogger(MobileGetWidgetLogic.class);
 
-    private MobileGetWidgetLogic() {
+    private final OrganizationDao organizationDao;
+
+    public MobileGetWidgetLogic(Holder holder) {
+        this.organizationDao = holder.organizationDao;
     }
 
-    public static void messageReceived(ChannelHandlerContext ctx, MobileStateHolder state, StringMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx, MobileStateHolder state, StringMessage message) {
         var split = split2(message.body);
 
         if (split.length < 2) {
@@ -38,6 +51,28 @@ public final class MobileGetWidgetLogic {
         var dash = user.profile.getDashByIdOrThrow(dashId);
 
         var widget = dash.getWidgetByIdOrThrow(widgetId);
+
+        if (widget instanceof DeviceTiles) {
+            Organization org = organizationDao.getOrgByIdOrThrow(state.user.orgId);
+            List<Device> devices;
+            if (state.role.canViewOrgDevices()) {
+                devices = org.getAllDevices();
+            } else if (state.role.canViewOrgDevices()) {
+                devices = org.getDevicesByOwner(state.user.email);
+            } else {
+                throw new NoPermissionException("User has no permission to view devices.");
+            }
+            DeviceTiles deviceTiles = (DeviceTiles) widget;
+            deviceTiles.recreateTiles(devices);
+
+            for (Device device : devices) {
+                for (var entry : device.pinStorage.values.entrySet()) {
+                    DeviceStorageKey key = entry.getKey();
+                    PinStorageValue value = entry.getValue();
+                    deviceTiles.updateIfSame(device.id, key.pin, key.pinType, value.lastValue());
+                }
+            }
+        }
 
         if (ctx.channel().isWritable()) {
             var widgetString = JsonParser.toJson(widget);

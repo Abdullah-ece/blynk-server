@@ -1,15 +1,21 @@
 package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.core.BlockingIOProcessor;
+import cc.blynk.server.core.dao.OrganizationDao;
+import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.ExportAppProfileDTO;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.model.web.Organization;
+import cc.blynk.server.core.protocol.exceptions.NoPermissionException;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.core.session.mobile.MobileStateHolder;
+import cc.blynk.server.core.session.mobile.BaseUserStateHolder;
+import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.model.FlashedToken;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
@@ -37,15 +43,52 @@ public final class MobileLoadProfileGzippedLogic {
 
     private static final Logger log = LogManager.getLogger(MobileLoadProfileGzippedLogic.class);
 
-    private MobileLoadProfileGzippedLogic() {
+    private final OrganizationDao organizationDao;
+    private final BlockingIOProcessor blockingIOProcessor;
+    private final UserDao userDao;
+    private final DBManager dbManager;
+
+    public MobileLoadProfileGzippedLogic(Holder holder) {
+        this.organizationDao = holder.organizationDao;
+        this.blockingIOProcessor = holder.blockingIOProcessor;
+        this.userDao = holder.userDao;
+        this.dbManager = holder.dbManager;
     }
 
-    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
-                                       MobileStateHolder state, StringMessage message) {
+    private static Profile fillWithValues(List<Device> userOwnedDevices, Profile profile) {
+        for (DashBoard dashBoard : profile.dashBoards) {
+            dashBoard.fillValues(userOwnedDevices);
+        }
+        return profile;
+    }
+
+    private static DashBoard fillWithValues(List<Device> userOwnedDevices, DashBoard dashBoard) {
+        dashBoard.fillValues(userOwnedDevices);
+        return dashBoard;
+    }
+
+    private static List<DashBoard> fillWithValues(List<Device> userOwnedDevices, List<DashBoard> dashBoards) {
+        for (DashBoard dashBoard : dashBoards) {
+            dashBoard.fillValues(userOwnedDevices);
+        }
+        return dashBoards;
+    }
+
+    public void messageReceived(ChannelHandlerContext ctx,
+                                BaseUserStateHolder state, StringMessage message) {
         int msgId = message.id;
 
         //load all
-        List<Device> devices = holder.deviceDao.getDevicesOwnedByUser(state.user.email);
+        Organization org = organizationDao.getOrgByIdOrThrow(state.user.orgId);
+        List<Device> devices;
+        if (state.role.canViewOrgDevices()) {
+            devices = org.getAllDevices();
+        } else if (state.role.canViewOrgDevices()) {
+            devices = org.getDevicesByOwner(state.user.email);
+        } else {
+            throw new NoPermissionException("User has no permission to view devices.");
+        }
+
         if (message.body.length() == 0) {
             //special case for the super admin in exported app, as admin can have parent and
             //child projects within same account, so we have to filter dashes for exported app
@@ -72,11 +115,11 @@ public final class MobileLoadProfileGzippedLogic {
             String publishingEmail = parts[2];
             //this is for simplification of testing.
 
-            holder.blockingIOProcessor.executeDB(() -> {
+            blockingIOProcessor.executeDB(() -> {
                 try {
-                    FlashedToken flashedToken = holder.dbManager.selectFlashedToken(token);
+                    FlashedToken flashedToken = dbManager.selectFlashedToken(token);
                     if (flashedToken != null) {
-                        User publishingUser = holder.userDao.getByName(publishingEmail);
+                        User publishingUser = userDao.getByName(publishingEmail);
                         DashBoard dash = publishingUser.profile.getDashByIdOrThrow(dashId);
                         //todo ugly. but ok for now
                         String copyString = JsonParser.toJsonRestrictiveDashboard(dash);
@@ -91,31 +134,6 @@ public final class MobileLoadProfileGzippedLogic {
                 }
             });
         }
-    }
-
-    private static Profile fillWithValues(List<Device> userOwnedDevices, Profile profile) {
-        for (Device device : userOwnedDevices) {
-            for (DashBoard dashBoard : profile.dashBoards) {
-                device.fillMobileDashboardValues(dashBoard);
-            }
-        }
-        return profile;
-    }
-
-    private static DashBoard fillWithValues(List<Device> userOwnedDevices, DashBoard dashBoard) {
-        for (Device device : userOwnedDevices) {
-            device.fillMobileDashboardValues(dashBoard);
-        }
-        return dashBoard;
-    }
-
-    private static List<DashBoard> fillWithValues(List<Device> userOwnedDevices, List<DashBoard> dashBoards) {
-        for (Device device : userOwnedDevices) {
-            for (DashBoard dashBoard : dashBoards) {
-                device.fillMobileDashboardValues(dashBoard);
-            }
-        }
-        return dashBoards;
     }
 
     public static void write(ChannelHandlerContext ctx, byte[] data, int msgId) {

@@ -1,6 +1,7 @@
 package cc.blynk.server.core.model.widgets.ui.tiles;
 
 import cc.blynk.server.core.model.DataStream;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.DeviceCleaner;
@@ -13,10 +14,12 @@ import io.netty.channel.Channel;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static cc.blynk.server.core.protocol.enums.Command.DEVICE_SYNC;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_DEVICE_TILES;
+import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_INTS;
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_TEMPLATES;
 import static cc.blynk.utils.StringUtils.prependDeviceId;
 
@@ -244,11 +247,30 @@ public class DeviceTiles extends Widget implements MobileSyncWidget, DeviceClean
         return null;
     }
 
-    public void addTile(TileTemplate tileTemplate, int deviceId) {
-        Tile newTile = new Tile(deviceId, tileTemplate.id, null,
-                tileTemplate.dataStream == null ? null : new DataStream(tileTemplate.dataStream)
-        );
-        this.tiles = ArrayUtil.add(this.tiles, newTile, Tile.class);
+    public void createTiles(List<Device> devices) {
+        var tiles = new ArrayList<Tile>(devices.size());
+        for (Device device : devices) {
+            String templateId = device.getTemplateId();
+            if (templateId != null) {
+                TileTemplate tileTemplate = getTileTemplateByTemplateId(templateId);
+                if (tileTemplate != null) {
+                    int deviceId = device.id;
+                    tiles.add(new Tile(deviceId, tileTemplate));
+                    tileTemplate.addDeviceId(deviceId);
+                }
+            }
+        }
+        this.tiles = tiles.toArray(new Tile[0]);
+    }
+
+    public void recreateTiles(List<Device> devices) {
+        tiles = EMPTY_DEVICE_TILES;
+        if (templates != null) {
+            for (TileTemplate tileTemplate : templates) {
+                tileTemplate.deviceIds = EMPTY_INTS;
+            }
+        }
+        createTiles(devices);
     }
 
     public void replaceTileTemplate(TileTemplate newTileTemplate, int existingTileTemplateIndex) {

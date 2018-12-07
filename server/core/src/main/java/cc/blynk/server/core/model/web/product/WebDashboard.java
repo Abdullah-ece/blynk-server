@@ -1,7 +1,6 @@
 package cc.blynk.server.core.model.web.product;
 
 import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.UpdateInterface;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.web.BaseWebGraph;
@@ -19,7 +18,7 @@ import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_WIDGETS;
  * Created by Dmitriy Dumanskiy.
  * Created on 24.08.17.
  */
-public class WebDashboard implements CopyObject<WebDashboard>, UpdateInterface {
+public class WebDashboard implements CopyObject<WebDashboard> {
 
     public volatile Widget[] widgets;
 
@@ -41,15 +40,10 @@ public class WebDashboard implements CopyObject<WebDashboard>, UpdateInterface {
         this.widgets = DashBoard.copyWidgetsAndPreservePrevValues(widgets, updatedDashboard.widgets);
     }
 
-    @Override
-    public boolean updateWidgetsValue(int deviceId, short pin, PinType type, String value) {
-        boolean hasWidget = false;
+    public void updateWidgetsValue(int deviceId, short pin, PinType type, String value) {
         for (Widget widget : widgets) {
-            if (widget.updateIfSame(deviceId, pin, type, value)) {
-                hasWidget = true;
-            }
+            widget.updateIfSame(deviceId, pin, type, value);
         }
-        return hasWidget;
     }
 
     public Widget getWidgetById(long id) {

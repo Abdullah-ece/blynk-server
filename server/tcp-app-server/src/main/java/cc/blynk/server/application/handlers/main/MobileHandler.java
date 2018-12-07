@@ -142,6 +142,8 @@ public class MobileHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
     private MobileMailQRsLogic mailQRsLogic;
     private MobileGetProjectByClonedTokenLogic getProjectByCloneCodeLogic;
     private MobileGetOrgDevicesLogic mobileGetOrgDevicesLogic;
+    private final MobileLoadProfileGzippedLogic mobileLoadProfileGzippedLogic;
+    private final MobileGetWidgetLogic mobileGetWidgetLogic;
 
     public MobileHandler(Holder holder, MobileStateHolder state) {
         super(StringMessage.class);
@@ -150,6 +152,8 @@ public class MobileHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
 
         this.hardwareLogic = new MobileHardwareLogic(holder);
         this.mobileGetOrgDevicesLogic = new MobileGetOrgDevicesLogic(holder);
+        this.mobileLoadProfileGzippedLogic = new MobileLoadProfileGzippedLogic(holder);
+        this.mobileGetWidgetLogic = new MobileGetWidgetLogic(holder);
     }
 
     @Override
@@ -172,7 +176,7 @@ public class MobileHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
                 MobileDeActivateDashboardLogic.messageReceived(holder, ctx, state, msg);
                 break;
             case LOAD_PROFILE_GZIPPED :
-                MobileLoadProfileGzippedLogic.messageReceived(holder, ctx, state, msg);
+                mobileLoadProfileGzippedLogic.messageReceived(ctx, state, msg);
                 break;
             case SHARING :
                 MobileShareLogic.messageReceived(holder, ctx, state, msg);
@@ -232,7 +236,7 @@ public class MobileHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
                 MobileDeleteWidgetLogic.messageReceived(holder, ctx, state, msg);
                 break;
             case GET_WIDGET :
-                MobileGetWidgetLogic.messageReceived(ctx, state, msg);
+                mobileGetWidgetLogic.messageReceived(ctx, state, msg);
                 break;
 
             case CREATE_TILE_TEMPLATE :

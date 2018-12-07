@@ -1,8 +1,6 @@
 package cc.blynk.server.core.model.device;
 
-import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DataStream;
-import cc.blynk.server.core.model.UpdateInterface;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.ota.DeviceOtaInfo;
 import cc.blynk.server.core.model.device.ota.OTAStatus;
@@ -17,7 +15,9 @@ import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.WebDashboard;
 import cc.blynk.server.core.model.web.product.metafields.DeviceNameMetaField;
 import cc.blynk.server.core.model.web.product.metafields.DeviceOwnerMetaField;
+import cc.blynk.server.core.model.web.product.metafields.TemplateIdMetaField;
 import cc.blynk.server.core.model.widgets.Target;
+import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.utils.ArrayUtil;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -212,6 +212,23 @@ public class Device implements Target {
             return true;
         }
         return false;
+    }
+
+    private TemplateIdMetaField getTemplateIdMetafield() {
+        for (MetaField metaField : metaFields) {
+            if (metaField instanceof TemplateIdMetaField) {
+                return (TemplateIdMetaField) metaField;
+            }
+        }
+        return null;
+    }
+
+    public String getTemplateId() {
+        TemplateIdMetaField templateIdMetaField = getTemplateIdMetafield();
+        if (templateIdMetaField != null) {
+            return templateIdMetaField.selectedOption;
+        }
+        return null;
     }
 
     @Override
@@ -426,24 +443,23 @@ public class Device implements Target {
         pinStorage.setLastReportedAt(lastReportedAt);
     }
 
-    public void fillMobileDashboardValues(DashBoard dashBoard) {
-        fillValues(dashBoard);
-    }
-
     public void fillWebDashboardValues() {
-        fillValues(webDashboard);
-    }
-
-    private void fillValues(UpdateInterface updateInterface) {
         for (var entry : pinStorage.values.entrySet()) {
             DeviceStorageKey key = entry.getKey();
             PinStorageValue value = entry.getValue();
-            updateInterface.updateWidgetsValue(id, key.pin, key.pinType, value.lastValue());
+            webDashboard.updateWidgetsValue(id, key.pin, key.pinType, value.lastValue());
         }
     }
 
     public boolean isUpdatedSince(long lastStart) {
         return lastStart <= this.updatedAt || lastStart <= this.pinStorage.lastReportedAt;
+    }
+
+    public void updateFromTileTemplate(TileTemplate tileTemplate) {
+        this.iconName = tileTemplate.iconName;
+        if (tileTemplate.boardType != null) {
+            this.boardType = tileTemplate.boardType;
+        }
     }
 
     @Override

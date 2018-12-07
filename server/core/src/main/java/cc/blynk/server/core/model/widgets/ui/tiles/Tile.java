@@ -34,8 +34,17 @@ public class Tile {
         this.dataStream = dataStream;
     }
 
+    public Tile(int deviceId, TileTemplate tileTemplate) {
+        this(deviceId, tileTemplate.id, null,
+                tileTemplate.dataStream == null ? null : new DataStream(tileTemplate.dataStream));
+    }
+
     public boolean isSame(int deviceId, short pin, PinType pinType) {
         return this.deviceId == deviceId && dataStream != null && dataStream.isSame(pin, pinType);
+    }
+
+    public boolean isSame(int deviceId, long templateId) {
+        return this.deviceId == deviceId && this.templateId == templateId;
     }
 
     public boolean updateIfSame(int deviceId, DataStream dataStream) {
