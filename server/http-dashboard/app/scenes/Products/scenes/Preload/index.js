@@ -44,7 +44,7 @@ class ProductsPreload extends React.Component {
   render() {
 
     if(this.props.Organization && this.props.Organization.parentId !== -1) {
-      this.context.router.push('/devices');
+      // this.context.router.push('/devices');
       return null;
     }
 
