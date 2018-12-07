@@ -103,9 +103,9 @@ public class ReportingDBDao {
                     + "VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
 
     private static final String insertRawData =
-            "INSERT INTO reporting_raw_data (email, project_id, device_id, pin, pinType, ts, "
+            "INSERT INTO reporting_raw_data (email, device_id, pin, pinType, ts, "
                     + "stringValue, doubleValue) "
-                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
     private static final Logger log = LogManager.getLogger(ReportingDBDao.class);
 
