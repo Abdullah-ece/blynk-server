@@ -1,6 +1,7 @@
 package cc.blynk.server.core.model.web.product.metafields;
 
 import cc.blynk.server.core.model.web.product.MetaField;
+import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -43,6 +44,14 @@ public class TextMetaField extends MetaField {
         return new TextMetaField(id, name, roleIds,
                 includeInProvision, isMandatory, isDefault,
                 icon, value);
+    }
+
+    @Override
+    public void basicValidate() {
+        super.basicValidate();
+        if (value != null && value.length() > 255) {
+            throw new IllegalCommandBodyException("Text metafield length is not valid. Length is larger 255 chars.");
+        }
     }
 
     public boolean isEmptyValue() {
