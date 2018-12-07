@@ -775,7 +775,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         MetaField templateIdMeta = webDevice.findMetaFieldById(3);
         assertNotNull(templateIdMeta);
         assertTrue(templateIdMeta instanceof TemplateIdMetaField);
-        assertEquals("TMPL0001", ((TemplateIdMetaField) templateIdMeta).selectedOption);
+        assertEquals("TMPL0001", webDevice.hardwareInfo.templateId);
 
         newHardClient.stop();
         appClient.reset();
@@ -986,7 +986,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         MetaField templateIdMeta = webDevice.findMetaFieldById(3);
         assertNotNull(templateIdMeta);
         assertTrue(templateIdMeta instanceof TemplateIdMetaField);
-        assertEquals("TMPL0001", ((TemplateIdMetaField) templateIdMeta).selectedOption);
+        assertEquals("TMPL0001", webDevice.hardwareInfo.templateId);
 
         newHardClient.stop();
         appClient.reset();

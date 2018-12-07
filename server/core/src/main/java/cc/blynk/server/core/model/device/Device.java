@@ -15,7 +15,6 @@ import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.WebDashboard;
 import cc.blynk.server.core.model.web.product.metafields.DeviceNameMetaField;
 import cc.blynk.server.core.model.web.product.metafields.DeviceOwnerMetaField;
-import cc.blynk.server.core.model.web.product.metafields.TemplateIdMetaField;
 import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
@@ -214,19 +213,9 @@ public class Device implements Target {
         return false;
     }
 
-    private TemplateIdMetaField getTemplateIdMetafield() {
-        for (MetaField metaField : metaFields) {
-            if (metaField instanceof TemplateIdMetaField) {
-                return (TemplateIdMetaField) metaField;
-            }
-        }
-        return null;
-    }
-
     public String getTemplateId() {
-        TemplateIdMetaField templateIdMetaField = getTemplateIdMetafield();
-        if (templateIdMetaField != null) {
-            return templateIdMetaField.selectedOption;
+        if (hardwareInfo != null) {
+            return hardwareInfo.templateId;
         }
         return null;
     }

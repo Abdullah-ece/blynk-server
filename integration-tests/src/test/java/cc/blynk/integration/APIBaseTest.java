@@ -198,11 +198,11 @@ public abstract class APIBaseTest extends CounterBase {
     }
 
     public static TemplateIdMetaField createTemplateIdMeta(int id, String name, String templateId) {
-        return new TemplateIdMetaField(id, name, new int[] {1}, false, false, true, null, new String[] {templateId}, null);
+        return new TemplateIdMetaField(id, name, new int[] {1}, false, false, true, null, new String[] {templateId});
     }
 
     public static TemplateIdMetaField createTemplateIdMeta(int id, String name, String templateId, boolean includeInProvision) {
-        return new TemplateIdMetaField(id, name, new int[] {1}, includeInProvision, false, true, null, new String[] {templateId}, null);
+        return new TemplateIdMetaField(id, name, new int[] {1}, includeInProvision, false, true, null, new String[] {templateId});
     }
 
     public static ContactMetaField createContactMeta(int id, String name) {

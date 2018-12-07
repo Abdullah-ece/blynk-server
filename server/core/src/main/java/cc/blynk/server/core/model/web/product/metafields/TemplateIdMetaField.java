@@ -14,8 +14,6 @@ public class TemplateIdMetaField extends MetaField {
 
     public final String[] options;
 
-    public final String selectedOption;
-
     @JsonCreator
     public TemplateIdMetaField(@JsonProperty("id") int id,
                                @JsonProperty("name") String name,
@@ -24,11 +22,9 @@ public class TemplateIdMetaField extends MetaField {
                                @JsonProperty("isMandatory") boolean isMandatory,
                                @JsonProperty("isDefault") boolean isDefault,
                                @JsonProperty("icon") String icon,
-                               @JsonProperty("options") String[] options,
-                               @JsonProperty("selectedOption") String selectedOption) {
+                               @JsonProperty("options") String[] options) {
         super(id, name, roleIds, includeInProvision, isMandatory, isDefault, icon);
         this.options = options;
-        this.selectedOption = selectedOption;
     }
 
     public boolean containsTemplate(String templateId) {
@@ -44,7 +40,7 @@ public class TemplateIdMetaField extends MetaField {
     public MetaField copy() {
         return new TemplateIdMetaField(id, name, roleIds,
                 includeInProvision, isMandatory, isDefault,
-                icon, options, selectedOption);
+                icon, options);
     }
 
     @Override
@@ -53,12 +49,7 @@ public class TemplateIdMetaField extends MetaField {
         return new TemplateIdMetaField(id, metaField.name, metaField.roleIds,
                 metaField.includeInProvision, metaField.isMandatory, metaField.isDefault,
                 metaField.icon,
-                listMetaField.options, selectedOption);
+                listMetaField.options);
     }
 
-    public MetaField copy(String selectedOption) {
-        return new TemplateIdMetaField(id, name, roleIds,
-                includeInProvision, isMandatory, isDefault,
-                icon, options, selectedOption);
-    }
 }
