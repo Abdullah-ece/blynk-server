@@ -104,7 +104,7 @@ Store().then((store) => {
                 <Route path="/devices/:id" components={Devices}/>
                 <Route path="/devices/:id/:tab" components={Devices}/>
                 <Route path="/devices/:id/create" components={Devices}/>
-                {process.env.ANALYTICS && <Route path="/analytics" component={Analytics.Index}/>}
+                {process.env.BLYNK_ANALYTICS && <Route path="/analytics" component={Analytics.Index}/>}
                 <Route path="/organizations" component={Organizations.Index}/>
                 <Route path="/organizations/create" component={Organizations.Create}/>
                 <Route path="/organizations/create/:tab" component={Organizations.Create}/>

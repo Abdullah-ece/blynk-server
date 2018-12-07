@@ -148,7 +148,7 @@ class UserLayout extends React.Component {
     if ('organizations' === splitedPath[1])
       return ['/organizations'];
 
-    if (process.env.ANALYTICS && 'analytics' === splitedPath[1])
+    if (process.env.BLYNK_ANALYTICS && 'analytics' === splitedPath[1])
       return ['/analytics'];
   }
 
@@ -284,7 +284,7 @@ class UserLayout extends React.Component {
               inlineCollapsed={this.state.collapsed}
               selectedKeys={this.currentActivePage(this.state.current)}
             >
-              {process.env.ANALYTICS && <Menu.Item key="/analytics">
+              {process.env.BLYNK_ANALYTICS && <Menu.Item key="/analytics">
                 <Icon type="bar-chart"/>
                 <span>Analytics</span>
               </Menu.Item>}

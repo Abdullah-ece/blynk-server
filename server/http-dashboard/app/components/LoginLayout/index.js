@@ -19,7 +19,7 @@ export default class LoginLayout extends React.Component {
       <div className="login-form">
         { this.props.children }
       </div>
-      <div className="login-bottom-label">{process.env.POWERED_BY && `⚡ powered by Blynk %(built_date)s`}</div>
+      <div className="login-bottom-label">{process.env.BLYNK_POWERED_BY && `⚡ powered by Blynk %(built_date)s`}</div>
     </div>);
   }
 }

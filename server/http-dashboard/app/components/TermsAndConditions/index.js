@@ -264,7 +264,7 @@ export default class TermsAndConditions extends React.Component {
             IF YOU DO NOT AGREE TO THE TERMS STATED ABOVE OR TO ANY CHANGES MADE IN THESE TERMS, PLEASE EXIT THIS SERVICE IMMEDIATELY.
           </div>
         </div>
-        <div className="login-bottom-label">{process.env.POWERED_BY && `⚡ powered by Blynk`}</div>
+        <div className="login-bottom-label">{process.env.BLYNK_POWERED_BY && `⚡ powered by Blynk`}</div>
       </div>);
   }
 }

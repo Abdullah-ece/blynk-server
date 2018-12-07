@@ -31,8 +31,9 @@ export default {
   plugins: [
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify('development'), // Tells React to build in either dev or prod modes. https://facebook.github.io/react/downloads.html (See bottom)
-      'process.env.ANALYTICS': JSON.stringify(process.env.ANALYTICS || false),
-      'process.env.POWERED_BY': JSON.stringify(process.env.POWERED_BY || false),
+      'process.env.BLYNK_ANALYTICS': JSON.stringify(process.env.BLYNK_ANALYTICS || false), // Defines need for analytics tab displayed inside the Admin navigation
+      'process.env.BLYNK_POWERED_BY': JSON.stringify(process.env.BLYNK_POWERED_BY || false), // Defines need to display 'Powered By Blink' text inside the Admin
+      'process.env.BLYNK_WATERMARK': JSON.stringify(process.env.BLYNK_WATERMARK || false), // Defines need to display Watermark in the right bottom of the screen inside the Admin dashboard layout
       __DEV__: true
     }),
     new webpack.HotModuleReplacementPlugin(),

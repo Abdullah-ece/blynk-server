@@ -121,7 +121,7 @@ class Header extends React.Component {
       if ('organizations' === splitedPath[i]) {
         return ['/organizations'];
       }
-      if (process.env.ANALYTICS && 'analytics' === splitedPath[i]) {
+      if (process.env.BLYNK_ANALYTICS && 'analytics' === splitedPath[i]) {
         return ['/analytics'];
       }
     }
@@ -142,7 +142,7 @@ class Header extends React.Component {
                   onClick={this.handleClick.bind(this)}
                   selectedKeys={this.currentActivePage(this.state.current)}>
               {/*<Menu.Item key="/dashboard">Dashboard</Menu.Item>*/}
-              {process.env.ANALYTICS && <Menu.Item key="/analytics">Analytics</Menu.Item>}
+              {process.env.BLYNK_ANALYTICS && <Menu.Item key="/analytics">Analytics</Menu.Item>}
               <Menu.Item key="/devices">Devices</Menu.Item>
               { this.props.Organization && this.props.Organization.canCreateOrgs && (
                 <Menu.Item key="/products">Products</Menu.Item>
