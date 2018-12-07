@@ -10,7 +10,6 @@ export default class LoginLayout extends React.Component {
   };
 
   render() {
-
     return (<div className="login-scene">
       <div className="login-logo-wrapper">
         <Link to="/login">
@@ -20,7 +19,7 @@ export default class LoginLayout extends React.Component {
       <div className="login-form">
         { this.props.children }
       </div>
-      <div className="login-bottom-label">⚡ powered by Blynk %(built_date)s</div>
+      <div className="login-bottom-label">{process.env.POWERED_BY && `⚡ powered by Blynk %(built_date)s`}</div>
     </div>);
   }
 }
