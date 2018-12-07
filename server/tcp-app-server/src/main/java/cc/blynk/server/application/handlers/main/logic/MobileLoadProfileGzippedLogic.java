@@ -137,10 +137,11 @@ public final class MobileLoadProfileGzippedLogic {
     }
 
     public static void write(ChannelHandlerContext ctx, byte[] data, int msgId) {
-        if (ctx.channel().isWritable()) {
-            MessageBase outputMsg = makeResponse(data, msgId);
-            ctx.writeAndFlush(outputMsg, ctx.voidPromise());
-        }
+        //todo, return?
+        //if (ctx.channel().isWritable()) {
+        MessageBase outputMsg = makeResponse(data, msgId);
+        ctx.writeAndFlush(outputMsg, ctx.voidPromise());
+        //}
     }
 
     private static MessageBase makeResponse(byte[] data, int msgId) {
