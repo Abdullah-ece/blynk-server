@@ -6,6 +6,8 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.HardwareInfo;
 import cc.blynk.server.core.model.device.ota.OTAStatus;
+import cc.blynk.server.core.model.web.Organization;
+import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.widgets.others.rtc.RTC;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
@@ -102,7 +104,6 @@ public final class BlynkInternalLogic {
         Device device = state.device;
 
         if (device != null) {
-            device.hardwareInfo = hardwareInfo;
             if (device.deviceOtaInfo != null) {
                 if (hardwareInfo.isFirmwareVersionChanged(device.deviceOtaInfo.buildDate)) {
                     if (device.deviceOtaInfo.otaStatus != OTAStatus.FAILURE) {
@@ -126,6 +127,27 @@ public final class BlynkInternalLogic {
                     }
                 }
             }
+
+            //special temporary hotfix https://github.com/blynkkk/dash/issues/1765
+            String templateId = hardwareInfo.templateId;
+            if (templateId == null) {
+                Organization org = holder.organizationDao.getOrgByIdOrThrow(state.orgId);
+
+                Product product = null;
+                if ("0.7.0".equals(hardwareInfo.blynkVersion)) {
+                    String productName = "Airius Fan";
+                    product = org.getProductByName(productName);
+                    if (product == null) {
+                        log.error("Didn't find product by name {} for orgId={}.", productName, state.orgId);
+                    }
+                }
+                if (product == null) {
+                    product = org.getFirstProduct();
+                }
+                templateId = product.getFirstTemplateId();
+                hardwareInfo.templateId = templateId;
+            }
+            device.hardwareInfo = hardwareInfo;
         }
 
         ctx.writeAndFlush(ok(msgId), ctx.voidPromise());

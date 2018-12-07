@@ -125,6 +125,7 @@ public class ProvisionedHardwareFirstHandler extends SimpleChannelInboundHandler
 
                     if (templateId == null) {
                         templateId = product.getFirstTemplateId();
+                        hardwareInfo.templateId = templateId;
                     }
 
                     log.info("Provisioning new deviceId {}, productId {}, templId {}.",

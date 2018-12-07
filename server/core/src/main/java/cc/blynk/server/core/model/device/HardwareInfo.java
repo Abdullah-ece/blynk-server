@@ -29,7 +29,7 @@ public class HardwareInfo {
 
     public final String build;
 
-    public final String templateId;
+    public volatile String templateId;
 
     public final int heartbeatInterval;
 
