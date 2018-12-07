@@ -25,6 +25,7 @@ import cc.blynk.server.web.handlers.logic.organization.WebCreateOrganizationLogi
 import cc.blynk.server.web.handlers.logic.organization.WebDeleteOrganizationLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebEditOrganizationLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebEditOwnOrganizationLogic;
+import cc.blynk.server.web.handlers.logic.organization.WebGetDeviceCountLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebGetOrganizationLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebGetOrganizationsHierarchyLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebGetOrganizationsLogic;
@@ -71,6 +72,7 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_OWN_ORG;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ACCOUNT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICES;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICE_COUNT_FOR_ORG;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICE_TIMELINE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_METAFIELD;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORG;
@@ -314,6 +316,9 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
                 break;
             case WEB_EDIT_OWN_ORG :
                 webEditOwnOrganizationLogic.messageReceived(ctx, state, msg);
+                break;
+            case WEB_GET_DEVICE_COUNT_FOR_ORG :
+                WebGetDeviceCountLogic.messageReceived(holder, ctx, state, msg);
                 break;
         }
     }

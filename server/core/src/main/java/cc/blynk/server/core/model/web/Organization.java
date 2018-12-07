@@ -337,6 +337,14 @@ public class Organization {
         return null;
     }
 
+    public int deviceCount() {
+        int count = 0;
+        for (Product product : products) {
+            count += product.devices.length;
+        }
+        return count;
+    }
+
     @Override
     public String toString() {
         return JsonParser.toJson(this);

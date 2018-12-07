@@ -35,6 +35,7 @@ import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.web.handlers.logic.device.timeline.TimelineDTO;
 import cc.blynk.server.web.handlers.logic.device.timeline.TimelineResponseDTO;
+import cc.blynk.server.web.handlers.logic.organization.dto.CountDTO;
 import cc.blynk.server.web.handlers.logic.organization.dto.LocationDTO;
 import cc.blynk.server.web.handlers.logic.organization.dto.OrganizationsHierarchyDTO;
 import cc.blynk.server.web.handlers.logic.organization.dto.SetAuthTokenDTO;
@@ -346,6 +347,10 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         send("webSetAuthToken " + JsonParser.toJson(new SetAuthTokenDTO(orgId, deviceId, newToken)));
     }
 
+    public void getDeviceCount(int orgId) {
+        send("webGetDeviceCountForOrg " + orgId);
+    }
+
     public TimelineResponseDTO parseTimelineResponse(int expectedMessageOrder) throws Exception {
         return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), TimelineResponseDTO.class);
     }
@@ -392,6 +397,10 @@ public final class AppWebSocketClient extends BaseTestAppClient {
 
     public TokenDTO parseToken(int expectedMessageOrder) throws Exception {
         return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), TokenDTO.class);
+    }
+
+    public CountDTO parseCountDTO(int expectedMessageOrder) throws Exception {
+        return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), CountDTO.class);
     }
 
     public void send(String line) {

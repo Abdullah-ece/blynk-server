@@ -87,6 +87,7 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_OWN_ORG;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ACCOUNT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICES;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICE_COUNT_FOR_ORG;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICE_TIMELINE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_METAFIELD;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORG;
@@ -358,6 +359,8 @@ public final class CommandParserUtil {
                 return WEB_SET_AUTH_TOKEN;
             case "webeditownorg" :
                 return WEB_EDIT_OWN_ORG;
+            case "webgetdevicecountfororg" :
+                return WEB_GET_DEVICE_COUNT_FOR_ORG;
 
             default:
                 throw new IllegalArgumentException("Unsupported command");
