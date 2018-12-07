@@ -859,6 +859,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
                         false, null,
                         false, null,
                         false, false,
+                        0,
                         null),
                 createContactMeta(3, "Contact", "contact_icon"),
                 createDeviceNameMeta(4, "Device name", "Default name", true),
@@ -892,6 +893,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
                 false, null,
                 false, null,
                 false, false,
+                0,
                 null);
         fromApiProduct.metaFields[2] = createContactMeta(3, "Contact", "contact_icon_2");
 
@@ -948,6 +950,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
                         false, null,
                         false, null,
                         false, false,
+                        0,
                         null),
                 createNumberMeta(3, "floor", 5),
                 createContactMeta(4, "Contact", "contact_icon"),
@@ -982,6 +985,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
                 false, null,
                 false, null,
                 false, false,
+                        0,
                 null));
         client.verifyResult(ok(3));
 
@@ -1001,6 +1005,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
                         false, null,
                         false, null,
                         false, false,
+                        0,
                         null),
                 createContactMeta(4, "Contact", "contact_icon"),
                 createDeviceNameMeta(5, "Device name", "Default name", true),

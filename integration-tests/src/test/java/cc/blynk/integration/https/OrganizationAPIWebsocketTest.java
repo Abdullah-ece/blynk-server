@@ -160,6 +160,7 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
                         false, null,
                         false, null,
                         false, false,
+                        0,
                         null),
                 createDeviceNameMeta(4, "namne", "name", true),
                 createDeviceOwnerMeta(5, "owner", "owner", true)
@@ -226,6 +227,7 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
                         false, null,
                         false, null,
                         false, false,
+                        0,
                         null),
                 createDeviceNameMeta(4, "namne", "name", true),
                 createDeviceOwnerMeta(5, "owner", "owner", true)
