@@ -1,6 +1,8 @@
 # some Dashboard
 
 ### Configuration options
+All of the values changes for variables below will ONLY WORK AFTER APP REBUILD, as those are added to the package by webpack during rebuild.
+
 Through environment variables you can change behavior of the application functionality. Available options:
 1. BLYNK_WATERMARK - if set to true, it will add a watermark to the bottom right screen of the dashboard. It will show current build date, last commit hash and commit date
 2. BLYNK_POWERED_BY - if set to true, it will show powered by Blynk footer on the login screen
