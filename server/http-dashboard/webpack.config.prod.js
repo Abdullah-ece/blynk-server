@@ -85,14 +85,22 @@ export default {
     })
   ],
   module: {
-    noParse: [ /^canvasjs$/gi ],
+    noParse: [/^canvasjs$/gi],
     rules: [
       {
         test: /\.jsx?$/,
         loader: 'string-replace-loader',
         options: {
-          search: '%(built_date)s',
-          replace: `Build hash: ${moment().format("HHmmssDDMM")}`,
+          multiple: [
+            {
+              search: '%(built_date)s',
+              replace: `Build hash: ${moment().format("HHmmssDDMM")}`,
+            },
+            {
+              search: '%(qa_watermark)',
+              replace: "",
+            },
+          ]
         }
       },
       {
@@ -101,7 +109,10 @@ export default {
         loader: 'babel-loader',
         options: 'cacheDirectory'
       },
-      {test: /\.eot(\?v=\d+.\d+.\d+)?$/, loader: 'url-loader?name=[name].[ext]'},
+      {
+        test: /\.eot(\?v=\d+.\d+.\d+)?$/,
+        loader: 'url-loader?name=[name].[ext]'
+      },
       {
         test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
         loader: 'url-loader?limit=10000&mimetype=application/font-woff&name=[name].[ext]'
@@ -110,9 +121,12 @@ export default {
         test: /\.[ot]tf(\?v=\d+.\d+.\d+)?$/,
         loader: 'url-loader?limit=10000&mimetype=application/octet-stream&name=[name].[ext]'
       },
-      {test: /\.svg(\?v=\d+.\d+.\d+)?$/, loader: 'url-loader?limit=10000&mimetype=image/svg+xml&name=[name].[ext]'},
-      {test: /\.(jpe?g|png|gif)$/i, loader: 'file-loader?name=[name].[ext]'},
-      {test: /\.ico$/, loader: 'file-loader?name=[name].[ext]'},
+      {
+        test: /\.svg(\?v=\d+.\d+.\d+)?$/,
+        loader: 'url-loader?limit=10000&mimetype=image/svg+xml&name=[name].[ext]'
+      },
+      { test: /\.(jpe?g|png|gif)$/i, loader: 'file-loader?name=[name].[ext]' },
+      { test: /\.ico$/, loader: 'file-loader?name=[name].[ext]' },
       {
         test: /(\.css|\.less)$/,
         loaders: ExtractTextPlugin.extract({

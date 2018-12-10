@@ -2,6 +2,11 @@ import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import autoprefixer from 'autoprefixer';
 import path from 'path';
+import moment from "moment";
+
+let commitHash = require('child_process')
+  .execSync('git rev-parse --short HEAD')
+  .toString();
 
 export default {
   externals: {
@@ -65,17 +70,38 @@ export default {
         test: /\.jsx?$/,
         loader: 'string-replace-loader',
         options: {
-          search: '%(built_date)s',
-          replace: "",
+          multiple: [
+            {
+              search: '%(built_date)s',
+              replace: "",
+            },
+            {
+              search: '%(qa_watermark_deployment_date)',
+              replace: `Deployment Date: ${moment().format("HHmmssDDMM")}`,
+            },
+            {
+              search: '%(qa_watermark_commit_hash)',
+              replace: `Git Commit Hash: ${commitHash}`,
+            },
+          ]
         }
       },
-      {test: /\.jsx?$/, exclude: /node_modules/, loaders: ['babel-loader']},
-      {test: /\.eot(\?v=\d+.\d+.\d+)?$/, loader: 'file-loader'},
-      {test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'url-loader?limit=10000&mimetype=application/font-woff'},
-      {test: /\.[ot]tf(\?v=\d+.\d+.\d+)?$/, loader: 'url-loader?limit=10000&mimetype=application/octet-stream'},
-      {test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, loader: 'url-loader?limit=10000&mimetype=image/svg+xml'},
-      {test: /\.(jpe?g|png|gif)$/i, loader: 'file-loader?name=[name].[ext]'},
-      {test: /\.ico$/, loader: 'file-loader?name=[name].[ext]'},
+      { test: /\.jsx?$/, exclude: /node_modules/, loaders: ['babel-loader'] },
+      { test: /\.eot(\?v=\d+.\d+.\d+)?$/, loader: 'file-loader' },
+      {
+        test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+        loader: 'url-loader?limit=10000&mimetype=application/font-woff'
+      },
+      {
+        test: /\.[ot]tf(\?v=\d+.\d+.\d+)?$/,
+        loader: 'url-loader?limit=10000&mimetype=application/octet-stream'
+      },
+      {
+        test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
+        loader: 'url-loader?limit=10000&mimetype=image/svg+xml'
+      },
+      { test: /\.(jpe?g|png|gif)$/i, loader: 'file-loader?name=[name].[ext]' },
+      { test: /\.ico$/, loader: 'file-loader?name=[name].[ext]' },
       {
         test: /(\.css|\.less)$/,
         // loaders: ['style-loader', 'css-loader?sourceMap', 'postcss-loader', 'less-loader?sourceMap']
