@@ -1,5 +1,6 @@
 // For info about this file refer to webpack and webpack-hot-middleware documentation
 // For info on how we're generating bundles with hashed filenames for cache busting: https://medium.com/@okonetchnikov/long-term-caching-of-static-assets-with-webpack-1ecb139adb95#.w99i89nsz
+/* eslint-disable no-console */
 import webpack from 'webpack';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import WebpackMd5Hash from 'webpack-md5-hash';
@@ -28,6 +29,8 @@ const GLOBALS = {
   __DEV__: false,
   'process.env.BLYNK_CREATE_DEVICE': JSON.stringify(process.env.BLYNK_CREATE_DEVICE || true), // Allows device creation through the UI
 };
+
+console.log(GLOBALS);
 
 export default {
   externals: {
