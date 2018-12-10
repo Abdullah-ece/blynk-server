@@ -87,6 +87,29 @@
             </properties>
         </profile>
 
+        <profile>
+            <id>prod</id>
+            <properties>
+                <blynk.watermark>false</blynk.watermark>
+                <blynk.powered.by>false</blynk.powered.by>
+                <blynk.analytics>false</blynk.analytics>
+                <blynk.create.device>false</blynk.create.device>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>qa</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <blynk.watermark>true</blynk.watermark>
+                <blynk.powered.by>false</blynk.powered.by>
+                <blynk.analytics>false</blynk.analytics>
+                <blynk.create.device>true</blynk.create.device>
+            </properties>
+        </profile>
+
     </profiles>
 
     <build>
