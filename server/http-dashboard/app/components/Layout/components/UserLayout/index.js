@@ -14,6 +14,7 @@ import {blynkWsConnect, blynkWsLogin} from 'store/blynk-websocket-middleware/act
 import {StartLoading, FinishLoading} from 'data/PageLoading/actions';
 
 import './styles.less';
+import Watermark from "../Watermark";
 
 const DEFAULT_LOGO = '/static/logo.png';
 
@@ -318,6 +319,7 @@ class UserLayout extends React.Component {
         <div className={`user-layout-right-content ${this.state.collapsed ? 'user-layout-right-content-fold' : 'user-layout-right-content-unfold'}`}>
           {this.props.children}
         </div>
+        <Watermark/>
       </div>
     );
   }
