@@ -40,6 +40,11 @@ public class DeviceOwnerMetaField extends MetaField {
     }
 
     @Override
+    public String getNotificationEmail() {
+        return value;
+    }
+
+    @Override
     public MetaField copySpecificFieldsOnly(MetaField metaField) {
         return new DeviceOwnerMetaField(id, metaField.name, metaField.roleIds,
                 metaField.includeInProvision, metaField.isMandatory, metaField.isDefault,
