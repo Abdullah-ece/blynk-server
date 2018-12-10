@@ -1,3 +1,4 @@
+/*eslint-disable react/jsx-wrap-multilines*/
 import React from 'react';
 import { Switch, Select } from 'antd';
 import { Field } from 'redux-form';
