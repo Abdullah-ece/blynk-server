@@ -24,7 +24,7 @@ class Watermark extends React.Component {
     return (
       process.env.BLYNK_WATERMARK && (<div style={styles}>
         <div>
-          Deployment Date: {process.env.BLYNK_DEPLOYMENT_DATE}
+          Build Date: {process.env.BLYNK_DEPLOYMENT_DATE}
         </div>
         <div>
           Git Commit Hash: {process.env.BLYNK_COMMIT_HASH}
