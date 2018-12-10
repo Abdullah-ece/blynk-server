@@ -111,14 +111,14 @@ public class HardwareLogEventLogic {
                     } else {
                         eventDescription = desc;
                     }
-                    mail(to, device.name + ": " + event.name,
-                            eventLogEmailBody
-                                    .replace("{DEVICE_URL}", deviceUrl + device.id)
-                                    .replace("{DEVICE_NAME}", device.name)
-                                    .replace("{DATE_TIME}", formatter.format(LocalDateTime.now()))
-                                    .replace("{EVENT_NAME}", event.name)
-                                    .replace("{EVENT_DESCRIPTION}", eventDescription)
-                    );
+                    String subj = device.name + ": " + event.name;
+                    String body = eventLogEmailBody
+                            .replace("{DEVICE_URL}", deviceUrl + device.id)
+                            .replace("{DEVICE_NAME}", device.name)
+                            .replace("{DATE_TIME}", formatter.format(LocalDateTime.now()))
+                            .replace("{EVENT_NAME}", event.name)
+                            .replace("{EVENT_DESCRIPTION}", eventDescription);
+                    mail(to, subj, body);
                 }
             }
         }
