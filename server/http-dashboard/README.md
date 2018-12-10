@@ -5,6 +5,7 @@ Through environment variables you can change behavior of the application functio
 1. BLYNK_WATERMARK - if set to true, it will add a watermark to the bottom right screen of the dashboard. It will show current build date, last commit hash and commit date
 2. BLYNK_POWERED_BY - if set to true, it will show powered by Blynk footer on the login screen
 3. BLYNK_ANALYTICS - if set to true, it will show analytics tab inside dashboard menu
+4. BLYNK_CREATE_DEVICE - if set to false, it will not show Create Device button
 
 ### Dependencies
 **Global Dependencies**: Git, NPM, NodeJS v6

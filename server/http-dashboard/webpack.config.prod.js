@@ -25,7 +25,8 @@ const GLOBALS = {
   'process.env.BLYNK_COMMIT_HASH': JSON.stringify(commitHash),
   'process.env.BLYNK_COMMIT_DATE': JSON.stringify(commitDate),
   'process.env.BLYNK_DEPLOYMENT_DATE': JSON.stringify(moment().format('YYYY/MM/DD_HH:MM:SS')),
-  __DEV__: false
+  __DEV__: false,
+  'process.env.BLYNK_CREATE_DEVICE': JSON.stringify(process.env.BLYNK_CREATE_DEVICE || true), // Allows device creation through the UI
 };
 
 export default {
