@@ -10,7 +10,7 @@ const commitHash = require('child_process')
   .toString();
 
 const commitDate = require('child_process')
-  .execSync(`git log -1 --format=%cd --date=format:"%H:%M %d:%m:%y"`)
+  .execSync(`git log -1 --format=%cd --date=format:"%H:%M %d.%m.%y"`)
   .toString();
 
 const GLOBALS = {
@@ -20,7 +20,7 @@ const GLOBALS = {
   'process.env.BLYNK_WATERMARK': JSON.stringify(process.env.BLYNK_WATERMARK || false), // Defines need to display Watermark in the right bottom of the screen inside the Admin dashboard layout
   'process.env.BLYNK_COMMIT_HASH': JSON.stringify(commitHash),
   'process.env.BLYNK_COMMIT_DATE': JSON.stringify(commitDate),
-  'process.env.BLYNK_DEPLOYMENT_DATE': JSON.stringify(moment().format('HH:mm DD:MM:YYYY')),
+  'process.env.BLYNK_DEPLOYMENT_DATE': JSON.stringify(moment().format('HH:mm DD.MM.YYYY')),
   __DEV__: true,
   'process.env.BLYNK_CREATE_DEVICE': JSON.stringify(process.env.BLYNK_CREATE_DEVICE || true), // Allows device creation through the UI
 };
