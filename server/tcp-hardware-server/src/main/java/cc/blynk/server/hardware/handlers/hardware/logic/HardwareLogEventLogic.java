@@ -125,7 +125,8 @@ public class HardwareLogEventLogic {
                         try {
                             mailWrapper.sendHtml(to, subj, body);
                         } catch (Exception e) {
-                            log.error("Error sending email from hardware. From user {}, to : {}. Reason : {}", to, e.getMessage());
+                            log.error("Error sending email from hardware. From user {}, to : {}. Reason : {}",
+                                    to, e.getMessage());
                         }
                     });
                 }
