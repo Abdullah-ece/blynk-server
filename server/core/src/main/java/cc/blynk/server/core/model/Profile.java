@@ -34,15 +34,6 @@ public class Profile {
 
     public volatile Tag[] tags = EMPTY_TAGS;
 
-    //todo this method is very wrong, need to something with it.
-    private static final DashBoard EMPTY_DASH = new DashBoard();
-    public DashBoard getFirstDashOrEmpty() {
-        if (dashBoards.length == 0) {
-            return EMPTY_DASH;
-        }
-        return dashBoards[0];
-    }
-
     public void deleteTag(int tagId) {
         int existingTagIndex = getTagIndexByIdOrThrow(tagId);
         this.tags = ArrayUtil.remove(this.tags, existingTagIndex, Tag.class);

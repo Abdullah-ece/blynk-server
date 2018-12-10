@@ -87,10 +87,6 @@ public class WebDeleteOwnDeviceLogic implements PermissionBasedLogic {
         log.debug("Deleting device {} for orgId {}.", deviceId, orgId);
         deviceDao.delete(deviceId);
 
-        //todo this is temp solution for now
-        for (User userTemp : userDao.users.values()) {
-            userTemp.deleteDevice(deviceId);
-        }
         Session session = sessionDao.getOrgSession(state.orgId);
         session.closeHardwareChannelByDeviceId(deviceId);
 

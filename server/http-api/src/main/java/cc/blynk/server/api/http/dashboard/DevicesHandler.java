@@ -272,13 +272,10 @@ public class DevicesHandler extends BaseHttpHandler {
         organizationDao.verifyUserAccessToDevice(user, device);
 
         deviceDao.delete(deviceId);
-        DashBoard dash = user.profile.getFirstDashOrEmpty();
 
-        if (dash == null) {
-            log.error("Dash not exists.");
-            return badRequest();
-        }
-        dash.eraseWidgetValuesForDevice(deviceId);
+        Session session = sessionDao.getOrgSession(userOrgId);
+        session.closeHardwareChannelByDeviceId(deviceId);
+
         user.lastModifiedTs = System.currentTimeMillis();
 
         return ok();
