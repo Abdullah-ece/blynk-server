@@ -16,13 +16,18 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_LOG_EVENT;
 import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
 import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
+import static cc.blynk.utils.DateTimeUtils.LOG_EVENT_FORMATTER;
 import static cc.blynk.utils.StringUtils.split2;
+import static cc.blynk.utils.properties.Placeholders.DATA_TIME;
+import static cc.blynk.utils.properties.Placeholders.DEVICE_NAME;
+import static cc.blynk.utils.properties.Placeholders.DEVICE_URL;
+import static cc.blynk.utils.properties.Placeholders.EVENT_DESCRIPTION;
+import static cc.blynk.utils.properties.Placeholders.EVENT_NAME;
 
 /**
  * The Blynk Project.
@@ -33,8 +38,6 @@ import static cc.blynk.utils.StringUtils.split2;
 public class HardwareLogEventLogic {
 
     private static final Logger log = LogManager.getLogger(HardwareLogEventLogic.class);
-
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mma, MMM d, yyyy");
 
     private final OrganizationDao organizationDao;
     private final BlockingIOProcessor blockingIOProcessor;
@@ -113,12 +116,18 @@ public class HardwareLogEventLogic {
                     }
                     String subj = device.name + ": " + event.name;
                     String body = eventLogEmailBody
-                            .replace("{DEVICE_URL}", deviceUrl + device.id)
-                            .replace("{DEVICE_NAME}", device.name)
-                            .replace("{DATE_TIME}", formatter.format(LocalDateTime.now()))
-                            .replace("{EVENT_NAME}", event.name)
-                            .replace("{EVENT_DESCRIPTION}", eventDescription);
-                    mail(to, subj, body);
+                            .replace(DEVICE_URL, deviceUrl + device.id)
+                            .replace(DEVICE_NAME, device.name)
+                            .replace(DATA_TIME, LOG_EVENT_FORMATTER.format(LocalDateTime.now()))
+                            .replace(EVENT_NAME, event.name)
+                            .replace(EVENT_DESCRIPTION, eventDescription);
+                    blockingIOProcessor.execute(() -> {
+                        try {
+                            mailWrapper.sendHtml(to, subj, body);
+                        } catch (Exception e) {
+                            log.error("Error sending email from hardware. From user {}, to : {}. Reason : {}", to, e.getMessage());
+                        }
+                    });
                 }
             }
         }
@@ -143,16 +152,6 @@ public class HardwareLogEventLogic {
         }
         widget.push(gcmWrapper, message, state.dash.id);
         */
-    }
-
-    private void mail(String to, String subj, String body) {
-        blockingIOProcessor.execute(() -> {
-            try {
-                mailWrapper.sendHtml(to, subj, body);
-            } catch (Exception e) {
-                log.error("Error sending email from hardware. From user {}, to : {}. Reason : {}", to, e.getMessage());
-            }
-        });
     }
 
 }

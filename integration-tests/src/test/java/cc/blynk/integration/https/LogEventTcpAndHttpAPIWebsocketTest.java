@@ -380,6 +380,45 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
     }
 
     @Test
+    public void testEmailNotificationWorkWithEventViaHttpsAPI() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+        Device device = createProductAndDevice(client, orgId);
+
+        TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
+        newHardClient.start();
+        newHardClient.login(device.token);
+        newHardClient.verifyResult(ok(1));
+        client.reset();
+
+        String externalApiUrl = String.format("https://localhost:%s/external/api/", properties.getHttpsPort());
+
+        CloseableHttpClient httpclient = getDefaultHttpsClient();
+        HttpGet insertEvent = new HttpGet(externalApiUrl + device.token + "/logEvent?code=temp_is_high&description=MyNewDescription");
+        try (CloseableHttpResponse response = httpclient.execute(insertEvent)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        client.getTimeline(orgId, device.id, EventType.CRITICAL, null, 0, System.currentTimeMillis(), 0, 10);
+        TimelineResponseDTO timeLineResponse = client.parseTimelineResponse(1);
+        assertNotNull(timeLineResponse);
+
+        assertEquals(1, timeLineResponse.totalCritical);
+        assertEquals(0, timeLineResponse.totalWarning);
+        assertEquals(0, timeLineResponse.totalResolved);
+        List<LogEvent> logEvents = timeLineResponse.eventList;
+        assertNotNull(logEvents);
+        assertEquals(1, logEvents.size());
+        assertEquals(device.id, logEvents.get(0).deviceId);
+        assertEquals(EventType.CRITICAL, logEvents.get(0).eventType);
+        assertFalse(logEvents.get(0).isResolved);
+        assertEquals("Temp is super high", logEvents.get(0).name);
+        assertEquals("MyNewDescription", logEvents.get(0).description);
+
+        verify(holder.mailWrapper, timeout(1000)).sendHtml(eq("dmitriy@blynk.cc"), eq("My New Device: Temp is super high"), contains("Temp is super high"));
+        verify(holder.mailWrapper, timeout(1000)).sendHtml(eq("owner@blynk.cc"), eq("My New Device: Temp is super high"), contains("Temp is super high"));
+    }
+
+    @Test
     public void testBasicLogEventWithIsResolvedFlow() throws Exception {
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
         Device device = createProductAndDevice(client, orgId);

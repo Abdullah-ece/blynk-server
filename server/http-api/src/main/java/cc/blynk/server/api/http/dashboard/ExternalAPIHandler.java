@@ -23,10 +23,12 @@ import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.storage.value.PinStorageValue;
 import cc.blynk.server.core.model.storage.value.SinglePinStorageValue;
+import cc.blynk.server.core.model.web.product.EventReceiver;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.db.ReportingDBManager;
 import cc.blynk.server.db.dao.descriptor.TableDataMapper;
 import cc.blynk.server.db.dao.descriptor.TableDescriptor;
+import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.utils.NumberUtil;
 import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.http.MediaType;
@@ -48,7 +50,13 @@ import static cc.blynk.server.core.protocol.enums.Command.HTTP_GET_PIN_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.HTTP_IS_HARDWARE_CONNECTED;
 import static cc.blynk.server.core.protocol.enums.Command.HTTP_UPDATE_PIN_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.SET_WIDGET_PROPERTY;
+import static cc.blynk.utils.DateTimeUtils.LOG_EVENT_FORMATTER;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
+import static cc.blynk.utils.properties.Placeholders.DATA_TIME;
+import static cc.blynk.utils.properties.Placeholders.DEVICE_NAME;
+import static cc.blynk.utils.properties.Placeholders.DEVICE_URL;
+import static cc.blynk.utils.properties.Placeholders.EVENT_DESCRIPTION;
+import static cc.blynk.utils.properties.Placeholders.EVENT_NAME;
 
 /**
  * The Blynk Project.
@@ -64,6 +72,9 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
     private final OrganizationDao organizationDao;
     private final ReportingDiskDao reportingDiskDao;
     private final ReportingDBManager reportingDBManager;
+    private final MailWrapper mailWrapper;
+    private final String eventLogEmailBody;
+    private final String deviceUrl;
 
     public ExternalAPIHandler(Holder holder, String rootPath) {
         super(holder.deviceDao, holder.sessionDao, holder.stats, rootPath);
@@ -71,6 +82,9 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
         this.organizationDao = holder.organizationDao;
         this.reportingDiskDao = holder.reportingDiskDao;
         this.reportingDBManager = holder.reportingDBManager;
+        this.mailWrapper = holder.mailWrapper;
+        this.eventLogEmailBody = holder.textHolder.logEventMailBody;
+        this.deviceUrl = holder.props.getDeviceUrl();
     }
 
     @GET
@@ -78,7 +92,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
     public Response logEvent(@Context ChannelHandlerContext ctx,
                              @PathParam("token") String token,
                              @QueryParam("code") String eventCode,
-                             @QueryParam("description") String description) {
+                             @QueryParam("description") String desc) {
 
         var tokenValue = deviceDao.getDeviceTokenValue(token);
 
@@ -109,7 +123,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
         blockingIOProcessor.executeDB(() -> {
             try {
                 long now = System.currentTimeMillis();
-                reportingDBManager.insertEvent(device.id, event.getType(), now, eventCode.hashCode(), description);
+                reportingDBManager.insertEvent(device.id, event.getType(), now, eventCode.hashCode(), desc);
                 device.setLastReportedAt(now);
                 ctx.writeAndFlush(ok(), ctx.voidPromise());
             } catch (Exception e) {
@@ -117,6 +131,36 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
                 ctx.writeAndFlush(serverError("Error inserting log event."), ctx.voidPromise());
             }
         });
+
+        //todo duplicated code. refactor?
+        for (EventReceiver mailReceiver : event.emailNotifications) {
+            var metaField = device.findMetaFieldById(mailReceiver.metaFieldId);
+            if (metaField != null) {
+                String to = metaField.getNotificationEmail();
+                if (to != null && !to.isEmpty()) {
+                    String eventDescription;
+                    if (desc == null || desc.isEmpty()) {
+                        eventDescription = event.description == null ? "" : event.description;
+                    } else {
+                        eventDescription = desc;
+                    }
+                    String subj = device.name + ": " + event.name;
+                    String body = eventLogEmailBody
+                            .replace(DEVICE_URL, deviceUrl + device.id)
+                            .replace(DEVICE_NAME, device.name)
+                            .replace(DATA_TIME, LOG_EVENT_FORMATTER.format(LocalDateTime.now()))
+                            .replace(EVENT_NAME, event.name)
+                            .replace(EVENT_DESCRIPTION, eventDescription);
+                    blockingIOProcessor.execute(() -> {
+                        try {
+                            mailWrapper.sendHtml(to, subj, body);
+                        } catch (Exception e) {
+                            log.error("Error sending email from hardware. From user {}, to : {}. Reason : {}", to, e.getMessage());
+                        }
+                    });
+                }
+            }
+        }
 
         return null;
     }

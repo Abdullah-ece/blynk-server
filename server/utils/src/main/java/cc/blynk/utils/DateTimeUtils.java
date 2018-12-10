@@ -1,6 +1,7 @@
 package cc.blynk.utils;
 
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.TimeZone;
 
@@ -13,6 +14,8 @@ public final class DateTimeUtils {
 
     private DateTimeUtils() {
     }
+
+    public static final DateTimeFormatter LOG_EVENT_FORMATTER = DateTimeFormatter.ofPattern("hh:mma, MMM d, yyyy");
 
     public static final ZoneId UTC = ZoneId.of("UTC");
     public static final ZoneId AMERICA_REGINA = ZoneId.of("America/Regina");
