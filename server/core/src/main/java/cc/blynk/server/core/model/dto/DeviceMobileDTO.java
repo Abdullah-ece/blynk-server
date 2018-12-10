@@ -43,9 +43,13 @@ public class DeviceMobileDTO {
     public final long lastReportedAt;
 
     public final String iconName;
+
     public final HardwareInfo hardwareInfo;
+
     public MetaField[] metaFields;
+
     public String productName;
+
     public String productLogoUrl;
 
     @JsonCreator

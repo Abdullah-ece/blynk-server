@@ -169,6 +169,11 @@ public class DeviceDTO {
         this.orgName = orgName;
     }
 
+    public DeviceDTO(Device device, Product product, String orgName, MetaField[] metaFields) {
+        this(device, product, metaFields);
+        this.orgName = orgName;
+    }
+
     @Override
     public String toString() {
         return JsonParser.toJson(this);

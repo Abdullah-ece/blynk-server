@@ -101,6 +101,10 @@ public class TestAppClient extends BaseTestAppClient {
         return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), Device[].class);
     }
 
+    public DeviceDTO[] parseDevicesDTO(int expectedMessageOrder) throws Exception {
+        return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), DeviceDTO[].class);
+    }
+
     public Tag[] parseTags(int expectedMessageOrder) throws Exception {
         return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), Tag[].class);
     }

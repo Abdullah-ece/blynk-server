@@ -438,6 +438,48 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
     }
 
     @Test
+    public void mobileListShouldNotReturnMeta() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+
+        Product product = new Product();
+        product.name = "My product";
+        product.logoUrl = "MyLogo.png";
+        product.metaFields = new MetaField[] {
+                createNumberMeta(1, "Jopa", 123D, true),
+                createDeviceNameMeta(2, "Device Name", "My Default device Name", true),
+                createDeviceOwnerMeta(3, "Device Owner", null, true)
+        };
+
+        client.createProduct(orgId, product);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
+        assertNotNull(fromApiProduct);
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.productId = fromApiProduct.id;
+
+
+        client.createDevice(orgId, newDevice);
+        Device createdDevice = client.parseDevice(2);
+        assertNotNull(createdDevice);
+
+        TestAppClient appClient = new TestAppClient("localhost", properties.getHttpsPort());
+        appClient.start();
+        appClient.login(getUserName(), "1");
+        appClient.verifyResult(ok(1));
+
+        appClient.getDevices(orgId);
+        DeviceDTO[] deviceDTOs = appClient.parseDevicesDTO(2);
+
+        assertNotNull(deviceDTOs);
+        assertEquals(2, deviceDTOs.length);
+        DeviceDTO newDeviceDTO = deviceDTOs[1];
+        assertEquals("My product", newDeviceDTO.productName);
+        assertEquals("MyLogo.png", newDeviceDTO.productLogoUrl);
+        assertNull(newDeviceDTO.metaFields);
+    }
+
+    @Test
     public void getDeviceFromMobile() throws Exception {
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
 

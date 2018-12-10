@@ -263,11 +263,17 @@ public class Organization {
         return result;
     }
 
-    public List<DeviceDTO> getAllDeviceDTOs() {
+    public List<DeviceDTO> getAllDeviceDTOs(boolean needMeta) {
         var result = new ArrayList<DeviceDTO>();
         for (Product product : products) {
             for (Device device : product.devices) {
-                result.add(new DeviceDTO(device, product, name));
+                DeviceDTO deviceDTO;
+                if (needMeta) {
+                    deviceDTO = new DeviceDTO(device, product, name);
+                } else {
+                    deviceDTO = new DeviceDTO(device, product, name, null);
+                }
+                result.add(deviceDTO);
             }
         }
         return result;

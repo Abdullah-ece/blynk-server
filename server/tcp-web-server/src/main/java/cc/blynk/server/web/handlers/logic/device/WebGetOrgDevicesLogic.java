@@ -60,7 +60,7 @@ public final class WebGetOrgDevicesLogic implements PermissionBasedLogic {
 
         Organization org = organizationDao.getOrgByIdOrThrow(orgId);
 
-        List<DeviceDTO> deviceDTOs = org.getAllDeviceDTOs();
+        List<DeviceDTO> deviceDTOs = org.getAllDeviceDTOs(false);
         String devicesJson = JsonParser.toJson(deviceDTOs);
 
         if (ctx.channel().isWritable()) {

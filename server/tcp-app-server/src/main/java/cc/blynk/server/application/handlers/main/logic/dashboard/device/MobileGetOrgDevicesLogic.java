@@ -48,7 +48,7 @@ public final class MobileGetOrgDevicesLogic implements PermissionBasedLogic {
         int orgId = user.orgId;
 
         Organization org = organizationDao.getOrgByIdOrThrow(orgId);
-        List<DeviceDTO> deviceDTOs = org.getAllDeviceDTOs();
+        List<DeviceDTO> deviceDTOs = org.getAllDeviceDTOs(false);
         String devicesJson = JsonParser.toJson(deviceDTOs);
 
         if (ctx.channel().isWritable()) {
