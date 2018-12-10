@@ -9,11 +9,22 @@ import autoprefixer from 'autoprefixer';
 import moment from "moment";
 import path from 'path';
 
+const commitHash = require('child_process')
+  .execSync('git rev-parse --short HEAD')
+  .toString();
+
+const commitDate = require('child_process')
+  .execSync('git log -1 --format="%at" | xargs -I{} date -d @{} +%Y/%m/%d_%H:%M:%S')
+  .toString();
+
 const GLOBALS = {
   'process.env.NODE_ENV': JSON.stringify('production'),
   'process.env.BLYNK_ANALYTICS': JSON.stringify(process.env.BLYNK_ANALYTICS || false), // Defines need for analytics tab displayed inside the Admin navigation
   'process.env.BLYNK_POWERED_BY': JSON.stringify(process.env.BLYNK_POWERED_BY || false), // Defines need to display 'Powered By Blink' text inside the Admin
   'process.env.BLYNK_WATERMARK': JSON.stringify(process.env.BLYNK_WATERMARK || false), // Defines need to display Watermark in the right bottom of the screen inside the Admin dashboard layout
+  'process.env.BLYNK_COMMIT_HASH': JSON.stringify(commitHash),
+  'process.env.BLYNK_COMMIT_DATE': JSON.stringify(commitDate),
+  'process.env.BLYNK_DEPLOYMENT_DATE': JSON.stringify(moment().format('YYYY/MM/DD_HH:MM:SS')),
   __DEV__: false
 };
 

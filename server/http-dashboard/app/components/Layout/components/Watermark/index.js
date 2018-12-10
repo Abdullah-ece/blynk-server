@@ -12,20 +12,26 @@ class Watermark extends React.Component {
   render() {
     const styles = {
       backgroundColor: '#' + this.props.Organization.primaryColor,
-      color: '#' + this.props.Organization.secondaryColor,
+      // color: '#' + this.props.Organization.secondaryColor,
       position: 'fixed',
       bottom: 0,
       right: 0,
       width: 'auto',
+      padding: 5,
       // opacity: 0.7,
     };
 
-    const watermarkDeploymentDate = `%(qa_watermark_deployment_date)`;
-    const watermarkGitHash = `%(qa_watermark_deployment_date)`;
-
     return (
       <div style={styles}>
-        {watermarkDeploymentDate}, {watermarkGitHash}
+        <div>
+          Deployment Date: {process.env.BLYNK_DEPLOYMENT_DATE}
+        </div>
+        <div>
+          Git Commit Hash: {process.env.BLYNK_COMMIT_HASH}
+        </div>
+        <div>
+          Git Commit Date: {process.env.BLYNK_COMMIT_DATE}
+        </div>
       </div>
     );
   }
