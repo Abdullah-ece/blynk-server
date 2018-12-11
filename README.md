@@ -6,7 +6,7 @@
 
 ## How to build
 Blynk has a bunch of integration tests that require DB, so you have to skip tests during build.
-- Build the project with : ```mvn clean install -Dmaven.test.skip=true```
+- Build the project with : ```mvn clean install -Dmaven.test.skip=true -P qa```
 
 ## Turn off https warning on localhost
 
