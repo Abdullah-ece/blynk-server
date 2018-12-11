@@ -14,7 +14,6 @@ import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.notifications.Mail;
-import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.model.widgets.notifications.Twitter;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
@@ -192,10 +191,6 @@ public class DashBoard {
         return null;
     }
 
-    public Notification getNotificationWidget() {
-        return getWidgetByType(Notification.class);
-    }
-
     public Eventor getEventorWidget() {
         return getWidgetByType(Eventor.class);
     }
@@ -299,16 +294,6 @@ public class DashBoard {
         this.widgetBackgroundOn = updatedDashboard.widgetBackgroundOn;
         this.color = updatedDashboard.color;
         this.isDefaultColor = updatedDashboard.isDefaultColor;
-
-        Notification newNotification = updatedDashboard.getNotificationWidget();
-        if (newNotification != null) {
-            Notification oldNotification = this.getNotificationWidget();
-            if (oldNotification != null) {
-                newNotification.iOSTokens = oldNotification.iOSTokens;
-                newNotification.androidTokens = oldNotification.androidTokens;
-            }
-        }
-
         this.widgets = updatedDashboard.widgets;
     }
 

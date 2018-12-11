@@ -57,12 +57,12 @@ public class UserDao {
         return null;
     }
 
-    public User getByName(String name) {
-        return users.get(name);
+    public User getByName(String email) {
+        return users.get(email);
     }
 
-    public boolean contains(String name) {
-        return users.containsKey(name);
+    public boolean contains(String email) {
+        return users.containsKey(email);
     }
 
     //for tests only

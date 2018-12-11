@@ -1,6 +1,8 @@
-package cc.blynk.server.core.model;
+package cc.blynk.server.core.model.profile;
 
 import cc.blynk.server.core.dao.DeviceDao;
+import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.auth.App;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Tag;
@@ -33,6 +35,8 @@ public class Profile {
     public volatile App[] apps = EMPTY_APPS;
 
     public volatile Tag[] tags = EMPTY_TAGS;
+
+    public final ProfileSettings settings = new ProfileSettings();
 
     public void deleteTag(int tagId) {
         int existingTagIndex = getTagIndexByIdOrThrow(tagId);

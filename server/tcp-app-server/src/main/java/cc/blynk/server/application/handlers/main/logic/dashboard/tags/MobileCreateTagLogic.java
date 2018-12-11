@@ -1,8 +1,8 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard.tags;
 
-import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Tag;
+import cc.blynk.server.core.model.profile.Profile;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;

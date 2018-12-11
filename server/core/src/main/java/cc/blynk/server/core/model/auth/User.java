@@ -2,8 +2,8 @@ package cc.blynk.server.core.model.auth;
 
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.permissions.Role;
+import cc.blynk.server.core.model.profile.Profile;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.serialization.View;
 import cc.blynk.server.core.model.web.UserInviteDTO;

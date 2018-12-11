@@ -1,10 +1,10 @@
 package cc.blynk.server.workers.timer;
 
 import cc.blynk.server.core.dao.DeviceDao;
+import cc.blynk.server.core.dao.NotificationsDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
@@ -22,8 +22,6 @@ import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.Tile;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
-import cc.blynk.server.core.processors.EventorProcessor;
-import cc.blynk.server.notifications.push.GCMWrapper;
 import cc.blynk.utils.DateTimeUtils;
 import cc.blynk.utils.IntArray;
 import org.apache.logging.log4j.LogManager;
@@ -63,16 +61,15 @@ public class TimerWorker implements Runnable {
     private final UserDao userDao;
     private final DeviceDao deviceDao;
     private final SessionDao sessionDao;
-    private final GCMWrapper gcmWrapper;
+    private final NotificationsDao notificationsDao;
     private final AtomicReferenceArray<ConcurrentHashMap<TimerKey, BaseAction[]>> timerExecutors;
     private final static int size = 86400;
 
-    @SuppressWarnings("unchecked")
-    public TimerWorker(UserDao userDao, DeviceDao deviceDao, SessionDao sessionDao, GCMWrapper gcmWrapper) {
+    public TimerWorker(UserDao userDao, DeviceDao deviceDao, SessionDao sessionDao, NotificationsDao notificationsDao) {
         this.userDao = userDao;
         this.deviceDao = deviceDao;
         this.sessionDao = sessionDao;
-        this.gcmWrapper = gcmWrapper;
+        this.notificationsDao = notificationsDao;
         //array cell for every second in a day,
         //yes, it costs a bit of memory, but still cheap :)
         this.timerExecutors = new AtomicReferenceArray<>(size);
@@ -248,53 +245,53 @@ public class TimerWorker implements Runnable {
                     DashBoard dash = user.profile.getDashById(key.dashId);
                     if (dash != null && dash.isActive) {
                         activeTimers++;
-                        process(user.orgId, user.profile, dash, key, actions, now);
+                        process(user.orgId, user, dash, key, actions, now);
                     }
                 }
             }
         }
     }
 
-    private void process(int orgId, Profile profile, DashBoard dash, TimerKey key, BaseAction[] actions, long now) {
+    private void process(int orgId, User user, DashBoard dash, TimerKey key, BaseAction[] actions, long now) {
         for (BaseAction action : actions) {
-            if (action instanceof SetPinAction) {
-                SetPinAction setPinAction = (SetPinAction) action;
 
-                int[] deviceIds = EMPTY_INTS;
-                if (key.isTilesTimer()) {
-                    Widget widget = dash.getWidgetById(key.deviceTilesId);
-                    if (widget instanceof DeviceTiles) {
-                        IntArray intArray = new IntArray();
-                        DeviceTiles deviceTiles = (DeviceTiles) widget;
-                        for (Tile tile : deviceTiles.tiles) {
-                            if (tile.templateId == key.templateId) {
-                                intArray.add(tile.deviceId);
-                            }
+            int[] deviceIds = EMPTY_INTS;
+            if (key.isTilesTimer()) {
+                Widget widget = dash.getWidgetById(key.deviceTilesId);
+                if (widget instanceof DeviceTiles) {
+                    IntArray intArray = new IntArray();
+                    DeviceTiles deviceTiles = (DeviceTiles) widget;
+                    for (Tile tile : deviceTiles.tiles) {
+                        if (tile.templateId == key.templateId) {
+                            intArray.add(tile.deviceId);
                         }
-                        deviceIds = intArray.toArray();
                     }
-                } else {
-                    Target target;
-                    int targetId = key.deviceId;
-                    if (targetId < Tag.START_TAG_ID) {
-                        target = deviceDao.getById(targetId);
-                    } else if (targetId < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
-                        target = profile.getTagById(targetId);
-                    } else {
-                        //means widget assigned to device selector widget.
-                        target = dash.getDeviceSelector(targetId);
-                    }
-                    if (target == null) {
-                        return;
-                    }
-
-                    deviceIds = target.getDeviceIds();
+                    deviceIds = intArray.toArray();
                 }
-
-                if (deviceIds.length == 0) {
+            } else {
+                Target target;
+                int targetId = key.deviceId;
+                if (targetId < Tag.START_TAG_ID) {
+                    target = deviceDao.getById(targetId);
+                } else if (targetId < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
+                    target = user.profile.getTagById(targetId);
+                } else {
+                    //means widget assigned to device selector widget.
+                    target = dash.getDeviceSelector(targetId);
+                }
+                if (target == null) {
                     return;
                 }
 
+                deviceIds = target.getDeviceIds();
+            }
+
+            if (deviceIds.length == 0) {
+                return;
+            }
+
+            if (action instanceof SetPinAction) {
+                SetPinAction setPinAction = (SetPinAction) action;
                 for (int deviceId : deviceIds) {
                     Device device = deviceDao.getById(deviceId);
                     if (device != null) {
@@ -305,7 +302,9 @@ public class TimerWorker implements Runnable {
                 triggerTimer(orgId, sessionDao, setPinAction.makeHardwareBody(), deviceIds);
             } else if (action instanceof NotifyAction) {
                 NotifyAction notifyAction = (NotifyAction) action;
-                EventorProcessor.push(gcmWrapper, dash, notifyAction.message);
+                for (int deviceId : deviceIds) {
+                    notificationsDao.push(user, notifyAction.message, deviceId);
+                }
             }
         }
     }

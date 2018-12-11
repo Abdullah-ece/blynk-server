@@ -1,8 +1,6 @@
 package cc.blynk.server.application.handlers.main.logic;
 
-import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -28,19 +26,7 @@ public final class MobileLogoutLogic {
         ctx.writeAndFlush(ok(msg.id), ctx.voidPromise());
 
         String uid = msg.body;
-        for (DashBoard dash : user.profile.dashBoards) {
-            Notification notification = dash.getNotificationWidget();
-            if (notification != null) {
-                if (uid == null || uid.isEmpty()) {
-                    notification.androidTokens.clear();
-                    notification.iOSTokens.clear();
-                } else {
-                    notification.androidTokens.remove(uid);
-                    notification.iOSTokens.remove(uid);
-                }
-            }
-        }
-
+        user.profile.settings.notificationSettings.clear(uid);
         ctx.close();
     }
 

@@ -23,7 +23,6 @@ import cc.blynk.server.core.model.widgets.controls.TwoAxisJoystick;
 import cc.blynk.server.core.model.widgets.controls.VerticalSlider;
 import cc.blynk.server.core.model.widgets.controls.VerticalStep;
 import cc.blynk.server.core.model.widgets.notifications.Mail;
-import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.model.widgets.notifications.SMS;
 import cc.blynk.server.core.model.widgets.notifications.Twitter;
 import cc.blynk.server.core.model.widgets.others.Bluetooth;
@@ -136,7 +135,6 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
         //notifications
         @JsonSubTypes.Type(value = Twitter.class, name = "TWITTER"),
         @JsonSubTypes.Type(value = Mail.class, name = "EMAIL"),
-        @JsonSubTypes.Type(value = Notification.class, name = "NOTIFICATION"),
         @JsonSubTypes.Type(value = SMS.class, name = "SMS"),
 
         //interface

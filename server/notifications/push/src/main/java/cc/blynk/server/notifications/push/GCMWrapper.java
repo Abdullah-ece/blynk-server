@@ -1,5 +1,8 @@
 package cc.blynk.server.notifications.push;
 
+import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
+import cc.blynk.server.notifications.push.enums.Priority;
+import cc.blynk.server.notifications.push.ios.IOSGCMMessage;
 import cc.blynk.utils.properties.GCMProperties;
 import cc.blynk.utils.properties.Placeholders;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -15,6 +18,7 @@ import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.Response;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The Blynk Project.
@@ -51,6 +55,26 @@ public class GCMWrapper {
         if (errorMessage != null && errorMessage.contains("NotRegistered")) {
             log.error("Removing invalid token. UID {}", uid);
             tokens.remove(uid);
+        }
+    }
+
+    public void sendIOS(ConcurrentHashMap<String, String> tokens,
+                        Priority priority, String body, int deviceId) {
+        if (tokens.size() != 0) {
+            for (Map.Entry<String, String> entry : tokens.entrySet()) {
+                GCMMessage messageBase = new IOSGCMMessage(entry.getValue(), priority, body, deviceId);
+                send(messageBase, tokens, entry.getKey());
+            }
+        }
+    }
+
+    public void sendAndroid(ConcurrentHashMap<String, String> tokens,
+                            Priority priority, String body, int deviceId) {
+        if (tokens.size() != 0) {
+            for (Map.Entry<String, String> entry : tokens.entrySet()) {
+                GCMMessage messageBase = new AndroidGCMMessage(entry.getValue(), priority, body, deviceId);
+                send(messageBase, tokens, entry.getKey());
+            }
         }
     }
 

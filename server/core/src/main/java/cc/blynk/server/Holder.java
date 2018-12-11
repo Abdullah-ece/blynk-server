@@ -4,6 +4,7 @@ import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.DeviceTokenManager;
 import cc.blynk.server.core.dao.FileManager;
+import cc.blynk.server.core.dao.NotificationsDao;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.dao.SessionDao;
@@ -88,6 +89,8 @@ public class Holder {
 
     public final SharedTokenManager sharedTokenManager;
 
+    public final NotificationsDao notificationsDao;
+
     public Holder(ServerProperties serverProperties, MailProperties mailProperties,
                   SmsProperties smsProperties, GCMProperties gcmProperties,
                   TwitterProperties twitterProperties,
@@ -147,13 +150,14 @@ public class Holder {
         this.gcmWrapper = new GCMWrapper(gcmProperties, asyncHttpClient, serverProperties.productName);
         this.smsWrapper = new SMSWrapper(smsProperties, asyncHttpClient);
 
-        this.eventorProcessor = new EventorProcessor(
-                gcmWrapper, mailWrapper, twitterWrapper, blockingIOProcessor, stats);
-        this.timerWorker = new TimerWorker(userDao, deviceDao, sessionDao, gcmWrapper);
+        this.textHolder = new TextHolder(gcmProperties);
+        this.notificationsDao = new NotificationsDao(twitterWrapper, mailWrapper, gcmWrapper,
+                smsWrapper, blockingIOProcessor, userDao, props.getDeviceUrl(), textHolder.logEventMailBody);
+        this.eventorProcessor = new EventorProcessor(notificationsDao, stats);
+        this.timerWorker = new TimerWorker(userDao, deviceDao, sessionDao, notificationsDao);
         this.readingWidgetsWorker = new ReadingWidgetsWorker(sessionDao,
                 userDao, deviceDao, props.getAllowWithoutActiveApp());
         this.limits = new Limits(props);
-        this.textHolder = new TextHolder(gcmProperties);
 
         this.reportScheduler = new ReportScheduler(
                 1, serverProperties.httpsServerUrl, mailWrapper, reportingDiskDao, userDao.users, deviceDao);
@@ -199,8 +203,10 @@ public class Holder {
         this.gcmWrapper = gcmWrapper;
         this.smsWrapper = smsWrapper;
 
-        this.eventorProcessor = new EventorProcessor(
-                gcmWrapper, mailWrapper, twitterWrapper, blockingIOProcessor, stats);
+        this.textHolder = new TextHolder(new GCMProperties(Collections.emptyMap()));
+        this.notificationsDao = new NotificationsDao(twitterWrapper, mailWrapper, gcmWrapper,
+                smsWrapper, blockingIOProcessor, userDao, props.getDeviceUrl(), textHolder.logEventMailBody);
+        this.eventorProcessor = new EventorProcessor(notificationsDao, stats);
         this.asyncHttpClient = new DefaultAsyncHttpClient(new DefaultAsyncHttpClientConfig.Builder()
                 .setUserAgent(null)
                 .setKeepAlive(true)
@@ -209,18 +215,16 @@ public class Holder {
                 .build()
         );
 
-        this.timerWorker = new TimerWorker(userDao, deviceDao, sessionDao, gcmWrapper);
+        this.timerWorker = new TimerWorker(userDao, deviceDao, sessionDao, notificationsDao);
         this.readingWidgetsWorker = new ReadingWidgetsWorker(sessionDao,
                 userDao, deviceDao, props.getAllowWithoutActiveApp());
         this.limits = new Limits(props);
-        this.textHolder = new TextHolder(new GCMProperties(Collections.emptyMap()));
 
         this.reportScheduler = new ReportScheduler(
                 1, serverProperties.httpsServerUrl, mailWrapper, reportingDiskDao, userDao.users, deviceDao);
 
         this.sslContextHolder = new SslContextHolder(props, "test@blynk.cc");
         this.tokensPool = new TokensPool(serverProperties.getReportingFolder());
-
     }
 
     private static void disableNettyLeakDetector() {

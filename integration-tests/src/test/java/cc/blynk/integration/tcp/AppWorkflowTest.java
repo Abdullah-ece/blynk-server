@@ -1,10 +1,10 @@
 package cc.blynk.integration.tcp;
 
 import cc.blynk.integration.SingleServerInstancePerTest;
-import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.App;
 import cc.blynk.server.core.model.enums.ProvisionType;
 import cc.blynk.server.core.model.enums.Theme;
+import cc.blynk.server.core.model.profile.Profile;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import org.junit.Before;
 import org.junit.Test;

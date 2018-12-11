@@ -2,7 +2,7 @@ package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.application.handlers.sharing.auth.MobileShareStateHolder;
 import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.Profile;
+import cc.blynk.server.core.model.profile.Profile;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import io.netty.channel.ChannelHandlerContext;
 
