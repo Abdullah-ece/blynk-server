@@ -1,6 +1,7 @@
 package cc.blynk.server.workers.timer;
 
 import cc.blynk.server.core.dao.DeviceDao;
+import cc.blynk.server.core.dao.NotificationsDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.DashBoard;
@@ -8,7 +9,6 @@ import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Tag;
-import cc.blynk.server.core.model.profile.Profile;
 import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Timer;
@@ -22,8 +22,6 @@ import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.Tile;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
-import cc.blynk.server.core.processors.EventorProcessor;
-import cc.blynk.server.notifications.push.GCMWrapper;
 import cc.blynk.utils.DateTimeUtils;
 import cc.blynk.utils.IntArray;
 import org.apache.logging.log4j.LogManager;
@@ -63,15 +61,15 @@ public class TimerWorker implements Runnable {
     private final UserDao userDao;
     private final DeviceDao deviceDao;
     private final SessionDao sessionDao;
-    private final GCMWrapper gcmWrapper;
+    private final NotificationsDao notificationsDao;
     private final AtomicReferenceArray<ConcurrentHashMap<TimerKey, BaseAction[]>> timerExecutors;
     private final static int size = 86400;
 
-    public TimerWorker(UserDao userDao, DeviceDao deviceDao, SessionDao sessionDao, GCMWrapper gcmWrapper) {
+    public TimerWorker(UserDao userDao, DeviceDao deviceDao, SessionDao sessionDao, NotificationsDao notificationsDao) {
         this.userDao = userDao;
         this.deviceDao = deviceDao;
         this.sessionDao = sessionDao;
-        this.gcmWrapper = gcmWrapper;
+        this.notificationsDao = notificationsDao;
         //array cell for every second in a day,
         //yes, it costs a bit of memory, but still cheap :)
         this.timerExecutors = new AtomicReferenceArray<>(size);
@@ -247,14 +245,14 @@ public class TimerWorker implements Runnable {
                     DashBoard dash = user.profile.getDashById(key.dashId);
                     if (dash != null && dash.isActive) {
                         activeTimers++;
-                        process(user.orgId, user.profile, dash, key, actions, now);
+                        process(user.orgId, user, dash, key, actions, now);
                     }
                 }
             }
         }
     }
 
-    private void process(int orgId, Profile profile, DashBoard dash, TimerKey key, BaseAction[] actions, long now) {
+    private void process(int orgId, User user, DashBoard dash, TimerKey key, BaseAction[] actions, long now) {
         for (BaseAction action : actions) {
 
             int[] deviceIds = EMPTY_INTS;
@@ -276,7 +274,7 @@ public class TimerWorker implements Runnable {
                 if (targetId < Tag.START_TAG_ID) {
                     target = deviceDao.getById(targetId);
                 } else if (targetId < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
-                    target = profile.getTagById(targetId);
+                    target = user.profile.getTagById(targetId);
                 } else {
                     //means widget assigned to device selector widget.
                     target = dash.getDeviceSelector(targetId);
@@ -305,8 +303,7 @@ public class TimerWorker implements Runnable {
             } else if (action instanceof NotifyAction) {
                 NotifyAction notifyAction = (NotifyAction) action;
                 for (int deviceId : deviceIds) {
-                    EventorProcessor.push(gcmWrapper,
-                            profile.settings.notificationSettings, deviceId, notifyAction.message);
+                    notificationsDao.push(user, notifyAction.message, deviceId);
                 }
             }
         }

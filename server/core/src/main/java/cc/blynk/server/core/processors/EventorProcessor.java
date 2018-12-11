@@ -1,13 +1,12 @@
 package cc.blynk.server.core.processors;
 
-import cc.blynk.server.core.BlockingIOProcessor;
+import cc.blynk.server.core.dao.NotificationsDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.WidgetProperty;
-import cc.blynk.server.core.model.profile.NotificationSettings;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.notifications.Mail;
 import cc.blynk.server.core.model.widgets.notifications.Twitter;
@@ -21,9 +20,6 @@ import cc.blynk.server.core.model.widgets.others.eventor.model.action.notificati
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.NotifyAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.TwitAction;
 import cc.blynk.server.core.stats.GlobalStats;
-import cc.blynk.server.notifications.mail.MailWrapper;
-import cc.blynk.server.notifications.push.GCMWrapper;
-import cc.blynk.server.notifications.twitter.TwitterWrapper;
 import cc.blynk.utils.NumberUtil;
 import cc.blynk.utils.validators.BlynkEmailValidator;
 import io.netty.handler.codec.http.HttpResponseStatus;
@@ -48,42 +44,19 @@ public class EventorProcessor {
 
     private static final Logger log = LogManager.getLogger(EventorProcessor.class);
 
-    private final GCMWrapper gcmWrapper;
-    private final TwitterWrapper twitterWrapper;
-    private final MailWrapper mailWrapper;
-    private final BlockingIOProcessor blockingIOProcessor;
+    private final NotificationsDao notificationsDao;
     private final GlobalStats globalStats;
 
-    public EventorProcessor(GCMWrapper gcmWrapper, MailWrapper mailWrapper, TwitterWrapper twitterWrapper,
-                            BlockingIOProcessor blockingIOProcessor, GlobalStats stats) {
-        this.gcmWrapper = gcmWrapper;
-        this.mailWrapper = mailWrapper;
-        this.twitterWrapper = twitterWrapper;
-        this.blockingIOProcessor = blockingIOProcessor;
+    public EventorProcessor(NotificationsDao notificationsDao, GlobalStats stats) {
+        this.notificationsDao = notificationsDao;
         this.globalStats = stats;
-    }
-
-    public static void push(GCMWrapper gcmWrapper, NotificationSettings notificationSettings,
-                            int deviceId, String body) {
-        if (NotificationSettings.isWrongBody(body)) {
-            log.debug("Wrong push body.");
-            return;
-        }
-
-        if (notificationSettings.hasNoToken()) {
-            log.debug("User has no access token provided for eventor push.");
-            return;
-        }
-
-        gcmWrapper.sendAndroid(notificationSettings.androidTokens, notificationSettings.priority, body, deviceId);
-        gcmWrapper.sendIOS(notificationSettings.iOSTokens, notificationSettings.priority, body, deviceId);
     }
 
     private void execute(User user, Device device, DashBoard dash,
                          String triggerValue, NotificationAction notificationAction) {
         String body = PIN_PATTERN.matcher(notificationAction.message).replaceAll(triggerValue);
         if (notificationAction instanceof NotifyAction) {
-            push(gcmWrapper, user.profile.settings.notificationSettings, device.id, body);
+            notificationsDao.push(user, body, device.id);
         } else if (notificationAction instanceof TwitAction) {
             twit(dash, body);
         } else if (notificationAction instanceof MailAction) {
@@ -144,9 +117,9 @@ public class EventorProcessor {
             return;
         }
 
-        blockingIOProcessor.execute(() -> {
+        notificationsDao.blockingIOProcessor.execute(() -> {
             try {
-                mailWrapper.sendText(to, subject, body);
+                notificationsDao.mailWrapper.sendText(to, subject, body);
             } catch (Exception e) {
                 log.warn("Error sending email from eventor. From user {}, to : {}. Reason : {}",
                         user.email, to, e.getMessage());
@@ -172,7 +145,7 @@ public class EventorProcessor {
             return;
         }
 
-        twitterWrapper.send(twitterWidget.token, twitterWidget.secret, body,
+        notificationsDao.twitterWrapper.send(twitterWidget.token, twitterWidget.secret, body,
                 new AsyncCompletionHandler<>() {
                     @Override
                     public Response onCompleted(Response response) {

@@ -1,10 +1,10 @@
 package cc.blynk.server.hardware.handlers.hardware.logic;
 
+import cc.blynk.server.core.dao.NotificationsDao;
 import cc.blynk.server.core.model.profile.NotificationSettings;
 import cc.blynk.server.core.processors.NotificationBase;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
-import cc.blynk.server.notifications.push.GCMWrapper;
 import cc.blynk.utils.properties.Placeholders;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -27,11 +27,11 @@ public class PushLogic extends NotificationBase {
 
     private static final Logger log = LogManager.getLogger(PushLogic.class);
 
-    private final GCMWrapper gcmWrapper;
+    private final NotificationsDao notificationsDao;
 
-    public PushLogic(GCMWrapper gcmWrapper, long notificationQuotaLimit) {
+    public PushLogic(NotificationsDao notificationsDao, long notificationQuotaLimit) {
         super(notificationQuotaLimit);
-        this.gcmWrapper = gcmWrapper;
+        this.notificationsDao = notificationsDao;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
@@ -63,10 +63,7 @@ public class PushLogic extends NotificationBase {
 
         int deviceId = state.device.id;
         log.trace("Sending push with message : '{}'.", message.body);
-        gcmWrapper.sendAndroid(notificationSettings.androidTokens,
-                notificationSettings.priority, updatedBody, deviceId);
-        gcmWrapper.sendIOS(notificationSettings.iOSTokens,
-                notificationSettings.priority, updatedBody, deviceId);
+        notificationsDao.send(notificationSettings, updatedBody, deviceId);
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }
 

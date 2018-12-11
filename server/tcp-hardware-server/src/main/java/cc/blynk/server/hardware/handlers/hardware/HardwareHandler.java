@@ -67,11 +67,10 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
         this.hardwareLogEventLogic = new HardwareLogEventLogic(holder);
 
         this.email = new MailLogic(holder);
-        this.push = new PushLogic(holder.gcmWrapper, holder.limits.notificationPeriodLimitSec);
+        this.push = new PushLogic(holder.notificationsDao, holder.limits.notificationPeriodLimitSec);
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         if (type.isInstance(msg)) {
             try {

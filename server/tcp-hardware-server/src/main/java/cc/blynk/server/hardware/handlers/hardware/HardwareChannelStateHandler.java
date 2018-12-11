@@ -6,7 +6,6 @@ import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.web.product.EventType;
 import cc.blynk.server.db.ReportingDBManager;
-import cc.blynk.server.notifications.push.GCMWrapper;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -30,14 +29,10 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
     private static final Logger log = LogManager.getLogger(HardwareChannelStateHandler.class);
 
     private final SessionDao sessionDao;
-    private final GCMWrapper gcmWrapper;
-    private final String pushNotificationBody;
     private final ReportingDBManager reportingDBManager;
 
     public HardwareChannelStateHandler(Holder holder) {
         this.sessionDao = holder.sessionDao;
-        this.gcmWrapper = holder.gcmWrapper;
-        this.pushNotificationBody = holder.textHolder.pushNotificationBody;
         this.reportingDBManager = holder.reportingDBManager;
     }
 
