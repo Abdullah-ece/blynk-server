@@ -4,7 +4,7 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.PermissionBasedLogic;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.dto.DeviceDTO;
+import cc.blynk.server.core.model.dto.DeviceMobileDTO;
 import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
@@ -48,7 +48,7 @@ public final class MobileGetOrgDevicesLogic implements PermissionBasedLogic {
         int orgId = user.orgId;
 
         Organization org = organizationDao.getOrgByIdOrThrow(orgId);
-        List<DeviceDTO> deviceDTOs = org.getAllDeviceDTOs(false);
+        List<DeviceMobileDTO> deviceDTOs = org.getAllMobileDeviceDTOs();
         String devicesJson = JsonParser.toJson(deviceDTOs);
 
         if (ctx.channel().isWritable()) {

@@ -438,7 +438,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
     }
 
     @Test
-    public void mobileListShouldNotReturnMeta() throws Exception {
+    public void mobileListShouldNotReturnMetaAndWebDash() throws Exception {
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
 
         Product product = new Product();
@@ -453,6 +453,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         client.createProduct(orgId, product);
         ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
+        assertNotNull(fromApiProduct.webDashboard);
 
         Device newDevice = new Device();
         newDevice.name = "My New Device";
@@ -477,6 +478,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertEquals("My product", newDeviceDTO.productName);
         assertEquals("MyLogo.png", newDeviceDTO.productLogoUrl);
         assertNull(newDeviceDTO.metaFields);
+        assertNull(newDeviceDTO.webDashboard);
     }
 
     @Test

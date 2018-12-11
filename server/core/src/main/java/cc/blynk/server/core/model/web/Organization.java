@@ -2,6 +2,7 @@ package cc.blynk.server.core.model.web;
 
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.dto.DeviceDTO;
+import cc.blynk.server.core.model.dto.DeviceMobileDTO;
 import cc.blynk.server.core.model.dto.OrganizationDTO;
 import cc.blynk.server.core.model.exceptions.ProductNotFoundException;
 import cc.blynk.server.core.model.permissions.Role;
@@ -263,6 +264,17 @@ public class Organization {
         return result;
     }
 
+    public List<DeviceMobileDTO> getAllMobileDeviceDTOs() {
+        var result = new ArrayList<DeviceMobileDTO>();
+        for (Product product : products) {
+            for (Device device : product.devices) {
+                DeviceMobileDTO deviceDTO = new DeviceMobileDTO(device, product, null);
+                result.add(deviceDTO);
+            }
+        }
+        return result;
+    }
+
     public List<DeviceDTO> getAllDeviceDTOs(boolean needMeta) {
         var result = new ArrayList<DeviceDTO>();
         for (Product product : products) {
@@ -274,6 +286,19 @@ public class Organization {
                     deviceDTO = new DeviceDTO(device, product, name, null);
                 }
                 result.add(deviceDTO);
+            }
+        }
+        return result;
+    }
+
+    public List<DeviceMobileDTO> getDevicesByOwnerMobileDTOs(String ownerEmail) {
+        var result = new ArrayList<DeviceMobileDTO>();
+        for (Product product : products) {
+            for (Device device : product.devices) {
+                if (device.hasOwner(ownerEmail)) {
+                    DeviceMobileDTO deviceMobileDTO = new DeviceMobileDTO(device, product, null);
+                    result.add(deviceMobileDTO);
+                }
             }
         }
         return result;
