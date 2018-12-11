@@ -3,7 +3,6 @@ package cc.blynk.server.web.handlers.logic.organization;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.OrganizationDao;
-import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.MetaField;
@@ -21,7 +20,6 @@ import java.util.List;
 import java.util.Set;
 
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
-import static cc.blynk.server.internal.WebByteBufUtil.userHasNoAccessToOrg;
 
 /**
  * The Blynk Project.
@@ -46,14 +44,6 @@ public class WebGetProductLocationsLogic {
         String searchString = null;
         if (split.length == 2) {
             searchString = split[1];
-        }
-
-        int orgId = organizationDao.getOrganizationIdByProductId(productId);
-        User user = state.user;
-        if (!organizationDao.hasAccess(user, orgId)) {
-            log.error("User {} tries to access organization he has no access.", state.user.email);
-            ctx.writeAndFlush(userHasNoAccessToOrg(message.id), ctx.voidPromise());
-            return;
         }
 
         List<Device> devices = deviceDao.getAllByProductId(productId);

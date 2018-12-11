@@ -16,7 +16,6 @@ import org.apache.logging.log4j.Logger;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_EDIT_USERS;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 import static cc.blynk.server.internal.WebByteBufUtil.json;
-import static cc.blynk.server.internal.WebByteBufUtil.userHasNoAccessToOrg;
 import static cc.blynk.utils.StringUtils.split2;
 
 /**
@@ -62,15 +61,6 @@ public final class WebEditUserInfoLogic implements PermissionBasedLogic {
             log.error("Bad data for user info update for {}.", user.email);
             ctx.writeAndFlush(json(message.id, "Bad data for user info update."), ctx.voidPromise());
             return;
-        }
-
-        //todo should be for admins only
-        if (!user.isSuperAdmin()) {
-            if (orgId != user.orgId) {
-                log.warn("User {} tries to access organization he has no access.", user.email);
-                ctx.writeAndFlush(userHasNoAccessToOrg(message.id), ctx.voidPromise());
-                return;
-            }
         }
 
         User userToUpdate = userDao.getByName(userInviteDTO.email);

@@ -3,7 +3,6 @@ package cc.blynk.server.web.handlers.logic.organization;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.PermissionBasedLogic;
 import cc.blynk.server.core.dao.OrganizationDao;
-import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.dto.OrganizationDTO;
 import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.web.Organization;
@@ -13,7 +12,6 @@ import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_VIEW;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
-import static cc.blynk.server.internal.WebByteBufUtil.userHasNoAccessToOrg;
 
 /**
  * The Blynk Project.
@@ -51,15 +49,6 @@ public class WebGetOrganizationLogic implements PermissionBasedLogic {
 
         //todo refactor when permissions ready
         Organization organization = organizationDao.getOrgByIdOrThrow(orgId);
-
-        User user = state.user;
-        if (!user.isSuperAdmin()) {
-            if (orgId != user.orgId) {
-                log.error("User {} tries to access organization he has no access.", user.email);
-                ctx.writeAndFlush(userHasNoAccessToOrg(message.id), ctx.voidPromise());
-                return;
-            }
-        }
 
         String parentOrgName = organizationDao.getParentOrgName(organization.parentId);
 

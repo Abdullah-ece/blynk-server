@@ -17,7 +17,6 @@ import java.util.List;
 
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_VIEW_USERS;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
-import static cc.blynk.server.internal.WebByteBufUtil.userHasNoAccessToOrg;
 
 /**
  * The Blynk Project.
@@ -51,11 +50,6 @@ public class WebGetOrgUsersLogic implements PermissionBasedLogic {
         int orgId = Integer.parseInt(message.body);
 
         User user = state.user;
-        if (!organizationDao.hasAccess(user, orgId)) {
-            log.error("User {} tries to access organization he has no access.");
-            ctx.writeAndFlush(userHasNoAccessToOrg(message.id), ctx.voidPromise());
-            return;
-        }
 
         if (ctx.channel().isWritable()) {
             List<User> users = userDao.getUsersByOrgId(orgId, user.email);
