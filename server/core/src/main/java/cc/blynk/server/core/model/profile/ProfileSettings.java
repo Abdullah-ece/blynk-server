@@ -17,8 +17,7 @@ public class ProfileSettings {
                 this.notificationSettings.iOSTokens,     //this field is preserved
                 profileSettings.notificationSettings.notifyWhenOffline,
                 profileSettings.notificationSettings.notifyWhenOfflineIgnorePeriod,
-                profileSettings.notificationSettings.priority,
-                profileSettings.notificationSettings.soundUri
+                profileSettings.notificationSettings.priority
         );
     }
 

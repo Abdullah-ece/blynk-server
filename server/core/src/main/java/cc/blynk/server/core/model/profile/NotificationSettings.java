@@ -29,15 +29,12 @@ public class NotificationSettings {
 
     public final Priority priority;
 
-    public final String soundUri;
-
     public NotificationSettings() {
         this.androidTokens = new ConcurrentHashMap<>();
         this.iOSTokens = new ConcurrentHashMap<>();
         this.notifyWhenOffline = false;
         this.notifyWhenOfflineIgnorePeriod = 0;
         this.priority = Priority.high;
-        this.soundUri = null;
     }
 
     @JsonCreator
@@ -45,14 +42,12 @@ public class NotificationSettings {
                                 @JsonProperty("iOSTokens") ConcurrentHashMap<String, String> iOSTokens,
                                 @JsonProperty("notifyWhenOffline") boolean notifyWhenOffline,
                                 @JsonProperty("notifyWhenOfflineIgnorePeriod") int notifyWhenOfflineIgnorePeriod,
-                                @JsonProperty("priority") Priority priority,
-                                @JsonProperty("soundUri") String soundUri) {
+                                @JsonProperty("priority") Priority priority) {
         this.androidTokens = androidTokens == null ? new ConcurrentHashMap<>() : androidTokens;
         this.iOSTokens = iOSTokens == null ? new ConcurrentHashMap<>() : iOSTokens;
         this.notifyWhenOffline = notifyWhenOffline;
         this.notifyWhenOfflineIgnorePeriod = notifyWhenOfflineIgnorePeriod;
         this.priority = priority == null ? Priority.high : priority;
-        this.soundUri = soundUri;
     }
 
     public static boolean isWrongBody(String body) {

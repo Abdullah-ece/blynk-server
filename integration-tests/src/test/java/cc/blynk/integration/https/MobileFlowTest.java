@@ -38,7 +38,7 @@ public class MobileFlowTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         ProfileSettings profileSettings = new ProfileSettings();
         ConcurrentHashMap<String, String> tokensMap = new ConcurrentHashMap<>();
         tokensMap.put("123", "1234");
-        profileSettings.notificationSettings = new NotificationSettings(tokensMap, tokensMap, true, -1, Priority.normal, "!23");
+        profileSettings.notificationSettings = new NotificationSettings(tokensMap, tokensMap, true, -1, Priority.normal);
         appClient.updateProfileSettings(profileSettings);
         appClient.verifyResult(ok(2));
 
@@ -53,7 +53,6 @@ public class MobileFlowTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         assertTrue(notificationSettings.notifyWhenOffline);
         assertEquals(-1, notificationSettings.notifyWhenOfflineIgnorePeriod);
         assertEquals(Priority.normal, notificationSettings.priority);
-        assertEquals("!23", notificationSettings.soundUri);
         assertEquals(0, notificationSettings.androidTokens.size());
         assertEquals(0, notificationSettings.iOSTokens.size());
     }
@@ -74,7 +73,7 @@ public class MobileFlowTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         ProfileSettings profileSettings = new ProfileSettings();
         ConcurrentHashMap<String, String> tokensMap = new ConcurrentHashMap<>();
         tokensMap.put("123", "1234");
-        profileSettings.notificationSettings = new NotificationSettings(tokensMap, tokensMap, true, -1, Priority.normal, "!23");
+        profileSettings.notificationSettings = new NotificationSettings(tokensMap, tokensMap, true, -1, Priority.normal);
         appClient.updateProfileSettings(profileSettings);
         appClient.verifyResult(ok(3));
 
@@ -89,7 +88,6 @@ public class MobileFlowTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         assertTrue(notificationSettings.notifyWhenOffline);
         assertEquals(-1, notificationSettings.notifyWhenOfflineIgnorePeriod);
         assertEquals(Priority.normal, notificationSettings.priority);
-        assertEquals("!23", notificationSettings.soundUri);
         assertEquals(1, notificationSettings.androidTokens.size());
         assertEquals("token", notificationSettings.androidTokens.get("android"));
         assertEquals(0, notificationSettings.iOSTokens.size());
