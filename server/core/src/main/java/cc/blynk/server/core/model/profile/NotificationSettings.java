@@ -25,7 +25,7 @@ public class NotificationSettings {
 
     public int notifyWhenOfflineIgnorePeriod;
 
-    public Priority priority = Priority.normal;
+    public Priority priority = Priority.high;
 
     public String soundUri;
 
