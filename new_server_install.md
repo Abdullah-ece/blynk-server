@@ -19,6 +19,9 @@
         sudo add-apt-repository ppa:openjdk-r/ppa \
         && sudo apt-get update -q \
         && sudo apt install -y openjdk-11-jdk
+
+        sudo rm /etc/ssl/certs/java/cacerts
+        sudo update-ca-certificates -f
         
         wget "https://github.com/blynkkk/blynk-server/releases/download/v0.40.2/server-0.40.2.jar"
         
