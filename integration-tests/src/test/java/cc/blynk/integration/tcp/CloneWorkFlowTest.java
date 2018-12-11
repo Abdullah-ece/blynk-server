@@ -2,8 +2,8 @@ package cc.blynk.integration.tcp;
 
 import cc.blynk.integration.SingleServerInstancePerTestWithDB;
 import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.profile.Profile;
 import cc.blynk.server.core.model.widgets.controls.Slider;
 import cc.blynk.utils.StringUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;

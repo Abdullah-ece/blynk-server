@@ -2,9 +2,9 @@ package cc.blynk.server.application.handlers.main.logic.graph;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Tag;
+import cc.blynk.server.core.model.profile.Profile;
 import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;

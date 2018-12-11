@@ -7,9 +7,9 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.WidgetProperty;
+import cc.blynk.server.core.model.profile.NotificationSettings;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.notifications.Mail;
-import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.model.widgets.notifications.Twitter;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.model.widgets.others.eventor.Rule;
@@ -63,26 +63,27 @@ public class EventorProcessor {
         this.globalStats = stats;
     }
 
-    public static void push(GCMWrapper gcmWrapper, DashBoard dash, String body) {
-        if (Notification.isWrongBody(body)) {
+    public static void push(GCMWrapper gcmWrapper, NotificationSettings notificationSettings,
+                            int deviceId, String body) {
+        if (NotificationSettings.isWrongBody(body)) {
             log.debug("Wrong push body.");
             return;
         }
 
-        Notification widget = dash.getNotificationWidget();
-
-        if (widget == null || widget.hasNoToken()) {
+        if (notificationSettings.hasNoToken()) {
             log.debug("User has no access token provided for eventor push.");
             return;
         }
 
-        widget.push(gcmWrapper, body, dash.id);
+        gcmWrapper.sendAndroid(notificationSettings.androidTokens, notificationSettings.priority, body, deviceId);
+        gcmWrapper.sendIOS(notificationSettings.iOSTokens, notificationSettings.priority, body, deviceId);
     }
 
-    private void execute(User user, DashBoard dash, String triggerValue, NotificationAction notificationAction) {
+    private void execute(User user, Device device, DashBoard dash,
+                         String triggerValue, NotificationAction notificationAction) {
         String body = PIN_PATTERN.matcher(notificationAction.message).replaceAll(triggerValue);
         if (notificationAction instanceof NotifyAction) {
-            push(gcmWrapper, dash, body);
+            push(gcmWrapper, user.profile.settings.notificationSettings, device.id, body);
         } else if (notificationAction instanceof TwitAction) {
             twit(dash, body);
         } else if (notificationAction instanceof MailAction) {
@@ -112,7 +113,7 @@ public class EventorProcessor {
                                 } else if (action instanceof SetPropertyPinAction) {
                                     execute(session, dash, device, (SetPropertyPinAction) action);
                                 } else if (action instanceof NotificationAction) {
-                                    execute(user, dash, triggerValue, (NotificationAction) action);
+                                    execute(user, device, dash, triggerValue, (NotificationAction) action);
                                 }
                                 globalStats.mark(EVENTOR);
                             }

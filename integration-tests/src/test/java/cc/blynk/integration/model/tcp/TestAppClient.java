@@ -3,11 +3,11 @@ package cc.blynk.integration.model.tcp;
 import cc.blynk.client.handlers.decoders.AppClientMessageDecoder;
 import cc.blynk.integration.model.SimpleClientHandler;
 import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.App;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.dto.DeviceDTO;
+import cc.blynk.server.core.model.profile.Profile;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.widgets.Widget;
@@ -357,6 +357,10 @@ public class TestAppClient extends BaseTestAppClient {
 
     public void getProvisionToken(Device device) {
         send("getProvisionToken " + device.toString());
+    }
+
+    public void addPushToken(String uid, String token) {
+        send("addPushToken " + uid + BODY_SEPARATOR + token);
     }
 
     public void createApp(App app) {

@@ -8,13 +8,13 @@ package cc.blynk.server.notifications.push.ios;
 class IOSBody {
 
     private final String body;
-    private final int dashId;
+    private final int deviceId;
     private final String sound;
     private String title;
 
-    IOSBody(String body, int dashId) {
+    IOSBody(String body, int deviceId) {
         this.body = body;
-        this.dashId = dashId;
+        this.deviceId = deviceId;
         this.sound = "default";
     }
 

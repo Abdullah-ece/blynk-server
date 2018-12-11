@@ -17,7 +17,6 @@ import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_RECEIVERS;
  */
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
-        include = JsonTypeInfo.As.PROPERTY,
         property = "type")
 @JsonSubTypes({
 
@@ -72,6 +71,14 @@ public abstract class Event implements CopyObject<Event> {
             this.smsNotifications = EMPTY_RECEIVERS;
         } else {
             this.smsNotifications = ArrayUtil.copy(smsNotifications, EventReceiver.class);
+        }
+    }
+
+    public String getDescription(String overrideDescription) {
+        if (overrideDescription == null || overrideDescription.isEmpty()) {
+            return this.description == null ? "" : this.description;
+        } else {
+            return overrideDescription;
         }
     }
 

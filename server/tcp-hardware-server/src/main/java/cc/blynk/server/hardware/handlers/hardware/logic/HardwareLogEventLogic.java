@@ -4,7 +4,12 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.SessionDao;
+import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.profile.NotificationSettings;
 import cc.blynk.server.core.model.web.product.EventReceiver;
+import cc.blynk.server.core.model.web.product.events.Event;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.db.ReportingDBManager;
@@ -47,6 +52,7 @@ public class HardwareLogEventLogic {
     private final String deviceUrl;
     private final String eventLogEmailBody;
     private final SessionDao sessionDao;
+    private final UserDao userDao;
 
     public HardwareLogEventLogic(Holder holder) {
         this.organizationDao = holder.organizationDao;
@@ -57,6 +63,7 @@ public class HardwareLogEventLogic {
         this.deviceUrl = holder.props.getDeviceUrl();
         this.eventLogEmailBody = holder.textHolder.logEventMailBody;
         this.sessionDao = holder.sessionDao;
+        this.userDao = holder.userDao;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
@@ -108,27 +115,8 @@ public class HardwareLogEventLogic {
             if (metaField != null) {
                 String to = metaField.getNotificationEmail();
                 if (to != null && !to.isEmpty()) {
-                    String eventDescription;
-                    if (desc == null || desc.isEmpty()) {
-                        eventDescription = event.description == null ? "" : event.description;
-                    } else {
-                        eventDescription = desc;
-                    }
-                    String subj = device.name + ": " + event.name;
-                    String body = eventLogEmailBody
-                            .replace(DEVICE_URL, deviceUrl + device.id)
-                            .replace(DEVICE_NAME, device.name)
-                            .replace(DATA_TIME, LOG_EVENT_FORMATTER.format(LocalDateTime.now()))
-                            .replace(EVENT_NAME, event.name)
-                            .replace(EVENT_DESCRIPTION, eventDescription);
-                    blockingIOProcessor.execute(() -> {
-                        try {
-                            mailWrapper.sendHtml(to, subj, body);
-                        } catch (Exception e) {
-                            log.error("Error sending email from hardware. From user {}, to : {}. Reason : {}",
-                                    to, e.getMessage());
-                        }
-                    });
+                    String eventDescription = event.getDescription(desc);
+                    email(to, eventDescription, event, device);
                 }
             }
         }
@@ -136,23 +124,43 @@ public class HardwareLogEventLogic {
         for (EventReceiver pushReceiver : event.pushNotifications) {
             var metaField = device.findMetaFieldById(pushReceiver.metaFieldId);
             if (metaField != null) {
-                //todo finish
-                push(state, "You received new event : " + event.name);
+                String to = metaField.getNotificationEmail();
+                if (to != null && !to.isEmpty()) {
+                    push(to, "You received new event : " + event.name, device.id);
+                }
             }
         }
     }
 
-    private void push(HardwareStateHolder state, String message) {
-        /*
-        var dash = state.dash;
-        var widget = dash.getWidgetByType(Notification.class);
+    private void email(String to, String eventDescription, Event event, Device device) {
+        String subj = device.name + ": " + event.name;
+        String body = eventLogEmailBody
+                .replace(DEVICE_URL, deviceUrl + device.id)
+                .replace(DEVICE_NAME, device.name)
+                .replace(DATA_TIME, LOG_EVENT_FORMATTER.format(LocalDateTime.now()))
+                .replace(EVENT_NAME, event.name)
+                .replace(EVENT_DESCRIPTION, eventDescription);
+        blockingIOProcessor.execute(() -> {
+            try {
+                mailWrapper.sendHtml(to, subj, body);
+            } catch (Exception e) {
+                log.error("Error sending email from hardware. From user {}, to : {}. Reason : {}",
+                        to, e.getMessage());
+            }
+        });
+    }
 
-        if (widget == null || widget.hasNoToken()) {
-            log.debug("User has no access token provided for push widget for event log.");
+    private void push(String to, String body, int deviceId) {
+        User user = userDao.getByName(to);
+        if (user == null) {
+            log.trace("Receiver {} for push notifications not exists.", to);
             return;
         }
-        widget.push(gcmWrapper, message, state.dash.id);
-        */
+
+        NotificationSettings notificationSettings = user.profile.settings.notificationSettings;
+
+        gcmWrapper.sendAndroid(notificationSettings.androidTokens, notificationSettings.priority, body, deviceId);
+        gcmWrapper.sendIOS(notificationSettings.iOSTokens, notificationSettings.priority, body, deviceId);
     }
 
 }

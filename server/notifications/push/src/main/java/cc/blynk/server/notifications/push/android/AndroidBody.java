@@ -8,11 +8,11 @@ package cc.blynk.server.notifications.push.android;
 class AndroidBody {
 
     private final String message;
-    private final int dashId;
+    private final int deviceId;
 
-    AndroidBody(String message, int dashId) {
+    AndroidBody(String message, int deviceId) {
         this.message = message;
-        this.dashId = dashId;
+        this.deviceId = deviceId;
     }
 
 }

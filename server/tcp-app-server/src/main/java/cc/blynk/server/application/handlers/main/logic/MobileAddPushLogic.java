@@ -1,6 +1,5 @@
 package cc.blynk.server.application.handlers.main.logic;
 
-import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.mobile.MobileStateHolder;
 import cc.blynk.utils.StringUtils;
@@ -26,25 +25,28 @@ public final class MobileAddPushLogic {
     public static void messageReceived(ChannelHandlerContext ctx, MobileStateHolder state, StringMessage message) {
         var splitBody = StringUtils.split3(message.body);
 
-        var dashId = Integer.parseInt(splitBody[0]);
-        var uid = splitBody[1];
-        var token = splitBody[2];
+        String uid;
+        String token;
 
-        var dash = state.user.profile.getDashByIdOrThrow(dashId);
-
-        var notification = dash.getNotificationWidget();
-
-        if (notification == null) {
-            log.error("No notification widget.");
-            throw new JsonException("No notification widget.");
+        //new format
+        if (splitBody.length == 2) {
+            uid = splitBody[0];
+            token = splitBody[1];
+        } else {
+            //todo not needed anymore
+            //var dashId = Integer.parseInt(splitBody[0]);
+            uid = splitBody[1];
+            token = splitBody[2];
         }
+
+        var notificationSettings = state.user.profile.settings.notificationSettings;
 
         switch (state.version.osType) {
             case ANDROID :
-                notification.androidTokens.put(uid, token);
+                notificationSettings.androidTokens.put(uid, token);
                 break;
             case IOS :
-                notification.iOSTokens.put(uid, token);
+                notificationSettings.iOSTokens.put(uid, token);
                 break;
         }
 

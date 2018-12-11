@@ -8,7 +8,6 @@ import cc.blynk.integration.model.tcp.TestSslHardClient;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DataStream;
-import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.App;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.BoardType;
@@ -17,9 +16,14 @@ import cc.blynk.server.core.model.dto.ProductDTO;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.ProvisionType;
 import cc.blynk.server.core.model.enums.Theme;
+import cc.blynk.server.core.model.profile.Profile;
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.model.web.product.EventReceiver;
 import cc.blynk.server.core.model.web.product.MetaField;
+import cc.blynk.server.core.model.web.product.MetadataType;
 import cc.blynk.server.core.model.web.product.Product;
+import cc.blynk.server.core.model.web.product.events.CriticalEvent;
+import cc.blynk.server.core.model.web.product.events.Event;
 import cc.blynk.server.core.model.web.product.metafields.DeviceNameMetaField;
 import cc.blynk.server.core.model.web.product.metafields.DeviceOwnerMetaField;
 import cc.blynk.server.core.model.web.product.metafields.DeviceReferenceMetaField;
@@ -35,6 +39,7 @@ import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.notifications.mail.QrHolder;
+import cc.blynk.server.notifications.push.enums.Priority;
 import cc.blynk.utils.SHA256Util;
 import cc.blynk.utils.StringUtils;
 import junit.framework.TestCase;
@@ -45,6 +50,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static cc.blynk.integration.APIBaseTest.createDeviceNameMeta;
 import static cc.blynk.integration.APIBaseTest.createDeviceOwnerMeta;
@@ -55,6 +61,7 @@ import static cc.blynk.integration.TestUtil.b;
 import static cc.blynk.integration.TestUtil.defaultClient;
 import static cc.blynk.integration.TestUtil.deviceConnected;
 import static cc.blynk.integration.TestUtil.hardware;
+import static cc.blynk.integration.TestUtil.logEvent;
 import static cc.blynk.integration.TestUtil.loggedDefaultClient;
 import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.integration.TestUtil.sleep;
@@ -905,6 +912,108 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         assertEquals(1, tile.dataStream.pin);
         assertEquals(PinType.VIRTUAL, tile.dataStream.pinType);
         assertEquals("123", tile.dataStream.value);
+    }
+
+    @Test
+    public void testProvisionFlowWithDeviceTilesAndPushNotificationsWork() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+
+        Product product = new Product();
+        product.name = "My product";
+        product.metaFields = new MetaField[] {
+                createMeasurementMeta(1, "Jopa", 1, MeasurementUnit.Celsius),
+                createDeviceNameMeta(2, "Device Name", "My Default device Name", false),
+                createDeviceOwnerMeta(3, "Device Owner", null, false),
+                createTemplateIdMeta(4, "Template Id", "TMPL0001")
+        };
+        Event criticalEvent = new CriticalEvent(
+                1,
+                "Temp is super high",
+                "This is my description",
+                false,
+                "temp_is_high" ,
+                null,
+                new EventReceiver[] {
+                        new EventReceiver(3, MetadataType.DeviceOwner, "Device Owner")
+                },
+                null
+        );
+        product.events = new Event[] {
+                criticalEvent
+        };
+
+        client.createProduct(orgId, product);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
+        assertNotNull(fromApiProduct);
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.boardType = BoardType.ESP32_Dev_Board;
+
+        TestAppClient appClient = new TestAppClient("localhost", properties.getHttpsPort());
+        appClient.start();
+        appClient.login(getUserName(), "1");
+        appClient.verifyResult(ok(1));
+        appClient.addPushToken("androidUid", "androidToken");
+        appClient.verifyResult(ok(2));
+        appClient.getProvisionToken(newDevice);
+        Device deviceFromApi = appClient.parseDevice(3);
+        assertNotNull(deviceFromApi);
+        assertNotNull(deviceFromApi.token);
+
+        long widgetId = 21321;
+
+        DeviceTiles deviceTiles = new DeviceTiles();
+        deviceTiles.id = widgetId;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+        deviceTiles.color = -231;
+
+        appClient.createWidget(1, deviceTiles);
+        appClient.verifyResult(ok(4));
+
+        PageTileTemplate tileTemplate = new PageTileTemplate(1,
+                null, null, "TMPL0001", "name", "iconName", ESP8266, new DataStream((byte) 1, PinType.VIRTUAL),
+                false, null, null, null, -75056000, -231, FontSize.LARGE, false, 2);
+
+        appClient.createTemplate(1, widgetId, tileTemplate);
+        appClient.verifyResult(ok(5));
+
+        TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
+        newHardClient.start();
+        newHardClient.login(deviceFromApi.token);
+        verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        appClient.never(deviceConnected(1, "1-1"));
+
+        newHardClient.send("internal " + b("ver 0.3.1 tmpl TMPL0001 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
+        newHardClient.verifyResult(ok(2));
+        appClient.verifyResult(deviceConnected(2, deviceFromApi.id));
+        client.verifyResult(deviceConnected(2, deviceFromApi.id));
+
+        appClient.getDevice(deviceFromApi.id);
+        Device provisionedDevice = appClient.parseDevice(7);
+        assertNotNull(provisionedDevice);
+        assertNotNull(provisionedDevice.metaFields);
+        assertEquals(4, provisionedDevice.metaFields.length);
+        assertEquals(fromApiProduct.id, provisionedDevice.productId);
+        assertNotNull(provisionedDevice.hardwareInfo);
+        assertEquals("TMPL0001", provisionedDevice.hardwareInfo.templateId);
+        assertEquals("iconName", provisionedDevice.iconName);
+        assertEquals(ESP8266, provisionedDevice.boardType);
+        assertEquals("My Default device Name", provisionedDevice.name);
+
+        client.track(deviceFromApi.id);
+        client.verifyResult(ok(2));
+        newHardClient.logEvent(criticalEvent.eventCode);
+        client.verifyResult(logEvent(3, deviceFromApi.id + " CRITICAL " + criticalEvent.eventCode));
+
+        ConcurrentHashMap<String, String> expectedMap = new ConcurrentHashMap<>();
+        expectedMap.put("androidUid", "androidToken");
+        ConcurrentHashMap<String, String> emptyMap = new ConcurrentHashMap<>();
+        verify(holder.gcmWrapper).sendAndroid(eq(expectedMap), eq(Priority.normal), eq("You received new event : Temp is super high"), eq(deviceFromApi.id));
+        verify(holder.gcmWrapper).sendIOS(eq(emptyMap), eq(Priority.normal), eq("You received new event : Temp is super high"), eq(deviceFromApi.id));
     }
 
     @Test

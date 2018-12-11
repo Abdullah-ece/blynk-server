@@ -5,14 +5,13 @@ import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DashboardSettings;
 import cc.blynk.server.core.model.DataStream;
-import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.Theme;
+import cc.blynk.server.core.model.profile.Profile;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
-import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.model.widgets.notifications.Twitter;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.model.widgets.others.eventor.Rule;
@@ -106,8 +105,6 @@ public class ShareProfileWorkflowTest extends SingleServerInstancePerTest {
         Profile profile = parseProfile(readTestUserProfile());
         Twitter twitter = profile.dashBoards[0].getTwitterWidget();
         clearPrivateData(twitter);
-        Notification notification = profile.dashBoards[0].getNotificationWidget();
-        clearPrivateData(notification);
 
         profile.dashBoards[0].updatedAt = serverDash.updatedAt;
         assertNull(serverDash.sharedToken);
@@ -118,10 +115,6 @@ public class ShareProfileWorkflowTest extends SingleServerInstancePerTest {
         profile = clientPair.appClient.parseProfile(2);
 
         profile.dashBoards[0].updatedAt = 0;
-        Notification originalNotification = profile.dashBoards[0].getNotificationWidget();
-        assertNotNull(originalNotification);
-        assertEquals(1, originalNotification.androidTokens.size());
-        assertEquals("token", originalNotification.androidTokens.get("uid"));
 
         Twitter originalTwitter = profile.dashBoards[0].getTwitterWidget();
         assertNotNull(originalTwitter);
@@ -675,8 +668,6 @@ public class ShareProfileWorkflowTest extends SingleServerInstancePerTest {
         Profile profile = parseProfile(readTestUserProfile());
         Twitter twitter = profile.dashBoards[0].getTwitterWidget();
         clearPrivateData(twitter);
-        Notification notification = profile.dashBoards[0].getNotificationWidget();
-        clearPrivateData(notification);
 
         //one field update, cause it is hard to compare.
         profile.dashBoards[0].updatedAt = serverDash.updatedAt;
@@ -758,11 +749,6 @@ public class ShareProfileWorkflowTest extends SingleServerInstancePerTest {
         clientPair.hardwareClient.send("hardware vw 1 1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1-0 vw 1 1"))));
         verify(appClient2.responseMock, never()).channelRead(any(), eq(produce(1, HARDWARE, b("1-0 vw 1 1"))));
-    }
-
-    private static void clearPrivateData(Notification n) {
-        n.iOSTokens.clear();
-        n.androidTokens.clear();
     }
 
     private static void clearPrivateData(Twitter t) {

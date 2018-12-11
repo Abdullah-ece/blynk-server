@@ -4,11 +4,11 @@ import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Tag;
+import cc.blynk.server.core.model.profile.Profile;
 import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Timer;
@@ -67,7 +67,6 @@ public class TimerWorker implements Runnable {
     private final AtomicReferenceArray<ConcurrentHashMap<TimerKey, BaseAction[]>> timerExecutors;
     private final static int size = 86400;
 
-    @SuppressWarnings("unchecked")
     public TimerWorker(UserDao userDao, DeviceDao deviceDao, SessionDao sessionDao, GCMWrapper gcmWrapper) {
         this.userDao = userDao;
         this.deviceDao = deviceDao;
@@ -257,44 +256,44 @@ public class TimerWorker implements Runnable {
 
     private void process(int orgId, Profile profile, DashBoard dash, TimerKey key, BaseAction[] actions, long now) {
         for (BaseAction action : actions) {
-            if (action instanceof SetPinAction) {
-                SetPinAction setPinAction = (SetPinAction) action;
 
-                int[] deviceIds = EMPTY_INTS;
-                if (key.isTilesTimer()) {
-                    Widget widget = dash.getWidgetById(key.deviceTilesId);
-                    if (widget instanceof DeviceTiles) {
-                        IntArray intArray = new IntArray();
-                        DeviceTiles deviceTiles = (DeviceTiles) widget;
-                        for (Tile tile : deviceTiles.tiles) {
-                            if (tile.templateId == key.templateId) {
-                                intArray.add(tile.deviceId);
-                            }
+            int[] deviceIds = EMPTY_INTS;
+            if (key.isTilesTimer()) {
+                Widget widget = dash.getWidgetById(key.deviceTilesId);
+                if (widget instanceof DeviceTiles) {
+                    IntArray intArray = new IntArray();
+                    DeviceTiles deviceTiles = (DeviceTiles) widget;
+                    for (Tile tile : deviceTiles.tiles) {
+                        if (tile.templateId == key.templateId) {
+                            intArray.add(tile.deviceId);
                         }
-                        deviceIds = intArray.toArray();
                     }
-                } else {
-                    Target target;
-                    int targetId = key.deviceId;
-                    if (targetId < Tag.START_TAG_ID) {
-                        target = deviceDao.getById(targetId);
-                    } else if (targetId < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
-                        target = profile.getTagById(targetId);
-                    } else {
-                        //means widget assigned to device selector widget.
-                        target = dash.getDeviceSelector(targetId);
-                    }
-                    if (target == null) {
-                        return;
-                    }
-
-                    deviceIds = target.getDeviceIds();
+                    deviceIds = intArray.toArray();
                 }
-
-                if (deviceIds.length == 0) {
+            } else {
+                Target target;
+                int targetId = key.deviceId;
+                if (targetId < Tag.START_TAG_ID) {
+                    target = deviceDao.getById(targetId);
+                } else if (targetId < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
+                    target = profile.getTagById(targetId);
+                } else {
+                    //means widget assigned to device selector widget.
+                    target = dash.getDeviceSelector(targetId);
+                }
+                if (target == null) {
                     return;
                 }
 
+                deviceIds = target.getDeviceIds();
+            }
+
+            if (deviceIds.length == 0) {
+                return;
+            }
+
+            if (action instanceof SetPinAction) {
+                SetPinAction setPinAction = (SetPinAction) action;
                 for (int deviceId : deviceIds) {
                     Device device = deviceDao.getById(deviceId);
                     if (device != null) {
@@ -305,7 +304,10 @@ public class TimerWorker implements Runnable {
                 triggerTimer(orgId, sessionDao, setPinAction.makeHardwareBody(), deviceIds);
             } else if (action instanceof NotifyAction) {
                 NotifyAction notifyAction = (NotifyAction) action;
-                EventorProcessor.push(gcmWrapper, dash, notifyAction.message);
+                for (int deviceId : deviceIds) {
+                    EventorProcessor.push(gcmWrapper,
+                            profile.settings.notificationSettings, deviceId, notifyAction.message);
+                }
             }
         }
     }
