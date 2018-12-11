@@ -1,6 +1,9 @@
 package cc.blynk.server.hardware.handlers.hardware.logic;
 
 import cc.blynk.server.core.dao.NotificationsDao;
+import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.profile.NotificationSettings;
 import cc.blynk.server.core.processors.NotificationBase;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -10,8 +13,9 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.List;
+
 import static cc.blynk.server.internal.CommonByteBufUtil.notificationInvalidBody;
-import static cc.blynk.server.internal.CommonByteBufUtil.notificationNotAuthorized;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 
 /**
@@ -28,10 +32,14 @@ public class PushLogic extends NotificationBase {
     private static final Logger log = LogManager.getLogger(PushLogic.class);
 
     private final NotificationsDao notificationsDao;
+    private final UserDao userDao;
 
-    public PushLogic(NotificationsDao notificationsDao, long notificationQuotaLimit) {
+    public PushLogic(NotificationsDao notificationsDao,
+                     UserDao userDao,
+                     long notificationQuotaLimit) {
         super(notificationQuotaLimit);
         this.notificationsDao = notificationsDao;
+        this.userDao = userDao;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
@@ -41,18 +49,11 @@ public class PushLogic extends NotificationBase {
             return;
         }
 
-        NotificationSettings notificationSettings = new NotificationSettings();
-
-        if (notificationSettings.hasNoToken()) {
-            log.debug("User has no access token provided for push widget.");
-            ctx.writeAndFlush(notificationNotAuthorized(message.id), ctx.voidPromise());
-            return;
-        }
-
         long now = System.currentTimeMillis();
         checkIfNotificationQuotaLimitIsNotReached(now);
 
-        String deviceName = state.device.name == null ? "" : state.device.name;
+        Device device = state.device;
+        String deviceName = device.name == null ? "" : device.name;
         String updatedBody = message.body.replace(Placeholders.DEVICE_NAME, deviceName);
 
         if (NotificationSettings.isWrongBody(updatedBody)) {
@@ -61,10 +62,26 @@ public class PushLogic extends NotificationBase {
             return;
         }
 
-        int deviceId = state.device.id;
-        log.trace("Sending push with message : '{}'.", message.body);
-        notificationsDao.send(notificationSettings, updatedBody, deviceId);
+        List<User> usersByOrgId = userDao.getAllUsersByOrgId(state.orgId);
+
+        for (User user : usersByOrgId) {
+            //todo check permissions
+            sendPush(user, device.id, updatedBody);
+        }
+
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
+    }
+
+    private void sendPush(User user, int deviceId, String body) {
+        NotificationSettings notificationSettings = user.profile.settings.notificationSettings;
+
+        if (notificationSettings.hasNoToken()) {
+            log.trace("User {} has no push token provided for notification.", user.email);
+            return;
+        }
+
+        log.trace("Sending push to {} with message : '{}'.", user.email, body);
+        notificationsDao.send(notificationSettings, body, deviceId);
     }
 
 }

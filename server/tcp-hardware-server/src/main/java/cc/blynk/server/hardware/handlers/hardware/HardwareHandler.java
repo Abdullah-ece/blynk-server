@@ -67,7 +67,8 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
         this.hardwareLogEventLogic = new HardwareLogEventLogic(holder);
 
         this.email = new MailLogic(holder);
-        this.push = new PushLogic(holder.notificationsDao, holder.limits.notificationPeriodLimitSec);
+        this.push = new PushLogic(holder.notificationsDao,
+                holder.userDao, holder.limits.notificationPeriodLimitSec);
     }
 
     @Override
