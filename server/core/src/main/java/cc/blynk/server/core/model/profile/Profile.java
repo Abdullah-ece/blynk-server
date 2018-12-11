@@ -38,6 +38,10 @@ public class Profile {
 
     public final ProfileSettings settings = new ProfileSettings();
 
+    public void updateSettings(ProfileSettings updatedSettings) {
+        this.settings.update(updatedSettings);
+    }
+
     public void deleteTag(int tagId) {
         int existingTagIndex = getTagIndexByIdOrThrow(tagId);
         this.tags = ArrayUtil.remove(this.tags, existingTagIndex, Tag.class);

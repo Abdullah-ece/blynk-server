@@ -8,6 +8,7 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.dto.DeviceDTO;
 import cc.blynk.server.core.model.profile.Profile;
+import cc.blynk.server.core.model.profile.ProfileSettings;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.widgets.Widget;
@@ -361,6 +362,10 @@ public class TestAppClient extends BaseTestAppClient {
 
     public void addPushToken(String uid, String token) {
         send("addPushToken " + uid + BODY_SEPARATOR + token);
+    }
+
+    public void updateProfileSettings(ProfileSettings profileSettings) {
+        send("mobileUpdateProfileSettings " + profileSettings.toString());
     }
 
     public void createApp(App app) {

@@ -22,6 +22,7 @@ public final class Command {
     public static final short ACTIVATE_DASHBOARD = 7;
     public static final short DEACTIVATE_DASHBOARD = 8;
     public static final short REFRESH_TOKEN = 9;
+    public static final short UPDATE_PROFILE_SETTINGS = 10;
 
     public static final short MOBILE_UPDATE_DEVICE_METAFIELD = 11;
 
@@ -214,6 +215,7 @@ public final class Command {
             Map.entry(HARDWARE_SYNC, "HardwareSync"),
             Map.entry(BLYNK_INTERNAL, "Internal"),
             Map.entry(ADD_PUSH_TOKEN, "AddPushToken"),
+            Map.entry(UPDATE_PROFILE_SETTINGS, "UpdateProfileSettings"),
             Map.entry(TWEET, "Tweet"), Map.entry(EMAIL, "Email"),
             Map.entry(PUSH_NOTIFICATION, "Push"),
             Map.entry(CREATE_WIDGET, "CreateWidget"),

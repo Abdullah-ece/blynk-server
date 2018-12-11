@@ -66,6 +66,7 @@ import static cc.blynk.server.core.protocol.enums.Command.UPDATE_APP;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_FACE;
+import static cc.blynk.server.core.protocol.enums.Command.UPDATE_PROFILE_SETTINGS;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_PROJECT_SETTINGS;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_REPORT;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_TAG;
@@ -361,6 +362,8 @@ public final class CommandParserUtil {
                 return WEB_EDIT_OWN_ORG;
             case "webgetdevicecountfororg" :
                 return WEB_GET_DEVICE_COUNT_FOR_ORG;
+            case "mobileupdateprofilesettings" :
+                return UPDATE_PROFILE_SETTINGS;
 
             default:
                 throw new IllegalArgumentException("Unsupported command");

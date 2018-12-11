@@ -89,6 +89,7 @@ public final class MobileLoadProfileGzippedLogic {
             throw new NoPermissionException("User has no permission to view devices.");
         }
 
+        //todo do not return tokens via load profile
         if (message.body.length() == 0) {
             //special case for the super admin in exported app, as admin can have parent and
             //child projects within same account, so we have to filter dashes for exported app

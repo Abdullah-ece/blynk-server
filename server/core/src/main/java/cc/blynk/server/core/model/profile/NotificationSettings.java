@@ -2,6 +2,8 @@ package cc.blynk.server.core.model.profile;
 
 import cc.blynk.server.core.model.serialization.View;
 import cc.blynk.server.notifications.push.enums.Priority;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -16,18 +18,42 @@ public class NotificationSettings {
     private static final int MAX_PUSH_BODY_SIZE = 255;
 
     @JsonView({View.Private.class, View.HttpAPIField.class})
-    public final ConcurrentHashMap<String, String> androidTokens = new ConcurrentHashMap<>();
+    public final ConcurrentHashMap<String, String> androidTokens;
 
     @JsonView({View.Private.class, View.HttpAPIField.class})
-    public final ConcurrentHashMap<String, String> iOSTokens = new ConcurrentHashMap<>();
+    public final ConcurrentHashMap<String, String> iOSTokens;
 
-    public boolean notifyWhenOffline;
+    public final boolean notifyWhenOffline;
 
-    public int notifyWhenOfflineIgnorePeriod;
+    public final int notifyWhenOfflineIgnorePeriod;
 
-    public Priority priority = Priority.high;
+    public final Priority priority;
 
-    public String soundUri;
+    public final String soundUri;
+
+    public NotificationSettings() {
+        this.androidTokens = new ConcurrentHashMap<>();
+        this.iOSTokens = new ConcurrentHashMap<>();
+        this.notifyWhenOffline = false;
+        this.notifyWhenOfflineIgnorePeriod = 0;
+        this.priority = Priority.high;
+        this.soundUri = null;
+    }
+
+    @JsonCreator
+    public NotificationSettings(@JsonProperty("androidTokens") ConcurrentHashMap<String, String> androidTokens,
+                                @JsonProperty("iOSTokens") ConcurrentHashMap<String, String> iOSTokens,
+                                @JsonProperty("notifyWhenOffline") boolean notifyWhenOffline,
+                                @JsonProperty("notifyWhenOfflineIgnorePeriod") int notifyWhenOfflineIgnorePeriod,
+                                @JsonProperty("priority") Priority priority,
+                                @JsonProperty("soundUri") String soundUri) {
+        this.androidTokens = androidTokens == null ? new ConcurrentHashMap<>() : androidTokens;
+        this.iOSTokens = iOSTokens == null ? new ConcurrentHashMap<>() : iOSTokens;
+        this.notifyWhenOffline = notifyWhenOffline;
+        this.notifyWhenOfflineIgnorePeriod = notifyWhenOfflineIgnorePeriod;
+        this.priority = priority == null ? Priority.high : priority;
+        this.soundUri = soundUri;
+    }
 
     public static boolean isWrongBody(String body) {
         return body == null || body.isEmpty() || body.length() > MAX_PUSH_BODY_SIZE;

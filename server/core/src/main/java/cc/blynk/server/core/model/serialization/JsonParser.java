@@ -10,6 +10,7 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.dto.OrganizationDTO;
 import cc.blynk.server.core.model.profile.Profile;
+import cc.blynk.server.core.model.profile.ProfileSettings;
 import cc.blynk.server.core.model.storage.value.SinglePinStorageValue;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.MetaField;
@@ -66,6 +67,7 @@ public final class JsonParser {
     private static final ObjectReader profileReader = MAPPER.readerFor(Profile.class);
     private static final ObjectReader dashboardReader = MAPPER.readerFor(DashBoard.class);
     private static final ObjectReader dashboardSettingsReader = MAPPER.readerFor(DashboardSettings.class);
+    private static final ObjectReader profileSettingsReader = MAPPER.readerFor(ProfileSettings.class);
     private static final ObjectReader widgetReader = MAPPER.readerFor(Widget.class);
     private static final ObjectReader tileTemplateReader = MAPPER.readerFor(TileTemplate.class);
     private static final ObjectReader appReader = MAPPER.readerFor(App.class);
@@ -304,6 +306,10 @@ public final class JsonParser {
 
     public static DashboardSettings parseDashboardSettings(String json, int msgId) {
         return parse(dashboardSettingsReader, json, "Error parsing dashboard settings.", msgId);
+    }
+
+    public static ProfileSettings parseProfileSettings(String json, int msgId) {
+        return parse(profileSettingsReader, json, "Error parsing profile settings.", msgId);
     }
 
     public static Product parseProduct(String product) throws IOException {

@@ -21,6 +21,7 @@ import cc.blynk.server.application.handlers.main.logic.MobilePurchaseLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileRedeemLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileRefreshTokenLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileSetWidgetPropertyLogic;
+import cc.blynk.server.application.handlers.main.logic.MobileUpdateProfileSettingLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.MobileCreateDashLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.MobileDeleteDashLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.MobileUpdateDashLogic;
@@ -117,6 +118,7 @@ import static cc.blynk.server.core.protocol.enums.Command.UPDATE_APP;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_FACE;
+import static cc.blynk.server.core.protocol.enums.Command.UPDATE_PROFILE_SETTINGS;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_PROJECT_SETTINGS;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_REPORT;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_TAG;
@@ -366,6 +368,9 @@ public class MobileHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
                 break;
             case EXPORT_REPORT :
                 MobileExportReportLogic.messageReceived(holder, ctx, state.user, msg);
+                break;
+            case UPDATE_PROFILE_SETTINGS :
+                MobileUpdateProfileSettingLogic.messageReceived(ctx, state, msg);
                 break;
         }
     }
