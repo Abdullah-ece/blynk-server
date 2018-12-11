@@ -165,6 +165,14 @@ Go [here](https://www.google.com/settings/security/lesssecureapps) and then clic
         && sudo apt-get update -q \
         && sudo apt install -y openjdk-11-jdk
 
+
+### HTTPS API for testing
+
+#### Log event:
+
+- /external/api/{token}/logEvent?code={event_name}
+- /external/api/{token}/logEvent?code=event_name&description={event_desciption}
+
         
 ### How Blynk Works?
 When hardware connects to Blynk cloud it opens either keep-alive ssl/tls connection on port 443 (9443 for local servers) or keep-alive plain
