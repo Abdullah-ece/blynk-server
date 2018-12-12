@@ -21,7 +21,6 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.ota.DeviceOtaInfo;
 import cc.blynk.server.core.model.device.ota.OTAStatus;
 import cc.blynk.server.core.model.dto.OtaDTO;
-import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.FirmwareInfo;
 import cc.blynk.server.core.model.web.product.OtaProgress;
 import cc.blynk.server.core.model.web.product.Product;
@@ -75,13 +74,6 @@ public class OTAHandler extends BaseHttpHandler {
     @GET
     @Path("/firmwareInfo")
     public Response getFirmwareInfo(@ContextUser User user, @QueryParam("file") String pathToFirmware) {
-        Organization organization = organizationDao.getOrgByIdOrThrow(user.orgId);
-
-        if (organization == null) {
-            log.error("Cannot find org with id {} for user {}", user.orgId, user.email);
-            return badRequest();
-        }
-
         if (pathToFirmware == null) {
             log.error("No path to firmware.");
             return badRequest("No path to firmware.");
@@ -96,13 +88,6 @@ public class OTAHandler extends BaseHttpHandler {
     @Path("/start")
     @Consumes(value = MediaType.APPLICATION_JSON)
     public Response startOTA(@ContextUser User user, OtaDTO otaDTO) {
-        Organization organization = organizationDao.getOrgByIdOrThrow(user.orgId);
-
-        if (organization == null) {
-            log.error("Cannot find org with id {} for user {}", user.orgId, user.email);
-            return badRequest();
-        }
-
         if (otaDTO == null || otaDTO.isNotValid()) {
             log.error("Wrong data for OTA start {}.", otaDTO);
             return badRequest("Wrong data for OTA start.");
@@ -110,7 +95,7 @@ public class OTAHandler extends BaseHttpHandler {
 
         //todo add tes for filter
         List<Device> filteredDevices = deviceDao.getByProductIdAndFilter(
-                user.orgId, otaDTO.productId, otaDTO.deviceIds);
+                otaDTO.orgId, otaDTO.productId, otaDTO.deviceIds);
         if (filteredDevices.size() == 0) {
             log.error("No devices for provided productId {}", otaDTO.productId);
             return badRequest("No devices for provided productId " + otaDTO.productId);
@@ -140,7 +125,7 @@ public class OTAHandler extends BaseHttpHandler {
             device.setDeviceOtaInfo(deviceOtaInfo);
         }
 
-        Session session = sessionDao.getOrgSession(user.orgId);
+        Session session = sessionDao.getOrgSession(otaDTO.orgId);
         String serverUrl = props.getServerUrl(otaDTO.isSecure);
         if (session != null) {
             for (Channel channel : session.hardwareChannels) {
@@ -166,20 +151,13 @@ public class OTAHandler extends BaseHttpHandler {
     @Path("/stop")
     @Consumes(value = MediaType.APPLICATION_JSON)
     public Response stopOTA(@ContextUser User user, OtaDTO otaDTO) {
-        Organization organization = organizationDao.getOrgByIdOrThrow(user.orgId);
-
-        if (organization == null) {
-            log.error("Cannot find org with id {} for user {}", user.orgId, user.email);
-            return badRequest();
-        }
-
         if (otaDTO == null || otaDTO.isDevicesEmpty()) {
             log.error("No devices to stop OTA. {}.", otaDTO);
             return badRequest("No devices to stop OTA..");
         }
 
         List<Device> filteredDevices = deviceDao.getByProductIdAndFilter(
-                user.orgId, otaDTO.productId, otaDTO.deviceIds);
+                otaDTO.orgId, otaDTO.productId, otaDTO.deviceIds);
         if (filteredDevices.size() == 0) {
             log.error("No devices for provided productId {}", otaDTO.productId);
             return badRequest("No devices for provided productId " + otaDTO.productId);
@@ -204,13 +182,6 @@ public class OTAHandler extends BaseHttpHandler {
     @Path("/deleteProgress/{productId}")
     @Consumes(value = MediaType.APPLICATION_JSON)
     public Response deleteProgress(@ContextUser User user, @PathParam("productId") int productId) {
-        Organization organization = organizationDao.getOrgByIdOrThrow(user.orgId);
-
-        if (organization == null) {
-            log.error("Cannot find org with id {} for user {}", user.orgId, user.email);
-            return badRequest();
-        }
-
         if (productId == -1) {
             log.error("No productId to delete OTA progress.");
             return badRequest("No productId to delete OTA progress");
