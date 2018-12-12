@@ -61,6 +61,41 @@ public class DeviceOtaInfo {
         this.isSecure = isSecure;
     }
 
+    public DeviceOtaInfo(DeviceOtaInfo prev,
+                         long finishedAt,
+                         OTAStatus otaStatus) {
+        this(prev.otaStartedBy, prev.otaStartedAt,
+                prev.requestSentAt, prev.firmwareRequestedAt, prev.firmwareUploadedAt, finishedAt,
+                prev.pathToFirmware, prev.buildDate,
+                otaStatus,
+                prev.attempts, prev.attemptsLimit,
+                prev.isSecure);
+
+    }
+
+    public DeviceOtaInfo(DeviceOtaInfo prev,
+                         long firmwareRequestedAt,
+                         long firmwareUploadedAt,
+                         long finishedAt,
+                         OTAStatus otaStatus,
+                         int attempts) {
+        this(prev.otaStartedBy, prev.otaStartedAt,
+                prev.requestSentAt, firmwareRequestedAt, firmwareUploadedAt, finishedAt,
+                prev.pathToFirmware, prev.buildDate,
+                otaStatus, attempts, prev.attemptsLimit, prev.isSecure);
+
+    }
+
+    public DeviceOtaInfo(DeviceOtaInfo prev,
+                         long firmwareUploadedAt,
+                         long finishedAt,
+                         OTAStatus otaStatus) {
+        this(prev.otaStartedBy, prev.otaStartedAt,
+                prev.requestSentAt, prev.firmwareRequestedAt, firmwareUploadedAt, finishedAt,
+                prev.pathToFirmware, prev.buildDate,
+                otaStatus, prev.attempts, prev.attemptsLimit, prev.isSecure);
+    }
+
     public boolean isLimitReached() {
         return attempts > attemptsLimit;
     }
