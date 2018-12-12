@@ -1,7 +1,7 @@
 import React from 'react';
 import {Link} from 'react-router';
 import {DeviceCreateModal} from 'scenes/Devices/scenes';
-import {Button} from 'antd';
+import { Button } from 'antd';
 import './styles.less';
 
 class NoDevices extends React.Component {
@@ -84,11 +84,11 @@ class NoDevices extends React.Component {
               <div className="devices-no-items-description">
                 Here you will find a list of all of your activated devices and their data visualized
               </div>
-              <div className="devices-no-items-action">
+              {process.env.BLYNK_CREATE_DEVICE && JSON.parse(process.env.BLYNK_CREATE_DEVICE) && <div className="devices-no-items-action">
                 <Link to="/devices/create">
                   <Button icon="plus" type="primary">Create New Device</Button>
                 </Link>
-              </div>
+              </div>}
 
               <DeviceCreateModal visible={this.state.isDeviceCreateModalVisible}
                                  onClose={this.onDeviceCreateModalClose.bind(this)}/>
