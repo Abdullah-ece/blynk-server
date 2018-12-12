@@ -5,6 +5,7 @@ import cc.blynk.server.core.dao.ota.OTAInfo;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.HardwareInfo;
+import cc.blynk.server.core.model.device.ota.DeviceOtaInfo;
 import cc.blynk.server.core.model.device.ota.OTAStatus;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
@@ -104,25 +105,26 @@ public final class BlynkInternalLogic {
         Device device = state.device;
 
         if (device != null) {
-            if (device.deviceOtaInfo != null) {
-                if (hardwareInfo.isFirmwareVersionChanged(device.deviceOtaInfo.buildDate)) {
-                    if (device.deviceOtaInfo.otaStatus != OTAStatus.FAILURE) {
+            DeviceOtaInfo deviceOtaInfo = device.deviceOtaInfo;
+            if (deviceOtaInfo != null) {
+                if (hardwareInfo.isFirmwareVersionChanged(deviceOtaInfo.buildDate)) {
+                    if (deviceOtaInfo.otaStatus != OTAStatus.FAILURE) {
                         if (device.isAttemptsLimitReached()) {
                             log.warn("OTA limit reached for deviceId {}.", device.id);
                             device.firmwareUploadFailure();
                         } else {
-                            String serverUrl = holder.props.getServerUrl(device.deviceOtaInfo.isSecure);
+                            String serverUrl = holder.props.getServerUrl(deviceOtaInfo.isSecure);
                             String downloadToken = TokenGeneratorUtil.generateNewToken();
                             holder.tokensPool.addToken(downloadToken, new OTADownloadToken(device.id));
                             String body = OTAInfo.makeHardwareBody(serverUrl,
-                                    device.deviceOtaInfo.pathToFirmware, downloadToken);
+                                    deviceOtaInfo.pathToFirmware, downloadToken);
                             StringMessage msg = makeASCIIStringMessage(BLYNK_INTERNAL, 7777, body);
                             ctx.write(msg, ctx.voidPromise());
                             device.requestSent();
                         }
                     }
                 } else {
-                    if (device.deviceOtaInfo.otaStatus == OTAStatus.FIRMWARE_UPLOADED) {
+                    if (deviceOtaInfo.otaStatus == OTAStatus.FIRMWARE_UPLOADED) {
                         device.success();
                     }
                 }
