@@ -4,14 +4,12 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.PermissionBasedLogic;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.permissions.Role;
-import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.mobile.BaseUserStateHolder;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.model.permissions.PermissionsTable.PRODUCT_DELETE;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
-import static cc.blynk.server.internal.WebByteBufUtil.json;
 import static cc.blynk.utils.StringUtils.split2;
 
 /**
@@ -51,18 +49,7 @@ public class WebCanDeleteProductLogic implements PermissionBasedLogic {
             productId = Integer.parseInt(split[0]);
         }
 
-        Product product = organizationDao.getProductOrThrow(orgId, productId);
-        if (product.devices.length > 0) {
-            ctx.writeAndFlush(json(message.id, "You can't delete product with devices."), ctx.voidPromise());
-            return;
-        }
-
-        int[] subProductIds = organizationDao.subProductIds(orgId, productId);
-        if (subProductIds.length != 0) {
-            ctx.writeAndFlush(json(message.id, "You can't delete product that is used in sub organizations."),
-                    ctx.voidPromise());
-            return;
-        }
+        organizationDao.checkCanDeleteProduct(orgId, productId);
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }

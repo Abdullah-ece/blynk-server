@@ -14,6 +14,7 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
+import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.mobile.BaseUserStateHolder;
 import cc.blynk.utils.IntArray;
@@ -83,10 +84,10 @@ public class WebDeleteProductLogic implements PermissionBasedLogic {
         if (product.parentId > 0) {
             log.error("Product {} is reference and can be deleted only via parent product. {}.",
                     product.id, user.email);
-            ctx.writeAndFlush(json(message.id,
-                    "Sub Org can't do anything with the Product Templates created by Meta Org."), ctx.voidPromise());
-            return;
+            throw new JsonException("Sub Org can't do anything with the Product Templates created by Meta Org.");
         }
+
+        organizationDao.checkCanDeleteProduct(orgId, productId);
 
         //todo check access
         Organization org = organizationDao.getOrgById(orgId);

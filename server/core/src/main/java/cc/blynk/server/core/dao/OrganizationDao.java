@@ -9,6 +9,7 @@ import cc.blynk.server.core.model.exceptions.ProductNotFoundException;
 import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
+import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.utils.IntArray;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -345,6 +346,18 @@ public class OrganizationDao {
             }
         }
         return null;
+    }
+
+    public void checkCanDeleteProduct(int orgId, int productId) {
+        Product product = getProductOrThrow(orgId, productId);
+        //if (product.devices.length > 0) {
+        //    throw new JsonException("You can't delete product with devices.");
+        //}
+
+        int[] subProductIds = subProductIds(orgId, productId);
+        if (subProductIds.length != 0) {
+            throw new JsonException("You can't delete product that is used in sub organizations.");
+        }
     }
 
 }

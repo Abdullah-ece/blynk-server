@@ -34,7 +34,7 @@ public class OtaDTO {
     public final boolean isSecure;
 
     @JsonCreator
-    public OtaDTO(@JsonProperty("productId") int orgId,
+    public OtaDTO(@JsonProperty("orgId") int orgId,
                   @JsonProperty("productId") int productId,
                   @JsonProperty("pathToFirmware") String pathToFirmware,
                   @JsonProperty("firmwareOriginalFileName") String firmwareOriginalFileName,

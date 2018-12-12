@@ -1131,7 +1131,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertNotNull(newDevice);
 
         client.canDeleteProduct(fromApiProduct.id);
-        client.verifyResult(webJson(4, "You can't delete product with devices."));
+        client.verifyResult(ok(4));
     }
 
     @Test
@@ -1460,7 +1460,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
-        Organization organization = new Organization("New Sub Org", "Some TimeZone", "/static/logo.png", false, orgId);
+        Organization organization = new Organization("New Sub Org111", "Some TimeZone", "/static/logo.png", false, orgId);
         organization.selectedProducts = new int[] {fromApiProduct.id};
 
         client.createOrganization(orgId, organization);
@@ -1481,6 +1481,9 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         client.verifyResult(webJson(4, "You can't delete product that is used in sub organizations."));
 
         client.canDeleteProduct(fromApiProductOrg.id, fromApiProduct.id);
-        client.verifyResult(webJson(5, "Product with passed id 1 not found in organization with id 2."));
+        client.verifyResult(webJson(5, "Product with passed id " + fromApiProduct.id +  " not found in organization with id " + fromApiProductOrg.id + "."));
+
+        client.deleteProduct(fromApiProduct.id);
+        client.verifyResult(webJson(6, "You can't delete product that is used in sub organizations."));
     }
 }

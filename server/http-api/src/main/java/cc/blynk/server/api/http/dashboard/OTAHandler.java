@@ -109,7 +109,8 @@ public class OTAHandler extends BaseHttpHandler {
         }
 
         //todo add tes for filter
-        List<Device> filteredDevices = deviceDao.getByProductIdAndFilter(otaDTO.productId, otaDTO.deviceIds);
+        List<Device> filteredDevices = deviceDao.getByProductIdAndFilter(
+                user.orgId, otaDTO.productId, otaDTO.deviceIds);
         if (filteredDevices.size() == 0) {
             log.error("No devices for provided productId {}", otaDTO.productId);
             return badRequest("No devices for provided productId " + otaDTO.productId);
@@ -177,7 +178,8 @@ public class OTAHandler extends BaseHttpHandler {
             return badRequest("No devices to stop OTA..");
         }
 
-        List<Device> filteredDevices = deviceDao.getByProductIdAndFilter(otaDTO.productId, otaDTO.deviceIds);
+        List<Device> filteredDevices = deviceDao.getByProductIdAndFilter(
+                user.orgId, otaDTO.productId, otaDTO.deviceIds);
         if (filteredDevices.size() == 0) {
             log.error("No devices for provided productId {}", otaDTO.productId);
             return badRequest("No devices for provided productId " + otaDTO.productId);
