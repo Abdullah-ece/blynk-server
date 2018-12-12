@@ -83,17 +83,16 @@ public final class NotificationsDao {
 
     public void push(User user, String body, int deviceId) {
         NotificationSettings notificationSettings = user.profile.settings.notificationSettings;
+        if (notificationSettings.hasNoToken()) {
+            log.trace("User {} has no access token provided for push notification.", user.email);
+            return;
+        }
         send(notificationSettings, body, deviceId);
     }
 
     public void send(NotificationSettings notificationSettings, String body, int deviceId) {
         if (NotificationSettings.isWrongBody(body)) {
             log.trace("Wrong push {} body.", body);
-            return;
-        }
-
-        if (notificationSettings.hasNoToken()) {
-            log.trace("User has no access token provided for push notification.");
             return;
         }
 

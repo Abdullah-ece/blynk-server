@@ -81,6 +81,10 @@ public class PushLogic extends NotificationBase {
         }
 
         log.trace("Sending push to {} with message : '{}'.", user.email, body);
+        if (notificationSettings.hasNoToken()) {
+            log.trace("User {} has no access token provided for push notification.", user.email);
+            return;
+        }
         notificationsDao.send(notificationSettings, body, deviceId);
     }
 
