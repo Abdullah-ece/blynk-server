@@ -77,7 +77,6 @@ public class Product {
         this.webDashboard = product.webDashboard.copy();
     }
 
-    @SuppressWarnings("NonAtomicOperationOnVolatileField")
     public void update(Product updatedProduct) {
         this.name = updatedProduct.name;
         this.boardType = updatedProduct.boardType;
@@ -183,6 +182,10 @@ public class Product {
                 hasAlready = true;
             }
         }
+    }
+
+    public void clearOtaProgress() {
+        setOtaProgress(null);
     }
 
     public void setOtaProgress(OtaProgress otaProgress) {

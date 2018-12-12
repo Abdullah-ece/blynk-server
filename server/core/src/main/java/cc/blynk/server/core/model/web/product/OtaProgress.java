@@ -1,10 +1,11 @@
 package cc.blynk.server.core.model.web.product;
 
 import cc.blynk.server.core.model.dto.OtaDTO;
+import cc.blynk.server.core.model.serialization.JsonParser;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class OtaProgress {
+public final class OtaProgress {
 
     public final String title;
 
@@ -56,5 +57,10 @@ public class OtaProgress {
                 otaDTO.attemptsLimit,
                 otaDTO.isSecure
         );
+    }
+
+    @Override
+    public String toString() {
+        return JsonParser.toJson(this);
     }
 }

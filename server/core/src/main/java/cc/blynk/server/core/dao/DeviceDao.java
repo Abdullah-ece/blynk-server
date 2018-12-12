@@ -124,11 +124,11 @@ public class DeviceDao {
         return result;
     }
 
-    public List<Device> getByProductIdAndFilter(int productId, int[] deviceIds) {
+    public List<Device> getByProductIdAndFilter(int orgId, int productId, int[] deviceIds) {
         List<Device> result = new ArrayList<>();
         for (int deviceId : deviceIds) {
             DeviceValue deviceValue = devices.get(deviceId);
-            if (deviceValue != null && deviceValue.product.id == productId) {
+            if (deviceValue != null && deviceValue.orgId == orgId && deviceValue.product.id == productId) {
                 Device device = deviceValue.device;
                 result.add(device);
             }

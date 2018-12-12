@@ -1,5 +1,6 @@
 package cc.blynk.server.core.model.web.product;
 
+import cc.blynk.server.core.model.serialization.JsonParser;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -31,5 +32,10 @@ public class FirmwareInfo {
                 entires.get("dev"),
                 entires.get("build"),
                 entires.get("MD5"));
+    }
+
+    @Override
+    public String toString() {
+        return JsonParser.toJson(this);
     }
 }

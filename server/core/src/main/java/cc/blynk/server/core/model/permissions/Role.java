@@ -19,6 +19,9 @@ import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_INVITE
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_SWITCH;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_VIEW;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_VIEW_USERS;
+import static cc.blynk.server.core.model.permissions.PermissionsTable.OTA_START;
+import static cc.blynk.server.core.model.permissions.PermissionsTable.OTA_STOP;
+import static cc.blynk.server.core.model.permissions.PermissionsTable.OTA_VIEW;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.OWN_DEVICES_CREATE;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.OWN_DEVICES_DELETE;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.OWN_DEVICES_EDIT;
@@ -70,6 +73,17 @@ public class Role implements CopyObject<Role> {
     //own org group
     public boolean canEditOwnOrg() {
         return hasPermission1(OWN_ORG_EDIT);
+    }
+
+    //ota group
+    public boolean canViewOta() {
+        return hasPermission1(OTA_VIEW);
+    }
+    public boolean canStartOta() {
+        return hasPermission1(OTA_START);
+    }
+    public boolean canStopOTA() {
+        return hasPermission1(OTA_STOP);
     }
 
     //org group

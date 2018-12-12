@@ -290,6 +290,10 @@ public class Device implements Target {
         return name == null ? "New Device" : name;
     }
 
+    public void clearDeviceOtaInfo() {
+        setDeviceOtaInfo(null);
+    }
+
     public void setDeviceOtaInfo(DeviceOtaInfo deviceOtaInfo) {
         this.deviceOtaInfo = deviceOtaInfo;
         this.updatedAt = System.currentTimeMillis();
