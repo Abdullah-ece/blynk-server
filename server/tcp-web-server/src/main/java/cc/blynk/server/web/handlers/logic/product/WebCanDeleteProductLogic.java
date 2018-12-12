@@ -2,8 +2,9 @@ package cc.blynk.server.web.handlers.logic.product;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.PermissionBasedLogic;
-import cc.blynk.server.core.dao.DeviceDao;
+import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.permissions.Role;
+import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.mobile.BaseUserStateHolder;
 import io.netty.channel.ChannelHandlerContext;
@@ -11,6 +12,7 @@ import io.netty.channel.ChannelHandlerContext;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.PRODUCT_DELETE;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 import static cc.blynk.server.internal.WebByteBufUtil.json;
+import static cc.blynk.utils.StringUtils.split2;
 
 /**
  * The Blynk Project.
@@ -19,10 +21,10 @@ import static cc.blynk.server.internal.WebByteBufUtil.json;
  */
 public class WebCanDeleteProductLogic implements PermissionBasedLogic {
 
-    private final DeviceDao deviceDao;
+    private final OrganizationDao organizationDao;
 
     public WebCanDeleteProductLogic(Holder holder) {
-        this.deviceDao = holder.deviceDao;
+        this.organizationDao = holder.organizationDao;
     }
 
     @Override
@@ -37,13 +39,32 @@ public class WebCanDeleteProductLogic implements PermissionBasedLogic {
 
     @Override
     public void messageReceived0(ChannelHandlerContext ctx, BaseUserStateHolder state, StringMessage message) {
-        int productId = Integer.parseInt(message.body);
+        String[] split = split2(message.body);
 
-        if (deviceDao.productHasDevices(productId)) {
-            ctx.writeAndFlush(json(message.id, "You can't delete product with devices."), ctx.voidPromise());
+        int orgId;
+        int productId;
+        if (split.length == 2) {
+            orgId = Integer.parseInt(split[0]);
+            productId = Integer.parseInt(split[1]);
         } else {
-            ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
+            orgId = state.orgId;
+            productId = Integer.parseInt(split[0]);
         }
+
+        Product product = organizationDao.getProductOrThrow(orgId, productId);
+        if (product.devices.length > 0) {
+            ctx.writeAndFlush(json(message.id, "You can't delete product with devices."), ctx.voidPromise());
+            return;
+        }
+
+        int[] subProductIds = organizationDao.subProductIds(orgId, productId);
+        if (subProductIds.length != 0) {
+            ctx.writeAndFlush(json(message.id, "You can't delete product that is used in sub organizations."),
+                    ctx.voidPromise());
+            return;
+        }
+
+        ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }
 
 }

@@ -159,6 +159,10 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         send("webCreateOrg " + orgId + StringUtils.BODY_SEPARATOR_STRING + organization);
     }
 
+    public void canDeleteProduct(int orgId, int productId) {
+        send("webCanDeleteProduct " + orgId + BODY_SEPARATOR_STRING + productId);
+    }
+
     public void canDeleteProduct(int productId) {
         send("webCanDeleteProduct " + productId);
     }

@@ -99,14 +99,14 @@ public class OrganizationDao {
         }
         log.error("Product with passed id {} not found in organization with id {}.", productId, orgId);
         throw new ProductNotFoundException("Product with passed id " + productId
-                + " not found in organization with id " + orgId);
+                + " not found in organization with id " + orgId + ".");
     }
 
     public int[] subProductIds(int parentOrgId, int parentProductId) {
         IntArray subProductIds = new IntArray();
-        for (Organization org : organizations.values()) {
-            if (org.parentId == parentOrgId) {
-                for (Product subProduct : org.products) {
+        for (Organization subOrg : organizations.values()) {
+            if (subOrg.parentId == parentOrgId) {
+                for (Product subProduct : subOrg.products) {
                     if (subProduct.parentId == parentProductId) {
                         subProductIds.add(subProduct.id);
                     }
@@ -262,15 +262,23 @@ public class OrganizationDao {
         return product;
     }
 
-    public int getOrganizationIdByProductId(int productId) {
+    public Organization getOrganizationByProductId(int productId) {
         for (Organization org : organizations.values()) {
             for (Product product : org.products) {
                 if (product.id == productId) {
-                    return org.id;
+                    return org;
                 }
             }
         }
-        return -1;
+        return null;
+    }
+
+    public int getOrganizationIdByProductId(int productId) {
+        Organization org = getOrganizationByProductId(productId);
+        if (org == null) {
+            return -1;
+        }
+        return org.id;
     }
 
     public String getOrganizationNameByProductId(int productId) {
