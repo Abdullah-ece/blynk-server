@@ -7,6 +7,11 @@ public enum OTAStatus {
     FIRMWARE_REQUESTED,
     FIRMWARE_UPLOADED,
     SUCCESS,
-    FAILURE
+    FAILURE,
+    DOWNLOAD_LIMIT_REACHED;
+
+    public boolean isNotFailure() {
+        return this != FAILURE && this != DOWNLOAD_LIMIT_REACHED;
+    }
 
 }

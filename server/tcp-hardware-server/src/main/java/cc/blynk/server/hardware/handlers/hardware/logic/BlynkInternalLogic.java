@@ -108,10 +108,10 @@ public final class BlynkInternalLogic {
             DeviceOtaInfo deviceOtaInfo = device.deviceOtaInfo;
             if (deviceOtaInfo != null) {
                 if (hardwareInfo.isFirmwareVersionChanged(deviceOtaInfo.buildDate)) {
-                    if (deviceOtaInfo.otaStatus != OTAStatus.FAILURE) {
+                    if (deviceOtaInfo.otaStatus.isNotFailure()) {
                         if (device.isAttemptsLimitReached()) {
                             log.warn("OTA limit reached for deviceId {}.", device.id);
-                            device.firmwareUploadFailure();
+                            device.firmwareDownloadLimitReached();
                         } else {
                             String serverUrl = holder.props.getServerUrl(deviceOtaInfo.isSecure);
                             String downloadToken = TokenGeneratorUtil.generateNewToken();

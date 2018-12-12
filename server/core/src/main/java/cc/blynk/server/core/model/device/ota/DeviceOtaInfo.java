@@ -97,7 +97,7 @@ public class DeviceOtaInfo {
     }
 
     public boolean isLimitReached() {
-        return attempts > attemptsLimit;
+        return attempts >= attemptsLimit;
     }
 
 }

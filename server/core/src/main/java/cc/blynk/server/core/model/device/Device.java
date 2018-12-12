@@ -327,7 +327,13 @@ public class Device implements Target {
 
     public void firmwareUploadFailure() {
         long now = System.currentTimeMillis();
-        this.deviceOtaInfo = new DeviceOtaInfo(this.deviceOtaInfo, -1L, OTAStatus.FAILURE);
+        this.deviceOtaInfo = new DeviceOtaInfo(this.deviceOtaInfo, now, OTAStatus.FAILURE);
+        this.updatedAt = now;
+    }
+
+    public void firmwareDownloadLimitReached() {
+        long now = System.currentTimeMillis();
+        this.deviceOtaInfo = new DeviceOtaInfo(this.deviceOtaInfo, now, OTAStatus.DOWNLOAD_LIMIT_REACHED);
         this.updatedAt = now;
     }
 
