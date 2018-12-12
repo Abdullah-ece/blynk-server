@@ -1,14 +1,15 @@
 import React from 'react';
-import {connect} from 'react-redux';
-import {bindActionCreators} from 'redux';
-import {Menu, Button, Icon, Dropdown} from 'antd';
-import {Link} from 'react-router';
-import {StartLoading, FinishLoading} from 'data/PageLoading/actions';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { Menu, Button, Icon, Dropdown } from 'antd';
+import { Link } from 'react-router';
+import { StartLoading, FinishLoading } from 'data/PageLoading/actions';
 
-import {OrganizationFetch} from 'data/Organization/actions';
-import {OrganizationsFetch} from 'data/Organizations/actions';
+import { OrganizationFetch } from 'data/Organization/actions';
+import { OrganizationsFetch } from 'data/Organizations/actions';
 
 import './styles.less';
+
 @connect((state) => ({
   Account: state.Account,
   Organization: state.Organization
@@ -51,7 +52,7 @@ class Header extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if(prevProps.Account.selectedOrgId !== this.props.Account.selectedOrgId)
+    if (prevProps.Account.selectedOrgId !== this.props.Account.selectedOrgId)
       this.fetchData();
   }
 
@@ -78,7 +79,7 @@ class Header extends React.Component {
           Users
         </Menu.Item>
         {/*<Menu.Item key="/user-profile/branding">*/}
-          {/*Branding*/}
+        {/*Branding*/}
         {/*</Menu.Item>*/}
 
         {/*<Menu.Item key="/billing">*/}
@@ -111,7 +112,7 @@ class Header extends React.Component {
   currentActivePage(state) {
     const splitedPath = state.split('/');
     const length = splitedPath.length;
-    for(let i = 0; i < length; i++) {
+    for (let i = 0; i < length; i++) {
       if ('products' === splitedPath[i]) {
         return ['/products'];
       }
@@ -121,7 +122,7 @@ class Header extends React.Component {
       if ('organizations' === splitedPath[i]) {
         return ['/organizations'];
       }
-      if (process.env.BLYNK_ANALYTICS && 'analytics' === splitedPath[i]) {
+      if (process.env.BLYNK_ANALYTICS && JSON.parse(process.env.BLYNK_ANALYTICS) && 'analytics' === splitedPath[i]) {
         return ['/analytics'];
       }
     }
@@ -142,20 +143,22 @@ class Header extends React.Component {
                   onClick={this.handleClick.bind(this)}
                   selectedKeys={this.currentActivePage(this.state.current)}>
               {/*<Menu.Item key="/dashboard">Dashboard</Menu.Item>*/}
-              {process.env.BLYNK_ANALYTICS && <Menu.Item key="/analytics">Analytics</Menu.Item>}
+              {process.env.BLYNK_ANALYTICS && JSON.parse(process.env.BLYNK_ANALYTICS) &&
+              <Menu.Item key="/analytics">Analytics</Menu.Item>}
               <Menu.Item key="/devices">Devices</Menu.Item>
-              { this.props.Organization && this.props.Organization.canCreateOrgs && (
+              {this.props.Organization && this.props.Organization.canCreateOrgs && (
                 <Menu.Item key="/products">Products</Menu.Item>
               ) || (null)}
-              { this.props.Organization && this.props.Organization.canCreateOrgs && (
+              {this.props.Organization && this.props.Organization.canCreateOrgs && (
                 <Menu.Item key="/organizations">Organizations</Menu.Item>
               ) || (null)}
             </Menu>
             <div className="user-layout--header-user">
               <div className="dark user-layout--header-user-link">
-                { this.props.Account.name }
+                {this.props.Account.name}
                 <Dropdown overlay={this.AccountMenu()} trigger={['click']}>
-                  <Button type="primary" icon="user" className="user-layout--header-user-button"/>
+                  <Button type="primary" icon="user"
+                          className="user-layout--header-user-button"/>
                 </Dropdown>
               </div>
             </div>

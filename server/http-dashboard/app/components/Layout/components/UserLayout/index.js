@@ -1,17 +1,20 @@
-import {OrganizationFetch} from "data/Organization/actions";
+import { OrganizationFetch } from "data/Organization/actions";
 import {
   OrganizationsFetch,
   OrganizationsHierarchyFetch
 } from "data/Organizations/actions";
 import React from 'react';
-import {Menu, Icon, Avatar, Dropdown} from 'antd';
-import {LinearIcon} from "components";
-import {Link} from 'react-router';
-import {connect} from 'react-redux';
-import {bindActionCreators} from 'redux';
+import { Menu, Icon, Avatar, Dropdown } from 'antd';
+import { LinearIcon } from "components";
+import { Link } from 'react-router';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import * as AccountActions from 'data/Account/actions';
-import {blynkWsConnect, blynkWsLogin} from 'store/blynk-websocket-middleware/actions';
-import {StartLoading, FinishLoading} from 'data/PageLoading/actions';
+import {
+  blynkWsConnect,
+  blynkWsLogin
+} from 'store/blynk-websocket-middleware/actions';
+import { StartLoading, FinishLoading } from 'data/PageLoading/actions';
 
 import './styles.less';
 import Watermark from "../Watermark";
@@ -19,18 +22,18 @@ import Watermark from "../Watermark";
 const DEFAULT_LOGO = '/static/logo.png';
 
 @connect((state) => ({
-  Account     : state.Account,
+  Account: state.Account,
   Organization: state.Organization,
-  hierarchy   : state.Organizations.get('hierarchy'),
+  hierarchy: state.Organizations.get('hierarchy'),
 }), (dispatch) => ({
-  organizationsHierarchyFetch : bindActionCreators(OrganizationsHierarchyFetch, dispatch),
-  startLoading      : bindActionCreators(StartLoading, dispatch),
-  finishLoading     : bindActionCreators(FinishLoading, dispatch),
-  fetchAccount      : bindActionCreators(AccountActions.Account, dispatch),
-  selectOrgId       : bindActionCreators(AccountActions.AccountSelectOrgId, dispatch),
-  blynkWsConnect    : bindActionCreators(blynkWsConnect, dispatch),
-  blynkWsLogin      : bindActionCreators(blynkWsLogin, dispatch),
-  OrganizationFetch : bindActionCreators(OrganizationFetch, dispatch),
+  organizationsHierarchyFetch: bindActionCreators(OrganizationsHierarchyFetch, dispatch),
+  startLoading: bindActionCreators(StartLoading, dispatch),
+  finishLoading: bindActionCreators(FinishLoading, dispatch),
+  fetchAccount: bindActionCreators(AccountActions.Account, dispatch),
+  selectOrgId: bindActionCreators(AccountActions.AccountSelectOrgId, dispatch),
+  blynkWsConnect: bindActionCreators(blynkWsConnect, dispatch),
+  blynkWsLogin: bindActionCreators(blynkWsLogin, dispatch),
+  OrganizationFetch: bindActionCreators(OrganizationFetch, dispatch),
   OrganizationsFetch: bindActionCreators(OrganizationsFetch, dispatch)
 }))
 class UserLayout extends React.Component {
@@ -40,18 +43,18 @@ class UserLayout extends React.Component {
   };
 
   static propTypes = {
-    Account           : React.PropTypes.object,
-    children          : React.PropTypes.object,
-    location          : React.PropTypes.object,
-    fetchAccount      : React.PropTypes.func,
-    blynkWsConnect    : React.PropTypes.func,
-    selectOrgId       : React.PropTypes.func,
-    blynkWsLogin      : React.PropTypes.func,
-    Organization      : React.PropTypes.object,
-    hierarchy         : React.PropTypes.object,
-    startLoading      : React.PropTypes.func,
-    finishLoading     : React.PropTypes.func,
-    OrganizationFetch : React.PropTypes.func,
+    Account: React.PropTypes.object,
+    children: React.PropTypes.object,
+    location: React.PropTypes.object,
+    fetchAccount: React.PropTypes.func,
+    blynkWsConnect: React.PropTypes.func,
+    selectOrgId: React.PropTypes.func,
+    blynkWsLogin: React.PropTypes.func,
+    Organization: React.PropTypes.object,
+    hierarchy: React.PropTypes.object,
+    startLoading: React.PropTypes.func,
+    finishLoading: React.PropTypes.func,
+    OrganizationFetch: React.PropTypes.func,
     OrganizationsFetch: React.PropTypes.func,
     organizationsHierarchyFetch: React.PropTypes.func,
   };
@@ -61,8 +64,8 @@ class UserLayout extends React.Component {
 
     this.state = {
       collapsed: true,
-      current  : props.location.pathname,
-      logoUrl  : props.Organization.logoUrl || DEFAULT_LOGO
+      current: props.location.pathname,
+      logoUrl: props.Organization.logoUrl || DEFAULT_LOGO
     };
 
     this.fetchData();
@@ -90,12 +93,12 @@ class UserLayout extends React.Component {
   componentWillReceiveProps(props) {
     this.setState({
       current: props.location.pathname,
-      logoUrl  : props.Organization.logoUrl || DEFAULT_LOGO
+      logoUrl: props.Organization.logoUrl || DEFAULT_LOGO
     });
   }
 
   componentDidUpdate(prevProps) {
-    if(prevProps.Account.selectedOrgId !== this.props.Account.selectedOrgId) {
+    if (prevProps.Account.selectedOrgId !== this.props.Account.selectedOrgId) {
       this.fetchData();
       this.context.router.push('/devices');
     }
@@ -127,8 +130,8 @@ class UserLayout extends React.Component {
     // }
   }
 
-  onImageError()  {
-    this.setState({logoUrl: DEFAULT_LOGO});
+  onImageError() {
+    this.setState({ logoUrl: DEFAULT_LOGO });
   }
 
   handleOrgSelect(e) {
@@ -140,7 +143,7 @@ class UserLayout extends React.Component {
   currentActivePage(state) {
     const splitedPath = state.split('/');
 
-    if ('products' === splitedPath[1] || 'product' === splitedPath[1] )
+    if ('products' === splitedPath[1] || 'product' === splitedPath[1])
       return ['/products'];
 
     if ('devices' === splitedPath[1])
@@ -149,7 +152,7 @@ class UserLayout extends React.Component {
     if ('organizations' === splitedPath[1])
       return ['/organizations'];
 
-    if (process.env.BLYNK_ANALYTICS && 'analytics' === splitedPath[1])
+    if (process.env.BLYNK_ANALYTICS && JSON.parse(process.env.BLYNK_ANALYTICS) && 'analytics' === splitedPath[1])
       return ['/analytics'];
   }
 
@@ -168,19 +171,20 @@ class UserLayout extends React.Component {
   OrgSelection() {
 
     const renderChild = (child, level = 1) => {
-      if(!child)
+      if (!child)
         return null;
 
       let children = [];
 
-      if(child && child.get('childs') && child.get('childs').map) {
+      if (child && child.get('childs') && child.get('childs').map) {
         child.get('childs').map((child) => {
           children.push(renderChild(child, level + 1));
         });
       }
 
       return [
-        <Menu.Item key={(child.get('id')).toString()} className={`user-layout--organization-select--org-level-${level} ${isActive(child.get('id'))}`}>
+        <Menu.Item key={(child.get('id')).toString()}
+                   className={`user-layout--organization-select--org-level-${level} ${isActive(child.get('id'))}`}>
           {child.get('name')}
         </Menu.Item>,
         children
@@ -196,23 +200,25 @@ class UserLayout extends React.Component {
     const childs = hierarchy && hierarchy.get && hierarchy.get('childs');
 
     const isActive = (id) => {
-      if(Number(id) === Number(currentOrgId)) {
+      if (Number(id) === Number(currentOrgId)) {
         return 'user-layout--organization-select--org-active';
       }
       return '';
     };
 
     return (
-      <Menu className="user-layout--organization-select" onClick={this.handleOrgSelect.bind(this)}>
-        <Menu.ItemGroup title="Main Organization" className={`user-layout--organization-select--meta-org`}>
+      <Menu className="user-layout--organization-select"
+            onClick={this.handleOrgSelect.bind(this)}>
+        <Menu.ItemGroup title="Main Organization"
+                        className={`user-layout--organization-select--meta-org`}>
           <Menu.Item key={`${id}`}>
             {name}
           </Menu.Item>
         </Menu.ItemGroup>
         <Menu.Divider/>
-        { childs && childs.size && (
+        {childs && childs.size && (
           <Menu.ItemGroup title="Sub Organizations">
-            { childs.map((child) => renderChild(child)) }
+            {childs.map((child) => renderChild(child))}
           </Menu.ItemGroup>
         ) || (
           null
@@ -224,7 +230,8 @@ class UserLayout extends React.Component {
   AccountMenu() {
 
     return (
-      <Menu className="user-layout-profile-dropdown-menu" onClick={this.handleClick.bind(this)}>
+      <Menu className="user-layout-profile-dropdown-menu"
+            onClick={this.handleClick.bind(this)}>
         <Menu.ItemGroup title="Profile">
           <Menu.Item key="/user-profile/account-settings">
             <LinearIcon type="user"/> My Profile
@@ -263,20 +270,26 @@ class UserLayout extends React.Component {
         <div
           className={`user-layout-left-navigation-stack ${this.state.collapsed ? 'user-layout-left-navigation-stack-fold' : 'user-layout-left-navigation-stack-unfold'}`}>
           <div
-            className={`user-layout-left-navigation ${this.state.navigationActive ? 'user-layout-left-navigation-active' : '' } ${this.state.collapsed ? 'user-layout-left-navigation-fold' : 'user-layout-left-navigation-unfold'}`}
+            className={`user-layout-left-navigation ${this.state.navigationActive ? 'user-layout-left-navigation-active' : ''} ${this.state.collapsed ? 'user-layout-left-navigation-fold' : 'user-layout-left-navigation-unfold'}`}
             onMouseOver={this.handleMouseEnter}
             onMouseOut={this.handleMouseLeave}
           >
-            <div className={this.state.collapsed ? 'user-layout-left-navigation-fold-company-logo' : 'user-layout-left-navigation-unfold-company-logo'}>
-              <Dropdown overlayClassName={`user-layout--organization-select--overlay ${this.state.collapsed ? '' : 'user-layout--organization-select--overlay--open'}`} overlay={this.OrgSelection()} trigger={['hover']} placement="topLeft"
-                        className="my-custom-dropdown">
+            <div
+              className={this.state.collapsed ? 'user-layout-left-navigation-fold-company-logo' : 'user-layout-left-navigation-unfold-company-logo'}>
+              <Dropdown
+                overlayClassName={`user-layout--organization-select--overlay ${this.state.collapsed ? '' : 'user-layout--organization-select--overlay--open'}`}
+                overlay={this.OrgSelection()} trigger={['hover']}
+                placement="topLeft"
+                className="my-custom-dropdown">
                 <Link to="/">
-                  <img src={this.state.logoUrl} onError={this.onImageError} alt=""/>
+                  <img src={this.state.logoUrl} onError={this.onImageError}
+                       alt=""/>
                 </Link>
               </Dropdown>
             </div>
             <div className={`user-layout-left-navigation-collapse-btn`}>
-              <Icon type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'} onClick={this.toggleCollapsed}/>
+              <Icon type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'}
+                    onClick={this.toggleCollapsed}/>
             </div>
             <Menu
               onClick={this.handleClick.bind(this)}
@@ -285,7 +298,8 @@ class UserLayout extends React.Component {
               inlineCollapsed={this.state.collapsed}
               selectedKeys={this.currentActivePage(this.state.current)}
             >
-              {process.env.BLYNK_ANALYTICS && <Menu.Item key="/analytics">
+              {process.env.BLYNK_ANALYTICS && JSON.parse(process.env.BLYNK_ANALYTICS) &&
+              <Menu.Item key="/analytics">
                 <Icon type="bar-chart"/>
                 <span>Analytics</span>
               </Menu.Item>}
@@ -293,7 +307,7 @@ class UserLayout extends React.Component {
                 <Icon type="hdd"/>
                 <span>Devices</span>
               </Menu.Item>
-              { this.props.Organization && this.props.Organization.parentId === -1 ? (
+              {this.props.Organization && this.props.Organization.parentId === -1 ? (
                 <Menu.Item key="/products">
                   <Icon type="appstore-o"/>
                   <span>Products</span>
@@ -307,8 +321,12 @@ class UserLayout extends React.Component {
               )}
             </Menu>
             <div className="user-layout-left-navigation-profile">
-              <Dropdown overlayClassName={`user-layout-left-navigation-profile--overlay ${this.state.collapsed ? '': 'user-layout-left-navigation-profile--overlay--open'}`} overlay={this.AccountMenu()} trigger={['hover']} placement="topLeft" className="my-custom-dropdown">
-                  <Avatar size="large" icon="user" className="user-layout-left-navigation-profile-button"/>
+              <Dropdown
+                overlayClassName={`user-layout-left-navigation-profile--overlay ${this.state.collapsed ? '' : 'user-layout-left-navigation-profile--overlay--open'}`}
+                overlay={this.AccountMenu()} trigger={['hover']}
+                placement="topLeft" className="my-custom-dropdown">
+                <Avatar size="large" icon="user"
+                        className="user-layout-left-navigation-profile-button"/>
               </Dropdown>
               <div>
                 {!this.state.collapsed && this.props.Account.name}
@@ -316,7 +334,8 @@ class UserLayout extends React.Component {
             </div>
           </div>
         </div>
-        <div className={`user-layout-right-content ${this.state.collapsed ? 'user-layout-right-content-fold' : 'user-layout-right-content-unfold'}`}>
+        <div
+          className={`user-layout-right-content ${this.state.collapsed ? 'user-layout-right-content-fold' : 'user-layout-right-content-unfold'}`}>
           {this.props.children}
         </div>
         <Watermark/>

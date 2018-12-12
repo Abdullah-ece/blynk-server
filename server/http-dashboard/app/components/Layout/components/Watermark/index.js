@@ -22,7 +22,7 @@ class Watermark extends React.Component {
     };
 
     return (
-      process.env.BLYNK_WATERMARK && (<div style={styles}>
+      process.env.BLYNK_WATERMARK && JSON.parse(process.env.BLYNK_WATERMARK) && (<div style={styles}>
         <div>
           Build Date: {process.env.BLYNK_DEPLOYMENT_DATE}
         </div>

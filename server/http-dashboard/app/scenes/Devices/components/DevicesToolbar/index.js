@@ -129,7 +129,7 @@ class DevicesToolbar extends React.Component {
                   className={devicesFilter === DEVICES_FILTERS.BY_PRODUCT ? 'active' : null}/>
         </Tooltip>
         <span/>
-        {process.env.BLYNK_CREATE_DEVICE && <Tooltip placement="top" title="Create new device">
+        {process.env.BLYNK_CREATE_DEVICE && JSON.parse(process.env.BLYNK_CREATE_DEVICE) && <Tooltip placement="top" title="Create new device">
           <Button icon="plus-square-o" size="small" onClick={this.handleDeviceCreateClick.bind(this)}/>
         </Tooltip>}
         <Tooltip placement="topRight" title="Smart Search" mouseEnterDelay={.75}>
