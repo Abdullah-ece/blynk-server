@@ -5,41 +5,57 @@ import WS_ACTIONS, {
   _websocketMessage
 } from './actions';
 
+import { browserHistory } from 'react-router';
+
+import { blynkWsLogin } from '../blynk-websocket-middleware/actions';
+
 let pingInterval = null;
 
 const onSocketOpen = (params) => {
-  const {socket, resolve, store, options} = params;
+  const { socket, resolve, store, options, loginRequired } = params;
 
   return () => {
 
     function keepAlive() {
       let timeout = options.pingTimeout || 1000;
-      if(socket && socket.send) {
+      if (socket && socket.send) {
         socket.send('');
       }
       pingInterval = setTimeout(keepAlive, timeout);
     }
 
-    if(options.isDebugMode) {
+    if (options.isDebugMode) {
       options.debug('onSocketOpen');
     }
-
+    
     store.dispatch(_websocketOpen());
+    if (loginRequired) {
+      const state = store.getState();
+      if (state && state.Account && state.Account.credentials && state.Account.credentials.username) {
+        const { username, password } = state.Account.credentials;
+        store.dispatch(blynkWsLogin({
+          username,
+          hash: password
+        }));
+      } else {
+        browserHistory.push('/login');
+      }
+    }
 
     resolve();
 
-    if(options.ping !== false) {
+    if (options.ping !== false) {
       keepAlive();
     }
 
   };
 };
 const onSocketClose = (params) => {
-  const {store, options} = params;
+  const { store, options } = params;
 
   return () => {
 
-    if(options.isDebugMode) {
+    if (options.isDebugMode) {
       options.debug('onSocketClose');
     }
 
@@ -48,11 +64,11 @@ const onSocketClose = (params) => {
   };
 };
 const onSocketMessage = (params) => {
-  const {store, options} = params;
+  const { store, options } = params;
 
   return (evt) => {
 
-    if(options.isDebugMode) {
+    if (options.isDebugMode) {
       options.debug('onSocketMessage');
     }
 
@@ -61,11 +77,11 @@ const onSocketMessage = (params) => {
   };
 };
 const onSocketError = (params) => {
-  const {store, options} = params;
+  const { store, options } = params;
 
   return () => {
 
-    if(options.isDebugMode) {
+    if (options.isDebugMode) {
       options.debug('onSocketError');
     }
 
@@ -83,7 +99,11 @@ const wsConnect = (params) => {
   let socket = new WebSocket(options.defaultEndpoint);
 
   socket.binaryType = 'arraybuffer';
-  socket.onopen = onSocketOpen({ ...params, socket: socket });
+  socket.onopen = onSocketOpen({
+    ...params,
+    socket: socket,
+    loginRequired: params.socket != null
+  });
   socket.onclose = onSocketClose(params);
   socket.onmessage = onSocketMessage(params);
   socket.onerror = onSocketError(params);
@@ -94,10 +114,10 @@ const wsConnect = (params) => {
 const wsSend = (params) => {
   const { socket, action, options } = params;
 
-  if(!socket)
+  if (!socket)
     throw new Error(`Cannot write WS. Socket doesn't exists`);
 
-  if(options.isDebugMode) {
+  if (options.isDebugMode) {
     options.debug('webSocketSend', action.value);
   }
 
@@ -106,7 +126,7 @@ const wsSend = (params) => {
 
 export const createWsMiddleware = (options = {}) => {
 
-  if(options.isDebugMode && !options.debug) {
+  if (options.isDebugMode && !options.debug) {
     options.debug = function () {
       /* eslint-disable */
       console.log.apply(null, ['WebSocket Debug:', ...arguments]);
@@ -126,9 +146,9 @@ export const createWsMiddleware = (options = {}) => {
       socket: socket,
     };
 
-    if(action && action.type === WS_ACTIONS.WEBSOCKET_CONNECT || action.type === WS_ACTIONS.WEBSOCKET_CLOSE) {
+    if (action && action.type === WS_ACTIONS.WEBSOCKET_CONNECT || action.type === WS_ACTIONS.WEBSOCKET_CLOSE) {
 
-      if(pingInterval)
+      if (pingInterval)
         clearTimeout(pingInterval);
 
       next(action);
@@ -141,7 +161,7 @@ export const createWsMiddleware = (options = {}) => {
       });
     }
 
-    if(action && action.type === WS_ACTIONS.WEBSOCKET_SEND) {
+    if (action && action.type === WS_ACTIONS.WEBSOCKET_SEND) {
       wsSend({
         ...params
       });
