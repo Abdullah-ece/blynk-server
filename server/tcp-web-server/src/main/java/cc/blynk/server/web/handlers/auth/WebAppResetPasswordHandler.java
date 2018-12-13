@@ -117,11 +117,7 @@ public class WebAppResetPasswordHandler extends SimpleChannelInboundHandler<Rese
                 return;
             }
             Organization org = organizationDao.getOrgByIdOrThrow(user.orgId);
-            if (org == null) {
-                log.info("Organization with orgId {} not found.", user.orgId);
-                ctx.writeAndFlush(json(msgId, "Organization not found."), ctx.voidPromise());
-                return;
-            }
+
             user.resetPass(passHash);
             tokensPool.removeToken(token);
             blockingIOProcessor.execute(() -> {
@@ -173,11 +169,6 @@ public class WebAppResetPasswordHandler extends SimpleChannelInboundHandler<Rese
         }
 
         Organization org = organizationDao.getOrgByIdOrThrow(user.orgId);
-        if (org == null) {
-            log.info("Organization with orgId {} not found.", user.orgId);
-            ctx.writeAndFlush(json(msgId, "Organization not found."), ctx.voidPromise());
-            return;
-        }
 
         String token = TokenGeneratorUtil.generateNewToken();
         log.info("{} trying to reset pass.", trimmedEmail);
