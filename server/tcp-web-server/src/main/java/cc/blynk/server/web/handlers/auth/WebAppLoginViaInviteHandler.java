@@ -112,8 +112,7 @@ public class WebAppLoginViaInviteHandler extends SimpleChannelInboundHandler<Web
         DefaultChannelPipeline pipeline = (DefaultChannelPipeline) ctx.pipeline();
         cleanPipeline(pipeline);
 
-        WebAppStateHolder appStateHolder = new WebAppStateHolder(user.orgId,
-                user, role, new Version(OsType.WEB_SOCKET, 41));
+        WebAppStateHolder appStateHolder = new WebAppStateHolder(user, role, new Version(OsType.WEB_SOCKET, 41));
         pipeline.addLast("AWebAppHandler", new WebAppHandler(holder, appStateHolder));
 
         Channel channel = ctx.channel();

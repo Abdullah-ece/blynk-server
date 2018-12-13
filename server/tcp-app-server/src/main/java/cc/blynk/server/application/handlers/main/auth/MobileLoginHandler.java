@@ -191,7 +191,7 @@ public class MobileLoginHandler extends SimpleChannelInboundHandler<LoginMessage
         cleanPipeline(pipeline);
 
         Role role = holder.organizationDao.getRole(user.orgId, user.roleId);
-        var appStateHolder = new MobileStateHolder(user.orgId, user, role, version);
+        var appStateHolder = new MobileStateHolder(user, role, version);
         pipeline.addLast("AAppHandler", new MobileHandler(holder, appStateHolder));
 
         var channel = ctx.channel();
