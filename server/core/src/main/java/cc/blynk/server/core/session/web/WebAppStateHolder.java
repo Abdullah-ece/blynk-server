@@ -20,6 +20,7 @@ public class WebAppStateHolder extends BaseUserStateHolder {
     public WebAppStateHolder(int orgId, User user, Role role, Version version) {
         super(orgId, user, role, version);
         this.selectedDeviceId = NO_DEVICE;
+        this.selectedOrgId = orgId;
     }
 
     public boolean isSelected(int deviceId) {
