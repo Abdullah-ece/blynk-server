@@ -15,7 +15,7 @@ public abstract class BaseUserStateHolder {
     public final Role role;
     public final Version version;
 
-    BaseUserStateHolder(int orgId, User user, Role role, Version version) {
+    public BaseUserStateHolder(int orgId, User user, Role role, Version version) {
         this.orgId = orgId;
         this.user = user;
         this.role = role;
