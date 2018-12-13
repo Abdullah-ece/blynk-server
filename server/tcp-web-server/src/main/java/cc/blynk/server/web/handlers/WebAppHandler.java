@@ -154,6 +154,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
     private final WebStopOtaLogic webStopOtaLogic;
     private final WebCleanOtaLogic webCleanOtaLogic;
     private final WebTrackOrganizationLogic webTrackOrganizationLogic;
+    private final WebUpdateDeviceMetafieldLogic webUpdateDeviceMetafieldLogic;
 
     private final Holder holder;
 
@@ -199,6 +200,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
         this.webStopOtaLogic = new WebStopOtaLogic(holder);
         this.webCleanOtaLogic = new WebCleanOtaLogic(holder);
         this.webTrackOrganizationLogic = new WebTrackOrganizationLogic(holder);
+        this.webUpdateDeviceMetafieldLogic = new WebUpdateDeviceMetafieldLogic(holder);
 
         this.state = state;
         this.holder = holder;
@@ -296,7 +298,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
                 webInviteUserLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_UPDATE_DEVICE_METAFIELD :
-                WebUpdateDeviceMetafieldLogic.messageReceived(holder, ctx, state, msg);
+                webUpdateDeviceMetafieldLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_GET_DEVICE_TIMELINE :
                 webGetDeviceTimelineLogic.messageReceived(ctx, state, msg);
