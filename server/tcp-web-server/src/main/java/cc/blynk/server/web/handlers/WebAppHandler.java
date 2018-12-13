@@ -156,6 +156,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
     private final WebTrackOrganizationLogic webTrackOrganizationLogic;
     private final WebUpdateDeviceMetafieldLogic webUpdateDeviceMetafieldLogic;
     private final WebTrackDeviceLogic webTrackDeviceLogic;
+    private final WebGetDeviceCountLogic webGetDeviceCountLogic;
 
     private final Holder holder;
 
@@ -203,6 +204,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
         this.webTrackOrganizationLogic = new WebTrackOrganizationLogic(holder);
         this.webUpdateDeviceMetafieldLogic = new WebUpdateDeviceMetafieldLogic(holder);
         this.webTrackDeviceLogic = new WebTrackDeviceLogic(holder);
+        this.webGetDeviceCountLogic = new WebGetDeviceCountLogic(holder);
 
         this.state = state;
         this.holder = holder;
@@ -342,7 +344,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
                 webEditOwnOrganizationLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_GET_DEVICE_COUNT_FOR_ORG :
-                WebGetDeviceCountLogic.messageReceived(holder, ctx, state, msg);
+                webGetDeviceCountLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_OTA_GET_FIRMWARE_INFO :
                 webGetOtaFirmwareInfoLogic.messageReceived(ctx, state, msg);
