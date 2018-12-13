@@ -1,4 +1,4 @@
-import { OrganizationFetch } from "data/Organization/actions";
+import { OrganizationFetch, OrganizationSwitch } from "data/Organization/actions";
 import {
   OrganizationsFetch,
   OrganizationsHierarchyFetch
@@ -27,6 +27,7 @@ const DEFAULT_LOGO = '/static/logo.png';
   hierarchy: state.Organizations.get('hierarchy'),
 }), (dispatch) => ({
   organizationsHierarchyFetch: bindActionCreators(OrganizationsHierarchyFetch, dispatch),
+  organizationSwitch: bindActionCreators(OrganizationSwitch, dispatch),
   startLoading: bindActionCreators(StartLoading, dispatch),
   finishLoading: bindActionCreators(FinishLoading, dispatch),
   fetchAccount: bindActionCreators(AccountActions.Account, dispatch),
@@ -135,6 +136,10 @@ class UserLayout extends React.Component {
   }
 
   handleOrgSelect(e) {
+    this.props.organizationSwitch({
+      orgId: e.key
+    });
+
     this.props.selectOrgId({
       orgId: e.key
     });

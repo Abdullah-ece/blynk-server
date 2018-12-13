@@ -14,6 +14,20 @@ export function OrganizationPreloadFetch(data = {}) {
   };
 }
 
+export function OrganizationSwitch(data = {}) {
+  if (!data.orgId)
+    throw Error('Organization id is not specified');
+  return {
+    type: 'TRACK_ORG',
+    ws: {
+      request: {
+        command: API_COMMANDS.WEB_TRACK_ORG,
+        query: [data.orgId]
+      }
+    }
+  };
+}
+
 export function OrganizationFetch(data = {}) {
   if (!data.id)
     throw Error('Organization id is not specified');
