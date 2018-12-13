@@ -154,6 +154,83 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         client.verifyResult(logEvent(3, device.id + " CRITICAL temp_is_high 222"));
     }
 
+    private static Device createProductAndDevice(AppWebSocketClient client, int orgId) throws Exception {
+        Product product = new Product();
+        product.name = "My product";
+        product.description = "Description";
+        product.boardType = "ESP8266";
+        product.connectionType = ConnectionType.WI_FI;
+        product.metaFields = new MetaField[] {
+                createNumberMeta(1, "Jopa", 123D),
+                createDeviceOwnerMeta(2, "owner", "owner", true),
+                createDeviceNameMeta(3, "anme", "name", true),
+                createContactMeta(6, "Farm of Smith"),
+                createTextMeta(7, "Device Owner", "owner@blynk.cc")
+        };
+
+        Event criticalEvent = new CriticalEvent(
+                1,
+                "Temp is super high",
+                "This is my description",
+                false,
+                "temp_is_high" ,
+                new EventReceiver[] {
+                        new EventReceiver(6, MetadataType.Contact, "Farm of Smith"),
+                        new EventReceiver(7, MetadataType.Text, "Device Owner")
+                },
+                null,
+                null
+        );
+
+        Event onlineEvent = new OnlineEvent(
+                2,
+                "Device is online!",
+                null,
+                false,
+                new EventReceiver[] {
+                        new EventReceiver(6, MetadataType.Contact, "Farm of Smith")
+                },
+                null,
+                null
+        );
+
+        Event offlineEvent = new OfflineEvent(
+                3,
+                "Device is offline!",
+                null,
+                false,
+                new EventReceiver[] {
+                        new EventReceiver(6, MetadataType.Contact, "Farm of Smith")
+                },
+                null,
+                null,
+                0
+        );
+
+        product.events = new Event[] {
+                criticalEvent,
+                onlineEvent,
+                offlineEvent
+        };
+
+        client.createProduct(orgId, product);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
+        assertNotNull(fromApiProduct);
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.productId = fromApiProduct.id;
+
+        client.createDevice(orgId, newDevice);
+        Device device = client.parseDevice(2);
+
+        client.trackDevice(device.id);
+        client.verifyResult(ok(3));
+
+        client.reset();
+        return device;
+    }
+
     @Test
     public void testLogEventIsResolvedFromWebapp() throws Exception {
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
@@ -170,6 +247,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         long now = System.currentTimeMillis();
 
         long logEventId;
+        client.reset();
         client.getTimeline(orgId, device.id, EventType.CRITICAL, false, 0, now, 0, 10);
         TimelineResponseDTO timeLineResponse = client.parseTimelineResponse(1);
         assertNotNull(timeLineResponse);
@@ -212,6 +290,24 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
     }
 
     @Test
+    public void testLogEventIsForwardedToWebappFromExternalAPI() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+        Device device = createProductAndDevice(client, orgId);
+        client.trackDevice(device.id);
+        client.verifyResult(ok(1));
+
+        String externalApiUrl = String.format("https://localhost:%s/external/api/", properties.getHttpsPort());
+
+        CloseableHttpClient httpclient = getDefaultHttpsClient();
+        HttpGet insertEvent = new HttpGet(externalApiUrl + device.token + "/logEvent?code=temp_is_high");
+        try (CloseableHttpResponse response = httpclient.execute(insertEvent)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        client.verifyResult(logEvent(111, device.id + " CRITICAL temp_is_high"));
+    }
+
+    @Test
     public void testLogEventIsResolvedFromWebappAndForwardedToAnotherWebapp() throws Exception {
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
         Device device = createProductAndDevice(client, orgId);
@@ -227,6 +323,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         long now = System.currentTimeMillis();
 
         long logEventId;
+        client.reset();
         client.getTimeline(orgId, device.id, EventType.CRITICAL, false, 0, now, 0, 10);
         TimelineResponseDTO timeLineResponse = client.parseTimelineResponse(1);
         assertNotNull(timeLineResponse);
@@ -267,24 +364,6 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
     }
 
     @Test
-    public void testLogEventIsForwardedToWebappFromExternalAPI() throws Exception {
-        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
-        Device device = createProductAndDevice(client, orgId);
-        client.trackDevice(device.id);
-        client.verifyResult(ok(1));
-
-        String externalApiUrl = String.format("https://localhost:%s/external/api/", properties.getHttpsPort());
-
-        CloseableHttpClient httpclient = getDefaultHttpsClient();
-        HttpGet insertEvent = new HttpGet(externalApiUrl + device.token + "/logEvent?code=temp_is_high");
-        try (CloseableHttpResponse response = httpclient.execute(insertEvent)) {
-            assertEquals(200, response.getStatusLine().getStatusCode());
-        }
-
-        client.verifyResult(logEvent(111, device.id + " CRITICAL temp_is_high"));
-    }
-
-    @Test
     public void testSystemLogEventViaHttpApi() throws Exception {
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
         Device device = createProductAndDevice(client, orgId);
@@ -296,6 +375,8 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         try (CloseableHttpResponse response = httpclient.execute(insertEvent)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
+
+        client.reset();
 
         client.getTimeline(orgId, device.id, EventType.ONLINE, null, 0, System.currentTimeMillis(), 0, 10);
         TimelineResponseDTO timeLineResponse = client.parseTimelineResponse(1);
@@ -323,10 +404,9 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         newHardClient.start();
         newHardClient.login(device.token);
         newHardClient.verifyResult(ok(1));
-        client.reset();
-
         newHardClient.logEvent("temp_is_high", "MyNewDescription");
         newHardClient.verifyResult(ok(2));
+        client.reset();
 
         client.getTimeline(orgId, device.id, EventType.CRITICAL, null, 0, System.currentTimeMillis(), 0, 10);
         TimelineResponseDTO timeLineResponse = client.parseTimelineResponse(1);
@@ -354,10 +434,9 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         newHardClient.start();
         newHardClient.login(device.token);
         newHardClient.verifyResult(ok(1));
-        client.reset();
-
         newHardClient.logEvent("temp_is_high", "MyNewDescription");
         newHardClient.verifyResult(ok(2));
+        client.reset();
 
         client.getTimeline(orgId, device.id, EventType.CRITICAL, null, 0, System.currentTimeMillis(), 0, 10);
         TimelineResponseDTO timeLineResponse = client.parseTimelineResponse(1);
@@ -398,6 +477,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
 
+        client.reset();
         client.getTimeline(orgId, device.id, EventType.CRITICAL, null, 0, System.currentTimeMillis(), 0, 10);
         TimelineResponseDTO timeLineResponse = client.parseTimelineResponse(1);
         assertNotNull(timeLineResponse);
@@ -416,30 +496,6 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
 
         verify(holder.mailWrapper, timeout(1000)).sendHtml(eq("dmitriy@blynk.cc"), eq("My New Device: Temp is super high"), contains("Temp is super high"));
         verify(holder.mailWrapper, timeout(1000)).sendHtml(eq("owner@blynk.cc"), eq("My New Device: Temp is super high"), contains("Temp is super high"));
-    }
-
-    @Test
-    public void testBasicLogEventWithIsResolvedFlow() throws Exception {
-        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
-        Device device = createProductAndDevice(client, orgId);
-
-        TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
-        newHardClient.start();
-        newHardClient.login(device.token);
-        newHardClient.verifyResult(ok(1));
-        client.reset();
-
-        newHardClient.logEvent("temp_is_high", "MyNewDescription");
-        newHardClient.verifyResult(ok(2));
-
-        client.getTimeline(orgId, device.id, EventType.CRITICAL, true, 0, System.currentTimeMillis(), 0, 10);
-        TimelineResponseDTO timeLineResponse = client.parseTimelineResponse(1);
-        assertNotNull(timeLineResponse);
-
-        assertEquals(1, timeLineResponse.totalCritical);
-        assertEquals(0, timeLineResponse.totalWarning);
-        assertEquals(0, timeLineResponse.totalResolved);
-        assertNull(timeLineResponse.eventList);
     }
 
     @Test
@@ -462,9 +518,83 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
     }
 
     @Test
-    public void testOnlineOfflineLogEventIsNotForwardedToWebappBecauseNoTrack() throws Exception {
+    public void testBasicLogEventWithIsResolvedFlow() throws Exception {
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
         Device device = createProductAndDevice(client, orgId);
+
+        TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
+        newHardClient.start();
+        newHardClient.login(device.token);
+        newHardClient.verifyResult(ok(1));
+        newHardClient.logEvent("temp_is_high", "MyNewDescription");
+        newHardClient.verifyResult(ok(2));
+        client.reset();
+
+        client.getTimeline(orgId, device.id, EventType.CRITICAL, true, 0, System.currentTimeMillis(), 0, 10);
+        TimelineResponseDTO timeLineResponse = client.parseTimelineResponse(1);
+        assertNotNull(timeLineResponse);
+
+        assertEquals(1, timeLineResponse.totalCritical);
+        assertEquals(0, timeLineResponse.totalWarning);
+        assertEquals(0, timeLineResponse.totalResolved);
+        assertNull(timeLineResponse.eventList);
+    }
+
+    @Test
+    public void testOnlineOfflineLogEventIsNotForwardedToWebappBecauseNoTrack() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+        Product product = new Product();
+        product.name = "My product";
+        product.boardType = "ESP8266";
+        product.connectionType = ConnectionType.WI_FI;
+        product.metaFields = new MetaField[] {
+                createNumberMeta(1, "Jopa", 123D),
+                createDeviceOwnerMeta(2, "owner", "owner", true),
+                createDeviceNameMeta(3, "anme", "name", true),
+                createContactMeta(6, "Farm of Smith"),
+                createTextMeta(7, "Device Owner", "owner@blynk.cc")
+        };
+
+        Event onlineEvent = new OnlineEvent(
+                2,
+                "Device is online!",
+                null,
+                false,
+                new EventReceiver[] {
+                        new EventReceiver(6, MetadataType.Contact, "Farm of Smith")
+                },
+                null,
+                null
+        );
+
+        Event offlineEvent = new OfflineEvent(
+                3,
+                "Device is offline!",
+                null,
+                false,
+                new EventReceiver[] {
+                        new EventReceiver(6, MetadataType.Contact, "Farm of Smith")
+                },
+                null,
+                null,
+                0
+        );
+
+        product.events = new Event[] {
+                onlineEvent,
+                offlineEvent
+        };
+
+        client.createProduct(orgId, product);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
+        assertNotNull(fromApiProduct);
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.productId = fromApiProduct.id;
+
+        client.createDevice(orgId, newDevice);
+        Device device = client.parseDevice(2);
 
         TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
         newHardClient.start();
@@ -488,10 +618,9 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         newHardClient.start();
         newHardClient.login(device.token);
         newHardClient.verifyResult(ok(1));
-        client.reset();
-
         newHardClient.logEvent("temp_is_high");
         newHardClient.verifyResult(ok(2));
+        client.reset();
 
         long logEventId;
         client.getTimeline(orgId, device.id, EventType.CRITICAL, null, 0, System.currentTimeMillis(), 0, 10);
@@ -561,6 +690,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         newHardClient.logEvent("temp_is_high");
         newHardClient.verifyResult(ok(4));
 
+        client.reset();
         client.getTimeline(orgId, device.id, EventType.CRITICAL, null, 0, System.currentTimeMillis(), 0, 10);
         TimelineResponseDTO timeLineResponse = client.parseTimelineResponse(1);
         assertNotNull(timeLineResponse);
@@ -590,47 +720,6 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         assertTrue(logEvents.get(0).isResolved);
         assertEquals(System.currentTimeMillis(), logEvents.get(0).resolvedAt, 5000);
         assertNull(logEvents.get(0).resolvedComment);
-    }
-
-    @Test
-    //https://github.com/blynkkk/dash/issues/1276
-    public void testDeviceQuicklyReconnects() throws Exception {
-        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
-        Device device = createProductAndDevice(client, orgId);
-
-        TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
-        newHardClient.start();
-        newHardClient.login(device.token);
-        newHardClient.verifyResult(ok(1));
-        client.verifyResult(deviceConnected(1, device.id));
-        newHardClient.stop();
-        client.reset();
-
-        newHardClient = new TestHardClient("localhost", properties.getHttpPort());
-        newHardClient.start();
-        newHardClient.login(device.token);
-        newHardClient.verifyResult(ok(1));
-        client.verifyResult(deviceConnected(1, device.id));
-        newHardClient.stop();
-        client.reset();
-
-        //we have to wait for DB.
-        sleep(500);
-
-        long now = System.currentTimeMillis();
-        client.getTimeline(orgId, device.id, null, null, 0, now, 0, 10);
-        TimelineResponseDTO timeLineResponse = client.parseTimelineResponse(1);
-        assertNotNull(timeLineResponse);
-        assertEquals(0, timeLineResponse.totalCritical);
-        assertEquals(0, timeLineResponse.totalWarning);
-        assertEquals(0, timeLineResponse.totalResolved);
-        List<LogEvent> logEvents = timeLineResponse.eventList;
-        assertNotNull(timeLineResponse.eventList);
-        assertEquals(4, logEvents.size());
-        assertEquals(EventType.OFFLINE, logEvents.get(0).eventType);
-        assertEquals(EventType.ONLINE, logEvents.get(1).eventType);
-        assertEquals(EventType.OFFLINE, logEvents.get(2).eventType);
-        assertEquals(EventType.ONLINE, logEvents.get(3).eventType);
     }
 
     @Test
@@ -792,78 +881,46 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
     }
     */
 
-    private static Device createProductAndDevice(AppWebSocketClient client, int orgId) throws Exception {
-        Product product = new Product();
-        product.name = "My product";
-        product.description = "Description";
-        product.boardType = "ESP8266";
-        product.connectionType = ConnectionType.WI_FI;
-        product.metaFields = new MetaField[] {
-                createNumberMeta(1, "Jopa", 123D),
-                createDeviceOwnerMeta(2, "owner", "owner", true),
-                createDeviceNameMeta(3, "anme", "name", true),
-                createContactMeta(6, "Farm of Smith"),
-                createTextMeta(7, "Device Owner", "owner@blynk.cc")
-        };
+    @Test
+    //https://github.com/blynkkk/dash/issues/1276
+    public void testDeviceQuicklyReconnects() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+        Device device = createProductAndDevice(client, orgId);
 
-        Event criticalEvent = new CriticalEvent(
-                1,
-                "Temp is super high",
-                "This is my description",
-                false,
-                "temp_is_high" ,
-                new EventReceiver[] {
-                        new EventReceiver(6, MetadataType.Contact, "Farm of Smith"),
-                        new EventReceiver(7, MetadataType.Text, "Device Owner")
-                },
-                null,
-                null
-        );
+        TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
+        newHardClient.start();
+        newHardClient.login(device.token);
+        newHardClient.verifyResult(ok(1));
+        client.verifyResult(deviceConnected(1, device.id));
+        newHardClient.stop();
+        client.reset();
 
-        Event onlineEvent = new OnlineEvent(
-                2,
-                "Device is online!",
-                null,
-                false,
-                new EventReceiver[] {
-                        new EventReceiver(6, MetadataType.Contact, "Farm of Smith")
-                },
-                null,
-                null
-        );
+        newHardClient = new TestHardClient("localhost", properties.getHttpPort());
+        newHardClient.start();
+        newHardClient.login(device.token);
+        newHardClient.verifyResult(ok(1));
+        client.verifyResult(deviceConnected(1, device.id));
+        newHardClient.stop();
+        client.reset();
 
-        Event offlineEvent = new OfflineEvent(
-                3,
-                "Device is offline!",
-                null,
-                false,
-                new EventReceiver[] {
-                        new EventReceiver(6, MetadataType.Contact, "Farm of Smith")
-                },
-                null,
-                null,
-                0
-        );
-
-        product.events = new Event[] {
-                criticalEvent,
-                onlineEvent,
-                offlineEvent
-        };
-
-        client.createProduct(orgId, product);
-        ProductDTO fromApiProduct = client.parseProductDTO(1);
-        assertNotNull(fromApiProduct);
-
-        Device newDevice = new Device();
-        newDevice.name = "My New Device";
-        newDevice.productId = fromApiProduct.id;
-
-        client.createDevice(orgId, newDevice);
-        Device device = client.parseDevice(2);
+        //we have to wait for DB.
+        sleep(500);
 
         client.reset();
-        return device;
+        long now = System.currentTimeMillis();
+        client.getTimeline(orgId, device.id, null, null, 0, now, 0, 10);
+        TimelineResponseDTO timeLineResponse = client.parseTimelineResponse(1);
+        assertNotNull(timeLineResponse);
+        assertEquals(0, timeLineResponse.totalCritical);
+        assertEquals(0, timeLineResponse.totalWarning);
+        assertEquals(0, timeLineResponse.totalResolved);
+        List<LogEvent> logEvents = timeLineResponse.eventList;
+        assertNotNull(timeLineResponse.eventList);
+        assertEquals(4, logEvents.size());
+        assertEquals(EventType.OFFLINE, logEvents.get(0).eventType);
+        assertEquals(EventType.ONLINE, logEvents.get(1).eventType);
+        assertEquals(EventType.OFFLINE, logEvents.get(2).eventType);
+        assertEquals(EventType.ONLINE, logEvents.get(3).eventType);
     }
 
 }

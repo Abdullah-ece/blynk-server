@@ -8,7 +8,6 @@ import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
 import cc.blynk.server.web.handlers.logic.account.WebEditAccountLogic;
 import cc.blynk.server.web.handlers.logic.account.WebGetAccountLogic;
-import cc.blynk.server.web.handlers.logic.device.WebAppHardwareLogic;
 import cc.blynk.server.web.handlers.logic.device.WebCreateDeviceLogic;
 import cc.blynk.server.web.handlers.logic.device.WebDeleteOrgDeviceLogic;
 import cc.blynk.server.web.handlers.logic.device.WebEditOrgDeviceLogic;
@@ -19,6 +18,7 @@ import cc.blynk.server.web.handlers.logic.device.WebGetOrgDevicesLogic;
 import cc.blynk.server.web.handlers.logic.device.WebSetAuthTokenForDeviceLogic;
 import cc.blynk.server.web.handlers.logic.device.WebTrackDeviceLogic;
 import cc.blynk.server.web.handlers.logic.device.WebUpdateDeviceMetafieldLogic;
+import cc.blynk.server.web.handlers.logic.device.control.WebAppControlHardwareLogic;
 import cc.blynk.server.web.handlers.logic.device.timeline.WebGetDeviceTimelineLogic;
 import cc.blynk.server.web.handlers.logic.device.timeline.WebResolveLogEventLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebCreateOrganizationLogic;
@@ -114,7 +114,7 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_USER_INFO;
 public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMessage, WebAppStateHolder> {
 
     public final WebAppStateHolder state;
-    private final WebAppHardwareLogic webAppHardwareLogic;
+    private final WebAppControlHardwareLogic webAppControlHardwareLogic;
     private final WebGetGraphDataLogic getWebGraphDataLogic;
     private final WebResolveLogEventLogic webResolveLogEventLogic;
     private final WebCreateDeviceLogic webCreateDeviceLogic;
@@ -162,7 +162,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
 
     public WebAppHandler(Holder holder, WebAppStateHolder state) {
         super(StringMessage.class);
-        this.webAppHardwareLogic = new WebAppHardwareLogic(holder);
+        this.webAppControlHardwareLogic = new WebAppControlHardwareLogic(holder);
         this.getWebGraphDataLogic = new WebGetGraphDataLogic(holder);
         this.webResolveLogEventLogic = new WebResolveLogEventLogic(holder);
         this.webCreateDeviceLogic = new WebCreateDeviceLogic(holder);
@@ -221,7 +221,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
                 WebEditAccountLogic.messageReceived(ctx, state, msg);
                 break;
             case HARDWARE :
-                webAppHardwareLogic.messageReceived(ctx, state, msg);
+                webAppControlHardwareLogic.messageReceived(ctx, state, msg);
                 break;
             case TRACK_DEVICE :
                 webTrackDeviceLogic.messageReceived(ctx, state, msg);

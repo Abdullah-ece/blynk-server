@@ -140,18 +140,20 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         appWebSocketClient.start();
         appWebSocketClient.login(regularUser);
         appWebSocketClient.verifyResult(ok(1));
+        appWebSocketClient.trackDevice(device.id);
+        appWebSocketClient.verifyResult(ok(2));
 
         TestHardClient testHardClient = new TestHardClient("localhost", properties.getHttpPort());
         testHardClient.start();
         testHardClient.login(device.token);
         testHardClient.verifyResult(ok(1));
 
-        appWebSocketClient.send("hardware 1 vw 1 222");
-        testHardClient.verifyResult(new HardwareMessage(2, b("vw 1 222")));
+        appWebSocketClient.send("hardware " + device.id + " vw 1 222");
+        testHardClient.verifyResult(new HardwareMessage(3, b("vw 1 222")));
 
-
+        appWebSocketClient.reset();
         appWebSocketClient.getDevice(regularUser.orgId, device.id);
-        Device deviceDTO = appWebSocketClient.parseDevice(3);
+        Device deviceDTO = appWebSocketClient.parseDevice(1);
         assertNotNull(deviceDTO);
         assertEquals("My New Device", deviceDTO.name);
         assertNotNull(deviceDTO.webDashboard);
@@ -236,6 +238,8 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         appWebSocketClient.start();
         appWebSocketClient.login(regularUser);
         appWebSocketClient.verifyResult(ok(1));
+        appWebSocketClient.trackDevice(0);
+        appWebSocketClient.verifyResult(ok(2));
 
         AppWebSocketClient appWebSocketClient2 = TestUtil.defaultClient();
         appWebSocketClient2.start();
@@ -245,8 +249,9 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         appWebSocketClient2.verifyResult(ok(2));
 
         appWebSocketClient.send("hardware 0 vw 10 100");
-        appWebSocketClient2.verifyResult(appSync(2, b("0 vw 10 100")));
-        appWebSocketClient.never(appSync(2, b("0 vw 10 100")));
+        appWebSocketClient2.verifyResult(appSync(3, b("0 vw 10 100")));
+        appWebSocketClient.never(appSync(3, b("0 vw 10 100")));
+        appWebSocketClient.never(appSync(1111, b("0 vw 10 100")));
     }
 
     @Test
@@ -255,6 +260,8 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         appWebSocketClient.start();
         appWebSocketClient.login(regularUser);
         appWebSocketClient.verifyResult(ok(1));
+        appWebSocketClient.trackDevice(0);
+        appWebSocketClient.verifyResult(ok(2));
 
         TestAppClient appClient = new TestAppClient("localhost", properties);
         appClient.start();
@@ -262,10 +269,11 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         appClient.verifyResult(ok(1));
 
         appWebSocketClient.send("hardware 0 vw 10 100");
-        appClient.verifyResult(appSync(2, "0 vw 10 100"));
+        appClient.verifyResult(appSync(3, "0 vw 10 100"));
 
-        appClient.sync(1);
-        appClient.verifyResult(appSync(2, b("0 vw 10 100")));
+        appClient.sync(0);
+        appClient.verifyResult(ok(2));
+        appClient.verifyResult(appSync(1111, b("0 vw 10 100")));
 
     }
 
@@ -372,20 +380,22 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         appWebSocketClient2.trackDevice(0);
         appWebSocketClient2.verifyResult(ok(2));
 
+        appWebSocketClient.trackDevice(0);
+        appWebSocketClient.verifyResult(ok(3));
         appWebSocketClient.send("hardware 0 vw 10 100");
-        appWebSocketClient2.verifyResult(appSync(3, b("0 vw 10 100")));
-        appWebSocketClient.never(appSync(3, b("0 vw 10 100")));
+        appWebSocketClient2.verifyResult(appSync(4, b("0 vw 10 100")));
+        appWebSocketClient.never(appSync(4, b("0 vw 10 100")));
 
         appWebSocketClient.send("hardware 1 vw 10 100");
-        appWebSocketClient2.never(appSync(4, b("1 vw 10 100")));
-        appWebSocketClient.never(appSync(4, b("1 vw 10 100")));
+        appWebSocketClient2.never(appSync(5, b("1 vw 10 100")));
+        appWebSocketClient.never(appSync(5, b("1 vw 10 100")));
 
         appWebSocketClient2.trackDevice(-1);
         appWebSocketClient2.verifyResult(webJson(3, "Requested device not exists."));
 
         appWebSocketClient.send("hardware 0 vw 10 100");
-        appWebSocketClient2.never(appSync(5, b("0 vw 10 100")));
-        appWebSocketClient.never(appSync(5, b("0 vw 10 100")));
+        appWebSocketClient2.never(appSync(6, b("0 vw 10 100")));
+        appWebSocketClient.never(appSync(6, b("0 vw 10 100")));
     }
 
     @Test

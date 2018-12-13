@@ -1,11 +1,13 @@
-package cc.blynk.server.web.handlers.logic.device;
+package cc.blynk.server.web.handlers.logic.device.control;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.core.PermissionBasedLogic;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
@@ -16,6 +18,7 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import static cc.blynk.server.core.model.permissions.PermissionsTable.OWN_DEVICES_EDIT;
 import static cc.blynk.server.core.protocol.enums.Command.DEVICE_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.utils.StringUtils.split2;
@@ -30,19 +33,30 @@ import static cc.blynk.utils.StringUtils.split3;
  * Created on 2/1/2015.
  *
  */
-public final class WebAppHardwareLogic {
+public final class WebAppOwnControlHardwareLogic implements PermissionBasedLogic<WebAppStateHolder> {
 
-    private static final Logger log = LogManager.getLogger(WebAppHardwareLogic.class);
+    private static final Logger log = LogManager.getLogger(WebAppOwnControlHardwareLogic.class);
 
     private final SessionDao sessionDao;
     private final DeviceDao deviceDao;
 
-    public WebAppHardwareLogic(Holder holder) {
+    WebAppOwnControlHardwareLogic(Holder holder) {
         this.sessionDao = holder.sessionDao;
         this.deviceDao = holder.deviceDao;
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
+    @Override
+    public boolean hasPermission(Role role) {
+        return role.canEditOwnDevice();
+    }
+
+    @Override
+    public int getPermission() {
+        return OWN_DEVICES_EDIT;
+    }
+
+    @Override
+    public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         Session session = sessionDao.getOrgSession(state.orgId);
 
         //here expecting command in format "200000 vw 88 1"
@@ -50,6 +64,7 @@ public final class WebAppHardwareLogic {
 
         //here we have "200000"
         int deviceId = Integer.parseInt(split[0]);
+        state.checkControlledDeviceIsSelected(deviceId);
 
         Device device = deviceDao.getByIdOrThrow(deviceId);
         if (device == null) {

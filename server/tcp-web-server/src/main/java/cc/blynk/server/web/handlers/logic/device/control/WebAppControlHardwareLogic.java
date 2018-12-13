@@ -1,4 +1,4 @@
-package cc.blynk.server.web.handlers.logic.device.timeline;
+package cc.blynk.server.web.handlers.logic.device.control;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.PermissionBasedLogic;
@@ -10,16 +10,20 @@ import io.netty.channel.ChannelHandlerContext;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_DEVICES_EDIT;
 
 /**
+ * Responsible for handling incoming hardware commands from applications and forwarding it to
+ * appropriate hardware.
+ *
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
- * Created on 13.04.18.
+ * Created on 2/1/2015.
+ *
  */
-public final class WebResolveLogEventLogic implements PermissionBasedLogic<WebAppStateHolder> {
+public final class WebAppControlHardwareLogic implements PermissionBasedLogic<WebAppStateHolder> {
 
-    private final WebResolveOwnLogEventLogic webResolveOwnLogEventLogic;
+    private final WebAppOwnControlHardwareLogic webAppOwnControlHardwareLogic;
 
-    public WebResolveLogEventLogic(Holder holder) {
-        this.webResolveOwnLogEventLogic = new WebResolveOwnLogEventLogic(holder);
+    public WebAppControlHardwareLogic(Holder holder) {
+        this.webAppOwnControlHardwareLogic = new WebAppOwnControlHardwareLogic(holder);
     }
 
     @Override
@@ -34,11 +38,12 @@ public final class WebResolveLogEventLogic implements PermissionBasedLogic<WebAp
 
     @Override
     public void noPermissionAction(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage msg) {
-        webResolveOwnLogEventLogic.messageReceived(ctx, state, msg);
+        webAppOwnControlHardwareLogic.messageReceived(ctx, state, msg);
     }
 
     @Override
     public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage msg) {
-        webResolveOwnLogEventLogic.messageReceived0(ctx, state, msg);
+        webAppOwnControlHardwareLogic.messageReceived0(ctx, state, msg);
     }
+
 }
