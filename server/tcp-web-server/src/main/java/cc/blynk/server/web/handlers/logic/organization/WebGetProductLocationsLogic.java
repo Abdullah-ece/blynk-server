@@ -1,8 +1,10 @@
 package cc.blynk.server.web.handlers.logic.organization;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.core.PermissionBasedLogic;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.metafields.LocationMetaField;
@@ -16,6 +18,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static cc.blynk.server.core.model.permissions.PermissionsTable.PRODUCT_VIEW;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 
 /**
@@ -23,7 +26,7 @@ import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
  * Created by Dmitriy Dumanskiy.
  * Created on 13.04.18.
  */
-public final class WebGetProductLocationsLogic {
+public final class WebGetProductLocationsLogic implements PermissionBasedLogic<WebAppStateHolder> {
 
     private final DeviceDao deviceDao;
 
@@ -31,7 +34,18 @@ public final class WebGetProductLocationsLogic {
         this.deviceDao = holder.deviceDao;
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
+    @Override
+    public boolean hasPermission(Role role) {
+        return role.canViewProduct();
+    }
+
+    @Override
+    public int getPermission() {
+        return PRODUCT_VIEW;
+    }
+
+    @Override
+    public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         String[] split = StringUtils.split2(message.body);
         int productId = Integer.parseInt(split[0]);
         String searchString = null;

@@ -2,10 +2,12 @@ package cc.blynk.server.web.handlers.logic.product;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.dashboard.dto.ProductAndOrgIdDTO;
+import cc.blynk.server.core.PermissionBasedLogic;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
@@ -19,6 +21,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
+import static cc.blynk.server.core.model.permissions.PermissionsTable.PRODUCT_EDIT;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.server.internal.WebByteBufUtil.json;
 
@@ -27,7 +30,7 @@ import static cc.blynk.server.internal.WebByteBufUtil.json;
  * Created by Dmitriy Dumanskiy.
  * Created on 13.04.18.
  */
-public final class WebUpdateDevicesMetaInProductLogic {
+public final class WebUpdateDevicesMetaInProductLogic implements PermissionBasedLogic<WebAppStateHolder> {
 
     private static final Logger log = LogManager.getLogger(WebUpdateDevicesMetaInProductLogic.class);
 
@@ -39,7 +42,18 @@ public final class WebUpdateDevicesMetaInProductLogic {
         this.deviceDao = holder.deviceDao;
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
+    @Override
+    public boolean hasPermission(Role role) {
+        return role.canEditProduct();
+    }
+
+    @Override
+    public int getPermission() {
+        return PRODUCT_EDIT;
+    }
+
+    @Override
+    public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         ProductAndOrgIdDTO productAndOrgIdDTO = JsonParser.readAny(message.body, ProductAndOrgIdDTO.class);
 
         User user = state.user;

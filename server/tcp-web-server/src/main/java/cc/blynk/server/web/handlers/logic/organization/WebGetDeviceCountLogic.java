@@ -1,6 +1,9 @@
 package cc.blynk.server.web.handlers.logic.organization;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.core.PermissionBasedLogic;
+import cc.blynk.server.core.dao.OrganizationDao;
+import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
@@ -9,6 +12,7 @@ import io.netty.channel.ChannelHandlerContext;
 
 import java.util.List;
 
+import static cc.blynk.server.core.model.permissions.PermissionsTable.PRODUCT_VIEW;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeASCIIStringMessage;
 
 /**
@@ -17,17 +21,30 @@ import static cc.blynk.server.internal.CommonByteBufUtil.makeASCIIStringMessage;
  * Created on 2/1/2015.
  *
  */
-public final class WebGetDeviceCountLogic {
+public final class WebGetDeviceCountLogic implements PermissionBasedLogic<WebAppStateHolder> {
 
-    private WebGetDeviceCountLogic() {
+    private final OrganizationDao organizationDao;
+
+    public WebGetDeviceCountLogic(Holder holder) {
+        this.organizationDao = holder.organizationDao;
     }
 
-    public static void messageReceived(Holder holder,
-                                       ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage msg) {
+    @Override
+    public boolean hasPermission(Role role) {
+        return role.canViewProduct();
+    }
+
+    @Override
+    public int getPermission() {
+        return PRODUCT_VIEW;
+    }
+
+    @Override
+    public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage msg) {
         int orgId = Integer.parseInt(msg.body);
 
         //todo permission check?
-        List<Organization> childs = holder.organizationDao.getOrgChilds(orgId);
+        List<Organization> childs = organizationDao.getOrgChilds(orgId);
         int totalCount = devicesCount(childs);
         Organization firstOrg = childs.get(0);
 
