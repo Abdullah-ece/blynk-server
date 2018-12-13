@@ -13,7 +13,7 @@ import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.core.session.mobile.BaseUserStateHolder;
+import cc.blynk.server.core.session.web.WebAppStateHolder;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.model.permissions.PermissionsTable.OWN_DEVICES_EDIT;
@@ -26,7 +26,7 @@ import static cc.blynk.utils.StringUtils.split2;
  * Created by Dmitriy Dumanskiy.
  * Created on 11.09.18.
  */
-public final class WebUpdateOwnDeviceMetafieldLogic implements PermissionBasedLogic {
+public final class WebUpdateOwnDeviceMetafieldLogic implements PermissionBasedLogic<WebAppStateHolder> {
 
     private final SessionDao sessionDao;
     private final DeviceDao deviceDao;
@@ -48,7 +48,7 @@ public final class WebUpdateOwnDeviceMetafieldLogic implements PermissionBasedLo
 
     @Override
     public void messageReceived0(ChannelHandlerContext ctx,
-                                 BaseUserStateHolder state, StringMessage message) {
+                                 WebAppStateHolder state, StringMessage message) {
         String[] split = split2(message.body);
 
         User user = state.user;
@@ -85,7 +85,7 @@ public final class WebUpdateOwnDeviceMetafieldLogic implements PermissionBasedLo
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
 
         //if update comes from the app - send update to the web
-        Session session = sessionDao.getOrgSession(user.orgId);
+        Session session = sessionDao.getOrgSession(state.selectedOrgId);
         session.sendToSelectedDeviceOnWeb(ctx.channel(), WEB_UPDATE_DEVICE_METAFIELD, message.id, split[1], device.id);
     }
 

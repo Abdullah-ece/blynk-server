@@ -13,7 +13,7 @@ import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.protocol.exceptions.NoPermissionException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.core.session.mobile.BaseUserStateHolder;
+import cc.blynk.server.core.session.web.WebAppStateHolder;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_DEVICES_VIEW;
@@ -26,12 +26,12 @@ import static cc.blynk.utils.StringUtils.split2;
  * Created by Dmitriy Dumanskiy.
  * Created on 13.04.18.
  */
-public class WebGetOwnDeviceLogic implements PermissionBasedLogic {
+public final class WebGetOwnDeviceLogic implements PermissionBasedLogic<WebAppStateHolder> {
 
     private final OrganizationDao organizationDao;
     private final DeviceDao deviceDao;
 
-    public WebGetOwnDeviceLogic(Holder holder) {
+    WebGetOwnDeviceLogic(Holder holder) {
         this.organizationDao = holder.organizationDao;
         this.deviceDao = holder.deviceDao;
     }
@@ -47,7 +47,7 @@ public class WebGetOwnDeviceLogic implements PermissionBasedLogic {
     }
 
     @Override
-    public void messageReceived0(ChannelHandlerContext ctx, BaseUserStateHolder state, StringMessage message) {
+    public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         String[] split = split2(message.body);
 
         int orgId = Integer.parseInt(split[0]);

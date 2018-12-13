@@ -30,7 +30,7 @@ import static cc.blynk.utils.StringUtils.split3;
  * Created on 2/1/2015.
  *
  */
-public class WebAppHardwareLogic {
+public final class WebAppHardwareLogic {
 
     private static final Logger log = LogManager.getLogger(WebAppHardwareLogic.class);
 

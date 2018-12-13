@@ -4,7 +4,6 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.PermissionBasedLogic;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.DeviceValue;
-import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
@@ -15,7 +14,7 @@ import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.exceptions.NoPermissionException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.core.session.mobile.BaseUserStateHolder;
+import cc.blynk.server.core.session.web.WebAppStateHolder;
 import cc.blynk.server.web.handlers.logic.organization.dto.SetAuthTokenDTO;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -28,15 +27,13 @@ import static cc.blynk.server.internal.WebByteBufUtil.json;
  * Created by Dmitriy Dumanskiy.
  * Created on 13.04.18.
  */
-public class WebSetAuthTokenForDeviceLogic implements PermissionBasedLogic {
+public final class WebSetAuthTokenForDeviceLogic implements PermissionBasedLogic<WebAppStateHolder> {
 
     private final DeviceDao deviceDao;
-    private final OrganizationDao organizationDao;
     private final SessionDao sessionDao;
 
     public WebSetAuthTokenForDeviceLogic(Holder holder) {
         this.deviceDao = holder.deviceDao;
-        this.organizationDao = holder.organizationDao;
         this.sessionDao = holder.sessionDao;
     }
 
@@ -51,7 +48,7 @@ public class WebSetAuthTokenForDeviceLogic implements PermissionBasedLogic {
     }
 
     @Override
-    public void messageReceived0(ChannelHandlerContext ctx, BaseUserStateHolder state, StringMessage message) {
+    public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         SetAuthTokenDTO setAuthTokenDTO = JsonParser.readAny(message.body, SetAuthTokenDTO.class);
 
         if (setAuthTokenDTO == null) {

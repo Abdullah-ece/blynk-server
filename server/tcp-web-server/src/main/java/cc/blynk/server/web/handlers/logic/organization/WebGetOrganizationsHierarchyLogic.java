@@ -6,7 +6,7 @@ import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.core.session.mobile.BaseUserStateHolder;
+import cc.blynk.server.core.session.web.WebAppStateHolder;
 import cc.blynk.server.web.handlers.logic.organization.dto.OrganizationsHierarchyDTO;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -22,7 +22,7 @@ import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
  * Created by Dmitriy Dumanskiy.
  * Created on 16.11.18.
  */
-public class WebGetOrganizationsHierarchyLogic implements PermissionBasedLogic {
+public final class WebGetOrganizationsHierarchyLogic implements PermissionBasedLogic<WebAppStateHolder> {
 
     private final OrganizationDao organizationDao;
     private Set<Organization> allOrgs;
@@ -43,7 +43,7 @@ public class WebGetOrganizationsHierarchyLogic implements PermissionBasedLogic {
     }
 
     @Override
-    public void messageReceived0(ChannelHandlerContext ctx, BaseUserStateHolder state, StringMessage message) {
+    public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         Organization userOrg = organizationDao.getOrgByIdOrThrow(state.orgId);
         allOrgs = new HashSet<>(organizationDao.getAll());
         invocationCounter = 0;

@@ -5,7 +5,6 @@ import cc.blynk.server.core.PermissionBasedLogic;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.core.session.mobile.BaseUserStateHolder;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -19,7 +18,7 @@ import static cc.blynk.server.internal.CommonByteBufUtil.ok;
  * Created on 2/1/2015.
  *
  */
-public final class WebTrackOrganizationLogic implements PermissionBasedLogic {
+public final class WebTrackOrganizationLogic implements PermissionBasedLogic<WebAppStateHolder> {
 
     private final OrganizationDao organizationDao;
 
@@ -39,14 +38,14 @@ public final class WebTrackOrganizationLogic implements PermissionBasedLogic {
 
     @Override
     //we do override basic method, because this is very special handler.
-    public void messageReceived(ChannelHandlerContext ctx, BaseUserStateHolder state, StringMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         int requestedOrgId = Integer.parseInt(message.body);
         int userOrgId = state.orgId;
 
         if (hasPermission(state.role) || userOrgId == requestedOrgId) {
             organizationDao.getOrgByIdOrThrow(requestedOrgId);
             organizationDao.checkAccess(state.user.email, state.role, userOrgId, requestedOrgId);
-            ((WebAppStateHolder) state).selectedOrgId = requestedOrgId;
+            state.selectedOrgId = requestedOrgId;
             log.trace("Selecting webapp org {} for {}.", requestedOrgId, state.user.email);
             ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
         } else {
@@ -55,6 +54,6 @@ public final class WebTrackOrganizationLogic implements PermissionBasedLogic {
     }
 
     @Override
-    public void messageReceived0(ChannelHandlerContext ctx, BaseUserStateHolder state, StringMessage message) {
+    public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
     }
 }

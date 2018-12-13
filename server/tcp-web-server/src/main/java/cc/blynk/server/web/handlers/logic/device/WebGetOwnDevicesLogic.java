@@ -8,7 +8,7 @@ import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.core.session.mobile.BaseUserStateHolder;
+import cc.blynk.server.core.session.web.WebAppStateHolder;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.List;
@@ -22,11 +22,11 @@ import static cc.blynk.utils.StringUtils.split2;
  * Created by Dmitriy Dumanskiy.
  * Created on 13.04.18.
  */
-public final class WebGetOwnDevicesLogic implements PermissionBasedLogic {
+public final class WebGetOwnDevicesLogic implements PermissionBasedLogic<WebAppStateHolder> {
 
     private final OrganizationDao organizationDao;
 
-    public WebGetOwnDevicesLogic(Holder holder) {
+    WebGetOwnDevicesLogic(Holder holder) {
         this.organizationDao = holder.organizationDao;
     }
 
@@ -41,7 +41,7 @@ public final class WebGetOwnDevicesLogic implements PermissionBasedLogic {
     }
 
     @Override
-    public void messageReceived0(ChannelHandlerContext ctx, BaseUserStateHolder state, StringMessage message) {
+    public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         String[] split = split2(message.body);
 
         int orgId = Integer.parseInt(split[0]);

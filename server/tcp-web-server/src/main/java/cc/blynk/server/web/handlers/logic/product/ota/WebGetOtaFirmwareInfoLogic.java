@@ -5,7 +5,7 @@ import cc.blynk.server.core.PermissionBasedLogic;
 import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.core.session.mobile.BaseUserStateHolder;
+import cc.blynk.server.core.session.web.WebAppStateHolder;
 import cc.blynk.utils.FileUtils;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -21,7 +21,7 @@ import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
  * Created by Dmitriy Dumanskiy.
  * Created on 12.12.18.
  */
-public final class WebGetOtaFirmwareInfoLogic implements PermissionBasedLogic {
+public final class WebGetOtaFirmwareInfoLogic implements PermissionBasedLogic<WebAppStateHolder> {
 
     private final String staticFilesFolder;
 
@@ -40,7 +40,7 @@ public final class WebGetOtaFirmwareInfoLogic implements PermissionBasedLogic {
     }
 
     @Override
-    public void messageReceived0(ChannelHandlerContext ctx, BaseUserStateHolder state, StringMessage message) {
+    public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         String pathToFirmware = message.body;
 
         if (pathToFirmware == null) {

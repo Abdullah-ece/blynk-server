@@ -12,7 +12,7 @@ import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.core.session.mobile.BaseUserStateHolder;
+import cc.blynk.server.core.session.web.WebAppStateHolder;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_DEVICES_EDIT;
@@ -26,7 +26,7 @@ import static cc.blynk.utils.StringUtils.split2;
  * Created by Dmitriy Dumanskiy.
  * Created on 13.04.18.
  */
-public class WebEditOrgDeviceLogic implements PermissionBasedLogic {
+public final class WebEditOrgDeviceLogic implements PermissionBasedLogic<WebAppStateHolder> {
 
     private final DeviceDao deviceDao;
     private final OrganizationDao organizationDao;
@@ -49,12 +49,12 @@ public class WebEditOrgDeviceLogic implements PermissionBasedLogic {
     }
 
     @Override
-    public void noPermissionAction(ChannelHandlerContext ctx, BaseUserStateHolder state, StringMessage msg) {
+    public void noPermissionAction(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage msg) {
         webEditOwnDeviceLogic.messageReceived(ctx, state, msg);
     }
 
     @Override
-    public void messageReceived0(ChannelHandlerContext ctx, BaseUserStateHolder state, StringMessage message) {
+    public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         String[] split = split2(message.body);
 
         int orgId = Integer.parseInt(split[0]);

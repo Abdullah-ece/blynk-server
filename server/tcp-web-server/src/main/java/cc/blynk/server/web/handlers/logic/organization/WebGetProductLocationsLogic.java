@@ -2,7 +2,6 @@ package cc.blynk.server.web.handlers.logic.organization;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.DeviceDao;
-import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.MetaField;
@@ -12,8 +11,6 @@ import cc.blynk.server.core.session.web.WebAppStateHolder;
 import cc.blynk.server.web.handlers.logic.organization.dto.LocationDTO;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.HashSet;
 import java.util.List;
@@ -26,15 +23,11 @@ import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
  * Created by Dmitriy Dumanskiy.
  * Created on 13.04.18.
  */
-public class WebGetProductLocationsLogic {
+public final class WebGetProductLocationsLogic {
 
-    private static final Logger log = LogManager.getLogger(WebGetProductLocationsLogic.class);
-
-    private final OrganizationDao organizationDao;
     private final DeviceDao deviceDao;
 
     public WebGetProductLocationsLogic(Holder holder) {
-        this.organizationDao = holder.organizationDao;
         this.deviceDao = holder.deviceDao;
     }
 

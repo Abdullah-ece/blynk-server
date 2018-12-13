@@ -15,11 +15,9 @@ import org.apache.logging.log4j.Logger;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 
 /**
- *
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 2/1/2015.
- *
  */
 public final class WebTrackDeviceLogic {
 

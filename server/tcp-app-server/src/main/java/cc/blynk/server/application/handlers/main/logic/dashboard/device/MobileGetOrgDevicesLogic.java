@@ -9,7 +9,7 @@ import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.core.session.mobile.BaseUserStateHolder;
+import cc.blynk.server.core.session.mobile.MobileStateHolder;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.List;
@@ -22,7 +22,7 @@ import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
  * Created by Dmitriy Dumanskiy.
  * Created on 01.02.16.
  */
-public final class MobileGetOrgDevicesLogic implements PermissionBasedLogic {
+public final class MobileGetOrgDevicesLogic implements PermissionBasedLogic<MobileStateHolder> {
 
     private final OrganizationDao organizationDao;
     private final MobileGetOwnDevicesLogic mobileGetOwnDevicesLogic;
@@ -43,7 +43,7 @@ public final class MobileGetOrgDevicesLogic implements PermissionBasedLogic {
     }
 
     @Override
-    public void messageReceived0(ChannelHandlerContext ctx, BaseUserStateHolder state, StringMessage message) {
+    public void messageReceived0(ChannelHandlerContext ctx, MobileStateHolder state, StringMessage message) {
         User user = state.user;
         int orgId = user.orgId;
 
@@ -58,7 +58,7 @@ public final class MobileGetOrgDevicesLogic implements PermissionBasedLogic {
     }
 
     @Override
-    public void noPermissionAction(ChannelHandlerContext ctx, BaseUserStateHolder state, StringMessage msg) {
+    public void noPermissionAction(ChannelHandlerContext ctx, MobileStateHolder state, StringMessage msg) {
         mobileGetOwnDevicesLogic.messageReceived(ctx, state, msg);
     }
 

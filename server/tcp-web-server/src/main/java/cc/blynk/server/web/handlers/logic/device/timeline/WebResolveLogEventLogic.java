@@ -4,7 +4,6 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.DeviceValue;
-import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
@@ -27,19 +26,17 @@ import static cc.blynk.utils.StringUtils.split3;
  * Created by Dmitriy Dumanskiy.
  * Created on 13.04.18.
  */
-public class WebResolveLogEventLogic {
+public final class WebResolveLogEventLogic {
 
     private static final Logger log = LogManager.getLogger(WebResolveLogEventLogic.class);
 
     private final DeviceDao deviceDao;
-    private final OrganizationDao organizationDao;
     private final BlockingIOProcessor blockingIOProcessor;
     private final ReportingDBManager reportingDBManager;
     private final SessionDao sessionDao;
 
     public WebResolveLogEventLogic(Holder holder) {
         this.deviceDao = holder.deviceDao;
-        this.organizationDao = holder.organizationDao;
         this.blockingIOProcessor = holder.blockingIOProcessor;
         this.reportingDBManager = holder.reportingDBManager;
         this.sessionDao = holder.sessionDao;

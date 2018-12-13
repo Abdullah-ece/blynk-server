@@ -4,7 +4,6 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.DeviceValue;
-import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
@@ -31,18 +30,16 @@ import static cc.blynk.server.internal.WebByteBufUtil.json;
  * Created by Dmitriy Dumanskiy.
  * Created on 13.04.18.
  */
-public class WebGetDeviceTimelineLogic {
+public final class WebGetDeviceTimelineLogic {
 
     private static final Logger log = LogManager.getLogger(WebGetDeviceTimelineLogic.class);
 
     private final DeviceDao deviceDao;
-    private final OrganizationDao organizationDao;
     private final BlockingIOProcessor blockingIOProcessor;
     private final ReportingDBManager reportingDBManager;
 
     public WebGetDeviceTimelineLogic(Holder holder) {
         this.deviceDao = holder.deviceDao;
-        this.organizationDao = holder.organizationDao;
         this.blockingIOProcessor = holder.blockingIOProcessor;
         this.reportingDBManager = holder.reportingDBManager;
     }

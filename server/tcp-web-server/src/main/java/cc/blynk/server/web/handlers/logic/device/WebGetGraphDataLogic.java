@@ -54,7 +54,7 @@ import static cc.blynk.utils.ByteUtils.REPORTING_RECORD_SIZE_BYTES;
  * Created on 2/1/2015.
  *
  */
-public class WebGetGraphDataLogic {
+public final class WebGetGraphDataLogic {
 
     private static final Logger log = LogManager.getLogger(WebGetGraphDataLogic.class);
 

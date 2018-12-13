@@ -5,7 +5,7 @@ import cc.blynk.server.core.PermissionBasedLogic;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.core.session.mobile.BaseUserStateHolder;
+import cc.blynk.server.core.session.web.WebAppStateHolder;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.model.permissions.PermissionsTable.PRODUCT_DELETE;
@@ -17,7 +17,7 @@ import static cc.blynk.utils.StringUtils.split2;
  * Created by Dmitriy Dumanskiy.
  * Created on 13.04.18.
  */
-public class WebCanDeleteProductLogic implements PermissionBasedLogic {
+public final class WebCanDeleteProductLogic implements PermissionBasedLogic<WebAppStateHolder> {
 
     private final OrganizationDao organizationDao;
 
@@ -36,7 +36,7 @@ public class WebCanDeleteProductLogic implements PermissionBasedLogic {
     }
 
     @Override
-    public void messageReceived0(ChannelHandlerContext ctx, BaseUserStateHolder state, StringMessage message) {
+    public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         String[] split = split2(message.body);
 
         int orgId;

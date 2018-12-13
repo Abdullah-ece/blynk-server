@@ -2,13 +2,12 @@ package cc.blynk.server.web.handlers.logic.product.ota;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.PermissionBasedLogic;
-import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.core.session.mobile.BaseUserStateHolder;
+import cc.blynk.server.core.session.web.WebAppStateHolder;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.model.permissions.PermissionsTable.OTA_STOP;
@@ -19,14 +18,12 @@ import static cc.blynk.server.internal.CommonByteBufUtil.ok;
  * Created by Dmitriy Dumanskiy.
  * Created on 12.12.18.
  */
-public final class WebCleanOtaLogic implements PermissionBasedLogic {
+public final class WebCleanOtaLogic implements PermissionBasedLogic<WebAppStateHolder> {
 
     private final OrganizationDao organizationDao;
-    private final DeviceDao deviceDao;
 
     public WebCleanOtaLogic(Holder holder) {
         this.organizationDao = holder.organizationDao;
-        this.deviceDao = holder.deviceDao;
     }
 
     @Override
@@ -40,7 +37,7 @@ public final class WebCleanOtaLogic implements PermissionBasedLogic {
     }
 
     @Override
-    public void messageReceived0(ChannelHandlerContext ctx, BaseUserStateHolder state, StringMessage message) {
+    public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         int productId = Integer.parseInt(message.body);
 
         if (productId == -1) {

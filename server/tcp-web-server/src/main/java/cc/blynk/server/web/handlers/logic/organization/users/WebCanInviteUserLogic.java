@@ -8,7 +8,7 @@ import cc.blynk.server.core.model.auth.UserStatus;
 import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.core.session.mobile.BaseUserStateHolder;
+import cc.blynk.server.core.session.web.WebAppStateHolder;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_INVITE_USERS;
@@ -20,7 +20,7 @@ import static cc.blynk.server.internal.WebByteBufUtil.json;
  * Created by Dmitriy Dumanskiy.
  * Created on 3/7/2018.
  */
-public final class WebCanInviteUserLogic implements PermissionBasedLogic {
+public final class WebCanInviteUserLogic implements PermissionBasedLogic<WebAppStateHolder> {
 
     private final UserDao userDao;
 
@@ -39,7 +39,7 @@ public final class WebCanInviteUserLogic implements PermissionBasedLogic {
     }
 
     @Override
-    public void messageReceived0(ChannelHandlerContext ctx, BaseUserStateHolder state, StringMessage message) {
+    public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         if (message.body == null) {
             throw new JsonException("Invalid email.");
         }

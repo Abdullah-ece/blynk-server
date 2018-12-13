@@ -11,7 +11,7 @@ import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.core.session.mobile.BaseUserStateHolder;
+import cc.blynk.server.core.session.web.WebAppStateHolder;
 import cc.blynk.server.db.DBManager;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -25,7 +25,7 @@ import static cc.blynk.utils.StringUtils.split2;
  * Created by Dmitriy Dumanskiy.
  * Created on 3/7/2018.
  */
-public final class WebDeleteUserLogic implements PermissionBasedLogic {
+public final class WebDeleteUserLogic implements PermissionBasedLogic<WebAppStateHolder> {
 
     private final UserDao userDao;
     private final FileManager fileManager;
@@ -52,7 +52,7 @@ public final class WebDeleteUserLogic implements PermissionBasedLogic {
     }
 
     @Override
-    public void messageReceived0(ChannelHandlerContext ctx, BaseUserStateHolder state, StringMessage message) {
+    public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         String[] split = split2(message.body);
 
         User user = state.user;

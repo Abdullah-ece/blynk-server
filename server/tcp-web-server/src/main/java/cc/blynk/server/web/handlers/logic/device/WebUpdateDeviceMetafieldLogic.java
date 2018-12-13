@@ -4,7 +4,7 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.PermissionBasedLogic;
 import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.core.session.mobile.BaseUserStateHolder;
+import cc.blynk.server.core.session.web.WebAppStateHolder;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_DEVICES_EDIT;
@@ -14,7 +14,7 @@ import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_DEVICE
  * Created by Dmitriy Dumanskiy.
  * Created on 11.09.18.
  */
-public final class WebUpdateDeviceMetafieldLogic implements PermissionBasedLogic {
+public final class WebUpdateDeviceMetafieldLogic implements PermissionBasedLogic<WebAppStateHolder> {
 
     private final WebUpdateOwnDeviceMetafieldLogic webUpdateOwnDeviceMetafieldLogic;
 
@@ -33,13 +33,13 @@ public final class WebUpdateDeviceMetafieldLogic implements PermissionBasedLogic
     }
 
     @Override
-    public void noPermissionAction(ChannelHandlerContext ctx, BaseUserStateHolder state, StringMessage msg) {
+    public void noPermissionAction(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage msg) {
         webUpdateOwnDeviceMetafieldLogic.messageReceived(ctx, state, msg);
     }
 
     @Override
     public void messageReceived0(ChannelHandlerContext ctx,
-                                 BaseUserStateHolder state, StringMessage message) {
+                                 WebAppStateHolder state, StringMessage message) {
         webUpdateOwnDeviceMetafieldLogic.messageReceived0(ctx, state, message);
     }
 

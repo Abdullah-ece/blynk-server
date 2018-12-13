@@ -27,7 +27,7 @@ import static cc.blynk.server.internal.WebByteBufUtil.json;
  * Created by Dmitriy Dumanskiy.
  * Created on 13.04.18.
  */
-public class WebUpdateDevicesMetaInProductLogic {
+public final class WebUpdateDevicesMetaInProductLogic {
 
     private static final Logger log = LogManager.getLogger(WebUpdateDevicesMetaInProductLogic.class);
 

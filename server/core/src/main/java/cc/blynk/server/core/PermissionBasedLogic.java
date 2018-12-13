@@ -8,7 +8,7 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public interface PermissionBasedLogic {
+public interface PermissionBasedLogic<T extends BaseUserStateHolder> {
 
     Logger log = LogManager.getLogger(PermissionBasedLogic.class);
 
@@ -16,7 +16,7 @@ public interface PermissionBasedLogic {
 
     int getPermission();
 
-    default void messageReceived(ChannelHandlerContext ctx, BaseUserStateHolder state, StringMessage msg) {
+    default void messageReceived(ChannelHandlerContext ctx, T state, StringMessage msg) {
         if (hasPermission(state.role)) {
             messageReceived0(ctx, state, msg);
         } else {
@@ -31,9 +31,9 @@ public interface PermissionBasedLogic {
      * and if user have overlapping permission VIEW_ORG_DEVICES - return all devices for this org
      * if user doesn't have VIEW_ORG_DEVICES - return devices based on VIEW_OWN_DEVICES
      */
-    default void noPermissionAction(ChannelHandlerContext ctx, BaseUserStateHolder state, StringMessage msg) {
+    default void noPermissionAction(ChannelHandlerContext ctx, T state, StringMessage msg) {
         throw new NoPermissionException(state.user.email, getPermission());
     }
 
-    void messageReceived0(ChannelHandlerContext ctx, BaseUserStateHolder state, StringMessage message);
+    void messageReceived0(ChannelHandlerContext ctx, T state, StringMessage message);
 }

@@ -4,7 +4,6 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.PermissionBasedLogic;
 import cc.blynk.server.core.dao.DeviceDao;
-import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
@@ -13,7 +12,7 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.core.session.mobile.BaseUserStateHolder;
+import cc.blynk.server.core.session.web.WebAppStateHolder;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_DEVICES_DELETE;
@@ -26,9 +25,8 @@ import static cc.blynk.utils.StringUtils.split2;
  * Created by Dmitriy Dumanskiy.
  * Created on 13.04.18.
  */
-public class WebDeleteOrgDeviceLogic implements PermissionBasedLogic {
+public final class WebDeleteOrgDeviceLogic implements PermissionBasedLogic<WebAppStateHolder> {
 
-    private final OrganizationDao organizationDao;
     private final DeviceDao deviceDao;
     private final SessionDao sessionDao;
     private final UserDao userDao;
@@ -37,7 +35,6 @@ public class WebDeleteOrgDeviceLogic implements PermissionBasedLogic {
     private final WebDeleteOwnDeviceLogic webDeleteOwnDeviceLogic;
 
     public WebDeleteOrgDeviceLogic(Holder holder) {
-        this.organizationDao = holder.organizationDao;
         this.deviceDao = holder.deviceDao;
         this.sessionDao = holder.sessionDao;
         this.userDao = holder.userDao;
@@ -57,12 +54,12 @@ public class WebDeleteOrgDeviceLogic implements PermissionBasedLogic {
     }
 
     @Override
-    public void noPermissionAction(ChannelHandlerContext ctx, BaseUserStateHolder state, StringMessage msg) {
+    public void noPermissionAction(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage msg) {
         webDeleteOwnDeviceLogic.messageReceived(ctx, state, msg);
     }
 
     @Override
-    public void messageReceived0(ChannelHandlerContext ctx, BaseUserStateHolder state, StringMessage message) {
+    public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         String[] split = split2(message.body);
 
         int orgId = Integer.parseInt(split[0]);

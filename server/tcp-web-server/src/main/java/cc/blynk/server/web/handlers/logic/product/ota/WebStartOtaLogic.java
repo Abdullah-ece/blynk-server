@@ -19,7 +19,7 @@ import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
-import cc.blynk.server.core.session.mobile.BaseUserStateHolder;
+import cc.blynk.server.core.session.web.WebAppStateHolder;
 import cc.blynk.server.internal.token.OTADownloadToken;
 import cc.blynk.server.internal.token.TokensPool;
 import cc.blynk.utils.TokenGeneratorUtil;
@@ -40,7 +40,7 @@ import static cc.blynk.server.internal.StateHolderUtil.getHardState;
  * Created by Dmitriy Dumanskiy.
  * Created on 12.12.18.
  */
-public final class WebStartOtaLogic implements PermissionBasedLogic {
+public final class WebStartOtaLogic implements PermissionBasedLogic<WebAppStateHolder> {
 
     private final OrganizationDao organizationDao;
     private final DeviceDao deviceDao;
@@ -67,7 +67,7 @@ public final class WebStartOtaLogic implements PermissionBasedLogic {
     }
 
     @Override
-    public void messageReceived0(ChannelHandlerContext ctx, BaseUserStateHolder state, StringMessage message) {
+    public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         OtaDTO otaDTO = JsonParser.readAny(message.body, OtaDTO.class);
 
         if (otaDTO == null || otaDTO.isNotValid()) {
