@@ -10,8 +10,6 @@ import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.mobile.BaseUserStateHolder;
 import io.netty.channel.ChannelHandlerContext;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_INVITE_USERS;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
@@ -23,8 +21,6 @@ import static cc.blynk.server.internal.WebByteBufUtil.json;
  * Created on 3/7/2018.
  */
 public final class WebCanInviteUserLogic implements PermissionBasedLogic {
-
-    private static final Logger log = LogManager.getLogger(WebGetOrgUsersLogic.class);
 
     private final UserDao userDao;
 

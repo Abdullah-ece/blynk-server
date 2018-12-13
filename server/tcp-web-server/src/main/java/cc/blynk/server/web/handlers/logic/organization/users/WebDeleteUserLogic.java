@@ -14,8 +14,6 @@ import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.mobile.BaseUserStateHolder;
 import cc.blynk.server.db.DBManager;
 import io.netty.channel.ChannelHandlerContext;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_DELETE_USERS;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
@@ -28,8 +26,6 @@ import static cc.blynk.utils.StringUtils.split2;
  * Created on 3/7/2018.
  */
 public final class WebDeleteUserLogic implements PermissionBasedLogic {
-
-    private static final Logger log = LogManager.getLogger(WebGetOrgUsersLogic.class);
 
     private final UserDao userDao;
     private final FileManager fileManager;

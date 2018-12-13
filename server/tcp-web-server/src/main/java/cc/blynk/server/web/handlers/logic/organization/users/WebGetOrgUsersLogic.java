@@ -10,8 +10,6 @@ import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.mobile.BaseUserStateHolder;
 import io.netty.channel.ChannelHandlerContext;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
@@ -24,8 +22,6 @@ import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
  * Created on 13.04.18.
  */
 public class WebGetOrgUsersLogic implements PermissionBasedLogic {
-
-    private static final Logger log = LogManager.getLogger(WebGetOrgUsersLogic.class);
 
     private final OrganizationDao organizationDao;
     private final UserDao userDao;

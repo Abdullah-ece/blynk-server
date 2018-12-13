@@ -10,8 +10,6 @@ import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.mobile.BaseUserStateHolder;
 import io.netty.channel.ChannelHandlerContext;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.model.dto.ProductDTO.toDTO;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.PRODUCT_VIEW;
@@ -24,8 +22,6 @@ import static cc.blynk.server.internal.WebByteBufUtil.json;
  * Created on 07.06.18.
  */
 public class WebGetProductsLogic implements PermissionBasedLogic {
-
-    private static final Logger log = LogManager.getLogger(WebGetProductsLogic.class);
 
     private final OrganizationDao organizationDao;
 
