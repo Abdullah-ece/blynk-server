@@ -104,6 +104,7 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_TEMP_SECURE_TO
 import static cc.blynk.server.core.protocol.enums.Command.WEB_INVITE_USER;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_LOGIN_VIA_INVITE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_SET_AUTH_TOKEN;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_TRACK_ORG;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_ACCOUNT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_DEVICES_META_IN_PRODUCT;
@@ -364,6 +365,8 @@ public final class CommandParserUtil {
                 return WEB_GET_DEVICE_COUNT_FOR_ORG;
             case "mobileupdateprofilesettings" :
                 return UPDATE_PROFILE_SETTINGS;
+            case "webtrackorg" :
+                return WEB_TRACK_ORG;
 
             default:
                 throw new IllegalArgumentException("Unsupported command");

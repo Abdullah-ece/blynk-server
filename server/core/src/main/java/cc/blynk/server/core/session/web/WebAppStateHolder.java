@@ -15,6 +15,7 @@ public class WebAppStateHolder extends MobileStateHolder {
     private static final int NO_DEVICE = -1;
 
     public int selectedDeviceId;
+    public int selectedOrgId;
 
     public WebAppStateHolder(int orgId, User user, Role role, Version version) {
         super(orgId, user, role, version);

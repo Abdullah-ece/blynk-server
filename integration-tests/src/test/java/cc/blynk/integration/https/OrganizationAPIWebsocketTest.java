@@ -676,5 +676,22 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
         client.editOwnOrg(organizationUpdated);
         client.verifyResult(webJson(2, "You can't edit another organization from this view."));
     }
+
+    @Test
+    public void basicTrackOrgTest() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+        client.getOrganization(orgId);
+        OrganizationDTO organizationDTO = client.parseOrganizationDTO(1);
+        assertNotNull(organizationDTO);
+        assertEquals("Blynk Inc.", organizationDTO.name);
+        assertEquals(-1, organizationDTO.parentId);
+        assertEquals(orgId, organizationDTO.id);
+
+        client.trackOrg(organizationDTO.id);
+        client.verifyResult(ok(2));
+
+        client.trackOrg(100);
+        client.verifyResult(webJson(3, "Cannot find organization with passed id."));
+    }
 }
 

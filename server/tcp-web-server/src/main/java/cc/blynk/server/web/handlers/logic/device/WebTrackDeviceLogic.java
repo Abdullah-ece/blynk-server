@@ -26,7 +26,7 @@ public final class WebTrackDeviceLogic {
         //todo security check
         int deviceId = Integer.parseInt(message.body);
         state.selectedDeviceId = deviceId;
-        log.debug("Selecting webapp device {} for {}.", deviceId, state.user.email);
+        log.trace("Selecting webapp device {} for {}.", deviceId, state.user.email);
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }
 

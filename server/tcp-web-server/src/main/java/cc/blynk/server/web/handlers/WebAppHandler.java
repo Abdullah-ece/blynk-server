@@ -31,6 +31,7 @@ import cc.blynk.server.web.handlers.logic.organization.WebGetOrganizationsHierar
 import cc.blynk.server.web.handlers.logic.organization.WebGetOrganizationsLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebGetProductLocationsLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebGetTempSecureTokenLogic;
+import cc.blynk.server.web.handlers.logic.organization.WebTrackOrganizationLogic;
 import cc.blynk.server.web.handlers.logic.organization.roles.WebCreateRoleLogic;
 import cc.blynk.server.web.handlers.logic.organization.roles.WebDeleteRoleLogic;
 import cc.blynk.server.web.handlers.logic.organization.roles.WebEditRoleLogic;
@@ -95,6 +96,7 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_OTA_GET_FIRMWARE_I
 import static cc.blynk.server.core.protocol.enums.Command.WEB_OTA_START;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_OTA_STOP;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_SET_AUTH_TOKEN;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_TRACK_ORG;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_ACCOUNT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_DEVICES_META_IN_PRODUCT;
@@ -347,6 +349,9 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
                 break;
             case WEB_OTA_CLEAN :
                 webCleanOtaLogic.messageReceived(ctx, state, msg);
+                break;
+            case WEB_TRACK_ORG :
+                WebTrackOrganizationLogic.messageReceived(holder, ctx, state, msg);
                 break;
         }
     }

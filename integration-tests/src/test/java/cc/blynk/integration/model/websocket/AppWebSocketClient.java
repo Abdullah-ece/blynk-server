@@ -355,6 +355,10 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         send("webGetDeviceCountForOrg " + orgId);
     }
 
+    public void trackOrg(int orgId) {
+        send("webTrackOrg " + orgId);
+    }
+
     public TimelineResponseDTO parseTimelineResponse(int expectedMessageOrder) throws Exception {
         return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), TimelineResponseDTO.class);
     }
