@@ -22,6 +22,7 @@ import java.util.List;
 import static cc.blynk.integration.TestUtil.consumeJsonPinValues;
 import static cc.blynk.integration.TestUtil.consumeText;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * The Blynk Project.
@@ -86,10 +87,12 @@ public class ExternalAPITest extends APIBaseTest {
 
     @Test
     public void testGetDeviceJson() throws Exception {
-        HttpGet request = new HttpGet(httpsServerUrl + token + "/id");
+        HttpGet request = new HttpGet(httpsServerUrl + token + "/device");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
+            String deviceString = consumeText(response);
+            assertTrue(deviceString.contains("orgId"));
         }
     }
 

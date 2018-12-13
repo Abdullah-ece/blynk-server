@@ -11,6 +11,7 @@ import cc.blynk.core.http.annotation.Path;
 import cc.blynk.core.http.annotation.PathParam;
 import cc.blynk.core.http.annotation.QueryParam;
 import cc.blynk.server.Holder;
+import cc.blynk.server.api.http.dashboard.dto.DeviceWithOrgIdDTO;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.DeviceValue;
 import cc.blynk.server.core.dao.NotificationsDao;
@@ -31,6 +32,7 @@ import cc.blynk.server.db.dao.descriptor.TableDescriptor;
 import cc.blynk.utils.NumberUtil;
 import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.http.MediaType;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -42,6 +44,7 @@ import java.util.Arrays;
 import static cc.blynk.core.http.Response.badRequest;
 import static cc.blynk.core.http.Response.ok;
 import static cc.blynk.core.http.Response.serverError;
+import static cc.blynk.server.core.model.serialization.JsonParser.init;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_LOG_EVENT;
 import static cc.blynk.server.core.protocol.enums.Command.HTTP_GET_DEVICE;
@@ -145,10 +148,13 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
         return ok(session.isHardwareConnected(deviceId));
     }
 
+    private final ObjectWriter deviceFancyWriter = init()
+            .writerWithDefaultPrettyPrinter().forType(DeviceWithOrgIdDTO.class);
+
     @GET
-    @Path("/{token}/id")
+    @Path("/{token}/device")
     @Metric(HTTP_GET_DEVICE)
-    public Response getDeviceJson(@PathParam("token") String token) {
+    public Response getDeviceJson(@PathParam("token") String token) throws Exception {
         DeviceValue tokenValue = deviceDao.getDeviceTokenValue(token);
 
         if (tokenValue == null) {
@@ -157,7 +163,9 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
         }
 
         Device device = tokenValue.device;
-        return ok(device, true);
+        DeviceWithOrgIdDTO deviceWithOrgIdDTO = new DeviceWithOrgIdDTO(device, tokenValue.orgId);
+        String response = deviceFancyWriter.writeValueAsString(deviceWithOrgIdDTO);
+        return ok(response);
     }
 
     @GET
