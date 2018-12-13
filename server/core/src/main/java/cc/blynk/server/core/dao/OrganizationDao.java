@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_VIEW;
+import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_DEVICES_VIEW;
 import static cc.blynk.server.core.model.web.Organization.NO_PARENT_ID;
 
 /**
@@ -188,8 +188,8 @@ public class OrganizationDao {
             return;
         }
         //this is minimum required permission if user wants to access other organizations
-        if (!userRole.canViewOrg()) {
-            throw new NoPermissionException(email, ORG_VIEW);
+        if (!userRole.canViewOrgDevices()) {
+            throw new NoPermissionException(email, ORG_DEVICES_VIEW);
         }
         //check if requested organization is not in upper hierarchy.
         //we allow to access only for childs orgs. User can't access parent org.

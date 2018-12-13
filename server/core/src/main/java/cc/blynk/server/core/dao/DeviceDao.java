@@ -92,7 +92,7 @@ public class DeviceDao {
         DeviceValue deviceValue = devices.get(deviceId);
         if (deviceValue == null) {
             log.error("Device with id {} not found.", deviceId);
-            throw new DeviceNotFoundException("Requested device not exists.");
+            throw new DeviceNotFoundException();
         }
         return deviceValue.device;
     }

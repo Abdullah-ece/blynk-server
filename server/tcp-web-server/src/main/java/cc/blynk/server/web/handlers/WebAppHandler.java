@@ -155,6 +155,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
     private final WebCleanOtaLogic webCleanOtaLogic;
     private final WebTrackOrganizationLogic webTrackOrganizationLogic;
     private final WebUpdateDeviceMetafieldLogic webUpdateDeviceMetafieldLogic;
+    private final WebTrackDeviceLogic webTrackDeviceLogic;
 
     private final Holder holder;
 
@@ -201,6 +202,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
         this.webCleanOtaLogic = new WebCleanOtaLogic(holder);
         this.webTrackOrganizationLogic = new WebTrackOrganizationLogic(holder);
         this.webUpdateDeviceMetafieldLogic = new WebUpdateDeviceMetafieldLogic(holder);
+        this.webTrackDeviceLogic = new WebTrackDeviceLogic(holder);
 
         this.state = state;
         this.holder = holder;
@@ -220,7 +222,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
                 webAppHardwareLogic.messageReceived(ctx, state, msg);
                 break;
             case TRACK_DEVICE :
-                WebTrackDeviceLogic.messageReceived(ctx, state, msg);
+                webTrackDeviceLogic.messageReceived(ctx, state, msg);
                 break;
             case GET_ENHANCED_GRAPH_DATA :
                 getWebGraphDataLogic.messageReceived(ctx, state, msg);

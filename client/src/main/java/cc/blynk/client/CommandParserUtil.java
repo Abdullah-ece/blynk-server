@@ -260,7 +260,7 @@ public final class CommandParserUtil {
                 return GET_CLONE_CODE;
             case "getprojectbyclonecode" :
                 return GET_PROJECT_BY_CLONE_CODE;
-            case "track" :
+            case "trackdevice" :
                 return TRACK_DEVICE;
             case "getprovisiontoken" :
                 return GET_PROVISION_TOKEN;

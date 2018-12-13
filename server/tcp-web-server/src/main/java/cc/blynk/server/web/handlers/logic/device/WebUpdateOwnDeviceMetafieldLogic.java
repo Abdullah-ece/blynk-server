@@ -31,7 +31,7 @@ public final class WebUpdateOwnDeviceMetafieldLogic implements PermissionBasedLo
     private final SessionDao sessionDao;
     private final DeviceDao deviceDao;
 
-    public WebUpdateOwnDeviceMetafieldLogic(Holder holder) {
+    WebUpdateOwnDeviceMetafieldLogic(Holder holder) {
         this.sessionDao = holder.sessionDao;
         this.deviceDao = holder.deviceDao;
     }

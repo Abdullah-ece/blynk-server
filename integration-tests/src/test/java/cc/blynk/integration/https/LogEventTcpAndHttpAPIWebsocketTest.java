@@ -133,7 +133,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
     public void testLogEventIsForwardedToWebapp() throws Exception {
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
         Device device = createProductAndDevice(client, orgId);
-        client.track(device.id);
+        client.trackDevice(device.id);
 
         TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
         newHardClient.start();
@@ -237,7 +237,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         logEventId = logEvent.id;
 
         AppWebSocketClient client2 = loggedDefaultClient(getUserName(), "1");
-        client2.track(device.id);
+        client2.trackDevice(device.id);
         client2.verifyResult(ok(1));
 
         client.resolveEvent(device.id, logEventId, "resolve comment");
@@ -270,7 +270,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
     public void testLogEventIsForwardedToWebappFromExternalAPI() throws Exception {
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
         Device device = createProductAndDevice(client, orgId);
-        client.track(device.id);
+        client.trackDevice(device.id);
         client.verifyResult(ok(1));
 
         String externalApiUrl = String.format("https://localhost:%s/external/api/", properties.getHttpsPort());
@@ -446,7 +446,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
     public void testOnlineOfflineLogEventIsForwardedToWebapp() throws Exception {
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
         Device device = createProductAndDevice(client, orgId);
-        client.track(device.id);
+        client.trackDevice(device.id);
 
         TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
         newHardClient.start();
@@ -506,7 +506,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         assertTrue(logEvents.get(0).id > 1);
         logEventId = logEvents.get(0).id;
 
-        client.track(device.id);
+        client.trackDevice(device.id);
         client.verifyResult(ok(2));
 
         client.resolveEvent(device.id, logEventId, "123");

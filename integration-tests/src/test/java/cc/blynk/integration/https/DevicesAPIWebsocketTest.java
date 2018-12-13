@@ -26,7 +26,6 @@ import cc.blynk.server.core.model.widgets.web.label.WebLabel;
 import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.TokenGeneratorUtil;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -632,7 +631,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertEquals(1, deviceNameMetaField.roleIds[0]);
         assertEquals("My Default device Name", deviceNameMetaField.value);
 
-        client.track(createdDevice.id);
+        client.trackDevice(createdDevice.id);
         client.verifyResult(ok(3));
         NumberMetaField newMeta = createNumberMeta(1, "Jopa", 10000D, true);
         appClient.updateDeviceMetafield(createdDevice.id, newMeta);
@@ -652,7 +651,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertEquals(10000D, numberMetaField.value, 0.1);
 
         AppWebSocketClient client2 = loggedDefaultClient(getUserName(), "1");
-        client2.track(createdDevice.id);
+        client2.trackDevice(createdDevice.id);
         client2.verifyResult(ok(1));
 
         newMeta = createNumberMeta(1, "Jopa", 10001D, true);
@@ -1095,16 +1094,11 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertEquals(PinType.VIRTUAL, webSource.dataStream.pinType);
     }
 
-        @Test
-    @Ignore
-    //todo finish
-    public void getDevicesWithSortingByMultiFields2() {
-    }
-
     @Test
-    @Ignore
-    //todo finish
-    public void getDevicesWithSorting() {
+    public void trackNonExistingDevice() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+        client.trackDevice(11111);
+        client.verifyResult(webJson(1, "Requested device not exists."));
     }
 
     public static class TestDevice extends Device {

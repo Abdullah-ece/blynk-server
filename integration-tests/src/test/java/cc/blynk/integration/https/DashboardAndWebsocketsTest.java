@@ -201,7 +201,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         appWebSocketClient.start();
         appWebSocketClient.login(regularUser);
         appWebSocketClient.verifyResult(ok(1));
-        appWebSocketClient.track(device.id);
+        appWebSocketClient.trackDevice(device.id);
         appWebSocketClient.verifyResult(ok(2));
 
         String apiUrl = String.format("https://localhost:%s/external/api/", properties.getHttpsPort());
@@ -226,7 +226,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         appWebSocketClient2.start();
         appWebSocketClient2.login(regularUser);
         appWebSocketClient2.verifyResult(ok(1));
-        appWebSocketClient2.send("track null");
+        appWebSocketClient2.send("trackDevice null");
         appWebSocketClient2.verifyResult(webJson(2, "Error parsing number. For input string: \"null\""));
     }
 
@@ -241,7 +241,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         appWebSocketClient2.start();
         appWebSocketClient2.login(regularUser);
         appWebSocketClient2.verifyResult(ok(1));
-        appWebSocketClient2.track(0);
+        appWebSocketClient2.trackDevice(0);
         appWebSocketClient2.verifyResult(ok(2));
 
         appWebSocketClient.send("hardware 0 vw 10 100");
@@ -281,8 +281,8 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         appWebSocketClient2.login(regularUser);
         appWebSocketClient2.verifyResult(ok(1));
 
-        //do not track any device by purpose
-        //appWebSocketClient2.track(0);
+        //do not trackDevice any device by purpose
+        //appWebSocketClient2.trackDevice(0);
         appWebSocketClient.send("hardware 0 vw 10 100");
         appWebSocketClient2.never(appSync(2, b("0 vw 10 100")));
         appWebSocketClient.never(appSync(2, b("0 vw 10 100")));
@@ -311,7 +311,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         appWebSocketClient.start();
         appWebSocketClient.login(regularUser);
         appWebSocketClient.verifyResult(ok(1));
-        appWebSocketClient.track(1);
+        appWebSocketClient.trackDevice(1);
         appWebSocketClient.verifyResult(ok(2));
 
         TestAppClient appClient = new TestAppClient("localhost", properties);
@@ -336,14 +336,14 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         appWebSocketClient.start();
         appWebSocketClient.login(regularUser);
         appWebSocketClient.verifyResult(ok(1));
-        appWebSocketClient.track(0);
+        appWebSocketClient.trackDevice(0);
         appWebSocketClient.verifyResult(ok(2));
 
         AppWebSocketClient appWebSocketClient2 = TestUtil.defaultClient();
         appWebSocketClient2.start();
         appWebSocketClient2.login(regularUser);
         appWebSocketClient2.verifyResult(ok(1));
-        appWebSocketClient2.track(0);
+        appWebSocketClient2.trackDevice(0);
         appWebSocketClient2.verifyResult(ok(2));
 
         appWebSocketClient.send("hardware 0 vw 10 100");
@@ -363,13 +363,13 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         appWebSocketClient2.login(regularUser);
         appWebSocketClient2.verifyResult(ok(1));
 
-        //do not track any device by purpose
-        //appWebSocketClient2.track(0);
+        //do not trackDevice any device by purpose
+        //appWebSocketClient2.trackDevice(0);
         appWebSocketClient.send("hardware 0 vw 10 100");
         appWebSocketClient2.never(appSync(2, b("0 vw 10 100")));
         appWebSocketClient.never(appSync(2, b("0 vw 10 100")));
 
-        appWebSocketClient2.track(0);
+        appWebSocketClient2.trackDevice(0);
         appWebSocketClient2.verifyResult(ok(2));
 
         appWebSocketClient.send("hardware 0 vw 10 100");
@@ -380,7 +380,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         appWebSocketClient2.never(appSync(4, b("1 vw 10 100")));
         appWebSocketClient.never(appSync(4, b("1 vw 10 100")));
 
-        appWebSocketClient2.track(-1);
+        appWebSocketClient2.trackDevice(-1);
         appWebSocketClient2.verifyResult(ok(3));
 
         appWebSocketClient.send("hardware 0 vw 10 100");
@@ -594,7 +594,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         appWebSocketClient.start();
         appWebSocketClient.login(regularUser);
         appWebSocketClient.verifyResult(ok(1));
-        appWebSocketClient.track(1);
+        appWebSocketClient.trackDevice(1);
 
         String apiUrl = String.format("https://localhost:%s/external/api/", properties.getHttpsPort());
 

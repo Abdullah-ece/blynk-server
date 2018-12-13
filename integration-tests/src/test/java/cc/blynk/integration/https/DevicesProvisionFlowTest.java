@@ -1004,7 +1004,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         assertEquals(ESP8266, provisionedDevice.boardType);
         assertEquals("My Default device Name", provisionedDevice.name);
 
-        client.track(deviceFromApi.id);
+        client.trackDevice(deviceFromApi.id);
         client.verifyResult(ok(2));
         newHardClient.logEvent(criticalEvent.eventCode);
         client.verifyResult(logEvent(3, deviceFromApi.id + " CRITICAL " + criticalEvent.eventCode));
@@ -1121,7 +1121,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         assertEquals(provisionedDevice.id, deviceTiles.tiles[0].deviceId);
         assertEquals(tileTemplate.id, deviceTiles.tiles[0].templateId);
 
-        client.track(provisionedDevice.id);
+        client.trackDevice(provisionedDevice.id);
         client.verifyResult(ok(1));
 
         appClient.send("hardware " + provisionedDevice.id + " vw 1 1");
