@@ -7,7 +7,7 @@ import cc.blynk.core.http.annotation.POST;
 import cc.blynk.core.http.annotation.PUT;
 import cc.blynk.core.http.rest.params.Param;
 import cc.blynk.server.core.model.exceptions.ForbiddenWebException;
-import cc.blynk.server.core.model.exceptions.WebException;
+import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.stats.GlobalStats;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpResponse;
@@ -93,7 +93,7 @@ public class HandlerWrapper {
             if (cause instanceof ForbiddenWebException) {
                 return forbidden(cause.getMessage());
             }
-            if (cause instanceof WebException) {
+            if (cause instanceof JsonException) {
                 return badRequest(cause.getMessage());
             }
 

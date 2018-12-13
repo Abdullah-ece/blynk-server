@@ -18,7 +18,6 @@ import io.netty.channel.ChannelHandlerContext;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_EDIT;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.server.internal.WebByteBufUtil.json;
-import static cc.blynk.server.internal.WebByteBufUtil.userHasNoAccessToOrg;
 
 /**
  * The Blynk Project.
@@ -60,12 +59,6 @@ public class WebEditOrganizationLogic implements PermissionBasedLogic {
         if (existingOrganization == null) {
             log.error("Organization {} for {} not found.", newOrganization.id, user.email);
             ctx.writeAndFlush(json(message.id, "Organization not found."), ctx.voidPromise());
-            return;
-        }
-
-        if (!organizationDao.hasAccess(user, newOrganization.id)) {
-            log.error("User {} tries to update organization he has no access.", user.email);
-            ctx.writeAndFlush(userHasNoAccessToOrg(message.id), ctx.voidPromise());
             return;
         }
 

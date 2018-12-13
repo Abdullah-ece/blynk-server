@@ -91,14 +91,6 @@ public final class WebInviteUserLogic implements PermissionBasedLogic {
             return;
         }
 
-        if (!organizationDao.hasAccess(user, orgId)) {
-            log.warn("{} (orgId = {}) tries to send invite to another organization with id = {}.",
-                    user.email, user.orgId, orgId);
-            ctx.writeAndFlush(json(message.id, "You are not allowed to send invite to another organization."),
-                    ctx.voidPromise());
-            return;
-        }
-
         User invitedUser = userDao.invite(userInvite, orgId);
 
         if (invitedUser == null) {

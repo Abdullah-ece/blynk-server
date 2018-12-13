@@ -20,7 +20,6 @@ import static cc.blynk.server.core.model.permissions.PermissionsTable.OWN_DEVICE
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.server.internal.WebByteBufUtil.json;
 import static cc.blynk.server.internal.WebByteBufUtil.productNotExists;
-import static cc.blynk.server.internal.WebByteBufUtil.userHasNoAccessToOrg;
 import static cc.blynk.utils.StringUtils.split2;
 
 /**
@@ -56,12 +55,6 @@ public class WebEditOwnDeviceLogic implements PermissionBasedLogic {
 
         //todo refactor when permissions ready
         User user = state.user;
-        if (!organizationDao.hasAccess(user, orgId)) {
-            log.error("User {} not allowed to access orgId {}", user.email, orgId);
-            ctx.writeAndFlush(userHasNoAccessToOrg(message.id), ctx.voidPromise());
-            return;
-        }
-
         Device newDevice = JsonParser.parseDevice(split[1], message.id);
 
         if (newDevice == null || newDevice.productId < 1) {

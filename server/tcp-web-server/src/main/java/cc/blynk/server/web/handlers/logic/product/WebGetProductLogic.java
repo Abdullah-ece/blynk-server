@@ -70,11 +70,6 @@ public final class WebGetProductLogic implements PermissionBasedLogic {
             throw new JsonException("Cannot find product with passed id.");
         }
 
-        if (!organizationDao.hasAccess(user, orgId)) {
-            log.error("User {} tries to access product he has no access.", user.email);
-            throw new JsonException("User tries to access product he has no access.");
-        }
-
         if (ctx.channel().isWritable()) {
             String productString = new ProductDTO(product).toString();
             StringMessage response = makeUTF8StringMessage(message.command, message.id, productString);

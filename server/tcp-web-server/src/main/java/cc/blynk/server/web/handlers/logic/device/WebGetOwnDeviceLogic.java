@@ -19,7 +19,6 @@ import io.netty.channel.ChannelHandlerContext;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_DEVICES_VIEW;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.server.internal.WebByteBufUtil.json;
-import static cc.blynk.server.internal.WebByteBufUtil.userHasNoAccessToOrg;
 import static cc.blynk.utils.StringUtils.split2;
 
 /**
@@ -70,14 +69,6 @@ public class WebGetOwnDeviceLogic implements PermissionBasedLogic {
 
         Organization org = organizationDao.getOrgByIdOrThrow(orgId);
         Product product = deviceValue.product;
-
-        //todo refactor when permissions ready
-        //todo check access for the device
-        if (!organizationDao.hasAccess(user, orgId)) {
-            log.error("User {} not allowed to access orgId {}", user.email, orgId);
-            ctx.writeAndFlush(userHasNoAccessToOrg(message.id), ctx.voidPromise());
-            return;
-        }
 
         device.fillWebDashboardValues();
         if (ctx.channel().isWritable()) {

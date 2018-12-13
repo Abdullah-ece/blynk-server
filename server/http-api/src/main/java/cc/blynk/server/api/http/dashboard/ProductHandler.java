@@ -17,9 +17,9 @@ import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.exceptions.ForbiddenWebException;
-import cc.blynk.server.core.model.exceptions.WebException;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
+import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.utils.http.MediaType;
 import io.netty.channel.ChannelHandler;
 
@@ -77,12 +77,6 @@ public class ProductHandler extends BaseHttpHandler {
             return badRequest();
         }
 
-        int orgId = organizationDao.getOrganizationIdByProductId(product.id);
-        if (!organizationDao.hasAccess(user, orgId)) {
-            log.error("User {} tries to access product he has no access.", user.email);
-            return forbidden("You are not allowed to getOrgSession this product.");
-        }
-
         return ok(product);
     }
 
@@ -111,7 +105,7 @@ public class ProductHandler extends BaseHttpHandler {
         }
 
         if (!product.isValidEvents()) {
-            throw new WebException("Events with this event codes are not allowed.");
+            throw new JsonException("Events with this event codes are not allowed.");
         }
 
         product = organizationDao.createProduct(productAndOrgIdDTO.orgId, product);

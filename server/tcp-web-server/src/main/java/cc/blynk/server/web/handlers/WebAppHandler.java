@@ -153,6 +153,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
     private final WebStartOtaLogic webStartOtaLogic;
     private final WebStopOtaLogic webStopOtaLogic;
     private final WebCleanOtaLogic webCleanOtaLogic;
+    private final WebTrackOrganizationLogic webTrackOrganizationLogic;
 
     private final Holder holder;
 
@@ -197,6 +198,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
         this.webStartOtaLogic = new WebStartOtaLogic(holder);
         this.webStopOtaLogic = new WebStopOtaLogic(holder);
         this.webCleanOtaLogic = new WebCleanOtaLogic(holder);
+        this.webTrackOrganizationLogic = new WebTrackOrganizationLogic(holder);
 
         this.state = state;
         this.holder = holder;
@@ -351,7 +353,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
                 webCleanOtaLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_TRACK_ORG :
-                WebTrackOrganizationLogic.messageReceived(holder, ctx, state, msg);
+                webTrackOrganizationLogic.messageReceived(ctx, state, msg);
                 break;
         }
     }
