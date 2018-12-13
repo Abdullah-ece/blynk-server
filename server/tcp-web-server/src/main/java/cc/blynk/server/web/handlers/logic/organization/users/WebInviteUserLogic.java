@@ -21,8 +21,6 @@ import cc.blynk.utils.FileLoaderUtil;
 import cc.blynk.utils.TokenGeneratorUtil;
 import cc.blynk.utils.properties.Placeholders;
 import io.netty.channel.ChannelHandlerContext;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -38,8 +36,6 @@ import static cc.blynk.utils.StringUtils.split2;
  * Created on 3/7/2018.
  */
 public final class WebInviteUserLogic implements PermissionBasedLogic {
-
-    private static final Logger log = LogManager.getLogger(WebGetOrgUsersLogic.class);
 
     private final String inviteTemplate;
     private final OrganizationDao organizationDao;
@@ -92,14 +88,6 @@ public final class WebInviteUserLogic implements PermissionBasedLogic {
         if (org == null) {
             log.error("Requested organization for invite not exists {} for {}.", userInvite, user.email);
             ctx.writeAndFlush(json(message.id, "Requested organization for invite doesn't exist."), ctx.voidPromise());
-            return;
-        }
-
-        if (!organizationDao.hasAccess(user, orgId)) {
-            log.warn("{} (orgId = {}) tries to send invite to another organization with id = {}.",
-                    user.email, user.orgId, orgId);
-            ctx.writeAndFlush(json(message.id, "You are not allowed to send invite to another organization."),
-                    ctx.voidPromise());
             return;
         }
 

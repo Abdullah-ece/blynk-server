@@ -3,7 +3,6 @@ package cc.blynk.server.web.handlers.logic.device;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.PermissionBasedLogic;
 import cc.blynk.server.core.dao.OrganizationDao;
-import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.dto.DeviceDTO;
 import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
@@ -16,7 +15,6 @@ import java.util.List;
 
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_DEVICES_VIEW;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
-import static cc.blynk.server.internal.WebByteBufUtil.userHasNoAccessToOrg;
 import static cc.blynk.utils.StringUtils.split2;
 
 /**
@@ -49,14 +47,6 @@ public final class WebGetOrgDevicesLogic implements PermissionBasedLogic {
         String[] split = split2(msg.body);
 
         int orgId = Integer.parseInt(split[0]);
-
-        //todo refactor when permissions ready
-        User user = state.user;
-        if (!organizationDao.hasAccess(user, orgId)) {
-            log.error("User {} not allowed to access orgId {}", user.email, orgId);
-            ctx.writeAndFlush(userHasNoAccessToOrg(msg.id), ctx.voidPromise());
-            return;
-        }
 
         Organization org = organizationDao.getOrgByIdOrThrow(orgId);
 

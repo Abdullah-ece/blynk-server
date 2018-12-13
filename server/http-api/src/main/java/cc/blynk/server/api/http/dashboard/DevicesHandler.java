@@ -25,14 +25,13 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.dto.DeviceDTO;
 import cc.blynk.server.core.model.enums.SortOrder;
-import cc.blynk.server.core.model.exceptions.ForbiddenWebException;
 import cc.blynk.server.core.model.exceptions.ProductNotFoundException;
-import cc.blynk.server.core.model.exceptions.WebException;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.EventType;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.events.Event;
+import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.db.ReportingDBManager;
 import cc.blynk.server.db.model.LogEvent;
 import cc.blynk.server.db.model.LogEventCountKey;
@@ -84,8 +83,6 @@ public class DevicesHandler extends BaseHttpHandler {
             log.error("No data or product orgId is wrong. {}", newDevice);
             return badRequest();
         }
-
-        organizationDao.hasAccess(user, orgId);
 
         Organization org = organizationDao.getOrgByIdOrThrow(orgId);
         Product product = org.getProduct(newDevice.productId);
@@ -195,7 +192,7 @@ public class DevicesHandler extends BaseHttpHandler {
         int fieldIndex = existingDevice.findMetaFieldIndex(updatedMetaField.id);
         if (fieldIndex == -1) {
             log.error("MetaField with id {} not found for device id {}.", updatedMetaField.id, deviceId);
-            throw new WebException("MetaField with passed id not found.");
+            throw new JsonException("MetaField with passed id not found.");
         }
 
         MetaField[] updatedMetaFields = Arrays.copyOf(existingDevice.metaFields, existingDevice.metaFields.length);
@@ -214,8 +211,6 @@ public class DevicesHandler extends BaseHttpHandler {
                            @QueryParam("orderField") String[] orderFields,
                            @QueryParam("order") SortOrder order) {
         User user = getUser(ctx);
-
-        organizationDao.hasAccess(user, orgId);
 
         Collection<Device> devices = organizationDao.getAllDevicesByOrgId(orgId);
 
@@ -256,9 +251,6 @@ public class DevicesHandler extends BaseHttpHandler {
                                   @PathParam("orgId") int orgId,
                                   @PathParam("deviceId") int deviceId) {
         Device device = deviceDao.getByIdOrThrow(deviceId);
-        if (!organizationDao.hasAccess(user, orgId)) {
-            throw new ForbiddenWebException("User has no rights for this device.");
-        }
 
         return ok(joinProductAndOrgInfo(device));
     }

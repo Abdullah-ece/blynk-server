@@ -16,8 +16,8 @@ public final class MobileShareStateHolder extends MobileStateHolder {
     public final String token;
     public final int dashId;
 
-    MobileShareStateHolder(int orgId, User user, Role role, Version version, String token, int dashId) {
-        super(orgId, user, role, version);
+    MobileShareStateHolder(User user, Role role, Version version, String token, int dashId) {
+        super(user, role, version);
         this.token = token;
         this.dashId = dashId;
     }

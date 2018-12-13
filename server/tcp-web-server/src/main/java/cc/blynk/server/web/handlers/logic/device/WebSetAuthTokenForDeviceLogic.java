@@ -22,7 +22,6 @@ import io.netty.channel.ChannelHandlerContext;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.SET_AUTH_TOKEN;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 import static cc.blynk.server.internal.WebByteBufUtil.json;
-import static cc.blynk.server.internal.WebByteBufUtil.userHasNoAccessToOrg;
 
 /**
  * The Blynk Project.
@@ -67,11 +66,6 @@ public class WebSetAuthTokenForDeviceLogic implements PermissionBasedLogic {
         int orgId = setAuthTokenDTO.orgId;
         int deviceId = setAuthTokenDTO.deviceId;
         User user = state.user;
-        if (!organizationDao.hasAccess(user, orgId)) {
-            log.error("User {} not allowed to access orgId {}", user.email, orgId);
-            ctx.writeAndFlush(userHasNoAccessToOrg(message.id), ctx.voidPromise());
-            return;
-        }
 
         DeviceValue deviceValue = deviceDao.getDeviceValueById(deviceId);
         if (deviceValue == null) {

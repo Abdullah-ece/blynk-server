@@ -10,6 +10,7 @@ import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
+import cc.blynk.server.core.protocol.exceptions.NoPermissionException;
 import cc.blynk.utils.IntArray;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_VIEW;
 import static cc.blynk.server.core.model.web.Organization.NO_PARENT_ID;
 
 /**
@@ -171,22 +173,31 @@ public class OrganizationDao {
         }
     }
 
-    public boolean hasAccess(User user, int orgId) {
-        if (user.isSuperAdmin()) {
-            return true;
-        }
-        if (user.orgId == orgId) {
-            return true;
-        }
-        Organization userOrg = getOrgById(user.orgId);
-        Role userRole = userOrg.getRoleById(user.roleId);
-        if (userRole.canViewOrg()) {
-            //user is admin of parent org, so he can perform admin action on child org
-            List<Organization> childOrgs = getOrgChilds(user.orgId);
-            Organization org = getOrgById(childOrgs, orgId);
-            return org != null;
+    private static boolean hasOrgById(List<Organization> orgs, int id) {
+        for (Organization org : orgs) {
+            if (org.id == id) {
+                return true;
+            }
         }
         return false;
+    }
+
+    public void checkAccess(String email, Role userRole, int userOrgId, int requestedOrgId) {
+        //own organization
+        if (userOrgId == requestedOrgId) {
+            return;
+        }
+        //this is minimum required permission if user wants to access other organizations
+        if (!userRole.canViewOrg()) {
+            throw new NoPermissionException(email, ORG_VIEW);
+        }
+        //check if requested organization is not in upper hierarchy.
+        //we allow to access only for childs orgs. User can't access parent org.
+        List<Organization> userOrgChilds = getOrgChilds(userOrgId);
+        boolean hasChild = hasOrgById(userOrgChilds, requestedOrgId);
+        if (!hasChild) {
+            throw new NoPermissionException("User " + email + " tries to access non child organization.");
+        }
     }
 
     public Collection<Organization> getAll() {
@@ -218,15 +229,6 @@ public class OrganizationDao {
         newDevice.webDashboard = product.webDashboard.copy();
         product.addDevice(newDevice);
         return product;
-    }
-
-    private static Organization getOrgById(List<Organization> orgs, int id) {
-        for (Organization org : orgs) {
-            if (org.id == id) {
-                return org;
-            }
-        }
-        return null;
     }
 
     public Organization getOrgById(int id) {

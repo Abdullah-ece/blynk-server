@@ -53,12 +53,6 @@ public class WebCreateDeviceLogic implements PermissionBasedLogic {
 
         //todo refactor when permissions ready
         User user = state.user;
-        if (!organizationDao.hasAccess(user, orgId)) {
-            log.error("User {} (orgId={}) not allowed to access orgId {}", user.email, user.orgId, orgId);
-            ctx.writeAndFlush(json(message.id, "User not allowed to access this organization."), ctx.voidPromise());
-            return;
-        }
-
         Device newDevice = JsonParser.parseDevice(split[1], message.id);
 
         if (newDevice == null) {
