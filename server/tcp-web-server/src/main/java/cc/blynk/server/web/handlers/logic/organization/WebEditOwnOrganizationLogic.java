@@ -51,19 +51,20 @@ public final class WebEditOwnOrganizationLogic implements PermissionBasedLogic<W
             return;
         }
 
-        if (user.orgId != orgDTO.id) {
+        int orgId = state.selectedOrgId;
+        if (user.orgId != orgId) {
             log.error("You can't edit another organization from this view.");
             throw new NoPermissionException("You can't edit another organization from this view.");
         }
 
-        Organization existingOrganization = organizationDao.getOrgById(orgDTO.id);
+        Organization existingOrganization = organizationDao.getOrgById(orgId);
         if (existingOrganization == null) {
-            log.error("Organization {} for {} not found.", orgDTO.id, user.email);
+            log.error("Organization {} for {} not found.", orgId, user.email);
             ctx.writeAndFlush(json(message.id, "Organization not found."), ctx.voidPromise());
             return;
         }
 
-        if (organizationDao.checkNameExists(orgDTO.id, orgDTO.name)) {
+        if (organizationDao.checkNameExists(orgId, orgDTO.name)) {
             log.error("Organization {} with this name already exists for {}", orgDTO, user.email);
             ctx.writeAndFlush(json(message.id, "Organization with this name already exists."), ctx.voidPromise());
             return;

@@ -91,7 +91,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
     @Test
     public void getNonExistingProduct() throws Exception {
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
-        client.getProduct(orgId, 1333);
+        client.getProduct(1333);
         client.verifyResult(webJson(1, "Product with passed id 1333 not exists."));
     }
 
@@ -195,7 +195,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
-        client.getProduct(orgId, fromApiProduct.id);
+        client.getProduct(fromApiProduct.id);
         fromApiProduct = client.parseProductDTO(2);
         assertNotNull(fromApiProduct);
     }
@@ -668,7 +668,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         Device createdDevice = client.parseDevice(2);
         assertNotNull(createdDevice);
 
-        client.getProduct(orgId, fromApiProduct.id);
+        client.getProduct(fromApiProduct.id);
         fromApiProduct = client.parseProductDTO(3);
         assertNotNull(fromApiProduct);
         assertEquals(1, fromApiProduct.deviceCount);
@@ -707,7 +707,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         client.deleteDevice(orgId, createdDevice.id);
         client.verifyResult(ok(4));
 
-        client.getProduct(orgId, fromApiProduct.id);
+        client.getProduct(fromApiProduct.id);
         fromApiProduct = client.parseProductDTO(5);
         assertNotNull(fromApiProduct);
         assertNotNull(product.devices);
@@ -1243,8 +1243,10 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertNotNull(fromApiProduct.webDashboard.widgets[0]);
         assertEquals("4444", fromApiProduct.webDashboard.widgets[0].label);
 
-        client.getProduct(fromApiProductOrg.id, fromApiProductOrg.products[0].id);
-        ProductDTO subProduct = client.parseProductDTO(4);
+        client.trackOrg(fromApiProductOrg.id);
+        client.verifyResult(ok(4));
+        client.getProduct(fromApiProductOrg.products[0].id);
+        ProductDTO subProduct = client.parseProductDTO(5);
         assertNotNull(subProduct);
         assertEquals("Updated Name", subProduct.name);
         assertEquals(fromApiProduct.id, subProduct.parentId);
@@ -1345,8 +1347,10 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertNotNull(fromApiProduct.metaFields);
         assertEquals("My test metafield 2", fromApiProduct.metaFields[0].name);
 
-        client.getProduct(fromApiProductSubOrg.id, fromApiProductSubOrg.products[0].id);
-        ProductDTO subProduct = client.parseProductDTO(5);
+        client.trackOrg(fromApiProductSubOrg.id);
+        client.verifyResult(ok(5));
+        client.getProduct(fromApiProductSubOrg.products[0].id);
+        ProductDTO subProduct = client.parseProductDTO(6);
         assertNotNull(subProduct);
         assertEquals("Updated Name", subProduct.name);
         assertEquals(fromApiProduct.id, subProduct.parentId);
@@ -1356,7 +1360,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertEquals("My test metafield 2", fromApiProduct.metaFields[0].name);
 
         client.getDevice(fromApiProductSubOrg.id, createdSubDevice.id);
-        createdSubDevice = client.parseDevice(6);
+        createdSubDevice = client.parseDevice(7);
         assertNotNull(createdSubDevice);
         assertNotNull(createdSubDevice.metaFields);
         assertEquals(3, createdSubDevice.metaFields.length);

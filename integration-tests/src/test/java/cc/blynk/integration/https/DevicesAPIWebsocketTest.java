@@ -992,9 +992,11 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         newHardClient.verifyResult(ok(1));
         client.verifyResult(TestUtil.deviceConnected(1, createdDevice.id));
 
-        String newToken = TokenGeneratorUtil.generateNewToken();
-        client.setAuthToken(orgId, createdDevice.id, newToken);
+        client.trackDevice(createdDevice.id);
         client.verifyResult(ok(3));
+        String newToken = TokenGeneratorUtil.generateNewToken();
+        client.setAuthToken(createdDevice.id, newToken);
+        client.verifyResult(ok(4));
 
         //after token was changed, expecting existing hard connection to be closed
         assertTrue(newHardClient.isClosed());
@@ -1019,7 +1021,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
     @Test
     public void testSetInvalidAuthToken() throws Exception {
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
-        client.setAuthToken(orgId, 1, "123");
+        client.setAuthToken(1, "123");
         client.verifyResult(webJson(1, "Set auth token is not valid. Token is empty or length is not 32 chars."));
     }
 

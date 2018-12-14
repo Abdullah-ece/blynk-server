@@ -194,8 +194,8 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         send("webGetProducts " + orgId);
     }
 
-    public void getProduct(int orgId, int productId) {
-        send("webGetProduct " + orgId + StringUtils.BODY_SEPARATOR_STRING + productId);
+    public void getProduct(int productId) {
+        send("webGetProduct " + productId);
     }
 
     public void inviteUser(int orgId, String email, String name, int roleId) {
@@ -347,8 +347,8 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         send("webGetRole " + orgId + BODY_SEPARATOR_STRING + roleId);
     }
 
-    public void setAuthToken(int orgId, int deviceId, String newToken) {
-        send("webSetAuthToken " + JsonParser.toJson(new SetAuthTokenDTO(orgId, deviceId, newToken)));
+    public void setAuthToken(int deviceId, String newToken) {
+        send("webSetAuthToken " + JsonParser.toJson(new SetAuthTokenDTO(deviceId, newToken)));
     }
 
     public void getDeviceCount(int orgId) {

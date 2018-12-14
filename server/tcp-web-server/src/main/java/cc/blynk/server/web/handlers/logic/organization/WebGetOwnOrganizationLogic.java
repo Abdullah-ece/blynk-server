@@ -12,7 +12,6 @@ import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
 import io.netty.channel.ChannelHandlerContext;
 
-import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_VIEW;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 
 /**
@@ -36,12 +35,12 @@ public final class WebGetOwnOrganizationLogic implements PermissionBasedLogic<We
 
     @Override
     public int getPermission() {
-        return ORG_VIEW;
+        return -1;
     }
 
     @Override
     public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
-        int orgId = "".equals(message.body) ? state.user.orgId : Integer.parseInt(message.body);
+        int orgId = state.selectedOrgId;
 
         User user = state.user;
         if (orgId != user.orgId) {

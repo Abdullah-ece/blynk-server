@@ -60,10 +60,11 @@ public final class WebCreateProductLogic implements PermissionBasedLogic<WebAppS
         Product product = productAndOrgIdDTO.product.toProduct();
         product.validate();
 
-        Organization organization = organizationDao.getOrgById(productAndOrgIdDTO.orgId);
+        int orgId = state.selectedOrgId;
+        Organization organization = organizationDao.getOrgById(orgId);
 
         if (organization == null) {
-            log.error("Cannot find org with id {} for user {}", user.orgId, user.email);
+            log.error("Cannot find org with id {} for user {}", orgId, user.email);
             ctx.writeAndFlush(json(message.id, "Cannot find organization."), ctx.voidPromise());
             return;
         }
@@ -87,9 +88,9 @@ public final class WebCreateProductLogic implements PermissionBasedLogic<WebAppS
             return;
         }
 
-        product = organizationDao.createProduct(productAndOrgIdDTO.orgId, product);
+        product = organizationDao.createProduct(orgId, product);
         log.debug("Product for {} and orgId={} successfully created. UserOrgId={}, {}.",
-                user.email, productAndOrgIdDTO.orgId, user.orgId, product);
+                user.email, orgId, user.orgId, product);
 
         if (ctx.channel().isWritable()) {
             String productString = product.toString();

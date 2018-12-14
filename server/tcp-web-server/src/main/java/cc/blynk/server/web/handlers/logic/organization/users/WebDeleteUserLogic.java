@@ -62,8 +62,7 @@ public final class WebDeleteUserLogic implements PermissionBasedLogic<WebAppStat
             return;
         }
 
-        //todo check user has access to modify the org
-        int orgId = Integer.parseInt(split[0]);
+        int orgId = state.selectedOrgId;
         String[] emailsToDelete = JsonParser.readAny(split[1], String[].class);
 
         if (emailsToDelete == null || emailsToDelete.length == 0) {
@@ -88,7 +87,7 @@ public final class WebDeleteUserLogic implements PermissionBasedLogic<WebAppStat
                 fileManager.delete(emailToDelete);
                 dbManager.deleteUser(emailToDelete);
                 sessionDao.deleteUser(orgId, emailToDelete);
-                Organization org = organizationDao.getOrgById(user.orgId);
+                Organization org = organizationDao.getOrgById(orgId);
                 if (org != null) {
                     org.reassignOwner(emailToDelete, superAdminEmail);
                 }

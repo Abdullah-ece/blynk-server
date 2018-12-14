@@ -42,17 +42,12 @@ public final class WebGetProductsLogic implements PermissionBasedLogic<WebAppSta
     @Override
     public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         User user = state.user;
-        int orgId;
-        if (message.body.isEmpty()) {
-            orgId = user.orgId;
-        } else {
-            orgId = Integer.parseInt(message.body);
-        }
+        int orgId = state.selectedOrgId;
 
         Organization organization = organizationDao.getOrgByIdOrThrow(orgId);
 
         if (organization == null) {
-            log.error("Cannot find org with id {} for user {}", user.orgId, user.email);
+            log.error("Cannot find org with id {} for user {}", orgId, user.email);
             ctx.writeAndFlush(json(message.id, "Cannot find organization."), ctx.voidPromise());
             return;
         }
@@ -62,7 +57,7 @@ public final class WebGetProductsLogic implements PermissionBasedLogic<WebAppSta
             log.error("Empty response for WebGetProductsLogic and {}.", user.email);
         } else {
             log.trace("Returning products for user {} and orgId {}, length {}.",
-                    user.email, user.orgId, productString.length());
+                    user.email, orgId, productString.length());
             StringMessage response = makeUTF8StringMessage(message.command, message.id, productString);
             ctx.writeAndFlush(response, ctx.voidPromise());
         }

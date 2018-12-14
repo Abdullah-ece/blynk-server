@@ -75,9 +75,9 @@ public final class WebStartOtaLogic implements PermissionBasedLogic<WebAppStateH
             throw new JsonException("Wrong data for OTA start.");
         }
 
+        int orgId = state.selectedOrgId;
         User user = state.user;
-        List<Device> filteredDevices = deviceDao.getByProductIdAndFilter(
-                otaDTO.orgId, otaDTO.productId, otaDTO.deviceIds);
+        List<Device> filteredDevices = deviceDao.getByProductIdAndFilter(orgId, otaDTO.productId, otaDTO.deviceIds);
         if (filteredDevices.size() == 0) {
             log.error("No devices for provided productId {}", otaDTO.productId);
             throw new JsonException("No devices for provided productId " + otaDTO.productId);
@@ -107,7 +107,7 @@ public final class WebStartOtaLogic implements PermissionBasedLogic<WebAppStateH
             device.setDeviceOtaInfo(deviceOtaInfo);
         }
 
-        Session session = sessionDao.getOrgSession(user.orgId);
+        Session session = sessionDao.getOrgSession(orgId);
         String serverUrl = props.getServerUrl(otaDTO.isSecure);
         if (session != null) {
             for (Channel channel : session.hardwareChannels) {

@@ -45,20 +45,18 @@ public final class WebGetProductLogic implements PermissionBasedLogic<WebAppStat
         String[] split = split2(message.body);
 
         User user = state.user;
-        int orgId;
         int productId;
         if (split.length == 2) {
-            orgId = Integer.parseInt(split[0]);
             productId = Integer.parseInt(split[1]);
         } else {
-            orgId = user.orgId;
             productId = Integer.parseInt(split[0]);
         }
+        int orgId = state.selectedOrgId;
 
         Organization organization = organizationDao.getOrgById(orgId);
 
         if (organization == null) {
-            log.error("Cannot find org with id {} for user {}", user.orgId, user.email);
+            log.error("Cannot find org with id {} for user {}", orgId, user.email);
             throw new JsonException("Cannot find organization.");
         }
 

@@ -673,8 +673,10 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
                 null,
                 null);
 
+        //this is ok, as orgId is actually taken from the session
         client.editOwnOrg(organizationUpdated);
-        client.verifyResult(webJson(2, "You can't edit another organization from this view."));
+        organizationDTO = client.parseOrganizationDTO(2);
+        assertNotNull(organizationDTO);
     }
 
     @Test

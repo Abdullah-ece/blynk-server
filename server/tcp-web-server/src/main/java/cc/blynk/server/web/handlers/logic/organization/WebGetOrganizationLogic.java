@@ -45,9 +45,8 @@ public final class WebGetOrganizationLogic implements PermissionBasedLogic<WebAp
 
     @Override
     public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
-        int orgId = "".equals(message.body) ? state.user.orgId : Integer.parseInt(message.body);
+        int orgId = state.selectedOrgId;
 
-        //todo refactor when permissions ready
         Organization organization = organizationDao.getOrgByIdOrThrow(orgId);
 
         String parentOrgName = organizationDao.getParentOrgName(organization.parentId);

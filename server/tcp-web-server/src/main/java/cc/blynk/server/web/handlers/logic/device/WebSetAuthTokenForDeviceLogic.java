@@ -59,9 +59,10 @@ public final class WebSetAuthTokenForDeviceLogic implements PermissionBasedLogic
             throw new JsonException("Set auth token is not valid. Token is empty or length is not 32 chars.");
         }
 
-        //todo refactor when permissions ready
-        int orgId = setAuthTokenDTO.orgId;
+        int orgId = state.selectedOrgId;
         int deviceId = setAuthTokenDTO.deviceId;
+        state.checkControlledDeviceIsSelected(deviceId);
+
         User user = state.user;
 
         DeviceValue deviceValue = deviceDao.getDeviceValueById(deviceId);
@@ -75,17 +76,13 @@ public final class WebSetAuthTokenForDeviceLogic implements PermissionBasedLogic
         Product product = deviceValue.product;
         String newToken = setAuthTokenDTO.token;
 
-        Role role = state.role;
-        if (role.canEditOrgDevice() || (role.canEditOwnDevice() && device.hasOwner(state.user))) {
-            DeviceValue deviceValueForToken = deviceDao.getDeviceTokenValue(newToken);
-            if (deviceValueForToken != null) {
-                throw new NoPermissionException("This token is already used by another device.");
-            }
-            deviceDao.assignNewToken(user.orgId, user.email, product, device, newToken);
-            log.warn("Manual setting auth token {} for device {}, orgId = {}.", newToken, deviceDao, orgId);
-        } else {
-            throw new NoPermissionException("You are not allowed to set auth token.");
+        DeviceValue deviceValueForToken = deviceDao.getDeviceTokenValue(newToken);
+        if (deviceValueForToken != null) {
+            throw new NoPermissionException("This token is already used by another device.");
         }
+
+        deviceDao.assignNewToken(orgId, user.email, product, device, newToken);
+        log.warn("Manual setting auth token {} for device {}, orgId = {}.", newToken, deviceDao, orgId);
 
         Session session = sessionDao.getOrgSession(orgId);
         session.closeHardwareChannelByDeviceId(deviceId);
