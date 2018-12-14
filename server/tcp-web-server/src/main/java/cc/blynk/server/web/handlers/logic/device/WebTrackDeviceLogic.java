@@ -5,7 +5,10 @@ import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.DeviceValue;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.exceptions.DeviceNotFoundException;
+import cc.blynk.server.core.model.permissions.Role;
+import cc.blynk.server.core.protocol.exceptions.NoPermissionException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
 import io.netty.channel.ChannelHandlerContext;
@@ -35,16 +38,35 @@ public final class WebTrackDeviceLogic {
         int deviceId = Integer.parseInt(message.body);
 
         User user = state.user;
+        String email = user.email;
         DeviceValue deviceValue = deviceDao.getDeviceValueById(deviceId);
         if (deviceValue == null) {
-            log.warn("User {} requested not existing deviceId {}.", user.email, deviceId);
+            log.warn("User {} requested not existing deviceId {}.", email, deviceId);
             throw new DeviceNotFoundException();
         }
 
-        organizationDao.checkInheritanceAccess(user.email, user.orgId, deviceValue.orgId);
+        Device device = deviceValue.device;
+        Role role = state.role;
+        int requestedDeviceOrd = deviceValue.orgId;
+
+        if (!role.canViewOrgDevices()) {
+            if (role.canViewOwnDevices()) {
+                //user can view own devices, so we check he has permissions for own devices
+                if (!device.hasOwner(user)) {
+                    log.warn("{} with OWN_DEVICES_VIEW tries to access device he is not owner to.", email);
+                    throw new NoPermissionException("User is not owner of the requested device.");
+                }
+            } else {
+                log.warn("{} with OWN_DEVICES_VIEW tries to access device he is not owner to.", email);
+                throw new NoPermissionException("User doesn't have any permissions to access the device.");
+            }
+        }
+
+        //user has access to all devices and subdevices, so we check only he doesn't accesses parent org
+        organizationDao.checkInheritanceAccess(email, user.orgId, requestedDeviceOrd);
 
         state.selectedDeviceId = deviceId;
-        log.trace("Selecting webapp device {} for {}.", deviceId, user.email);
+        log.trace("Selecting webapp device {} for {}.", deviceId, email);
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }
 

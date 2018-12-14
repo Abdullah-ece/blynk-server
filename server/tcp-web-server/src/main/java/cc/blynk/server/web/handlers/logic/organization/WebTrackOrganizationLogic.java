@@ -37,8 +37,8 @@ public final class WebTrackOrganizationLogic {
         int userOrgId = state.orgId;
 
         //user is not in own organization, so security checks are required here
+        String email = state.user.email;
         if (userOrgId != requestedOrgId) {
-            String email = state.user.email;
             Role role = state.role;
             //no permission to switch orgs
             if (!role.canSwitchOrg()) {
@@ -53,13 +53,10 @@ public final class WebTrackOrganizationLogic {
             organizationDao.checkInheritanceAccess(email, userOrgId, requestedOrgId);
         }
 
-        select(ctx, state, requestedOrgId, message.id);
-    }
-
-    private void select(ChannelHandlerContext ctx, WebAppStateHolder state, int requestedOrgId, int msgId) {
         organizationDao.getOrgByIdOrThrow(requestedOrgId);
         state.selectedOrgId = requestedOrgId;
-        log.trace("Selecting webapp org {} for {}.", requestedOrgId, state.user.email);
-        ctx.writeAndFlush(ok(msgId), ctx.voidPromise());
+        log.trace("Selecting webapp org {} for {}.", requestedOrgId, email);
+        ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }
+
 }
