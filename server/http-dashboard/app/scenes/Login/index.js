@@ -2,13 +2,13 @@ import React from 'react';
 
 import LoginForm from './components/LoginForm';
 
-import {bindActionCreators} from 'redux';
+import { bindActionCreators } from 'redux';
 
-import {SubmissionError} from 'redux-form';
+import { SubmissionError } from 'redux-form';
 
-import {LoginWsSuccess} from 'data/Login/actions';
+import { LoginWsSuccess } from 'data/Login/actions';
 
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 
 import * as AccountAPI from 'data/Account/actions';
 
@@ -17,16 +17,20 @@ import {
 } from 'store/blynk-websocket-middleware/actions';
 
 
-import {encryptUserPassword} from 'services/Crypto';
+import { encryptUserPassword } from 'services/Crypto';
+import { OrganizationSwitch } from "../../data/Organization/actions";
 
-@connect(() => {
-  return {};
+@connect((state) => {
+  return {
+    orgId: state.Account.selectedOrgId,
+  };
 }, (dispatch) => {
   return {
     LoginWsSuccess: bindActionCreators(LoginWsSuccess, dispatch),
     AccountSaveCredentials: bindActionCreators(AccountAPI.AccountSaveCredentials, dispatch),
     AccountFetch: bindActionCreators(AccountAPI.Account, dispatch),
-    blynkWsLogin: bindActionCreators(blynkWsLogin, dispatch)
+    blynkWsLogin: bindActionCreators(blynkWsLogin, dispatch),
+    organizationSwitch: bindActionCreators(OrganizationSwitch, dispatch),
   };
 })
 export default class Login extends React.Component {
@@ -59,6 +63,8 @@ export default class Login extends React.Component {
     this.setState({
       loading: true
     });
+
+
     return this.props.blynkWsLogin({
       username: values.email,
       hash: password
@@ -66,8 +72,12 @@ export default class Login extends React.Component {
       this.setState({
         loading: false
       });
-      throw new SubmissionError({_error: 'Incorrect email or password. Please try again.'});
+      throw new SubmissionError({ _error: 'Incorrect email or password. Please try again.' });
     }).then(() => {
+      this.props.organizationSwitch({
+        orgId: this.props.orgId
+      });
+
       this.props.AccountSaveCredentials({
         username: values.email,
         password: password,
