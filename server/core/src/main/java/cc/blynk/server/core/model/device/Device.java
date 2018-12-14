@@ -367,7 +367,8 @@ public class Device implements Target {
             MetaField metaField = localMetaFields[i];
             if (metaField instanceof DeviceOwnerMetaField) {
                 DeviceOwnerMetaField deviceOwnerMetaField = (DeviceOwnerMetaField) metaField;
-                if (ownerEmail.equals(deviceOwnerMetaField.value)) {
+                //todo lowercase device owner?
+                if (ownerEmail.equalsIgnoreCase(deviceOwnerMetaField.value)) {
                     return i;
                 }
             }
