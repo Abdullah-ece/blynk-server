@@ -327,24 +327,24 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         send("webGetTempSecureToken");
     }
 
-    public void createRole(int orgId, RoleDTO roleDTO) {
-        send("webCreateRole " + orgId + BODY_SEPARATOR_STRING + roleDTO.toString());
+    public void createRole(RoleDTO roleDTO) {
+        send("webCreateRole " + roleDTO.toString());
     }
 
-    public void updateRole(int orgId, RoleDTO roleDTO) {
-        send("webUpdateRole " + orgId + BODY_SEPARATOR_STRING + roleDTO.toString());
+    public void updateRole(RoleDTO roleDTO) {
+        send("webUpdateRole " + roleDTO.toString());
     }
 
-    public void deleteRole(int orgId, int roleId) {
-        send("webDeleteRole " + orgId + BODY_SEPARATOR_STRING + roleId);
+    public void deleteRole(int roleId) {
+        send("webDeleteRole " + roleId);
     }
 
-    public void getRoles(int orgId) {
-        send("webGetRoles " + orgId);
+    public void getRoles() {
+        send("webGetRoles");
     }
 
-    public void getRole(int orgId, int roleId) {
-        send("webGetRole " + orgId + BODY_SEPARATOR_STRING + roleId);
+    public void getRole(int roleId) {
+        send("webGetRole " + roleId);
     }
 
     public void setAuthToken(int deviceId, String newToken) {

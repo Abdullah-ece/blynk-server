@@ -38,7 +38,7 @@ public final class WebGetRolesLogic implements PermissionBasedLogic<WebAppStateH
 
     @Override
     public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
-        int orgId = Integer.parseInt(message.body);
+        int orgId = state.selectedOrgId;
 
         log.debug("{} gets roles orgId {}.", state.user.email, orgId);
         Organization org = organizationDao.getOrgByIdOrThrow(orgId);

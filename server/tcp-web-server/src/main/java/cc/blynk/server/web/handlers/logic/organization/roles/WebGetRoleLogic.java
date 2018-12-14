@@ -6,13 +6,11 @@ import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.permissions.PermissionsTable;
 import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.web.Organization;
-import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
-import static cc.blynk.utils.StringUtils.split2;
 
 /**
  * The Blynk Project.
@@ -39,14 +37,8 @@ public final class WebGetRoleLogic implements PermissionBasedLogic<WebAppStateHo
 
     @Override
     public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
-        String[] messageParts = split2(message.body);
-
-        if (messageParts.length != 2) {
-            throw new JsonException("Get role command body is wrong.");
-        }
-
-        int orgId = Integer.parseInt(messageParts[0]);
-        int roleId = Integer.parseInt(messageParts[1]);
+        int orgId = state.selectedOrgId;
+        int roleId = Integer.parseInt(message.body);
 
         log.debug("{} gets role {} orgId {}.", state.user.email, roleId, orgId);
         Organization org = organizationDao.getOrgByIdOrThrow(orgId);

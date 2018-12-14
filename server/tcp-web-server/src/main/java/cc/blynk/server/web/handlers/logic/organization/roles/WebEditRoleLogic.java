@@ -14,7 +14,6 @@ import cc.blynk.server.core.session.web.WebAppStateHolder;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
-import static cc.blynk.utils.StringUtils.split2;
 
 /**
  * The Blynk Project.
@@ -41,14 +40,8 @@ public final class WebEditRoleLogic implements PermissionBasedLogic<WebAppStateH
 
     @Override
     public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
-        String[] messageParts = split2(message.body);
-
-        if (messageParts.length != 2) {
-            throw new JsonException("Update role command body is wrong.");
-        }
-
-        int orgId = Integer.parseInt(messageParts[0]);
-        RoleDTO roleDTO = JsonParser.readAny(messageParts[1], RoleDTO.class);
+        int orgId = state.selectedOrgId;
+        RoleDTO roleDTO = JsonParser.readAny(message.body, RoleDTO.class);
         if (roleDTO == null) {
             throw new JsonException("Could not parse the role.");
         }

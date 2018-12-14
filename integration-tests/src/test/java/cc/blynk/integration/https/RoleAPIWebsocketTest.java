@@ -27,7 +27,7 @@ public class RoleAPIWebsocketTest extends APIBaseTest {
         AppWebSocketClient client = loggedDefaultClient(admin);
 
         RoleDTO roleDTO = new RoleDTO(-1, "My New Role", 0, 0);
-        client.createRole(admin.orgId, roleDTO);
+        client.createRole(roleDTO);
         roleDTO = client.parseRoleDTO(1);
         assertNotNull(roleDTO);
         assertEquals(4, roleDTO.id);
@@ -41,7 +41,7 @@ public class RoleAPIWebsocketTest extends APIBaseTest {
         AppWebSocketClient client = loggedDefaultClient(admin);
 
         RoleDTO roleDTO = new RoleDTO(3, "My Updated Role", 0, 0);
-        client.updateRole(admin.orgId, roleDTO);
+        client.updateRole(roleDTO);
         roleDTO = client.parseRoleDTO(1);
         assertNotNull(roleDTO);
         assertEquals(3, roleDTO.id);
@@ -54,7 +54,7 @@ public class RoleAPIWebsocketTest extends APIBaseTest {
     public void deleteRole() throws Exception {
         AppWebSocketClient client = loggedDefaultClient(admin);
 
-        client.deleteRole(admin.orgId, 3);
+        client.deleteRole(3);
         client.verifyResult(ok(1));
     }
 
@@ -62,7 +62,7 @@ public class RoleAPIWebsocketTest extends APIBaseTest {
     public void getRoles() throws Exception {
         AppWebSocketClient client = loggedDefaultClient(admin);
 
-        client.getRoles(admin.orgId);
+        client.getRoles();
         RoleDTO[] roleDTOs = client.parseRoleDTOs(1);
         assertNotNull(roleDTOs);
         assertEquals(0, roleDTOs[0].id);
@@ -75,7 +75,7 @@ public class RoleAPIWebsocketTest extends APIBaseTest {
     public void getRole() throws Exception {
         AppWebSocketClient client = loggedDefaultClient(admin);
 
-        client.getRole(admin.orgId, 1);
+        client.getRole(1);
         RoleDTO roleDTOs = client.parseRoleDTO(1);
         assertNotNull(roleDTOs);
         assertEquals(1, roleDTOs.id);
@@ -88,7 +88,7 @@ public class RoleAPIWebsocketTest extends APIBaseTest {
 
         int orgId = admin.orgId;
         RoleDTO roleDTO = new RoleDTO(3, "My Updated Role", 0, 0);
-        client.updateRole(orgId, roleDTO);
+        client.updateRole(roleDTO);
         roleDTO = client.parseRoleDTO(1);
         assertNotNull(roleDTO);
         assertEquals(3, roleDTO.id);
