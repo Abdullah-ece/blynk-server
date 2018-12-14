@@ -51,7 +51,7 @@ public final class WebCanInviteUserLogic implements PermissionBasedLogic<WebAppS
         } else {
             if (userToInvite.status == UserStatus.Active) {
                 log.debug("User {}-{} already registered in the system for invite.",
-                        userEMailToInvite, state.user.orgId);
+                        userEMailToInvite, userToInvite.orgId);
                 ctx.writeAndFlush(json(message.id, userEMailToInvite + " already registered in the system."),
                         ctx.voidPromise());
             } else {
