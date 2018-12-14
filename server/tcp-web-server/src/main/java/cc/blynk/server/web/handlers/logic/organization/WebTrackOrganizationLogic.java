@@ -44,7 +44,7 @@ public final class WebTrackOrganizationLogic implements PermissionBasedLogic<Web
 
         if (hasPermission(state.role) || userOrgId == requestedOrgId) {
             organizationDao.getOrgByIdOrThrow(requestedOrgId);
-            organizationDao.checkAccess(state.user.email, state.role, userOrgId, requestedOrgId);
+            organizationDao.checkInheritanceAccess(state.user.email, userOrgId, requestedOrgId);
             state.selectedOrgId = requestedOrgId;
             log.trace("Selecting webapp org {} for {}.", requestedOrgId, state.user.email);
             ctx.writeAndFlush(ok(message.id), ctx.voidPromise());

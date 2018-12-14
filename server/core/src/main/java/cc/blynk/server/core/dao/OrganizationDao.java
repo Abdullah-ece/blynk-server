@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_DEVICES_VIEW;
 import static cc.blynk.server.core.model.web.Organization.NO_PARENT_ID;
 
 /**
@@ -186,14 +185,14 @@ public class OrganizationDao {
         return false;
     }
 
-    public void checkAccess(String email, Role userRole, int userOrgId, int requestedOrgId) {
-        //own organization
+    /**
+     * This check i sused cot check user doesn't try to access parent org
+     * or org he has no access
+     */
+    public void checkInheritanceAccess(String email, int userOrgId, int requestedOrgId) {
+        //own organization, so this is ok
         if (userOrgId == requestedOrgId) {
             return;
-        }
-        //this is minimum required permission if user wants to access other organizations
-        if (!userRole.canViewOrgDevices()) {
-            throw new NoPermissionException(email, ORG_DEVICES_VIEW);
         }
         //check if requested organization is not in upper hierarchy.
         //we allow to access only for childs orgs. User can't access parent org.

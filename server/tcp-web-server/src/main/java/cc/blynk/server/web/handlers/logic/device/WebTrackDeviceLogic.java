@@ -41,7 +41,7 @@ public final class WebTrackDeviceLogic {
             throw new DeviceNotFoundException();
         }
 
-        organizationDao.checkAccess(user.email, state.role, user.orgId, deviceValue.orgId);
+        organizationDao.checkInheritanceAccess(user.email, user.orgId, deviceValue.orgId);
 
         state.selectedDeviceId = deviceId;
         log.trace("Selecting webapp device {} for {}.", deviceId, user.email);
