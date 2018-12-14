@@ -98,7 +98,7 @@ public class WebAppLoginHandler extends SimpleChannelInboundHandler<LoginMessage
         DefaultChannelPipeline pipeline = (DefaultChannelPipeline) ctx.pipeline();
         cleanPipeline(pipeline);
 
-        Role role = holder.organizationDao.getRole(user.orgId, user.roleId);
+        Role role = holder.organizationDao.getRole(user);
         WebAppStateHolder appStateHolder = new WebAppStateHolder(user, role, new Version(WEB_SOCKET, 41));
         pipeline.addLast("AWebAppHandler", new WebAppHandler(holder, appStateHolder));
 

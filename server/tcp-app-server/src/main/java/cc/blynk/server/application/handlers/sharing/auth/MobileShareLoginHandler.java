@@ -87,7 +87,7 @@ public class MobileShareLoginHandler extends SimpleChannelInboundHandler<ShareLo
         }
 
         cleanPipeline(ctx.pipeline());
-        Role role = holder.organizationDao.getRole(user.orgId, user.roleId);
+        Role role = holder.organizationDao.getRole(user);
         MobileShareStateHolder mobileShareStateHolder =
                 new MobileShareStateHolder(user, role, version, token, dashId);
         ctx.pipeline().addLast("AAppSHareHandler", new MobileShareHandler(holder, mobileShareStateHolder));

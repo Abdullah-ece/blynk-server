@@ -58,6 +58,10 @@ public class OrganizationDao {
         log.info("Organization sequence number is {}", largestOrgSequenceNumber);
     }
 
+    public Role getRole(User user) {
+        return getRole(user.orgId, user.roleId);
+    }
+
     public Role getRole(int orgId, int roleId) {
         Organization org = getOrgByIdOrThrow(orgId);
         return org.getRoleByIdOrThrow(roleId);
