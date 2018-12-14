@@ -74,24 +74,6 @@ public final class MobileCreateDashLogic {
         }
         user.subtractEnergy(price);
         user.profile.dashBoards = ArrayUtil.add(user.profile.dashBoards, newDash, DashBoard.class);
-
-        /*
-        if (newDash.devices == null) {
-            newDash.devices = EmptyArraysUtil.EMPTY_DEVICES;
-        } else {
-            Organization org = holder.organizationDao.getOrgByIdOrThrow(user.orgId);
-            for (Device device : newDash.devices) {
-                //this case only possible for clone,
-                device.erase();
-                if (generateTokensForDevices) {
-                    holder.organizationDao.assignToOrgAndAddDevice(org, device);
-                    String token = TokenGeneratorUtil.generateNewToken();
-                    holder.tokenManager.assignNewToken(user, newDash, device, token);
-                }
-            }
-        }
-        */
-
         user.lastModifiedTs = System.currentTimeMillis();
 
         newDash.addTimers(holder.timerWorker, state.user.orgId, state.user.email);
