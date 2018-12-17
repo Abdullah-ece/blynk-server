@@ -232,13 +232,15 @@ public class Organization {
         return null;
     }
 
-    public void reassignOwner(String oldOwner, String newOwner) {
+    public void eraseOwner(String oldOwner) {
+        reassignOwner(oldOwner, null);
+    }
+
+    private void reassignOwner(String oldOwner, String newOwner) {
         for (Product product : this.products) {
             for (Device device : product.devices) {
-                if (device.hasOwner(oldOwner)) {
-                    if (device.reassignOwner(oldOwner, newOwner)) {
-                        log.trace("Device owner {} of device {} is reassigned to {}.", oldOwner, device.id, newOwner);
-                    }
+                if (device.reassignOwner(oldOwner, newOwner)) {
+                    log.trace("Device owner {} of device {} is reassigned to {}.", oldOwner, device.id, newOwner);
                 }
             }
         }
