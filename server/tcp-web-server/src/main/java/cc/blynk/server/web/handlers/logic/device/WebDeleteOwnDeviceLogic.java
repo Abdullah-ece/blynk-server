@@ -53,7 +53,7 @@ public final class WebDeleteOwnDeviceLogic implements PermissionBasedLogic<WebAp
     public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         String[] split = split2(message.body);
 
-        int orgId = Integer.parseInt(split[0]);
+        int orgId = state.selectedOrgId;
         int deviceId = Integer.parseInt(split[1]);
 
         //todo refactor when permissions ready
@@ -74,7 +74,7 @@ public final class WebDeleteOwnDeviceLogic implements PermissionBasedLogic<WebAp
         log.debug("Deleting device {} for orgId {}.", deviceId, orgId);
         deviceDao.delete(deviceId);
 
-        Session session = sessionDao.getOrgSession(state.orgId);
+        Session session = sessionDao.getOrgSession(orgId);
         session.closeHardwareChannelByDeviceId(deviceId);
 
         blockingIOProcessor.executeHistory(() -> {

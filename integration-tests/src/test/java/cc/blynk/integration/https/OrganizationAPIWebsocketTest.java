@@ -132,8 +132,10 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
         assertNotNull(organizationDTO.roles);
         assertEquals(3, organizationDTO.roles.length);
 
-        client.getOrganizations(organizationDTO.id);
-        organizationDTOs = client.parseOrganizations(3);
+        client.trackOrg(organizationDTO.id);
+        client.verifyResult(ok(3));
+        client.getOrganizations(-1);
+        organizationDTOs = client.parseOrganizations(4);
         assertNotNull(organizationDTOs);
         assertEquals(0, organizationDTOs.length);
     }
@@ -349,12 +351,16 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
         newDevice.name = "My New Device";
         newDevice.productId = subOrgDTO.products[0].id;
 
-        client.createDevice(subOrgDTO.id, newDevice);
-        newDevice = client.parseDevice(3);
+        client.trackOrg(subOrgDTO.id);
+        client.verifyResult(ok(3));
+        client.createDevice(-1, newDevice);
+        newDevice = client.parseDevice(4);
         assertNotNull(newDevice);
 
-        client.getOrganizations(orgId);
-        OrganizationDTO[] orgs = client.parseOrganizations(4);
+        client.trackOrg(orgId);
+        client.verifyResult(ok(5));
+        client.getOrganizations(-1);
+        OrganizationDTO[] orgs = client.parseOrganizations(6);
         assertNotNull(orgs);
         assertEquals(1, orgs.length);
         assertEquals(1, orgs[0].products[0].deviceCount);
@@ -399,18 +405,24 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
         newDevice.name = "My New Device";
         newDevice.productId = subOrgDTO.products[0].id;
 
-        client.createDevice(subOrgDTO.id, newDevice);
-        newDevice = client.parseDevice(3);
+        client.trackOrg(subOrgDTO.id);
+        client.verifyResult(ok(3));
+        client.createDevice(-1, newDevice);
+        newDevice = client.parseDevice(4);
         assertNotNull(newDevice);
 
-        client.getDeviceCount(orgId);
-        CountDTO countDTO = client.parseCountDTO(4);
+        client.trackOrg(orgId);
+        client.verifyResult(ok(5));
+        client.getDeviceCount(-1);
+        CountDTO countDTO = client.parseCountDTO(6);
         assertNotNull(countDTO);
         assertEquals(1, countDTO.orgCount);
         assertEquals(1, countDTO.subOrgCount);
 
+        client.trackOrg(subOrgDTO.id);
+        client.verifyResult(ok(7));
         client.getDeviceCount(subOrgDTO.id);
-        CountDTO subCountDTO = client.parseCountDTO(5);
+        CountDTO subCountDTO = client.parseCountDTO(8);
         assertNotNull(subCountDTO);
         assertEquals(1, subCountDTO.orgCount);
         assertEquals(0, subCountDTO.subOrgCount);
@@ -419,18 +431,20 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
     @Test
     public void userAreRemovedWithOrganization() throws Exception {
         AppWebSocketClient client = loggedDefaultClient("super@blynk.cc", "1");
-        client.getOrganization(orgId);
+        client.getOrganization(-1);
         OrganizationDTO organizationDTO = client.parseOrganizationDTO(1);
         assertNotNull(organizationDTO);
         assertEquals(orgId, organizationDTO.id);
 
         Organization subOrg = new Organization("SubOrg", "Europe/Kiev", "/static/logo.png", true, organizationDTO.id);
-        client.createOrganization(orgId, subOrg);
+        client.createOrganization(-1, subOrg);
         OrganizationDTO subOrgDTO = client.parseOrganizationDTO(2);
         assertNotNull(subOrgDTO);
 
-        client.inviteUser(subOrgDTO.id, "test@gmail.com", "Dmitriy", 3);
+        client.trackOrg(subOrgDTO.id);
         client.verifyResult(ok(3));
+        client.inviteUser(-1, "test@gmail.com", "Dmitriy", 3);
+        client.verifyResult(ok(4));
         ArgumentCaptor<String> bodyArgumentCapture = ArgumentCaptor.forClass(String.class);
         verify(holder.mailWrapper, timeout(1000).times(1)).sendHtml(eq("test@gmail.com"),
                 eq("Invitation to SubOrg dashboard."), bodyArgumentCapture.capture());
@@ -439,8 +453,8 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
         String token = body.substring(body.indexOf("token=") + 6, body.indexOf("&"));
         assertEquals(32, token.length());
 
-        client.deleteOrg(subOrgDTO.id);
-        client.verifyResult(ok(4));
+        client.deleteOrg(-1);
+        client.verifyResult(ok(5));
 
         String passHash = SHA256Util.makeHash("123", "test@gmail.com");
         AppWebSocketClient appWebSocketClient = defaultClient();
@@ -522,16 +536,18 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
 
         Organization subOrg = new Organization("SubOrg1", "Europe/Kiev", "/static/logo.png", true, -1);
-        client.createOrganization(orgId, subOrg);
+        client.createOrganization(-1, subOrg);
 
         Organization subOrg2 = new Organization("AAA1", "Europe/Kiev", "/static/logo.png", true, -1);
-        client.createOrganization(orgId, subOrg2);
+        client.createOrganization(-1, subOrg2);
 
+        client.trackOrg(orgId + 1);
+        client.verifyResult(ok(3));
         Organization subOrg3 = new Organization("BBB1", "Europe/Kiev", "/static/logo.png", true, -1);
-        client.createOrganization(orgId + 1, subOrg3);
+        client.createOrganization(-1, subOrg3);
 
         client.getOrganizationHierarchy();
-        OrganizationsHierarchyDTO organizationsHierarchyDTO = client.parseOrganizationHierarchyDTO(4);
+        OrganizationsHierarchyDTO organizationsHierarchyDTO = client.parseOrganizationHierarchyDTO(5);
         assertNotNull(organizationsHierarchyDTO);
         printHierarchy(organizationsHierarchyDTO, 0);
 
@@ -587,9 +603,11 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
         assertEquals(3, subOrgDTO.roles.length);
         assertEquals(1, subOrgDTO.roles[0].id);
 
+        client.trackOrg(subOrgDTO.id);
+        client.verifyResult(ok(3));
         Organization subOrg2 = new Organization("SubOrg222", "Europe/Kiev", "/static/logo.png", true, subOrgDTO.id);
-        client.createOrganization(subOrgDTO.id, subOrg2);
-        OrganizationDTO subOrgDTO2 = client.parseOrganizationDTO(3);
+        client.createOrganization(-1, subOrg2);
+        OrganizationDTO subOrgDTO2 = client.parseOrganizationDTO(4);
         assertNotNull(subOrgDTO2);
         assertEquals(subOrgDTO.id, subOrgDTO2.parentId);
         assertNotNull(subOrgDTO2.roles);

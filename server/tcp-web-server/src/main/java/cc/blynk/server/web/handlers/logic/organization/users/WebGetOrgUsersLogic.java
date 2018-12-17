@@ -40,8 +40,7 @@ public final class WebGetOrgUsersLogic implements PermissionBasedLogic<WebAppSta
 
     @Override
     public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
-        int orgId = Integer.parseInt(message.body);
-
+        int orgId = state.selectedOrgId;
         User user = state.user;
 
         if (ctx.channel().isWritable()) {

@@ -37,13 +37,6 @@ import static org.mockito.Mockito.verify;
 public class InvitationAPIWebsocketTest extends SingleServerInstancePerTestWithDBAndNewOrg {
 
     @Test
-    public void sendInvitationForNonExistingOrganization() throws Exception {
-        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
-        client.inviteUser(1000, "dmitriy@blynk.cc", "Dmitriy", 3);
-        client.verifyResult(webJson(1, "Requested organization for invite doesn't exist."));
-    }
-
-    @Test
     public void userSendInvitationToExistingUser() throws Exception {
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
         client.inviteUser(orgId, getUserName(), "Dmitriy", 3);
@@ -158,8 +151,10 @@ public class InvitationAPIWebsocketTest extends SingleServerInstancePerTestWithD
         client.createOrganization(orgId, subOrg);
         OrganizationDTO subOrgDTO = client.parseOrganizationDTO(1);
 
-        client.inviteUser(subOrgDTO.id, "test3@gmail.com", "Dmitriy", 3);
+        client.trackOrg(subOrgDTO.id);
         client.verifyResult(ok(2));
+        client.inviteUser(-1, "test3@gmail.com", "Dmitriy", 3);
+        client.verifyResult(ok(3));
 
         ArgumentCaptor<String> bodyArgumentCapture = ArgumentCaptor.forClass(String.class);
         verify(holder.mailWrapper, timeout(1000).times(1)).sendHtml(eq("test3@gmail.com"),
@@ -209,11 +204,13 @@ public class InvitationAPIWebsocketTest extends SingleServerInstancePerTestWithD
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
 
         Organization subOrg = new Organization("SubOrg2", "Europe/Kiev", "/static/123.png", true, -1);
-        client.createOrganization(orgId, subOrg);
+        client.createOrganization(-1, subOrg);
         OrganizationDTO subOrgDTO = client.parseOrganizationDTO(1);
 
-        client.inviteUser(subOrgDTO.id, "test4@gmail.com", "Dmitriy", 3);
+        client.trackOrg(subOrgDTO.id);
         client.verifyResult(ok(2));
+        client.inviteUser(-1, "test4@gmail.com", "Dmitriy", 3);
+        client.verifyResult(ok(3));
 
         ArgumentCaptor<String> bodyArgumentCapture = ArgumentCaptor.forClass(String.class);
         verify(holder.mailWrapper, timeout(1000).times(1)).sendHtml(eq("test4@gmail.com"),

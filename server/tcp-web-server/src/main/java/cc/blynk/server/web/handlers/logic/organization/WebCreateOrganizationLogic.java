@@ -8,7 +8,6 @@ import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
-import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
 import io.netty.channel.ChannelHandlerContext;
@@ -46,12 +45,7 @@ public final class WebCreateOrganizationLogic implements PermissionBasedLogic<We
     public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         String[] split = split2(message.body);
 
-        if (split.length < 2) {
-            log.debug("Invalid create organization command. Probably orgId is missing.");
-            throw new JsonException("Invalid create organization command. Probably orgId is missing.");
-        }
-
-        int orgId = Integer.parseInt(split[0]);
+        int orgId = state.selectedOrgId;
         Organization newOrganization = JsonParser.parseOrganization(split[1], message.id);
 
         User user = state.user;

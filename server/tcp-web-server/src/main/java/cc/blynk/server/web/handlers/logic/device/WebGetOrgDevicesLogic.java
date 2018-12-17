@@ -15,7 +15,6 @@ import java.util.List;
 
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_DEVICES_VIEW;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
-import static cc.blynk.utils.StringUtils.split2;
 
 /**
  * The Blynk Project.
@@ -44,9 +43,7 @@ public final class WebGetOrgDevicesLogic implements PermissionBasedLogic<WebAppS
 
     @Override
     public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage msg) {
-        String[] split = split2(msg.body);
-
-        int orgId = Integer.parseInt(split[0]);
+        int orgId = state.selectedOrgId;
 
         Organization org = organizationDao.getOrgByIdOrThrow(orgId);
 

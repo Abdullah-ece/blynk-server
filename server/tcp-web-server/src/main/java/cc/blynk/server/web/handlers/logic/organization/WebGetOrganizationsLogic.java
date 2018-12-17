@@ -40,7 +40,7 @@ public final class WebGetOrganizationsLogic implements PermissionBasedLogic<WebA
 
     @Override
     public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
-        int orgId = Integer.parseInt(message.body);
+        int orgId = state.selectedOrgId;
         List<OrganizationDTO> orgs = organizationDao.getFirstLevelChilds(orgId);
 
         if (ctx.channel().isWritable()) {

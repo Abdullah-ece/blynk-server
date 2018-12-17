@@ -172,8 +172,10 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         newDevice.name = "My New Device";
         newDevice.productId = fromApi.products[0].id;
 
-        client.createDevice(fromApi.id, newDevice);
-        Device createdDevice = client.parseDevice(3);
+        client.trackOrg(fromApi.id);
+        client.verifyResult(ok(3));
+        client.createDevice(-1, newDevice);
+        Device createdDevice = client.parseDevice(4);
         assertNotNull(createdDevice);
         assertEquals("My New Device", createdDevice.name);
         assertNotNull(createdDevice.metaFields);
@@ -181,15 +183,15 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertEquals(System.currentTimeMillis(), createdDevice.activatedAt, 5000);
         assertEquals("super@blynk.cc", createdDevice.activatedBy);
 
-        client.getDevices(fromApi.id);
-        DeviceDTO[] devices = client.parseDevicesDTO(4);
+        client.getDevices(-1);
+        DeviceDTO[] devices = client.parseDevicesDTO(5);
         assertNotNull(devices);
         assertEquals(1, devices.length);
         assertEquals(product.name, devices[0].productName);
         assertEquals("My SubOrg", devices[0].orgName);
 
-        client.getDevice(fromApi.id, devices[0].id);
-        Device device = client.parseDevice(5);
+        client.getDevice(-1, devices[0].id);
+        Device device = client.parseDevice(6);
         assertNotNull(device);
     }
 
@@ -225,8 +227,10 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         newDevice.name = "My New Device";
         newDevice.productId = fromApi.products[0].id;
 
-        client.createDevice(fromApi.id, newDevice);
-        Device createdDevice = client.parseDevice(3);
+        client.trackOrg(fromApi.id);
+        client.verifyResult(ok(3));
+        client.createDevice(-1, newDevice);
+        Device createdDevice = client.parseDevice(4);
         assertNotNull(createdDevice);
         assertEquals("My New Device", createdDevice.name);
         assertNotNull(createdDevice.metaFields);
@@ -234,13 +238,17 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertEquals(System.currentTimeMillis(), createdDevice.activatedAt, 5000);
         assertEquals("super@blynk.cc", createdDevice.activatedBy);
 
-        client.getDevices(orgId);
-        DeviceDTO[] devices = client.parseDevicesDTO(4);
+        client.trackOrg(orgId);
+        client.verifyResult(ok(5));
+        client.getDevices(-1);
+        DeviceDTO[] devices = client.parseDevicesDTO(6);
         assertNotNull(devices);
         assertEquals(1, devices.length);
 
-        client.getDevices(fromApi.id);
-        devices = client.parseDevicesDTO(5);
+        client.trackOrg(fromApi.id);
+        client.verifyResult(ok(7));
+        client.getDevices(-1);
+        devices = client.parseDevicesDTO(8);
         assertNotNull(devices);
         assertNotNull(devices);
         assertEquals(1, devices.length);

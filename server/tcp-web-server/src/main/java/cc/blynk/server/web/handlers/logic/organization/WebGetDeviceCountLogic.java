@@ -41,9 +41,8 @@ public final class WebGetDeviceCountLogic implements PermissionBasedLogic<WebApp
 
     @Override
     public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage msg) {
-        int orgId = Integer.parseInt(msg.body);
+        int orgId = state.selectedOrgId;
 
-        //todo permission check?
         List<Organization> childs = organizationDao.getOrgChilds(orgId);
         int totalCount = devicesCount(childs);
         Organization firstOrg = childs.get(0);

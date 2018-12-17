@@ -56,8 +56,6 @@ public final class WebGetOrgDeviceLogic implements PermissionBasedLogic<WebAppSt
     public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         String[] split = split2(message.body);
 
-        //todo no need?
-        //int orgId = Integer.parseInt(split[0]);
         int deviceId = Integer.parseInt(split[1]);
 
         User user = state.user;

@@ -51,7 +51,7 @@ public final class WebEditOwnDeviceLogic implements PermissionBasedLogic<WebAppS
     public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         String[] split = split2(message.body);
 
-        int orgId = Integer.parseInt(split[0]);
+        int orgId = state.selectedOrgId;
 
         //todo refactor when permissions ready
         User user = state.user;
