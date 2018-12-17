@@ -284,6 +284,44 @@ class RolesAndPermissions extends React.Component {
       render: value => <Switch className='permissions-table-switch' size="small" checked={value} />,
     }];
 
+    const dataSource2 = [{
+      key: '1',
+      name: 'Invite',
+      admin: true,
+      staff: true
+    }, {
+      key: '2',
+      name: 'View',
+      admin: true,
+      staff: false
+    }, {
+      key: '3',
+      name: 'Edit',
+      admin: true,
+      staff: false
+    }, {
+      key: '4',
+      name: 'Delete',
+      admin: true,
+      staff: false
+    }];
+
+    const columns2 = [{
+      dataIndex: 'name',
+      key: 'name',
+      width: '292px',
+      render: value => <div className='permissions-table-main-column'>{value}</div>,
+    }, {
+      dataIndex: 'admin',
+      key: 'admin',
+      width: '184px',
+      render: value => <Switch className='permissions-table-switch' size="small" checked={value} />,
+    }, {
+      dataIndex: 'staff',
+      key: 'staff',
+      render: value => <Switch className='permissions-table-switch' size="small" checked={value} />,
+    }];
+
     return (
       <div className="user-profile--roles-and-permissions">
         {/*<div className="user-profile--roles-and-permissions--add-button">*/}
@@ -326,9 +364,16 @@ class RolesAndPermissions extends React.Component {
             <Collapse className="no-styles">
               <Panel header={<div>
                 <LinearIcon type="plus-square" /> Devices
-              </div>} key={1}>
+              </div>} key={1} className='list-of-permissions-collapsed-panel'>
                 <div className="list-of-permissions-items--content">
                   <Table className='roles-list--role--table' showHeader={false} pagination={false} dataSource={dataSource} columns={columns} bordered/>
+                </div>
+              </Panel>
+              <Panel header={<div>
+                <LinearIcon type="plus-square" /> Organization
+              </div>} key={2} className='list-of-permissions-collapsed-panel'>
+                <div className="list-of-permissions-items--content">
+                  <Table className='roles-list--role--table' showHeader={false} pagination={false} dataSource={dataSource2} columns={columns2} bordered/>
                 </div>
               </Panel>
             </Collapse>

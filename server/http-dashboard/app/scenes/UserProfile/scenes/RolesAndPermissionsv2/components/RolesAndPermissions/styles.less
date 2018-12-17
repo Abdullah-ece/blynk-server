@@ -6,6 +6,7 @@
   .user-profile--roles-and-permissions--list-of-permissions--header {
     display: flex;
     flex-direction: row;
+    margin-left: 4px;
 
     .user-profile--roles-and-permissions--list-of-permissions--actions {
       width: 284px;
@@ -16,6 +17,8 @@
       font-family: Roboto;
       font-size: 18px;
       font-weight: 500;
+      border-radius: 4px;
+      box-shadow: 0 10px 30px 0 rgba(33, 34, 39, 0.1);
 
       .user-profile--roles-and-permissions--list-of-permissions--actions-links {
         display: flex;
@@ -68,17 +71,18 @@
     > .ant-collapse-item {
       border: 0;
       padding: 0;
-      margin: 0;
+      box-shadow: inset 0 -1px 0 0 rgba(0, 0, 0, 0.1), inset 0 1px 0 0 rgba(33, 34, 39, 0.1);
 
       > .ant-collapse-header {
         border: 0;
 
         border-radius: 5px;
-        padding: 0 48px 0 8px;
-        margin: 0 18px;
+        padding: 24px 48px 24px 8px;
+        margin: 0px 18px;
         font-family: Roboto;
         font-size: 22px;
         font-weight: 500;
+        color: @color-dark-grey-75;
 
         > div {
           max-width: 100%;
@@ -117,6 +121,13 @@
       }
     }
 
+    > .ant-collapse-item-active {
+      box-shadow: none;
+    }
+  }
+
+  .list-of-permissions-collapsed-panel {
+    margin-bottom: 32px;
   }
 }
 
