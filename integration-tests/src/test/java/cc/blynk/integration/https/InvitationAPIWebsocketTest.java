@@ -153,7 +153,7 @@ public class InvitationAPIWebsocketTest extends SingleServerInstancePerTestWithD
 
         client.trackOrg(subOrgDTO.id);
         client.verifyResult(ok(2));
-        client.inviteUser(-1, "test3@gmail.com", "Dmitriy", 3);
+        client.inviteUser(subOrgDTO.id, "test3@gmail.com", "Dmitriy", 3);
         client.verifyResult(ok(3));
 
         ArgumentCaptor<String> bodyArgumentCapture = ArgumentCaptor.forClass(String.class);
@@ -209,7 +209,7 @@ public class InvitationAPIWebsocketTest extends SingleServerInstancePerTestWithD
 
         client.trackOrg(subOrgDTO.id);
         client.verifyResult(ok(2));
-        client.inviteUser(-1, "test4@gmail.com", "Dmitriy", 3);
+        client.inviteUser(subOrgDTO.id, "test4@gmail.com", "Dmitriy", 3);
         client.verifyResult(ok(3));
 
         ArgumentCaptor<String> bodyArgumentCapture = ArgumentCaptor.forClass(String.class);

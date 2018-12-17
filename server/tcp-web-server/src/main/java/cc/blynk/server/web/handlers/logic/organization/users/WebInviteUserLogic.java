@@ -73,7 +73,8 @@ public final class WebInviteUserLogic implements PermissionBasedLogic<WebAppStat
     public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         String[] split = split2(message.body);
 
-        int orgId = state.selectedOrgId;
+        //todo permission check
+        int orgId = Integer.parseInt(split[0]);
         UserInviteDTO userInvite = JsonParser.readAny(split[1], UserInviteDTO.class);
 
         if (orgId == 0 || userInvite == null || userInvite.isNotValid()) {

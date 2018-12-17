@@ -436,27 +436,25 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
         assertNotNull(organizationDTO);
         assertEquals(orgId, organizationDTO.id);
 
-        Organization subOrg = new Organization("SubOrg", "Europe/Kiev", "/static/logo.png", true, organizationDTO.id);
+        Organization subOrg = new Organization("userAreRemovedWithOrganization", "Europe/Kiev", "/static/logo.png", true, organizationDTO.id);
         client.createOrganization(-1, subOrg);
         OrganizationDTO subOrgDTO = client.parseOrganizationDTO(2);
         assertNotNull(subOrgDTO);
 
-        client.trackOrg(subOrgDTO.id);
+        client.inviteUser(subOrgDTO.id, "test@gmail.com", "Dmitriy", 3);
         client.verifyResult(ok(3));
-        client.inviteUser(-1, "test@gmail.com", "Dmitriy", 3);
-        client.verifyResult(ok(4));
         ArgumentCaptor<String> bodyArgumentCapture = ArgumentCaptor.forClass(String.class);
         verify(holder.mailWrapper, timeout(1000).times(1)).sendHtml(eq("test@gmail.com"),
-                eq("Invitation to SubOrg dashboard."), bodyArgumentCapture.capture());
+                eq("Invitation to userAreRemovedWithOrganization dashboard."), bodyArgumentCapture.capture());
         String body = bodyArgumentCapture.getValue();
 
         String token = body.substring(body.indexOf("token=") + 6, body.indexOf("&"));
         assertEquals(32, token.length());
 
         client.trackOrg(orgId);
-        client.verifyResult(ok(5));
+        client.verifyResult(ok(4));
         client.deleteOrg(subOrgDTO.id);
-        client.verifyResult(ok(6));
+        client.verifyResult(ok(5));
 
         String passHash = SHA256Util.makeHash("123", "test@gmail.com");
         AppWebSocketClient appWebSocketClient = defaultClient();
@@ -473,7 +471,7 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
         assertNotNull(organizationDTO);
         assertEquals(orgId, organizationDTO.id);
 
-        Organization subOrg = new Organization("SubOrg", "Europe/Kiev", "/static/logo.png", true, -1);
+        Organization subOrg = new Organization("userCantRemoveOrgWithSubOrganizations", "Europe/Kiev", "/static/logo.png", true, -1);
         client.createOrganization(-1, subOrg);
         OrganizationDTO subOrgDTO = client.parseOrganizationDTO(2);
         assertNotNull(subOrgDTO);
@@ -481,7 +479,7 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
         client.trackOrg(subOrgDTO.id);
         client.verifyResult(ok(3));
 
-        Organization subOrg2 = new Organization("SubOrgSecond", "Europe/Kiev", "/static/logo.png", true, -1);
+        Organization subOrg2 = new Organization("userCantRemoveOrgWithSubOrganizations2", "Europe/Kiev", "/static/logo.png", true, -1);
         client.createOrganization(-1, subOrg2);
         OrganizationDTO subOrgDTO2 = client.parseOrganizationDTO(4);
         assertNotNull(subOrgDTO2);
@@ -629,6 +627,43 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
         assertEquals(orgId + 3, subOrgHierarchy.id);
         assertEquals("BBB1", subOrgHierarchy.name);
         assertNull(subOrgHierarchy.childs);
+    }
+
+    @Test
+    public void getOrgHierarchyForSubAdmin() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient("super@blynk.cc", "1");
+        client.getOrganization(-1);
+        OrganizationDTO organizationDTO = client.parseOrganizationDTO(1);
+        assertNotNull(organizationDTO);
+        assertEquals(orgId, organizationDTO.id);
+
+        Organization subOrg = new Organization("getOrgHierarchyForSubAdmin", "Europe/Kiev", "/static/logo.png", true, -1);
+        client.createOrganization(-1, subOrg);
+        OrganizationDTO subOrgDTO = client.parseOrganizationDTO(2);
+        assertNotNull(subOrgDTO);
+
+        client.inviteUser(subOrgDTO.id, "test@gmail.com", "Dmitriy", 3);
+        client.verifyResult(ok(3));
+        ArgumentCaptor<String> bodyArgumentCapture = ArgumentCaptor.forClass(String.class);
+        verify(holder.mailWrapper, timeout(1000).times(1)).sendHtml(eq("test@gmail.com"),
+                eq("Invitation to getOrgHierarchyForSubAdmin dashboard."), bodyArgumentCapture.capture());
+        String body = bodyArgumentCapture.getValue();
+
+        String token = body.substring(body.indexOf("token=") + 6, body.indexOf("&"));
+        assertEquals(32, token.length());
+
+        String passHash = SHA256Util.makeHash("123", "test@gmail.com");
+        AppWebSocketClient appWebSocketClient = defaultClient();
+        appWebSocketClient.start();
+        appWebSocketClient.loginViaInvite(token, passHash);
+        appWebSocketClient.verifyResult(ok(1));
+
+        appWebSocketClient.getOrganizationHierarchy();
+        OrganizationsHierarchyDTO organizationsHierarchyDTO = appWebSocketClient.parseOrganizationHierarchyDTO(2);
+        assertNotNull(organizationsHierarchyDTO);
+        assertEquals("getOrgHierarchyForSubAdmin", organizationsHierarchyDTO.name);
+        assertNull(organizationsHierarchyDTO.childs);
+        printHierarchy(organizationsHierarchyDTO, 0);
     }
 
     public void printHierarchy(OrganizationsHierarchyDTO organizationsHierarchyDTO, int spaces) {
