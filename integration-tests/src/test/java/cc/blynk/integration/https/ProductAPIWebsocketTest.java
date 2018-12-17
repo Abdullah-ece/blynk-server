@@ -1310,8 +1310,10 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         newDevice.name = "My New Device for subproduct";
         newDevice.productId = productInResponse.id;
 
+        client.trackOrg(fromApiProductSubOrg.id);
+        client.verifyResult(ok(3));
         client.createDevice(fromApiProductSubOrg.id, newDevice);
-        Device createdSubDevice = client.parseDevice(3);
+        Device createdSubDevice = client.parseDevice(4);
         assertNotNull(createdSubDevice);
         assertNotNull(createdSubDevice.metaFields);
         assertEquals(3, createdSubDevice.metaFields.length);
@@ -1339,7 +1341,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         );
 
         client.updateDevicesMeta(orgId, fromApiProduct);
-        fromApiProduct = client.parseProductDTO(4);
+        fromApiProduct = client.parseProductDTO(5);
         assertNotNull(fromApiProduct);
         assertEquals("Updated Name", fromApiProduct.name);
         assertNotNull(fromApiProduct.webDashboard.widgets[0]);
@@ -1348,9 +1350,9 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertEquals("My test metafield 2", fromApiProduct.metaFields[0].name);
 
         client.trackOrg(fromApiProductSubOrg.id);
-        client.verifyResult(ok(5));
+        client.verifyResult(ok(6));
         client.getProduct(fromApiProductSubOrg.products[0].id);
-        ProductDTO subProduct = client.parseProductDTO(6);
+        ProductDTO subProduct = client.parseProductDTO(7);
         assertNotNull(subProduct);
         assertEquals("Updated Name", subProduct.name);
         assertEquals(fromApiProduct.id, subProduct.parentId);
@@ -1360,7 +1362,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertEquals("My test metafield 2", fromApiProduct.metaFields[0].name);
 
         client.getDevice(fromApiProductSubOrg.id, createdSubDevice.id);
-        createdSubDevice = client.parseDevice(7);
+        createdSubDevice = client.parseDevice(8);
         assertNotNull(createdSubDevice);
         assertNotNull(createdSubDevice.metaFields);
         assertEquals(3, createdSubDevice.metaFields.length);
