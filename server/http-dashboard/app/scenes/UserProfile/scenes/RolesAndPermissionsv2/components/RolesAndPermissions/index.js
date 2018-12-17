@@ -3,7 +3,7 @@ import {/*Button,*/ Table, Checkbox, Collapse, Switch} from 'antd';
 import {SimpleContentEditable} from 'components';
 import PropTypes from 'prop-types';
 import Scroll from "react-scroll";
-import {reduxForm, FieldArray/*, Field*/} from 'redux-form';
+import {reduxForm, /*FieldArray, Field*/} from 'redux-form';
 import './styles.less';
 import LinearIcon from "../../../../../../components/LinearIcon";
 
@@ -47,6 +47,14 @@ class RolesAndPermissions extends React.Component {
 
     this.renderList = this.renderList.bind(this);
     this.handleAddRole = this.handleAddRole.bind(this);
+
+    this.handleCollapseAll = this.handleCollapseAll.bind(this);
+    this.handleExpandAll = this.handleExpandAll.bind(this);
+    this.hanldeCollapseOnChange = this.hanldeCollapseOnChange.bind(this);
+
+    this.state = {
+      currentActiveKeys: ['1']
+    };
   }
 
   componentDidUpdate(prevProps) {
@@ -74,6 +82,24 @@ class RolesAndPermissions extends React.Component {
       }
     }
 
+  }
+
+  handleExpandAll(){
+    this.setState({
+      currentActiveKeys: ['1','2']
+    });
+  }
+
+  handleCollapseAll(){
+    this.setState({
+      currentActiveKeys: ['']
+    });
+  }
+
+  hanldeCollapseOnChange(key){
+    this.setState({
+      currentActiveKeys: key
+    });
   }
 
   roleNameComponent({input}) {
@@ -334,10 +360,10 @@ class RolesAndPermissions extends React.Component {
             <div className={'user-profile--roles-and-permissions--list-of-permissions--actions'}>
               Actions
               <div className={'user-profile--roles-and-permissions--list-of-permissions--actions-links'}>
-                <a href='#'>
+                <a href='#' onClick={this.handleCollapseAll}>
                   Collapse all
                 </a>
-                <a href='#'>
+                <a href='#' onClick={this.handleExpandAll}>
                   Expand all
                 </a>
               </div>
@@ -361,7 +387,7 @@ class RolesAndPermissions extends React.Component {
           </div>
 
           <div className="list-of-permissions-collapsed">
-            <Collapse className="no-styles">
+            <Collapse className="no-styles" onChange={this.hanldeCollapseOnChange} activeKey={this.state.currentActiveKeys}>
               <Panel header={<div>
                 <LinearIcon type="plus-square" /> Devices
               </div>} key={1} className='list-of-permissions-collapsed-panel'>
@@ -378,38 +404,6 @@ class RolesAndPermissions extends React.Component {
               </Panel>
             </Collapse>
           </div>
-
-          {/*<Cards onSortEnd={handleSortEnd} onSortStart={this.handleSortStart}>*/}
-
-            {/*{fields.map((field, index, fields) => {*/}
-
-              {/*const role = fields.get(index);*/}
-
-              {/*return (*/}
-                {/*<Cards.Item key={role.id}*/}
-                            {/*cardId={index}*/}
-                            {/*draggable={!role.isDefault}*/}
-                            {/*removeable={!role.isDefault}*/}
-                            {/*copyable={!role.isDefault}*/}
-                            {/*onRemove={handleRemove}*/}
-                            {/*onCopy={handleCopy}>*/}
-                  {/*/!*<Scroll.Element name={`role-${role.id}`}>*!/*/}
-                    {/*<div className="user-profile--roles-and-permissions--roles-list--role">*/}
-                      {/*{role.isDefault && (*/}
-                        {/*<div className="user-profile--roles-and-permissions--roles-list--role--title">{role.name}</div>*/}
-                      {/*) || (*/}
-                        {/*<Field name={`${field}.name`} component={this.roleNameComponent}/>*/}
-                      {/*)}*/}
-                      {/*<div className="user-profile--roles-and-permissions--roles-list--role--table">*/}
-                        {/*<Table dataSource={prepareData(field, role)} columns={columns} size="small" pagination={false}/>*/}
-                      {/*</div>*/}
-                    {/*</div>*/}
-                  {/*/!*</Scroll.Element>*!/*/}
-                {/*</Cards.Item>*/}
-              {/*);*/}
-            {/*})}*/}
-          {/*</Cards>*/}
-
         </div>
       </div>
     );
@@ -418,7 +412,7 @@ class RolesAndPermissions extends React.Component {
   render() {
 
     return (
-      <FieldArray component={this.renderList}  name="roles" rerenderOnEveryChange={true}/>
+      this.renderList()
     );
   }
 
