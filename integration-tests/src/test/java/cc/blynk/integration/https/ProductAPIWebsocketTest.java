@@ -76,6 +76,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
@@ -1371,7 +1372,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
     }
 
     @Test
-    public void deviceOwnershipTransferredAfterUserIsRemoved() throws Exception {
+    public void deviceOwnerErasedAfterUserIsRemoved() throws Exception {
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
 
         //create product
@@ -1429,7 +1430,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertNotNull(createdDevice);
         assertNotNull(createdDevice.metaFields);
         assertEquals(2, createdDevice.metaFields.length);
-        assertEquals("super@blynk.cc", ((DeviceOwnerMetaField) createdDevice.metaFields[0]).value);
+        assertNull(((DeviceOwnerMetaField) createdDevice.metaFields[0]).value);
     }
 
     @Test
