@@ -7,7 +7,21 @@ export default function RolesAndPermissions(state = initialState, action) {
     case "WEB_GET_ROLES_SUCCESS":
       return {
         ...state,
-        ...action.payload.data
+        roles: (Object.values(action.payload.data).map(
+          ({
+             id,
+             name,
+             permissionGroup1,
+             permissionGroup2
+           }) => {
+            return {
+              id,
+              name,
+              permissionGroup1,
+              permissionGroup2,
+              permissionsGroup1Binary: (permissionGroup1 >>> 0).toString(2)
+            };
+          }))
       };
 
     default:
