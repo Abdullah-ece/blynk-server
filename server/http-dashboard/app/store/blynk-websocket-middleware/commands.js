@@ -77,6 +77,11 @@ export const API_COMMANDS = {
   WEB_SET_AUTH_TOKEN            : 138,
   WEB_EDIT_OWN_ORG              : 139,
   WEB_TRACK_ORG                 : 145,
+  WEB_CREATE_ROLE               : 133, // accepts role json
+  WEB_UPDATE_ROLE               : 134, // accepts role json
+  WEB_GET_ROLE                  : 135, // accepts roleId
+  WEB_GET_ROLES                 : 136, // no params required
+  WEB_DELETE_ROLE               : 137, // accepts roleId
 };
 
 export const getCommandKeyName = (value) => {
