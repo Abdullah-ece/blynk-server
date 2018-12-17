@@ -90,8 +90,9 @@ public class HardwareLogEventLogic {
             }
         });
 
-        notificationsDao.sendLogEventEmails(device, event, desc);
-        notificationsDao.sendLogEventPushNotifications(device, event);
+        String finalDesc = event.getDescription(desc);
+        notificationsDao.sendLogEventEmails(device, event, finalDesc);
+        notificationsDao.sendLogEventPushNotifications(device, event, finalDesc);
     }
 
 }

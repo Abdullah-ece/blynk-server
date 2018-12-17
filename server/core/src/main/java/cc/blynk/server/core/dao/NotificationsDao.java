@@ -11,6 +11,7 @@ import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.push.GCMWrapper;
 import cc.blynk.server.notifications.sms.SMSWrapper;
 import cc.blynk.server.notifications.twitter.TwitterWrapper;
+import cc.blynk.utils.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -60,13 +61,15 @@ public final class NotificationsDao {
         this.eventLogEmailBody = eventLogEmailBody;
     }
 
-    public void sendLogEventPushNotifications(Device device, Event event) {
+    public void sendLogEventPushNotifications(Device device, Event event, String desc) {
         for (EventReceiver pushReceiver : event.pushNotifications) {
             var metaField = device.findMetaFieldById(pushReceiver.metaFieldId);
             if (metaField != null) {
                 String to = metaField.getNotificationEmail();
                 if (to != null && !to.isEmpty()) {
-                    push(to, "You received new event : " + event.name, device.id);
+                    String body = device.getNameOrDefault() + ": " + event.name + "\n" + desc;
+                    body = StringUtils.truncate(body, 255);
+                    push(to, body, device.id);
                 }
             }
         }
@@ -100,14 +103,13 @@ public final class NotificationsDao {
         gcmWrapper.sendIOS(notificationSettings.iOSTokens, notificationSettings.priority, body, deviceId);
     }
 
-    public void sendLogEventEmails(Device device, Event event, String overrideDescription) {
+    public void sendLogEventEmails(Device device, Event event, String desc) {
         for (EventReceiver mailReceiver : event.emailNotifications) {
             MetaField metaField = device.findMetaFieldById(mailReceiver.metaFieldId);
             if (metaField != null) {
                 String to = metaField.getNotificationEmail();
                 if (to != null && !to.isEmpty()) {
-                    String eventDescription = event.getDescription(overrideDescription);
-                    email(to, eventDescription, event, device);
+                    email(to, desc, event, device);
                 }
             }
         }
