@@ -21,6 +21,7 @@ import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.BLYNK_INTERNAL;
 import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
+import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 
 /**
  * Hardware that is provisioned should be connected to the product.
@@ -41,15 +42,17 @@ public class ProvisionedHardwareFirstHandler extends SimpleChannelInboundHandler
     private final int orgId;
     private final User user;
     private final Device device;
+    private final int msgId;
     private Organization org;
     private Product product;
 
-    ProvisionedHardwareFirstHandler(Holder holder, int orgId, User user, Device device) {
+    ProvisionedHardwareFirstHandler(Holder holder, int orgId, User user, Device device, int msgId) {
         super(StringMessage.class);
         this.holder = holder;
         this.orgId = orgId;
         this.user = user;
         this.device = device;
+        this.msgId = msgId;
     }
 
     private static void setDeviceOwnerInMeta(MetaField[] metaFields, String email) {
@@ -70,6 +73,11 @@ public class ProvisionedHardwareFirstHandler extends SimpleChannelInboundHandler
             this.org = tempOrg;
             this.product = productWithTemplate;
         }
+    }
+
+    @Override
+    public void handlerAdded(ChannelHandlerContext ctx) {
+        ctx.writeAndFlush(ok(msgId));
     }
 
     @Override

@@ -133,8 +133,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
             ProvisionTokenValue provisionTokenValue = (ProvisionTokenValue) tokenValue;
             ctx.pipeline().addBefore("H_Login", "HHProvisionedHardwareFirstHandler",
                     new ProvisionedHardwareFirstHandler(holder,
-                            orgId, provisionTokenValue.user, device));
-            ctx.writeAndFlush(ok(message.id));
+                            orgId, provisionTokenValue.user, device, message.id));
             return;
         }
 

@@ -1012,8 +1012,8 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         ConcurrentHashMap<String, String> expectedMap = new ConcurrentHashMap<>();
         expectedMap.put("androidUid", "androidToken");
         ConcurrentHashMap<String, String> emptyMap = new ConcurrentHashMap<>();
-        verify(holder.gcmWrapper).sendAndroid(eq(expectedMap), eq(Priority.high), eq("You received new event : Temp is super high"), eq(deviceFromApi.id));
-        verify(holder.gcmWrapper).sendIOS(eq(emptyMap), eq(Priority.high), eq("You received new event : Temp is super high"), eq(deviceFromApi.id));
+        verify(holder.gcmWrapper).sendAndroid(eq(expectedMap), eq(Priority.high), eq("My Default device Name: Temp is super high\nThis is my description"), eq(deviceFromApi.id));
+        verify(holder.gcmWrapper).sendIOS(eq(emptyMap), eq(Priority.high), eq("My Default device Name: Temp is super high\nThis is my description"), eq(deviceFromApi.id));
     }
 
     @Test
