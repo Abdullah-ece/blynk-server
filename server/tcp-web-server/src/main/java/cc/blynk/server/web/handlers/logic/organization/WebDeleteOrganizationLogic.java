@@ -42,7 +42,7 @@ public final class WebDeleteOrganizationLogic implements PermissionBasedLogic<We
 
     @Override
     public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
-        int orgId = state.selectedOrgId;
+        int orgId = Integer.parseInt(message.body);
 
         User user = state.user;
         if (orgId == OrganizationDao.DEFAULT_ORGANIZATION_ID) {
@@ -61,6 +61,21 @@ public final class WebDeleteOrganizationLogic implements PermissionBasedLogic<We
         if (orgToDelete == null) {
             log.error("Organization for removal for {} not found.", user.email);
             ctx.writeAndFlush(json(message.id, "Organization for removal not found."), ctx.voidPromise());
+            return;
+        }
+
+        if (organizationDao.hasChilds(orgId)) {
+            log.error("{} are not allowed to remove organization with sub organizations.", user.email);
+            ctx.writeAndFlush(json(message.id,
+                    "You are not allowed to remove organization with sub organizations."), ctx.voidPromise());
+            return;
+        }
+
+        if (orgToDelete.parentId != state.selectedOrgId) {
+            log.error("Removed organization should be a child of current organization. User {}.",
+                    user.email);
+            ctx.writeAndFlush(json(message.id,
+                    "Removed organization should be a child of current organization."), ctx.voidPromise());
             return;
         }
 

@@ -164,6 +164,11 @@ public class OrganizationDao {
         return orgs;
     }
 
+    public boolean hasChilds(int orgId) {
+        List<Organization> orgs = getOrgChilds(orgId);
+        return orgs.size() > 1;
+    }
+
     private void getOrgChilds(List<Organization> orgs, int parentId, int invocationCounter) {
         if (invocationCounter == 1000) {
             throw new RuntimeException("Error finding organization.");

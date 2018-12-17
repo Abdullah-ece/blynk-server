@@ -453,14 +453,71 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
         String token = body.substring(body.indexOf("token=") + 6, body.indexOf("&"));
         assertEquals(32, token.length());
 
-        client.deleteOrg(-1);
+        client.trackOrg(orgId);
         client.verifyResult(ok(5));
+        client.deleteOrg(subOrgDTO.id);
+        client.verifyResult(ok(6));
 
         String passHash = SHA256Util.makeHash("123", "test@gmail.com");
         AppWebSocketClient appWebSocketClient = defaultClient();
         appWebSocketClient.start();
         appWebSocketClient.loginViaInvite(token, passHash);
         appWebSocketClient.verifyResult(webJson(1, "User not found."));
+    }
+
+    @Test
+    public void userCantRemoveOrgWithSubOrganizations() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient("super@blynk.cc", "1");
+        client.getOrganization(-1);
+        OrganizationDTO organizationDTO = client.parseOrganizationDTO(1);
+        assertNotNull(organizationDTO);
+        assertEquals(orgId, organizationDTO.id);
+
+        Organization subOrg = new Organization("SubOrg", "Europe/Kiev", "/static/logo.png", true, -1);
+        client.createOrganization(-1, subOrg);
+        OrganizationDTO subOrgDTO = client.parseOrganizationDTO(2);
+        assertNotNull(subOrgDTO);
+
+        client.trackOrg(subOrgDTO.id);
+        client.verifyResult(ok(3));
+
+        Organization subOrg2 = new Organization("SubOrgSecond", "Europe/Kiev", "/static/logo.png", true, -1);
+        client.createOrganization(-1, subOrg2);
+        OrganizationDTO subOrgDTO2 = client.parseOrganizationDTO(4);
+        assertNotNull(subOrgDTO2);
+        assertEquals(subOrgDTO.id, subOrgDTO2.parentId);
+
+        client.deleteOrg(subOrgDTO.id);
+        client.verifyResult(webJson(5, "You are not allowed to remove organization with sub organizations."));
+    }
+
+    @Test
+    public void userCantRemoveSubOrgWithoutSwitchingToParentOrg() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient("super@blynk.cc", "1");
+        client.getOrganization(-1);
+        OrganizationDTO organizationDTO = client.parseOrganizationDTO(1);
+        assertNotNull(organizationDTO);
+        assertEquals(orgId, organizationDTO.id);
+
+        Organization subOrg = new Organization("SubOrg", "Europe/Kiev", "/static/logo.png", true, -1);
+        client.createOrganization(-1, subOrg);
+        OrganizationDTO subOrgDTO = client.parseOrganizationDTO(2);
+        assertNotNull(subOrgDTO);
+
+        client.trackOrg(subOrgDTO.id);
+        client.verifyResult(ok(3));
+
+        Organization subOrg2 = new Organization("SubOrgSecond", "Europe/Kiev", "/static/logo.png", true, -1);
+        client.createOrganization(-1, subOrg2);
+        OrganizationDTO subOrgDTO2 = client.parseOrganizationDTO(4);
+        assertNotNull(subOrgDTO2);
+        assertEquals(subOrgDTO.id, subOrgDTO2.parentId);
+
+        client.trackOrg(orgId);
+        client.verifyResult(ok(5));
+
+        client.deleteOrg(subOrgDTO2.id);
+        client.verifyResult(webJson(6, "Removed organization should be a child of current organization."));
     }
 
     @Test
