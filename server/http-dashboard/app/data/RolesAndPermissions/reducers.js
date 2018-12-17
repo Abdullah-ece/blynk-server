@@ -22,6 +22,8 @@ export default function RolesAndPermissions(state = initialState, action) {
               permissionsGroup1Binary: (permissionGroup1 >>> 0).toString(2)
             };
           }))
+          // Skip super admin!!! This role has id of 0
+          .filter(role => role.id)
       };
 
     case "WEB_UPDATE_ROLE":
