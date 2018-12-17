@@ -80,7 +80,7 @@ class UserProfile extends Component {
     OrganizationUpdateTimezone: React.PropTypes.func,
     OrganizationUsersFetch: React.PropTypes.func,
     OrganizationSendInvite: React.PropTypes.func,
-
+    GetPermissions: React.PropTypes.func,
   };
 
   constructor(props) {

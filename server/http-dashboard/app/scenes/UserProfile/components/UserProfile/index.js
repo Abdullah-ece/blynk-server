@@ -22,6 +22,7 @@ class UserProfile extends Component {
     onAccountSave: React.PropTypes.func,
     onAccountResetPassword: React.PropTypes.func,
 
+    GetPermissions: React.PropTypes.func,
     onOrganizationSave: React.PropTypes.func,
     onOrganizationLogoUpdate: React.PropTypes.func,
     onOrganizationUpdateName: React.PropTypes.func,

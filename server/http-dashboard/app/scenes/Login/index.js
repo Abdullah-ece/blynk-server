@@ -45,7 +45,9 @@ export default class Login extends React.Component {
     UnmarkAsRecentRegistered: React.PropTypes.func,
     AccountFetch: React.PropTypes.func,
     AccountSaveCredentials: React.PropTypes.func,
+    organizationSwitch: React.PropTypes.func,
     isRecentlyRegistered: React.PropTypes.bool,
+    orgId: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.number]),
   };
 
   constructor() {

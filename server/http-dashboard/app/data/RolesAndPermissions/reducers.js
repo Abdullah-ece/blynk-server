@@ -25,13 +25,14 @@ export default function RolesAndPermissions(state = initialState, action) {
       };
 
     case "WEB_UPDATE_ROLE":
+      const data = JSON.parse(action.ws.request.query);
       return {
         ...state,
-        roles: [...state.roles.roles].map((role) => {
-          return role.id === action.payload.id ? {
+        roles: [...state.roles].map((role) => {
+          return role.id === data.id ? {
             ...role,
-            permissionGroup1: action.payload,
-            permissionsGroup1Binary: (action.payload.permissionGroup1 >>> 0).toString(2)
+            permissionGroup1: data.permissionGroup1,
+            permissionsGroup1Binary: (data.permissionGroup1 >>> 0).toString(2)
           } : role;
         })
       };
