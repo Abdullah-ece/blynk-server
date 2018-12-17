@@ -25,6 +25,10 @@ import {
   OrganizationUsersFetch,
 } from 'data/Organization/actions';
 
+import {
+  GetPermissions,
+} from 'data/RolesAndPermissions/actions';
+
 
 @connect((state)=>{
   return {
@@ -38,6 +42,7 @@ import {
     AccountUpdateName: bindActionCreators(AccountUpdateName, dispatch),
     AccountSave: bindActionCreators(AccountSave, dispatch),
     AccountResetPassword: bindActionCreators(AccountResetPassword, dispatch),
+    GetPermissions: bindActionCreators(GetPermissions, dispatch),
 
     OrganizationBrandingUpdate: bindActionCreators(OrganizationBrandingUpdate, dispatch),
     OrganizationUpdateName: bindActionCreators(OrganizationUpdateName, dispatch),
@@ -166,7 +171,7 @@ class UserProfile extends Component {
                             onOrganizationUpdateTimezone={this.handleOrganizationUpdateTimezone}
                             onOrganizationUsersFetch = {this.handleOrganizationUsersFetch}
                             onOrganizationSendInvite = {this.handleOrganizationSendInvite}
-
+                            GetPermissions = {this.props.GetPermissions}
                             onResetForm = {this.props.ResetForm}/>
     );
   }

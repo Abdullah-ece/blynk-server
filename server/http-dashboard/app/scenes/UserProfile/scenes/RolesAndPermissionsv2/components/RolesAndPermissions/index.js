@@ -57,6 +57,10 @@ class RolesAndPermissions extends React.Component {
     };
   }
 
+  componentDidMount() {
+    this.props.GetPermissions();
+  }
+
   componentDidUpdate(prevProps) {
 
     if(prevProps && prevProps.formValues && prevProps.formValues.roles) {
@@ -350,10 +354,6 @@ class RolesAndPermissions extends React.Component {
 
     return (
       <div className="user-profile--roles-and-permissions">
-        {/*<div className="user-profile--roles-and-permissions--add-button">*/}
-          {/*<Button onClick={handleAddRole}>Add Role</Button>*/}
-        {/*</div>*/}
-
         <div className="user-profile--roles-and-permissions--list-of-permissions">
 
           <div className={'user-profile--roles-and-permissions--list-of-permissions--header'}>

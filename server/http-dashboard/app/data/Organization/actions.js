@@ -1,4 +1,4 @@
-import {API_COMMANDS} from "store/blynk-websocket-middleware/commands";
+import { API_COMMANDS } from "store/blynk-websocket-middleware/commands";
 
 export function OrganizationPreloadFetch(data = {}) {
   if (!data.id)
@@ -90,12 +90,14 @@ export function OrganizationSendInvite(data = {}) {
     }
   };
 }
+
 export function OrganizationLogoUpdate(logo) {
   return {
     type: 'ORGANIZATION_UPDATE_LOGO',
     logoUrl: logo
   };
 }
+
 export function OrganizationUpdateName(name) {
   return {
     type: 'ORGANIZATION_UPDATE_NAME',
