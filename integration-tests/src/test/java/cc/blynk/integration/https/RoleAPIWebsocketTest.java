@@ -32,8 +32,8 @@ public class RoleAPIWebsocketTest extends APIBaseTest {
         assertNotNull(roleDTO);
         assertEquals(4, roleDTO.id);
         assertEquals("My New Role", roleDTO.name);
-        assertEquals(0, roleDTO.permissions1);
-        assertEquals(0, roleDTO.permissions2);
+        assertEquals(0, roleDTO.permissionGroup1);
+        assertEquals(0, roleDTO.permissionGroup2);
     }
 
     @Test
@@ -46,8 +46,8 @@ public class RoleAPIWebsocketTest extends APIBaseTest {
         assertNotNull(roleDTO);
         assertEquals(3, roleDTO.id);
         assertEquals("My Updated Role", roleDTO.name);
-        assertEquals(0, roleDTO.permissions1);
-        assertEquals(0, roleDTO.permissions2);
+        assertEquals(0, roleDTO.permissionGroup1);
+        assertEquals(0, roleDTO.permissionGroup2);
     }
 
     @Test
@@ -93,8 +93,8 @@ public class RoleAPIWebsocketTest extends APIBaseTest {
         assertNotNull(roleDTO);
         assertEquals(3, roleDTO.id);
         assertEquals("My Updated Role", roleDTO.name);
-        assertEquals(0, roleDTO.permissions1);
-        assertEquals(0, roleDTO.permissions2);
+        assertEquals(0, roleDTO.permissionGroup1);
+        assertEquals(0, roleDTO.permissionGroup2);
 
         Organization subOrg = new Organization("SubOrg", "Europe/Kiev", "/static/logo.png", true, orgId);
         client.createOrganization(orgId, subOrg);
