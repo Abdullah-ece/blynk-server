@@ -49,7 +49,7 @@ public final class WebCreateRoleLogic implements PermissionBasedLogic<WebAppStat
         Organization org = organizationDao.getOrgByIdOrThrow(orgId);
 
         log.debug("{} creates new role {} for {}.", state.user.email, roleDTO, orgId);
-        Role role = new Role(org.getIdForRole(), roleDTO.name, roleDTO.permissions1, roleDTO.permissions2);
+        Role role = new Role(org.getIdForRole(), roleDTO.name, roleDTO.permissionGroup1, roleDTO.permissionGroup2);
         org.addRole(role);
 
         String roleString = role.toString();
