@@ -2,6 +2,7 @@ package cc.blynk.server.core.model.web.product.metafields;
 
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
+import cc.blynk.utils.validators.BlynkEmailValidator;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -32,6 +33,9 @@ public class DeviceOwnerMetaField extends MetaField {
         super.validateAll();
         if (isEmptyValue()) {
             throw new IllegalCommandBodyException("Device owner metafield value is empty.");
+        }
+        if (BlynkEmailValidator.isNotValidEmail(this.value)) {
+            throw new IllegalCommandBodyException("Device owner metafield value is not correct email.");
         }
     }
 

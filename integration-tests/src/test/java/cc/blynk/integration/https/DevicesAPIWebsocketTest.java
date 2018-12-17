@@ -307,6 +307,46 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
     }
 
     @Test
+    public void createDeviceAndUpdateWithWrongMetafield() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+
+        Product product = new Product();
+        product.name = "My product";
+        product.metaFields = new MetaField[] {
+                createNumberMeta(1, "Jopa", 123D),
+                createTextMeta(2, "Device Name", "My Default device Name"),
+                createDeviceNameMeta(3, "Device Name", "My Default device Name", true),
+                createDeviceOwnerMeta(4, "Device Owner", null, true)
+        };
+
+        client.createProduct(orgId, product);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
+        assertNotNull(fromApiProduct);
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.productId = fromApiProduct.id;
+
+        client.createDevice(orgId, newDevice);
+        Device device = client.parseDevice(2);
+        assertEquals("My New Device", device.name);
+        assertNotNull(device.metaFields);
+        assertEquals(4, device.metaFields.length);
+
+        MetaField updatedMetaField = createDeviceOwnerMeta(4, "Device Owner", "aaaa", true);
+        client.updateDeviceMetafield(device.id, updatedMetaField);
+        client.verifyResult(webJson(3, "Device owner metafield value is not correct email."));
+
+        updatedMetaField = createDeviceOwnerMeta(4, "Device Owner", "", true);
+        client.updateDeviceMetafield(device.id, updatedMetaField);
+        client.verifyResult(webJson(4, "Device owner metafield value is empty."));
+
+        updatedMetaField = createDeviceOwnerMeta(4, "Device Owner", "a@a.com", true);
+        client.updateDeviceMetafield(device.id, updatedMetaField);
+        client.verifyResult(ok(5));
+    }
+
+    @Test
     public void createDeviceAndUpdateUnitMetafield() throws Exception {
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
 
