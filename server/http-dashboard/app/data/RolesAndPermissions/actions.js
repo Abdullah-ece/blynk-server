@@ -22,3 +22,15 @@ export function GetPermissionsForRole(data) {
     }
   };
 }
+
+export function UpdateRole(data){
+  return {
+    type: 'WEB_UPDATE_ROLE',
+    ws: {
+      request: {
+        command: API_COMMANDS.WEB_UPDATE_ROLE,
+        query: [JSON.stringify(data)]
+      }
+    }
+  };
+}

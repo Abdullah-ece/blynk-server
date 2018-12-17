@@ -336,7 +336,24 @@ class RolesAndPermissions extends React.Component {
   }
 
   onPermissionChange(role, index, value) {
-    console.log(role, index, value);
+    const {
+      id,
+      name,
+      permissionsGroup1Binary,
+      permissionGroup2,
+    } = role;
+
+    const newValue = permissionsGroup1Binary.split('');
+    newValue[index] = Number(value).toString();
+
+    this.props.UpdateRole({
+      id,
+      name,
+      permissionGroup1: parseInt(newValue.join(''), 2) >> 0,
+      permissionGroup2,
+    });
+
+    console.log(role, index, value, newValue, newValue.join(''), parseInt(newValue.join(''), 2) >> 0, permissionsGroup1Binary);
   }
 
   buildPermissionsPanel(key, header, startingPermission, offset) {
@@ -367,7 +384,7 @@ class RolesAndPermissions extends React.Component {
 
       for (let role of this.props.roles) {
         value[role.name.toLowerCase().trim()] = {
-          role: role.name.toLowerCase().trim(),
+          role,
           index: currentIndex,
           value: Boolean(Number(role.permissionsGroup1Binary[currentIndex])),
         };
@@ -375,7 +392,7 @@ class RolesAndPermissions extends React.Component {
 
       result.push(value);
     }
-    console.log(result);
+
     return result;
   }
 
@@ -407,7 +424,7 @@ class RolesAndPermissions extends React.Component {
 
       result.push(value);
     }
-    console.log(result);
+
     return result;
   }
 
