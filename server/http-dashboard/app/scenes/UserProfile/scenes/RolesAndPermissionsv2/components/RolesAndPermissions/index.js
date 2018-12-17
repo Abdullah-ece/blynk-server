@@ -1,9 +1,9 @@
 import React from 'react';
-import {/*Button,*/ Table, Checkbox, Collapse, Switch} from 'antd';
-import {SimpleContentEditable} from 'components';
+import {/*Button,*/ Table, Checkbox, Collapse, Switch } from 'antd';
+import { SimpleContentEditable } from 'components';
 import PropTypes from 'prop-types';
 import Scroll from "react-scroll";
-import {reduxForm, /*FieldArray, Field*/} from 'redux-form';
+import { reduxForm, /*FieldArray, Field*/ } from 'redux-form';
 import './styles.less';
 import LinearIcon from "../../../../../../components/LinearIcon";
 
@@ -32,12 +32,12 @@ class RolesAndPermissions extends React.Component {
 
     formValues: PropTypes.shape({
       roles: PropTypes.arrayOf(PropTypes.shape({
-        id              : PropTypes.number,
-        name            : PropTypes.string,
-        devices         : PropTypes.any,
-        products        : PropTypes.any,
+        id: PropTypes.number,
+        name: PropTypes.string,
+        devices: PropTypes.any,
+        products: PropTypes.any,
         suborganizations: PropTypes.any,
-        organization    : PropTypes.any,
+        organization: PropTypes.any,
       }))
     })
   };
@@ -63,7 +63,7 @@ class RolesAndPermissions extends React.Component {
 
   componentDidUpdate(prevProps) {
 
-    if(prevProps && prevProps.formValues && prevProps.formValues.roles) {
+    if (prevProps && prevProps.formValues && prevProps.formValues.roles) {
       let newId = null;
 
       const lastIds = prevProps.formValues.roles.map((role) => {
@@ -71,12 +71,12 @@ class RolesAndPermissions extends React.Component {
       });
 
       this.props.formValues.roles.forEach((role) => {
-        if(lastIds.indexOf(Number(role.id)) === -1) {
+        if (lastIds.indexOf(Number(role.id)) === -1) {
           newId = role.id;
         }
       });
 
-      if(newId) {
+      if (newId) {
 
         Scroll.scroller.scrollTo(`role-${newId}`, {
           duration: 1000,
@@ -88,25 +88,25 @@ class RolesAndPermissions extends React.Component {
 
   }
 
-  handleExpandAll(){
+  handleExpandAll() {
     this.setState({
-      currentActiveKeys: ['1','2']
+      currentActiveKeys: ['1', '2']
     });
   }
 
-  handleCollapseAll(){
+  handleCollapseAll() {
     this.setState({
       currentActiveKeys: ['']
     });
   }
 
-  hanldeCollapseOnChange(key){
+  hanldeCollapseOnChange(key) {
     this.setState({
       currentActiveKeys: key
     });
   }
 
-  roleNameComponent({input}) {
+  roleNameComponent({ input }) {
     return (
       <SimpleContentEditable maxLength={35}
                              className="user-profile--roles-and-permissions--roles-list--role--title"
@@ -134,9 +134,9 @@ class RolesAndPermissions extends React.Component {
 
       const checked = event.target.checked;
 
-      if((input.value & permissionType.mask) && !checked) {
+      if ((input.value & permissionType.mask) && !checked) {
         input.onChange(input.value - permissionType.mask);
-      } else if(!(input.value & permissionType.mask) && checked) {
+      } else if (!(input.value & permissionType.mask) && checked) {
         input.onChange(input.value + permissionType.mask);
       }
     };
@@ -302,16 +302,19 @@ class RolesAndPermissions extends React.Component {
       dataIndex: 'name',
       key: 'name',
       width: '292px',
-      render: value => <div className='permissions-table-main-column'>{value}</div>,
+      render: value => <div
+        className='permissions-table-main-column'>{value}</div>,
     }, {
       dataIndex: 'admin',
       key: 'admin',
       width: '184px',
-      render: value => <Switch className='permissions-table-switch' size="small" checked={value} />,
+      render: value => <Switch className='permissions-table-switch' size="small"
+                               checked={value}/>,
     }, {
       dataIndex: 'staff',
       key: 'staff',
-      render: value => <Switch className='permissions-table-switch' size="small" checked={value} />,
+      render: value => <Switch className='permissions-table-switch' size="small"
+                               checked={value}/>,
     }];
 
     const dataSource2 = [{
@@ -340,26 +343,33 @@ class RolesAndPermissions extends React.Component {
       dataIndex: 'name',
       key: 'name',
       width: '292px',
-      render: value => <div className='permissions-table-main-column'>{value}</div>,
+      render: value => <div
+        className='permissions-table-main-column'>{value}</div>,
     }, {
       dataIndex: 'admin',
       key: 'admin',
       width: '184px',
-      render: value => <Switch className='permissions-table-switch' size="small" checked={value} />,
+      render: value => <Switch className='permissions-table-switch' size="small"
+                               checked={value}/>,
     }, {
       dataIndex: 'staff',
       key: 'staff',
-      render: value => <Switch className='permissions-table-switch' size="small" checked={value} />,
+      render: value => <Switch className='permissions-table-switch' size="small"
+                               checked={value}/>,
     }];
-
+    
     return (
       <div className="user-profile--roles-and-permissions">
-        <div className="user-profile--roles-and-permissions--list-of-permissions">
+        <div
+          className="user-profile--roles-and-permissions--list-of-permissions">
 
-          <div className={'user-profile--roles-and-permissions--list-of-permissions--header'}>
-            <div className={'user-profile--roles-and-permissions--list-of-permissions--actions'}>
+          <div
+            className={'user-profile--roles-and-permissions--list-of-permissions--header'}>
+            <div
+              className={'user-profile--roles-and-permissions--list-of-permissions--actions'}>
               Actions
-              <div className={'user-profile--roles-and-permissions--list-of-permissions--actions-links'}>
+              <div
+                className={'user-profile--roles-and-permissions--list-of-permissions--actions-links'}>
                 <a href='#' onClick={this.handleCollapseAll}>
                   Collapse all
                 </a>
@@ -368,38 +378,51 @@ class RolesAndPermissions extends React.Component {
                 </a>
               </div>
             </div>
-            <div className={'user-profile--roles-and-permissions--list-of-permissions--role'}>
-              <div className={'user-profile--roles-and-permissions--list-of-permissions--role-header'}>
+            <div
+              className={'user-profile--roles-and-permissions--list-of-permissions--role'}>
+              <div
+                className={'user-profile--roles-and-permissions--list-of-permissions--role-header'}>
                 Administrator
               </div>
-              <div className={'user-profile--roles-and-permissions--list-of-permissions--users-count'}>
+              <div
+                className={'user-profile--roles-and-permissions--list-of-permissions--users-count'}>
                 2 USERS
               </div>
             </div>
-            <div className={'user-profile--roles-and-permissions--list-of-permissions--role'}>
-              <div className={'user-profile--roles-and-permissions--list-of-permissions--role-header'}>
+            <div
+              className={'user-profile--roles-and-permissions--list-of-permissions--role'}>
+              <div
+                className={'user-profile--roles-and-permissions--list-of-permissions--role-header'}>
                 Staff
               </div>
-              <div className={'user-profile--roles-and-permissions--list-of-permissions--users-count'}>
+              <div
+                className={'user-profile--roles-and-permissions--list-of-permissions--users-count'}>
                 167 USERS
               </div>
             </div>
           </div>
 
           <div className="list-of-permissions-collapsed">
-            <Collapse className="no-styles" onChange={this.hanldeCollapseOnChange} activeKey={this.state.currentActiveKeys}>
+            <Collapse className="no-styles"
+                      onChange={this.hanldeCollapseOnChange}
+                      activeKey={this.state.currentActiveKeys}>
               <Panel header={<div>
-                <LinearIcon type="plus-square" /> Devices
+                <LinearIcon type={this.state.currentActiveKeys.indexOf('1') < 0 ? "plus-square" : "minus-square"}/> Devices
               </div>} key={1} className='list-of-permissions-collapsed-panel'>
                 <div className="list-of-permissions-items--content">
-                  <Table className='roles-list--role--table' showHeader={false} pagination={false} dataSource={dataSource} columns={columns} bordered/>
+                  <Table className='roles-list--role--table' showHeader={false}
+                         pagination={false} dataSource={dataSource}
+                         columns={columns} bordered/>
                 </div>
               </Panel>
               <Panel header={<div>
-                <LinearIcon type="plus-square" /> Organization
+                <LinearIcon
+                  type={this.state.currentActiveKeys.indexOf('2') < 0 ? "plus-square" : "minus-square"}/> Organization
               </div>} key={2} className='list-of-permissions-collapsed-panel'>
                 <div className="list-of-permissions-items--content">
-                  <Table className='roles-list--role--table' showHeader={false} pagination={false} dataSource={dataSource2} columns={columns2} bordered/>
+                  <Table className='roles-list--role--table' showHeader={false}
+                         pagination={false} dataSource={dataSource2}
+                         columns={columns2} bordered/>
                 </div>
               </Panel>
             </Collapse>
