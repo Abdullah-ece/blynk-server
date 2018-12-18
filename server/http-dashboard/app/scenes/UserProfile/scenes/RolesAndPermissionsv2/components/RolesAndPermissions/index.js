@@ -2,7 +2,7 @@
 /*eslint-disable jsx-quotes*/
 
 import React from 'react';
-import {Table, Collapse, Switch } from 'antd';
+import { Table, Collapse, Switch } from 'antd';
 import './styles.less';
 import PropTypes from 'prop-types';
 import LinearIcon from "../../../../../../components/LinearIcon";
@@ -10,45 +10,90 @@ import LinearIcon from "../../../../../../components/LinearIcon";
 const Panel = Collapse.Panel;
 
 const PERMISSIONS_TABLE = [
-  'ORG_SWITCH',
-  'OWN_ORG_EDIT',
-  'OTA_VIEW',
-  'OTA_START',
-  'OTA_STOP',
-
-  'ORG_CREATE',
-  'ORG_VIEW',
-  'ORG_EDIT',
-  'ORG_DELETE',
-
-  'ORG_INVITE_USERS',
-  'ORG_VIEW_USERS',
-  'ORG_EDIT_USERS',
-  'ORG_DELETE_USERS',
-
-  'PRODUCT_CREATE',
-  'PRODUCT_VIEW',
-  'PRODUCT_EDIT',
-  'PRODUCT_DELETE',
-
-  'ROLE_CREATE',
-  'ROLE_VIEW',
-  'ROLE_EDIT',
-  'ROLE_DELETE',
-
-  'ORG_DEVICES_CREATE',
-  'ORG_DEVICES_VIEW',
-  'ORG_DEVICES_EDIT',
-  'ORG_DEVICES_DELETE',
-
-  'ORG_DEVICES_SHARE',
-  'OWN_DEVICES_CREATE',
-  'OWN_DEVICES_VIEW',
-  'OWN_DEVICES_EDIT',
-  'OWN_DEVICES_DELETE',
-  'OWN_DEVICES_SHARE',
-
-  'SET_AUTH_TOKEN',
+  { additionalIndexes: [], key: 'ORG_SWITCH', value: 'Switch to sub orgs' },
+  {
+    additionalIndexes: [],
+    key: 'OWN_ORG_EDIT',
+    value: 'Edit own organization'
+  },
+  { additionalIndexes: [], key: 'OTA_VIEW', value: 'View OTA updates' },
+  { additionalIndexes: [], key: 'OTA_START', value: 'Start OTA updates' },
+  { additionalIndexes: [], key: 'OTA_STOP', value: 'Stop OTA updates' },
+  {
+    additionalIndexes: [],
+    key: 'ORG_CREATE',
+    value: 'Create sub organizations'
+  },
+  { additionalIndexes: [], key: 'ORG_VIEW', value: 'View sub organizations' },
+  { additionalIndexes: [], key: 'ORG_EDIT', value: 'Edit sub organizations' },
+  {
+    additionalIndexes: [],
+    key: 'ORG_DELETE',
+    value: 'Delete sub organizations'
+  },
+  { additionalIndexes: [], key: 'ORG_INVITE_USERS', value: 'Invite users' },
+  { additionalIndexes: [], key: 'ORG_VIEW_USERS', value: 'View users' },
+  { additionalIndexes: [], key: 'ORG_EDIT_USERS', value: 'Edit users' },
+  { additionalIndexes: [], key: 'ORG_DELETE_USERS', value: 'Delete users' },
+  { additionalIndexes: [], key: 'PRODUCT_CREATE', value: 'Create products' },
+  { additionalIndexes: [], key: 'PRODUCT_VIEW', value: 'View products' },
+  { additionalIndexes: [], key: 'PRODUCT_EDIT', value: 'Edit products' },
+  { additionalIndexes: [], key: 'PRODUCT_DELETE', value: 'Delete products' },
+  { additionalIndexes: [], key: 'ROLE_CREATE', value: 'Create new roles' },
+  {
+    additionalIndexes: [],
+    key: 'ROLE_VIEW',
+    value: 'View roles and permissions'
+  },
+  { additionalIndexes: [], key: 'ROLE_EDIT', value: 'Edit roles' },
+  { additionalIndexes: [], key: 'ROLE_DELETE', value: 'Delete roles' },
+  {
+    additionalIndexes: [],
+    key: 'ORG_DEVICES_CREATE',
+    value: 'Create organization devices'
+  },
+  {
+    additionalIndexes: [],
+    key: 'ORG_DEVICES_VIEW',
+    value: 'View organization devices'
+  },
+  {
+    additionalIndexes: [],
+    key: 'ORG_DEVICES_EDIT',
+    value: 'Edit organization devices'
+  },
+  {
+    additionalIndexes: [],
+    key: 'ORG_DEVICES_DELETE',
+    value: 'Delete organization devices'
+  },
+  {
+    additionalIndexes: [],
+    key: 'ORG_DEVICES_SHARE',
+    value: 'Share organization devices'
+  },
+  {
+    additionalIndexes: [],
+    key: 'OWN_DEVICES_CREATE',
+    value: 'Create own devices'
+  },
+  { additionalIndexes: [], key: 'OWN_DEVICES_VIEW', value: 'View own devices' },
+  { additionalIndexes: [], key: 'OWN_DEVICES_EDIT', value: 'Edit own devices' },
+  {
+    additionalIndexes: [],
+    key: 'OWN_DEVICES_DELETE',
+    value: 'Delete own devices'
+  },
+  {
+    additionalIndexes: [],
+    key: 'OWN_DEVICES_SHARE',
+    value: 'Share own devices'
+  },
+  {
+    additionalIndexes: [],
+    key: 'SET_AUTH_TOKEN',
+    value: 'Enable auth token edit'
+  },
 ];
 
 class RolesAndPermissions extends React.Component {
@@ -68,6 +113,7 @@ class RolesAndPermissions extends React.Component {
     this.buildDataSources = this.buildDataSources.bind(this);
     this.onPermissionChange = this.onPermissionChange.bind(this);
     this.buildPermissionsPanel = this.buildPermissionsPanel.bind(this);
+    this.applyPermissions = this.applyPermissions.bind(this);
     // this.handleAddRole = this.handleAddRole.bind(this);
 
     this.handleCollapseAll = this.handleCollapseAll.bind(this);
@@ -85,7 +131,7 @@ class RolesAndPermissions extends React.Component {
 
   handleExpandAll() {
     this.setState({
-      currentActiveKeys: ['1', '2']
+      currentActiveKeys: ['1', '2', '3', '4', '5', '6', '7', '8']
     });
   }
 
@@ -144,23 +190,32 @@ class RolesAndPermissions extends React.Component {
     );
   }
 
-  onPermissionChange(role, index, value) {
+  onPermissionChange(role, index) {
     const {
       id,
       name,
-      permissionsGroup1Binary,
+      permissionGroup1,
       permissionGroup2,
     } = role;
 
-    const newValue = permissionsGroup1Binary.split('');
-    newValue[index] = Number(value).toString();
 
     this.props.UpdateRole({
       id,
       name,
-      permissionGroup1: parseInt(newValue.join(''), 2) >> 0,
+      permissionGroup1: this.applyPermissions(permissionGroup1, index),
       permissionGroup2,
     });
+  }
+
+  applyPermissions(permissionGroup1, index) {
+    const newPermissions = Math.pow(2, index + 1);
+    let value = permissionGroup1 ^ newPermissions;
+
+    for (let perm of PERMISSIONS_TABLE[index].additionalIndexes) {
+      value = value ^ Math.pow(2, perm + 1);
+    }
+
+    return value;
   }
 
   buildPermissionsPanel(key, header, startingPermission, offset) {
@@ -186,14 +241,16 @@ class RolesAndPermissions extends React.Component {
       let currentIndex = startingPermission + i;
       let value = {
         key: currentIndex,
-        name: PERMISSIONS_TABLE[currentIndex],
+        name: PERMISSIONS_TABLE[currentIndex].value,
       };
 
       for (let role of this.props.roles) {
-        value[role.name.toLowerCase().trim()] = {
+        const { name, permissionsGroup1Binary } = role;
+
+        value[name.toLowerCase().trim()] = {
           role,
-          index: currentIndex,
-          value: Boolean(Number(role.permissionsGroup1Binary[currentIndex])),
+          index: currentIndex -1,
+          value: Boolean(Number(permissionsGroup1Binary[permissionsGroup1Binary.length - currentIndex - 1])),
         };
       }
 
