@@ -1,13 +1,9 @@
 package cc.blynk.server.core.reporting.raw;
 
-import cc.blynk.server.core.model.enums.PinType;
-import cc.blynk.server.db.dao.descriptor.TableDataMapper;
-import cc.blynk.server.db.dao.descriptor.TableDescriptor;
-import cc.blynk.utils.StringUtils;
-
-import java.time.LocalDateTime;
+import java.util.ArrayDeque;
+import java.util.Map;
 import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Simply stores every record in memory that should be stored in reporting DB lately.
@@ -20,25 +16,19 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 public class RawDataProcessor {
 
-    public final Queue<TableDataMapper> rawStorage;
+    public final Map<BaseReportingKey, Queue<BaseReportingValue>> rawStorage;
 
-    public RawDataProcessor(boolean enable) {
-        rawStorage = new ConcurrentLinkedQueue<>();
+    public RawDataProcessor() {
+        rawStorage = new ConcurrentHashMap<>();
     }
 
-    public void collect(int deviceId, PinType pinType, short pin, String stringValue) {
-        if (stringValue.contains(StringUtils.BODY_SEPARATOR_STRING)) {
-            //storing for now just first part for multi value
-            stringValue = stringValue.split(StringUtils.BODY_SEPARATOR_STRING)[0];
+    public void collect(BaseReportingKey key, long ts, double value) {
+        Queue<BaseReportingValue> queue = rawStorage.get(key);
+        if (queue == null) {
+            queue = new ArrayDeque<>();
+            rawStorage.put(key, queue);
         }
-
-        rawStorage.add(
-                new TableDataMapper(
-                    TableDescriptor.BLYNK_DEFAULT_INSTANCE,
-                    deviceId, pin, pinType, LocalDateTime.now(),
-                    stringValue
-                )
-        );
+        queue.add(new BaseReportingValue(ts, value));
     }
 
 }

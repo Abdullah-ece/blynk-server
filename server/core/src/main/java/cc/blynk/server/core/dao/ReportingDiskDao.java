@@ -57,7 +57,7 @@ public class ReportingDiskDao implements Closeable {
         this.rawDataCacheForGraphProcessor = new RawDataCacheForGraphProcessor();
         this.dataFolder = reportingFolder;
         this.enableRawDbDataStore = isEnabled;
-        this.rawDataProcessor = new RawDataProcessor(enableRawDbDataStore);
+        this.rawDataProcessor = new RawDataProcessor();
     }
 
     public ReportingDiskDao(String reportingFolder, boolean isEnabled) {
@@ -65,7 +65,7 @@ public class ReportingDiskDao implements Closeable {
         this.rawDataCacheForGraphProcessor = new RawDataCacheForGraphProcessor();
         this.dataFolder = reportingFolder;
         this.enableRawDbDataStore = isEnabled;
-        this.rawDataProcessor = new RawDataProcessor(enableRawDbDataStore);
+        this.rawDataProcessor = new RawDataProcessor();
         createCSVFolder();
     }
 
@@ -240,19 +240,15 @@ public class ReportingDiskDao implements Closeable {
     public void process(Device device, short pin, PinType pinType, String value, long ts) {
         try {
             double doubleVal = NumberUtil.parseDouble(value);
-            process(device, pin, pinType, value, ts, doubleVal);
+            process(device, pin, pinType, ts, doubleVal);
         } catch (Exception e) {
             //just in case
             log.trace("Error collecting reporting entry.");
         }
     }
 
-    private void process(Device device, short pin, PinType pinType,
-                         String value, long ts, double doubleVal) {
+    private void process(Device device, short pin, PinType pinType, long ts, double doubleVal) {
         int deviceId = device.id;
-        if (enableRawDbDataStore) {
-            rawDataProcessor.collect(deviceId, pinType, pin, value);
-        }
 
         //not a number, nothing to aggregate
         if (doubleVal == NumberUtil.NO_RESULT) {
@@ -260,6 +256,10 @@ public class ReportingDiskDao implements Closeable {
         }
 
         BaseReportingKey key = new BaseReportingKey(deviceId, pinType, pin);
+        if (enableRawDbDataStore) {
+            rawDataProcessor.collect(key, ts, doubleVal);
+        }
+
         averageAggregator.collect(key, ts, doubleVal);
         if (device.webDashboard.needRawDataForGraph(pin, pinType) /* || dash.needRawDataForGraph(pin, pinType)*/) {
             rawDataCacheForGraphProcessor.collect(key, new RawEntry(ts, doubleVal));

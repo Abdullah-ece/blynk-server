@@ -3,6 +3,7 @@ package cc.blynk.server.db;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.reporting.raw.BaseReportingKey;
 import cc.blynk.server.core.reporting.raw.RawDataProcessor;
 import cc.blynk.server.db.dao.RawEntry;
 import cc.blynk.server.db.dao.descriptor.DataQueryRequestDTO;
@@ -55,8 +56,8 @@ public class RawDataDBTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testSelectSingleRawData() {
-        RawDataProcessor rawDataProcessor = new RawDataProcessor(true);
-        rawDataProcessor.collect(2, PinType.VIRTUAL, (short) 3, "123");
+        RawDataProcessor rawDataProcessor = new RawDataProcessor();
+        rawDataProcessor.collect(new BaseReportingKey(2, PinType.VIRTUAL, (short) 3), System.currentTimeMillis(), 123D);
 
         //invoking directly dao to avoid separate thread execution
         reportingDBManager.reportingDBDao.insertDataPoint(rawDataProcessor.rawStorage);
@@ -74,10 +75,10 @@ public class RawDataDBTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testSelectFewRawData() {
-        RawDataProcessor rawDataProcessor = new RawDataProcessor(true);
-        rawDataProcessor.collect(2, PinType.VIRTUAL, (short) 3, "123");
-        rawDataProcessor.collect(2, PinType.VIRTUAL, (short) 3, "124");
-        rawDataProcessor.collect(2, PinType.VIRTUAL, (short) 3, "125.25");
+        RawDataProcessor rawDataProcessor = new RawDataProcessor();
+        rawDataProcessor.collect(new BaseReportingKey(2, PinType.VIRTUAL, (short) 3), System.currentTimeMillis()-2, 123);
+        rawDataProcessor.collect(new BaseReportingKey(2, PinType.VIRTUAL, (short) 3), System.currentTimeMillis()-1, 124);
+        rawDataProcessor.collect(new BaseReportingKey(2, PinType.VIRTUAL, (short) 3), System.currentTimeMillis(), 125.25);
 
         //invoking directly dao to avoid separate thread execution
         reportingDBManager.reportingDBDao.insertDataPoint(rawDataProcessor.rawStorage);

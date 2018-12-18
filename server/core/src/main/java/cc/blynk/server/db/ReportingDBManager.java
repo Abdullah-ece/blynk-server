@@ -6,12 +6,13 @@ import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.reporting.WebGraphRequest;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
+import cc.blynk.server.core.reporting.raw.BaseReportingKey;
+import cc.blynk.server.core.reporting.raw.BaseReportingValue;
 import cc.blynk.server.core.stats.model.Stat;
 import cc.blynk.server.db.dao.EventDBDao;
 import cc.blynk.server.db.dao.RawEntry;
 import cc.blynk.server.db.dao.ReportingDBDao;
 import cc.blynk.server.db.dao.descriptor.DataQueryRequestDTO;
-import cc.blynk.server.db.dao.descriptor.TableDataMapper;
 import cc.blynk.utils.properties.BaseProperties;
 import cc.blynk.utils.properties.DBProperties;
 import com.zaxxer.hikari.HikariConfig;
@@ -124,7 +125,7 @@ public class ReportingDBManager implements Closeable {
         return Collections.emptyList();
     }
 
-    public void insertBatchDataPoints(Queue<TableDataMapper> rawDataBatch) {
+    public void insertBatchDataPoints(Map<BaseReportingKey, Queue<BaseReportingValue>> rawDataBatch) {
         if (isDBEnabled() && rawDataBatch.size() > 0) {
             blockingIOProcessor.executeDB(() -> reportingDBDao.insertDataPoint(rawDataBatch));
         }

@@ -19,6 +19,7 @@ import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.web.WebSource;
 import cc.blynk.server.core.model.widgets.web.label.WebLabel;
+import cc.blynk.server.core.reporting.raw.BaseReportingKey;
 import cc.blynk.server.core.reporting.raw.RawDataProcessor;
 import cc.blynk.server.db.dao.descriptor.DataQueryRequestDTO;
 import cc.blynk.server.db.dao.descriptor.TableDescriptor;
@@ -115,9 +116,9 @@ public class DataAPITest extends APIBaseTest {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
 
-        RawDataProcessor rawDataProcessor = new RawDataProcessor(true);
-        rawDataProcessor.collect(1, PinType.VIRTUAL, (byte) 1, "123");
-        rawDataProcessor.collect(1, PinType.VIRTUAL, (byte) 1, "124");
+        RawDataProcessor rawDataProcessor = new RawDataProcessor();
+        rawDataProcessor.collect(new BaseReportingKey(1, PinType.VIRTUAL, (byte) 1), System.currentTimeMillis() - 1, 123);
+        rawDataProcessor.collect(new BaseReportingKey(1, PinType.VIRTUAL, (byte) 1), System.currentTimeMillis(), 124);
 
         //invoking directly dao to avoid separate thread execution
         holder.reportingDBManager.reportingDBDao.insertDataPoint(rawDataProcessor.rawStorage);
@@ -142,8 +143,8 @@ public class DataAPITest extends APIBaseTest {
             LinkedHashMap point0 = (LinkedHashMap) dataField.get(0);
             LinkedHashMap point1 = (LinkedHashMap) dataField.get(1);
 
-            assertTrue(point0.containsValue(123D));
-            assertTrue(point1.containsValue(124D));
+            assertEquals(123D, (double) point0.get("value"), 0.1D);
+            assertEquals(124D, (double) point1.get("value"), 0.1D);
 
             System.out.println(responseString);
         }
@@ -170,9 +171,9 @@ public class DataAPITest extends APIBaseTest {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
 
-        RawDataProcessor rawDataProcessor = new RawDataProcessor(true);
-        rawDataProcessor.collect(1, PinType.VIRTUAL, (byte) 1, "123");
-        rawDataProcessor.collect(1, PinType.VIRTUAL, (byte) 2, "124");
+        RawDataProcessor rawDataProcessor = new RawDataProcessor();
+        rawDataProcessor.collect(new BaseReportingKey(1, PinType.VIRTUAL, (byte) 1), System.currentTimeMillis(), 123);
+        rawDataProcessor.collect(new BaseReportingKey(1, PinType.VIRTUAL, (byte) 2), System.currentTimeMillis(), 124);
 
         //invoking directly dao to avoid separate thread execution
         holder.reportingDBManager.reportingDBDao.insertDataPoint(rawDataProcessor.rawStorage);

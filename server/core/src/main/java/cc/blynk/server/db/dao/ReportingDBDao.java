@@ -10,6 +10,8 @@ import cc.blynk.server.core.reporting.WebGraphRequest;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
 import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
+import cc.blynk.server.core.reporting.raw.BaseReportingKey;
+import cc.blynk.server.core.reporting.raw.BaseReportingValue;
 import cc.blynk.server.core.stats.model.CommandStat;
 import cc.blynk.server.core.stats.model.HttpStat;
 import cc.blynk.server.core.stats.model.Stat;
@@ -419,24 +421,30 @@ public class ReportingDBDao {
         }
     }
 
-    public void insertDataPoint(Queue<TableDataMapper> tableDataMappers)  {
+    public void insertDataPoint(Map<BaseReportingKey, Queue<BaseReportingValue>> tableDataMappers)  {
+        TableDescriptor descriptor = TableDescriptor.BLYNK_DEFAULT_INSTANCE;
+
         try (Connection connection = ds.getConnection()) {
             DSLContext create = DSL.using(connection, POSTGRES_9_4);
-
-            TableDescriptor descriptor = tableDataMappers.peek().tableDescriptor;
 
             BatchBindStep batchBindStep = create.batch(
                     create.insertInto(table(descriptor.tableName), descriptor.fields())
                             .values(descriptor.values()));
 
-            Iterator<TableDataMapper> iterator = tableDataMappers.iterator();
-            while (iterator.hasNext()) {
-                TableDataMapper dataMapper = iterator.next();
-                batchBindStep.bind(dataMapper.data);
-                iterator.remove();
+            for (var entry : tableDataMappers.entrySet()) {
+                BaseReportingKey key = entry.getKey();
+                Queue<BaseReportingValue> values = entry.getValue();
+                if (values != null) {
+                    Iterator<BaseReportingValue> iterator = values.iterator();
+                    while (iterator.hasNext()) {
+                        BaseReportingValue dataPoint = iterator.next();
+                        batchBindStep.bind(key.deviceId, key.pin, key.pinType.ordinal(), dataPoint.ts, dataPoint.value);
+                        iterator.remove();
+                    }
+                }
             }
-            batchBindStep.execute();
 
+            batchBindStep.execute();
             connection.commit();
         } catch (Exception e) {
             log.error("Error inserting data.", e);
