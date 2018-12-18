@@ -255,23 +255,6 @@ public abstract class Widget implements CopyObject<Widget> {
         }
     }
 
-    public static boolean isNotValidProperty(String property) {
-        switch (property) {
-            case "label":
-            case "color":
-            case "isEnabled":
-            case "onLabel":
-            case "offLabel":
-            case "labels":
-            case "min":
-            case "max":
-            case "isOnPlay":
-                return false;
-            default:
-                return true;
-        }
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {

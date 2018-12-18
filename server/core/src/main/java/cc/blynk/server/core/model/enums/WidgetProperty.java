@@ -27,7 +27,8 @@ public enum WidgetProperty {
     FRACTION("maximumFractionDigits"),
     OPACITY("opacity"),
     SCALE("scale"),
-    ROTATION("rotation");
+    ROTATION("rotation"),
+    SORT_TPYE("sortType");
 
     public final String label;
 
@@ -79,6 +80,8 @@ public enum WidgetProperty {
                 return SCALE;
             case "rotation" :
                 return ROTATION;
+            case "sortType" :
+                return SORT_TPYE;
             default:
                 return null;
         }

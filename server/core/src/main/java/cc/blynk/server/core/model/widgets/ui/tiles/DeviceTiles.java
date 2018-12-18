@@ -4,6 +4,7 @@ import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.model.widgets.DeviceCleaner;
 import cc.blynk.server.core.model.widgets.MobileSyncWidget;
 import cc.blynk.server.core.model.widgets.Widget;
@@ -38,7 +39,7 @@ public class DeviceTiles extends Widget implements MobileSyncWidget, DeviceClean
 
     public int columns;
 
-    public SortType sortType;
+    public volatile SortType sortType;
 
     public TextAlignment alignment = TextAlignment.LEFT;
 
@@ -294,6 +295,16 @@ public class DeviceTiles extends Widget implements MobileSyncWidget, DeviceClean
         for (TileTemplate tileTemplate : this.templates) {
             tileTemplate.deviceIds = ArrayUtil.deleteFromArray(tileTemplate.deviceIds, deviceId);
         }
+    }
 
+    @Override
+    public boolean setProperty(WidgetProperty property, String propertyValue) {
+        switch (property) {
+            case SORT_TPYE:
+                this.sortType = SortType.valueOf(propertyValue);
+                return true;
+            default:
+                return super.setProperty(property, propertyValue);
+        }
     }
 }
