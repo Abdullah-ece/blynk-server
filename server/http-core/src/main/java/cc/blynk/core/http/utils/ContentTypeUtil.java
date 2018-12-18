@@ -10,6 +10,7 @@ public final class ContentTypeUtil {
     private ContentTypeUtil() {
     }
 
+    //todo fix?
     public static String getContentType(String fileName) {
         if (fileName.endsWith(".ico")) {
             return "image/x-icon";

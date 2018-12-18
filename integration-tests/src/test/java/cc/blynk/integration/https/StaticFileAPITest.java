@@ -4,6 +4,7 @@ import cc.blynk.integration.APIBaseTest;
 import cc.blynk.integration.MyHostVerifier;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
+import cc.blynk.utils.http.MediaType;
 import org.apache.http.Header;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -17,6 +18,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import javax.net.ssl.SSLContext;
 
 import static cc.blynk.integration.TestUtil.consumeText;
+import static cc.blynk.integration.TestUtil.getDefaultHttpsClient;
 import static cc.blynk.integration.TestUtil.initUnsecuredSSLContext;
 import static cc.blynk.integration.TestUtil.sleep;
 import static org.junit.Assert.assertEquals;
@@ -130,5 +132,30 @@ public class StaticFileAPITest extends APIBaseTest {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
         httpServer.close();
+    }
+
+    @Test
+    public void getAppleHostFile() throws Exception {
+        String serverUrl = String.format("https://localhost:%s/.well-known/apple-app-site-association", properties.getHttpsPort());
+
+        HttpGet index = new HttpGet(serverUrl);
+
+        try (CloseableHttpResponse response = getDefaultHttpsClient().execute(index)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            assertEquals(MediaType.APPLICATION_JSON, response.getFirstHeader("Content-Type").getValue());
+            String content = consumeText(response);
+            assertNotNull(content);
+            assertEquals("{\n" +
+                    "    \"applinks\": {\n" +
+                    "        \"apps\": [],\n" +
+                    "        \"details\": [\n" +
+                    "            {\n" +
+                    "                \"appID\": \"808760481.cc.blynk.blynk\",\n" +
+                    "                \"paths\": [\"*restore*\"]\n" +
+                    "            }\n" +
+                    "        ]\n" +
+                    "    }\n" +
+                    "}", content);
+        }
     }
 }

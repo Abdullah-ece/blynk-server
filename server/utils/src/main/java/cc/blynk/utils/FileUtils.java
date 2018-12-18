@@ -48,6 +48,7 @@ public final class FileUtils {
             "./server/http-admin/target/classes",
             "./server/http-core/target/classes",
             "./server/core/target",
+            "../server/http-api/target/classes",
             "../server/http-admin/target/classes",
             "../server/http-dashboard/target/classes",
             "../server/http-core/target/classes",

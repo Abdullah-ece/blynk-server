@@ -1,6 +1,5 @@
 package cc.blynk.core.http.handlers;
 
-import cc.blynk.core.http.utils.ContentTypeUtil;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.OrganizationDao;
@@ -46,7 +45,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.TimeZone;
-import java.util.regex.Pattern;
 
 import static cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler.handleGeneralException;
 import static io.netty.handler.codec.http.HttpHeaderNames.ACCESS_CONTROL_ALLOW_ORIGIN;
@@ -205,7 +203,7 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
         Path path;
         String uri = request.uri();
 
-        if (isNotSecure(uri)) {
+        if (staticFile.isNotSecure(uri)) {
             sendError(ctx, NOT_FOUND);
             return;
         }
@@ -271,7 +269,7 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
         HttpResponse response = new DefaultHttpResponse(HTTP_1_1, OK);
         response.headers()
                 .set(CONTENT_LENGTH, fileLength)
-                .set(CONTENT_TYPE, ContentTypeUtil.getContentType(file.getName()))
+                .set(CONTENT_TYPE, staticFile.getContentType(file.getName()))
                 .set(ACCESS_CONTROL_ALLOW_ORIGIN, "*");
 
         //todo setup caching for files.
@@ -350,20 +348,6 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
             return uriParts[1].substring(6);
         }
         return null;
-    }
-
-    private static final Pattern INSECURE_URI = Pattern.compile(".*[<>&\"].*");
-
-    private static boolean isNotSecure(String uri) {
-        if (uri.isEmpty() || uri.charAt(0) != '/') {
-            return true;
-        }
-
-        return uri.contains(File.separator + '.')
-                || uri.contains('.' + File.separator)
-                || uri.charAt(0) == '.' || uri.charAt(uri.length() - 1) == '.'
-                || INSECURE_URI.matcher(uri).matches();
-
     }
 
     @Override

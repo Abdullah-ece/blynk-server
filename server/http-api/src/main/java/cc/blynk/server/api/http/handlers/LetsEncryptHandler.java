@@ -1,6 +1,7 @@
 package cc.blynk.server.api.http.handlers;
 
 import cc.blynk.server.acme.ContentHolder;
+import cc.blynk.utils.http.MediaType;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFuture;
@@ -26,7 +27,6 @@ import java.nio.charset.StandardCharsets;
 
 import static io.netty.handler.codec.http.HttpHeaderNames.CONNECTION;
 import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_TYPE;
-import static io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
 import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
@@ -48,9 +48,10 @@ public class LetsEncryptHandler extends ChannelInboundHandlerAdapter {
         this.contentHolder = contentHolder;
     }
 
-    private static void sendError(ChannelHandlerContext ctx, HttpResponseStatus status) {
+    private static void sendError(ChannelHandlerContext ctx) {
         FullHttpResponse response = new DefaultFullHttpResponse(
-                HTTP_1_1, status, Unpooled.copiedBuffer("Failure: " + status + "\r\n", StandardCharsets.UTF_8));
+                HTTP_1_1, HttpResponseStatus.BAD_REQUEST,
+                Unpooled.copiedBuffer("Failure: " + HttpResponseStatus.BAD_REQUEST + "\r\n", StandardCharsets.UTF_8));
         response.headers().set(CONTENT_TYPE, "text/plain; charset=UTF-8");
 
         // Close the connection as soon as the error message is sent.
@@ -79,7 +80,7 @@ public class LetsEncryptHandler extends ChannelInboundHandlerAdapter {
 
     private void serveContent(ChannelHandlerContext ctx, FullHttpRequest request) {
         if (!request.decoderResult().isSuccess()) {
-            sendError(ctx, BAD_REQUEST);
+            sendError(ctx);
             return;
         }
 
@@ -98,7 +99,7 @@ public class LetsEncryptHandler extends ChannelInboundHandlerAdapter {
 
         HttpResponse response = new DefaultHttpResponse(HTTP_1_1, OK);
         HttpUtil.setContentLength(response, content.length());
-        response.headers().set(CONTENT_TYPE, "text/html");
+        response.headers().set(CONTENT_TYPE, MediaType.TEXT_HTML);
 
         if (HttpUtil.isKeepAlive(request)) {
             response.headers().set(CONNECTION, HttpHeaderValues.KEEP_ALIVE);

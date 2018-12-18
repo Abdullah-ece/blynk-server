@@ -1,6 +1,7 @@
 package cc.blynk.server.servers.application;
 
 import cc.blynk.core.http.handlers.NoMatchHandler;
+import cc.blynk.core.http.handlers.StaticAppleFile;
 import cc.blynk.core.http.handlers.StaticFile;
 import cc.blynk.core.http.handlers.StaticFileEdsWith;
 import cc.blynk.core.http.handlers.StaticFileHandler;
@@ -189,13 +190,15 @@ public class MobileAndHttpsServer extends BaseServer {
                         return pipeline
                                 .addLast("HttpsServerCodec", new HttpServerCodec())
                                 .addLast("HttpsServerKeepAlive", new HttpServerKeepAliveHandler())
-                                .addLast("HttpCompressor", new HttpContentCompressor())
+                                .addLast("HttpsCompressor", new HttpContentCompressor())
                                 .addLast("HttpsObjectAggregator",
                                         new HttpObjectAggregator(holder.limits.webRequestMaxSize, true))
-                                .addLast("HttpChunkedWrite", new ChunkedWriteHandler())
-                                .addLast("HttpUrlMapper", urlReWriterHandler)
+                                .addLast("HttpsChunkedWrite", new ChunkedWriteHandler())
+                                .addLast("HttpsUrlMapper", urlReWriterHandler)
                                 .addLast("HttpStaticFile",
-                                        new StaticFileHandler(holder, new StaticFile("/static"),
+                                        new StaticFileHandler(holder,
+                                                new StaticFile("/static"),
+                                                new StaticAppleFile(),
                                                 new StaticFileEdsWith(FileUtils.CSV_DIR, ".gz"),
                                                 new StaticFileEdsWith(FileUtils.CSV_DIR, ".zip")))
                                 .addLast(externalAPIHandler)
