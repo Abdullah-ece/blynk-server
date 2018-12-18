@@ -76,10 +76,6 @@ export default class Login extends React.Component {
       });
       throw new SubmissionError({ _error: 'Incorrect email or password. Please try again.' });
     }).then(() => {
-      this.props.organizationSwitch({
-        orgId: this.props.orgId
-      });
-
       this.props.AccountSaveCredentials({
         username: values.email,
         password: password,
@@ -87,6 +83,11 @@ export default class Login extends React.Component {
       //todo this is not required since api send back user data on successful login
       this.props.AccountFetch().then(() => {
         this.props.LoginWsSuccess();
+        if (this.props.orgId) {
+          this.props.organizationSwitch({
+            orgId: this.props.orgId
+          });
+        }
         this.context.router.push('/devices');
       });
     });
