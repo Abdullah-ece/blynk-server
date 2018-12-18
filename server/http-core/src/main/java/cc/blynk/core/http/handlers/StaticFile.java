@@ -3,6 +3,8 @@ package cc.blynk.core.http.handlers;
 import cc.blynk.core.http.utils.ContentTypeUtil;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.regex.Pattern;
 
 /**
@@ -14,14 +16,20 @@ public class StaticFile {
 
     private static final Pattern INSECURE_URI = Pattern.compile(".*[<>&\"].*");
 
+    final String pathForStatic;
     public final String path;
 
-    public StaticFile(String path) {
+    public StaticFile(String jarPath, String path) {
+        this.pathForStatic = jarPath;
         this.path = path;
     }
 
     public boolean isStatic(String url) {
         return url.startsWith(path);
+    }
+
+    public Path getPath(String uri) {
+        return Paths.get(pathForStatic, uri);
     }
 
     public String getContentType(String fileName) {

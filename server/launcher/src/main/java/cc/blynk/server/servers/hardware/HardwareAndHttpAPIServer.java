@@ -54,6 +54,7 @@ public class HardwareAndHttpAPIServer extends BaseServer {
         //http API handlers
         var httpToHttpsRedirectHandler = new HttpToHttpsRedirectHandler(holder.props);
         var noMatchHandler = new NoMatchHandler();
+        String pathForStatic = holder.props.jarPath;
 
         BaseWebSocketUnificator baseWebSocketUnificator = new BaseWebSocketUnificator() {
             @Override
@@ -68,7 +69,7 @@ public class HardwareAndHttpAPIServer extends BaseServer {
                         .addLast(letsEncryptHandler)
                         //.addLast(webLoginHandler)
                         //.addLast(authCookieHandler)
-                        //.addLast(new UploadHandler(jarPath, "/api/upload", "/" + STATIC_FILES_FOLDER))
+                        //.addLast(new UploadHandler(pathForStatic, "/api/upload", "/" + STATIC_FILES_FOLDER))
                         //.addLast(accountHandler)
                         //.addLast(devicesHandler)
                         //.addLast(dataHandler)
@@ -97,7 +98,7 @@ public class HardwareAndHttpAPIServer extends BaseServer {
                                         .addLast("HttpObjectAggregator", new HttpObjectAggregator(maxWebLength, true))
                                         .addLast("HttpChunkedWrite", new ChunkedWriteHandler())
                                         .addLast("HttpStaticFile",
-                                                new StaticFileHandler(holder, new StaticFile("/static"),
+                                                new StaticFileHandler(holder, new StaticFile(pathForStatic, "/static"),
                                                         new StaticFileEdsWith(FileUtils.CSV_DIR, ".csv.gz")))
                                         .addLast(externalAPIHandler)
                                         .addLast("HttpWebSocketUnificator", baseWebSocketUnificator);

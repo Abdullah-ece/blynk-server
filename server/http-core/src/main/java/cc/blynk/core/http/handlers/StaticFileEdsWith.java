@@ -1,5 +1,8 @@
 package cc.blynk.core.http.handlers;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -7,11 +10,13 @@ package cc.blynk.core.http.handlers;
  */
 public class StaticFileEdsWith extends StaticFile {
 
-    final String folderPathForStatic;
+    public StaticFileEdsWith(String pathForStatic, String path) {
+        super(pathForStatic, path);
+    }
 
-    public StaticFileEdsWith(String folderPathForStatic, String path) {
-        super(path);
-        this.folderPathForStatic = folderPathForStatic;
+    @Override
+    public Path getPath(String uri) {
+        return Paths.get(pathForStatic, uri);
     }
 
     @Override

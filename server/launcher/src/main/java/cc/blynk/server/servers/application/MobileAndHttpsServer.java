@@ -113,6 +113,7 @@ public class MobileAndHttpsServer extends BaseServer {
         var mobileAlreadyLoggedHandler = new MobileAlreadyLoggedHandler();
         int hardTimeoutSecs = NumberUtil.calcHeartbeatTimeout(holder.limits.hardwareIdleTimeout);
         var otaHandler = new OTAHandler(holder, apiPath);
+        String pathForStatic = holder.props.jarPath;
 
         var baseWebSocketUnificator = new BaseWebSocketUnificator() {
             @Override
@@ -197,8 +198,8 @@ public class MobileAndHttpsServer extends BaseServer {
                                 .addLast("HttpsUrlMapper", urlReWriterHandler)
                                 .addLast("HttpStaticFile",
                                         new StaticFileHandler(holder,
-                                                new StaticFile("/static"),
-                                                new StaticAppleFile(),
+                                                new StaticFile(pathForStatic, "/static"),
+                                                new StaticAppleFile(pathForStatic),
                                                 new StaticFileEdsWith(FileUtils.CSV_DIR, ".gz"),
                                                 new StaticFileEdsWith(FileUtils.CSV_DIR, ".zip")))
                                 .addLast(externalAPIHandler)

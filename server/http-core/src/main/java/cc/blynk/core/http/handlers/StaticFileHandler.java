@@ -38,7 +38,6 @@ import java.io.RandomAccessFile;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -84,7 +83,6 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
      */
     private final boolean isUnpacked;
     private final StaticFile[] staticPaths;
-    private final String jarPath;
     private final DeviceDao deviceDao;
     private final TokensPool tokensPool;
     private final OrganizationDao organizationDao;
@@ -92,7 +90,6 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
     public StaticFileHandler(Holder holder, StaticFile... staticPaths) {
         this.staticPaths = staticPaths;
         this.isUnpacked = holder.props.isUnpacked;
-        this.jarPath = holder.props.jarPath;
         this.deviceDao = holder.deviceDao;
         this.tokensPool = holder.tokensPool;
         this.organizationDao = holder.organizationDao;
@@ -214,12 +211,7 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
         //running from jar
         if (isUnpacked) {
             log.trace("Is unpacked.");
-            if (staticFile instanceof StaticFileEdsWith) {
-                StaticFileEdsWith staticFileEdsWith = (StaticFileEdsWith) staticFile;
-                path = Paths.get(staticFileEdsWith.folderPathForStatic, uri);
-            } else {
-                path = Paths.get(jarPath, uri);
-            }
+            path = staticFile.getPath(uri);
         } else {
             //for local mode / running from ide
             path = FileUtils.getPathForLocalRun(uri);
@@ -241,7 +233,7 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
 
         // Cache Validation
         String ifModifiedSince = request.headers().get(IF_MODIFIED_SINCE);
-        if (ifModifiedSince != null && !ifModifiedSince.isEmpty() && !(staticFile instanceof NoCacheStaticFile)) {
+        if (ifModifiedSince != null && !ifModifiedSince.isEmpty()) {
             SimpleDateFormat dateFormatter = new SimpleDateFormat(HTTP_DATE_FORMAT, Locale.US);
             Date ifModifiedSinceDate = dateFormatter.parse(ifModifiedSince);
 

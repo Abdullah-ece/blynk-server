@@ -9,8 +9,8 @@ import cc.blynk.utils.http.MediaType;
  */
 public class StaticAppleFile extends StaticFile {
 
-    public StaticAppleFile() {
-        super("/.well-known/apple-app-site-association");
+    public StaticAppleFile(String pathForStatic) {
+        super(pathForStatic, "/.well-known/apple-app-site-association");
     }
 
     @Override
