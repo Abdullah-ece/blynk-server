@@ -225,7 +225,8 @@ class RolesAndPermissions extends React.Component {
           type={this.state.currentActiveKeys.indexOf(key.toString()) < 0 ? "plus-square" : "minus-square"}/> {header}
       </div>} key={key} className='list-of-permissions-collapsed-panel'>
         <div className="list-of-permissions-items--content">
-          <Table className='roles-list--role--table' showHeader={false}
+          <div className={'roles-list--role--table-border'}></div>
+          <Table showHeader={false}
                  pagination={false}
                  dataSource={this.buildDataSources(startingPermission, offset)}
                  columns={this.buildColumns()} />
@@ -266,6 +267,7 @@ class RolesAndPermissions extends React.Component {
         dataIndex: 'name',
         key: 'name',
         width: '292px',
+        style: {borderTop: '1px solid #e9e9e9;'},
         render: value => <div
           className='permissions-table-main-column'>{value}</div>,
       }
