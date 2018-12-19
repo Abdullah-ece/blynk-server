@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public abstract class CounterBase {
 
     private static final String DEFAULT_TEST_USER = "dima@mail.ua";
-    private static final AtomicLong userCounter = new AtomicLong();
+    public static final AtomicLong userCounter = new AtomicLong();
 
     static {
         Security.addProvider(new BouncyCastleProvider());

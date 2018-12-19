@@ -252,6 +252,14 @@ public class OrganizationDao {
         return org;
     }
 
+    public void deleteWithSubOrgs(int orgId) {
+        List<Organization> childs = getOrgChilds(orgId);
+        log.trace("Deleting org {} and all its {} childs.", orgId, childs.size() - 1);
+        for (Organization org : childs) {
+            delete(org.id);
+        }
+    }
+
     public boolean delete(int orgId) {
         List<User> users = userDao.getAllUsersByOrgId(orgId);
         for (User user : users) {

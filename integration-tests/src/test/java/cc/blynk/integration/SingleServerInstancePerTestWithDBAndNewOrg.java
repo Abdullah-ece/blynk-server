@@ -44,7 +44,7 @@ public abstract class SingleServerInstancePerTestWithDBAndNewOrg extends SingleS
 
     @After
     public void deleteOrg() {
-        holder.organizationDao.delete(orgId);
+        holder.organizationDao.deleteWithSubOrgs(orgId);
     }
 
     @Before
