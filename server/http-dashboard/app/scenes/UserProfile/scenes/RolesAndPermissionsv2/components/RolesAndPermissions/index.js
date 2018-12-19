@@ -112,7 +112,7 @@ class RolesAndPermissions extends React.Component {
     this.buildColumns = this.buildColumns.bind(this);
     this.buildDataSources = this.buildDataSources.bind(this);
     this.onPermissionChange = this.onPermissionChange.bind(this);
-    this.buildPermissionsPanel = this.buildPermissionsPanel.bind(this);
+    this.buildGenericPermissionsPanel = this.buildGenericPermissionsPanel.bind(this);
     this.applyPermissions = this.applyPermissions.bind(this);
     // this.handleAddRole = this.handleAddRole.bind(this);
 
@@ -175,14 +175,14 @@ class RolesAndPermissions extends React.Component {
             <Collapse className="no-styles"
                       onChange={this.hanldeCollapseOnChange}
                       activeKey={this.state.currentActiveKeys}>
-              {this.buildPermissionsPanel(5, 'Permissions Control', 17, 4)}
-              {this.buildPermissionsPanel(3, 'Users', 9, 4)}
-              {this.buildPermissionsPanel(6, 'Devices', 21, 5)}
-              {this.buildPermissionsPanel(7, 'Devices', 26, 5)}
-              {this.buildPermissionsPanel(8, 'Auth Token', 31, 1)}
-              {this.buildPermissionsPanel(1, 'Blynk.Air: Firmware Over-The-Air Updates', 0, 5)}
-              {this.buildPermissionsPanel(4, 'Products', 13, 4)}
-              {this.buildPermissionsPanel(2, 'Organizations', 5, 4)}
+              {this.buildGenericPermissionsPanel(5, 'Permissions Control', 17, 4)}
+              {this.buildGenericPermissionsPanel(3, 'Users', 9, 4)}
+              {this.buildGenericPermissionsPanel(7, 'Own Devices', 26, 5)}
+              {this.buildGenericPermissionsPanel(6, 'Organization Devices', 21, 5)}
+              {this.buildGenericPermissionsPanel(8, 'Auth Token', 31, 1)}
+              {this.buildGenericPermissionsPanel(1, 'Blynk.Air: Firmware Over-The-Air Updates', 0, 5)}
+              {this.buildGenericPermissionsPanel(4, 'Products', 13, 4)}
+              {this.buildGenericPermissionsPanel(2, 'Organizations', 5, 4)}
             </Collapse>
           </div>
         </div>
@@ -218,7 +218,7 @@ class RolesAndPermissions extends React.Component {
     return value;
   }
 
-  buildPermissionsPanel(key, header, startingPermission, offset) {
+  buildGenericPermissionsPanel(key, header, startingPermission, offset) {
     return (
       <Panel header={<div>
         <LinearIcon
@@ -228,7 +228,7 @@ class RolesAndPermissions extends React.Component {
           <Table className='roles-list--role--table' showHeader={false}
                  pagination={false}
                  dataSource={this.buildDataSources(startingPermission, offset)}
-                 columns={this.buildColumns()} bordered/>
+                 columns={this.buildColumns()} />
         </div>
       </Panel>
     );
