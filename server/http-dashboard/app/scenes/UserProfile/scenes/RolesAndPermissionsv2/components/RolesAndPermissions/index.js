@@ -11,90 +11,194 @@ const Panel = Collapse.Panel;
 
 const PERMISSIONS_TABLE = [
   {
-    additionalIndexes: [],
+    dependentPermsToActivate: [6],
+    dependentPermsToRemove: [],
     key: 'ORG_SWITCH',
     value: 'Switch to Sub-Organizations'
   },
   {
-    additionalIndexes: [],
+    dependentPermsToActivate: [6],
+    dependentPermsToRemove: [],
     key: 'OWN_ORG_EDIT',
     value: 'Access Organization Settings'
   },
-  { additionalIndexes: [], key: 'OTA_VIEW', value: 'Get Access' },
-  { additionalIndexes: [], key: 'OTA_START', value: 'Initiate FOTA' },
-  { additionalIndexes: [], key: 'OTA_STOP', value: 'Stop/Pause FOTA' },
   {
-    additionalIndexes: [],
+    dependentPermsToActivate: [],
+    dependentPermsToRemove: [],
+    key: 'OTA_VIEW',
+    value: 'Get Access'
+  },
+  {
+    dependentPermsToActivate: [],
+    dependentPermsToRemove: [],
+    key: 'OTA_START',
+    value: 'Initiate FOTA'
+  },
+  {
+    dependentPermsToActivate: [],
+    dependentPermsToRemove: [],
+    key: 'OTA_STOP',
+    value: 'Stop/Pause FOTA'
+  },
+  {
+    dependentPermsToActivate: [6],
+    dependentPermsToRemove: [],
     key: 'ORG_CREATE',
     value: 'Create'
   },
-  { additionalIndexes: [], key: 'ORG_VIEW', value: 'View' },
-  { additionalIndexes: [], key: 'ORG_EDIT', value: 'Edit' },
   {
-    additionalIndexes: [],
+    dependentPermsToActivate: [],
+    dependentPermsToRemove: [5, 7, 8, 0, 1],
+    key: 'ORG_VIEW',
+    value: 'View'
+  },
+  {
+    dependentPermsToActivate: [6],
+    dependentPermsToRemove: [],
+    key: 'ORG_EDIT',
+    value: 'Edit'
+  },
+  {
+    dependentPermsToActivate: [6],
+    dependentPermsToRemove: [],
     key: 'ORG_DELETE',
     value: 'Delete'
   },
-  { additionalIndexes: [], key: 'ORG_INVITE_USERS', value: 'Invite new users' },
-  { additionalIndexes: [], key: 'ORG_VIEW_USERS', value: 'View' },
-  { additionalIndexes: [], key: 'ORG_EDIT_USERS', value: 'Edit' },
-  { additionalIndexes: [], key: 'ORG_DELETE_USERS', value: 'Delete' },
-  { additionalIndexes: [], key: 'PRODUCT_CREATE', value: 'Add new' },
-  { additionalIndexes: [], key: 'PRODUCT_VIEW', value: 'View' },
-  { additionalIndexes: [], key: 'PRODUCT_EDIT', value: 'Edit' },
-  { additionalIndexes: [], key: 'PRODUCT_DELETE', value: 'Delete' },
-  { additionalIndexes: [], key: 'ROLE_CREATE', value: 'Create new roles' },
   {
-    additionalIndexes: [],
+    dependentPermsToActivate: [10],
+    dependentPermsToRemove: [],
+    key: 'ORG_INVITE_USERS',
+    value: 'Invite new users'
+  },
+  {
+    dependentPermsToActivate: [],
+    dependentPermsToRemove: [9, 11, 12],
+    key: 'ORG_VIEW_USERS',
+    value: 'View'
+  },
+  {
+    dependentPermsToActivate: [10],
+    dependentPermsToRemove: [],
+    key: 'ORG_EDIT_USERS',
+    value: 'Edit'
+  },
+  {
+    dependentPermsToActivate: [10],
+    dependentPermsToRemove: [],
+    key: 'ORG_DELETE_USERS',
+    value: 'Delete'
+  },
+  {
+    dependentPermsToActivate: [14],
+    dependentPermsToRemove: [],
+    key: 'PRODUCT_CREATE',
+    value: 'Add new'
+  },
+  {
+    dependentPermsToActivate: [],
+    dependentPermsToRemove: [13, 15, 16],
+    key: 'PRODUCT_VIEW',
+    value: 'View'
+  },
+  {
+    dependentPermsToActivate: [14],
+    dependentPermsToRemove: [],
+    key: 'PRODUCT_EDIT',
+    value: 'Edit'
+  },
+  {
+    dependentPermsToActivate: [14],
+    dependentPermsToRemove: [],
+    key: 'PRODUCT_DELETE',
+    value: 'Delete'
+  },
+  {
+    dependentPermsToActivate: [],
+    dependentPermsToRemove: [],
+    key: 'ROLE_CREATE',
+    value: 'Create new roles'
+  },
+  {
+    dependentPermsToActivate: [],
+    dependentPermsToRemove: [],
     key: 'ROLE_VIEW',
     value: 'View roles and permissions'
   },
-  { additionalIndexes: [], key: 'ROLE_EDIT', value: 'Edit roles' },
-  { additionalIndexes: [], key: 'ROLE_DELETE', value: 'Delete roles' },
   {
-    additionalIndexes: [],
+    dependentPermsToActivate: [],
+    dependentPermsToRemove: [],
+    key: 'ROLE_EDIT',
+    value: 'Edit roles'
+  },
+  {
+    dependentPermsToActivate: [],
+    dependentPermsToRemove: [],
+    key: 'ROLE_DELETE',
+    value: 'Delete roles'
+  },
+  {
+    dependentPermsToActivate: [],
+    dependentPermsToRemove: [],
     key: 'ORG_DEVICES_CREATE',
     value: 'Add new devices'
   },
   {
-    additionalIndexes: [23, 24, 31],
+    dependentPermsToActivate: [],
+    dependentPermsToRemove: [23, 24, 31],
     key: 'ORG_DEVICES_VIEW',
     value: 'View'
   },
   {
-    additionalIndexes: [31],
+    dependentPermsToActivate: [22],
+    dependentPermsToRemove: [31],
     key: 'ORG_DEVICES_EDIT',
     value: 'Edit'
   },
   {
-    additionalIndexes: [],
+    dependentPermsToActivate: [22],
+    dependentPermsToRemove: [],
     key: 'ORG_DEVICES_DELETE',
     value: 'Delete'
   },
   {
-    additionalIndexes: [],
+    dependentPermsToActivate: [],
+    dependentPermsToRemove: [],
     key: 'ORG_DEVICES_SHARE',
     value: 'Share access'
   },
   {
-    additionalIndexes: [],
+    dependentPermsToActivate: [],
+    dependentPermsToRemove: [],
     key: 'OWN_DEVICES_CREATE',
     value: 'Add new devices'
   },
-  { additionalIndexes: [28, 29, 31], key: 'OWN_DEVICES_VIEW', value: 'View' },
-  { additionalIndexes: [31], key: 'OWN_DEVICES_EDIT', value: 'Edit' },
   {
-    additionalIndexes: [],
+    dependentPermsToActivate: [],
+    dependentPermsToRemove: [28, 29, 31],
+    key: 'OWN_DEVICES_VIEW',
+    value: 'View'
+  },
+  {
+    dependentPermsToActivate: [27],
+    dependentPermsToRemove: [31],
+    key: 'OWN_DEVICES_EDIT',
+    value: 'Edit'
+  },
+  {
+    dependentPermsToActivate: [27],
+    dependentPermsToRemove: [],
     key: 'OWN_DEVICES_DELETE',
     value: 'Delete'
   },
   {
-    additionalIndexes: [],
+    dependentPermsToActivate: [],
+    dependentPermsToRemove: [],
     key: 'OWN_DEVICES_SHARE',
     value: 'Share access'
   },
   {
-    additionalIndexes: [],
+    dependentPermsToActivate: [27,28],
+    dependentPermsToRemove: [],
     key: 'SET_AUTH_TOKEN',
     value: 'Enable Auth Token Edit'
   },
@@ -219,8 +323,15 @@ class RolesAndPermissions extends React.Component {
     let result = permissionGroup1 ^ newPermissions;
 
     if (!value) {
-      for (let perm of PERMISSIONS_TABLE[index + 1].additionalIndexes) {
+      for (let perm of PERMISSIONS_TABLE[index + 1].dependentPermsToRemove) {
         if (permissionsGroup1Binary[permissionsGroup1Binary.length - perm - 1] === '1') {
+          result = result ^ Math.pow(2, perm);
+        }
+      }
+    }
+    else {
+      for (let perm of PERMISSIONS_TABLE[index + 1].dependentPermsToActivate) {
+        if (permissionsGroup1Binary[permissionsGroup1Binary.length - perm - 1] === '0') {
           result = result ^ Math.pow(2, perm);
         }
       }
