@@ -21,12 +21,12 @@ public class IOSGCMMessage implements GCMMessage {
             .writerFor(IOSGCMMessage.class);
     private final String to;
     private final Priority priority;
-    private final IOSBody notification;
+    private final IOSPushNotificationBody notification;
 
     public IOSGCMMessage(String to, Priority priority, String message, int deviceId) {
         this.to = to;
         this.priority = priority;
-        this.notification = new IOSBody(message, deviceId);
+        this.notification = new IOSPushNotificationBody(message, deviceId);
     }
 
     @Override

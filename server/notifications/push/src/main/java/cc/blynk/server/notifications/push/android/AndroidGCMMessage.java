@@ -21,12 +21,12 @@ public class AndroidGCMMessage implements GCMMessage {
             .writerFor(AndroidGCMMessage.class);
     private final String to;
     private final Priority priority;
-    private final AndroidBody data;
+    private final AndroidPushNotificationBody data;
 
     public AndroidGCMMessage(String to, Priority priority, String message, int deviceId) {
         this.to = to;
         this.priority = priority;
-        this.data = new AndroidBody(message, deviceId);
+        this.data = new AndroidPushNotificationBody(message, deviceId);
     }
 
     @Override
