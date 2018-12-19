@@ -40,6 +40,7 @@ public final class MobileAddPushLogic {
         }
 
         var notificationSettings = state.user.profile.settings.notificationSettings;
+        log.trace("Adding push token {} for {}.", token, state.user.email);
 
         switch (state.version.osType) {
             case ANDROID :

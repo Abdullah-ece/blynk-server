@@ -67,6 +67,7 @@ public final class NotificationsDao {
             if (metaField != null) {
                 String to = metaField.getNotificationEmail();
                 if (to != null && !to.isEmpty()) {
+                    log.trace("Sending logEvent push notification for {} and deviceId {}.", to, device.id);
                     String body = device.getNameOrDefault() + ": " + event.name + "\n" + desc;
                     body = StringUtils.truncate(body, 255);
                     push(to, body, device.id);
@@ -109,6 +110,7 @@ public final class NotificationsDao {
             if (metaField != null) {
                 String to = metaField.getNotificationEmail();
                 if (to != null && !to.isEmpty()) {
+                    log.trace("Sending logEvent email for {} and deviceId {}.", to, device.id);
                     email(to, desc, event, device);
                 }
             }
