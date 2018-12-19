@@ -324,7 +324,7 @@ class RolesAndPermissions extends React.Component {
               {/*{this.buildGenericPermissionsPanel(6, 'Organizations', 5, 4)}*/}
               <Panel header={<div>
                 <LinearIcon
-                  type={this.state.currentActiveKeys.indexOf('6') < 0 ? "plus-square" : "minus-square"}/> Devices
+                  type={this.state.currentActiveKeys.indexOf('6') < 0 ? "plus-square" : "minus-square"}/> Organizations
               </div>} key={6} className='list-of-permissions-collapsed-panel'>
                 <div className="list-of-permissions-items--content">
                   <Table showHeader={false}
