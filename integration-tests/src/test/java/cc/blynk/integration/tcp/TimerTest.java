@@ -216,7 +216,7 @@ public class TimerTest extends SingleServerInstancePerTest {
         verify(holder.gcmWrapper, timeout(2000).times(1)).send(objectArgumentCaptor.capture(), any(), any());
         AndroidGCMMessage message = objectArgumentCaptor.getValue();
 
-        String expectedJson = new AndroidGCMMessage("token", Priority.normal, "Hello", 1).toJson();
+        String expectedJson = new AndroidGCMMessage("token", Priority.normal, null, "Hello", 1).toJson();
         assertEquals(expectedJson, message.toJson());
 
         verify(clientPair.appClient.responseMock, timeout(2000)).channelRead(any(), eq(hardware(TIMER_MSG_ID, "1-0 vw 1 1")));

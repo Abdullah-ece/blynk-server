@@ -47,7 +47,7 @@ public class GCMWrapperTest {
     @Ignore
     public void testIOS() {
         GCMWrapper gcmWrapper = new GCMWrapper(props, client, AppNameUtil.BLYNK);
-        gcmWrapper.send(new IOSGCMMessage("to", Priority.normal, "yo!!!", 1), null, null);
+        gcmWrapper.send(new IOSGCMMessage("to", Priority.normal, null, "yo!!!", 1), null, null);
     }
 
     @Test
@@ -56,19 +56,18 @@ public class GCMWrapperTest {
         when(props.getProperty("gcm.api.key")).thenReturn("");
         when(props.getProperty("gcm.server")).thenReturn("");
         GCMWrapper gcmWrapper = new GCMWrapper(props, client, AppNameUtil.BLYNK);
-        gcmWrapper.send(new AndroidGCMMessage("", Priority.normal, "yo!!!", 1), null, null);
+        gcmWrapper.send(new AndroidGCMMessage("", Priority.normal, null, "yo!!!", 1), null, null);
         Thread.sleep(5000);
     }
 
     @Test
     public void testValidAndroidJson() throws JsonProcessingException {
-        assertEquals("{\"to\":\"to\",\"priority\":\"normal\",\"data\":{\"message\":\"yo!!!\",\"dashId\":1}}", new AndroidGCMMessage("to", Priority.normal, "yo!!!", 1).toJson());
+        assertEquals("{\"to\":\"to\",\"priority\":\"normal\",\"data\":{\"message\":\"yo!!!\",\"dashId\":1}}", new AndroidGCMMessage("to", Priority.normal, null, "yo!!!", 1).toJson());
     }
 
     @Test
     public void testValidIOSJson() throws JsonProcessingException {
-        IOSGCMMessage iosgcmMessage = new IOSGCMMessage("to", Priority.normal, "yo!!!", 1);
-        iosgcmMessage.setTitle("Blynk Notification");
+        IOSGCMMessage iosgcmMessage = new IOSGCMMessage("to", Priority.normal, "Blynk Notification", "yo!!!", 1);
         assertEquals("{\"to\":\"to\",\"priority\":\"normal\",\"notification\":{\"body\":\"yo!!!\",\"dashId\":1,\"sound\":\"default\",\"title\":\"Blynk Notification\"}}", iosgcmMessage.toJson());
     }
 

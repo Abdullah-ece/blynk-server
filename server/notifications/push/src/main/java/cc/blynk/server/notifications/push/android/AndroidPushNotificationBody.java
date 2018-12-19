@@ -7,10 +7,12 @@ package cc.blynk.server.notifications.push.android;
  */
 class AndroidPushNotificationBody {
 
-    private final String message;
-    private final int deviceId;
+    public final String message;
+    public final int deviceId;
+    public final String title;
 
-    AndroidPushNotificationBody(String message, int deviceId) {
+    AndroidPushNotificationBody(String title, String message, int deviceId) {
+        this.title = title;
         this.message = message;
         this.deviceId = deviceId;
     }

@@ -133,7 +133,7 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
         verify(holder.gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), any());
         AndroidGCMMessage message = objectArgumentCaptor.getValue();
 
-        String expectedJson = new AndroidGCMMessage("token", Priority.normal, "Your My Device went offline.", 1).toJson();
+        String expectedJson = new AndroidGCMMessage("token", Priority.normal, null, "Your My Device went offline.", 1).toJson();
         assertEquals(expectedJson, message.toJson());
     }
 

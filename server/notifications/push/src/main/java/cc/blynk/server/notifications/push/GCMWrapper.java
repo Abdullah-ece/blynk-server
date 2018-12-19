@@ -62,7 +62,7 @@ public class GCMWrapper {
                         Priority priority, String body, int deviceId) {
         if (tokens.size() != 0) {
             for (Map.Entry<String, String> entry : tokens.entrySet()) {
-                GCMMessage messageBase = new IOSGCMMessage(entry.getValue(), priority, body, deviceId);
+                GCMMessage messageBase = new IOSGCMMessage(entry.getValue(), priority, title, body, deviceId);
                 send(messageBase, tokens, entry.getKey());
             }
         }
@@ -72,7 +72,7 @@ public class GCMWrapper {
                             Priority priority, String body, int deviceId) {
         if (tokens.size() != 0) {
             for (Map.Entry<String, String> entry : tokens.entrySet()) {
-                GCMMessage messageBase = new AndroidGCMMessage(entry.getValue(), priority, body, deviceId);
+                GCMMessage messageBase = new AndroidGCMMessage(entry.getValue(), priority, title, body, deviceId);
                 send(messageBase, tokens, entry.getKey());
             }
         }
@@ -86,7 +86,6 @@ public class GCMWrapper {
 
         String message;
         try {
-            messageBase.setTitle(title);
             message = messageBase.toJson();
         } catch (JsonProcessingException e) {
             log.error("Error sending push. Wrong message format.");

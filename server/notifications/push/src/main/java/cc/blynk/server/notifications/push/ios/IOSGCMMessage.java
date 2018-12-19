@@ -23,20 +23,15 @@ public class IOSGCMMessage implements GCMMessage {
     private final Priority priority;
     private final IOSPushNotificationBody notification;
 
-    public IOSGCMMessage(String to, Priority priority, String message, int deviceId) {
+    public IOSGCMMessage(String to, Priority priority, String title, String message, int deviceId) {
         this.to = to;
         this.priority = priority;
-        this.notification = new IOSPushNotificationBody(message, deviceId);
+        this.notification = new IOSPushNotificationBody(title, message, deviceId);
     }
 
     @Override
     public String getToken() {
         return to;
-    }
-
-    @Override
-    public void setTitle(String title) {
-        this.notification.setTitle(title);
     }
 
     @Override

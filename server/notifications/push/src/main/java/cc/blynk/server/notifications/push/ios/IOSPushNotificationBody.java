@@ -7,18 +7,15 @@ package cc.blynk.server.notifications.push.ios;
  */
 class IOSPushNotificationBody {
 
-    private final String body;
-    private final int deviceId;
-    private final String sound;
-    private String title;
+    public final String body;
+    public final int deviceId;
+    public final String sound;
+    public final String title;
 
-    IOSPushNotificationBody(String body, int deviceId) {
+    IOSPushNotificationBody(String title, String body, int deviceId) {
+        this.title = title;
         this.body = body;
         this.deviceId = deviceId;
         this.sound = "default";
-    }
-
-    void setTitle(String title) {
-        this.title = title;
     }
 }

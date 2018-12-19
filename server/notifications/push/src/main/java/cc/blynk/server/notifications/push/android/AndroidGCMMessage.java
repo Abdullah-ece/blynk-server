@@ -19,14 +19,14 @@ public class AndroidGCMMessage implements GCMMessage {
             .setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE)
             .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY)
             .writerFor(AndroidGCMMessage.class);
-    private final String to;
-    private final Priority priority;
-    private final AndroidPushNotificationBody data;
+    public final String to;
+    public final Priority priority;
+    public final AndroidPushNotificationBody data;
 
-    public AndroidGCMMessage(String to, Priority priority, String message, int deviceId) {
+    public AndroidGCMMessage(String to, Priority priority, String title, String message, int deviceId) {
         this.to = to;
         this.priority = priority;
-        this.data = new AndroidPushNotificationBody(message, deviceId);
+        this.data = new AndroidPushNotificationBody(title, message, deviceId);
     }
 
     @Override
