@@ -197,7 +197,7 @@ const PERMISSIONS_TABLE = [
     value: 'Share access'
   },
   {
-    dependentPermsToActivate: [27,28],
+    dependentPermsToActivate: [27, 28],
     dependentPermsToRemove: [],
     key: 'SET_AUTH_TOKEN',
     value: 'Enable Auth Token Edit'
@@ -222,7 +222,7 @@ class RolesAndPermissions extends React.Component {
     this.onPermissionChange = this.onPermissionChange.bind(this);
     this.buildGenericPermissionsPanel = this.buildGenericPermissionsPanel.bind(this);
     this.applyPermissions = this.applyPermissions.bind(this);
-    // this.handleAddRole = this.handleAddRole.bind(this);
+    this.addDataSource = this.addDataSource.bind(this);
 
     this.handleCollapseAll = this.handleCollapseAll.bind(this);
     this.handleExpandAll = this.handleExpandAll.bind(this);
@@ -283,14 +283,64 @@ class RolesAndPermissions extends React.Component {
             <Collapse className="no-styles"
                       onChange={this.hanldeCollapseOnChange}
                       activeKey={this.state.currentActiveKeys}>
-              {this.buildGenericPermissionsPanel(5, 'Permissions Control', 17, 4)}
-              {this.buildGenericPermissionsPanel(3, 'Users', 9, 4)}
-              {this.buildGenericPermissionsPanel(7, 'Own Devices', 26, 5)}
-              {this.buildGenericPermissionsPanel(6, 'Organization Devices', 21, 5)}
-              {this.buildGenericPermissionsPanel(8, 'Auth Token', 31, 1)}
-              {this.buildGenericPermissionsPanel(1, 'Blynk.Air: Firmware Over-The-Air Updates', 0, 5)}
-              {this.buildGenericPermissionsPanel(4, 'Products', 13, 4)}
-              {this.buildGenericPermissionsPanel(2, 'Organizations', 5, 4)}
+              {this.buildGenericPermissionsPanel(1, 'Permissions Control', 17, 4, [18, 17, 19, 20])}
+              {this.buildGenericPermissionsPanel(2, 'Users', 9, 4)}
+              <Panel header={<div>
+                <LinearIcon
+                  type={this.state.currentActiveKeys.indexOf('3') < 0 ? "plus-square" : "minus-square"}/> Devices
+              </div>} key={3} className='list-of-permissions-collapsed-panel'>
+                <div className="list-of-permissions-items--content">
+                  <div
+                    className={'roles-list--role--table-border sub-header'}>Own
+                    Devices
+                  </div>
+                  <Table showHeader={false}
+                         pagination={false}
+                         dataSource={this.buildDataSources(26, 5, [26, 27, 28, 30, 29])}
+                         columns={this.buildColumns('permissions-table-main-column--level2')}/>
+                  <div
+                    className={'roles-list--role--table-border sub-header'}>Organization
+                    Devices
+                  </div>
+                  <Table showHeader={false}
+                         pagination={false}
+                         dataSource={this.buildDataSources(21, 5, [21, 22, 23, 25, 24])}
+                         columns={this.buildColumns('permissions-table-main-column--level2')}/>
+                  <div
+                    className={'roles-list--role--table-border sub-header'}>Auth
+                    Token
+                  </div>
+                  <Table showHeader={false}
+                         pagination={false}
+                         dataSource={this.buildDataSources(31, 1)}
+                         columns={this.buildColumns('permissions-table-main-column--level2')}/>
+                </div>
+              </Panel>
+              {/*{this.buildGenericPermissionsPanel(7, 'Own Devices', 26, 5)}*/}
+              {/*{this.buildGenericPermissionsPanel(6, 'Organization Devices', 21, 5)}*/}
+              {/*{this.buildGenericPermissionsPanel(8, 'Auth Token', 31, 1)}*/}
+              {this.buildGenericPermissionsPanel(4, 'Blynk.Air: Firmware Over-The-Air Updates', 2, 3)}
+              {this.buildGenericPermissionsPanel(5, 'Products', 13, 4)}
+              {/*{this.buildGenericPermissionsPanel(6, 'Organizations', 5, 4)}*/}
+              <Panel header={<div>
+                <LinearIcon
+                  type={this.state.currentActiveKeys.indexOf('6') < 0 ? "plus-square" : "minus-square"}/> Devices
+              </div>} key={6} className='list-of-permissions-collapsed-panel'>
+                <div className="list-of-permissions-items--content">
+                  <Table showHeader={false}
+                         pagination={false}
+                         dataSource={this.buildDataSources(0, 2,[1,0])}
+                         columns={this.buildColumns('permissions-table-main-column--level2')}/>
+                  <div
+                    className={'roles-list--role--table-border sub-header'}>Sub
+                    Organizations
+                  </div>
+                  <Table showHeader={false}
+                         pagination={false}
+                         dataSource={this.buildDataSources(5, 4,[6,5,7,8])}
+                         columns={this.buildColumns('permissions-table-main-column--level2')}/>
+                </div>
+              </Panel>
             </Collapse>
           </div>
         </div>
@@ -319,18 +369,17 @@ class RolesAndPermissions extends React.Component {
     index,
     value
   ) {
-    const newPermissions = Math.pow(2, index + 1);
+    const newPermissions = Math.pow(2, index);
     let result = permissionGroup1 ^ newPermissions;
 
     if (!value) {
-      for (let perm of PERMISSIONS_TABLE[index + 1].dependentPermsToRemove) {
+      for (let perm of PERMISSIONS_TABLE[index].dependentPermsToRemove) {
         if (permissionsGroup1Binary[permissionsGroup1Binary.length - perm - 1] === '1') {
           result = result ^ Math.pow(2, perm);
         }
       }
-    }
-    else {
-      for (let perm of PERMISSIONS_TABLE[index + 1].dependentPermsToActivate) {
+    } else {
+      for (let perm of PERMISSIONS_TABLE[index].dependentPermsToActivate) {
         if (permissionsGroup1Binary[permissionsGroup1Binary.length - perm - 1] === '0') {
           result = result ^ Math.pow(2, perm);
         }
@@ -340,7 +389,13 @@ class RolesAndPermissions extends React.Component {
     return result;
   }
 
-  buildGenericPermissionsPanel(key, header, startingPermission, offset) {
+  buildGenericPermissionsPanel(
+    key,
+    header,
+    startingPermission,
+    offset,
+    permissionsList
+  ) {
     return (
       <Panel header={<div>
         <LinearIcon
@@ -350,40 +405,50 @@ class RolesAndPermissions extends React.Component {
           <div className={'roles-list--role--table-border'}></div>
           <Table showHeader={false}
                  pagination={false}
-                 dataSource={this.buildDataSources(startingPermission, offset)}
-                 columns={this.buildColumns()}/>
+                 dataSource={this.buildDataSources(startingPermission, offset, permissionsList)}
+                 columns={this.buildColumns('permissions-table-main-column')}/>
         </div>
       </Panel>
     );
   }
 
-  buildDataSources(startingPermission, offset) {
+  buildDataSources(startingPermission, offset, permissionsList) {
     const result = [];
 
-    for (let i = 0; i != offset; i++) {
-      let currentIndex = startingPermission + i;
-      let value = {
-        key: currentIndex,
-        name: PERMISSIONS_TABLE[currentIndex].value,
-      };
-
-      for (let role of this.props.roles) {
-        const { name, permissionsGroup1Binary } = role;
-
-        value[name.toLowerCase().trim()] = {
-          role,
-          index: currentIndex - 1,
-          value: Boolean(Number(permissionsGroup1Binary[permissionsGroup1Binary.length - currentIndex - 1])),
-        };
+    if (!permissionsList) {
+      for (let i = 0; i != offset; i++) {
+        let currentIndex = startingPermission + i;
+        this.addDataSource(result, currentIndex);
       }
-
-      result.push(value);
+    } else {
+      for (let currentIndex of permissionsList) {
+        this.addDataSource(result, currentIndex);
+      }
     }
 
     return result;
   }
 
-  buildColumns() {
+  addDataSource(result, currentIndex) {
+    let value = {
+      key: currentIndex,
+      name: PERMISSIONS_TABLE[currentIndex].value,
+    };
+
+    for (let role of this.props.roles) {
+      const { name, permissionsGroup1Binary } = role;
+
+      value[name.toLowerCase().trim()] = {
+        role,
+        index: currentIndex,
+        value: Boolean(Number(permissionsGroup1Binary[permissionsGroup1Binary.length - currentIndex - 1])),
+      };
+    }
+
+    result.push(value);
+  }
+
+  buildColumns(className) {
     const result = [
       {
         dataIndex: 'name',
@@ -391,7 +456,7 @@ class RolesAndPermissions extends React.Component {
         width: '292px',
         style: { borderTop: '1px solid #e9e9e9;' },
         render: value => <div
-          className='permissions-table-main-column'>{value}</div>,
+          className={className}>{value}</div>,
       }
     ];
 
