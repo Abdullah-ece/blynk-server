@@ -10,7 +10,11 @@ import LinearIcon from "../../../../../../components/LinearIcon";
 const Panel = Collapse.Panel;
 
 const PERMISSIONS_TABLE = [
-  { additionalIndexes: [], key: 'ORG_SWITCH', value: 'Switch to Sub-Organizations' },
+  {
+    additionalIndexes: [],
+    key: 'ORG_SWITCH',
+    value: 'Switch to Sub-Organizations'
+  },
   {
     additionalIndexes: [],
     key: 'OWN_ORG_EDIT',
@@ -53,12 +57,12 @@ const PERMISSIONS_TABLE = [
     value: 'Add new devices'
   },
   {
-    additionalIndexes: [],
+    additionalIndexes: [23, 24, 31],
     key: 'ORG_DEVICES_VIEW',
     value: 'View'
   },
   {
-    additionalIndexes: [],
+    additionalIndexes: [31],
     key: 'ORG_DEVICES_EDIT',
     value: 'Edit'
   },
@@ -77,8 +81,8 @@ const PERMISSIONS_TABLE = [
     key: 'OWN_DEVICES_CREATE',
     value: 'Add new devices'
   },
-  { additionalIndexes: [], key: 'OWN_DEVICES_VIEW', value: 'View' },
-  { additionalIndexes: [], key: 'OWN_DEVICES_EDIT', value: 'Edit' },
+  { additionalIndexes: [28, 29, 31], key: 'OWN_DEVICES_VIEW', value: 'View' },
+  { additionalIndexes: [31], key: 'OWN_DEVICES_EDIT', value: 'Edit' },
   {
     additionalIndexes: [],
     key: 'OWN_DEVICES_DELETE',
@@ -190,11 +194,10 @@ class RolesAndPermissions extends React.Component {
     );
   }
 
-  onPermissionChange(role, index) {
+  onPermissionChange(role, index, value) {
     const {
       id,
       name,
-      permissionGroup1,
       permissionGroup2,
     } = role;
 
@@ -202,20 +205,28 @@ class RolesAndPermissions extends React.Component {
     this.props.UpdateRole({
       id,
       name,
-      permissionGroup1: this.applyPermissions(permissionGroup1, index),
+      permissionGroup1: this.applyPermissions(role, index, value),
       permissionGroup2,
     });
   }
 
-  applyPermissions(permissionGroup1, index) {
+  applyPermissions(
+    { permissionGroup1, permissionsGroup1Binary },
+    index,
+    value
+  ) {
     const newPermissions = Math.pow(2, index + 1);
-    let value = permissionGroup1 ^ newPermissions;
+    let result = permissionGroup1 ^ newPermissions;
 
-    for (let perm of PERMISSIONS_TABLE[index].additionalIndexes) {
-      value = value ^ Math.pow(2, perm + 1);
+    if (!value) {
+      for (let perm of PERMISSIONS_TABLE[index + 1].additionalIndexes) {
+        if (permissionsGroup1Binary[permissionsGroup1Binary.length - perm - 1] === '1') {
+          result = result ^ Math.pow(2, perm);
+        }
+      }
     }
 
-    return value;
+    return result;
   }
 
   buildGenericPermissionsPanel(key, header, startingPermission, offset) {
@@ -229,7 +240,7 @@ class RolesAndPermissions extends React.Component {
           <Table showHeader={false}
                  pagination={false}
                  dataSource={this.buildDataSources(startingPermission, offset)}
-                 columns={this.buildColumns()} />
+                 columns={this.buildColumns()}/>
         </div>
       </Panel>
     );
@@ -250,7 +261,7 @@ class RolesAndPermissions extends React.Component {
 
         value[name.toLowerCase().trim()] = {
           role,
-          index: currentIndex -1,
+          index: currentIndex - 1,
           value: Boolean(Number(permissionsGroup1Binary[permissionsGroup1Binary.length - currentIndex - 1])),
         };
       }
@@ -267,7 +278,7 @@ class RolesAndPermissions extends React.Component {
         dataIndex: 'name',
         key: 'name',
         width: '292px',
-        style: {borderTop: '1px solid #e9e9e9;'},
+        style: { borderTop: '1px solid #e9e9e9;' },
         render: value => <div
           className='permissions-table-main-column'>{value}</div>,
       }
