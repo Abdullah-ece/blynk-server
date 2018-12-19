@@ -9,7 +9,7 @@ import MyAccount from './components/AccountSettings';
 import OrganizationSettings from './components/OrganizationSettings';
 import Users from './components/Users';
 // import Branding from './components/Branding';
-import { RolesAndPermissions } from 'scenes/UserProfile/scenes';
+import { RolesAndPermissionsv2 } from 'scenes/UserProfile/scenes';
 
 class UserProfile extends Component {
 
@@ -94,7 +94,7 @@ class UserProfile extends Component {
               <Tabs.TabPane
                 tab={<span>{TABS.ROLES_AND_PERMISSIONS.value}</span>}
                 key={TABS.ROLES_AND_PERMISSIONS.key}>
-                <RolesAndPermissions/>
+                <RolesAndPermissionsv2/>
               </Tabs.TabPane>
             </Tabs>
           </MainLayout.Content>

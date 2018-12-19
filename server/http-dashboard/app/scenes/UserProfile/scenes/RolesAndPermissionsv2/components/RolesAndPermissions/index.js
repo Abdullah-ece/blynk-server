@@ -10,89 +10,197 @@ import LinearIcon from "../../../../../../components/LinearIcon";
 const Panel = Collapse.Panel;
 
 const PERMISSIONS_TABLE = [
-  { additionalIndexes: [], key: 'ORG_SWITCH', value: 'Switch to sub orgs' },
   {
-    additionalIndexes: [],
+    dependentPermsToActivate: [6],
+    dependentPermsToRemove: [],
+    key: 'ORG_SWITCH',
+    value: 'Switch to Sub-Organizations'
+  },
+  {
+    dependentPermsToActivate: [6],
+    dependentPermsToRemove: [],
     key: 'OWN_ORG_EDIT',
-    value: 'Edit own organization'
+    value: 'Access Organization Settings'
   },
-  { additionalIndexes: [], key: 'OTA_VIEW', value: 'View OTA updates' },
-  { additionalIndexes: [], key: 'OTA_START', value: 'Start OTA updates' },
-  { additionalIndexes: [], key: 'OTA_STOP', value: 'Stop OTA updates' },
   {
-    additionalIndexes: [],
+    dependentPermsToActivate: [],
+    dependentPermsToRemove: [],
+    key: 'OTA_VIEW',
+    value: 'Get Access'
+  },
+  {
+    dependentPermsToActivate: [],
+    dependentPermsToRemove: [],
+    key: 'OTA_START',
+    value: 'Initiate FOTA'
+  },
+  {
+    dependentPermsToActivate: [],
+    dependentPermsToRemove: [],
+    key: 'OTA_STOP',
+    value: 'Stop/Pause FOTA'
+  },
+  {
+    dependentPermsToActivate: [6],
+    dependentPermsToRemove: [],
     key: 'ORG_CREATE',
-    value: 'Create sub organizations'
+    value: 'Create'
   },
-  { additionalIndexes: [], key: 'ORG_VIEW', value: 'View sub organizations' },
-  { additionalIndexes: [], key: 'ORG_EDIT', value: 'Edit sub organizations' },
   {
-    additionalIndexes: [],
+    dependentPermsToActivate: [],
+    dependentPermsToRemove: [5, 7, 8, 0, 1],
+    key: 'ORG_VIEW',
+    value: 'View'
+  },
+  {
+    dependentPermsToActivate: [6],
+    dependentPermsToRemove: [],
+    key: 'ORG_EDIT',
+    value: 'Edit'
+  },
+  {
+    dependentPermsToActivate: [6],
+    dependentPermsToRemove: [],
     key: 'ORG_DELETE',
-    value: 'Delete sub organizations'
+    value: 'Delete'
   },
-  { additionalIndexes: [], key: 'ORG_INVITE_USERS', value: 'Invite users' },
-  { additionalIndexes: [], key: 'ORG_VIEW_USERS', value: 'View users' },
-  { additionalIndexes: [], key: 'ORG_EDIT_USERS', value: 'Edit users' },
-  { additionalIndexes: [], key: 'ORG_DELETE_USERS', value: 'Delete users' },
-  { additionalIndexes: [], key: 'PRODUCT_CREATE', value: 'Create products' },
-  { additionalIndexes: [], key: 'PRODUCT_VIEW', value: 'View products' },
-  { additionalIndexes: [], key: 'PRODUCT_EDIT', value: 'Edit products' },
-  { additionalIndexes: [], key: 'PRODUCT_DELETE', value: 'Delete products' },
-  { additionalIndexes: [], key: 'ROLE_CREATE', value: 'Create new roles' },
   {
-    additionalIndexes: [],
+    dependentPermsToActivate: [10],
+    dependentPermsToRemove: [],
+    key: 'ORG_INVITE_USERS',
+    value: 'Invite new users'
+  },
+  {
+    dependentPermsToActivate: [],
+    dependentPermsToRemove: [9, 11, 12],
+    key: 'ORG_VIEW_USERS',
+    value: 'View'
+  },
+  {
+    dependentPermsToActivate: [10],
+    dependentPermsToRemove: [],
+    key: 'ORG_EDIT_USERS',
+    value: 'Edit'
+  },
+  {
+    dependentPermsToActivate: [10],
+    dependentPermsToRemove: [],
+    key: 'ORG_DELETE_USERS',
+    value: 'Delete'
+  },
+  {
+    dependentPermsToActivate: [14],
+    dependentPermsToRemove: [],
+    key: 'PRODUCT_CREATE',
+    value: 'Add new'
+  },
+  {
+    dependentPermsToActivate: [],
+    dependentPermsToRemove: [13, 15, 16],
+    key: 'PRODUCT_VIEW',
+    value: 'View'
+  },
+  {
+    dependentPermsToActivate: [14],
+    dependentPermsToRemove: [],
+    key: 'PRODUCT_EDIT',
+    value: 'Edit'
+  },
+  {
+    dependentPermsToActivate: [14],
+    dependentPermsToRemove: [],
+    key: 'PRODUCT_DELETE',
+    value: 'Delete'
+  },
+  {
+    dependentPermsToActivate: [],
+    dependentPermsToRemove: [],
+    key: 'ROLE_CREATE',
+    value: 'Create new roles'
+  },
+  {
+    dependentPermsToActivate: [],
+    dependentPermsToRemove: [],
     key: 'ROLE_VIEW',
     value: 'View roles and permissions'
   },
-  { additionalIndexes: [], key: 'ROLE_EDIT', value: 'Edit roles' },
-  { additionalIndexes: [], key: 'ROLE_DELETE', value: 'Delete roles' },
   {
-    additionalIndexes: [],
+    dependentPermsToActivate: [],
+    dependentPermsToRemove: [],
+    key: 'ROLE_EDIT',
+    value: 'Edit roles'
+  },
+  {
+    dependentPermsToActivate: [],
+    dependentPermsToRemove: [],
+    key: 'ROLE_DELETE',
+    value: 'Delete roles'
+  },
+  {
+    dependentPermsToActivate: [],
+    dependentPermsToRemove: [],
     key: 'ORG_DEVICES_CREATE',
-    value: 'Create organization devices'
+    value: 'Add new devices'
   },
   {
-    additionalIndexes: [],
+    dependentPermsToActivate: [],
+    dependentPermsToRemove: [23, 24, 31],
     key: 'ORG_DEVICES_VIEW',
-    value: 'View organization devices'
+    value: 'View'
   },
   {
-    additionalIndexes: [],
+    dependentPermsToActivate: [22],
+    dependentPermsToRemove: [31],
     key: 'ORG_DEVICES_EDIT',
-    value: 'Edit organization devices'
+    value: 'Edit'
   },
   {
-    additionalIndexes: [],
+    dependentPermsToActivate: [22],
+    dependentPermsToRemove: [],
     key: 'ORG_DEVICES_DELETE',
-    value: 'Delete organization devices'
+    value: 'Delete'
   },
   {
-    additionalIndexes: [],
+    dependentPermsToActivate: [],
+    dependentPermsToRemove: [],
     key: 'ORG_DEVICES_SHARE',
-    value: 'Share organization devices'
+    value: 'Share access'
   },
   {
-    additionalIndexes: [],
+    dependentPermsToActivate: [],
+    dependentPermsToRemove: [],
     key: 'OWN_DEVICES_CREATE',
-    value: 'Create own devices'
+    value: 'Add new devices'
   },
-  { additionalIndexes: [], key: 'OWN_DEVICES_VIEW', value: 'View own devices' },
-  { additionalIndexes: [], key: 'OWN_DEVICES_EDIT', value: 'Edit own devices' },
   {
-    additionalIndexes: [],
+    dependentPermsToActivate: [],
+    dependentPermsToRemove: [28, 29, 31],
+    key: 'OWN_DEVICES_VIEW',
+    value: 'View'
+  },
+  {
+    dependentPermsToActivate: [27],
+    dependentPermsToRemove: [31],
+    key: 'OWN_DEVICES_EDIT',
+    value: 'Edit'
+  },
+  {
+    dependentPermsToActivate: [27],
+    dependentPermsToRemove: [],
     key: 'OWN_DEVICES_DELETE',
-    value: 'Delete own devices'
+    value: 'Delete'
   },
   {
-    additionalIndexes: [],
+    dependentPermsToActivate: [],
+    dependentPermsToRemove: [],
     key: 'OWN_DEVICES_SHARE',
-    value: 'Share own devices'
+    value: 'Share access'
   },
   {
-    additionalIndexes: [],
+    dependentPermsToActivate: [27, 28],
+    dependentPermsToRemove: [],
     key: 'SET_AUTH_TOKEN',
-    value: 'Enable auth token edit'
+    value: 'Enable Auth Token Edit'
   },
 ];
 
@@ -112,9 +220,9 @@ class RolesAndPermissions extends React.Component {
     this.buildColumns = this.buildColumns.bind(this);
     this.buildDataSources = this.buildDataSources.bind(this);
     this.onPermissionChange = this.onPermissionChange.bind(this);
-    this.buildPermissionsPanel = this.buildPermissionsPanel.bind(this);
+    this.buildGenericPermissionsPanel = this.buildGenericPermissionsPanel.bind(this);
     this.applyPermissions = this.applyPermissions.bind(this);
-    // this.handleAddRole = this.handleAddRole.bind(this);
+    this.addDataSource = this.addDataSource.bind(this);
 
     this.handleCollapseAll = this.handleCollapseAll.bind(this);
     this.handleExpandAll = this.handleExpandAll.bind(this);
@@ -175,14 +283,64 @@ class RolesAndPermissions extends React.Component {
             <Collapse className="no-styles"
                       onChange={this.hanldeCollapseOnChange}
                       activeKey={this.state.currentActiveKeys}>
-              {this.buildPermissionsPanel(1, 'OTA', 0, 5)}
-              {this.buildPermissionsPanel(2, 'Organizations', 5, 4)}
-              {this.buildPermissionsPanel(3, 'Users', 9, 4)}
-              {this.buildPermissionsPanel(4, 'Products', 13, 4)}
-              {this.buildPermissionsPanel(5, 'Roles', 17, 4)}
-              {this.buildPermissionsPanel(6, 'Org Devices', 21, 5)}
-              {this.buildPermissionsPanel(7, 'Own Devices', 26, 5)}
-              {this.buildPermissionsPanel(8, 'Auth Token', 31, 1)}
+              {this.buildGenericPermissionsPanel(1, 'Permissions Control', 17, 4, [18, 17, 19, 20])}
+              {this.buildGenericPermissionsPanel(2, 'Users', 9, 4)}
+              <Panel header={<div>
+                <LinearIcon
+                  type={this.state.currentActiveKeys.indexOf('3') < 0 ? "plus-square" : "minus-square"}/> Devices
+              </div>} key={3} className='list-of-permissions-collapsed-panel'>
+                <div className="list-of-permissions-items--content">
+                  <div
+                    className={'roles-list--role--table-border sub-header'}>Own
+                    Devices
+                  </div>
+                  <Table showHeader={false}
+                         pagination={false}
+                         dataSource={this.buildDataSources(26, 5, [26, 27, 28, 30, 29])}
+                         columns={this.buildColumns('permissions-table-main-column--level2')}/>
+                  <div
+                    className={'roles-list--role--table-border sub-header'}>Organization
+                    Devices
+                  </div>
+                  <Table showHeader={false}
+                         pagination={false}
+                         dataSource={this.buildDataSources(21, 5, [21, 22, 23, 25, 24])}
+                         columns={this.buildColumns('permissions-table-main-column--level2')}/>
+                  <div
+                    className={'roles-list--role--table-border sub-header'}>Auth
+                    Token
+                  </div>
+                  <Table showHeader={false}
+                         pagination={false}
+                         dataSource={this.buildDataSources(31, 1)}
+                         columns={this.buildColumns('permissions-table-main-column--level2')}/>
+                </div>
+              </Panel>
+              {/*{this.buildGenericPermissionsPanel(7, 'Own Devices', 26, 5)}*/}
+              {/*{this.buildGenericPermissionsPanel(6, 'Organization Devices', 21, 5)}*/}
+              {/*{this.buildGenericPermissionsPanel(8, 'Auth Token', 31, 1)}*/}
+              {this.buildGenericPermissionsPanel(4, 'Blynk.Air: Firmware Over-The-Air Updates', 2, 3)}
+              {this.buildGenericPermissionsPanel(5, 'Products', 13, 4)}
+              {/*{this.buildGenericPermissionsPanel(6, 'Organizations', 5, 4)}*/}
+              <Panel header={<div>
+                <LinearIcon
+                  type={this.state.currentActiveKeys.indexOf('6') < 0 ? "plus-square" : "minus-square"}/> Devices
+              </div>} key={6} className='list-of-permissions-collapsed-panel'>
+                <div className="list-of-permissions-items--content">
+                  <Table showHeader={false}
+                         pagination={false}
+                         dataSource={this.buildDataSources(0, 2,[1,0])}
+                         columns={this.buildColumns('permissions-table-main-column--level2')}/>
+                  <div
+                    className={'roles-list--role--table-border sub-header'}>Sub
+                    Organizations
+                  </div>
+                  <Table showHeader={false}
+                         pagination={false}
+                         dataSource={this.buildDataSources(5, 4,[6,5,7,8])}
+                         columns={this.buildColumns('permissions-table-main-column--level2')}/>
+                </div>
+              </Panel>
             </Collapse>
           </div>
         </div>
@@ -190,11 +348,10 @@ class RolesAndPermissions extends React.Component {
     );
   }
 
-  onPermissionChange(role, index) {
+  onPermissionChange(role, index, value) {
     const {
       id,
       name,
-      permissionGroup1,
       permissionGroup2,
     } = role;
 
@@ -202,72 +359,104 @@ class RolesAndPermissions extends React.Component {
     this.props.UpdateRole({
       id,
       name,
-      permissionGroup1: this.applyPermissions(permissionGroup1, index),
+      permissionGroup1: this.applyPermissions(role, index, value),
       permissionGroup2,
     });
   }
 
-  applyPermissions(permissionGroup1, index) {
-    const newPermissions = Math.pow(2, index + 1);
-    let value = permissionGroup1 ^ newPermissions;
+  applyPermissions(
+    { permissionGroup1, permissionsGroup1Binary },
+    index,
+    value
+  ) {
+    const newPermissions = Math.pow(2, index);
+    let result = permissionGroup1 ^ newPermissions;
 
-    for (let perm of PERMISSIONS_TABLE[index].additionalIndexes) {
-      value = value ^ Math.pow(2, perm + 1);
+    if (!value) {
+      for (let perm of PERMISSIONS_TABLE[index].dependentPermsToRemove) {
+        if (permissionsGroup1Binary[permissionsGroup1Binary.length - perm - 1] === '1') {
+          result = result ^ Math.pow(2, perm);
+        }
+      }
+    } else {
+      for (let perm of PERMISSIONS_TABLE[index].dependentPermsToActivate) {
+        if (permissionsGroup1Binary[permissionsGroup1Binary.length - perm - 1] === '0') {
+          result = result ^ Math.pow(2, perm);
+        }
+      }
     }
 
-    return value;
+    return result;
   }
 
-  buildPermissionsPanel(key, header, startingPermission, offset) {
+  buildGenericPermissionsPanel(
+    key,
+    header,
+    startingPermission,
+    offset,
+    permissionsList
+  ) {
     return (
       <Panel header={<div>
         <LinearIcon
           type={this.state.currentActiveKeys.indexOf(key.toString()) < 0 ? "plus-square" : "minus-square"}/> {header}
       </div>} key={key} className='list-of-permissions-collapsed-panel'>
         <div className="list-of-permissions-items--content">
-          <Table className='roles-list--role--table' showHeader={false}
+          <div className={'roles-list--role--table-border'}></div>
+          <Table showHeader={false}
                  pagination={false}
-                 dataSource={this.buildDataSources(startingPermission, offset)}
-                 columns={this.buildColumns()} bordered/>
+                 dataSource={this.buildDataSources(startingPermission, offset, permissionsList)}
+                 columns={this.buildColumns('permissions-table-main-column')}/>
         </div>
       </Panel>
     );
   }
 
-  buildDataSources(startingPermission, offset) {
+  buildDataSources(startingPermission, offset, permissionsList) {
     const result = [];
 
-    for (let i = 0; i != offset; i++) {
-      let currentIndex = startingPermission + i;
-      let value = {
-        key: currentIndex,
-        name: PERMISSIONS_TABLE[currentIndex].value,
-      };
-
-      for (let role of this.props.roles) {
-        const { name, permissionsGroup1Binary } = role;
-
-        value[name.toLowerCase().trim()] = {
-          role,
-          index: currentIndex -1,
-          value: Boolean(Number(permissionsGroup1Binary[permissionsGroup1Binary.length - currentIndex - 1])),
-        };
+    if (!permissionsList) {
+      for (let i = 0; i != offset; i++) {
+        let currentIndex = startingPermission + i;
+        this.addDataSource(result, currentIndex);
       }
-
-      result.push(value);
+    } else {
+      for (let currentIndex of permissionsList) {
+        this.addDataSource(result, currentIndex);
+      }
     }
 
     return result;
   }
 
-  buildColumns() {
+  addDataSource(result, currentIndex) {
+    let value = {
+      key: currentIndex,
+      name: PERMISSIONS_TABLE[currentIndex].value,
+    };
+
+    for (let role of this.props.roles) {
+      const { name, permissionsGroup1Binary } = role;
+
+      value[name.toLowerCase().trim()] = {
+        role,
+        index: currentIndex,
+        value: Boolean(Number(permissionsGroup1Binary[permissionsGroup1Binary.length - currentIndex - 1])),
+      };
+    }
+
+    result.push(value);
+  }
+
+  buildColumns(className) {
     const result = [
       {
         dataIndex: 'name',
         key: 'name',
         width: '292px',
+        style: { borderTop: '1px solid #e9e9e9;' },
         render: value => <div
-          className='permissions-table-main-column'>{value}</div>,
+          className={className}>{value}</div>,
       }
     ];
 

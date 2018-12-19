@@ -1,6 +1,5 @@
-//@import "components/Layout/style-guide";
-//@import "components/StyleGuide/ant-overrides";
-//@import "scenes/Products/components/Metadata/styles";
+@import "components/Layout/style-guide";
+@import "scenes/Products/components/Metadata/styles";
 
 .user-profile--roles-and-permissions--list-of-permissions {
   .user-profile--roles-and-permissions--list-of-permissions--header {
@@ -37,8 +36,8 @@
       height: 79px;
       border-radius: 4px;
       box-shadow: 0 10px 30px 0 rgba(33, 34, 39, 0.1);
-      //background-color: @primary-color;
-      //color: @text-color-dark;
+      background-color: @color-primary;
+      color: @color-white;
       margin-right: 16px;
 
       .user-profile--roles-and-permissions--list-of-permissions--role-header {
@@ -56,7 +55,7 @@
         margin: 8px 0px 16px 16px;
         font-family: Roboto;
         font-size: 12px;
-        //color: @color-white-75;
+        color: @color-white-75;
       }
     }
   }
@@ -85,7 +84,7 @@
         font-family: Roboto;
         font-size: 22px;
         font-weight: 500;
-        //color: @color-dark-grey-75;
+        color: @color-dark-grey-75;
 
         > div {
           max-width: 100%;
@@ -104,11 +103,11 @@
         }
 
         &:hover {
-          //background: @color-primary-01;
+          background: @color-primary-01;
         }
 
         &:active {
-          //background: @color-primary-01 !important;
+          background: @color-primary-01 !important;
         }
       }
 
@@ -134,52 +133,20 @@
   }
 }
 
-roles-list--role--table {
-
-  //&-column-title-clickable {
-  //  cursor: pointer;
-  //}
-
-  //&-name-clickable {
-  //  cursor: pointer;
-  //}
-
-  .ant-table-small .ant-table-body > table {
-    padding: 0;
-
-    td:nth-child(1) {
-      //width: 200px;
-    }
-
-    td:nth-child(2) {
-      //width: 100px;
-    }
-
-    td:nth-child(3) {
-      //width: 100px;
-    }
-
-    td:nth-child(4) {
-      //width: 100px;
-    }
-
-  }
-
-  .ant-table-small .ant-table-tbody {
-    & > tr > td {
-      height: 48px;
-    }
-  }
-
-  .ant-table-small th span {
-    font-weight: 500;
-    //color: @color-dark-grey-75;
-  }
+.sub-header {
+  font-family: Roboto;
+  font-size: 18px;
+  font-weight: 500;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  color: @color-dark-grey-75;
+  padding: 24px 0px;
+  padding-left: 32px;
 }
 
 .permissions-table-main-column {
-  //width: 292px;
-  //height: 64px;
   font-family: Roboto;
   font-size: 16px;
   font-weight: normal;
@@ -188,97 +155,27 @@ roles-list--role--table {
   line-height: 2;
   letter-spacing: normal;
   color: #212227;
-  text-align: center;
   vertical-align: center;
+  margin-left: 40px;
+}
+
+.permissions-table-main-column--level2 {
+  font-family: Roboto;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: 2;
+  letter-spacing: normal;
+  color: #212227;
+  vertical-align: center;
+  margin-left: 56px;
 }
 
 .permissions-table-switch {
   margin-left: 72px;
 }
 
-//.user-profile--roles-and-permissions {
-//
-//  padding: @style-size-3-1 @style-size-3-1;
-//
-//  &--add-button {
-//
-//  }
-//
-//  &--roles-list {
-//
-//  }
-//
-//  &--roles-list--role {
-//    &--title {
-//      font-size: 18px;
-//      line-height: 18px;
-//      font-weight: 500;
-//      margin-bottom: 12px;
-//
-//      input {
-//        font-size: 18px;
-//        border: 0;
-//        border-bottom: 1px dashed rgba(32, 34, 39, 0.25);
-//      }
-//    }
-//
-//    &--tools {
-//      .product-metadata-item-tools;
-//
-//      button {
-//        height: 32px;
-//      }
-//
-//      i {
-//        font-size: 16px;
-//        line-height: 18px;
-//      }
-//
-//    }
-//
-//    &:hover {
-//      .user-profile--roles-and-permissions--roles-list--role--tools {
-//        opacity: 1;
-//      }
-//    }
-//  }
-//
-//  &--roles-list--role--table {
-//
-//    //&-column-title-clickable {
-//    //  cursor: pointer;
-//    //}
-//
-//    //&-name-clickable {
-//    //  cursor: pointer;
-//    //}
-//
-//    .ant-table-small .ant-table-body > table {
-//      padding: 0;
-//
-//      td:nth-child(1) {
-//        width: 200px;
-//      }
-//
-//      td:nth-child(2) {
-//        width: 100px;
-//      }
-//
-//      td:nth-child(3) {
-//        width: 100px;
-//      }
-//
-//    }
-//
-//    .ant-table-small .ant-table-tbody {
-//      & > tr > td {
-//        height: 48px;
-//      }
-//    }
-//
-//    .ant-table-small th span {
-//      font-weight: 500;
-//      color: @color-dark-grey-75;
-//    }
-//  }
-//}
+.roles-list--role--table-border {
+  border-bottom: 1px solid #e9e9e9;
+}
