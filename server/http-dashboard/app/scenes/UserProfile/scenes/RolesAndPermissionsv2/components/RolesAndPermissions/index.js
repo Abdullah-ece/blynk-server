@@ -10,35 +10,35 @@ import LinearIcon from "../../../../../../components/LinearIcon";
 const Panel = Collapse.Panel;
 
 const PERMISSIONS_TABLE = [
-  { additionalIndexes: [], key: 'ORG_SWITCH', value: 'Switch to sub orgs' },
+  { additionalIndexes: [], key: 'ORG_SWITCH', value: 'Switch to Sub-Organizations' },
   {
     additionalIndexes: [],
     key: 'OWN_ORG_EDIT',
-    value: 'Edit own organization'
+    value: 'Access Organization Settings'
   },
-  { additionalIndexes: [], key: 'OTA_VIEW', value: 'View OTA updates' },
-  { additionalIndexes: [], key: 'OTA_START', value: 'Start OTA updates' },
-  { additionalIndexes: [], key: 'OTA_STOP', value: 'Stop OTA updates' },
+  { additionalIndexes: [], key: 'OTA_VIEW', value: 'Get Access' },
+  { additionalIndexes: [], key: 'OTA_START', value: 'Initiate FOTA' },
+  { additionalIndexes: [], key: 'OTA_STOP', value: 'Stop/Pause FOTA' },
   {
     additionalIndexes: [],
     key: 'ORG_CREATE',
-    value: 'Create sub organizations'
+    value: 'Create'
   },
-  { additionalIndexes: [], key: 'ORG_VIEW', value: 'View sub organizations' },
-  { additionalIndexes: [], key: 'ORG_EDIT', value: 'Edit sub organizations' },
+  { additionalIndexes: [], key: 'ORG_VIEW', value: 'View' },
+  { additionalIndexes: [], key: 'ORG_EDIT', value: 'Edit' },
   {
     additionalIndexes: [],
     key: 'ORG_DELETE',
-    value: 'Delete sub organizations'
+    value: 'Delete'
   },
-  { additionalIndexes: [], key: 'ORG_INVITE_USERS', value: 'Invite users' },
-  { additionalIndexes: [], key: 'ORG_VIEW_USERS', value: 'View users' },
-  { additionalIndexes: [], key: 'ORG_EDIT_USERS', value: 'Edit users' },
-  { additionalIndexes: [], key: 'ORG_DELETE_USERS', value: 'Delete users' },
-  { additionalIndexes: [], key: 'PRODUCT_CREATE', value: 'Create products' },
-  { additionalIndexes: [], key: 'PRODUCT_VIEW', value: 'View products' },
-  { additionalIndexes: [], key: 'PRODUCT_EDIT', value: 'Edit products' },
-  { additionalIndexes: [], key: 'PRODUCT_DELETE', value: 'Delete products' },
+  { additionalIndexes: [], key: 'ORG_INVITE_USERS', value: 'Invite new users' },
+  { additionalIndexes: [], key: 'ORG_VIEW_USERS', value: 'View' },
+  { additionalIndexes: [], key: 'ORG_EDIT_USERS', value: 'Edit' },
+  { additionalIndexes: [], key: 'ORG_DELETE_USERS', value: 'Delete' },
+  { additionalIndexes: [], key: 'PRODUCT_CREATE', value: 'Add new' },
+  { additionalIndexes: [], key: 'PRODUCT_VIEW', value: 'View' },
+  { additionalIndexes: [], key: 'PRODUCT_EDIT', value: 'Edit' },
+  { additionalIndexes: [], key: 'PRODUCT_DELETE', value: 'Delete' },
   { additionalIndexes: [], key: 'ROLE_CREATE', value: 'Create new roles' },
   {
     additionalIndexes: [],
@@ -50,49 +50,49 @@ const PERMISSIONS_TABLE = [
   {
     additionalIndexes: [],
     key: 'ORG_DEVICES_CREATE',
-    value: 'Create organization devices'
+    value: 'Add new devices'
   },
   {
     additionalIndexes: [],
     key: 'ORG_DEVICES_VIEW',
-    value: 'View organization devices'
+    value: 'View'
   },
   {
     additionalIndexes: [],
     key: 'ORG_DEVICES_EDIT',
-    value: 'Edit organization devices'
+    value: 'Edit'
   },
   {
     additionalIndexes: [],
     key: 'ORG_DEVICES_DELETE',
-    value: 'Delete organization devices'
+    value: 'Delete'
   },
   {
     additionalIndexes: [],
     key: 'ORG_DEVICES_SHARE',
-    value: 'Share organization devices'
+    value: 'Share access'
   },
   {
     additionalIndexes: [],
     key: 'OWN_DEVICES_CREATE',
-    value: 'Create own devices'
+    value: 'Add new devices'
   },
-  { additionalIndexes: [], key: 'OWN_DEVICES_VIEW', value: 'View own devices' },
-  { additionalIndexes: [], key: 'OWN_DEVICES_EDIT', value: 'Edit own devices' },
+  { additionalIndexes: [], key: 'OWN_DEVICES_VIEW', value: 'View' },
+  { additionalIndexes: [], key: 'OWN_DEVICES_EDIT', value: 'Edit' },
   {
     additionalIndexes: [],
     key: 'OWN_DEVICES_DELETE',
-    value: 'Delete own devices'
+    value: 'Delete'
   },
   {
     additionalIndexes: [],
     key: 'OWN_DEVICES_SHARE',
-    value: 'Share own devices'
+    value: 'Share access'
   },
   {
     additionalIndexes: [],
     key: 'SET_AUTH_TOKEN',
-    value: 'Enable auth token edit'
+    value: 'Enable Auth Token Edit'
   },
 ];
 
@@ -175,14 +175,14 @@ class RolesAndPermissions extends React.Component {
             <Collapse className="no-styles"
                       onChange={this.hanldeCollapseOnChange}
                       activeKey={this.state.currentActiveKeys}>
-              {this.buildPermissionsPanel(1, 'OTA', 0, 5)}
-              {this.buildPermissionsPanel(2, 'Organizations', 5, 4)}
+              {this.buildPermissionsPanel(5, 'Permissions Control', 17, 4)}
               {this.buildPermissionsPanel(3, 'Users', 9, 4)}
-              {this.buildPermissionsPanel(4, 'Products', 13, 4)}
-              {this.buildPermissionsPanel(5, 'Roles', 17, 4)}
-              {this.buildPermissionsPanel(6, 'Org Devices', 21, 5)}
-              {this.buildPermissionsPanel(7, 'Own Devices', 26, 5)}
+              {this.buildPermissionsPanel(6, 'Devices', 21, 5)}
+              {this.buildPermissionsPanel(7, 'Devices', 26, 5)}
               {this.buildPermissionsPanel(8, 'Auth Token', 31, 1)}
+              {this.buildPermissionsPanel(1, 'Blynk.Air: Firmware Over-The-Air Updates', 0, 5)}
+              {this.buildPermissionsPanel(4, 'Products', 13, 4)}
+              {this.buildPermissionsPanel(2, 'Organizations', 5, 4)}
             </Collapse>
           </div>
         </div>
