@@ -185,10 +185,8 @@ public class Device implements Target {
         MetaField[] localCopy = Arrays.copyOf(this.metaFields, this.metaFields.length);
         for (MetaField updated : updatedMetafields) {
             int i = findMetaFieldIndexOrThrow(localCopy, updated.id);
-            if (i != -1) {
-                updateNameForDeviceNameMeta(updated);
-                localCopy[i] = updated;
-            }
+            updateNameForDeviceNameMeta(updated);
+            localCopy[i] = updated;
         }
 
         long now = System.currentTimeMillis();
