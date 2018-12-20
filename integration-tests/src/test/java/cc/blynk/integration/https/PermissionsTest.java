@@ -69,7 +69,7 @@ public class PermissionsTest extends SingleServerInstancePerTestWithDBAndNewOrg 
         newDevice.name = "My New Device";
         newDevice.productId = fromApiProduct.id;
 
-        client.createDevice(orgId, newDevice);
+        client.createDevice(newDevice);
         Device createdDevice = client.parseDevice(3);
         assertNotNull(createdDevice);
         assertEquals("My New Device", createdDevice.name);

@@ -56,8 +56,7 @@ public final class WebCreateOrgDeviceLogic implements PermissionBasedLogic<WebAp
     public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         String[] split = split2(message.body);
 
-        //todo check access to this org
-        int orgId = Integer.parseInt(split[0]);
+        int orgId = state.selectedOrgId;
         User user = state.user;
         Device newDevice = JsonParser.parseDevice(split[1], message.id);
 

@@ -422,7 +422,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         newDevice.name = "My New Device";
         newDevice.productId = fromApiProduct.id;
 
-        client.createDevice(orgId, newDevice);
+        client.createDevice(newDevice);
         Device createdDevice = client.parseDevice(2);
         assertNotNull(createdDevice);
 
@@ -467,7 +467,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         newDevice.name = "My New Device";
         newDevice.productId = fromApiProduct.id;
 
-        client.createDevice(orgId, newDevice);
+        client.createDevice(newDevice);
         Device createdDevice = client.parseDevice(3);
         assertNotNull(createdDevice);
 
