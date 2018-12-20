@@ -23,6 +23,7 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.dto.DeviceDTO;
 import cc.blynk.server.core.model.dto.OrganizationDTO;
+import cc.blynk.server.core.model.dto.OtaDTO;
 import cc.blynk.server.core.model.dto.ProductDTO;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
@@ -423,6 +424,22 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         send("getenhanceddata " + deviceId + BODY_SEPARATOR_STRING
                 + widgetId + BODY_SEPARATOR_STRING + GraphPeriod.CUSTOM
                 + BODY_SEPARATOR_STRING + from + BODY_SEPARATOR_STRING + to);
+    }
+
+    public void getOTAInfo(String firmwareUrl) {
+        if (firmwareUrl == null) {
+            send("webOtaGetFirmwareInfo");
+        } else {
+            send("webOtaGetFirmwareInfo " + firmwareUrl);
+        }
+    }
+
+    public void otaStart(OtaDTO otaDTO) {
+        send("webStartOta " + otaDTO);
+    }
+
+    public void otaStop(OtaDTO otaDTO) {
+        send("webStopOta " + otaDTO);
     }
 
 }

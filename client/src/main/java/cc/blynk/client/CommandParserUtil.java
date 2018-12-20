@@ -103,6 +103,9 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ROLES;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_TEMP_SECURE_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_INVITE_USER;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_LOGIN_VIA_INVITE;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_OTA_GET_FIRMWARE_INFO;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_OTA_START;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_OTA_STOP;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_SET_AUTH_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_TRACK_ORG;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_ACCOUNT;
@@ -367,6 +370,12 @@ public final class CommandParserUtil {
                 return UPDATE_PROFILE_SETTINGS;
             case "webtrackorg" :
                 return WEB_TRACK_ORG;
+            case "webotagetfirmwareinfo" :
+                return WEB_OTA_GET_FIRMWARE_INFO;
+            case "webstartota" :
+                return WEB_OTA_START;
+            case "webstopota" :
+                return WEB_OTA_STOP;
 
             default:
                 throw new IllegalArgumentException("Unsupported command");
