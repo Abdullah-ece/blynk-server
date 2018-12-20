@@ -16,7 +16,7 @@ import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
 import io.netty.channel.ChannelHandlerContext;
 
-import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_DEVICES_VIEW;
+import static cc.blynk.server.core.model.permissions.PermissionsTable.OWN_DEVICES_VIEW;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.server.internal.WebByteBufUtil.json;
 import static cc.blynk.utils.StringUtils.split2;
@@ -38,12 +38,12 @@ public final class WebGetOwnDeviceLogic implements PermissionBasedLogic<WebAppSt
 
     @Override
     public boolean hasPermission(Role role) {
-        return role.canViewOrgDevices();
+        return role.canViewOwnDevices();
     }
 
     @Override
     public int getPermission() {
-        return ORG_DEVICES_VIEW;
+        return OWN_DEVICES_VIEW;
     }
 
     @Override
