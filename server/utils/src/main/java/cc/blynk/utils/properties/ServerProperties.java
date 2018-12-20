@@ -92,7 +92,7 @@ public class ServerProperties extends BaseProperties {
     }
 
     public String getRestoreHost() {
-        return getProperty("restore.host");
+        return getProperty("restore.host", getHostProperty());
     }
 
     private String getHostProperty() {
