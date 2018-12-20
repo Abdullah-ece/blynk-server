@@ -111,6 +111,46 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
     }
 
     @Test
+    public void deviceEditChangesAlsoDeviceNameMetafeild() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+
+        Product product = new Product();
+        product.name = "My product";
+        product.metaFields = new MetaField[] {
+                createDeviceNameMeta(1, "Device Name", "Default Name", true),
+                createDeviceOwnerMeta(2, "Device Owner", null, true),
+                createNumberMeta(3, "Jopa", 123D)
+        };
+
+        client.createProduct(orgId, product);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
+        assertNotNull(fromApiProduct);
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.productId = fromApiProduct.id;
+
+        client.createDevice(newDevice);
+        Device createdDevice = client.parseDevice(2);
+        assertNotNull(createdDevice);
+        assertEquals("My New Device", createdDevice.name);
+        assertNotNull(createdDevice.metaFields);
+        assertEquals(3, createdDevice.metaFields.length);
+        DeviceNameMetaField deviceNameMetaField = (DeviceNameMetaField) createdDevice.metaFields[0];
+        assertEquals(createdDevice.name, deviceNameMetaField.value);
+
+        createdDevice.name = "123";
+        client.updateDevice(orgId, createdDevice);
+        createdDevice = client.parseDevice(3);
+        assertNotNull(createdDevice);
+        assertEquals("123", createdDevice.name);
+        assertNotNull(createdDevice.metaFields);
+        assertEquals(3, createdDevice.metaFields.length);
+        deviceNameMetaField = (DeviceNameMetaField) createdDevice.metaFields[0];
+        assertEquals(createdDevice.name, deviceNameMetaField.value);
+    }
+
+    @Test
     public void createAndDeleteDevice() throws Exception {
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
 

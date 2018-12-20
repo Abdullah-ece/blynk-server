@@ -74,6 +74,8 @@ public final class WebCreateOwnDeviceLogic implements PermissionBasedLogic<WebAp
         Organization org = organizationDao.getOrgByIdOrThrow(orgId);
         Product product = organizationDao.assignToOrgAndAddDevice(org, newDevice);
         deviceDao.create(orgId, user.email, product, newDevice);
+        newDevice.updateDeviceNameMetaFieldFromName();
+        newDevice.updatedAt = System.currentTimeMillis();
 
         if (ctx.channel().isWritable()) {
             String deviceString = new DeviceDTO(newDevice, product, org.name).toString();

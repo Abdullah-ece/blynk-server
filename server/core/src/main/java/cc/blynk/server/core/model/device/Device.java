@@ -101,6 +101,7 @@ public class Device implements Target {
         this.webDashboard = new WebDashboard();
     }
 
+    //todo remove?
     public Device(String name, BoardType boardType, String token, int productId, ConnectionType connectionType) {
         this();
         this.name = name;
@@ -110,6 +111,7 @@ public class Device implements Target {
         this.connectionType = connectionType;
     }
 
+    //todo remove?
     public Device(int id, String name, BoardType boardType) {
         this();
         this.id = id;
@@ -182,6 +184,7 @@ public class Device implements Target {
     }
 
     public void updateMetafields(MetaField[] updatedMetafields) {
+        //copy is necesary here, we don't know here this reference comes from
         MetaField[] localCopy = Arrays.copyOf(this.metaFields, this.metaFields.length);
         for (MetaField updated : updatedMetafields) {
             int i = findMetaFieldIndexOrThrow(localCopy, updated.id);
@@ -209,6 +212,22 @@ public class Device implements Target {
             return true;
         }
         return false;
+    }
+
+    public void updateDeviceNameMetaFieldFromName() {
+        MetaField[] localCopy = this.metaFields;
+        for (int i = 0; i < localCopy.length; i++) {
+            MetaField metaField = localCopy[i];
+            if (metaField instanceof DeviceNameMetaField) {
+                localCopy[i] = new DeviceNameMetaField(
+                        metaField.id, metaField.name,
+                        metaField.roleIds,
+                        metaField.includeInProvision, metaField.isMandatory, metaField.isDefault,
+                        metaField.icon, this.name);
+                this.metaFields = localCopy;
+                return;
+            }
+        }
     }
 
     public String getTemplateId() {
@@ -247,6 +266,7 @@ public class Device implements Target {
         //that's fine. leave this fields as it is. It cannot be update from app client.
         //this.hardwareInfo = newDevice.hardwareInfo;
         //this.deviceOtaInfo = newDevice.deviceOtaInfo;
+        updateDeviceNameMetaFieldFromName();
         this.updatedAt = System.currentTimeMillis();
     }
 
