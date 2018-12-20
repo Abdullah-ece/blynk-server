@@ -24,7 +24,6 @@ class RolesAndPermissionsv2 extends React.Component {
   };
 
   render() {
-    console.log(this.props)
     return (
       <RolesAndPermissions {...this.props}/>
     );

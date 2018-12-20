@@ -54,7 +54,7 @@ export default function RolesAndPermissions(state = initialState, action) {
         })
       };
 
-    case "WEB_GET_USER_COUNTERS_BY_ROLE":
+    case "WEB_GET_USER_COUNTERS_BY_ROLE_SUCCESS":
       return {
         ...state,
         usersPerRole: action.payload.data
