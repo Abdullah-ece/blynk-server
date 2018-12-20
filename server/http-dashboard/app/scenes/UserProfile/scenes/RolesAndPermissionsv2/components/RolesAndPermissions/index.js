@@ -402,7 +402,7 @@ class RolesAndPermissions extends React.Component {
           type={this.state.currentActiveKeys.indexOf(key.toString()) < 0 ? "plus-square" : "minus-square"}/> {header}
       </div>} key={key} className='list-of-permissions-collapsed-panel'>
         <div className="list-of-permissions-items--content">
-          <div className={'roles-list--role--table-border'}></div>
+          <div className={'roles-list--role--table-border'} />
           <Table showHeader={false}
                  pagination={false}
                  dataSource={this.buildDataSources(startingPermission, offset, permissionsList)}
