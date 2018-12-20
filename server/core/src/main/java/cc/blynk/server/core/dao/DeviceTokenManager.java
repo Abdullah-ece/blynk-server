@@ -74,12 +74,13 @@ public class DeviceTokenManager {
 
     void assignNewToken(int orgId, String email, Product product, Device device, String newToken) {
         String oldToken = assignToken(orgId, product, device, newToken);
+
+        device.setDeviceOwnerInMeta(email);
         //device activated when new token is assigned
         long now = System.currentTimeMillis();
         device.activatedAt = now;
         device.activatedBy = email;
         device.updatedAt = now;
-        device.setDeviceOwnerInMeta(email);
 
         dbManager.assignServerToToken(newToken, host, email, device.id);
         if (oldToken != null) {
