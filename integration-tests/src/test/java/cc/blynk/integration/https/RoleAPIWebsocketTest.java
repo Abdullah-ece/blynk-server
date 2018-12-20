@@ -96,8 +96,8 @@ public class RoleAPIWebsocketTest extends APIBaseTest {
         assertEquals(0, roleDTO.permissionGroup1);
         assertEquals(0, roleDTO.permissionGroup2);
 
-        Organization subOrg = new Organization("SubOrg", "Europe/Kiev", "/static/logo.png", true, orgId);
-        client.createOrganization(orgId, subOrg);
+        Organization subOrg = new Organization("SubOrg", "Europe/Kiev", "/static/logo.png", true, -1);
+        client.createOrganization(subOrg);
         OrganizationDTO subOrgDTO = client.parseOrganizationDTO(2);
         assertNotNull(subOrgDTO);
         assertEquals(orgId, subOrgDTO.parentId);

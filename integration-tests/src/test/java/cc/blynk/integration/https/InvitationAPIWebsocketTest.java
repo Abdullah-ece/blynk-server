@@ -148,7 +148,7 @@ public class InvitationAPIWebsocketTest extends SingleServerInstancePerTestWithD
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
 
         Organization subOrg = new Organization("SubOrg1", "Europe/Kiev", null, true, -1);
-        client.createOrganization(orgId, subOrg);
+        client.createOrganization(subOrg);
         OrganizationDTO subOrgDTO = client.parseOrganizationDTO(1);
 
         client.trackOrg(subOrgDTO.id);
@@ -204,7 +204,7 @@ public class InvitationAPIWebsocketTest extends SingleServerInstancePerTestWithD
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
 
         Organization subOrg = new Organization("SubOrg2", "Europe/Kiev", "/static/123.png", true, -1);
-        client.createOrganization(-1, subOrg);
+        client.createOrganization(subOrg);
         OrganizationDTO subOrgDTO = client.parseOrganizationDTO(1);
 
         client.trackOrg(subOrgDTO.id);

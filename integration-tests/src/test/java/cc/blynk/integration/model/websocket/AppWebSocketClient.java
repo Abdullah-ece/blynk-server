@@ -156,6 +156,10 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         send("resolveEvent " + deviceId + "\0" + logEventId + "\0" + comment);
     }
 
+    public void createOrganization(Organization organization) {
+        send("webCreateOrg " + (-1) + StringUtils.BODY_SEPARATOR_STRING + organization);
+    }
+
     public void createOrganization(int orgId, Organization organization) {
         send("webCreateOrg " + orgId + StringUtils.BODY_SEPARATOR_STRING + organization);
     }

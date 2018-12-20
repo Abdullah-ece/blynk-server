@@ -3,6 +3,7 @@ package cc.blynk.server.web.handlers.logic.organization;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.PermissionBasedLogic;
 import cc.blynk.server.core.dao.OrganizationDao;
+import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.dto.OrganizationDTO;
 import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.web.Organization;
@@ -45,8 +46,14 @@ public final class WebGetOrganizationLogic implements PermissionBasedLogic<WebAp
 
     @Override
     public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
-        //todo permission check
-        int orgId = state.selectedOrgId;
+        int orgId;
+        if (message.body.isEmpty()) {
+            orgId = state.selectedOrgId;
+        } else {
+            orgId = Integer.parseInt(message.body);
+            User user = state.user;
+            organizationDao.checkInheritanceAccess(user.email, user.orgId, orgId);
+        }
 
         Organization organization = organizationDao.getOrgByIdOrThrow(orgId);
 

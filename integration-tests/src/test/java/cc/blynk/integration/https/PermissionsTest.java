@@ -50,7 +50,7 @@ public class PermissionsTest extends SingleServerInstancePerTestWithDBAndNewOrg 
                 new Role(1, "Admin", 0b11111111111111111111, 0));
         organization.selectedProducts = new int[] {fromApiProduct.id};
 
-        client.createOrganization(orgId, organization);
+        client.createOrganization(organization);
         OrganizationDTO fromApiOrg = client.parseOrganizationDTO(2);
         assertNotNull(fromApiOrg);
         assertEquals(orgId, fromApiOrg.parentId);
@@ -108,7 +108,7 @@ public class PermissionsTest extends SingleServerInstancePerTestWithDBAndNewOrg 
                 new Role(1, "Admin", 0b11111111111111111111, 0));
         organization.selectedProducts = new int[] {fromApiProduct.id};
 
-        client.createOrganization(orgId, organization);
+        client.createOrganization(organization);
         OrganizationDTO fromApiOrg = client.parseOrganizationDTO(2);
         assertNotNull(fromApiOrg);
         assertEquals(orgId, fromApiOrg.parentId);
@@ -128,7 +128,7 @@ public class PermissionsTest extends SingleServerInstancePerTestWithDBAndNewOrg 
                 new Role(1, "Admin", 0b11111111111111111111, 0));
 
         AppWebSocketClient subUserClient = loggedDefaultClient(subOrgUser1, "1");
-        subUserClient.createOrganization(fromApiOrg.id, organization2);
+        subUserClient.createOrganization(organization2);
         OrganizationDTO fromApiOrg2 = subUserClient.parseOrganizationDTO(1);
         assertNotNull(fromApiOrg2);
         assertEquals(fromApiOrg2.parentId, fromApiOrg.id);

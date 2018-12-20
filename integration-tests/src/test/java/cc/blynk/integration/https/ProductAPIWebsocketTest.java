@@ -1150,10 +1150,10 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
-        Organization organization = new Organization("Sub Org", "Some TimeZone", "/static/logo.png", false, orgId);
+        Organization organization = new Organization("Sub Org", "Some TimeZone", "/static/logo.png", false, -1);
         organization.selectedProducts = new int[] {fromApiProduct.id};
 
-        client.createOrganization(orgId, organization);
+        client.createOrganization(organization);
         OrganizationDTO fromApiProductOrg = client.parseOrganizationDTO(2);
         assertNotNull(fromApiProductOrg);
         assertEquals(orgId, fromApiProductOrg.parentId);
@@ -1205,10 +1205,10 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
-        Organization organization = new Organization("New Sub Org", "Some TimeZone", "/static/logo.png", false, orgId);
+        Organization organization = new Organization("New Sub Org", "Some TimeZone", "/static/logo.png", false, -1);
         organization.selectedProducts = new int[] {fromApiProduct.id};
 
-        client.createOrganization(orgId, organization);
+        client.createOrganization(organization);
         OrganizationDTO fromApiProductOrg = client.parseOrganizationDTO(2);
         assertNotNull(fromApiProductOrg);
         assertEquals(orgId, fromApiProductOrg.parentId);
@@ -1290,10 +1290,10 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
-        Organization organization = new Organization("Sub Org for test 2", "Some TimeZone", "/static/logo.png", false, orgId);
+        Organization organization = new Organization("Sub Org for test 2", "Some TimeZone", "/static/logo.png", false, -1);
         organization.selectedProducts = new int[] {fromApiProduct.id};
 
-        client.createOrganization(orgId, organization);
+        client.createOrganization(organization);
         OrganizationDTO fromApiProductSubOrg = client.parseOrganizationDTO(2);
         assertNotNull(fromApiProductSubOrg);
         assertEquals(orgId, fromApiProductSubOrg.parentId);
@@ -1467,10 +1467,10 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
-        Organization organization = new Organization("New Sub Org111", "Some TimeZone", "/static/logo.png", false, orgId);
+        Organization organization = new Organization("New Sub Org111", "Some TimeZone", "/static/logo.png", false, -1);
         organization.selectedProducts = new int[] {fromApiProduct.id};
 
-        client.createOrganization(orgId, organization);
+        client.createOrganization(organization);
         OrganizationDTO fromApiProductOrg = client.parseOrganizationDTO(2);
         assertNotNull(fromApiProductOrg);
         assertEquals(orgId, fromApiProductOrg.parentId);

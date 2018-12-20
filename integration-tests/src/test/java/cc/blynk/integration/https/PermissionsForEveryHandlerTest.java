@@ -20,6 +20,7 @@ import static cc.blynk.integration.TestUtil.defaultClient;
 import static cc.blynk.integration.TestUtil.loggedDefaultClient;
 import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.integration.TestUtil.webJson;
+import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_CREATE;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_SWITCH;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.OTA_START;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.OTA_STOP;
@@ -57,7 +58,7 @@ public class PermissionsForEveryHandlerTest extends SingleServerInstancePerTestW
         AppWebSocketClient client = loggedDefaultClient("super@blynk.cc", "1");
 
         Organization subOrg = new Organization("PermissionTestSuborg", "Europe/Kiev", null, true, -1);
-        client.createOrganization(orgId, subOrg);
+        client.createOrganization(subOrg);
         OrganizationDTO subOrgDTO = client.parseOrganizationDTO(1);
         assertNotNull(subOrgDTO);
 
@@ -110,7 +111,7 @@ public class PermissionsForEveryHandlerTest extends SingleServerInstancePerTestW
     }
 
     @Test
-    public void testOrgSwitch() throws Exception {
+    public void orgSwitch() throws Exception {
         AppWebSocketClient client = createUserForSubOrgSpecificRole(setPermission(ORG_SWITCH));
         client.getOrganizationHierarchy();
         OrganizationsHierarchyDTO organizationsHierarchyDTO = client.parseOrganizationHierarchyDTO(1);
@@ -118,14 +119,14 @@ public class PermissionsForEveryHandlerTest extends SingleServerInstancePerTestW
         assertEquals("PermissionTestSuborg", organizationsHierarchyDTO.name);
     }
     @Test
-    public void testNoOrgSwitch() throws Exception {
+    public void noOrgSwitch() throws Exception {
         AppWebSocketClient client = createUserForSubOrgSpecificRole(removePermission(ORG_SWITCH));
         client.getOrganizationHierarchy();
         client.verifyResult(webJson(1, "User testpermissions@gmail.com has no permission for 'switch organization' operation."));
     }
 
     @Test
-    public void testOwnOrgEdit() throws Exception {
+    public void ownOrgEdit() throws Exception {
         AppWebSocketClient client = createUserForSubOrgSpecificRole(setPermission(OWN_ORG_EDIT));
         client.editOwnOrg(new OrganizationDTO(
                 orgId,
@@ -149,7 +150,7 @@ public class PermissionsForEveryHandlerTest extends SingleServerInstancePerTestW
         assertEquals("123", organizationDTO.name);
     }
     @Test
-    public void testNoOwnOrgEdit() throws Exception {
+    public void noOwnOrgEdit() throws Exception {
         AppWebSocketClient client = createUserForSubOrgSpecificRole(removePermission(OWN_ORG_EDIT));
         client.editOwnOrg(new OrganizationDTO(
                 orgId,
@@ -172,41 +173,67 @@ public class PermissionsForEveryHandlerTest extends SingleServerInstancePerTestW
     }
 
     @Test
-    public void testOTAView() throws Exception {
+    public void OTAView() throws Exception {
         AppWebSocketClient client = createUserForSubOrgSpecificRole(setPermission(OTA_VIEW));
         client.getOTAInfo(null);
         client.verifyResult(webJson(1, "Path to firmware is not provided."));
     }
     @Test
-    public void testNoOTAView() throws Exception {
+    public void noOTAView() throws Exception {
         AppWebSocketClient client = createUserForSubOrgSpecificRole(removePermission(OTA_VIEW));
         client.getOTAInfo(null);
         client.verifyResult(webJson(1, "User testpermissions@gmail.com has no permission for 'view ota' operation."));
     }
 
     @Test
-    public void testOTAStart() throws Exception {
+    public void OTAStart() throws Exception {
         AppWebSocketClient client = createUserForSubOrgSpecificRole(setPermission(OTA_START));
         client.otaStart(new OtaDTO(1, 1, null, null, null, null, false, null, 0, false));
         client.verifyResult(webJson(1, "Wrong data for OTA start."));
     }
     @Test
-    public void testNoOTAStart() throws Exception {
+    public void noOTAStart() throws Exception {
         AppWebSocketClient client = createUserForSubOrgSpecificRole(removePermission(OTA_START));
         client.otaStart(new OtaDTO(1, 1, null, null, null, null, false, null, 0, false));
         client.verifyResult(webJson(1, "User testpermissions@gmail.com has no permission for 'start ota' operation."));
     }
 
     @Test
-    public void testOTAStop() throws Exception {
+    public void OTAStop() throws Exception {
         AppWebSocketClient client = createUserForSubOrgSpecificRole(setPermission(OTA_STOP));
         client.otaStop(new OtaDTO(1, 1, null, null, null, null, false, null, 0, false));
         client.verifyResult(webJson(1, "No devices to stop OTA."));
     }
     @Test
-    public void testNoOTAStop() throws Exception {
+    public void noOTAStop() throws Exception {
         AppWebSocketClient client = createUserForSubOrgSpecificRole(removePermission(OTA_STOP));
         client.otaStop(new OtaDTO(1, 1, null, null, null, null, false, null, 0, false));
         client.verifyResult(webJson(1, "User testpermissions@gmail.com has no permission for 'stop ota' operation."));
+    }
+
+    @Test
+    public void orgCreate() throws Exception {
+        AppWebSocketClient client = createUserForSubOrgSpecificRole(setPermission(ORG_CREATE));
+        client.createOrganization(new Organization());
+        client.verifyResult(webJson(1, "Organization is empty."));
+    }
+    @Test
+    public void noOrgCreate() throws Exception {
+        AppWebSocketClient client = createUserForSubOrgSpecificRole(removePermission(ORG_CREATE));
+        client.createOrganization(new Organization());
+        client.verifyResult(webJson(1, "User testpermissions@gmail.com has no permission for 'create organization' operation."));
+    }
+
+    @Test
+    public void orgGet() throws Exception {
+        AppWebSocketClient client = createUserForSubOrgSpecificRole(setPermission(ORG_CREATE));
+        client.createOrganization(new Organization());
+        client.verifyResult(webJson(1, "Organization is empty."));
+    }
+    @Test
+    public void noOrgGet() throws Exception {
+        AppWebSocketClient client = createUserForSubOrgSpecificRole(removePermission(ORG_CREATE));
+        client.createOrganization(new Organization());
+        client.verifyResult(webJson(1, "User testpermissions@gmail.com has no permission for 'create organization' operation."));
     }
 }
