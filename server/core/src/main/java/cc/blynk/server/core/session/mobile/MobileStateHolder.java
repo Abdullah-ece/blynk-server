@@ -11,7 +11,7 @@ import cc.blynk.server.core.model.permissions.Role;
 public class MobileStateHolder extends BaseUserStateHolder {
 
     public MobileStateHolder(User user, Role role, Version version) {
-        super(user.orgId, user, role, version);
+        super(user.orgId, user, version, role);
     }
 
 }

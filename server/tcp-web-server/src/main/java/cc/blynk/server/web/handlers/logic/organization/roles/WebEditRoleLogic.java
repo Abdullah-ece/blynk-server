@@ -4,6 +4,8 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.dashboard.dto.RoleDTO;
 import cc.blynk.server.core.PermissionBasedLogic;
 import cc.blynk.server.core.dao.OrganizationDao;
+import cc.blynk.server.core.dao.SessionDao;
+import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.permissions.PermissionsTable;
 import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
@@ -23,9 +25,11 @@ import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 public final class WebEditRoleLogic implements PermissionBasedLogic<WebAppStateHolder> {
 
     private final OrganizationDao organizationDao;
+    private final SessionDao sessionDao;
 
     public WebEditRoleLogic(Holder holder) {
         this.organizationDao = holder.organizationDao;
+        this.sessionDao = holder.sessionDao;
     }
 
     @Override
@@ -48,11 +52,14 @@ public final class WebEditRoleLogic implements PermissionBasedLogic<WebAppStateH
 
         log.debug("{} updates role {} for orgId {}.", state.user.email, roleDTO, orgId);
         Organization org = organizationDao.getOrgByIdOrThrow(orgId);
-        Role role = roleDTO.toRole();
-        org.updateRole(role);
+        Role updatedRole = roleDTO.toRole();
+        org.updateRole(updatedRole);
+
+        Session session = sessionDao.getOrgSession(orgId);
+        session.applyRoleChanges(updatedRole);
 
         if (ctx.channel().isWritable()) {
-            String roleString = role.toString();
+            String roleString = updatedRole.toString();
             ctx.writeAndFlush(makeUTF8StringMessage(message.command, message.id, roleString),
                     ctx.voidPromise());
         }

@@ -111,6 +111,71 @@ public class PermissionsForEveryHandlerTest extends SingleServerInstancePerTestW
     }
 
     @Test
+    public void roleUpdateAppliedInRealtime() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient("super@blynk.cc", "1");
+
+        Organization subOrg = new Organization("PermissionTestSuborg", "Europe/Kiev", null, true, -1);
+        client.createOrganization(subOrg);
+        OrganizationDTO subOrgDTO = client.parseOrganizationDTO(1);
+        assertNotNull(subOrgDTO);
+
+        client.trackOrg(subOrgDTO.id);
+        client.verifyResult(ok(2));
+        client.createRole(new RoleDTO(-1, "Test", 0b11111111111111111111111111111111, 0));
+        RoleDTO roleDTO = client.parseRoleDTO(3);
+        assertNotNull(roleDTO);
+
+        client.getOrganization(subOrgDTO.id);
+        subOrgDTO = client.parseOrganizationDTO(4);
+        assertNotNull(subOrgDTO);
+        assertEquals(4, subOrgDTO.roles.length);
+        Role createRole = subOrgDTO.roles[3];
+        assertEquals(4, createRole.id);
+
+        client.inviteUser(subOrgDTO.id, "testPermissions@gmail.com", "Dmitriy", createRole.id);
+        client.verifyResult(ok(5));
+
+        ArgumentCaptor<String> bodyArgumentCapture = ArgumentCaptor.forClass(String.class);
+        verify(holder.mailWrapper, timeout(1000).times(1)).sendHtml(eq("testpermissions@gmail.com"),
+                eq("Invitation to PermissionTestSuborg dashboard."), bodyArgumentCapture.capture());
+        String body = bodyArgumentCapture.getValue();
+
+        String token = body.substring(body.indexOf("token=") + 6, body.indexOf("&"));
+        assertEquals(32, token.length());
+
+        String passHash = SHA256Util.makeHash("1", "testpermissions@gmail.com");
+        AppWebSocketClient appWebSocketClient = defaultClient();
+        appWebSocketClient.start();
+        appWebSocketClient.loginViaInvite(token, passHash);
+        appWebSocketClient.verifyResult(ok(1));
+
+        appWebSocketClient.getAccount();
+        User user = appWebSocketClient.parseAccount(2);
+        TestCase.assertNotNull(user);
+        assertEquals("testpermissions@gmail.com", user.email);
+        assertEquals("Dmitriy", user.name);
+        assertEquals(4, user.roleId);
+        assertEquals(subOrgDTO.id, user.orgId);
+
+        appWebSocketClient.reset();
+
+        appWebSocketClient.getOrganizationHierarchy();
+        OrganizationsHierarchyDTO organizationsHierarchyDTO = client.parseOrganizationHierarchyDTO(1);
+        assertNotNull(organizationsHierarchyDTO);
+        assertEquals("PermissionTestSuborg", organizationsHierarchyDTO.name);
+
+        int updatedPerm = removePermission(ORG_SWITCH);
+        client.updateRole(new RoleDTO(createRole.id, createRole.name, updatedPerm, createRole.permissionGroup2));
+        roleDTO = client.parseRoleDTO(6);
+        assertNotNull(roleDTO);
+        assertEquals(4, roleDTO.id);
+        assertEquals(updatedPerm, roleDTO.permissionGroup1);
+
+        appWebSocketClient.getOrganizationHierarchy();
+        appWebSocketClient.verifyResult(webJson(2, "User testpermissions@gmail.com has no permission for 'switch organization' operation."));
+    }
+
+    @Test
     public void orgSwitch() throws Exception {
         AppWebSocketClient client = createUserForSubOrgSpecificRole(setPermission(ORG_SWITCH));
         client.getOrganizationHierarchy();

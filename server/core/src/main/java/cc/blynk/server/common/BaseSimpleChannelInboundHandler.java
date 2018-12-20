@@ -1,5 +1,6 @@
 package cc.blynk.server.common;
 
+import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -43,6 +44,10 @@ public abstract class BaseSimpleChannelInboundHandler<I, T> extends ChannelInbou
     public abstract void messageReceived(ChannelHandlerContext ctx, I msg);
 
     public abstract T getState();
+
+    public void updateRole(Role role) {
+        //do nothing by default
+    }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {

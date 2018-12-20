@@ -1,10 +1,12 @@
 package cc.blynk.server.core.model.auth;
 
 import cc.blynk.server.common.BaseSimpleChannelInboundHandler;
+import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.core.session.mobile.MobileStateHolder;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
+import cc.blynk.server.internal.StateHolderUtil;
 import cc.blynk.utils.ArrayUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
@@ -281,6 +283,12 @@ public class Session {
             if (hardState != null && hardState.contains(deviceIds)) {
                 channel.close();
             }
+        }
+    }
+
+    public void applyRoleChanges(Role role) {
+        for (Channel webChannel : webChannels) {
+            StateHolderUtil.applyRoleChanges(webChannel, role);
         }
     }
 

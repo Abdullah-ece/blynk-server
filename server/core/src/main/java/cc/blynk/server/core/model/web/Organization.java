@@ -349,9 +349,9 @@ public class Organization {
         this.lastModifiedTs = System.currentTimeMillis();
     }
 
-    public void updateRole(Role roleDTO) {
-        int index = getRoleIndexOrThrow(roleDTO.id);
-        this.roles = ArrayUtil.copyAndReplace(this.roles, roleDTO, index);
+    public void updateRole(Role updatedRole) {
+        int index = getRoleIndexOrThrow(updatedRole.id);
+        this.roles = ArrayUtil.copyAndReplace(this.roles, updatedRole, index);
         this.lastModifiedTs = System.currentTimeMillis();
     }
 

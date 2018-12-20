@@ -1,6 +1,7 @@
 package cc.blynk.server.internal;
 
 import cc.blynk.server.common.BaseSimpleChannelInboundHandler;
+import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.core.session.mobile.BaseUserStateHolder;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
@@ -27,6 +28,13 @@ public final class StateHolderUtil {
     public static WebAppStateHolder getWebState(Channel channel) {
         BaseSimpleChannelInboundHandler handler = channel.pipeline().get(BaseSimpleChannelInboundHandler.class);
         return handler == null ? null : (WebAppStateHolder) handler.getState();
+    }
+
+    public static void applyRoleChanges(Channel channel, Role role) {
+        BaseSimpleChannelInboundHandler handler = channel.pipeline().get(BaseSimpleChannelInboundHandler.class);
+        if (handler != null) {
+            handler.updateRole(role);
+        }
     }
 
     public static boolean isSameDeviceId(Channel channel, int deviceId) {

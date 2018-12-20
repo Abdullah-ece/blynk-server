@@ -12,14 +12,14 @@ public abstract class BaseUserStateHolder {
 
     public final int orgId;
     public final User user;
-    public final Role role;
     public final Version version;
+    public Role role;
 
-    public BaseUserStateHolder(int orgId, User user, Role role, Version version) {
+    public BaseUserStateHolder(int orgId, User user, Version version, Role role) {
         this.orgId = orgId;
         this.user = user;
-        this.role = role;
         this.version = version;
+        this.role = role;
     }
 
     public boolean isSameUser(String email) {
@@ -28,6 +28,10 @@ public abstract class BaseUserStateHolder {
 
     public boolean contains(String sharedToken) {
         return true;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 
 }

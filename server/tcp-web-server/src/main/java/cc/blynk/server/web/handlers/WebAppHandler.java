@@ -4,6 +4,7 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.logic.MobileLogoutLogic;
 import cc.blynk.server.common.JsonBasedSimpleChannelInboundHandler;
 import cc.blynk.server.common.handlers.logic.PingLogic;
+import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
 import cc.blynk.server.web.handlers.logic.account.WebEditAccountLogic;
@@ -374,5 +375,13 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
     @Override
     public WebAppStateHolder getState() {
         return state;
+    }
+
+    @Override
+    public void updateRole(Role role) {
+        if (state.role.id == role.id) {
+            state.setRole(role);
+            log.trace("Changing session role for {}.", state.user.email);
+        }
     }
 }
