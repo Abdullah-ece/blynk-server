@@ -15,7 +15,7 @@ import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
 import io.netty.channel.ChannelHandlerContext;
 
-import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_DEVICES_CREATE;
+import static cc.blynk.server.core.model.permissions.PermissionsTable.OWN_DEVICES_CREATE;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.server.internal.WebByteBufUtil.json;
 import static cc.blynk.utils.StringUtils.split2;
@@ -25,31 +25,32 @@ import static cc.blynk.utils.StringUtils.split2;
  * Created by Dmitriy Dumanskiy.
  * Created on 13.04.18.
  */
-public final class WebCreateDeviceLogic implements PermissionBasedLogic<WebAppStateHolder> {
+public final class WebCreateOwnDeviceLogic implements PermissionBasedLogic<WebAppStateHolder> {
 
     private final DeviceDao deviceDao;
     private final OrganizationDao organizationDao;
 
-    public WebCreateDeviceLogic(Holder holder) {
+    WebCreateOwnDeviceLogic(Holder holder) {
         this.deviceDao = holder.deviceDao;
         this.organizationDao = holder.organizationDao;
     }
 
     @Override
     public boolean hasPermission(Role role) {
-        return role.canCreateOrgDevice();
+        return role.canCreateOwnDevice();
     }
 
     @Override
     public int getPermission() {
-        return ORG_DEVICES_CREATE;
+        return OWN_DEVICES_CREATE;
     }
 
     @Override
     public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         String[] split = split2(message.body);
 
-        int orgId = state.selectedOrgId;
+        //todo check access to this org
+        int orgId = Integer.parseInt(split[0]);
         User user = state.user;
         Device newDevice = JsonParser.parseDevice(split[1], message.id);
 

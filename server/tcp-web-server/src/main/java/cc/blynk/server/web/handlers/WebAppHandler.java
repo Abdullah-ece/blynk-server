@@ -9,7 +9,7 @@ import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
 import cc.blynk.server.web.handlers.logic.account.WebEditAccountLogic;
 import cc.blynk.server.web.handlers.logic.account.WebGetAccountLogic;
-import cc.blynk.server.web.handlers.logic.device.WebCreateDeviceLogic;
+import cc.blynk.server.web.handlers.logic.device.WebCreateOrgDeviceLogic;
 import cc.blynk.server.web.handlers.logic.device.WebDeleteOrgDeviceLogic;
 import cc.blynk.server.web.handlers.logic.device.WebEditOrgDeviceLogic;
 import cc.blynk.server.web.handlers.logic.device.WebGetGraphDataLogic;
@@ -120,7 +120,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
     private final WebAppControlHardwareLogic webAppControlHardwareLogic;
     private final WebGetGraphDataLogic getWebGraphDataLogic;
     private final WebResolveLogEventLogic webResolveLogEventLogic;
-    private final WebCreateDeviceLogic webCreateDeviceLogic;
+    private final WebCreateOrgDeviceLogic webCreateOrgDeviceLogic;
     private final WebGetOrgDeviceLogic webGetOrgDeviceLogic;
     private final WebGetOrganizationLogic webGetOrganizationLogic;
     private final WebGetOrganizationsLogic webGetOrganizationsLogic;
@@ -169,7 +169,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
         this.webAppControlHardwareLogic = new WebAppControlHardwareLogic(holder);
         this.getWebGraphDataLogic = new WebGetGraphDataLogic(holder);
         this.webResolveLogEventLogic = new WebResolveLogEventLogic(holder);
-        this.webCreateDeviceLogic = new WebCreateDeviceLogic(holder);
+        this.webCreateOrgDeviceLogic = new WebCreateOrgDeviceLogic(holder);
         this.webGetOrgDeviceLogic = new WebGetOrgDeviceLogic(holder);
         this.webGetOrganizationLogic = new WebGetOrganizationLogic(holder);
         this.webGetOrganizationsLogic = new WebGetOrganizationsLogic(holder);
@@ -241,7 +241,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
                 PingLogic.messageReceived(ctx, msg.id);
                 break;
             case WEB_CREATE_DEVICE :
-                webCreateDeviceLogic.messageReceived(ctx, state, msg);
+                webCreateOrgDeviceLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_UPDATE_DEVICE :
                 webEditOrgDeviceLogic.messageReceived(ctx, state, msg);

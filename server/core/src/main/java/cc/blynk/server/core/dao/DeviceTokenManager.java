@@ -79,6 +79,7 @@ public class DeviceTokenManager {
         device.activatedAt = now;
         device.activatedBy = email;
         device.updatedAt = now;
+        device.setDeviceOwnerInMeta(email);
 
         dbManager.assignServerToToken(newToken, host, email, device.id);
         if (oldToken != null) {

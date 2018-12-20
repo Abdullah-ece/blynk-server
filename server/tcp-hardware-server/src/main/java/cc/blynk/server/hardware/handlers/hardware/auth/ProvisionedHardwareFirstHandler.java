@@ -8,7 +8,6 @@ import cc.blynk.server.core.model.device.HardwareInfo;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
-import cc.blynk.server.core.model.web.product.metafields.DeviceOwnerMetaField;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.hardware.internal.ProvisionedDeviceAddedMessage;
@@ -53,17 +52,6 @@ public class ProvisionedHardwareFirstHandler extends SimpleChannelInboundHandler
         this.user = user;
         this.device = device;
         this.msgId = msgId;
-    }
-
-    private static void setDeviceOwnerInMeta(MetaField[] metaFields, String email) {
-        for (int i = 0; i < metaFields.length; i++) {
-            MetaField metaField = metaFields[i];
-            if (metaField instanceof DeviceOwnerMetaField) {
-                DeviceOwnerMetaField deviceOwnerMetaField = (DeviceOwnerMetaField) metaField;
-                metaFields[i] = deviceOwnerMetaField.copy(email);
-                return;
-            }
-        }
     }
 
     private void getProductAndOrgByTemplateId(int orgId, String templateId) {
@@ -147,7 +135,7 @@ public class ProvisionedHardwareFirstHandler extends SimpleChannelInboundHandler
                         //setting iconName and boardType from the template
                         setDeviceIconAndBoardNameFromDevice(templateId);
                     }
-                    setDeviceOwnerInMeta(metaFields, user.email);
+
                     device.metaFields = metaFields;
                     device.updateNameFromMetafields();
                     holder.deviceDao.createWithPredefinedIdAndToken(orgId, user.email, product, device);

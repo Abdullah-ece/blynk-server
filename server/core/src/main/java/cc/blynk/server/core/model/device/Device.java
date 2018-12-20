@@ -446,6 +446,19 @@ public class Device implements Target {
         }
     }
 
+    public void setDeviceOwnerInMeta(String email) {
+        MetaField[] metaFields = this.metaFields;
+        for (int i = 0; i < metaFields.length; i++) {
+            MetaField metaField = metaFields[i];
+            if (metaField instanceof DeviceOwnerMetaField) {
+                DeviceOwnerMetaField deviceOwnerMetaField = (DeviceOwnerMetaField) metaField;
+                metaFields[i] = deviceOwnerMetaField.copy(email);
+                this.metaFields = metaFields;
+                return;
+            }
+        }
+    }
+
     @Override
     public String toString() {
         return JsonParser.toJson(this);
