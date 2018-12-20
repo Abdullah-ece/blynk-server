@@ -60,7 +60,7 @@ public class MobileHardwareResendFromBTLogic extends BaseProcessorHandler {
         if (isWriteOperation(split[1])) {
             String[] splitBody = split3(split[1]);
 
-            if (splitBody.length < 3 || splitBody[0].length() == 0 || splitBody[2].length() == 0) {
+            if (splitBody.length < 3 || splitBody[0].isEmpty() || splitBody[2].isEmpty()) {
                 log.debug("MobileHardwareResendFromBTLogic write command is wrong.");
                 throw new JsonException("Write command is wrong.");
             }

@@ -73,7 +73,7 @@ public class InetAddressValidator {
 
         // verify that address subgroups are legal
         for (String ipSegment : groups) {
-            if (ipSegment == null || ipSegment.length() == 0) {
+            if (ipSegment == null || ipSegment.isEmpty()) {
                 return false;
             }
 
@@ -132,7 +132,7 @@ public class InetAddressValidator {
         int emptyOctets = 0; // consecutive empty chunks
         for (int index = 0; index < octets.length; index++) {
             String octet = octets[index];
-            if (octet.length() == 0) {
+            if (octet.isEmpty()) {
                 emptyOctets++;
                 if (emptyOctets > 1) {
                     return false;

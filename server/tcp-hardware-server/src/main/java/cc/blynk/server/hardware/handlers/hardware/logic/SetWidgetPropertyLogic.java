@@ -46,7 +46,7 @@ public final class SetWidgetPropertyLogic {
         String property = bodyParts[1];
         String propertyValue = bodyParts[2];
 
-        if (property.length() == 0 || propertyValue.length() == 0) {
+        if (property.isEmpty() || propertyValue.isEmpty()) {
             log.debug("SetWidgetProperty command body has wrong format. {}", message.body);
             ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
             return;

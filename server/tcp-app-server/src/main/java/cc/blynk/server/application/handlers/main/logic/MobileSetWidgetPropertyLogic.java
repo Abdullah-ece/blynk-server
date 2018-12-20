@@ -39,7 +39,7 @@ public final class MobileSetWidgetPropertyLogic {
         var property = splitBody[2];
         var propertyValue = splitBody[3];
 
-        if (property.length() == 0 || propertyValue.length() == 0) {
+        if (property.isEmpty() || propertyValue.isEmpty()) {
             log.debug("AppSetWidgetProperty command body has wrong format. {}", message.body);
             throw new JsonException("SetProperty command body has wrong format.");
         }

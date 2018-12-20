@@ -94,7 +94,7 @@ public class RegexValidator {
         patterns = new Pattern[regexs.length];
         int flags =  (caseSensitive ? 0 : Pattern.CASE_INSENSITIVE);
         for (int i = 0; i < regexs.length; i++) {
-            if (regexs[i] == null || regexs[i].length() == 0) {
+            if (regexs[i] == null || regexs[i].isEmpty()) {
                 throw new IllegalArgumentException("Regular expression[" + i + "] is missing");
             }
             patterns[i] =  Pattern.compile(regexs[i], flags);

@@ -85,7 +85,7 @@ public class ProvisionedHardwareFirstHandler extends SimpleChannelInboundHandler
         if (message.command == BLYNK_INTERNAL) {
             String[] messageParts = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
 
-            if (messageParts.length == 0 || messageParts[0].length() == 0) {
+            if (messageParts.length == 0 || messageParts[0].isEmpty()) {
                 ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
                 return;
             }
