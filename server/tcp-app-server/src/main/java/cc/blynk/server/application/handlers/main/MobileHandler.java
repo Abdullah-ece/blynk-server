@@ -61,6 +61,7 @@ import cc.blynk.server.application.handlers.main.logic.sharing.MobileRefreshShar
 import cc.blynk.server.application.handlers.main.logic.sharing.MobileShareLogic;
 import cc.blynk.server.common.JsonBasedSimpleChannelInboundHandler;
 import cc.blynk.server.common.handlers.logic.PingLogic;
+import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.mobile.MobileStateHolder;
 import io.netty.channel.ChannelHandlerContext;
@@ -378,5 +379,13 @@ public class MobileHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
     @Override
     public MobileStateHolder getState() {
         return state;
+    }
+
+    @Override
+    public void updateRole(Role role) {
+        if (state.role.id == role.id) {
+            state.setRole(role);
+            log.trace("Changing mobile session role for {}.", state.user.email);
+        }
     }
 }

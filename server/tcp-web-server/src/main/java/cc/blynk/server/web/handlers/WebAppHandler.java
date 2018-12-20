@@ -381,7 +381,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
     public void updateRole(Role role) {
         if (state.role.id == role.id) {
             state.setRole(role);
-            log.trace("Changing session role for {}.", state.user.email);
+            log.trace("Changing ws session role for {}.", state.user.email);
         }
     }
 }
