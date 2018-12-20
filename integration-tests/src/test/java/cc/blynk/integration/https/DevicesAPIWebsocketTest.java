@@ -521,7 +521,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertEquals(2, deviceNameMetaField.id);
         assertEquals("Device Name", deviceNameMetaField.name);
         assertEquals(1, deviceNameMetaField.roleIds[0]);
-        assertEquals("My Default device Name", deviceNameMetaField.value);
+        assertEquals("My New Device", deviceNameMetaField.value);
     }
 
     @Test
@@ -610,7 +610,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertEquals(2, deviceNameMetaField.id);
         assertEquals("Device Name", deviceNameMetaField.name);
         assertEquals(1, deviceNameMetaField.roleIds[0]);
-        assertEquals("My Default device Name", deviceNameMetaField.value);
+        assertEquals("My New Device", deviceNameMetaField.value);
     }
 
     @Test
@@ -656,7 +656,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertEquals(2, textMetaField.id);
         assertEquals("Device Name", textMetaField.name);
         assertEquals(1, textMetaField.roleIds[0]);
-        assertEquals("My Default device Name", textMetaField.value);
+        assertEquals("My New Device", textMetaField.value);
 
         NumberMetaField newMeta = createNumberMeta(1, "Jopa", 10000D, true);
         appClient.updateDeviceMetafield(createdDevice.id, newMeta);
@@ -717,7 +717,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertEquals(2, deviceNameMetaField.id);
         assertEquals("Device Name", deviceNameMetaField.name);
         assertEquals(1, deviceNameMetaField.roleIds[0]);
-        assertEquals("My Default device Name", deviceNameMetaField.value);
+        assertEquals("My New Device", deviceNameMetaField.value);
 
         client.trackDevice(createdDevice.id);
         client.verifyResult(ok(3));
@@ -795,7 +795,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertEquals(2, deviceNameMetaField.id);
         assertEquals("Device Name", deviceNameMetaField.name);
         assertEquals(1, deviceNameMetaField.roleIds[0]);
-        assertEquals("My Default device Name", deviceNameMetaField.value);
+        assertEquals("My New Device", deviceNameMetaField.value);
 
         metaFields = new MetaField[] {
                 createNumberMeta(1, "Jopa", 1000D, true),
@@ -866,7 +866,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertEquals(2, deviceNameMetaField.id);
         assertEquals("Device Name", deviceNameMetaField.name);
         assertEquals(1, deviceNameMetaField.roleIds[0]);
-        assertEquals("My Default device Name", deviceNameMetaField.value);
+        assertEquals("My New Device", deviceNameMetaField.value);
 
         metaFields = new MetaField[] {
                 createNumberMeta(10, "Jopa", 123D, true),
@@ -918,7 +918,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertEquals(2, textMetaField.id);
         assertEquals("Device Name", textMetaField.name);
         assertEquals(1, textMetaField.roleIds[0]);
-        assertEquals("My Default device Name", textMetaField.value);
+        assertEquals("My New Device", textMetaField.value);
 
         MetaField updatedMeta = createDeviceNameMeta(2, "Device Name", "Updated Name", true);
         appClient.updateDeviceMetafield(createdDevice.id, updatedMeta);

@@ -66,7 +66,7 @@ public final class WebDeleteOwnDeviceLogic implements PermissionBasedLogic<WebAp
             return;
         }
 
-        if (!device.hasOwner(state.user.email)) {
+        if (!state.role.canDeleteOrgDevice() && !device.hasOwner(state.user.email)) {
             log.error("User {} is not owner of requested deviceId {}.", user.email, deviceId);
             throw new NoPermissionException("User is not owner of requested device.");
         }

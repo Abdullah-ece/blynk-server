@@ -51,9 +51,9 @@ public final class WebEditOwnDeviceLogic implements PermissionBasedLogic<WebAppS
     public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         String[] split = split2(message.body);
 
-        int orgId = state.selectedOrgId;
-
         //todo refactor when permissions ready
+        //todo check access for the device
+        int orgId = state.selectedOrgId;
         User user = state.user;
         Device newDevice = JsonParser.parseDevice(split[1], message.id);
 
@@ -75,7 +75,7 @@ public final class WebEditOwnDeviceLogic implements PermissionBasedLogic<WebAppS
             return;
         }
 
-        if (!newDevice.hasOwner(state.user)) {
+        if (!state.role.canEditOrgDevice() && !newDevice.hasOwner(state.user)) {
             log.error("User {} is not owner of requested deviceId {}.", user.email, newDevice.id);
             throw new NoPermissionException("User is not owner of requested device.");
         }
@@ -94,7 +94,7 @@ public final class WebEditOwnDeviceLogic implements PermissionBasedLogic<WebAppS
         existingDevice.updateFromWeb(newDevice);
 
         if (ctx.channel().isWritable()) {
-            String deviceString = new DeviceDTO(newDevice, product, org.name).toString();
+            String deviceString = new DeviceDTO(existingDevice, product, org.name).toString();
             ctx.writeAndFlush(makeUTF8StringMessage(message.command, message.id, deviceString), ctx.voidPromise());
         }
     }

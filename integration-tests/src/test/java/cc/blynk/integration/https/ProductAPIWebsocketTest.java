@@ -755,7 +755,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertEquals(1, deviceNameMetaField.id);
         assertEquals("Device name", deviceNameMetaField.name);
         assertEquals(1, deviceNameMetaField.roleIds[0]);
-        assertEquals("Default name", deviceNameMetaField.value);
+        assertEquals(newDevice.name, deviceNameMetaField.value);
 
         DeviceOwnerMetaField deviceOwnerMetaField = (DeviceOwnerMetaField) newDevice.metaFields[1];
         assertEquals(2, deviceOwnerMetaField.id);
@@ -785,9 +785,9 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertEquals(4, newDevice.metaFields.length);
         deviceNameMetaField = (DeviceNameMetaField) newDevice.metaFields[0];
         assertEquals(1, deviceNameMetaField.id);
-        assertEquals("Device name 2", deviceNameMetaField.name);
+        assertEquals("Device name", deviceNameMetaField.name);
         assertEquals(1, deviceNameMetaField.roleIds[0]);
-        assertEquals("Updated device name", deviceNameMetaField.value);
+        assertEquals(newDevice.name, deviceNameMetaField.value);
 
         fromApiProduct = updateProductMetafields(fromApiProduct,
                 createDeviceNameMeta(1, "Device name 2", "Updated device name", true),
@@ -808,7 +808,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertEquals(1, deviceNameMetaField.id);
         assertEquals("Device name 2", deviceNameMetaField.name);
         assertEquals(1, deviceNameMetaField.roleIds[0]);
-        assertEquals("Updated device name", deviceNameMetaField.value);
+        assertEquals("My New Device", deviceNameMetaField.value);
 
         deviceOwnerMetaField = (DeviceOwnerMetaField) newDevice.metaFields[1];
         assertEquals(2, deviceOwnerMetaField.id);

@@ -272,7 +272,8 @@ public class Device implements Target {
 
     public void updateFromWeb(Device newDevice) {
         this.productId = newDevice.productId;
-        this.metaFields = newDevice.metaFields;
+        //dod not update metafields by purpose we have separate atomic api fro metafield update
+        //this.metaFields = newDevice.metaFields;
         this.webDashboard = newDevice.webDashboard;
         updateFromMobile(newDevice);
     }
