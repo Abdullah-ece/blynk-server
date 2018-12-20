@@ -6,10 +6,8 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.storage.key.DeviceStorageKey;
 import cc.blynk.server.core.model.storage.value.PinStorageValue;
-import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
-import cc.blynk.server.core.protocol.exceptions.NoPermissionException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.mobile.MobileStateHolder;
 import io.netty.channel.ChannelHandlerContext;
@@ -53,15 +51,8 @@ public final class MobileGetWidgetLogic {
         var widget = dash.getWidgetByIdOrThrow(widgetId);
 
         if (widget instanceof DeviceTiles) {
-            Organization org = organizationDao.getOrgByIdOrThrow(state.user.orgId);
-            List<Device> devices;
-            if (state.role.canViewOrgDevices()) {
-                devices = org.getAllDevices();
-            } else if (state.role.canViewOrgDevices()) {
-                devices = org.getDevicesByOwner(state.user.email);
-            } else {
-                throw new NoPermissionException("User has no permission to view devices.");
-            }
+            List<Device> devices = organizationDao.getDevices(state);
+
             DeviceTiles deviceTiles = (DeviceTiles) widget;
             deviceTiles.recreateTiles(devices);
 

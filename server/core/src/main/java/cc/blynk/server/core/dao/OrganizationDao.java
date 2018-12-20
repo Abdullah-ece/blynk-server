@@ -11,6 +11,7 @@ import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.exceptions.NoPermissionException;
+import cc.blynk.server.core.session.mobile.BaseUserStateHolder;
 import cc.blynk.utils.IntArray;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -375,6 +376,21 @@ public class OrganizationDao {
         int[] subProductIds = subProductIds(orgId, productId);
         if (subProductIds.length != 0) {
             throw new JsonException("You can't delete product that is used in sub organizations.");
+        }
+    }
+
+    public List<Device> getDevices(BaseUserStateHolder state) {
+        return getDevices(state.orgId, state.role, state.user.email);
+    }
+
+    public List<Device> getDevices(int userOrgId, Role userRole, String email) {
+        Organization org = getOrgByIdOrThrow(userOrgId);
+        if (userRole.canViewOrgDevices()) {
+            return org.getAllDevices();
+        } else if (userRole.canViewOwnDevices()) {
+            return org.getDevicesByOwner(email);
+        } else {
+            throw new NoPermissionException("User has no permission to view devices.");
         }
     }
 

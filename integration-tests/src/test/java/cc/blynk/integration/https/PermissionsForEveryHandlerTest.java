@@ -1,9 +1,11 @@
 package cc.blynk.integration.https;
 
 import cc.blynk.integration.SingleServerInstancePerTestWithDBAndNewOrg;
+import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
 import cc.blynk.server.api.http.dashboard.dto.RoleDTO;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.dto.DeviceDTO;
 import cc.blynk.server.core.model.dto.OrganizationDTO;
 import cc.blynk.server.core.model.dto.OtaDTO;
 import cc.blynk.server.core.model.permissions.Role;
@@ -21,6 +23,7 @@ import static cc.blynk.integration.TestUtil.loggedDefaultClient;
 import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.integration.TestUtil.webJson;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_CREATE;
+import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_DEVICES_VIEW;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_SWITCH;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.OTA_START;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.OTA_STOP;
@@ -173,6 +176,28 @@ public class PermissionsForEveryHandlerTest extends SingleServerInstancePerTestW
 
         appWebSocketClient.getOrganizationHierarchy();
         appWebSocketClient.verifyResult(webJson(2, "User testpermissions@gmail.com has no permission for 'switch organization' operation."));
+
+        TestAppClient invitedUserAppClient = new TestAppClient(properties);
+        invitedUserAppClient.start();
+        invitedUserAppClient.login("testpermissions@gmail.com", "1");
+        invitedUserAppClient.verifyResult(ok(1));
+
+        invitedUserAppClient.getDevices();
+        DeviceDTO[] deviceDTO = invitedUserAppClient.parseDevicesDTO(2);
+        assertNotNull(deviceDTO);
+        assertEquals(0, deviceDTO.length);
+
+        updatedPerm = removePermission(ORG_DEVICES_VIEW);
+        client.updateRole(new RoleDTO(createRole.id, createRole.name, updatedPerm, createRole.permissionGroup2));
+        roleDTO = client.parseRoleDTO(7);
+        assertNotNull(roleDTO);
+        assertEquals(4, roleDTO.id);
+        assertEquals(updatedPerm, roleDTO.permissionGroup1);
+
+        invitedUserAppClient.getDevices();
+        deviceDTO = invitedUserAppClient.parseDevicesDTO(3);
+        assertNotNull(deviceDTO);
+        assertEquals(0, deviceDTO.length);
     }
 
     @Test

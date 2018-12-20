@@ -10,8 +10,6 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.profile.Profile;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.core.model.web.Organization;
-import cc.blynk.server.core.protocol.exceptions.NoPermissionException;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.mobile.BaseUserStateHolder;
@@ -79,15 +77,7 @@ public final class MobileLoadProfileGzippedLogic {
         int msgId = message.id;
 
         //load all
-        Organization org = organizationDao.getOrgByIdOrThrow(state.user.orgId);
-        List<Device> devices;
-        if (state.role.canViewOrgDevices()) {
-            devices = org.getAllDevices();
-        } else if (state.role.canViewOrgDevices()) {
-            devices = org.getDevicesByOwner(state.user.email);
-        } else {
-            throw new NoPermissionException("User has no permission to view devices.");
-        }
+        List<Device> devices = organizationDao.getDevices(state);
 
         //todo do not return tokens via load profile
         if (message.body.isEmpty()) {
