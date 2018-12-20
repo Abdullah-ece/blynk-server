@@ -22,6 +22,7 @@ class UserProfile extends Component {
     onAccountSave: React.PropTypes.func,
     onAccountResetPassword: React.PropTypes.func,
 
+    GetRolesUsers: React.PropTypes.func,
     GetPermissions: React.PropTypes.func,
     onOrganizationSave: React.PropTypes.func,
     onOrganizationLogoUpdate: React.PropTypes.func,
@@ -37,8 +38,10 @@ class UserProfile extends Component {
   handleTabChange(tab) {
 
     if (tab === 'roles-and-permissions') {
-      this.props.GetPermissions().then(()=>{
-        this.props.onTabChange(tab);
+      this.props.GetPermissions().then(() => {
+        this.props.GetRolesUsers().then(() => {
+          this.props.onTabChange(tab);
+        });
       });
     } else {
       this.props.onTabChange(tab);

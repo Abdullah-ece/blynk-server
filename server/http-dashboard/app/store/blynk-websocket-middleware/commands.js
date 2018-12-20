@@ -82,6 +82,7 @@ export const API_COMMANDS = {
   WEB_GET_ROLE                  : 135, // accepts roleId
   WEB_GET_ROLES                 : 136, // no params required
   WEB_DELETE_ROLE               : 137, // accepts roleId
+  WEB_GET_USER_COUNTERS_BY_ROLE : 146
 };
 
 export const getCommandKeyName = (value) => {

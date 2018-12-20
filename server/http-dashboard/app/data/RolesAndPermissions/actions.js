@@ -11,6 +11,17 @@ export function GetPermissions() {
   };
 }
 
+export function GetRolesUsers() {
+  return {
+    type: 'WEB_GET_USER_COUNTERS_BY_ROLE',
+    ws: {
+      request: {
+        command: API_COMMANDS.WEB_GET_USER_COUNTERS_BY_ROLE
+      }
+    }
+  };
+}
+
 export function GetPermissionsForRole(data) {
   return {
     type: 'WEB_GET_ROLE',

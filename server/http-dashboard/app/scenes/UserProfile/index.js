@@ -27,6 +27,7 @@ import {
 
 import {
   GetPermissions,
+  GetRolesUsers,
 } from 'data/RolesAndPermissions/actions';
 
 
@@ -43,6 +44,7 @@ import {
     AccountSave: bindActionCreators(AccountSave, dispatch),
     AccountResetPassword: bindActionCreators(AccountResetPassword, dispatch),
     GetPermissions: bindActionCreators(GetPermissions, dispatch),
+    GetRolesUsers: bindActionCreators(GetRolesUsers, dispatch),
 
     OrganizationBrandingUpdate: bindActionCreators(OrganizationBrandingUpdate, dispatch),
     OrganizationUpdateName: bindActionCreators(OrganizationUpdateName, dispatch),
@@ -81,6 +83,7 @@ class UserProfile extends Component {
     OrganizationUsersFetch: React.PropTypes.func,
     OrganizationSendInvite: React.PropTypes.func,
     GetPermissions: React.PropTypes.func,
+    GetRolesUsers: React.PropTypes.func,
   };
 
   constructor(props) {
@@ -172,6 +175,7 @@ class UserProfile extends Component {
                             onOrganizationUsersFetch = {this.handleOrganizationUsersFetch}
                             onOrganizationSendInvite = {this.handleOrganizationSendInvite}
                             GetPermissions = {this.props.GetPermissions}
+                            GetRolesUsers = {this.props.GetRolesUsers}
                             onResetForm = {this.props.ResetForm}/>
     );
   }

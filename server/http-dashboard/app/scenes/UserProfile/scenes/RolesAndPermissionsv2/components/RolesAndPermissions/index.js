@@ -210,6 +210,7 @@ class RolesAndPermissions extends React.Component {
     roles: PropTypes.array,
     GetPermissions: PropTypes.func,
     UpdateRole: PropTypes.func,
+    GetRolesUsers: PropTypes.func,
   };
 
   constructor(props) {
@@ -234,7 +235,9 @@ class RolesAndPermissions extends React.Component {
   }
 
   componentDidMount() {
-    this.props.GetPermissions();
+    this.props.GetPermissions().then(()=>{
+      this.props.GetRolesUsers();
+    });
   }
 
   handleExpandAll() {

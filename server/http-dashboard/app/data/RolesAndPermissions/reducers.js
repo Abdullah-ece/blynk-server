@@ -1,5 +1,6 @@
 const initialState = {
-  roles: []
+  roles: [],
+  usersPerRole: {}
 };
 
 export default function RolesAndPermissions(state = initialState, action) {
@@ -53,6 +54,11 @@ export default function RolesAndPermissions(state = initialState, action) {
         })
       };
 
+    case "WEB_GET_USER_COUNTERS_BY_ROLE":
+      return {
+        ...state,
+        usersPerRole: action.payload.data
+      };
     default:
       return state;
   }
