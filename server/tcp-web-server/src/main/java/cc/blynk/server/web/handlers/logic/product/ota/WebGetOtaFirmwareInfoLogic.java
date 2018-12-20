@@ -43,7 +43,7 @@ public final class WebGetOtaFirmwareInfoLogic implements PermissionBasedLogic<We
     public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         String pathToFirmware = message.body;
 
-        if (pathToFirmware == null) {
+        if (pathToFirmware.isEmpty()) {
             log.error("Path to firmware is not provided. User {}.", state.user.email);
             throw new JsonException("Path to firmware is not provided.");
         }

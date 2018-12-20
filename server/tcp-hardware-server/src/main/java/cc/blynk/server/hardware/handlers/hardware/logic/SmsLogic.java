@@ -38,7 +38,7 @@ public class SmsLogic extends NotificationBase {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
-        if (message.body == null || message.body.isEmpty() || message.body.length() > MAX_SMS_BODY_SIZE) {
+        if (message.body.isEmpty() || message.body.length() > MAX_SMS_BODY_SIZE) {
             log.debug("Notification message is empty or larger than limit.");
             ctx.writeAndFlush(notificationInvalidBody(message.id), ctx.voidPromise());
             return;

@@ -26,7 +26,7 @@ public final class MobileUpdateAppLogic {
                                        StringMessage message, int maxWidgetSize) {
         var appString = message.body;
 
-        if (appString == null || appString.isEmpty()) {
+        if (appString.isEmpty()) {
             throw new JsonException("Income app message is empty.");
         }
 

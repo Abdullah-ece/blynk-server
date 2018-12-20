@@ -32,7 +32,7 @@ public final class MobileUpdateDashLogic {
                                        MobileStateHolder state, StringMessage message) {
         String dashString = message.body;
 
-        if (dashString == null || dashString.isEmpty()) {
+        if (dashString.isEmpty()) {
             throw new JsonException("Income create dash message is empty.");
         }
 

@@ -27,7 +27,8 @@ public final class MobileGetProvisionTokenLogic {
 
     public static void messageReceived(Holder holder, ChannelHandlerContext ctx, User user, StringMessage message) {
         String deviceString = message.body;
-        if (deviceString == null || deviceString.isEmpty()) {
+
+        if (deviceString.isEmpty()) {
             throw new IllegalCommandException("Income device message is empty.");
         }
 

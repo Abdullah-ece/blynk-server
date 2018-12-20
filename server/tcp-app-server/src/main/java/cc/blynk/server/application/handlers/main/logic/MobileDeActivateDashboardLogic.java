@@ -30,7 +30,7 @@ public final class MobileDeActivateDashboardLogic {
         var user = state.user;
 
         String sharedToken;
-        if (message.body.length() > 0) {
+        if (!message.body.isEmpty()) {
             log.debug("DeActivating dash {} for user {}", message.body, user.email);
             int dashId = Integer.parseInt(message.body);
             DashBoard dashBoard = user.profile.getDashByIdOrThrow(dashId);

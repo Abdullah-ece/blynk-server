@@ -34,7 +34,7 @@ public final class HardwareSyncLogic {
                                        StringMessage message) {
         Device device = state.device;
 
-        if (message.body.length() == 0) {
+        if (message.body.isEmpty()) {
             syncAll(ctx, message.id, device);
         } else {
             syncSpecificPins(ctx, message.body, message.id, device);

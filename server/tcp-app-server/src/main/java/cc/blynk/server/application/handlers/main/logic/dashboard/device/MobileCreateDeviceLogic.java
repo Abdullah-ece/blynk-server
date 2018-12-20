@@ -30,7 +30,7 @@ public final class MobileCreateDeviceLogic {
                                        User user, StringMessage message) {
         String deviceString = message.body;
 
-        if (deviceString == null || deviceString.isEmpty()) {
+        if (deviceString.isEmpty()) {
             throw new JsonException("Income device message is empty.");
         }
 

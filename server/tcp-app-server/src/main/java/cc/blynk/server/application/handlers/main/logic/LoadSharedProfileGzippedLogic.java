@@ -23,7 +23,7 @@ public final class LoadSharedProfileGzippedLogic {
     public static void messageReceived(ChannelHandlerContext ctx, MobileShareStateHolder state, StringMessage message) {
         byte[] data;
         var user = state.user;
-        if (message.body.length() == 0) {
+        if (message.body.isEmpty()) {
             var dash = user.profile.getDashByIdOrThrow(state.dashId);
             var profile = new Profile();
             profile.dashBoards = new DashBoard[] {dash};

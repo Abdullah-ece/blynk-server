@@ -29,7 +29,7 @@ public final class MobileUpdateProfileSettingLogic {
                                        StringMessage message) {
 
         String body = message.body;
-        if (body == null || body.isEmpty()) {
+        if (body.isEmpty()) {
             throw new JsonException("Income edit profile settings message is empty.");
         }
 

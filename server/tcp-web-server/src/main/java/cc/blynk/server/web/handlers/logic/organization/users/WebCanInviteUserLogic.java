@@ -40,7 +40,7 @@ public final class WebCanInviteUserLogic implements PermissionBasedLogic<WebAppS
 
     @Override
     public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
-        if (message.body == null) {
+        if (message.body.isEmpty()) {
             throw new JsonException("Invalid email.");
         }
 
