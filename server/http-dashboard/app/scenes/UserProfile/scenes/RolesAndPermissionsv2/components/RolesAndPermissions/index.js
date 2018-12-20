@@ -208,6 +208,7 @@ class RolesAndPermissions extends React.Component {
 
   static propTypes = {
     roles: PropTypes.array,
+    usersPerRole: PropTypes.object,
     GetPermissions: PropTypes.func,
     UpdateRole: PropTypes.func,
     GetRolesUsers: PropTypes.func,
@@ -235,7 +236,7 @@ class RolesAndPermissions extends React.Component {
   }
 
   componentDidMount() {
-    this.props.GetPermissions().then(()=>{
+    this.props.GetPermissions().then(() => {
       this.props.GetRolesUsers();
     });
   }
@@ -332,7 +333,7 @@ class RolesAndPermissions extends React.Component {
                 <div className="list-of-permissions-items--content">
                   <Table showHeader={false}
                          pagination={false}
-                         dataSource={this.buildDataSources(0, 2,[1,0])}
+                         dataSource={this.buildDataSources(0, 2, [1, 0])}
                          columns={this.buildColumns('permissions-table-main-column--level2')}/>
                   <div
                     className={'roles-list--role--table-border sub-header'}>Sub
@@ -340,7 +341,7 @@ class RolesAndPermissions extends React.Component {
                   </div>
                   <Table showHeader={false}
                          pagination={false}
-                         dataSource={this.buildDataSources(5, 4,[6,5,7,8])}
+                         dataSource={this.buildDataSources(5, 4, [6, 5, 7, 8])}
                          columns={this.buildColumns('permissions-table-main-column--level2')}/>
                 </div>
               </Panel>
@@ -405,7 +406,7 @@ class RolesAndPermissions extends React.Component {
           type={this.state.currentActiveKeys.indexOf(key.toString()) < 0 ? "plus-square" : "minus-square"}/> {header}
       </div>} key={key} className='list-of-permissions-collapsed-panel'>
         <div className="list-of-permissions-items--content">
-          <div className={'roles-list--role--table-border'} />
+          <div className={'roles-list--role--table-border'}/>
           <Table showHeader={false}
                  pagination={false}
                  dataSource={this.buildDataSources(startingPermission, offset, permissionsList)}
@@ -495,7 +496,7 @@ class RolesAndPermissions extends React.Component {
           </div>
           <div
             className={'user-profile--roles-and-permissions--list-of-permissions--users-count'}>
-            0 USERS
+            {this.props.usersPerRole[role.id] || 0} USERS
           </div>
         </div>);
       }
