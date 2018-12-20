@@ -44,6 +44,7 @@ import cc.blynk.server.web.handlers.logic.organization.dto.TokenDTO;
 import cc.blynk.utils.SHA256Util;
 import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.properties.ServerProperties;
+import com.fasterxml.jackson.core.type.TypeReference;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.ChannelInitializer;
@@ -64,6 +65,8 @@ import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
@@ -231,6 +234,10 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), RoleDTO[].class);
     }
 
+    public Map<Integer, Integer> parseUserCountersPerRole(int expectedMessageOrder) throws Exception {
+        return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), new TypeReference<HashMap<Integer, Integer>>() {});
+    }
+
     public void deleteProduct(int productId) {
         send("webDeleteProduct " + productId);
     }
@@ -281,6 +288,10 @@ public final class AppWebSocketClient extends BaseTestAppClient {
 
     public void deleteOrg(int orgId) {
         send("webDeleteOrg " + orgId);
+    }
+
+    public void getOrganization() {
+        send("webGetOrg");
     }
 
     public void getOrganization(int orgId) {
@@ -350,6 +361,10 @@ public final class AppWebSocketClient extends BaseTestAppClient {
 
     public void getRole(int roleId) {
         send("webGetRole " + roleId);
+    }
+
+    public void getUserCountersByRole() {
+        send("getUserCountersByRole");
     }
 
     public void setAuthToken(int deviceId, String newToken) {

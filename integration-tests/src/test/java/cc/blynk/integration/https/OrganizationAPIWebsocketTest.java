@@ -431,7 +431,7 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
     @Test
     public void userAreRemovedWithOrganization() throws Exception {
         AppWebSocketClient client = loggedDefaultClient("super@blynk.cc", "1");
-        client.getOrganization(-1);
+        client.getOrganization();
         OrganizationDTO organizationDTO = client.parseOrganizationDTO(1);
         assertNotNull(organizationDTO);
         assertEquals(orgId, organizationDTO.id);
@@ -466,7 +466,7 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
     @Test
     public void userCantRemoveOrgWithSubOrganizations() throws Exception {
         AppWebSocketClient client = loggedDefaultClient("super@blynk.cc", "1");
-        client.getOrganization(-1);
+        client.getOrganization();
         OrganizationDTO organizationDTO = client.parseOrganizationDTO(1);
         assertNotNull(organizationDTO);
         assertEquals(orgId, organizationDTO.id);
@@ -492,7 +492,7 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
     @Test
     public void userCantRemoveSubOrgWithoutSwitchingToParentOrg() throws Exception {
         AppWebSocketClient client = loggedDefaultClient("super@blynk.cc", "1");
-        client.getOrganization(-1);
+        client.getOrganization();
         OrganizationDTO organizationDTO = client.parseOrganizationDTO(1);
         assertNotNull(organizationDTO);
         assertEquals(orgId, organizationDTO.id);
@@ -632,7 +632,7 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
     @Test
     public void getOrgHierarchyForSubAdmin() throws Exception {
         AppWebSocketClient client = loggedDefaultClient("super@blynk.cc", "1");
-        client.getOrganization(-1);
+        client.getOrganization();
         OrganizationDTO organizationDTO = client.parseOrganizationDTO(1);
         assertNotNull(organizationDTO);
         assertEquals(orgId, organizationDTO.id);

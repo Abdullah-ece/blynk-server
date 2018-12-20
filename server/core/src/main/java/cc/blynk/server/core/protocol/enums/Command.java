@@ -182,6 +182,7 @@ public final class Command {
     public static final short WEB_OTA_GET_FIRMWARE_INFO = 143;
     public static final short WEB_OTA_CLEAN = 144;
     public static final short WEB_TRACK_ORG = 145;
+    public static final short WEB_GET_USER_COUNTERS_BY_ROLE = 146;
 
     public static final int LAST_COMMAND_INDEX = 150;
 
@@ -321,7 +322,8 @@ public final class Command {
             Map.entry(WEB_OTA_STOP, "WebOtaStop"),
             Map.entry(WEB_OTA_GET_FIRMWARE_INFO, "WebGetFirmwareInfo"),
             Map.entry(WEB_OTA_CLEAN, "WebOtaClean"),
-            Map.entry(WEB_TRACK_ORG, "WebTrackOrg")
+            Map.entry(WEB_TRACK_ORG, "WebTrackOrg"),
+            Map.entry(WEB_GET_USER_COUNTERS_BY_ROLE, "WebGetUserCountersByRole")
     );
 
     public static String getNameByValue(short val) {

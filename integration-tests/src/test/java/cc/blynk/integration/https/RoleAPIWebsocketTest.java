@@ -9,10 +9,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.Map;
+
 import static cc.blynk.integration.TestUtil.loggedDefaultClient;
 import static cc.blynk.integration.TestUtil.ok;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 /**
  * The Blynk Project.
@@ -106,5 +109,18 @@ public class RoleAPIWebsocketTest extends APIBaseTest {
         assertEquals(1, subOrgDTO.roles[0].id);
         assertEquals(3, subOrgDTO.roles[2].id);
         assertEquals("User", subOrgDTO.roles[2].name);
+    }
+
+    @Test
+    public void getRoleCounters() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(admin);
+        client.getUserCountersByRole();
+        Map<Integer, Integer> counters = client.parseUserCountersPerRole(1);
+        assertNotNull(counters);
+        assertEquals(3, counters.size());
+        assertEquals(Integer.valueOf(1), counters.get(0));
+        assertEquals(Integer.valueOf(2), counters.get(1));
+        assertEquals(Integer.valueOf(1), counters.get(2));
+        assertNull(counters.get(3));
     }
 }

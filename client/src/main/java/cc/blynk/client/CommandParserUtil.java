@@ -101,6 +101,7 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_PRODUCT_LOCATI
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ROLE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ROLES;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_TEMP_SECURE_TOKEN;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_USER_COUNTERS_BY_ROLE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_INVITE_USER;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_LOGIN_VIA_INVITE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_OTA_GET_FIRMWARE_INFO;
@@ -376,6 +377,8 @@ public final class CommandParserUtil {
                 return WEB_OTA_START;
             case "webstopota" :
                 return WEB_OTA_STOP;
+            case "getusercountersbyrole" :
+                return WEB_GET_USER_COUNTERS_BY_ROLE;
 
             default:
                 throw new IllegalArgumentException("Unsupported command");
