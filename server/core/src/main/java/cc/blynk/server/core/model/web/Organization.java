@@ -1,6 +1,7 @@
 package cc.blynk.server.core.model.web;
 
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.core.model.dto.DeviceDTO;
 import cc.blynk.server.core.model.dto.DeviceMobileDTO;
 import cc.blynk.server.core.model.dto.OrganizationDTO;
@@ -376,6 +377,14 @@ public class Organization {
             count += product.devices.length;
         }
         return count;
+    }
+
+    public void resetDeviceStatus() {
+        for (Product product : products) {
+            for (Device device : product.devices) {
+                device.status = Status.OFFLINE;
+            }
+        }
     }
 
     @Override

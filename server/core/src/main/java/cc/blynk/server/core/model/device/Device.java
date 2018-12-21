@@ -280,12 +280,16 @@ public class Device implements Target {
 
     public void disconnected() {
         this.status = Status.OFFLINE;
-        this.disconnectTime = System.currentTimeMillis();
+        long now = System.currentTimeMillis();
+        this.disconnectTime = now;
+        this.updatedAt = now;
     }
 
     public void connected() {
         this.status = Status.ONLINE;
-        this.connectTime = System.currentTimeMillis();
+        long now = System.currentTimeMillis();
+        this.connectTime = now;
+        this.updatedAt = now;
     }
 
     public void erase() {
