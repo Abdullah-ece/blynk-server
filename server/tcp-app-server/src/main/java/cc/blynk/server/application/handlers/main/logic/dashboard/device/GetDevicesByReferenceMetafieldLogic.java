@@ -1,15 +1,17 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard.device;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.dao.DeviceValue;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.dto.IdNameDTO;
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.MetaField;
+import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.metafields.DeviceReferenceMetaField;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.mobile.MobileStateHolder;
+import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -47,14 +49,20 @@ public final class GetDevicesByReferenceMetafieldLogic {
             throw new IllegalCommandException("Metafield is not DeviceReferenceMetaField.");
         }
 
+        //we allow to view devices only from the current org of this user
+        //todo security checks
+        int orgId = state.orgId;
+        Organization org = holder.organizationDao.getOrgByIdOrThrow(orgId);
+
         DeviceReferenceMetaField deviceReferenceMetaField = (DeviceReferenceMetaField) metaField;
         List<IdNameDTO> result = new ArrayList<>();
         for (int productId : deviceReferenceMetaField.selectedProductIds) {
-            for (var deviceEntries : holder.deviceDao.devices.entrySet()) {
-                DeviceValue deviceValue = deviceEntries.getValue();
-                Device tempDevice = deviceValue.device;
-                if (tempDevice.productId == productId) {
-                    result.add(new IdNameDTO(tempDevice));
+            int[] subProductIds = holder.organizationDao.getProductChilds(productId);
+            for (Product product : org.products) {
+                if (ArrayUtil.contains(subProductIds, product.id)) {
+                    for (Device tempDevice : product.devices) {
+                        result.add(new IdNameDTO(tempDevice));
+                    }
                 }
             }
         }

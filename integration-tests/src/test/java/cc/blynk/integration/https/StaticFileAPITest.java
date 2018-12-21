@@ -150,8 +150,8 @@ public class StaticFileAPITest extends APIBaseTest {
                     "        \"apps\": [],\n" +
                     "        \"details\": [\n" +
                     "            {\n" +
-                    "                \"appID\": \"808760481.cc.blynk.blynk\",\n" +
-                    "                \"paths\": [\"*restore*\"]\n" +
+                    "                \"appID\": \"YCN439KN4Y.cc.blynk.blynk\",\n" +
+                    "                \"paths\": [\"*resetPass*\"]\n" +
                     "            }\n" +
                     "        ]\n" +
                     "    }\n" +

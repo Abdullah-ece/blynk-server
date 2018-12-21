@@ -212,7 +212,7 @@ public class DevicesHandler extends BaseHttpHandler {
                            @QueryParam("order") SortOrder order) {
         User user = getUser(ctx);
 
-        Collection<Device> devices = organizationDao.getAllDevicesByOrgId(orgId);
+        List<Device> devices = organizationDao.getAllDevicesByOrgId(orgId);
 
         blockingIOProcessor.executeDB(() -> {
             Response response;

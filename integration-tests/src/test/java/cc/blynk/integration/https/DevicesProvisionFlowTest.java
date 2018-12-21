@@ -12,12 +12,14 @@ import cc.blynk.server.core.model.auth.App;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.dto.OrganizationDTO;
 import cc.blynk.server.core.model.dto.ProductDTO;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.ProvisionType;
 import cc.blynk.server.core.model.enums.Theme;
 import cc.blynk.server.core.model.profile.Profile;
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.EventReceiver;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.MetadataType;
@@ -488,6 +490,96 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         assertNotNull(deviceDTOS);
         assertEquals(1, deviceDTOS.length);
         assertEquals("My New Device", deviceDTOS[0].name);
+    }
+
+    @Test
+    public void testGetDevicesByReferenceMetafieldFromSubOrganization() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+
+        Product product = new Product();
+        product.name = "My product";
+        product.metaFields = new MetaField[] {
+                createDeviceOwnerMeta(1, "Device Owner", null, true),
+                createDeviceNameMeta(2, "Device Name", "111", true)
+        };
+
+        client.createProduct(orgId, product);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
+        assertNotNull(fromApiProduct);
+
+        DeviceReferenceMetaField deviceReferenceMetaField =
+                new DeviceReferenceMetaField(3, "Device Ref", new int[] {1}, true, true, true, null, new int[] {fromApiProduct.id}, -1L);
+        Product product2 = new Product();
+        product2.name = "My product 2";
+        product2.metaFields = new MetaField[] {
+                createDeviceOwnerMeta(1, "Device Owner", null, true),
+                createDeviceNameMeta(2, "Device Name", "111", true),
+                deviceReferenceMetaField
+        };
+
+        client.createProduct(orgId, product2);
+        ProductDTO fromApiProduct2 = client.parseProductDTO(2);
+        assertNotNull(fromApiProduct2);
+
+        Organization newOrg = new Organization();
+        newOrg.name = "testGetDevicesByReferenceMetafieldFromSubOrganization";
+        newOrg.selectedProducts = new int[] {fromApiProduct.id, fromApiProduct2.id};
+
+        client.createOrganization(newOrg);
+        OrganizationDTO orgFromApi = client.parseOrganizationDTO(3);
+        assertNotNull(orgFromApi);
+        ProductDTO product3 = orgFromApi.products[0];
+        ProductDTO product4 = orgFromApi.products[1];
+        assertEquals(product.name, product3.name);
+
+        //creating test device, to make sure it will not appear in search
+        Device testDevice = new Device();
+        testDevice.name = "My New Device For Product 1";
+        testDevice.productId = fromApiProduct.id;
+        client.createDevice(testDevice);
+        client.parseDevice(4);
+
+
+        client.trackOrg(orgFromApi.id);
+        client.verifyResult(ok(5));
+
+        //creating reference device
+        Device referenceDevice = new Device();
+        referenceDevice.name = "My New Device For Product 3";
+        referenceDevice.productId = product3.id;
+        client.createDevice(referenceDevice);
+        Device createdReferenceDevice = client.parseDevice(6);
+        assertNotNull(createdReferenceDevice);
+        assertEquals(product3.id, createdReferenceDevice.productId);
+        assertEquals(2, createdReferenceDevice.metaFields.length);
+
+        //creating regular device
+        Device newDevice = new Device();
+        newDevice.name = "My New Device For Product 4";
+        newDevice.productId = product4.id;
+        client.createDevice(newDevice);
+        Device createdDevice = client.parseDevice(7);
+        assertNotNull(createdDevice);
+        assertEquals(product4.id, createdDevice.productId);
+        assertEquals(3, createdDevice.metaFields.length);
+
+
+        //creating fake user from suborg
+        String subOrgUser1 = "subOrgUser1@blynk.cc";
+        String pass = "1";
+        String hash = SHA256Util.makeHash(pass, subOrgUser1);
+        holder.userDao.add(subOrgUser1.toLowerCase(), hash, orgFromApi.id, 1);
+
+        TestAppClient appClient = new TestAppClient("localhost", properties.getHttpsPort());
+        appClient.start();
+        appClient.login(subOrgUser1, pass);
+        appClient.verifyResult(ok(1));
+
+        appClient.getDevicesByReferenceMetafield(createdDevice.id, deviceReferenceMetaField.id);
+        Device[] deviceDTOS = appClient.parseDevices(2);
+        assertNotNull(deviceDTOS);
+        assertEquals(1, deviceDTOS.length);
+        assertEquals("My New Device For Product 3", deviceDTOS[0].name);
     }
 
     private static Device getDeviceById(Device[] devices, int id) {

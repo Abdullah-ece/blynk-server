@@ -123,7 +123,7 @@ public class OrganizationDao {
         return subProductIds.toArray();
     }
 
-    public Collection<Device> getAllDevicesByOrgId(int orgId) {
+    public List<Device> getAllDevicesByOrgId(int orgId) {
         List<Device> result = new ArrayList<>();
         //getting org and all it child orgs
         int[] orgIds = orgListToIdList(getOrgChilds(orgId));
@@ -165,11 +165,6 @@ public class OrganizationDao {
         return orgs;
     }
 
-    public boolean hasChilds(int orgId) {
-        List<Organization> orgs = getOrgChilds(orgId);
-        return orgs.size() > 1;
-    }
-
     private void getOrgChilds(List<Organization> orgs, int parentId, int invocationCounter) {
         if (invocationCounter == 1000) {
             throw new RuntimeException("Error finding organization.");
@@ -178,6 +173,31 @@ public class OrganizationDao {
             if (org.parentId == parentId) {
                 orgs.add(org);
                 getOrgChilds(orgs, org.id, invocationCounter++);
+            }
+        }
+    }
+
+    public boolean hasChilds(int orgId) {
+        List<Organization> orgs = getOrgChilds(orgId);
+        return orgs.size() > 1;
+    }
+
+    public int[] getProductChilds(int productId) {
+        IntArray result = new IntArray();
+        result.add(productId);
+        getProductChilds(result, productId, 1);
+        return result.toArray();
+    }
+
+    private void getProductChilds(IntArray productIds, int productId, int invocationCounter) {
+        if (invocationCounter == 1000) {
+            throw new RuntimeException("Error finding sub products.");
+        }
+        for (Organization org : organizations.values()) {
+            Product subProduct = org.getSubProductOf(productId);
+            if (subProduct != null) {
+                productIds.add(subProduct.id);
+                getProductChilds(productIds, subProduct.id, invocationCounter++);
             }
         }
     }

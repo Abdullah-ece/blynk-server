@@ -378,6 +378,15 @@ public class Organization {
         return count;
     }
 
+    public Product getSubProductOf(int parentProductId) {
+        for (Product product : products) {
+            if (product.parentId == parentProductId) {
+                return product;
+            }
+        }
+        return null;
+    }
+
     @Override
     public String toString() {
         return JsonParser.toJson(this);
