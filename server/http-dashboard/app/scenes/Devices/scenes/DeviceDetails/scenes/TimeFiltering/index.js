@@ -73,7 +73,7 @@ class TimeFilteringScene extends React.Component {
   render() {
 
     const initialValues = {
-      time: TIMELINE_TIME_FILTERS.LIVE.key,
+      time: TIMELINE_TIME_FILTERS.ONE_HOUR.key,
       customTime: [
         moment().subtract(7, 'day').valueOf(),
         moment().valueOf()

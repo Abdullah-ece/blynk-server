@@ -418,13 +418,13 @@ export const STATUS = {
 export const TIMELINE_TIME_FILTERS = {
   'LIVE': {
     'key': 'LIVE',
-    'value': 'Live',
+    'value': 'Current',
     'time': 60 * 60 * 1000,
     'get': () => moment().subtract(1, 'hour').valueOf()
   },
   'ONE_HOUR': {
     'key': 'ONE_HOUR',
-    'value': '1 hour',
+    'value': 'Last Hour',
     'time': 60 * 60 * 1000,
     'get': () => moment().subtract(1, 'hour').valueOf()
   },
