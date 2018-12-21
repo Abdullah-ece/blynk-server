@@ -57,7 +57,8 @@ public final class WebAppOwnControlHardwareLogic implements PermissionBasedLogic
 
     @Override
     public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
-        Session session = sessionDao.getOrgSession(state.orgId);
+        int orgId = state.selectedOrgId;
+        Session session = sessionDao.getOrgSession(orgId);
 
         //here expecting command in format "200000 vw 88 1"
         String[] split = split2(message.body);
@@ -86,11 +87,8 @@ public final class WebAppOwnControlHardwareLogic implements PermissionBasedLogic
         device.updateValue(pin, pinType, value);
 
         Channel channel = ctx.channel();
-
         //sending to shared dashes and master-master apps
-
         session.sendToApps(DEVICE_SYNC, message.id, deviceId, split[1]);
-
         session.sendToSelectedDeviceOnWeb(channel, DEVICE_SYNC, message.id, split[1], deviceId);
 
         if (session.sendMessageToHardware(HARDWARE, message.id, split[1], deviceId)) {
