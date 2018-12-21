@@ -5,12 +5,11 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.session.CookieUtil;
 import cc.blynk.server.internal.StateHolderUtil;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelOutboundInvoker;
 import io.netty.channel.EventLoop;
-import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.cookie.Cookie;
 import io.netty.util.AttributeKey;
-import io.netty.util.concurrent.GlobalEventExecutor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -130,12 +129,10 @@ public class SessionDao {
 
     public void close() {
         System.out.println("Closing all sockets...");
-        DefaultChannelGroup allChannels = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
         orgSession.forEach((orgKey, session) -> {
-            allChannels.addAll(session.appChannels);
-            allChannels.addAll(session.hardwareChannels);
-            allChannels.addAll(session.webChannels);
+            session.appChannels.forEach(ChannelOutboundInvoker::close);
+            session.webChannels.forEach(ChannelOutboundInvoker::close);
+            session.hardwareChannels.forEach(ChannelOutboundInvoker::close);
         });
-        allChannels.close().awaitUninterruptibly();
     }
 }
