@@ -160,7 +160,6 @@ public class FileManager {
                     .flatMap(file -> {
                         try {
                             Organization org = JsonParser.parseOrganization(file);
-                            org.resetDeviceStatus();
                             return Stream.of(org);
                         } catch (IOException ioe) {
                             log.error("Error parsing file '{}'. Error : {}", file, ioe.getMessage());

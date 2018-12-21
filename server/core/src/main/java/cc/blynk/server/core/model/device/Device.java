@@ -50,8 +50,7 @@ public class Device implements Target {
 
     public volatile ConnectionType connectionType;
 
-    @JsonView(View.Private.class)
-    public volatile Status status = Status.OFFLINE;
+    public volatile transient Status status = Status.OFFLINE;
 
     public volatile long activatedAt;
 
