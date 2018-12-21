@@ -1,7 +1,10 @@
 package cc.blynk.utils;
 
+import java.net.URLEncoder;
 import java.security.SecureRandom;
 import java.util.regex.Pattern;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * The Blynk Project.
@@ -175,5 +178,10 @@ public final class StringUtils {
 
     public static boolean isReadOperation(String body) {
         return body.length() > 1 && body.charAt(1) == 'r';
+    }
+
+    public static String buildResetPasswordUrl(String resetURL, String token, String email) {
+        String encodedEmail = URLEncoder.encode(email, UTF_8);
+        return resetURL + "?token=" + token + "&email=" + encodedEmail;
     }
 }

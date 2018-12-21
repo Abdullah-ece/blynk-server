@@ -21,9 +21,6 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 import static cc.blynk.server.internal.WebByteBufUtil.json;
 
@@ -67,7 +64,7 @@ public class WebAppResetPasswordHandler extends SimpleChannelInboundHandler<Rese
         this.blockingIOProcessor = holder.blockingIOProcessor;
         this.host = holder.props.getRestoreHost();
         this.organizationDao = holder.organizationDao;
-        this.resetURL = holder.props.httpsServerUrl + "/dashboard" + "/resetPass?token=";
+        this.resetURL = holder.props.getResetPasswordUrl();
         this.httpsServerUrl = holder.props.httpsServerUrl;
     }
 
@@ -182,8 +179,7 @@ public class WebAppResetPasswordHandler extends SimpleChannelInboundHandler<Rese
                         .replace(Placeholders.ORGANIZATION, org.name)
                         .replace(Placeholders.ORG_LOGO_URL, httpsServerUrl + org.getLogoOrDefault())
                         .replace("{host}", host)
-                        .replace("{link}", resetURL + token + "&email="
-                                + URLEncoder.encode(trimmedEmail, StandardCharsets.UTF_8));
+                        .replace("{link}", StringUtils.buildResetPasswordUrl(resetURL, token, trimmedEmail));
                 String subject = "Reset your " + org.name + " Dashboard password";
 
                 mailWrapper.sendHtml(trimmedEmail, subject, body);

@@ -162,4 +162,7 @@ public class ServerProperties extends BaseProperties {
         return httpServerUrl;
     }
 
+    public String getResetPasswordUrl() {
+        return this.httpsServerUrl + rootPath + "/resetPass";
+    }
 }

@@ -41,7 +41,7 @@ public class MobileResetPasswordHandler extends SimpleChannelInboundHandler<Rese
     private final MailWrapper mailWrapper;
     private final UserDao userDao;
     private final BlockingIOProcessor blockingIOProcessor;
-    private final String host;
+    private final String resetPasswordUrl;
     private final String httpsServerUrl;
     private final OrganizationDao organizationDao;
 
@@ -57,7 +57,7 @@ public class MobileResetPasswordHandler extends SimpleChannelInboundHandler<Rese
         this.mailWrapper = holder.mailWrapper;
         this.userDao = holder.userDao;
         this.blockingIOProcessor = holder.blockingIOProcessor;
-        this.host = holder.props.getRestoreHost();
+        this.resetPasswordUrl = holder.props.getResetPasswordUrl();
         this.httpsServerUrl = holder.props.httpsServerUrl;
         this.organizationDao = holder.organizationDao;
     }
@@ -169,9 +169,9 @@ public class MobileResetPasswordHandler extends SimpleChannelInboundHandler<Rese
         ResetPassToken userToken = new ResetPassToken(trimmedEmail, appName);
         tokensPool.addToken(token, userToken);
 
-        String resetUrl = "http://" + host + "/restore?token=" + token + "&email=" + trimmedEmail;
+        String resetUrl = StringUtils.buildResetPasswordUrl(resetPasswordUrl, token, trimmedEmail);
         String body = resetEmailBody.replace(Placeholders.RESET_URL, resetUrl);
-        String qrString = appName.toLowerCase() + "://restore?token=" + token + "&email=" + trimmedEmail;
+        String qrString = appName.toLowerCase() + "://resetPass?token=" + token + "&email=" + trimmedEmail;
         byte[] qrBytes = QRCode.from(qrString).to(ImageType.JPG).withSize(250, 250).stream().toByteArray();
         QrHolder qrHolder = new ResetQrHolder("resetPassQr.jpg", qrBytes);
 
