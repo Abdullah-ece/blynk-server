@@ -37,6 +37,14 @@ public final class WebTrackDeviceLogic {
     public void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         int deviceId = Integer.parseInt(message.body);
 
+        //special case, we switch from devices view, so no need to track anything
+        if (deviceId == WebAppStateHolder.NO_DEVICE) {
+            state.selectedDeviceId = deviceId;
+            log.trace("Removing selected device for {} from the webapp session.", state.user);
+            ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
+            return;
+        }
+
         User user = state.user;
         String email = user.email;
         DeviceValue deviceValue = deviceDao.getDeviceValueById(deviceId);
