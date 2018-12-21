@@ -803,7 +803,7 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
         client.verifyResult(ok(2));
 
         client.trackOrg(100);
-        client.verifyResult(webJson(3, "User " + getUserName() + " has no access to this organization."));
+        client.verifyResult(webJson(3, "User " + getUserName() + " has no access to this organization (id=" + 100 + ")."));
     }
 }
 
