@@ -86,8 +86,6 @@ public class MobileHardwareLogic extends BaseProcessorHandler {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, MobileStateHolder state, StringMessage message) {
-        Session session = sessionDao.getOrgSession(state.orgId);
-
         //here expecting command in format "200000 vw 88 1"
         String[] split = split2(message.body);
 
@@ -149,6 +147,7 @@ public class MobileHardwareLogic extends BaseProcessorHandler {
                     }
                 }
 
+                Session session = sessionDao.getOrgSession(state.orgId);
                 //sending to shared dashes and master-master apps
                 //session.sendToSharedApps(ctx.channel(), dash.sharedToken, DEVICE_SYNC, message.id, message.body);
                 session.sendToApps(ctx.channel(), DEVICE_SYNC, message.id, message.body);
