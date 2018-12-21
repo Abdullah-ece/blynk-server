@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Dotdotdot from 'react-dotdotdot';
-import {WIDGETS_LABEL_TEXT_ALIGNMENT} from 'services/Widgets';
+import { WIDGETS_LABEL_TEXT_ALIGNMENT } from 'services/Widgets';
 import Canvasjs from 'canvasjs';
 import './styles.less';
 
@@ -34,14 +34,14 @@ class LabelWidget extends React.Component {
     value: PropTypes.string,
 
     parentElementProps: PropTypes.shape({
-      id         : PropTypes.string,
-      onMouseUp  : PropTypes.func,
-      onTouchEnd : PropTypes.func,
+      id: PropTypes.string,
+      onMouseUp: PropTypes.func,
+      onTouchEnd: PropTypes.func,
       onMouseDown: PropTypes.func,
-      style      : PropTypes.object,
+      style: PropTypes.object,
     }),
 
-    tools        : PropTypes.element,
+    tools: PropTypes.element,
     settingsModal: PropTypes.element,
     resizeHandler: PropTypes.oneOfType([
       PropTypes.arrayOf(PropTypes.element),
@@ -91,10 +91,16 @@ class LabelWidget extends React.Component {
     if (!isNaN(Number(value)) && Number(value) === 0)
       return 0;
 
-    return Canvasjs.formatNumber(value, this.props.data.decimalFormat);
+    let finalFormat = this.props.data.decimalFormat === '#.#' ? '#0.#' : this.props.data.decimalFormat;
+    return Canvasjs.formatNumber(value, finalFormat);
   }
 
-  renderLabelByParams(params = {alignment: WIDGETS_LABEL_TEXT_ALIGNMENT.LEFT, value: null, suffix: null, customText: null}) {
+  renderLabelByParams(params = {
+    alignment: WIDGETS_LABEL_TEXT_ALIGNMENT.LEFT,
+    value: null,
+    suffix: null,
+    customText: null
+  }) {
 
     const alignmentClassName = this.getTextAlignmentClassNameByAlignment(params.alignment);
 
@@ -109,23 +115,28 @@ class LabelWidget extends React.Component {
     return (
       <div className={`widgets--widget-web-label ${alignmentClassName}`}>
         {!isNoData && (
-          <div className={`widgets--widget-web-label--container ${valueSizeClassName}`}>
+          <div
+            className={`widgets--widget-web-label--container ${valueSizeClassName}`}>
             <Dotdotdot clamp={1}>
               {!params.customText && (
                 <span
                   className={`${valueClassName}`}>{isStringValue ? params.value : this.formatLabelValue(params.value)}</span>
               ) || (null)}
               {!params.customText && params.suffix && (
-                <span className="widgets--widget-web-label--suffix-label">{params.suffix || null}</span>
+                <span
+                  className="widgets--widget-web-label--suffix-label">{params.suffix || null}</span>
               )}
               {params.customText && (
-                <span className={"widgets--widget-web-label--custom-text"}>{params.customText || null}</span>
+                <span
+                  className={"widgets--widget-web-label--custom-text"}>{params.customText || null}</span>
               )}
             </Dotdotdot>
           </div>
         ) || (
-          <div className={`widgets--widget-web-label--container ${valueSizeClassName}`}>
-            <span className={`widgets--widget-web-label--number-value`}>--</span>
+          <div
+            className={`widgets--widget-web-label--container ${valueSizeClassName}`}>
+            <span
+              className={`widgets--widget-web-label--number-value`}>--</span>
           </div>
         )}
       </div>
@@ -151,20 +162,20 @@ class LabelWidget extends React.Component {
     return this.props.value;
   }
 
-  getCurrentColorSet(){
+  getCurrentColorSet() {
     const labelValue = this.getLabelValue();
     let currentColorSet = null;
     // Choose color set from all color sets based on label value. If label value not fit to any of color sets then
     // select the first color set if value is lower then min value, select the last if value is higher then max, or select default
-    if(this.props.data.colorsSet && labelValue !== null && labelValue !== undefined) {
-      currentColorSet = (this.props.data.colorsSet.filter(( obj )=>(obj.min <= Number(labelValue) && obj.max >= Number(labelValue))))[0] || null;
-      if(currentColorSet === null) {
+    if (this.props.data.colorsSet && labelValue !== null && labelValue !== undefined) {
+      currentColorSet = (this.props.data.colorsSet.filter((obj) => (obj.min <= Number(labelValue) && obj.max >= Number(labelValue))))[0] || null;
+      if (currentColorSet === null) {
         currentColorSet = labelValue < this.props.data.colorsSet[0].min ? this.props.data.colorsSet[0] :
-          labelValue > this.props.data.colorsSet[this.props.data.colorsSet.length-1].max ? this.props.data.colorsSet[this.props.data.colorsSet.length-1] :
-            {backgroundColor:"ffffff",textColor:"000000"};
+          labelValue > this.props.data.colorsSet[this.props.data.colorsSet.length - 1].max ? this.props.data.colorsSet[this.props.data.colorsSet.length - 1] :
+            { backgroundColor: "ffffff", textColor: "000000" };
       }
     } else {
-      currentColorSet = {backgroundColor:"ffffff",textColor:"000000"};
+      currentColorSet = { backgroundColor: "ffffff", textColor: "000000" };
     }
 
     return currentColorSet;
@@ -175,7 +186,7 @@ class LabelWidget extends React.Component {
     return !this.props.data.isColorSetEnabled ? {
       backgroundColor: "#" + this.props.data.backgroundColor,
       color: "#" + this.props.data.textColor
-    } : (({ backgroundColor,textColor }) => {
+    } : (({ backgroundColor, textColor }) => {
       return {
         backgroundColor: "#" + backgroundColor,
         color: "#" + textColor
@@ -185,45 +196,46 @@ class LabelWidget extends React.Component {
 
   renderLabelLevel() {
 
-    if(this.props.data.level.min >= this.props.data.level.max){
+    if (this.props.data.level.min >= this.props.data.level.max) {
 
       return null;
     }
 
     let percentFilled = 0;
-    if(this.getLabelValue() !== null && this.getLabelValue() !== undefined){
+    if (this.getLabelValue() !== null && this.getLabelValue() !== undefined) {
       percentFilled = Math.round((this.getLabelValue() - this.props.data.level.min) / ((this.props.data.level.max - this.props.data.level.min) / 100));
     }
 
-    if(percentFilled < 0)
+    if (percentFilled < 0)
       percentFilled = 0;
 
-    if(percentFilled > 100)
+    if (percentFilled > 100)
       percentFilled = 100;
 
     let style = {
       position: "absolute",
       bottom: 0,
-        left: 0,
+      left: 0,
       backgroundColor: "#" + this.props.data.level.color,
       height: "100%",
       width: "100%",
     };
 
-    if(this.props.data.level.position === "VERTICAL"){
-      style.height = percentFilled +"%";
+    if (this.props.data.level.position === "VERTICAL") {
+      style.height = percentFilled + "%";
     } else {
-      style.width = percentFilled +"%";
+      style.width = percentFilled + "%";
     }
 
-    return(
-      <div className={"web-label-level " + (this.props.data.level.position).toLowerCase()}>
+    return (
+      <div
+        className={"web-label-level " + (this.props.data.level.position).toLowerCase()}>
         <div style={style}/>
       </div>
     );
   }
 
-  getTextAlignStyle(alignment){
+  getTextAlignStyle(alignment) {
     if (alignment === WIDGETS_LABEL_TEXT_ALIGNMENT.LEFT)
       return 'left';
 
@@ -238,27 +250,29 @@ class LabelWidget extends React.Component {
   render() {
 
     let style = {
-      position:"relative",
+      position: "relative",
       ...(this.props.parentElementProps && this.props.parentElementProps.style || {}),
       ...this.props.style,
       ...this.getLabelStyles(),
       textAlign: this.getTextAlignStyle(this.props.data.alignment),
     };
-    const labelColor = (this.props.data.textColor === "DEFAULT" && !this.props.data.isColorSetEnabled)? "#58595d" : null;
+    const labelColor = (this.props.data.textColor === "DEFAULT" && !this.props.data.isColorSetEnabled) ? "#58595d" : null;
     return (
-      <div {...this.props.parentElementProps} style={style} className={`widgets--widget`}>
-        <div className="widgets--widget-label" style={{color:labelColor}} >
-          <Dotdotdot  clamp={1}>{this.props.data.label || 'No Widget Name'}</Dotdotdot>
+      <div {...this.props.parentElementProps} style={style}
+           className={`widgets--widget`}>
+        <div className="widgets--widget-label" style={{ color: labelColor }}>
+          <Dotdotdot
+            clamp={1}>{this.props.data.label || 'No Widget Name'}</Dotdotdot>
           {this.props.tools}
         </div>
 
-        {this.props.data.isShowLevelEnabled && this.renderLabelLevel() }
+        {this.props.data.isShowLevelEnabled && this.renderLabelLevel()}
 
-        { /* widget content */ }
+        { /* widget content */}
 
-        { this.renderRealDataLabel() }
+        {this.renderRealDataLabel()}
 
-        { /* end widget content */ }
+        { /* end widget content */}
 
         {this.props.settingsModal}
         {this.props.resizeHandler}
