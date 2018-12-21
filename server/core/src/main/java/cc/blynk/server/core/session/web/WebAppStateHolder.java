@@ -13,7 +13,7 @@ import cc.blynk.server.core.session.mobile.Version;
  */
 public class WebAppStateHolder extends BaseUserStateHolder {
 
-    private static final int NO_DEVICE = -1;
+    public static final int NO_DEVICE = -1;
 
     public int selectedDeviceId;
     public int selectedOrgId;

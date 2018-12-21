@@ -81,6 +81,14 @@ public class Session {
         }
     }
 
+    public void removeWebChannel(Channel webChannel) {
+        if (webChannels.remove(webChannel)) {
+            //we have to manually remove listener when we manually remove channel
+            //to avoid memory leak in case user switches organizations a lot
+            webChannel.closeFuture().removeListener(webRemover);
+        }
+    }
+
     private Set<Channel> filter(int bodySize, int[] deviceIds) {
         Set<Channel> targetChannels = new HashSet<>();
         for (Channel channel : hardwareChannels) {

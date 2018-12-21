@@ -16,7 +16,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import static cc.blynk.integration.APIBaseTest.createDeviceNameMeta;
 import static cc.blynk.integration.APIBaseTest.createDeviceOwnerMeta;
+import static cc.blynk.integration.TestUtil.appSync;
 import static cc.blynk.integration.TestUtil.loggedDefaultClient;
+import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.integration.TestUtil.webJson;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -135,6 +137,72 @@ public class PermissionsTest extends SingleServerInstancePerTestWithDBAndNewOrg 
         assertEquals(organization2.name, fromApiOrg2.name);
         assertEquals(organization2.tzName, fromApiOrg2.tzName);
         assertNull(fromApiOrg2.products);
+    }
+
+    @Test
+    public void adminCanSeeHardwareCommandsWhenSwitchedToSubOrg() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient("super@blynk.cc", "1");
+
+        Product product = new Product();
+        product.name = "My product";
+        product.metaFields = new MetaField[] {
+                createDeviceNameMeta(1, "namne", "name", true),
+                createDeviceOwnerMeta(2, "owner", "owner", true)
+        };
+
+        client.createProduct(orgId, product);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
+        assertNotNull(fromApiProduct);
+
+        Organization organization = new Organization(
+                "My Org ffff", "Some TimeZone", "/static/logo.png", false, -1,
+                new Role(1, "Admin", 0b11111111111111111111, 0));
+        organization.selectedProducts = new int[] {fromApiProduct.id};
+
+        client.createOrganization(organization);
+        OrganizationDTO fromApiOrg = client.parseOrganizationDTO(2);
+        assertNotNull(fromApiOrg);
+        assertEquals(orgId, fromApiOrg.parentId);
+        assertEquals(organization.name, fromApiOrg.name);
+        assertEquals(organization.tzName, fromApiOrg.tzName);
+        assertNotNull(fromApiOrg.products);
+        assertEquals(1, fromApiOrg.products.length);
+        assertEquals(fromApiProduct.id + 1, fromApiOrg.products[0].id);
+
+        String subOrgUser1 = "subOrgUser1@blynk.cc";
+        String pass = "1";
+        String hash = SHA256Util.makeHash(pass, subOrgUser1);
+        holder.userDao.add(subOrgUser1.toLowerCase(), hash, fromApiOrg.id, 1);
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.productId = fromApiOrg.products[0].id;
+
+        client.trackOrg(fromApiOrg.id);
+        client.verifyResult(ok(3));
+
+        client.createDevice(newDevice);
+        Device createdDevice = client.parseDevice(4);
+        assertNotNull(createdDevice);
+        assertEquals("My New Device", createdDevice.name);
+        assertNotNull(createdDevice.metaFields);
+        assertEquals(2, createdDevice.metaFields.length);
+        assertEquals(System.currentTimeMillis(), createdDevice.activatedAt, 5000);
+        assertEquals("super@blynk.cc", createdDevice.activatedBy);
+
+        AppWebSocketClient subUserClient = loggedDefaultClient(subOrgUser1, "1");
+
+        subUserClient.trackDevice(createdDevice.id);
+        subUserClient.verifyResult(ok(1));
+
+        subUserClient.send("hardware " + createdDevice.id + " vw 1 100");
+        client.neverAfter(500, appSync(2, createdDevice.id + " vw 1 100"));
+
+        client.trackDevice(createdDevice.id);
+        client.verifyResult(ok(5));
+
+        subUserClient.send("hardware " + createdDevice.id + " vw 1 101");
+        client.verifyResult(appSync(3, createdDevice.id + " vw 1 101"));
     }
 
 }

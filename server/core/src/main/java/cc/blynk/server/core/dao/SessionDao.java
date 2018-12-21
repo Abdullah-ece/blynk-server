@@ -4,6 +4,7 @@ import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.session.CookieUtil;
 import cc.blynk.server.internal.StateHolderUtil;
+import io.netty.channel.Channel;
 import io.netty.channel.EventLoop;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.handler.codec.http.HttpRequest;
@@ -108,6 +109,23 @@ public class SessionDao {
         }
 
         return null;
+    }
+
+    /**
+     * When user switches organization via OrgSwitch we move it to another org session.
+     * This is needed to avoid lookup across all sessions, so we can take only session
+     * of the specific organization and send data between them without iterating through
+     * sessions of other organizations
+     */
+    public void moveToAnotherSession(Channel channel, int prevOrgId, int newOrgId) {
+        //couldn't be null, as current user in it
+        Session prevSession = orgSession.get(prevOrgId);
+        //could be null, for now using the same EventLoop, but we need to use round-robin
+        Session newSession = getOrCreateSessionForOrg(newOrgId, channel.eventLoop());
+
+        //order is important here, as we use the same
+        prevSession.removeWebChannel(channel);
+        newSession.addWebChannel(channel);
     }
 
     public void close() {

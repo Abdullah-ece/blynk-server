@@ -391,7 +391,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         appWebSocketClient.never(appSync(5, b("1 vw 10 100")));
 
         appWebSocketClient2.trackDevice(-1);
-        appWebSocketClient2.verifyResult(webJson(3, "Requested device not exists."));
+        appWebSocketClient2.verifyResult(ok(3));
 
         appWebSocketClient.send("hardware 0 vw 10 100");
         appWebSocketClient2.never(appSync(6, b("0 vw 10 100")));

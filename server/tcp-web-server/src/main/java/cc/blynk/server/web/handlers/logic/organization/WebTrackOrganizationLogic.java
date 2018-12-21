@@ -2,6 +2,7 @@ package cc.blynk.server.web.handlers.logic.organization;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.OrganizationDao;
+import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.protocol.exceptions.NoPermissionException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -26,9 +27,11 @@ public final class WebTrackOrganizationLogic {
     private static final Logger log = LogManager.getLogger(WebTrackOrganizationLogic.class);
 
     private final OrganizationDao organizationDao;
+    private final SessionDao sessionDao;
 
     public WebTrackOrganizationLogic(Holder holder) {
         this.organizationDao = holder.organizationDao;
+        this.sessionDao = holder.sessionDao;
     }
 
     //we do override basic method, because this is very special handler.
@@ -54,6 +57,7 @@ public final class WebTrackOrganizationLogic {
         }
 
         organizationDao.getOrgByIdOrThrow(requestedOrgId);
+        sessionDao.moveToAnotherSession(ctx.channel(), state.selectedOrgId, requestedOrgId);
         state.selectedOrgId = requestedOrgId;
         log.trace("Selecting webapp org {} for {}.", requestedOrgId, email);
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
