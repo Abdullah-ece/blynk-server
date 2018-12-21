@@ -4,7 +4,7 @@
         "details": [
             {
                 "appID": "808760481.cc.blynk.blynk",
-                "paths": ["*restore*"]
+                "paths": ["*resetPass*"]
             }
         ]
     }
