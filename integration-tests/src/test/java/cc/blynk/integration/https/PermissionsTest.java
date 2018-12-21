@@ -203,6 +203,9 @@ public class PermissionsTest extends SingleServerInstancePerTestWithDBAndNewOrg 
 
         subUserClient.send("hardware " + createdDevice.id + " vw 1 101");
         client.verifyResult(appSync(3, createdDevice.id + " vw 1 101"));
+
+        client.send("hardware " + createdDevice.id + " vw 2 102");
+        subUserClient.verifyResult(appSync(6, createdDevice.id + " vw 2 102"));
     }
 
 }
