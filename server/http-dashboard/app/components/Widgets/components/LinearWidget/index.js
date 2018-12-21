@@ -293,6 +293,7 @@ class LinearWidget extends React.Component {
       tickLength: 0,
       lineThickness: 0,
       margin: 0,
+      labelFontFamily: 'Roboto',
       valueFormatString: '\u0020', //space to hide values on Axis
       // valueFormatString: '', //space to hide values on Axis
     };
@@ -318,6 +319,7 @@ class LinearWidget extends React.Component {
         lineColor: dataSource.color,
         tickColor: dataSource.color,
         labelFontColor: dataSource.color,
+        labelFontFamily: 'Roboto'
       };
 
       if (!dataSource.enableYAxis) {
@@ -351,7 +353,11 @@ class LinearWidget extends React.Component {
         labelMaxWidth: formats.labelMaxWidth,
         labelWrap: true,
         labelAngle: 0,
+        labelFontFamily: 'Roboto',
         valueFormatString: formats.tickFormat,
+      },
+      legend: {
+        fontFamily: 'Roboto',
       },
       axisY: axisY,
       axisY2: axisY2,
