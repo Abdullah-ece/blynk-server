@@ -175,7 +175,6 @@ public class UserDao {
     public User add(String email, String passHash, int orgId, int roleId) {
         log.debug("Adding new user {}. OrgId : {}", email, orgId);
         User newUser = new User(email, passHash, orgId, region, host, false, roleId);
-        newUser.orgId = orgId;
         newUser.status = UserStatus.Active;
         add(newUser);
         return newUser;
