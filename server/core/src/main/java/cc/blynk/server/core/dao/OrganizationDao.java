@@ -205,7 +205,8 @@ public class OrganizationDao {
         List<Organization> userOrgChilds = getOrgChilds(userOrgId);
         boolean hasChild = hasOrgById(userOrgChilds, requestedOrgId);
         if (!hasChild) {
-            throw new NoPermissionException("User " + email + " has no access to this organization.");
+            throw new NoPermissionException("User "
+                    + email + " has no access to organizationId=" + requestedOrgId + " .");
         }
     }
 
