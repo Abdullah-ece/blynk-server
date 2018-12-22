@@ -59,6 +59,8 @@ import static cc.blynk.integration.TestUtil.webJson;
 import static cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType.AVG;
 import static cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType.RAW_DATA;
 import static cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod.LIVE;
+import static cc.blynk.server.core.protocol.enums.Command.GET_SUPERCHART_DATA;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_TRACK_DEVICE;
 import static cc.blynk.server.core.reporting.average.AverageAggregatorProcessor.MINUTE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -148,7 +150,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         testHardClient.login(device.token);
         testHardClient.verifyResult(ok(1));
 
-        appWebSocketClient.send("hardware " + device.id + " vw 1 222");
+        appWebSocketClient.hardware(device.id, "vw 1 222");
         testHardClient.verifyResult(new HardwareMessage(3, b("vw 1 222")));
 
         appWebSocketClient.reset();
@@ -228,7 +230,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         appWebSocketClient2.start();
         appWebSocketClient2.login(regularUser);
         appWebSocketClient2.verifyResult(ok(1));
-        appWebSocketClient2.send("trackDevice null");
+        appWebSocketClient2.send(WEB_TRACK_DEVICE, "null");
         appWebSocketClient2.verifyResult(webJson(2, "Error parsing number. For input string: \"null\""));
     }
 
@@ -248,7 +250,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         appWebSocketClient2.trackDevice(0);
         appWebSocketClient2.verifyResult(ok(2));
 
-        appWebSocketClient.send("hardware 0 vw 10 100");
+        appWebSocketClient.hardware(0, "vw 10 100");
         appWebSocketClient2.verifyResult(appSync(3, b("0 vw 10 100")));
         appWebSocketClient.never(appSync(3, b("0 vw 10 100")));
         appWebSocketClient.never(appSync(1111, b("0 vw 10 100")));
@@ -268,7 +270,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         appClient.loginNoHash(regularUser.email, regularUser.pass);
         appClient.verifyResult(ok(1));
 
-        appWebSocketClient.send("hardware 0 vw 10 100");
+        appWebSocketClient.hardware(0, "vw 10 100");
         appClient.verifyResult(appSync(3, "0 vw 10 100"));
 
         appClient.sync(0);
@@ -291,7 +293,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
 
         //do not trackDevice any device by purpose
         //appWebSocketClient2.trackDevice(0);
-        appWebSocketClient.send("hardware 0 vw 10 100");
+        appWebSocketClient.hardware(0, "vw 10 100");
         appWebSocketClient2.never(appSync(2, b("0 vw 10 100")));
         appWebSocketClient.never(appSync(2, b("0 vw 10 100")));
     }
@@ -333,7 +335,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         appClient.send("hardware 1 vw 2 222");
         appWebSocketClient.verifyResult(appSync(3, b("1 vw 2 222")));
 
-        appWebSocketClient.send("hardware 1 vw 10 100");
+        appWebSocketClient.hardware(1, "vw 10 100");
         appClient.verifyResult(appSync(3, b("1 vw 10 100")));
         appClient.verifyResult(webJson(3, "Device not in the network.", Response.DEVICE_NOT_IN_NETWORK));
     }
@@ -354,7 +356,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         appWebSocketClient2.trackDevice(0);
         appWebSocketClient2.verifyResult(ok(2));
 
-        appWebSocketClient.send("hardware 0 vw 10 100");
+        appWebSocketClient.hardware(0, "vw 10 100");
         appWebSocketClient2.verifyResult(appSync(3, b("0 vw 10 100")));
         appWebSocketClient.never(appSync(3, b("0 vw 10 100")));
     }
@@ -373,7 +375,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
 
         //do not trackDevice any device by purpose
         //appWebSocketClient2.trackDevice(0);
-        appWebSocketClient.send("hardware 0 vw 10 100");
+        appWebSocketClient.hardware(0, "vw 10 100");
         appWebSocketClient2.never(appSync(2, b("0 vw 10 100")));
         appWebSocketClient.never(appSync(2, b("0 vw 10 100")));
 
@@ -382,18 +384,18 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
 
         appWebSocketClient.trackDevice(0);
         appWebSocketClient.verifyResult(ok(3));
-        appWebSocketClient.send("hardware 0 vw 10 100");
+        appWebSocketClient.hardware(0, "vw 10 100");
         appWebSocketClient2.verifyResult(appSync(4, b("0 vw 10 100")));
         appWebSocketClient.never(appSync(4, b("0 vw 10 100")));
 
-        appWebSocketClient.send("hardware 1 vw 10 100");
+        appWebSocketClient.hardware(1, "vw 10 100");
         appWebSocketClient2.never(appSync(5, b("1 vw 10 100")));
         appWebSocketClient.never(appSync(5, b("1 vw 10 100")));
 
         appWebSocketClient2.trackDevice(-1);
         appWebSocketClient2.verifyResult(ok(3));
 
-        appWebSocketClient.send("hardware 0 vw 10 100");
+        appWebSocketClient.hardware(0, "vw 10 100");
         appWebSocketClient2.never(appSync(6, b("0 vw 10 100")));
         appWebSocketClient.never(appSync(6, b("0 vw 10 100")));
     }
@@ -549,7 +551,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         );
         holder.reportingDBManager.reportingDBDao.insert(data, GraphGranularityType.MINUTE);
 
-        appWebSocketClient.send("getenhanceddata 1" + b(" 432 CUSTOM " + (now - 120_000) + " " + now));
+        appWebSocketClient.send(GET_SUPERCHART_DATA, "1" + b(" 432 CUSTOM " + (now - 120_000) + " " + now));
 
         BinaryMessage graphDataResponse = appWebSocketClient.getBinaryBody();
         assertNotNull(graphDataResponse);

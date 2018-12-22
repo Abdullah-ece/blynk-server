@@ -70,8 +70,10 @@ import java.util.Map;
 import java.util.Random;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_SUPERCHART_DATA;
+import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.LOGIN;
 import static cc.blynk.server.core.protocol.enums.Command.LOGOUT;
+import static cc.blynk.server.core.protocol.enums.Command.RESET_PASSWORD;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_CAN_DELETE_PRODUCT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_CAN_INVITE_USER;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_CREATE_DEVICE;
@@ -468,11 +470,6 @@ public final class AppWebSocketClient extends BaseTestAppClient {
     }
 
     @Override
-    public void send(String line) {
-        send(produceWebSocketFrame(produceMessageBaseOnUserInput(line, ++msgId)));
-    }
-
-    @Override
     public void send(short command) {
         send(produceWebSocketFrame(produceMessage(command, ++msgId, "")));
     }
@@ -480,6 +477,22 @@ public final class AppWebSocketClient extends BaseTestAppClient {
     @Override
     public void send(short command, Object body) {
         send(produceWebSocketFrame(produceMessage(command, ++msgId, body.toString())));
+    }
+
+    public void hardware(int deviceId, String body) {
+        send(HARDWARE, "" + deviceId + BODY_SEPARATOR_STRING + body);
+    }
+
+    public void resetPass(String command) {
+        send(RESET_PASSWORD, command);
+    }
+
+    public void resetPass(String command, String email, String appName) {
+        send(RESET_PASSWORD, command + BODY_SEPARATOR_STRING + email + BODY_SEPARATOR_STRING + appName);
+    }
+
+    public void resetPassReset(String token, String hash) {
+        send(RESET_PASSWORD, "reset" + BODY_SEPARATOR_STRING + token + BODY_SEPARATOR_STRING + hash);
     }
 
     public void getGraphData(int deviceId, long widgetId, GraphPeriod graphPeriod) {

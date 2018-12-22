@@ -37,7 +37,7 @@ public class ResetPassAPIWebsocketTest extends SingleServerInstancePerTestWithDB
     public void sendBadRequest() throws Exception {
         AppWebSocketClient client = defaultClient();
         client.start();
-        client.send("resetPass start");
+        client.resetPass("start");
         client.verifyResult(webJson(1, "Wrong income message format."));
     }
 
@@ -45,7 +45,7 @@ public class ResetPassAPIWebsocketTest extends SingleServerInstancePerTestWithDB
     public void resetPassForNonExistingUserShouldNotReturnOk() throws Exception {
         AppWebSocketClient client = defaultClient();
         client.start();
-        client.send("resetPass start xxx@gmail.com Blynk");
+        client.resetPass("start", "xxx@gmail.com", "Blynk");
         client.verifyResult(webJson(1, "User does not exists."));
     }
 
@@ -53,7 +53,7 @@ public class ResetPassAPIWebsocketTest extends SingleServerInstancePerTestWithDB
     public void resetFullFlowForNotLoggedUser() throws Exception {
         AppWebSocketClient client = defaultClient();
         client.start();
-        client.send("resetPass start " + getUserName() + " Blynk");
+        client.resetPass("start", getUserName(), "Blynk");
         client.verifyResult(ok(1));
 
         ArgumentCaptor<String> bodyArgumentCapture = ArgumentCaptor.forClass(String.class);
@@ -79,7 +79,7 @@ public class ResetPassAPIWebsocketTest extends SingleServerInstancePerTestWithDB
         client.start();
 
         String hash = SHA256Util.makeHash("123", getUserName());
-        client.send("resetPass reset " + token + " " + hash);
+        client.resetPassReset(token, hash);
         client.verifyResult(ok(1));
 
         client.login(getUserName(), "123");
@@ -96,7 +96,7 @@ public class ResetPassAPIWebsocketTest extends SingleServerInstancePerTestWithDB
     @Test
     public void resetFullFlowForLoggedUser() throws Exception {
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
-        client.send("resetPass start " + getUserName() + " Blynk");
+        client.resetPass("start", getUserName(), "Blynk");
         client.verifyResult(ok(1));
 
         ArgumentCaptor<String> bodyArgumentCapture = ArgumentCaptor.forClass(String.class);
@@ -121,7 +121,7 @@ public class ResetPassAPIWebsocketTest extends SingleServerInstancePerTestWithDB
         client.start();
 
         String hash = SHA256Util.makeHash("123", getUserName());
-        client.send("resetPass reset " + token + " " + hash);
+        client.resetPassReset(token, hash);
         client.verifyResult(ok(1));
 
         client.login(getUserName(), "123");

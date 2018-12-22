@@ -195,16 +195,16 @@ public class PermissionsTest extends SingleServerInstancePerTestWithDBAndNewOrg 
         subUserClient.trackDevice(createdDevice.id);
         subUserClient.verifyResult(ok(1));
 
-        subUserClient.send("hardware " + createdDevice.id + " vw 1 100");
+        subUserClient.hardware(createdDevice.id, "vw 1 100");
         client.neverAfter(500, appSync(2, createdDevice.id + " vw 1 100"));
 
         client.trackDevice(createdDevice.id);
         client.verifyResult(ok(5));
 
-        subUserClient.send("hardware " + createdDevice.id + " vw 1 101");
+        subUserClient.hardware(createdDevice.id, "vw 1 101");
         client.verifyResult(appSync(3, createdDevice.id + " vw 1 101"));
 
-        client.send("hardware " + createdDevice.id + " vw 2 102");
+        client.hardware(createdDevice.id, "vw 2 102");
         subUserClient.verifyResult(appSync(6, createdDevice.id + " vw 2 102"));
     }
 
