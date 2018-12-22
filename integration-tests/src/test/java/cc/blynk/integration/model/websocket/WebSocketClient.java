@@ -49,7 +49,7 @@ public final class WebSocketClient extends BaseClient {
     public final SimpleClientHandler responseMock = Mockito.mock(SimpleClientHandler.class);
     private final SslContext sslCtx;
     private final WebSocketClientHandler handler;
-    public int msgId = 0;
+    private int msgId = 0;
 
     public WebSocketClient(String host, int port, String path, boolean isSSL) throws Exception {
         super(host, port, new Random());

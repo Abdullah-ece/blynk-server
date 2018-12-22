@@ -181,6 +181,10 @@ public abstract class BaseClient {
         channel.writeAndFlush(msg);
     }
 
+    public void send(short command, int msgId, Object body) {
+        send(produceMessage(command, msgId, body.toString()));
+    }
+
     public boolean isClosed() {
         return !channel.isOpen();
     }
