@@ -472,6 +472,7 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         send(produceWebSocketFrame(produceMessageBaseOnUserInput(line, ++msgId)));
     }
 
+    @Override
     public void send(short command) {
         send(produceWebSocketFrame(produceMessage(command, ++msgId, "")));
     }

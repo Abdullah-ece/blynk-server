@@ -115,7 +115,7 @@ public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testTerminalSendsSyncOnActivate() throws Exception {
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         Profile profile = clientPair.appClient.parseProfile(1);
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
@@ -144,7 +144,7 @@ public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testTerminalStorageRemembersCommands() throws Exception {
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         Profile profile = clientPair.appClient.parseProfile(1);
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
@@ -179,7 +179,7 @@ public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
         appClient.login(getUserName(), "1", "Android", "2.26.0");
         appClient.verifyResult(ok(1));
 
-        appClient.send("loadProfileGzipped");
+        appClient.loadProfileGzipped();
         Profile profile = appClient.parseProfile(2);
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
@@ -217,7 +217,7 @@ public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
         appClient.login(getUserName(), "1", "Android", "2.26.0");
         appClient.verifyResult(ok(1));
 
-        appClient.send("loadProfileGzipped");
+        appClient.loadProfileGzipped();
         Profile profile = appClient.parseProfile(2);
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
@@ -258,7 +258,7 @@ public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
         appClient.login(getUserName(), "1", "Android", "2.26.0");
         appClient.verifyResult(ok(1));
 
-        appClient.send("loadProfileGzipped");
+        appClient.loadProfileGzipped();
         Profile profile = appClient.parseProfile(2);
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
@@ -308,7 +308,7 @@ public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
         appClient.login(getUserName(), "1", "Android", "2.26.0");
         appClient.verifyResult(ok(1));
 
-        appClient.send("loadProfileGzipped");
+        appClient.loadProfileGzipped();
         Profile profile = appClient.parseProfile(2);
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
@@ -367,7 +367,7 @@ public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
         appClient.login(getUserName(), "1", "Android", "2.26.0");
         appClient.verifyResult(ok(1));
 
-        appClient.send("loadProfileGzipped");
+        appClient.loadProfileGzipped();
         Profile profile = appClient.parseProfile(2);
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
@@ -426,7 +426,7 @@ public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
         appClient.login(getUserName(), "1", "Android", "2.25.0");
         appClient.verifyResult(ok(1));
 
-        appClient.send("loadProfileGzipped");
+        appClient.loadProfileGzipped();
         Profile profile = appClient.parseProfile(2);
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
@@ -486,7 +486,7 @@ public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
         appClient.login(getUserName(), "1", "Android", "2.26.0");
         appClient.verifyResult(ok(1));
 
-        appClient.send("loadProfileGzipped");
+        appClient.loadProfileGzipped();
         Profile profile = appClient.parseProfile(2);
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
@@ -550,7 +550,7 @@ public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
         appClient.login(getUserName(), "1", "Android", "2.26.0");
         appClient.verifyResult(ok(1));
 
-        appClient.send("loadProfileGzipped");
+        appClient.loadProfileGzipped();
         Profile profile = appClient.parseProfile(2);
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
@@ -635,7 +635,7 @@ public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
         appClient.login(getUserName(), "1", "Android", "2.26.0");
         appClient.verifyResult(ok(1));
 
-        appClient.send("loadProfileGzipped");
+        appClient.loadProfileGzipped();
         Profile profile = appClient.parseProfile(2);
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
@@ -682,7 +682,7 @@ public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
         appClient.login(getUserName(), "1", "Android", "2.26.0");
         appClient.verifyResult(ok(1));
 
-        appClient.send("loadProfileGzipped");
+        appClient.loadProfileGzipped();
         Profile profile = appClient.parseProfile(2);
         assertEquals(16, profile.dashBoards[0].widgets.length);
 

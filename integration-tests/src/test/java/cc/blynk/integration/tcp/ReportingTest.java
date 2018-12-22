@@ -436,7 +436,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(2, holder.reportScheduler.getCompletedTaskCount());
         assertEquals(4, holder.reportScheduler.getTaskCount());
 
-        clientPair.appClient.send("loadProfileGzipped 1");
+        clientPair.appClient.loadProfileGzipped(1);
         DashBoard dashBoard = clientPair.appClient.parseDash(5);
         assertNotNull(dashBoard);
         reportingWidget = dashBoard.getReportingWidget();

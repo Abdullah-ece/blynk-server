@@ -1659,7 +1659,7 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
         clientPair.appClient.deleteWidget(1, tabs.id);
         clientPair.appClient.verifyResult(ok(9));
 
-        clientPair.appClient.send("loadProfileGzipped 1");
+        clientPair.appClient.loadProfileGzipped(1);
         DashBoard dashBoard = clientPair.appClient.parseDash(10);
         assertNotNull(dashBoard);
         Tabs dashTabs = dashBoard.getWidgetByType(Tabs.class);
@@ -1782,7 +1782,7 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
         clientPair.appClient.deleteWidget(1, tabs2.id);
         clientPair.appClient.verifyResult(ok(10));
 
-        clientPair.appClient.send("loadProfileGzipped 1");
+        clientPair.appClient.loadProfileGzipped(1);
         DashBoard dashBoard = clientPair.appClient.parseDash(11);
         assertNotNull(dashBoard);
         Tabs searchTabs = (Tabs) dashBoard.getWidgetById(tabs.id);
@@ -1895,7 +1895,7 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
         clientPair.appClient.updateWidget(1, tabs);
         clientPair.appClient.verifyResult(ok(9));
 
-        clientPair.appClient.send("loadProfileGzipped 1");
+        clientPair.appClient.loadProfileGzipped(1);
         DashBoard dashBoard = clientPair.appClient.parseDash(10);
         assertNotNull(dashBoard);
         Tabs dashTabs = dashBoard.getWidgetByType(Tabs.class);
@@ -1977,7 +1977,7 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
         clientPair.hardwareClient.send("hardware vw 111 1");
         clientPair.appClient.verifyResult(hardware(1, "1-0 vw 111 1"));
 
-        clientPair.appClient.send("loadProfileGzipped 1");
+        clientPair.appClient.loadProfileGzipped(1);
         DashBoard dashBoard = clientPair.appClient.parseDash(4);
         assertNotNull(dashBoard);
         deviceTiles = dashBoard.getWidgetByType(DeviceTiles.class);

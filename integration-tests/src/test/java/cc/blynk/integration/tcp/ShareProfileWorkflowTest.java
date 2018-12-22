@@ -98,7 +98,7 @@ public class ShareProfileWorkflowTest extends SingleServerInstancePerTest {
         appClient2.send("shareLogin " + getUserName() + " " + token + " Android 24");
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        appClient2.send("loadProfileGzipped");
+        appClient2.loadProfileGzipped();
         Profile serverProfile = appClient2.parseProfile(2);
         DashBoard serverDash = serverProfile.dashBoards[0];
 
@@ -111,7 +111,7 @@ public class ShareProfileWorkflowTest extends SingleServerInstancePerTest {
 
         assertEquals(profile.dashBoards[0].toString(), serverDash.toString());
 
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         profile = clientPair.appClient.parseProfile(2);
 
         profile.dashBoards[0].updatedAt = 0;
@@ -305,7 +305,7 @@ public class ShareProfileWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.send("hardware 1 aw 3 1");
         clientPair.hardwareClient.verifyResult(produce(1, HARDWARE, b("aw 3 1")));
 
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         Profile profile = clientPair.appClient.parseProfile(1);
 
         OnePinWidget tmp = getWidgetByPin(profile, 3);
@@ -319,7 +319,7 @@ public class ShareProfileWorkflowTest extends SingleServerInstancePerTest {
         clientPair.hardwareClient.verifyResult(produce(1, HARDWARE, b("aw 3 150")));
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         profile = clientPair.appClient.parseProfile(1);
 
         tmp = getWidgetByPin(profile, 3);
@@ -332,7 +332,7 @@ public class ShareProfileWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(produce(1, HARDWARE, b("1-0 aw 3 151")));
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         profile = clientPair.appClient.parseProfile(1);
 
         tmp = getWidgetByPin(profile, 3);
@@ -494,7 +494,7 @@ public class ShareProfileWorkflowTest extends SingleServerInstancePerTest {
         verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(produce(2, HARDWARE, b("1-0 aw 3 152"))));
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         Profile profile = clientPair.appClient.parseProfile(1);
 
         OnePinWidget tmp = getWidgetByPin(profile, 3);

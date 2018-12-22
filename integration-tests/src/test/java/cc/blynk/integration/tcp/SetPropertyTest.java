@@ -46,7 +46,7 @@ public class SetPropertyTest extends SingleServerInstancePerTest {
 
     @Test
     public void testSetWidgetProperty() throws Exception {
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         Profile profile = clientPair.appClient.parseProfile(1);
 
         Widget widget = profile.dashBoards[0].findWidgetByPin(0, (short) 4, PinType.VIRTUAL);
@@ -58,7 +58,7 @@ public class SetPropertyTest extends SingleServerInstancePerTest {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(1, "1-0 4 label MyNewLabel")));
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         profile = clientPair.appClient.parseProfile(1);
 
         widget = profile.dashBoards[0].findWidgetByPin(0, (short) 4, PinType.VIRTUAL);
@@ -78,7 +78,7 @@ public class SetPropertyTest extends SingleServerInstancePerTest {
         assertEquals(100_000, tag.id);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createTag(1, tag)));
 
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         Profile profile = clientPair.appClient.parseProfile(2);
 
         Slider slider = (Slider) profile.dashBoards[0].findWidgetByPin(0, (short) 4, PinType.VIRTUAL);
@@ -121,7 +121,7 @@ public class SetPropertyTest extends SingleServerInstancePerTest {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(2, "1-0 17 offLabel выкл")));
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         Profile profile = clientPair.appClient.parseProfile(1);
 
         Widget widget = profile.dashBoards[0].findWidgetByPin(0, (short) 17, PinType.VIRTUAL);
@@ -144,7 +144,7 @@ public class SetPropertyTest extends SingleServerInstancePerTest {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(1, "1-0 17 isOnPlay true")));
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         Profile profile = clientPair.appClient.parseProfile(1);
 
         Widget widget = profile.dashBoards[0].findWidgetByPin(0, (short) 17, PinType.VIRTUAL);
@@ -165,7 +165,7 @@ public class SetPropertyTest extends SingleServerInstancePerTest {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(1, "1-0 17 labels label1 label2 label3")));
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         Profile profile = clientPair.appClient.parseProfile(1);
 
         Widget widget = profile.dashBoards[0].findWidgetByPin(0, (short) 17, PinType.VIRTUAL);
@@ -178,7 +178,7 @@ public class SetPropertyTest extends SingleServerInstancePerTest {
 
     @Test
     public void testSetWrongWidgetProperty() throws Exception {
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         Profile profile = clientPair.appClient.parseProfile(1);
 
         Widget widget = profile.dashBoards[0].findWidgetByPin(0, (short) 4, PinType.VIRTUAL);
@@ -187,7 +187,7 @@ public class SetPropertyTest extends SingleServerInstancePerTest {
         clientPair.hardwareClient.setProperty(4, "YYY", "MyNewLabel");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, ILLEGAL_COMMAND_BODY)));
 
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         profile = clientPair.appClient.parseProfile(2);
         widget = profile.dashBoards[0].findWidgetByPin(0, (short) 4, PinType.VIRTUAL);
 
@@ -196,7 +196,7 @@ public class SetPropertyTest extends SingleServerInstancePerTest {
 
     @Test
     public void testSetWrongWidgetProperty2() throws Exception {
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         Profile profile = clientPair.appClient.parseProfile(1);
 
         Widget widget = profile.dashBoards[0].findWidgetByPin(0, (short) 4, PinType.VIRTUAL);
@@ -205,7 +205,7 @@ public class SetPropertyTest extends SingleServerInstancePerTest {
         clientPair.hardwareClient.setProperty(4, "x", "0");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, ILLEGAL_COMMAND_BODY)));
 
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         profile = clientPair.appClient.parseProfile(2);
         widget = profile.dashBoards[0].findWidgetByPin(0, (short) 4, PinType.VIRTUAL);
 
@@ -214,7 +214,7 @@ public class SetPropertyTest extends SingleServerInstancePerTest {
 
     @Test
     public void testSetWrongWidgetProperty3() throws Exception {
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         Profile profile = clientPair.appClient.parseProfile(1);
 
         Widget widget = profile.dashBoards[0].findWidgetByPin(0, (short) 4, PinType.VIRTUAL);
@@ -234,7 +234,7 @@ public class SetPropertyTest extends SingleServerInstancePerTest {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(1, "1-0 4 color #23C48E")));
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         Profile profile = clientPair.appClient.parseProfile(1);
 
         Widget widget = profile.dashBoards[0].findWidgetByPin(0, (short) 4, PinType.VIRTUAL);
@@ -251,7 +251,7 @@ public class SetPropertyTest extends SingleServerInstancePerTest {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(2, "1-0 4 max 20")));
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         Profile profile = clientPair.appClient.parseProfile(1);
         profile.dashBoards[0].updatedAt = 0;
 
@@ -270,7 +270,7 @@ public class SetPropertyTest extends SingleServerInstancePerTest {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(2, "1-0 4 max 20.2")));
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         Profile profile = clientPair.appClient.parseProfile(1);
         profile.dashBoards[0].updatedAt = 0;
 
@@ -309,7 +309,7 @@ public class SetPropertyTest extends SingleServerInstancePerTest {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(1, "1-0 17 url http://123.com")));
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         Profile profile = clientPair.appClient.parseProfile(1);
 
         Widget widget = profile.dashBoards[0].findWidgetByPin(0, (short) 17, PinType.VIRTUAL);
@@ -330,7 +330,7 @@ public class SetPropertyTest extends SingleServerInstancePerTest {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(1, "1-0 17 urls http://123.com")));
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         Profile profile = clientPair.appClient.parseProfile(1);
 
         Widget widget = profile.dashBoards[0].findWidgetByPin(0, (short) 17, PinType.VIRTUAL);
@@ -345,7 +345,7 @@ public class SetPropertyTest extends SingleServerInstancePerTest {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(2, "1-0 17 urls http://123.com http://124.com")));
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         profile = clientPair.appClient.parseProfile(1);
 
         widget = profile.dashBoards[0].findWidgetByPin(0, (short) 17, PinType.VIRTUAL);
@@ -366,7 +366,7 @@ public class SetPropertyTest extends SingleServerInstancePerTest {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(1, "1-0 17 url 1 http://123.com")));
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         Profile profile = clientPair.appClient.parseProfile(1);
 
         Widget widget = profile.dashBoards[0].findWidgetByPin(0, (short) 17, PinType.VIRTUAL);
@@ -381,7 +381,7 @@ public class SetPropertyTest extends SingleServerInstancePerTest {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(2, "1-0 17 url 2 http://123.com")));
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         profile = clientPair.appClient.parseProfile(1);
 
         widget = profile.dashBoards[0].findWidgetByPin(0, (short) 17, PinType.VIRTUAL);
@@ -418,7 +418,7 @@ public class SetPropertyTest extends SingleServerInstancePerTest {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(1, "1-0 17 url http://123.com")));
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         Profile profile = clientPair.appClient.parseProfile(1);
 
         Widget widget = profile.dashBoards[0].findWidgetByPin(0, (short) 17, PinType.VIRTUAL);
@@ -439,7 +439,7 @@ public class SetPropertyTest extends SingleServerInstancePerTest {
         verify(clientPair.appClient.responseMock, never()).channelRead(any(), eq(setProperty(1111, "1 17 url http://updated.com")));
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         profile = clientPair.appClient.parseProfile(1);
     }
 
@@ -453,7 +453,7 @@ public class SetPropertyTest extends SingleServerInstancePerTest {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(1, "1-0 17 step 1.1")));
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         Profile profile = clientPair.appClient.parseProfile(1);
 
         Widget widget = profile.dashBoards[0].findWidgetByPin(0, (short) 17, PinType.VIRTUAL);
@@ -469,7 +469,7 @@ public class SetPropertyTest extends SingleServerInstancePerTest {
         clientPair.appClient.send("setProperty 1 4 color #23C48E");
         clientPair.appClient.verifyResult(ok(1));
 
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         Profile profile = clientPair.appClient.parseProfile(2);
 
         Widget widget = profile.dashBoards[0].getWidgetById(4);

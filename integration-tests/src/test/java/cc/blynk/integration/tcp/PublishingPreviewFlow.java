@@ -264,7 +264,7 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
         appClient2.login("test@blynk.cc", "a", "Android", "1.10.4", app.id);
         verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(ok(2)));
 
-        appClient2.send("loadProfileGzipped");
+        appClient2.loadProfileGzipped();
         Profile profile = appClient2.parseProfile(3);
         assertEquals(1, profile.dashBoards.length);
         dashBoard = profile.dashBoards[0];
@@ -282,7 +282,7 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
         appClient2.login("test@blynk.cc", "a", "Android", "1.10.4", app.id);
         verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
 
-        appClient2.send("loadProfileGzipped");
+        appClient2.loadProfileGzipped();
         profile = appClient2.parseProfile(2);
         assertEquals(1, profile.dashBoards.length);
         dashBoard = profile.dashBoards[0];
@@ -370,7 +370,7 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
         appClient2.login("test@blynk.cc", "a", "Android", "1.10.4", app.id);
         appClient2.verifyResult(ok(2));
 
-        appClient2.send("loadProfileGzipped");
+        appClient2.loadProfileGzipped();
         Profile profile = appClient2.parseProfile(3);
         assertEquals(1, profile.dashBoards.length);
         dashBoard = profile.dashBoards[0];
@@ -402,7 +402,7 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
         appClient2.login("test@blynk.cc", "a", "Android", "1.10.4", app.id);
         verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
 
-        appClient2.send("loadProfileGzipped");
+        appClient2.loadProfileGzipped();
         profile = appClient2.parseProfile(2);
         assertEquals(1, profile.dashBoards.length);
         dashBoard = profile.dashBoards[0];
@@ -481,7 +481,7 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
         appClient2.login("test@blynk.cc", "a", "Android", "1.10.4", app.id);
         appClient2.verifyResult(ok(2));
 
-        appClient2.send("loadProfileGzipped");
+        appClient2.loadProfileGzipped();
         Profile profile = appClient2.parseProfile(3);
         assertEquals(1, profile.dashBoards.length);
         dashBoard = profile.dashBoards[0];
@@ -558,7 +558,7 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
         appClient2.login("test@blynk.cc", "a", "Android", "1.10.4", app.id);
         appClient2.verifyResult(ok(2));
 
-        appClient2.send("loadProfileGzipped");
+        appClient2.loadProfileGzipped();
         Profile profile = appClient2.parseProfile(3);
         assertEquals(1, profile.dashBoards.length);
         dashBoard = profile.dashBoards[0];
@@ -589,7 +589,7 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
         appClient2.login("test@blynk.cc", "a", "Android", "1.10.4", app.id);
         appClient2.verifyResult(ok(1));
 
-        appClient2.send("loadProfileGzipped");
+        appClient2.loadProfileGzipped();
         profile = appClient2.parseProfile(2);
         assertEquals(1, profile.dashBoards.length);
         dashBoard = profile.dashBoards[0];
@@ -609,7 +609,7 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
         appClient2.login("test@blynk.cc", "a", "Android", "1.10.4", app.id);
         appClient2.verifyResult(ok(1));
 
-        appClient2.send("loadProfileGzipped");
+        appClient2.loadProfileGzipped();
         profile = appClient2.parseProfile(2);
         assertEquals(1, profile.dashBoards.length);
         dashBoard = profile.dashBoards[0];
@@ -663,7 +663,7 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
         appClient2.login("test@blynk.cc", "a", "Android", "1.10.4", app.id);
         appClient2.verifyResult(ok(2));
 
-        appClient2.send("loadProfileGzipped");
+        appClient2.loadProfileGzipped();
         profile = appClient2.parseProfile(3);
         assertEquals(1, profile.dashBoards.length);
         dashBoard = profile.dashBoards[0];
@@ -688,7 +688,7 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
         appClient2.login("test@blynk.cc", "a", "Android", "1.10.4", app.id);
         verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
 
-        appClient2.send("loadProfileGzipped");
+        appClient2.loadProfileGzipped();
         profile = appClient2.parseProfile(2);
         assertEquals(1, profile.dashBoards.length);
         dashBoard = profile.dashBoards[0];
@@ -745,12 +745,12 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
         clientPair.appClient.deleteDash(2);
         clientPair.appClient.verifyResult(ok(5));
 
-        clientPair.appClient.send("loadProfileGzipped 1");
+        clientPair.appClient.loadProfileGzipped(1);
         dashBoard = clientPair.appClient.parseDash(6);
         assertNotNull(dashBoard);
         assertEquals(1, dashBoard.id);
 
-        clientPair.appClient.send("loadProfileGzipped 2");
+        clientPair.appClient.loadProfileGzipped(2);
         clientPair.appClient.verifyResult(illegalCommand(7));
     }
 
@@ -795,13 +795,13 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
         clientPair.appClient.deleteDash(1);
         clientPair.appClient.verifyResult(ok(5));
 
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         Profile profile = clientPair.appClient.parseProfile(6);
         assertNotNull(profile);
         assertNotNull(profile.dashBoards);
         assertEquals(1, profile.dashBoards.length);
 
-        clientPair.appClient.send("loadProfileGzipped 2");
+        clientPair.appClient.loadProfileGzipped(2);
         String response = clientPair.appClient.getBody(7);
         assertNotNull(response);
     }
@@ -822,7 +822,7 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
         appClient2.login("test@blynk.cc", "a", "Android", "1.10.4", app.id);
         appClient2.verifyResult(ok(2));
 
-        appClient2.send("loadProfileGzipped 1");
+        appClient2.loadProfileGzipped(1);
         DashBoard dashBoard = appClient2.parseDash(3);
         assertNotNull(dashBoard);
 
@@ -854,7 +854,7 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
         clientPair.appClient.verifyResult(hardware(1, "1-0 dw 1 abc"));
         clientPair.appClient.verifyResult(hardware(2, "1-0 vw 77 123"));
 
-        clientPair.appClient.send("loadProfileGzipped 1");
+        clientPair.appClient.loadProfileGzipped(1);
         DashBoard dashBoard = clientPair.appClient.parseDash(4);
         assertNotNull(dashBoard);
         Widget w = dashBoard.findWidgetByPin(0, (short) 1, PinType.DIGITAL);

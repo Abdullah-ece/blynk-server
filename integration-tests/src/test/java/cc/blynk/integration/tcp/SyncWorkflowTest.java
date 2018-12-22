@@ -326,7 +326,7 @@ public class SyncWorkflowTest extends SingleServerInstancePerTest {
         verify(clientPair.hardwareClient.responseMock, timeout(500).times(1)).channelRead(any(), eq(produce(1, HARDWARE, b("vw 99 82800 82860 Europe/Kiev 1"))));
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         Profile profile = clientPair.appClient.parseProfile(1);
         TimeInput timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (short) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
@@ -374,7 +374,7 @@ public class SyncWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testTerminalSendsSyncOnActivate() throws Exception {
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         Profile profile = clientPair.appClient.parseProfile(1);
         assertEquals(16, profile.dashBoards[0].widgets.length);
 

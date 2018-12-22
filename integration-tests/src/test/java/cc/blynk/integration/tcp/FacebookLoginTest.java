@@ -57,7 +57,7 @@ public class FacebookLoginTest extends SingleServerInstancePerTest {
         String expected = readTestUserProfile();
 
         appClient.reset();
-        appClient.send("loadProfileGzipped");
+        appClient.loadProfileGzipped();
         verify(appClient.responseMock, timeout(500)).channelRead(any(), any());
 
         Profile profile = appClient.parseProfile(1);

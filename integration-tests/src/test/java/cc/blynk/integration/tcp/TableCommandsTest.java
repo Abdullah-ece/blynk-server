@@ -257,7 +257,7 @@ public class TableCommandsTest extends SingleServerInstancePerTest {
 
     private Table loadTable() throws Exception {
         clientPair.appClient.reset();
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         Profile profile = clientPair.appClient.parseProfile(1);
         return (Table) profile.dashBoards[0].findWidgetByPin(0, (short) 123, PinType.VIRTUAL);
     }

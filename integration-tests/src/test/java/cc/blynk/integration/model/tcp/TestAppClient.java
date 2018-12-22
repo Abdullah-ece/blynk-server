@@ -3,6 +3,7 @@ package cc.blynk.integration.model.tcp;
 import cc.blynk.client.handlers.decoders.AppClientMessageDecoder;
 import cc.blynk.integration.model.SimpleClientHandler;
 import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.DashboardSettings;
 import cc.blynk.server.core.model.auth.App;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Tag;
@@ -34,6 +35,7 @@ import static cc.blynk.server.core.protocol.enums.Command.DEVICE_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.GET_SUPERCHART_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.LOGIN;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_ACTIVATE_DASHBOARD;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_ADD_ENERGY;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_ADD_PUSH_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_APP;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_DASH;
@@ -53,12 +55,14 @@ import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_DEVICE_METAFIELD;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_PROFILE_SETTINGS;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_PROJECT_SETTINGS;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_REPORT;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_TAG;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_TILE_TEMPLATE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EXPORT_REPORT;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICE;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICES;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICES_BY_REFERENCE_METAFIELD;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_PROVISION_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_WIDGET;
@@ -113,11 +117,11 @@ public class TestAppClient extends BaseTestAppClient {
     }
 
     public void getDevices() {
-        send("getDevices");
+        send(MOBILE_GET_DEVICES);
     }
 
     public void getDevices(int dashId) {
-        send("getDevices " + dashId);
+        send(MOBILE_GET_DEVICES, dashId);
     }
 
     public Device[] parseDevices() throws Exception {
@@ -386,12 +390,24 @@ public class TestAppClient extends BaseTestAppClient {
         send(MOBILE_EDIT_PROFILE_SETTINGS, profileSettings);
     }
 
+    public void editDashboarSettings(int dashId, DashboardSettings dashboardSettings) {
+        send(MOBILE_EDIT_PROJECT_SETTINGS, "" + dashId + BODY_SEPARATOR + dashboardSettings);
+    }
+
     public void createApp(App app) {
         send(MOBILE_CREATE_APP, app);
     }
 
     public void loadProfileGzipped() {
         send(MOBILE_LOAD_PROFILE_GZIPPED);
+    }
+
+    public void loadProfileGzipped(int dashId) {
+        send(MOBILE_LOAD_PROFILE_GZIPPED, dashId);
+    }
+
+    public void addEnergy(int energy, String transactionId) {
+        send(MOBILE_ADD_ENERGY, "" + energy + BODY_SEPARATOR + transactionId);
     }
 
     public void replace(SimpleClientHandler simpleClientHandler) {

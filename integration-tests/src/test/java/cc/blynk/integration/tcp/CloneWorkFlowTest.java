@@ -71,7 +71,7 @@ public class CloneWorkFlowTest extends SingleServerInstancePerTestWithDB {
         assertNotNull(slider);
         assertNull(slider.value);
 
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         Profile profile = clientPair.appClient.parseProfile(5);
         assertEquals(1, profile.dashBoards.length);
     }
@@ -96,7 +96,7 @@ public class CloneWorkFlowTest extends SingleServerInstancePerTestWithDB {
         assertNull(device.hardwareInfo);
         assertNotNull(device.token);
 
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         Profile profile = clientPair.appClient.parseProfile(3);
         assertEquals(2, profile.dashBoards.length);
     }
@@ -112,7 +112,7 @@ public class CloneWorkFlowTest extends SingleServerInstancePerTestWithDB {
         DashBoard dashBoard = clientPair.appClient.parseDash(2);
         assertEquals("My Dashboard", dashBoard.name);
 
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         Profile profile = clientPair.appClient.parseProfile(3);
         assertEquals(2, profile.dashBoards.length);
         assertEquals(2, profile.dashBoards[1].id);

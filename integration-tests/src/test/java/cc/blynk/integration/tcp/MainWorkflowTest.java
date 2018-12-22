@@ -171,7 +171,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
 
         appClient.reset();
 
-        appClient.send("loadProfileGzipped");
+        appClient.loadProfileGzipped();
         Profile profile = appClient.parseProfile(1);
         profile.dashBoards[0].updatedAt = 0;
 
@@ -182,7 +182,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
 
         appClient.reset();
 
-        appClient.send("loadProfileGzipped");
+        appClient.loadProfileGzipped();
         profile = appClient.parseProfile(1);
         profile.dashBoards[0].updatedAt = 0;
         assertEquals("{\"dashBoards\":[{\"id\":1,\"parentId\":-1,\"isPreview\":false,\"name\":\"test board\",\"createdAt\":1,\"updatedAt\":0,\"widgets\":[{\"type\":\"BUTTON\",\"id\":1,\"x\":0,\"y\":0,\"color\":0,\"width\":1,\"height\":1,\"tabId\":0,\"label\":\"Some Text\",\"isDefaultColor\":false,\"deviceId\":0,\"pinType\":\"DIGITAL\",\"pin\":1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0.0,\"max\":0.0,\"pushMode\":false},{\"type\":\"BUTTON\",\"id\":2,\"x\":2,\"y\":2,\"color\":0,\"width\":1,\"height\":1,\"tabId\":0,\"label\":\"Some Text 2\",\"isDefaultColor\":false,\"deviceId\":0,\"pinType\":\"DIGITAL\",\"pin\":2,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0.0,\"max\":0.0,\"pushMode\":false}],\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isNotificationsOff\":false,\"isShared\":false,\"isActive\":false,\"widgetBackgroundOn\":false,\"color\":-1,\"isDefaultColor\":true}]}", profile.toString());
@@ -192,7 +192,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
 
         appClient.reset();
 
-        appClient.send("loadProfileGzipped");
+        appClient.loadProfileGzipped();
         profile = appClient.parseProfile(1);
         profile.dashBoards[0].updatedAt = 0;
         assertEquals("{\"dashBoards\":[{\"id\":1,\"parentId\":-1,\"isPreview\":false,\"name\":\"test board\",\"createdAt\":1,\"updatedAt\":0,\"widgets\":[{\"type\":\"BUTTON\",\"id\":1,\"x\":0,\"y\":0,\"color\":0,\"width\":1,\"height\":1,\"tabId\":0,\"label\":\"Some Text\",\"isDefaultColor\":false,\"deviceId\":0,\"pinType\":\"DIGITAL\",\"pin\":1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0.0,\"max\":0.0,\"pushMode\":false},{\"type\":\"BUTTON\",\"id\":2,\"x\":2,\"y\":2,\"color\":0,\"width\":1,\"height\":1,\"tabId\":0,\"label\":\"new label\",\"isDefaultColor\":false,\"deviceId\":0,\"pinType\":\"DIGITAL\",\"pin\":3,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0.0,\"max\":0.0,\"pushMode\":false}],\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isNotificationsOff\":false,\"isShared\":false,\"isActive\":false,\"widgetBackgroundOn\":false,\"color\":-1,\"isDefaultColor\":true}]}", profile.toString());
@@ -208,7 +208,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
 
         appClient.reset();
 
-        appClient.send("loadProfileGzipped");
+        appClient.loadProfileGzipped();
         profile = appClient.parseProfile(1);
         profile.dashBoards[0].updatedAt = 0;
         assertEquals("{\"dashBoards\":[{\"id\":1,\"parentId\":-1,\"isPreview\":false,\"name\":\"test board\",\"createdAt\":1,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isNotificationsOff\":false,\"isShared\":false,\"isActive\":false,\"widgetBackgroundOn\":false,\"color\":-1,\"isDefaultColor\":true}]}", profile.toString());
@@ -323,7 +323,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
 
         appClient.reset();
 
-        appClient.send("loadProfileGzipped");
+        appClient.loadProfileGzipped();
         Profile profile = appClient.parseProfile(1);
         profile.dashBoards[0].updatedAt = 0;
 
@@ -368,7 +368,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.send("hardwareBT 1-0 vw 67 100");
         verify(clientPair.hardwareClient.responseMock, after(500).never()).channelRead(any(), eq(hardware(2, "1-0 vw 67 100")));
 
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         Profile profile = clientPair.appClient.parseProfile(2);
         assertNotNull(profile);
         Widget widget = profile.dashBoards[0].findWidgetByPin(0, (short) 67, PinType.VIRTUAL);
@@ -385,7 +385,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.send("hardware 1 aw 24 100");
         clientPair.hardwareClient.verifyResult(hardware(2, "aw 24 100"));
 
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         Profile profile = clientPair.appClient.parseProfile(2);
         assertNotNull(profile);
         Widget widget = profile.dashBoards[0].findWidgetByPin(0, (short) 24, PinType.DIGITAL);
@@ -459,7 +459,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testAddAndRemoveTabs() throws Exception {
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         Profile profile = clientPair.appClient.parseProfile(1);
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
@@ -479,7 +479,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(produce(6, MOBILE_GET_ENERGY, "7100"));
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         profile = clientPair.appClient.parseProfile(1);
         assertEquals(19, profile.dashBoards[0].widgets.length);
 
@@ -490,7 +490,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(produce(3, MOBILE_GET_ENERGY, "7300"));
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         profile = clientPair.appClient.parseProfile(1);
         assertEquals(17, profile.dashBoards[0].widgets.length);
         assertNotNull(profile.dashBoards[0].findWidgetByPin(0, (short) 17, PinType.DIGITAL));
@@ -498,7 +498,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testAddAndUpdateTabs() throws Exception {
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         Profile profile = clientPair.appClient.parseProfile(1);
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
@@ -518,7 +518,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(produce(6, MOBILE_GET_ENERGY, "7100"));
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         profile = clientPair.appClient.parseProfile(1);
         assertEquals(19, profile.dashBoards[0].widgets.length);
 
@@ -529,7 +529,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(produce(3, MOBILE_GET_ENERGY, "7300"));
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         profile = clientPair.appClient.parseProfile(1);
         assertEquals(18, profile.dashBoards[0].widgets.length);
         assertNull(profile.dashBoards[0].findWidgetByPin(0, (short) 17, PinType.DIGITAL));
@@ -605,25 +605,25 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         Profile responseProfile;
         DashBoard responseDash;
 
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         responseProfile = clientPair.appClient.parseProfile(7);
         responseProfile.dashBoards[0].updatedAt = 0;
         responseProfile.dashBoards[0].createdAt = 0;
         assertEquals("{\"dashBoards\":[{\"id\":10,\"parentId\":-1,\"isPreview\":false,\"name\":\"test board update\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isNotificationsOff\":false,\"isShared\":false,\"isActive\":false,\"widgetBackgroundOn\":false,\"color\":-1,\"isDefaultColor\":true}]}", responseProfile.toString());
 
-        clientPair.appClient.send("loadProfileGzipped 10");
+        clientPair.appClient.loadProfileGzipped(10);
         responseDash = clientPair.appClient.parseDash(8);
         responseDash.updatedAt = 0;
         responseDash.createdAt = 0;
         assertEquals("{\"id\":10,\"parentId\":-1,\"isPreview\":false,\"name\":\"test board update\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isNotificationsOff\":false,\"isShared\":false,\"isActive\":false,\"widgetBackgroundOn\":false,\"color\":-1,\"isDefaultColor\":true}", responseDash.toString());
 
-        clientPair.appClient.send("loadProfileGzipped 1");
+        clientPair.appClient.loadProfileGzipped(1);
         clientPair.appClient.verifyResult(illegalCommand(9));
 
         clientPair.appClient.activate(10);
         clientPair.appClient.verifyResult(new ResponseMessage(10, DEVICE_NOT_IN_NETWORK));
 
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         responseProfile = clientPair.appClient.parseProfile(11);
         responseProfile.dashBoards[0].updatedAt = 0;
         responseProfile.dashBoards[0].createdAt = 0;
@@ -634,7 +634,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(2));
 
         expectedProfile = "{\"dashBoards\":[{\"id\":10,\"parentId\":-1,\"isPreview\":false,\"name\":\"test board update\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isNotificationsOff\":false,\"isShared\":false,\"isActive\":true,\"widgetBackgroundOn\":false,\"color\":-1,\"isDefaultColor\":true}]}";
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         responseProfile = clientPair.appClient.parseProfile(13);
         responseProfile.dashBoards[0].updatedAt = 0;
         responseProfile.dashBoards[0].createdAt = 0;
@@ -736,7 +736,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
     public void loadGzippedProfile() throws Exception{
         Profile expectedProfile = JsonParser.parseProfileFromString(readTestUserProfile());
 
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         Profile profile = clientPair.appClient.parseProfile(1);
 
         profile.dashBoards[0].updatedAt = 0;
@@ -749,10 +749,10 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         DashboardSettings settings = new DashboardSettings("New Name",
                 true, Theme.BlynkLight, true, true, false, false, 0, false);
 
-        clientPair.appClient.send("updateSettings 1\0" + JsonParser.toJson(settings));
+        clientPair.appClient.editDashboarSettings(1, settings);
         clientPair.appClient.verifyResult(ok(1));
 
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         Profile profile = clientPair.appClient.parseProfile(2);
         DashBoard dashBoard = profile.dashBoards[0];
         assertNotNull(dashBoard);
@@ -950,7 +950,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         verify(clientPair.hardwareClient.responseMock, timeout(500).times(1)).channelRead(any(), eq(hardware(2, "vw 99 play")));
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         Profile profile = clientPair.appClient.parseProfile(1);
         Player player = (Player) profile.dashBoards[0].findWidgetByPin(0, (short) 99, PinType.VIRTUAL);
         assertNotNull(player);
@@ -960,7 +960,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         verify(clientPair.hardwareClient.responseMock, timeout(500).times(1)).channelRead(any(), eq(hardware(2, "vw 99 stop")));
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         profile = clientPair.appClient.parseProfile(1);
         player = (Player) profile.dashBoards[0].findWidgetByPin(0, (short) 99, PinType.VIRTUAL);
         assertNotNull(player);
@@ -978,7 +978,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         verify(clientPair.hardwareClient.responseMock, timeout(500).times(1)).channelRead(any(), eq(hardware(2, "vw 99 82800 82860 Europe/Kiev 1")));
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         Profile profile = clientPair.appClient.parseProfile(1);
         TimeInput timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (short) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
@@ -992,7 +992,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         verify(clientPair.hardwareClient.responseMock, timeout(500).times(1)).channelRead(any(), eq(hardware(2, "vw 99 82800 82860 Europe/Kiev ")));
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         profile = clientPair.appClient.parseProfile(1);
         timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (short) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
@@ -1005,7 +1005,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         verify(clientPair.hardwareClient.responseMock, timeout(500).times(1)).channelRead(any(), eq(hardware(2, "vw 99 82800  Europe/Kiev ")));
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         profile = clientPair.appClient.parseProfile(1);
         timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (short) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
@@ -1018,7 +1018,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         verify(clientPair.hardwareClient.responseMock, timeout(500).times(1)).channelRead(any(), eq(hardware(2, "vw 99 82800  Europe/Kiev 1,2,3,4")));
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         profile = clientPair.appClient.parseProfile(1);
         timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (short) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
@@ -1031,7 +1031,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         verify(clientPair.hardwareClient.responseMock, timeout(500).times(1)).channelRead(any(), eq(hardware(2, "vw 99   Europe/Kiev 1,2,3,4")));
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         profile = clientPair.appClient.parseProfile(1);
         timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (short) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
@@ -1044,7 +1044,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         verify(clientPair.hardwareClient.responseMock, timeout(500).times(1)).channelRead(any(), eq(hardware(2, "vw 99 82800 82800 Europe/Kiev  10800")));
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         profile = clientPair.appClient.parseProfile(1);
         timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (short) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
@@ -1057,7 +1057,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         verify(clientPair.hardwareClient.responseMock, timeout(500).times(1)).channelRead(any(), eq(hardware(2, "vw 99 ss sr Europe/Kiev  10800")));
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         profile = clientPair.appClient.parseProfile(1);
         timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (short) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
@@ -1079,7 +1079,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         verify(clientPair.appClient.responseMock, timeout(500).times(1)).channelRead(any(), eq(hardware(1, "1-0 vw 99 82800 82860 Europe/Kiev 1")));
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         Profile profile = clientPair.appClient.parseProfile(1);
         TimeInput timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (short) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
@@ -1093,7 +1093,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         verify(clientPair.appClient.responseMock, timeout(500).times(1)).channelRead(any(), eq(hardware(2, "1-0 vw 99 82800 82860 Europe/Kiev ")));
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         profile = clientPair.appClient.parseProfile(1);
         timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (short) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
@@ -1106,7 +1106,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         verify(clientPair.appClient.responseMock, timeout(500).times(1)).channelRead(any(), eq(hardware(3, "1-0 vw 99 82800  Europe/Kiev ")));
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         profile = (clientPair.appClient.parseProfile(1));
         timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (short) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
@@ -1119,7 +1119,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         verify(clientPair.appClient.responseMock, timeout(500).times(1)).channelRead(any(), eq(hardware(4, "1-0 vw 99 82800  Europe/Kiev 1,2,3,4")));
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         profile = (clientPair.appClient.parseProfile(1));
         timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (short) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
@@ -1132,7 +1132,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         verify(clientPair.appClient.responseMock, timeout(500).times(1)).channelRead(any(), eq(hardware(5, "1-0 vw 99   Europe/Kiev 1,2,3,4")));
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         profile = (clientPair.appClient.parseProfile(1));
         timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (short) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
@@ -1145,7 +1145,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         verify(clientPair.appClient.responseMock, timeout(500).times(1)).channelRead(any(), eq(hardware(6, "1-0 vw 99 82800 82800 Europe/Kiev  10800")));
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         profile = clientPair.appClient.parseProfile(1);
         timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (short) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
@@ -1158,7 +1158,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         verify(clientPair.appClient.responseMock, timeout(500).times(1)).channelRead(any(), eq(hardware(7, "1-0 vw 99 ss sr Europe/Kiev  10800")));
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         profile = clientPair.appClient.parseProfile(1);
         timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (short) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
@@ -1362,7 +1362,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.send("hardware 1 aw 18 1032");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(hardware(2, "aw 18 1032")));
 
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         Profile profile = clientPair.appClient.parseProfile(2);
         Widget widget = profile.dashBoards[0].findWidgetByPin(0, (short) 18, PinType.DIGITAL);
         assertNotNull(widget);
@@ -1380,7 +1380,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.send("hardware 1 vw 37 10");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(hardware(3, "vw 37 10")));
 
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         Profile profile = clientPair.appClient.parseProfile(3);
 
         int counter = 0;
@@ -1394,7 +1394,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
 
         clientPair.hardwareClient.send("hardware vw 37 11");
         clientPair.appClient.verifyResult(hardware(1, "1-0 vw 37 11"));
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         profile = clientPair.appClient.parseProfile(5);
         counter = 0;
         for (Widget widget : profile.dashBoards[0].widgets) {
@@ -1414,7 +1414,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.send("hardware 1 dw 18 1");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(hardware(2, "dw 18 1")));
 
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         Profile profile = clientPair.appClient.parseProfile(2);
         Widget widget = profile.dashBoards[0].findWidgetByPin(0, (short) 18, PinType.DIGITAL);
         assertNotNull(widget);

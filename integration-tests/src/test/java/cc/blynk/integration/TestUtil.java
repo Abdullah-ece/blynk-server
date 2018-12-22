@@ -284,7 +284,7 @@ public final class TestUtil {
         appClient.register(user, pass, AppNameUtil.BLYNK);
         appClient.login(user, pass, "Android", "2.27.0");
         int rand = ThreadLocalRandom.current().nextInt();
-        appClient.send("addEnergy " + energy + "\0" + String.valueOf(rand));
+        appClient.addEnergy(energy, String.valueOf(rand));
         //we should wait until login finished. Only after that we can send commands
         verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(2)));
 
@@ -346,7 +346,6 @@ public final class TestUtil {
         return JsonParser.readAny(consumeText(response), List.class);
     }
 
-    @SuppressWarnings("unchecked")
     public static String consumeText(CloseableHttpResponse response) throws IOException {
         return EntityUtils.toString(response.getEntity());
     }

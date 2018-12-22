@@ -177,7 +177,7 @@ public class EventorTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(hardware(888, "1-0 vw 4 123"));
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         Profile profile = clientPair.appClient.parseProfile(1);
         assertNotNull(profile);
         OnePinWidget widget = (OnePinWidget) profile.dashBoards[0].findWidgetByPin(0, (short) 4, PinType.VIRTUAL);
@@ -640,7 +640,7 @@ public class EventorTest extends SingleServerInstancePerTest {
 
     @Test
     public void testSetWidgetPropertyViaEventor() throws Exception {
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         Profile profile = clientPair.appClient.parseProfile(1);
 
         Widget widget = profile.dashBoards[0].findWidgetByPin(0, (short) 4, PinType.VIRTUAL);
@@ -665,7 +665,7 @@ public class EventorTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(produce(888, SET_WIDGET_PROPERTY, b("1-0 4 label MyNewLabel")));
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("loadProfileGzipped");
+        clientPair.appClient.loadProfileGzipped();
         profile = clientPair.appClient.parseProfile(1);
 
         widget = profile.dashBoards[0].findWidgetByPin(0, (short) 4, PinType.VIRTUAL);
