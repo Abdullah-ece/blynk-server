@@ -63,7 +63,8 @@ public final class MobileCreateAppLogic {
         user.profile.apps = ArrayUtil.add(user.profile.apps, newApp, App.class);
         user.lastModifiedTs = System.currentTimeMillis();
 
-        ctx.writeAndFlush(makeUTF8StringMessage(MOBILE_CREATE_APP, message.id, JsonParser.toJson(newApp)), ctx.voidPromise());
+        ctx.writeAndFlush(makeUTF8StringMessage(MOBILE_CREATE_APP, message.id, JsonParser.toJson(newApp)),
+                ctx.voidPromise());
     }
 
 }

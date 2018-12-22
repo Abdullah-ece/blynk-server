@@ -19,7 +19,8 @@ public final class MobileGetEnergyLogic {
 
     public static void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
         if (ctx.channel().isWritable()) {
-            ctx.writeAndFlush(makeASCIIStringMessage(MOBILE_GET_ENERGY, message.id, "" + user.energy), ctx.voidPromise());
+            ctx.writeAndFlush(makeASCIIStringMessage(MOBILE_GET_ENERGY, message.id, "" + user.energy),
+                    ctx.voidPromise());
         }
     }
 

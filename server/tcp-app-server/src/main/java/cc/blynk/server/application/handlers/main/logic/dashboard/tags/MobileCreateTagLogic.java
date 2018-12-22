@@ -59,7 +59,8 @@ public final class MobileCreateTagLogic {
         user.lastModifiedTs = System.currentTimeMillis();
 
         if (ctx.channel().isWritable()) {
-            ctx.writeAndFlush(makeUTF8StringMessage(MOBILE_CREATE_TAG, message.id, newTag.toString()), ctx.voidPromise());
+            ctx.writeAndFlush(makeUTF8StringMessage(MOBILE_CREATE_TAG, message.id, newTag.toString()),
+                    ctx.voidPromise());
         }
     }
 

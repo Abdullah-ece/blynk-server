@@ -99,7 +99,8 @@ public final class MobileCreateReportLogic {
         reportingWidget.reports = ArrayUtil.add(reportingWidget.reports, report, Report.class);
         dash.updatedAt = System.currentTimeMillis();
 
-        ctx.writeAndFlush(makeUTF8StringMessage(MOBILE_CREATE_REPORT, message.id, report.toString()), ctx.voidPromise());
+        ctx.writeAndFlush(makeUTF8StringMessage(MOBILE_CREATE_REPORT, message.id, report.toString()),
+                ctx.voidPromise());
     }
 
 }
