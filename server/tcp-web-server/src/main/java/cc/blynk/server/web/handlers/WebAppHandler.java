@@ -62,8 +62,6 @@ import static cc.blynk.server.core.protocol.enums.Command.GET_ENHANCED_GRAPH_DAT
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.LOGOUT;
 import static cc.blynk.server.core.protocol.enums.Command.PING;
-import static cc.blynk.server.core.protocol.enums.Command.RESOLVE_EVENT;
-import static cc.blynk.server.core.protocol.enums.Command.TRACK_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_CAN_DELETE_PRODUCT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_CAN_INVITE_USER;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_CREATE_DEVICE;
@@ -75,8 +73,15 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_DELETE_ORG;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_DELETE_PRODUCT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_DELETE_ROLE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_DELETE_USER;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_ACCOUNT;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_DEVICE;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_DEVICES_META_IN_PRODUCT;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_DEVICE_METAFIELD;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_ORG;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_OWN_ORG;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_PRODUCT;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_ROLE;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_USER_INFO;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ACCOUNT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICES;
@@ -100,15 +105,10 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_OTA_CLEAN;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_OTA_GET_FIRMWARE_INFO;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_OTA_START;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_OTA_STOP;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_RESOLVE_EVENT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_SET_AUTH_TOKEN;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_TRACK_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_TRACK_ORG;
-import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_ACCOUNT;
-import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_DEVICE;
-import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_DEVICES_META_IN_PRODUCT;
-import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_DEVICE_METAFIELD;
-import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_PRODUCT;
-import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_ROLE;
-import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_USER_INFO;
 
 /**
  * The Blynk Project.
@@ -224,19 +224,19 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
             case WEB_GET_ACCOUNT:
                 WebGetAccountLogic.messageReceived(ctx, state, msg);
                 break;
-            case WEB_UPDATE_ACCOUNT:
+            case WEB_EDIT_ACCOUNT:
                 WebEditAccountLogic.messageReceived(ctx, state, msg);
                 break;
             case HARDWARE :
                 webAppControlHardwareLogic.messageReceived(ctx, state, msg);
                 break;
-            case TRACK_DEVICE :
+            case WEB_TRACK_DEVICE:
                 webTrackDeviceLogic.messageReceived(ctx, state, msg);
                 break;
             case GET_ENHANCED_GRAPH_DATA :
                 getWebGraphDataLogic.messageReceived(ctx, state, msg);
                 break;
-            case RESOLVE_EVENT :
+            case WEB_RESOLVE_EVENT:
                 webResolveLogEventLogic.messageReceived(ctx, state, msg);
                 break;
             case PING :
@@ -245,7 +245,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
             case WEB_CREATE_DEVICE :
                 webCreateOrgDeviceLogic.messageReceived(ctx, state, msg);
                 break;
-            case WEB_UPDATE_DEVICE :
+            case WEB_EDIT_DEVICE:
                 webEditOrgDeviceLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_GET_DEVICES :
@@ -278,16 +278,16 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
             case WEB_GET_PRODUCTS :
                 webGetProductsLogic.messageReceived(ctx, state, msg);
                 break;
-            case WEB_UPDATE_PRODUCT :
+            case WEB_EDIT_PRODUCT:
                 webEditProductLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_DELETE_PRODUCT :
                 webDeleteProductLogic.messageReceived(ctx, state, msg);
                 break;
-            case WEB_UPDATE_DEVICES_META_IN_PRODUCT :
+            case WEB_EDIT_DEVICES_META_IN_PRODUCT:
                 webUpdateDevicesMetaInProductLogic.messageReceived(ctx, state, msg);
                 break;
-            case WEB_UPDATE_USER_INFO :
+            case WEB_EDIT_USER_INFO:
                 webEditUserInfoLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_DELETE_USER :
@@ -308,7 +308,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
             case WEB_INVITE_USER :
                 webInviteUserLogic.messageReceived(ctx, state, msg);
                 break;
-            case WEB_UPDATE_DEVICE_METAFIELD :
+            case WEB_EDIT_DEVICE_METAFIELD:
                 webUpdateDeviceMetafieldLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_GET_DEVICE_TIMELINE :
@@ -332,7 +332,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
             case WEB_CREATE_ROLE :
                 webCreateRoleLogic.messageReceived(ctx, state, msg);
                 break;
-            case WEB_UPDATE_ROLE:
+            case WEB_EDIT_ROLE:
                 webEditRoleLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_DELETE_ROLE :

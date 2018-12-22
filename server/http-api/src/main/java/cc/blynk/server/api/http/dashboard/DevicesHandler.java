@@ -51,7 +51,7 @@ import static cc.blynk.core.http.Response.badRequest;
 import static cc.blynk.core.http.Response.notFound;
 import static cc.blynk.core.http.Response.ok;
 import static cc.blynk.core.http.Response.serverError;
-import static cc.blynk.server.core.protocol.enums.Command.RESOLVE_EVENT;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_RESOLVE_EVENT;
 
 /**
  * The Blynk Project.
@@ -124,7 +124,7 @@ public class DevicesHandler extends BaseHttpHandler {
                     if (comment != null) {
                         body = body + StringUtils.BODY_SEPARATOR + userComment;
                     }
-                    session.sendToSelectedDeviceOnWeb(ctx.channel(), RESOLVE_EVENT, 1111, body, deviceId);
+                    session.sendToSelectedDeviceOnWeb(ctx.channel(), WEB_RESOLVE_EVENT, 1111, body, deviceId);
                 } else {
                     log.warn("Event with id {} for user {} not resolved.", logEventId, user.email);
                     response = notFound();

@@ -1,35 +1,39 @@
 package cc.blynk.server.core.stats.model;
 
 import static cc.blynk.server.core.protocol.enums.Command.ACTIVATE_DASHBOARD;
-import static cc.blynk.server.core.protocol.enums.Command.ADD_ENERGY;
 import static cc.blynk.server.core.protocol.enums.Command.ADD_PUSH_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.BLYNK_INTERNAL;
 import static cc.blynk.server.core.protocol.enums.Command.BRIDGE;
 import static cc.blynk.server.core.protocol.enums.Command.CONNECT_REDIRECT;
-import static cc.blynk.server.core.protocol.enums.Command.CREATE_DASH;
-import static cc.blynk.server.core.protocol.enums.Command.CREATE_DEVICE;
-import static cc.blynk.server.core.protocol.enums.Command.CREATE_TAG;
-import static cc.blynk.server.core.protocol.enums.Command.CREATE_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.DEACTIVATE_DASHBOARD;
-import static cc.blynk.server.core.protocol.enums.Command.DELETE_DASH;
-import static cc.blynk.server.core.protocol.enums.Command.DELETE_DEVICE;
-import static cc.blynk.server.core.protocol.enums.Command.DELETE_TAG;
-import static cc.blynk.server.core.protocol.enums.Command.DELETE_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.DEVICE_CONNECTED;
 import static cc.blynk.server.core.protocol.enums.Command.DEVICE_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.EMAIL;
 import static cc.blynk.server.core.protocol.enums.Command.EVENTOR;
-import static cc.blynk.server.core.protocol.enums.Command.GET_DEVICES;
-import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
 import static cc.blynk.server.core.protocol.enums.Command.GET_SERVER;
 import static cc.blynk.server.core.protocol.enums.Command.GET_SHARE_TOKEN;
-import static cc.blynk.server.core.protocol.enums.Command.GET_TAGS;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_LOGIN;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_LOG_EVENT;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_SYNC;
-import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
 import static cc.blynk.server.core.protocol.enums.Command.LOGIN;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_ADD_ENERGY;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_DASH;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_DEVICE;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_TAG;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_WIDGET;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_DASH;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_DEVICE;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_TAG;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_WIDGET;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_DASH;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_DEVICE;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_WIDGET;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICES;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_ENERGY;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_TAGS;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_LOAD_PROFILE_GZIPPED;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_UPDATE_TAG;
 import static cc.blynk.server.core.protocol.enums.Command.PING;
 import static cc.blynk.server.core.protocol.enums.Command.PUSH_NOTIFICATION;
 import static cc.blynk.server.core.protocol.enums.Command.REDEEM;
@@ -42,10 +46,6 @@ import static cc.blynk.server.core.protocol.enums.Command.SHARE_LOGIN;
 import static cc.blynk.server.core.protocol.enums.Command.SHARING;
 import static cc.blynk.server.core.protocol.enums.Command.SMS;
 import static cc.blynk.server.core.protocol.enums.Command.TWEET;
-import static cc.blynk.server.core.protocol.enums.Command.UPDATE_DASH;
-import static cc.blynk.server.core.protocol.enums.Command.UPDATE_DEVICE;
-import static cc.blynk.server.core.protocol.enums.Command.UPDATE_TAG;
-import static cc.blynk.server.core.protocol.enums.Command.UPDATE_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_HOOKS;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_SOCKETS;
 
@@ -139,7 +139,7 @@ public class CommandStat {
             case HARDWARE_LOGIN :
                 this.hardwareLogin = val;
                 break;
-            case LOAD_PROFILE_GZIPPED :
+            case MOBILE_LOAD_PROFILE_GZIPPED:
                 this.loadProfile = val;
                 break;
             case DEVICE_SYNC:
@@ -184,13 +184,13 @@ public class CommandStat {
             case SHARE_LOGIN :
                 this.shareLogin = val;
                 break;
-            case CREATE_DASH :
+            case MOBILE_CREATE_DASH:
                 this.createProject = val;
                 break;
-            case UPDATE_DASH :
+            case MOBILE_EDIT_DASH:
                 this.updateProject = val;
                 break;
-            case DELETE_DASH :
+            case MOBILE_DELETE_DASH:
                 this.deleteProject = val;
                 break;
             case HARDWARE_SYNC :
@@ -211,43 +211,43 @@ public class CommandStat {
             case PUSH_NOTIFICATION :
                 this.push = val;
                 break;
-            case CREATE_WIDGET :
+            case MOBILE_CREATE_WIDGET:
                 this.createWidget = val;
                 break;
-            case UPDATE_WIDGET :
+            case MOBILE_EDIT_WIDGET:
                 this.updateWidget = val;
                 break;
-            case DELETE_WIDGET :
+            case MOBILE_DELETE_WIDGET:
                 this.deleteWidget = val;
                 break;
-            case CREATE_DEVICE :
+            case MOBILE_CREATE_DEVICE:
                 this.createDevice = val;
                 break;
-            case UPDATE_DEVICE :
+            case MOBILE_EDIT_DEVICE:
                 this.updateDevice = val;
                 break;
-            case DELETE_DEVICE :
+            case MOBILE_DELETE_DEVICE:
                 this.deleteDevice = val;
                 break;
-            case GET_DEVICES :
+            case MOBILE_GET_DEVICES:
                 this.getDevices = val;
                 break;
-            case CREATE_TAG :
+            case MOBILE_CREATE_TAG:
                 this.createTag = val;
                 break;
-            case UPDATE_TAG :
+            case MOBILE_UPDATE_TAG:
                 this.updateTag = val;
                 break;
-            case DELETE_TAG :
+            case MOBILE_DELETE_TAG:
                 this.deleteTag = val;
                 break;
-            case GET_TAGS :
+            case MOBILE_GET_TAGS:
                 this.getTags = val;
                 break;
-            case ADD_ENERGY :
+            case MOBILE_ADD_ENERGY:
                 this.addEnergy = val;
                 break;
-            case GET_ENERGY :
+            case MOBILE_GET_ENERGY:
                 this.getEnergy = val;
                 break;
             case GET_SERVER :

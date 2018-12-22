@@ -74,15 +74,15 @@ import static cc.blynk.server.core.model.widgets.outputs.graph.AggregationFuncti
 import static cc.blynk.server.core.protocol.enums.Command.BLYNK_INTERNAL;
 import static cc.blynk.server.core.protocol.enums.Command.BRIDGE;
 import static cc.blynk.server.core.protocol.enums.Command.CONNECT_REDIRECT;
-import static cc.blynk.server.core.protocol.enums.Command.CREATE_DEVICE;
-import static cc.blynk.server.core.protocol.enums.Command.CREATE_TAG;
 import static cc.blynk.server.core.protocol.enums.Command.DEVICE_CONNECTED;
 import static cc.blynk.server.core.protocol.enums.Command.DEVICE_DISCONNECTED;
 import static cc.blynk.server.core.protocol.enums.Command.DEVICE_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_CLONE_CODE;
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_TOKEN;
-import static cc.blynk.server.core.protocol.enums.Command.GET_PROVISION_TOKEN;
-import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_DEVICE;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_TAG;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_PROVISION_TOKEN;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_LOAD_PROFILE_GZIPPED;
 import static cc.blynk.server.core.protocol.enums.Command.OUTDATED_APP_NOTIFICATION;
 import static cc.blynk.server.core.protocol.enums.Command.SET_WIDGET_PROPERTY;
 import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND;
@@ -116,9 +116,9 @@ public final class TestUtil {
         MessageBase messageBase = arguments.get(expectedMessageOrder - 1);
         if (messageBase instanceof StringMessage) {
             return ((StringMessage) messageBase).body;
-        } else if (messageBase.command == LOAD_PROFILE_GZIPPED
+        } else if (messageBase.command == MOBILE_LOAD_PROFILE_GZIPPED
                 || messageBase.command == GET_PROJECT_BY_TOKEN
-                || messageBase.command == GET_PROVISION_TOKEN
+                || messageBase.command == MOBILE_GET_PROVISION_TOKEN
                 || messageBase.command == GET_PROJECT_BY_CLONE_CODE) {
             return new String(BaseTest.decompress(messageBase.getBytes()));
         }
@@ -204,7 +204,7 @@ public final class TestUtil {
     }
 
     public static StringMessage createTag(int msgId, String body) {
-        return new StringMessage(msgId, CREATE_TAG, body);
+        return new StringMessage(msgId, MOBILE_CREATE_TAG, body);
     }
 
     public static StringMessage appIsOutdated(int msgId, String body) {
@@ -236,7 +236,7 @@ public final class TestUtil {
     }
 
     public static StringMessage createDevice(int msgId, String body) {
-        return new StringMessage(msgId, CREATE_DEVICE, body);
+        return new StringMessage(msgId, MOBILE_CREATE_DEVICE, body);
     }
 
     public static StringMessage createDevice(int msgId, Device device) {

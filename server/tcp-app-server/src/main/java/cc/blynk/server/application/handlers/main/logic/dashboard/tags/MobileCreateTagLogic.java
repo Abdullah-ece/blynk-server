@@ -10,7 +10,7 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.core.protocol.enums.Command.CREATE_TAG;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_TAG;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.utils.StringUtils.split2;
 
@@ -59,7 +59,7 @@ public final class MobileCreateTagLogic {
         user.lastModifiedTs = System.currentTimeMillis();
 
         if (ctx.channel().isWritable()) {
-            ctx.writeAndFlush(makeUTF8StringMessage(CREATE_TAG, message.id, newTag.toString()), ctx.voidPromise());
+            ctx.writeAndFlush(makeUTF8StringMessage(MOBILE_CREATE_TAG, message.id, newTag.toString()), ctx.voidPromise());
         }
     }
 

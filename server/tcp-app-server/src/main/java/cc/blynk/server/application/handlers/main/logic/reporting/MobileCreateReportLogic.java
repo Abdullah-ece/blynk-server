@@ -15,7 +15,7 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.core.protocol.enums.Command.CREATE_REPORT;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_REPORT;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.utils.StringUtils.split2;
 
@@ -99,7 +99,7 @@ public final class MobileCreateReportLogic {
         reportingWidget.reports = ArrayUtil.add(reportingWidget.reports, report, Report.class);
         dash.updatedAt = System.currentTimeMillis();
 
-        ctx.writeAndFlush(makeUTF8StringMessage(CREATE_REPORT, message.id, report.toString()), ctx.voidPromise());
+        ctx.writeAndFlush(makeUTF8StringMessage(MOBILE_CREATE_REPORT, message.id, report.toString()), ctx.voidPromise());
     }
 
 }

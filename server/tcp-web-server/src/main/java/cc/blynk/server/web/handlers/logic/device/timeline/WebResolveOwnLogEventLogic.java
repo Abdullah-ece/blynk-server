@@ -18,7 +18,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.model.permissions.PermissionsTable.OWN_DEVICES_EDIT;
-import static cc.blynk.server.core.protocol.enums.Command.RESOLVE_EVENT;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_RESOLVE_EVENT;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 import static cc.blynk.server.internal.WebByteBufUtil.json;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
@@ -92,7 +92,7 @@ public final class WebResolveOwnLogEventLogic implements PermissionBasedLogic<We
                     if (comment != null) {
                         body = body + BODY_SEPARATOR_STRING + comment;
                     }
-                    session.sendToSelectedDeviceOnWeb(ctx.channel(), RESOLVE_EVENT, message.id, body, deviceId);
+                    session.sendToSelectedDeviceOnWeb(ctx.channel(), WEB_RESOLVE_EVENT, message.id, body, deviceId);
                 } else {
                     log.warn("Event with id {} for user {} not resolved.", logEventId, user.email);
                     response = json(message.id, "Event for user not resolved.");

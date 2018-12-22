@@ -56,8 +56,8 @@ import static cc.blynk.integration.TestUtil.notAllowed;
 import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.integration.TestUtil.sleep;
 import static cc.blynk.server.core.model.widgets.FrequencyWidget.READING_MSG_ID;
-import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_ENERGY;
 import static cc.blynk.server.core.protocol.enums.Response.NO_DATA;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static junit.framework.TestCase.assertNull;
@@ -1379,7 +1379,7 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(1));
 
         clientPair.appClient.send("getEnergy");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, GET_ENERGY, "5800")));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, MOBILE_GET_ENERGY, "5800")));
 
         TileTemplate tileTemplate = new PageTileTemplate(1,
                 null, null, "name", "name", "iconName", BoardType.ESP8266, null,
@@ -1392,25 +1392,25 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(4));
 
         clientPair.appClient.send("getEnergy");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(5, GET_ENERGY, "5600")));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(5, MOBILE_GET_ENERGY, "5600")));
 
         clientPair.appClient.createWidget(1, 21321, 1, "{\"id\":101, \"width\":1, \"height\":1, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":3}");
         clientPair.appClient.verifyResult(ok(6));
 
         clientPair.appClient.send("getEnergy");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(7, GET_ENERGY, "5400")));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(7, MOBILE_GET_ENERGY, "5400")));
 
         clientPair.appClient.deleteWidget(1, 101);
         clientPair.appClient.verifyResult(ok(8));
 
         clientPair.appClient.send("getEnergy");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(9, GET_ENERGY, "5600")));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(9, MOBILE_GET_ENERGY, "5600")));
 
         clientPair.appClient.deleteWidget(1, 21321);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(10)));
 
         clientPair.appClient.send("getEnergy");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(11, GET_ENERGY, "7500")));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(11, MOBILE_GET_ENERGY, "7500")));
     }
 
     @Test

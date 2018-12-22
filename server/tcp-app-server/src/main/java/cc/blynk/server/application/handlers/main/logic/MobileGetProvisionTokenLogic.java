@@ -10,7 +10,7 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.core.protocol.enums.Command.GET_PROVISION_TOKEN;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_PROVISION_TOKEN;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeASCIIStringMessage;
 
 /**
@@ -40,7 +40,7 @@ public final class MobileGetProvisionTokenLogic {
         holder.deviceDao.assignTempToken(user.orgId, user, temporaryDevice);
 
         if (ctx.channel().isWritable()) {
-            ctx.writeAndFlush(makeASCIIStringMessage(GET_PROVISION_TOKEN,
+            ctx.writeAndFlush(makeASCIIStringMessage(MOBILE_GET_PROVISION_TOKEN,
                     message.id, temporaryDevice.toString()), ctx.voidPromise());
         }
 

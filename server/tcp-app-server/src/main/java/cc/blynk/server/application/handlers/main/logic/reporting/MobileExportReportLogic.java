@@ -15,7 +15,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.concurrent.TimeUnit;
 
-import static cc.blynk.server.core.protocol.enums.Command.EXPORT_REPORT;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EXPORT_REPORT;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.server.internal.WebByteBufUtil.json;
 import static cc.blynk.utils.StringUtils.split2;
@@ -79,7 +79,7 @@ public final class MobileExportReportLogic {
                     report.lastReportAt = generateReport();
                     if (ctx.channel().isWritable()) {
                         ctx.writeAndFlush(
-                                makeUTF8StringMessage(EXPORT_REPORT, message.id, report.toString()),
+                                makeUTF8StringMessage(MOBILE_EXPORT_REPORT, message.id, report.toString()),
                                 ctx.voidPromise()
                         );
                     }

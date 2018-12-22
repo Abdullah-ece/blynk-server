@@ -42,7 +42,7 @@ import static cc.blynk.integration.TestUtil.logEvent;
 import static cc.blynk.integration.TestUtil.loggedDefaultClient;
 import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.integration.TestUtil.sleep;
-import static cc.blynk.server.core.protocol.enums.Command.RESOLVE_EVENT;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_RESOLVE_EVENT;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -340,7 +340,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         client.resolveEvent(device.id, logEventId, "resolve comment");
         client.verifyResult(ok(2));
 
-        client2.verifyResult(new StringMessage(2, RESOLVE_EVENT,
+        client2.verifyResult(new StringMessage(2, WEB_RESOLVE_EVENT,
                 b(device.id + " " + logEventId + " " + getUserName() + " ") + "resolve comment"));
 
         client.getTimeline(orgId, device.id, EventType.CRITICAL, null, 0, System.currentTimeMillis(), 0, 10);

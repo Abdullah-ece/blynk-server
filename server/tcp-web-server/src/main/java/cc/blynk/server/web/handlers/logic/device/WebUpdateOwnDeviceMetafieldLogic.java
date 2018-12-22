@@ -17,7 +17,7 @@ import cc.blynk.server.core.session.web.WebAppStateHolder;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.model.permissions.PermissionsTable.OWN_DEVICES_EDIT;
-import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_DEVICE_METAFIELD;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_DEVICE_METAFIELD;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 import static cc.blynk.utils.StringUtils.split2;
 
@@ -86,7 +86,7 @@ public final class WebUpdateOwnDeviceMetafieldLogic implements PermissionBasedLo
 
         //if update comes from the app - send update to the web
         Session session = sessionDao.getOrgSession(state.selectedOrgId);
-        session.sendToSelectedDeviceOnWeb(ctx.channel(), WEB_UPDATE_DEVICE_METAFIELD, message.id, split[1], device.id);
+        session.sendToSelectedDeviceOnWeb(ctx.channel(), WEB_EDIT_DEVICE_METAFIELD, message.id, split[1], device.id);
     }
 
 }

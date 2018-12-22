@@ -27,7 +27,7 @@ import static cc.blynk.server.core.model.serialization.JsonParser.gzipDash;
 import static cc.blynk.server.core.model.serialization.JsonParser.gzipDashRestrictive;
 import static cc.blynk.server.core.model.serialization.JsonParser.gzipExportProfileDTO;
 import static cc.blynk.server.core.model.serialization.JsonParser.gzipProfile;
-import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_LOAD_PROFILE_GZIPPED;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeBinaryMessage;
 import static cc.blynk.server.internal.WebByteBufUtil.json;
 
@@ -139,7 +139,7 @@ public final class MobileLoadProfileGzippedLogic {
         if (data == null) {
             return json(msgId, "No data.");
         }
-        return makeBinaryMessage(LOAD_PROFILE_GZIPPED, msgId, data);
+        return makeBinaryMessage(MOBILE_LOAD_PROFILE_GZIPPED, msgId, data);
     }
 
     private static List<DashBoard> filter(DashBoard[] dashBoards) {

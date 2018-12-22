@@ -61,7 +61,7 @@ import static cc.blynk.server.core.model.widgets.ui.reporting.ReportOutput.CSV_F
 import static cc.blynk.server.core.model.widgets.ui.reporting.ReportOutput.MERGED_CSV;
 import static cc.blynk.server.core.model.widgets.ui.reporting.ReportResult.EXPIRED;
 import static cc.blynk.server.core.model.widgets.ui.reporting.ReportResult.OK;
-import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_ENERGY;
 import static cc.blynk.server.core.protocol.enums.Response.QUOTA_LIMIT;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static java.nio.charset.StandardCharsets.UTF_16;
@@ -245,13 +245,13 @@ public class ReportingTest extends BaseTest {
         };
 
         clientPair.appClient.send("getEnergy");
-        clientPair.appClient.verifyResult(produce(1, GET_ENERGY, "7500"));
+        clientPair.appClient.verifyResult(produce(1, MOBILE_GET_ENERGY, "7500"));
 
         clientPair.appClient.createWidget(1, reportingWidget);
         clientPair.appClient.verifyResult(ok(2));
 
         clientPair.appClient.send("getEnergy");
-        clientPair.appClient.verifyResult(produce(3, GET_ENERGY, "7500"));
+        clientPair.appClient.verifyResult(produce(3, MOBILE_GET_ENERGY, "7500"));
 
         Report report = new Report(1, "My One Time Report",
                 new ReportSource[] {reportSource},
@@ -263,7 +263,7 @@ public class ReportingTest extends BaseTest {
         assertNotNull(report);
 
         clientPair.appClient.send("getEnergy");
-        clientPair.appClient.verifyResult(produce(5, GET_ENERGY, "4600"));
+        clientPair.appClient.verifyResult(produce(5, MOBILE_GET_ENERGY, "4600"));
 
         report = new Report(1, "Updated",
                 new ReportSource[] {reportSource},
@@ -279,7 +279,7 @@ public class ReportingTest extends BaseTest {
         clientPair.appClient.verifyResult(ok(7));
 
         clientPair.appClient.send("getEnergy");
-        clientPair.appClient.verifyResult(produce(8, GET_ENERGY, "7500"));
+        clientPair.appClient.verifyResult(produce(8, MOBILE_GET_ENERGY, "7500"));
     }
 
     @Test

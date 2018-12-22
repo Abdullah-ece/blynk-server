@@ -16,7 +16,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
-import static cc.blynk.server.core.protocol.enums.Command.GET_WIDGET;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_WIDGET;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.utils.StringUtils.split2;
 
@@ -68,7 +68,7 @@ public final class MobileGetWidgetLogic {
         if (ctx.channel().isWritable()) {
             var widgetString = JsonParser.toJson(widget);
             ctx.writeAndFlush(
-                    makeUTF8StringMessage(GET_WIDGET, message.id, widgetString),
+                    makeUTF8StringMessage(MOBILE_GET_WIDGET, message.id, widgetString),
                     ctx.voidPromise()
             );
             log.debug("Get widget {} for {}.", widget.id, user.email);

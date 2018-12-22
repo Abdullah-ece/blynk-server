@@ -23,12 +23,12 @@ import java.util.Collections;
 import java.util.Random;
 
 import static cc.blynk.server.core.protocol.enums.Command.BRIDGE;
-import static cc.blynk.server.core.protocol.enums.Command.DELETE_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.EMAIL;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_RESEND_FROM_BLUETOOTH;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_SYNC;
-import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_WIDGET;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_LOAD_PROFILE_GZIPPED;
 import static cc.blynk.server.core.protocol.enums.Command.RESET_PASSWORD;
 import static cc.blynk.server.core.protocol.enums.Command.SET_WIDGET_PROPERTY;
 import static cc.blynk.server.core.protocol.enums.Command.SHARE_LOGIN;
@@ -55,7 +55,7 @@ public abstract class BaseClient {
         this(host, port, messageIdGenerator, new NioEventLoopGroup(1));
     }
 
-    public BaseClient(String host, int port, Random messageIdGenerator, ServerProperties serverProperties) {
+    BaseClient(String host, int port, Random messageIdGenerator, ServerProperties serverProperties) {
         this.host = host;
         this.port = port;
         this.random = messageIdGenerator;
@@ -63,7 +63,7 @@ public abstract class BaseClient {
         this.nioEventLoopGroup = new NioEventLoopGroup(1);
     }
 
-    public BaseClient(String host, int port, Random messageIdGenerator, NioEventLoopGroup nioEventLoopGroup) {
+    private BaseClient(String host, int port, Random messageIdGenerator, NioEventLoopGroup nioEventLoopGroup) {
         this.host = host;
         this.port = port;
         this.random = messageIdGenerator;
@@ -71,7 +71,7 @@ public abstract class BaseClient {
         this.nioEventLoopGroup = nioEventLoopGroup;
     }
 
-    public static MessageBase produceMessageBaseOnUserInput(String line, int msgId) {
+    protected static MessageBase produceMessageBaseOnUserInput(String line, int msgId) {
         String[] input = line.split(" ", 2);
 
         short command;
@@ -85,9 +85,13 @@ public abstract class BaseClient {
 
         String body = input.length == 1 ? "" : input[1];
 
+        return produceMessage(command, msgId, body);
+    }
+
+    protected static MessageBase produceMessage(short command, int msgId, String body) {
         if (command == HARDWARE
                 || command == SHARE_LOGIN
-                || command == LOAD_PROFILE_GZIPPED
+                || command == MOBILE_LOAD_PROFILE_GZIPPED
                 || command == HARDWARE_RESEND_FROM_BLUETOOTH
                 || command == BRIDGE
                 || command == EMAIL
@@ -95,7 +99,7 @@ public abstract class BaseClient {
                 || command == SET_WIDGET_PROPERTY
                 || command == HARDWARE_SYNC
                 || command == RESET_PASSWORD
-                || command == DELETE_WIDGET) {
+                || command == MOBILE_DELETE_WIDGET) {
             body = body.replace(" ", "\0");
         }
         return produce(msgId, command, body);

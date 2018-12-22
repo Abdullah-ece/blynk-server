@@ -53,7 +53,7 @@ import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.integration.TestUtil.parseProfile;
 import static cc.blynk.integration.TestUtil.readTestUserProfile;
 import static cc.blynk.server.core.protocol.enums.Command.DEVICE_CONNECTED;
-import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_ENERGY;
 import static cc.blynk.server.core.protocol.enums.Response.DEVICE_NOT_IN_NETWORK;
 import static cc.blynk.server.core.protocol.enums.Response.INVALID_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_INVALID_BODY;
@@ -430,7 +430,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         appClient.verifyResult(ok(3));
 
         appClient.send("getEnergy");
-        appClient.verifyResult(produce(4, GET_ENERGY, "2000"));
+        appClient.verifyResult(produce(4, MOBILE_GET_ENERGY, "2000"));
 
         appClient.createWidget(2, "{\"orgId\":2, \"width\":1, \"height\":1, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"LCD\", \"pinType\":\"DIGITAL\", \"pin\":2}");
         appClient.verifyResult(ok(5));
@@ -464,7 +464,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
         clientPair.appClient.send("getEnergy");
-        clientPair.appClient.verifyResult(produce(2, GET_ENERGY, "7500"));
+        clientPair.appClient.verifyResult(produce(2, MOBILE_GET_ENERGY, "7500"));
 
         clientPair.appClient.createWidget(1, "{\"orgId\":100, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"tabs\":[{\"label\":\"tab 1\"}, {\"label\":\"tab 2\"}, {\"label\":\"tab 3\"}], \"type\":\"TABS\"}");
         clientPair.appClient.verifyResult(ok(3));
@@ -476,7 +476,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(5));
 
         clientPair.appClient.send("getEnergy");
-        clientPair.appClient.verifyResult(produce(6, GET_ENERGY, "7100"));
+        clientPair.appClient.verifyResult(produce(6, MOBILE_GET_ENERGY, "7100"));
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
@@ -487,7 +487,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(2));
 
         clientPair.appClient.send("getEnergy");
-        clientPair.appClient.verifyResult(produce(3, GET_ENERGY, "7300"));
+        clientPair.appClient.verifyResult(produce(3, MOBILE_GET_ENERGY, "7300"));
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
@@ -503,7 +503,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
         clientPair.appClient.send("getEnergy");
-        clientPair.appClient.verifyResult(produce(2, GET_ENERGY, "7500"));
+        clientPair.appClient.verifyResult(produce(2, MOBILE_GET_ENERGY, "7500"));
 
         clientPair.appClient.createWidget(1, "{\"orgId\":100, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"tabs\":[{\"label\":\"tab 1\"}, {\"label\":\"tab 2\"}, {\"label\":\"tab 3\"}], \"type\":\"TABS\"}");
         clientPair.appClient.verifyResult(ok(3));
@@ -515,7 +515,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(5));
 
         clientPair.appClient.send("getEnergy");
-        clientPair.appClient.verifyResult(produce(6, GET_ENERGY, "7100"));
+        clientPair.appClient.verifyResult(produce(6, MOBILE_GET_ENERGY, "7100"));
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
@@ -526,7 +526,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(2));
 
         clientPair.appClient.send("getEnergy");
-        clientPair.appClient.verifyResult(produce(3, GET_ENERGY, "7300"));
+        clientPair.appClient.verifyResult(produce(3, MOBILE_GET_ENERGY, "7300"));
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");

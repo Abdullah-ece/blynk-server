@@ -18,13 +18,13 @@ import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.ADD_PUSH_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.DASH_SYNC;
-import static cc.blynk.server.core.protocol.enums.Command.DELETE_DEVICE_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.DEVICE_SYNC;
-import static cc.blynk.server.core.protocol.enums.Command.GET_DEVICES;
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENHANCED_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
-import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
 import static cc.blynk.server.core.protocol.enums.Command.LOGOUT;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_DEVICE_DATA;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICES;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_LOAD_PROFILE_GZIPPED;
 import static cc.blynk.server.core.protocol.enums.Command.PING;
 
 /**
@@ -55,7 +55,7 @@ public class MobileShareHandler extends JsonBasedSimpleChannelInboundHandler<Str
             case HARDWARE:
                 hardwareApp.messageReceived(ctx, state, msg);
                 break;
-            case LOAD_PROFILE_GZIPPED :
+            case MOBILE_LOAD_PROFILE_GZIPPED:
                 LoadSharedProfileGzippedLogic.messageReceived(ctx, state, msg);
                 break;
             case ADD_PUSH_TOKEN :
@@ -64,7 +64,7 @@ public class MobileShareHandler extends JsonBasedSimpleChannelInboundHandler<Str
             case GET_ENHANCED_GRAPH_DATA :
                 MobileGetEnhancedGraphDataLogic.messageReceived(holder, ctx, state, msg);
                 break;
-            case GET_DEVICES :
+            case MOBILE_GET_DEVICES:
                 mobileGetOrgDevicesLogic.messageReceived(ctx, state, msg);
                 break;
             case PING :
@@ -79,7 +79,7 @@ public class MobileShareHandler extends JsonBasedSimpleChannelInboundHandler<Str
             case LOGOUT :
                 MobileLogoutLogic.messageReceived(ctx, state.user, msg);
                 break;
-            case DELETE_DEVICE_DATA :
+            case MOBILE_DELETE_DEVICE_DATA:
                 MobileDeleteDeviceDataLogic.messageReceived(holder, ctx, state, msg);
                 break;
         }

@@ -64,14 +64,12 @@ public class WebClientAppMessageDecoder extends ChannelInboundHandlerAdapter {
                     int length = in.capacity() - 3;
 
                     ByteBuf buf = in.readSlice(length);
-                    switch (command) {
-                        case GET_ENHANCED_GRAPH_DATA :
-                            byte[] bytes = new byte[buf.readableBytes()];
-                            buf.readBytes(bytes);
-                            message = new BinaryMessage(messageId, command, bytes);
-                            break;
-                        default:
-                            message = produce(messageId, command, buf.toString(StandardCharsets.UTF_8));
+                    if (command == GET_ENHANCED_GRAPH_DATA) {
+                        byte[] bytes = new byte[buf.readableBytes()];
+                        buf.readBytes(bytes);
+                        message = new BinaryMessage(messageId, command, bytes);
+                    } else {
+                        message = produce(messageId, command, buf.toString(StandardCharsets.UTF_8));
                     }
                 }
 

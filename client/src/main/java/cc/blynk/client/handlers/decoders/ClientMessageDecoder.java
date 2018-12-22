@@ -17,7 +17,7 @@ import java.util.List;
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENHANCED_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_CLONE_CODE;
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_TOKEN;
-import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_LOAD_PROFILE_GZIPPED;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 
 /**
@@ -58,7 +58,7 @@ public class ClientMessageDecoder extends ByteToMessageDecoder {
             switch (command) {
                 case GET_ENHANCED_GRAPH_DATA :
                 case GET_PROJECT_BY_CLONE_CODE :
-                case LOAD_PROFILE_GZIPPED :
+                case MOBILE_LOAD_PROFILE_GZIPPED:
                 case GET_PROJECT_BY_TOKEN :
                     byte[] bytes = new byte[buf.readableBytes()];
                     buf.readBytes(bytes);

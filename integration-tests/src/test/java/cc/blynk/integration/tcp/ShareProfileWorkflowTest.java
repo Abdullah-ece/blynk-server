@@ -39,8 +39,8 @@ import static cc.blynk.integration.TestUtil.setProperty;
 import static cc.blynk.server.core.protocol.enums.Command.ACTIVATE_DASHBOARD;
 import static cc.blynk.server.core.protocol.enums.Command.DEACTIVATE_DASHBOARD;
 import static cc.blynk.server.core.protocol.enums.Command.DEVICE_SYNC;
-import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_ENERGY;
 import static cc.blynk.server.core.protocol.enums.Command.SHARING;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static org.junit.Assert.assertEquals;
@@ -244,7 +244,7 @@ public class ShareProfileWorkflowTest extends SingleServerInstancePerTest {
     @Test
     public void testSharingChargingCorrect() throws Exception {
         clientPair.appClient.send("getEnergy");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, GET_ENERGY, "7500")));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, MOBILE_GET_ENERGY, "7500")));
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getShareToken 1");
@@ -253,7 +253,7 @@ public class ShareProfileWorkflowTest extends SingleServerInstancePerTest {
         assertEquals(32, token.length());
 
         clientPair.appClient.send("getEnergy");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, GET_ENERGY, "6500")));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, MOBILE_GET_ENERGY, "6500")));
 
         clientPair.appClient.reset();
 
@@ -263,7 +263,7 @@ public class ShareProfileWorkflowTest extends SingleServerInstancePerTest {
         assertEquals(32, token.length());
 
         clientPair.appClient.send("getEnergy");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, GET_ENERGY, "6500")));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, MOBILE_GET_ENERGY, "6500")));
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getShareToken 1");
@@ -276,7 +276,7 @@ public class ShareProfileWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.send("getShareToken 1");
 
         clientPair.appClient.send("getEnergy");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(5, GET_ENERGY, "6500")));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(5, MOBILE_GET_ENERGY, "6500")));
     }
 
     @Test

@@ -25,8 +25,8 @@ import static cc.blynk.integration.TestUtil.createDevice;
 import static cc.blynk.integration.TestUtil.hardware;
 import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.integration.TestUtil.setProperty;
-import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_ENERGY;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -120,7 +120,7 @@ public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
         clientPair.appClient.send("getEnergy");
-        clientPair.appClient.verifyResult(produce(2, GET_ENERGY, "7500"));
+        clientPair.appClient.verifyResult(produce(2, MOBILE_GET_ENERGY, "7500"));
 
         clientPair.appClient.createWidget(1, "{\"orgId\":102, \"width\":1, \"height\":1, \"x\":5, \"y\":0, \"tabId\":0, \"label\":\"Some Text\", \"type\":\"TERMINAL\", \"pinType\":\"VIRTUAL\", \"pin\":17}");
         clientPair.appClient.verifyResult(ok(3));
@@ -149,7 +149,7 @@ public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
         clientPair.appClient.send("getEnergy");
-        clientPair.appClient.verifyResult(produce(2, GET_ENERGY, "7500"));
+        clientPair.appClient.verifyResult(produce(2, MOBILE_GET_ENERGY, "7500"));
 
         clientPair.appClient.createWidget(1, "{\"orgId\":102, \"width\":1, \"height\":1, \"x\":5, \"y\":0, \"tabId\":0, \"label\":\"Some Text\", \"type\":\"TERMINAL\", \"pinType\":\"VIRTUAL\", \"pin\":17}");
         clientPair.appClient.verifyResult(ok(3));
@@ -184,7 +184,7 @@ public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
         appClient.send("getEnergy");
-        appClient.verifyResult(produce(3, GET_ENERGY, "7500"));
+        appClient.verifyResult(produce(3, MOBILE_GET_ENERGY, "7500"));
 
         appClient.createWidget(1, "{\"id\":102, \"width\":1, \"height\":1, \"x\":5, \"y\":0, \"tabId\":0, \"label\":\"Some Text\", \"type\":\"TERMINAL\", \"pinType\":\"VIRTUAL\", \"pin\":56}");
         appClient.verifyResult(ok(4));
@@ -263,7 +263,7 @@ public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
         appClient.send("getEnergy");
-        appClient.verifyResult(produce(3, GET_ENERGY, "7500"));
+        appClient.verifyResult(produce(3, MOBILE_GET_ENERGY, "7500"));
 
         appClient.createWidget(1, "{\"id\":102, \"width\":1, \"height\":1, \"x\":5, \"y\":0, \"tabId\":0, \"label\":\"Some Text\", \"type\":\"TERMINAL\", \"pinType\":\"VIRTUAL\", \"pin\":56}");
         appClient.createWidget(1, "{\"id\":103, \"width\":1, \"height\":1, \"x\":5, \"y\":0, \"tabId\":0, \"label\":\"Some Text\", \"type\":\"DIGIT4_DISPLAY\", \"pinType\":\"VIRTUAL\", \"pin\":56}");
@@ -313,7 +313,7 @@ public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
         appClient.send("getEnergy");
-        appClient.verifyResult(produce(3, GET_ENERGY, "7500"));
+        appClient.verifyResult(produce(3, MOBILE_GET_ENERGY, "7500"));
 
         DeviceSelector deviceSelector = new DeviceSelector();
         deviceSelector.id = 200_000;
@@ -372,7 +372,7 @@ public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
         appClient.send("getEnergy");
-        appClient.verifyResult(produce(3, GET_ENERGY, "7500"));
+        appClient.verifyResult(produce(3, MOBILE_GET_ENERGY, "7500"));
 
         DeviceSelector deviceSelector = new DeviceSelector();
         deviceSelector.id = 200_000;
@@ -431,7 +431,7 @@ public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
         appClient.send("getEnergy");
-        appClient.verifyResult(produce(3, GET_ENERGY, "7500"));
+        appClient.verifyResult(produce(3, MOBILE_GET_ENERGY, "7500"));
 
         DeviceSelector deviceSelector = new DeviceSelector();
         deviceSelector.id = 200_000;
@@ -491,7 +491,7 @@ public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
         appClient.send("getEnergy");
-        appClient.verifyResult(produce(3, GET_ENERGY, "7500"));
+        appClient.verifyResult(produce(3, MOBILE_GET_ENERGY, "7500"));
 
         DeviceTiles deviceTiles = new DeviceTiles();
         deviceTiles.id = 21321;
@@ -555,7 +555,7 @@ public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
         appClient.send("getEnergy");
-        appClient.verifyResult(produce(3, GET_ENERGY, "7500"));
+        appClient.verifyResult(produce(3, MOBILE_GET_ENERGY, "7500"));
 
         DeviceTiles deviceTiles = new DeviceTiles();
         deviceTiles.id = 21321;
@@ -640,7 +640,7 @@ public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
         appClient.send("getEnergy");
-        appClient.verifyResult(produce(3, GET_ENERGY, "7500"));
+        appClient.verifyResult(produce(3, MOBILE_GET_ENERGY, "7500"));
 
         DeviceSelector deviceSelector = new DeviceSelector();
         deviceSelector.id = 200_000;
@@ -687,7 +687,7 @@ public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
         appClient.send("getEnergy");
-        appClient.verifyResult(produce(3, GET_ENERGY, "7500"));
+        appClient.verifyResult(produce(3, MOBILE_GET_ENERGY, "7500"));
 
         Table table = new Table();
         table.pin = 56;

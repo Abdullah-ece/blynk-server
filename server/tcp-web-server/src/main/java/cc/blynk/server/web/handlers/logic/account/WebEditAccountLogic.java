@@ -8,7 +8,7 @@ import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
 import io.netty.channel.ChannelHandlerContext;
 
-import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_ACCOUNT;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_ACCOUNT;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 
 /**
@@ -38,7 +38,7 @@ public final class WebEditAccountLogic {
         user.lastModifiedTs = System.currentTimeMillis();
         if (ctx.channel().isWritable()) {
             String userString = JsonParser.toJsonWeb(user);
-            ctx.writeAndFlush(makeUTF8StringMessage(WEB_UPDATE_ACCOUNT, message.id, userString), ctx.voidPromise());
+            ctx.writeAndFlush(makeUTF8StringMessage(WEB_EDIT_ACCOUNT, message.id, userString), ctx.voidPromise());
         }
     }
 

@@ -1,77 +1,75 @@
 package cc.blynk.client;
 
 import static cc.blynk.server.core.protocol.enums.Command.ACTIVATE_DASHBOARD;
-import static cc.blynk.server.core.protocol.enums.Command.ADD_ENERGY;
 import static cc.blynk.server.core.protocol.enums.Command.ADD_PUSH_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.ASSIGN_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.BLYNK_INTERNAL;
 import static cc.blynk.server.core.protocol.enums.Command.BRIDGE;
 import static cc.blynk.server.core.protocol.enums.Command.CREATE_APP;
-import static cc.blynk.server.core.protocol.enums.Command.CREATE_DASH;
-import static cc.blynk.server.core.protocol.enums.Command.CREATE_DEVICE;
-import static cc.blynk.server.core.protocol.enums.Command.CREATE_REPORT;
-import static cc.blynk.server.core.protocol.enums.Command.CREATE_TAG;
-import static cc.blynk.server.core.protocol.enums.Command.CREATE_TILE_TEMPLATE;
-import static cc.blynk.server.core.protocol.enums.Command.CREATE_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.DEACTIVATE_DASHBOARD;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_APP;
-import static cc.blynk.server.core.protocol.enums.Command.DELETE_DASH;
-import static cc.blynk.server.core.protocol.enums.Command.DELETE_DEVICE;
-import static cc.blynk.server.core.protocol.enums.Command.DELETE_DEVICE_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_ENHANCED_GRAPH_DATA;
-import static cc.blynk.server.core.protocol.enums.Command.DELETE_REPORT;
-import static cc.blynk.server.core.protocol.enums.Command.DELETE_TAG;
-import static cc.blynk.server.core.protocol.enums.Command.DELETE_TILE_TEMPLATE;
-import static cc.blynk.server.core.protocol.enums.Command.DELETE_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.DEVICE_SYNC;
+import static cc.blynk.server.core.protocol.enums.Command.EDIT_PROFILE_SETTINGS;
+import static cc.blynk.server.core.protocol.enums.Command.EDIT_PROJECT_SETTINGS;
 import static cc.blynk.server.core.protocol.enums.Command.EMAIL;
 import static cc.blynk.server.core.protocol.enums.Command.EMAIL_QR;
-import static cc.blynk.server.core.protocol.enums.Command.EXPORT_REPORT;
 import static cc.blynk.server.core.protocol.enums.Command.GET_CLONE_CODE;
-import static cc.blynk.server.core.protocol.enums.Command.GET_DEVICES;
-import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENHANCED_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_CLONE_CODE;
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_TOKEN;
-import static cc.blynk.server.core.protocol.enums.Command.GET_PROVISION_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.GET_SERVER;
 import static cc.blynk.server.core.protocol.enums.Command.GET_SHARE_TOKEN;
-import static cc.blynk.server.core.protocol.enums.Command.GET_TAGS;
-import static cc.blynk.server.core.protocol.enums.Command.GET_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_LOGIN;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_LOG_EVENT;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_RESEND_FROM_BLUETOOTH;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_SYNC;
-import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
 import static cc.blynk.server.core.protocol.enums.Command.LOGIN;
 import static cc.blynk.server.core.protocol.enums.Command.LOGOUT;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_ADD_ENERGY;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_DASH;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_DEVICE;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_REPORT;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_TAG;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_TILE_TEMPLATE;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_WIDGET;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_DASH;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_DEVICE;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_DEVICE_DATA;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_REPORT;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_TAG;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_TILE_TEMPLATE;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_WIDGET;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_DASH;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_DEVICE;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_DEVICE_METAFIELD;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_FACE;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_TILE_TEMPLATE;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_WIDGET;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EXPORT_REPORT;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICE;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICES;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICES_BY_REFERENCE_METAFIELD;
-import static cc.blynk.server.core.protocol.enums.Command.MOBILE_UPDATE_DEVICE_METAFIELD;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_ENERGY;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_PROVISION_TOKEN;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_TAGS;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_WIDGET;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_LOAD_PROFILE_GZIPPED;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_UPDATE_REPORT;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_UPDATE_TAG;
 import static cc.blynk.server.core.protocol.enums.Command.PING;
 import static cc.blynk.server.core.protocol.enums.Command.PUSH_NOTIFICATION;
 import static cc.blynk.server.core.protocol.enums.Command.REFRESH_SHARE_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.REFRESH_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.REGISTER;
 import static cc.blynk.server.core.protocol.enums.Command.RESET_PASSWORD;
-import static cc.blynk.server.core.protocol.enums.Command.RESOLVE_EVENT;
 import static cc.blynk.server.core.protocol.enums.Command.SET_WIDGET_PROPERTY;
 import static cc.blynk.server.core.protocol.enums.Command.SHARE_LOGIN;
 import static cc.blynk.server.core.protocol.enums.Command.SHARING;
 import static cc.blynk.server.core.protocol.enums.Command.SMS;
-import static cc.blynk.server.core.protocol.enums.Command.TRACK_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.TWEET;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_APP;
-import static cc.blynk.server.core.protocol.enums.Command.UPDATE_DASH;
-import static cc.blynk.server.core.protocol.enums.Command.UPDATE_DEVICE;
-import static cc.blynk.server.core.protocol.enums.Command.UPDATE_FACE;
-import static cc.blynk.server.core.protocol.enums.Command.UPDATE_PROFILE_SETTINGS;
-import static cc.blynk.server.core.protocol.enums.Command.UPDATE_PROJECT_SETTINGS;
-import static cc.blynk.server.core.protocol.enums.Command.UPDATE_REPORT;
-import static cc.blynk.server.core.protocol.enums.Command.UPDATE_TAG;
-import static cc.blynk.server.core.protocol.enums.Command.UPDATE_TILE_TEMPLATE;
-import static cc.blynk.server.core.protocol.enums.Command.UPDATE_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_CAN_DELETE_PRODUCT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_CAN_INVITE_USER;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_CREATE_DEVICE;
@@ -83,8 +81,15 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_DELETE_ORG;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_DELETE_PRODUCT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_DELETE_ROLE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_DELETE_USER;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_ACCOUNT;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_DEVICE;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_DEVICES_META_IN_PRODUCT;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_DEVICE_METAFIELD;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_ORG;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_OWN_ORG;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_PRODUCT;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_ROLE;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_USER_INFO;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ACCOUNT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICES;
@@ -108,15 +113,10 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_LOGIN_VIA_INVITE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_OTA_GET_FIRMWARE_INFO;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_OTA_START;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_OTA_STOP;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_RESOLVE_EVENT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_SET_AUTH_TOKEN;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_TRACK_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_TRACK_ORG;
-import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_ACCOUNT;
-import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_DEVICE;
-import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_DEVICES_META_IN_PRODUCT;
-import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_DEVICE_METAFIELD;
-import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_PRODUCT;
-import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_ROLE;
-import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_USER_INFO;
 
 /**
  * The Blynk Project.
@@ -141,7 +141,7 @@ public final class CommandParserUtil {
             case "ping" :
                 return PING;
             case "loadprofilegzipped" :
-                return LOAD_PROFILE_GZIPPED;
+                return MOBILE_LOAD_PROFILE_GZIPPED;
             case "appsync" :
                 return DEVICE_SYNC;
             case "sharing" :
@@ -184,22 +184,22 @@ public final class CommandParserUtil {
                 return BRIDGE;
 
             case "createdash" :
-                return CREATE_DASH;
+                return MOBILE_CREATE_DASH;
             case "updatedash" :
-                return UPDATE_DASH;
+                return MOBILE_EDIT_DASH;
             case "deletedash" :
-                return DELETE_DASH;
+                return MOBILE_DELETE_DASH;
             case "updatesettings" :
-                return UPDATE_PROJECT_SETTINGS;
+                return EDIT_PROJECT_SETTINGS;
 
             case "createwidget" :
-                return CREATE_WIDGET;
+                return MOBILE_CREATE_WIDGET;
             case "updatewidget" :
-                return UPDATE_WIDGET;
+                return MOBILE_EDIT_WIDGET;
             case "deletewidget" :
-                return DELETE_WIDGET;
+                return MOBILE_DELETE_WIDGET;
             case "getwidget" :
-                return GET_WIDGET;
+                return MOBILE_GET_WIDGET;
 
             case "hardsync" :
                 return HARDWARE_SYNC;
@@ -207,36 +207,36 @@ public final class CommandParserUtil {
                 return BLYNK_INTERNAL;
 
             case "createtemplate" :
-                return CREATE_TILE_TEMPLATE;
+                return MOBILE_CREATE_TILE_TEMPLATE;
             case "updatetemplate" :
-                return UPDATE_TILE_TEMPLATE;
+                return MOBILE_EDIT_TILE_TEMPLATE;
             case "deletetemplate" :
-                return DELETE_TILE_TEMPLATE;
+                return MOBILE_DELETE_TILE_TEMPLATE;
 
             case "createdevice" :
-                return CREATE_DEVICE;
+                return MOBILE_CREATE_DEVICE;
             case "updatedevice" :
-                return UPDATE_DEVICE;
+                return MOBILE_EDIT_DEVICE;
             case "deletedevice" :
-                return DELETE_DEVICE;
+                return MOBILE_DELETE_DEVICE;
             case "getdevices" :
-                return GET_DEVICES;
+                return MOBILE_GET_DEVICES;
             case "getdevice" :
                 return MOBILE_GET_DEVICE;
 
             case "createtag" :
-                return CREATE_TAG;
+                return MOBILE_CREATE_TAG;
             case "updatetag" :
-                return UPDATE_TAG;
+                return MOBILE_UPDATE_TAG;
             case "deletetag" :
-                return DELETE_TAG;
+                return MOBILE_DELETE_TAG;
             case "gettags" :
-                return GET_TAGS;
+                return MOBILE_GET_TAGS;
 
             case "addenergy" :
-                return ADD_ENERGY;
+                return MOBILE_ADD_ENERGY;
             case "getenergy" :
-                return GET_ENERGY;
+                return MOBILE_GET_ENERGY;
 
             case "getserver" :
                 return GET_SERVER;
@@ -260,38 +260,38 @@ public final class CommandParserUtil {
             case "emailqr" :
                 return EMAIL_QR;
             case "updateface" :
-                return UPDATE_FACE;
+                return MOBILE_EDIT_FACE;
             case "getclonecode" :
                 return GET_CLONE_CODE;
             case "getprojectbyclonecode" :
                 return GET_PROJECT_BY_CLONE_CODE;
             case "trackdevice" :
-                return TRACK_DEVICE;
+                return WEB_TRACK_DEVICE;
             case "getprovisiontoken" :
-                return GET_PROVISION_TOKEN;
+                return MOBILE_GET_PROVISION_TOKEN;
             case "resolveevent" :
-                return RESOLVE_EVENT;
+                return WEB_RESOLVE_EVENT;
             case "deletedevicedata" :
-                return DELETE_DEVICE_DATA;
+                return MOBILE_DELETE_DEVICE_DATA;
 
             case "createreport" :
-                return CREATE_REPORT;
+                return MOBILE_CREATE_REPORT;
             case "deletereport" :
-                return DELETE_REPORT;
+                return MOBILE_DELETE_REPORT;
             case "updatereport" :
-                return UPDATE_REPORT;
+                return MOBILE_UPDATE_REPORT;
             case "exportreport" :
-                return EXPORT_REPORT;
+                return MOBILE_EXPORT_REPORT;
             case "resetpass" :
                 return RESET_PASSWORD;
             case "getaccount" :
                 return WEB_GET_ACCOUNT;
             case "updateaccount" :
-                return WEB_UPDATE_ACCOUNT;
+                return WEB_EDIT_ACCOUNT;
             case "webcreatedevice" :
                 return WEB_CREATE_DEVICE;
             case "webupdatedevice" :
-                return WEB_UPDATE_DEVICE;
+                return WEB_EDIT_DEVICE;
             case "webgetdevices" :
                 return WEB_GET_DEVICES;
             case "webgetdevice" :
@@ -315,13 +315,13 @@ public final class CommandParserUtil {
             case "webgetproducts" :
                 return WEB_GET_PRODUCTS;
             case "webupdateproduct" :
-                return WEB_UPDATE_PRODUCT;
+                return WEB_EDIT_PRODUCT;
             case "webdeleteproduct" :
                 return WEB_DELETE_PRODUCT;
             case "webupdatedevicesmeta" :
-                return WEB_UPDATE_DEVICES_META_IN_PRODUCT;
+                return WEB_EDIT_DEVICES_META_IN_PRODUCT;
             case "webupdateuserinfo" :
-                return WEB_UPDATE_USER_INFO;
+                return WEB_EDIT_USER_INFO;
             case "webdeleteuser" :
                 return WEB_DELETE_USER;
             case "webcreateorg" :
@@ -335,13 +335,13 @@ public final class CommandParserUtil {
             case "webloginviainvite" :
                 return WEB_LOGIN_VIA_INVITE;
             case "webupdatedevicemetafield" :
-                return WEB_UPDATE_DEVICE_METAFIELD;
+                return WEB_EDIT_DEVICE_METAFIELD;
             case "webgetdevicetimeline" :
                 return WEB_GET_DEVICE_TIMELINE;
             case "webdeletedevice" :
                 return WEB_DELETE_DEVICE;
             case "updatedevicemetafield" :
-                return MOBILE_UPDATE_DEVICE_METAFIELD;
+                return MOBILE_EDIT_DEVICE_METAFIELD;
             case "webgetmetafield" :
                 return WEB_GET_METAFIELD;
             case "getdevicesbyreferencemetafield" :
@@ -357,7 +357,7 @@ public final class CommandParserUtil {
             case "webdeleterole" :
                 return WEB_DELETE_ROLE;
             case "webupdaterole" :
-                return WEB_UPDATE_ROLE;
+                return WEB_EDIT_ROLE;
             case "webgetroles" :
                 return WEB_GET_ROLES;
             case "webgetrole" :
@@ -369,7 +369,7 @@ public final class CommandParserUtil {
             case "webgetdevicecountfororg" :
                 return WEB_GET_DEVICE_COUNT_FOR_ORG;
             case "mobileupdateprofilesettings" :
-                return UPDATE_PROFILE_SETTINGS;
+                return EDIT_PROFILE_SETTINGS;
             case "webtrackorg" :
                 return WEB_TRACK_ORG;
             case "webotagetfirmwareinfo" :

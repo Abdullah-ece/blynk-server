@@ -69,6 +69,55 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+import static cc.blynk.server.core.protocol.enums.Command.GET_ENHANCED_GRAPH_DATA;
+import static cc.blynk.server.core.protocol.enums.Command.LOGIN;
+import static cc.blynk.server.core.protocol.enums.Command.LOGOUT;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_CAN_DELETE_PRODUCT;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_CAN_INVITE_USER;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_CREATE_DEVICE;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_CREATE_ORG;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_CREATE_PRODUCT;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_CREATE_ROLE;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_DELETE_DEVICE;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_DELETE_ORG;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_DELETE_PRODUCT;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_DELETE_ROLE;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_DELETE_USER;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_ACCOUNT;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_DEVICE;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_DEVICES_META_IN_PRODUCT;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_DEVICE_METAFIELD;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_OWN_ORG;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_PRODUCT;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_ROLE;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_USER_INFO;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ACCOUNT;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICE;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICES;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICES_BY_REFERENCE_METAFIELD;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICE_COUNT_FOR_ORG;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICE_TIMELINE;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_METAFIELD;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORG;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORGS;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORG_HIERARCHY;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORG_USERS;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_PRODUCT;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_PRODUCTS;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_PRODUCT_LOCATIONS;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ROLE;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ROLES;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_TEMP_SECURE_TOKEN;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_USER_COUNTERS_BY_ROLE;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_INVITE_USER;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_LOGIN_VIA_INVITE;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_OTA_GET_FIRMWARE_INFO;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_OTA_START;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_OTA_STOP;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_RESOLVE_EVENT;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_SET_AUTH_TOKEN;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_TRACK_DEVICE;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_TRACK_ORG;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
 
@@ -136,7 +185,7 @@ public final class AppWebSocketClient extends BaseTestAppClient {
 
     public void login(User user, String type, String version) {
         //user.pass is hashed password here actually
-        send("login " + user.email + BODY_SEPARATOR + user.pass + BODY_SEPARATOR + type + BODY_SEPARATOR + version);
+        send(LOGIN, user.email + BODY_SEPARATOR + user.pass + BODY_SEPARATOR + type + BODY_SEPARATOR + version);
     }
 
     public void login(User user) {
@@ -144,78 +193,70 @@ public final class AppWebSocketClient extends BaseTestAppClient {
     }
 
     public void login(String email, String pass) {
-        send("login " + email + StringUtils.BODY_SEPARATOR + SHA256Util.makeHash(pass, email));
+        send(LOGIN, email + StringUtils.BODY_SEPARATOR + SHA256Util.makeHash(pass, email));
     }
 
     public void trackDevice(int deviceId) {
-        send("trackDevice " + deviceId);
+        send(WEB_TRACK_DEVICE, deviceId);
     }
 
     public void resolveEvent(int deviceId, long logEventId) {
-        send("resolveEvent " + deviceId + "\0" + logEventId);
+        send(WEB_RESOLVE_EVENT, "" + deviceId + BODY_SEPARATOR_STRING + logEventId);
     }
 
     public void resolveEvent(int deviceId, long logEventId, String comment) {
-        send("resolveEvent " + deviceId + "\0" + logEventId + "\0" + comment);
+        send(WEB_RESOLVE_EVENT, "" + deviceId + BODY_SEPARATOR_STRING + logEventId + BODY_SEPARATOR_STRING + comment);
     }
 
     public void createOrganization(Organization organization) {
-        send("webCreateOrg " + (-1) + StringUtils.BODY_SEPARATOR_STRING + organization);
-    }
-
-    public void createOrganization(int orgId, Organization organization) {
-        send("webCreateOrg " + orgId + StringUtils.BODY_SEPARATOR_STRING + organization);
+        send(WEB_CREATE_ORG, "-1" + BODY_SEPARATOR_STRING + organization);
     }
 
     public void canDeleteProduct(int orgId, int productId) {
-        send("webCanDeleteProduct " + orgId + BODY_SEPARATOR_STRING + productId);
+        send(WEB_CAN_DELETE_PRODUCT, "" + orgId + BODY_SEPARATOR_STRING + productId);
     }
 
     public void canDeleteProduct(int productId) {
-        send("webCanDeleteProduct " + productId);
+        send(WEB_CAN_DELETE_PRODUCT, productId);
     }
 
-    //todo remove in future
     public void createProduct(int orgId, Product product) {
         createProduct(orgId, new ProductDTO(product));
     }
     public void updateProduct(int orgId, Product product) {
         updateProduct(orgId, new ProductDTO(product));
     }
-    public void updateDevicesMeta(int orgId, Product product) {
-        updateDevicesMeta(orgId, new ProductDTO(product));
-    }
 
     public void createProduct(int orgId, ProductDTO product) {
-        send("webCreateProduct " + new ProductAndOrgIdDTO(orgId, product));
+        send(WEB_CREATE_PRODUCT, new ProductAndOrgIdDTO(orgId, product));
     }
 
     public void updateProduct(int orgId, ProductDTO product) {
-        send("webUpdateProduct " + new ProductAndOrgIdDTO(orgId, product));
+        send(WEB_EDIT_PRODUCT, new ProductAndOrgIdDTO(orgId, product));
     }
 
     public void updateDevicesMeta(int orgId, ProductDTO product) {
-        send("webUpdateDevicesMeta " + new ProductAndOrgIdDTO(orgId, product));
+        send(WEB_EDIT_DEVICES_META_IN_PRODUCT, new ProductAndOrgIdDTO(orgId, product));
     }
 
     public void getProducts(int orgId) {
-        send("webGetProducts " + orgId);
+        send(WEB_GET_PRODUCTS, orgId);
     }
 
     public void getProduct(int productId) {
-        send("webGetProduct " + productId);
+        send(WEB_GET_PRODUCT, + productId);
     }
 
     public void inviteUser(int orgId, String email, String name, int roleId) {
-        send("webInviteUser " + orgId + BODY_SEPARATOR_STRING + new UserInviteDTO(email, name, roleId));
+        send(WEB_INVITE_USER, "" + orgId + BODY_SEPARATOR_STRING + new UserInviteDTO(email, name, roleId));
     }
 
     public void canInviteUser(String email) {
-        send("canInviteUser " + email);
+        send(WEB_CAN_INVITE_USER, email);
     }
 
     public void loginViaInvite(String token, String passHash) {
-        send("webLoginViaInvite " + token + BODY_SEPARATOR_STRING + passHash);
+        send(WEB_LOGIN_VIA_INVITE, token + BODY_SEPARATOR_STRING + passHash);
     }
 
     public ProductDTO parseProductDTO(int expectedMessageOrder) throws Exception {
@@ -239,87 +280,83 @@ public final class AppWebSocketClient extends BaseTestAppClient {
     }
 
     public void deleteProduct(int productId) {
-        send("webDeleteProduct " + productId);
+        send(WEB_DELETE_PRODUCT, productId);
     }
 
     public void updateAccount(User user) {
-        send("updateAccount " + user);
+        send(WEB_EDIT_ACCOUNT, user);
     }
 
     public void getAccount() {
-        send("getAccount");
+        send(WEB_GET_ACCOUNT);
     }
 
     public void logout() {
-        send("logout");
+        send(LOGOUT);
     }
 
     public void deleteDevice(int orgId, int deviceId) {
-        send("webDeleteDevice " + orgId + BODY_SEPARATOR + deviceId);
+        send(WEB_DELETE_DEVICE, "" + orgId + BODY_SEPARATOR + deviceId);
     }
 
     public void createDevice(Device device) {
-        send("webCreateDevice " + -1 + BODY_SEPARATOR + device);
+        send(WEB_CREATE_DEVICE, "" + -1 + BODY_SEPARATOR + device);
     }
 
     public void updateDevice(int orgId, Device device) {
-        send("webUpdateDevice " + orgId + BODY_SEPARATOR + device);
+        send(WEB_EDIT_DEVICE, "" + orgId + BODY_SEPARATOR + device);
     }
 
     public void getDevice(int orgId, int deviceId) {
-        send("webGetDevice " + orgId + BODY_SEPARATOR_STRING + deviceId);
+        send(WEB_GET_DEVICE, "" + orgId + BODY_SEPARATOR_STRING + deviceId);
     }
 
     public void getDevices(int orgId) {
-        send("webGetDevices " + orgId);
+        send(WEB_GET_DEVICES, orgId);
     }
 
     public void getProductLocations(int productId) {
-        send("webGetProductLocations " + productId);
+        send(WEB_GET_PRODUCT_LOCATIONS, productId);
     }
 
     public void getProductLocations(int productId, String searchString) {
-        send("webGetProductLocations " + productId + BODY_SEPARATOR + searchString);
+        send(WEB_GET_PRODUCT_LOCATIONS, "" + productId + BODY_SEPARATOR + searchString);
     }
 
     public void getMetafield(int deviceId, int metafieldId) {
-        send("webGetMetafield " + deviceId + BODY_SEPARATOR + metafieldId);
+        send(WEB_GET_METAFIELD, "" + deviceId + BODY_SEPARATOR + metafieldId);
     }
 
     public void deleteOrg(int orgId) {
-        send("webDeleteOrg " + orgId);
+        send(WEB_DELETE_ORG, orgId);
     }
 
     public void getOrganization() {
-        send("webGetOrg");
+        send(WEB_GET_ORG);
     }
 
     public void getOrganization(int orgId) {
-        send("webGetOrg " + orgId);
+        send(WEB_GET_ORG, orgId);
     }
 
     public void getOrganizationHierarchy() {
-        send("getOrganizationHierarchy");
+        send(WEB_GET_ORG_HIERARCHY);
     }
 
     public void getOrganizations(int orgId) {
-        send("webGetOrgs " + orgId);
+        send(WEB_GET_ORGS, orgId);
     }
 
     public void getOrgUsers(int orgId) {
-        send("webGetOrgUsers " + orgId);
-    }
-
-    public void getOrgLocations(int orgId) {
-        send("webGetOrgLocations " + orgId);
+        send(WEB_GET_ORG_USERS, orgId);
     }
 
     public void editOwnOrg(OrganizationDTO organizationDTO) {
-        send("webEditOwnOrg " + organizationDTO);
+        send(WEB_EDIT_OWN_ORG, organizationDTO);
     }
 
     public void deleteUser(int orgId, String... users) {
-        send("webDeleteUser " + orgId + StringUtils.BODY_SEPARATOR_STRING
+        send(WEB_DELETE_USER, "" + orgId + StringUtils.BODY_SEPARATOR_STRING
                 + JsonParser.valueToJsonAsString(Arrays.asList(users)));
     }
 
@@ -327,56 +364,55 @@ public final class AppWebSocketClient extends BaseTestAppClient {
                             EventType eventType, Boolean isResolved,
                             long form, long to,
                             int offset, int limit) {
-        send("webgetdevicetimeline " +
-                new TimelineDTO(orgId, deviceId, eventType, isResolved, form, to, offset, limit).toString());
+        send(WEB_GET_DEVICE_TIMELINE, new TimelineDTO(orgId, deviceId, eventType, isResolved, form, to, offset, limit));
     }
 
     public void updateDeviceMetafield(int deviceId, MetaField metaField) {
-        send("webUpdateDeviceMetafield " + deviceId + BODY_SEPARATOR_STRING + metaField);
+        send(WEB_EDIT_DEVICE_METAFIELD, "" + deviceId + BODY_SEPARATOR_STRING + metaField);
     }
 
     public void updateUserInfo(int orgId, User user) {
-        send("WebUpdateUserInfo " + orgId + BODY_SEPARATOR_STRING + user.toString());
+        send(WEB_EDIT_USER_INFO, "" + orgId + BODY_SEPARATOR_STRING + user.toString());
     }
 
     public void getTempSecureToken() {
-        send("webGetTempSecureToken");
+        send(WEB_GET_TEMP_SECURE_TOKEN);
     }
 
     public void createRole(RoleDTO roleDTO) {
-        send("webCreateRole " + roleDTO.toString());
+        send(WEB_CREATE_ROLE, roleDTO);
     }
 
     public void updateRole(RoleDTO roleDTO) {
-        send("webUpdateRole " + roleDTO.toString());
+        send(WEB_EDIT_ROLE, roleDTO);
     }
 
     public void deleteRole(int roleId) {
-        send("webDeleteRole " + roleId);
+        send(WEB_DELETE_ROLE, roleId);
     }
 
     public void getRoles() {
-        send("webGetRoles");
+        send(WEB_GET_ROLES);
     }
 
     public void getRole(int roleId) {
-        send("webGetRole " + roleId);
+        send(WEB_GET_ROLE, roleId);
     }
 
     public void getUserCountersByRole() {
-        send("getUserCountersByRole");
+        send(WEB_GET_USER_COUNTERS_BY_ROLE);
     }
 
     public void setAuthToken(int deviceId, String newToken) {
-        send("webSetAuthToken " + JsonParser.toJson(new SetAuthTokenDTO(deviceId, newToken)));
+        send(WEB_SET_AUTH_TOKEN, JsonParser.toJson(new SetAuthTokenDTO(deviceId, newToken)));
     }
 
     public void getDeviceCount(int orgId) {
-        send("webGetDeviceCountForOrg " + orgId);
+        send(WEB_GET_DEVICE_COUNT_FOR_ORG, "" + orgId);
     }
 
     public void trackOrg(int orgId) {
-        send("webTrackOrg " + orgId);
+        send(WEB_TRACK_ORG, "" + orgId);
     }
 
     public TimelineResponseDTO parseTimelineResponse(int expectedMessageOrder) throws Exception {
@@ -431,38 +467,47 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), CountDTO.class);
     }
 
+    @Override
     public void send(String line) {
         send(produceWebSocketFrame(produceMessageBaseOnUserInput(line, ++msgId)));
     }
 
+    public void send(short command) {
+        send(produceWebSocketFrame(produceMessage(command, ++msgId, "")));
+    }
+
+    public void send(short command, Object body) {
+        send(produceWebSocketFrame(produceMessage(command, ++msgId, body.toString())));
+    }
+
     public void getGraphData(int deviceId, long widgetId, GraphPeriod graphPeriod) {
-        send("getenhanceddata " + deviceId + BODY_SEPARATOR_STRING + widgetId + BODY_SEPARATOR_STRING + graphPeriod);
+        send(GET_ENHANCED_GRAPH_DATA, "" + deviceId + BODY_SEPARATOR_STRING + widgetId + BODY_SEPARATOR_STRING + graphPeriod);
     }
 
     public void getGraphDataCustom(int deviceId, long widgetId, long from, long to) {
-        send("getenhanceddata " + deviceId + BODY_SEPARATOR_STRING
+        send(GET_ENHANCED_GRAPH_DATA, "" + deviceId + BODY_SEPARATOR_STRING
                 + widgetId + BODY_SEPARATOR_STRING + GraphPeriod.CUSTOM
                 + BODY_SEPARATOR_STRING + from + BODY_SEPARATOR_STRING + to);
     }
 
     public void getOTAInfo(String firmwareUrl) {
         if (firmwareUrl == null) {
-            send("webOtaGetFirmwareInfo");
+            send(WEB_OTA_GET_FIRMWARE_INFO);
         } else {
-            send("webOtaGetFirmwareInfo " + firmwareUrl);
+            send(WEB_OTA_GET_FIRMWARE_INFO, firmwareUrl);
         }
     }
 
     public void otaStart(OtaDTO otaDTO) {
-        send("webStartOta " + otaDTO);
+        send(WEB_OTA_START, otaDTO);
     }
 
     public void otaStop(OtaDTO otaDTO) {
-        send("webStopOta " + otaDTO);
+        send(WEB_OTA_STOP, otaDTO);
     }
 
     public void getDevicesByReferenceMetafield(int deviceId, int metafieldId) {
-        send("webGetDevicesByReferenceMetafield " + deviceId + BODY_SEPARATOR + metafieldId);
+        send(WEB_GET_DEVICES_BY_REFERENCE_METAFIELD, "" + deviceId + BODY_SEPARATOR + metafieldId);
     }
 
 

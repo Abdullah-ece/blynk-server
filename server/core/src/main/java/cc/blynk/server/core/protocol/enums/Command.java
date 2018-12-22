@@ -22,9 +22,9 @@ public final class Command {
     public static final short ACTIVATE_DASHBOARD = 7;
     public static final short DEACTIVATE_DASHBOARD = 8;
     public static final short REFRESH_TOKEN = 9;
-    public static final short UPDATE_PROFILE_SETTINGS = 10;
+    public static final short EDIT_PROFILE_SETTINGS = 10;
 
-    public static final short MOBILE_UPDATE_DEVICE_METAFIELD = 11;
+    public static final short MOBILE_EDIT_DEVICE_METAFIELD = 11;
 
     //HARDWARE commands
     public static final short TWEET = 12;
@@ -37,10 +37,10 @@ public final class Command {
     public static final short SET_WIDGET_PROPERTY = 19;
     public static final short HARDWARE = 20;
     //app commands
-    public static final short CREATE_DASH = 21;
-    public static final short UPDATE_DASH = 22;
-    public static final short DELETE_DASH = 23;
-    public static final short LOAD_PROFILE_GZIPPED = 24;
+    public static final short MOBILE_CREATE_DASH = 21;
+    public static final short MOBILE_EDIT_DASH = 22;
+    public static final short MOBILE_DELETE_DASH = 23;
+    public static final short MOBILE_LOAD_PROFILE_GZIPPED = 24;
     public static final short DEVICE_SYNC = 25;
     public static final short SHARING = 26;
     public static final short ADD_PUSH_TOKEN = 27;
@@ -51,33 +51,33 @@ public final class Command {
     public static final short REFRESH_SHARE_TOKEN = 31;
     public static final short SHARE_LOGIN = 32;
     //app commands
-    public static final short CREATE_WIDGET = 33;
-    public static final short UPDATE_WIDGET = 34;
-    public static final short DELETE_WIDGET = 35;
+    public static final short MOBILE_CREATE_WIDGET = 33;
+    public static final short MOBILE_EDIT_WIDGET = 34;
+    public static final short MOBILE_DELETE_WIDGET = 35;
 
     //energy commands
-    public static final short GET_ENERGY = 36;
-    public static final short ADD_ENERGY = 37;
+    public static final short MOBILE_GET_ENERGY = 36;
+    public static final short MOBILE_ADD_ENERGY = 37;
 
-    public static final short UPDATE_PROJECT_SETTINGS = 38;
+    public static final short EDIT_PROJECT_SETTINGS = 38;
 
     public static final short ASSIGN_TOKEN = 39;
 
     public static final short GET_SERVER = 40;
     public static final short CONNECT_REDIRECT = 41;
 
-    public static final short CREATE_DEVICE = 42;
-    public static final short UPDATE_DEVICE = 43;
-    public static final short DELETE_DEVICE = 44;
-    public static final short GET_DEVICES = 45;
+    public static final short MOBILE_CREATE_DEVICE = 42;
+    public static final short MOBILE_EDIT_DEVICE = 43;
+    public static final short MOBILE_DELETE_DEVICE = 44;
+    public static final short MOBILE_GET_DEVICES = 45;
 
-    public static final short CREATE_TAG = 46;
-    public static final short UPDATE_TAG = 47;
-    public static final short DELETE_TAG = 48;
-    public static final short GET_TAGS = 49;
+    public static final short MOBILE_CREATE_TAG = 46;
+    public static final short MOBILE_UPDATE_TAG = 47;
+    public static final short MOBILE_DELETE_TAG = 48;
+    public static final short MOBILE_GET_TAGS = 49;
     public static final short MOBILE_GET_DEVICE = 50;
 
-    public static final short UPDATE_FACE = 51;
+    public static final short MOBILE_EDIT_FACE = 51;
 
     //------------------------------------------
 
@@ -102,21 +102,21 @@ public final class Command {
     public static final short HARDWARE_RESEND_FROM_BLUETOOTH = 65;
     public static final short LOGOUT = 66;
 
-    public static final short CREATE_TILE_TEMPLATE = 67;
-    public static final short UPDATE_TILE_TEMPLATE = 68;
-    public static final short DELETE_TILE_TEMPLATE = 69;
-    public static final short GET_WIDGET = 70;
+    public static final short MOBILE_CREATE_TILE_TEMPLATE = 67;
+    public static final short MOBILE_EDIT_TILE_TEMPLATE = 68;
+    public static final short MOBILE_DELETE_TILE_TEMPLATE = 69;
+    public static final short MOBILE_GET_WIDGET = 70;
     public static final short DEVICE_DISCONNECTED = 71;
     public static final short OUTDATED_APP_NOTIFICATION = 72;
-    public static final short TRACK_DEVICE = 73;
-    public static final short GET_PROVISION_TOKEN = 74;
-    public static final short RESOLVE_EVENT = 75;
-    public static final short DELETE_DEVICE_DATA = 76;
+    public static final short WEB_TRACK_DEVICE = 73;
+    public static final short MOBILE_GET_PROVISION_TOKEN = 74;
+    public static final short WEB_RESOLVE_EVENT = 75;
+    public static final short MOBILE_DELETE_DEVICE_DATA = 76;
 
-    public static final short CREATE_REPORT = 77;
-    public static final short UPDATE_REPORT = 78;
-    public static final short DELETE_REPORT = 79;
-    public static final short EXPORT_REPORT = 80;
+    public static final short MOBILE_CREATE_REPORT = 77;
+    public static final short MOBILE_UPDATE_REPORT = 78;
+    public static final short MOBILE_DELETE_REPORT = 79;
+    public static final short MOBILE_EXPORT_REPORT = 80;
 
     public static final short RESET_PASSWORD = 81;
 
@@ -138,9 +138,9 @@ public final class Command {
 
     public static final short WEB_JSON = 99;
     public static final short WEB_GET_ACCOUNT = 100;
-    public static final short WEB_UPDATE_ACCOUNT = 101;
+    public static final short WEB_EDIT_ACCOUNT = 101;
     public static final short WEB_CREATE_DEVICE = 102;
-    public static final short WEB_UPDATE_DEVICE = 103;
+    public static final short WEB_EDIT_DEVICE = 103;
     public static final short WEB_GET_DEVICES = 104;
     public static final short WEB_GET_DEVICE = 105;
     public static final short WEB_GET_ORG = 106;
@@ -150,19 +150,19 @@ public final class Command {
     public static final short WEB_CAN_INVITE_USER = 110;
     public static final short WEB_EDIT_ORG = 111;
     public static final short WEB_CREATE_PRODUCT = 112;
-    public static final short WEB_UPDATE_PRODUCT = 113;
+    public static final short WEB_EDIT_PRODUCT = 113;
     public static final short WEB_DELETE_PRODUCT = 114;
     public static final short WEB_GET_PRODUCT = 115;
     public static final short WEB_GET_PRODUCTS = 116;
-    public static final short WEB_UPDATE_DEVICES_META_IN_PRODUCT = 117;
-    public static final short WEB_UPDATE_USER_INFO = 118;
+    public static final short WEB_EDIT_DEVICES_META_IN_PRODUCT = 117;
+    public static final short WEB_EDIT_USER_INFO = 118;
     public static final short WEB_DELETE_USER = 119;
     public static final short WEB_CREATE_ORG = 120;
     public static final short WEB_DELETE_ORG = 122;
     public static final short WEB_CAN_DELETE_PRODUCT = 123;
     public static final short WEB_INVITE_USER = 124;
     public static final short WEB_LOGIN_VIA_INVITE = 125;
-    public static final short WEB_UPDATE_DEVICE_METAFIELD = 126;
+    public static final short WEB_EDIT_DEVICE_METAFIELD = 126;
     public static final short WEB_GET_DEVICE_TIMELINE = 127;
     public static final short WEB_DELETE_DEVICE = 128;
     public static final short WEB_GET_METAFIELD = 129;
@@ -170,7 +170,7 @@ public final class Command {
     public static final short WEB_GET_TEMP_SECURE_TOKEN = 131;
     public static final short WEB_GET_ORG_HIERARCHY = 132;
     public static final short WEB_CREATE_ROLE = 133;
-    public static final short WEB_UPDATE_ROLE = 134;
+    public static final short WEB_EDIT_ROLE = 134;
     public static final short WEB_GET_ROLE = 135;
     public static final short WEB_GET_ROLES = 136;
     public static final short WEB_DELETE_ROLE = 137;
@@ -200,7 +200,7 @@ public final class Command {
             Map.entry(LOGIN, "Login"),
             Map.entry(HARDWARE_LOGIN, "LoginHardware"),
             Map.entry(LOGOUT, "Logout"),
-            Map.entry(LOAD_PROFILE_GZIPPED, "LoadProfile"),
+            Map.entry(MOBILE_LOAD_PROFILE_GZIPPED, "LoadProfile"),
             Map.entry(DEVICE_SYNC, "AppSync"),
             Map.entry(SHARING, "Sharing"),
             Map.entry(ASSIGN_TOKEN, "AssignToken"),
@@ -216,58 +216,58 @@ public final class Command {
             Map.entry(GET_SHARE_TOKEN, "GetShareToken"),
             Map.entry(REFRESH_SHARE_TOKEN, "RefreshShareToken"),
             Map.entry(SHARE_LOGIN, "ShareLogin"),
-            Map.entry(CREATE_DASH, "CreateProject"),
-            Map.entry(UPDATE_DASH, "UpdateProject"),
-            Map.entry(DELETE_DASH, "DeleteProject"),
+            Map.entry(MOBILE_CREATE_DASH, "CreateProject"),
+            Map.entry(MOBILE_EDIT_DASH, "EditProject"),
+            Map.entry(MOBILE_DELETE_DASH, "DeleteProject"),
             Map.entry(HARDWARE_SYNC, "HardwareSync"),
             Map.entry(BLYNK_INTERNAL, "Internal"),
             Map.entry(ADD_PUSH_TOKEN, "AddPushToken"),
-            Map.entry(UPDATE_PROFILE_SETTINGS, "UpdateProfileSettings"),
+            Map.entry(EDIT_PROFILE_SETTINGS, "EditProfileSettings"),
             Map.entry(TWEET, "Tweet"), Map.entry(EMAIL, "Email"),
             Map.entry(PUSH_NOTIFICATION, "Push"),
-            Map.entry(CREATE_WIDGET, "CreateWidget"),
-            Map.entry(UPDATE_WIDGET, "UpdateWidget"),
-            Map.entry(DELETE_WIDGET, "DeleteWidget"),
-            Map.entry(GET_WIDGET, "GetWidget"),
-            Map.entry(CREATE_TILE_TEMPLATE, "CreateTileTemplate"),
-            Map.entry(UPDATE_TILE_TEMPLATE, "UpdateTileTemplate"),
-            Map.entry(DELETE_TILE_TEMPLATE, "DeleteTileTemplate"),
-            Map.entry(CREATE_DEVICE, "CreateDevice"),
-            Map.entry(UPDATE_DEVICE, "UpdateDevice"),
-            Map.entry(DELETE_DEVICE, "DeleteDevice"),
+            Map.entry(MOBILE_CREATE_WIDGET, "CreateWidget"),
+            Map.entry(MOBILE_EDIT_WIDGET, "EditWidget"),
+            Map.entry(MOBILE_DELETE_WIDGET, "DeleteWidget"),
+            Map.entry(MOBILE_GET_WIDGET, "GetWidget"),
+            Map.entry(MOBILE_CREATE_TILE_TEMPLATE, "CreateTileTemplate"),
+            Map.entry(MOBILE_EDIT_TILE_TEMPLATE, "EditTileTemplate"),
+            Map.entry(MOBILE_DELETE_TILE_TEMPLATE, "DeleteTileTemplate"),
+            Map.entry(MOBILE_CREATE_DEVICE, "CreateDevice"),
+            Map.entry(MOBILE_EDIT_DEVICE, "EditDevice"),
+            Map.entry(MOBILE_DELETE_DEVICE, "DeleteDevice"),
             Map.entry(MOBILE_GET_DEVICE, "GetDevice"),
-            Map.entry(GET_DEVICES, "GetDevices"),
-            Map.entry(ADD_ENERGY, "AddEnergy"),
-            Map.entry(GET_ENERGY, "GetEnergy"),
-            Map.entry(UPDATE_PROJECT_SETTINGS, "UpdateProjectSettings"),
+            Map.entry(MOBILE_GET_DEVICES, "GetDevices"),
+            Map.entry(MOBILE_ADD_ENERGY, "AddEnergy"),
+            Map.entry(MOBILE_GET_ENERGY, "GetEnergy"),
+            Map.entry(EDIT_PROJECT_SETTINGS, "EditProjectSettings"),
             Map.entry(GET_SERVER, "GetServer"),
             Map.entry(CONNECT_REDIRECT, "ConnectRedirect"),
             Map.entry(CREATE_APP, "CreateApp"),
-            Map.entry(UPDATE_APP, "UpdateApp"),
+            Map.entry(UPDATE_APP, "EditApp"),
             Map.entry(DELETE_APP, "DeleteApp"),
             Map.entry(GET_PROJECT_BY_TOKEN, "GetProjectByToken"),
             Map.entry(EMAIL_QR, "MailQRs"),
-            Map.entry(UPDATE_FACE, "UpdateFace"),
-            Map.entry(GET_PROVISION_TOKEN, "getProvisionToken"),
-            Map.entry(RESOLVE_EVENT, "resolveEvent"),
-            Map.entry(DELETE_DEVICE_DATA, "deleteDeviceData"),
+            Map.entry(MOBILE_EDIT_FACE, "EditFace"),
+            Map.entry(MOBILE_GET_PROVISION_TOKEN, "getProvisionToken"),
+            Map.entry(WEB_RESOLVE_EVENT, "webResolveEvent"),
+            Map.entry(MOBILE_DELETE_DEVICE_DATA, "deleteDeviceData"),
             Map.entry(HARDWARE_LOG_EVENT, "HardwareLogEvent"),
             Map.entry(HARDWARE_RESEND_FROM_BLUETOOTH, "HardwareResendFromBluetooth"),
             Map.entry(GET_CLONE_CODE, "GetCloneCode"),
             Map.entry(GET_PROJECT_BY_CLONE_CODE, "GetProjectByCloneCode"),
             Map.entry(DEVICE_DISCONNECTED, "deviceOffline"),
             Map.entry(OUTDATED_APP_NOTIFICATION, "outdatedAppNotification"),
-            Map.entry(TRACK_DEVICE, "trackDevice"),
-            Map.entry(CREATE_REPORT, "createReport"),
-            Map.entry(UPDATE_REPORT, "updateReport"),
-            Map.entry(DELETE_REPORT, "deleteReport"),
-            Map.entry(EXPORT_REPORT, "exportReport"),
+            Map.entry(WEB_TRACK_DEVICE, "webTrackDevice"),
+            Map.entry(MOBILE_CREATE_REPORT, "createReport"),
+            Map.entry(MOBILE_UPDATE_REPORT, "editReport"),
+            Map.entry(MOBILE_DELETE_REPORT, "deleteReport"),
+            Map.entry(MOBILE_EXPORT_REPORT, "exportReport"),
             Map.entry(RESET_PASSWORD, "resetPass"),
-            Map.entry(MOBILE_UPDATE_DEVICE_METAFIELD, "MobileUpdateDeviceMetafield"),
+            Map.entry(MOBILE_EDIT_DEVICE_METAFIELD, "MobileEditDeviceMetafield"),
             Map.entry(HTTP_IS_HARDWARE_CONNECTED, "HttpIsHardwareConnected"),
             Map.entry(HTTP_IS_APP_CONNECTED, "HttpIsAppConnected"),
             Map.entry(HTTP_GET_PIN_DATA, "HttpGetPinData"),
-            Map.entry(HTTP_UPDATE_PIN_DATA, "HttpUpdatePinData"),
+            Map.entry(HTTP_UPDATE_PIN_DATA, "HttpEditPinData"),
             Map.entry(HTTP_NOTIFY, "HttpNotify"),
             Map.entry(HTTP_EMAIL, "HttpEmail"),
             Map.entry(HTTP_GET_PROJECT, "HttpGetProject"),
@@ -281,7 +281,7 @@ public final class Command {
             Map.entry(EVENTOR, "Eventor"),
             Map.entry(WEB_HOOKS, "WebHooks"),
             Map.entry(WEB_GET_ACCOUNT, "WebGetAccount"),
-            Map.entry(WEB_UPDATE_ACCOUNT, "WebUpdateAccount"),
+            Map.entry(WEB_EDIT_ACCOUNT, "WebEditAccount"),
             Map.entry(WEB_CREATE_DEVICE, "WebCreateDevice"),
             Map.entry(WEB_GET_DEVICES, "WebGetDevices"),
             Map.entry(WEB_GET_DEVICE, "WebGetDevice"),
@@ -291,28 +291,28 @@ public final class Command {
             Map.entry(WEB_GET_PRODUCT_LOCATIONS, "WebGetProductLocations"),
             Map.entry(WEB_CAN_INVITE_USER, "WebCanInviteUser"),
             Map.entry(WEB_CREATE_PRODUCT, "WebCreateProduct"),
-            Map.entry(WEB_UPDATE_PRODUCT, "WebUpdateProduct"),
+            Map.entry(WEB_EDIT_PRODUCT, "WebEditProduct"),
             Map.entry(WEB_DELETE_PRODUCT, "WebDeleteProduct"),
             Map.entry(WEB_GET_PRODUCT, "WebGetProduct"),
             Map.entry(WEB_GET_PRODUCTS, "WebGetProducts"),
-            Map.entry(WEB_UPDATE_DEVICES_META_IN_PRODUCT, "WebUpdateDevicesMeta"),
-            Map.entry(WEB_UPDATE_DEVICE, "WebUpdateDevice"),
-            Map.entry(WEB_UPDATE_USER_INFO, "WebUpdateUserInfo"),
+            Map.entry(WEB_EDIT_DEVICES_META_IN_PRODUCT, "WebEditDevicesMeta"),
+            Map.entry(WEB_EDIT_DEVICE, "WebEditDevice"),
+            Map.entry(WEB_EDIT_USER_INFO, "WebEditUserInfo"),
             Map.entry(WEB_DELETE_USER, "WebDeleteUser"),
             Map.entry(WEB_CREATE_ORG, "WebCreateOrg"),
-            Map.entry(WEB_EDIT_ORG, "WebUpdateOrg"),
+            Map.entry(WEB_EDIT_ORG, "WebEditOrg"),
             Map.entry(WEB_DELETE_ORG, "WebDeleteOrg"),
             Map.entry(WEB_CAN_DELETE_PRODUCT, "WebCanDeleteProduct"),
             Map.entry(WEB_INVITE_USER, "WebInviteUser"),
             Map.entry(WEB_LOGIN_VIA_INVITE, "WebLoginViaInvite"),
-            Map.entry(WEB_UPDATE_DEVICE_METAFIELD, "WebUpdateDeviceMetafield"),
+            Map.entry(WEB_EDIT_DEVICE_METAFIELD, "WebEditDeviceMetafield"),
             Map.entry(WEB_GET_DEVICE_TIMELINE, "WebGetDeviceTimeline"),
             Map.entry(WEB_DELETE_DEVICE, "WebDeleteDevice"),
             Map.entry(MOBILE_GET_DEVICES_BY_REFERENCE_METAFIELD, "MobileGetDevicesByReferenceMetafield"),
             Map.entry(WEB_GET_TEMP_SECURE_TOKEN, "WebGetTempSecureToken"),
             Map.entry(WEB_GET_ORG_HIERARCHY, "WebGetOrgHierarchy"),
             Map.entry(WEB_CREATE_ROLE, "WebCreateRole"),
-            Map.entry(WEB_UPDATE_ROLE, "WebUpdateRole"),
+            Map.entry(WEB_EDIT_ROLE, "WebEditRole"),
             Map.entry(WEB_GET_ROLES, "WebGetRoles"),
             Map.entry(WEB_GET_ROLE, "WebGetRole"),
             Map.entry(WEB_DELETE_ROLE, "WebDeleteRole"),

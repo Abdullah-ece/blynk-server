@@ -5,7 +5,7 @@ import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import io.netty.channel.ChannelHandlerContext;
 
-import static cc.blynk.server.core.protocol.enums.Command.GET_TAGS;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_TAGS;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 
 /**
@@ -27,7 +27,7 @@ public final class MobileGetTagsLogic {
         }
 
         if (ctx.channel().isWritable()) {
-            ctx.writeAndFlush(makeUTF8StringMessage(GET_TAGS, message.id, response), ctx.voidPromise());
+            ctx.writeAndFlush(makeUTF8StringMessage(MOBILE_GET_TAGS, message.id, response), ctx.voidPromise());
         }
     }
 

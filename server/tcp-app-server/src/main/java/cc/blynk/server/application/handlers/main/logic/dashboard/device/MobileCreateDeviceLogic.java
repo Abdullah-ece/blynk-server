@@ -11,7 +11,7 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.core.protocol.enums.Command.CREATE_DEVICE;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_DEVICE;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 
 /**
@@ -50,7 +50,7 @@ public final class MobileCreateDeviceLogic {
 
         if (ctx.channel().isWritable()) {
             ctx.writeAndFlush(
-                    makeUTF8StringMessage(CREATE_DEVICE, message.id, newDevice.toString()), ctx.voidPromise());
+                    makeUTF8StringMessage(MOBILE_CREATE_DEVICE, message.id, newDevice.toString()), ctx.voidPromise());
         }
     }
 
