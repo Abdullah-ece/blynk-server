@@ -354,22 +354,19 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
         }
 
         TableDescriptor tableDescriptor = TableDescriptor.BLYNK_DEFAULT_INSTANCE;
-        if (TableDescriptor.BLYNK_DEFAULT_INSTANCE != tableDescriptor) {
-            blockingIOProcessor.executeDB(() -> {
-                try {
-                    TableDataMapper tableDataMapper = new TableDataMapper(
-                            tableDescriptor,
-                            deviceId, pin, pinType, LocalDateTime.now(),
-                            pinValues);
-                    reportingDBManager.reportingDBDao.insertDataPoint(tableDataMapper);
-                    ctx.writeAndFlush(ok());
-                } catch (Exception e) {
-                    log.error("Error insert record.", e);
-                    ctx.writeAndFlush(serverError("Error insert record. " + e.getMessage()));
-                }
-            });
-            return null;
-        }
+        blockingIOProcessor.executeDB(() -> {
+            try {
+                TableDataMapper tableDataMapper = new TableDataMapper(
+                        tableDescriptor,
+                        deviceId, pin, pinType, LocalDateTime.now(),
+                        pinValues);
+                reportingDBManager.reportingDBDao.insertDataPoint(tableDataMapper);
+                ctx.writeAndFlush(ok());
+            } catch (Exception e) {
+                log.error("Error insert record.", e);
+                ctx.writeAndFlush(serverError("Error insert record. " + e.getMessage()));
+            }
+        });
 
         final long now = System.currentTimeMillis();
 
