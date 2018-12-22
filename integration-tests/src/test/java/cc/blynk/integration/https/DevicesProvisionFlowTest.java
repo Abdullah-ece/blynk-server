@@ -12,6 +12,7 @@ import cc.blynk.server.core.model.auth.App;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.dto.DeviceDTO;
 import cc.blynk.server.core.model.dto.OrganizationDTO;
 import cc.blynk.server.core.model.dto.ProductDTO;
 import cc.blynk.server.core.model.enums.PinType;
@@ -576,7 +577,13 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         appClient.verifyResult(ok(1));
 
         appClient.getDevicesByReferenceMetafield(createdDevice.id, deviceReferenceMetaField.id);
-        Device[] deviceDTOS = appClient.parseDevices(2);
+        Device[] devices = appClient.parseDevices(2);
+        assertNotNull(devices);
+        assertEquals(1, devices.length);
+        assertEquals("My New Device For Product 3", devices[0].name);
+
+        client.getDevicesByReferenceMetafield(createdDevice.id, deviceReferenceMetaField.id);
+        DeviceDTO[] deviceDTOS = client.parseDevicesDTO(8);
         assertNotNull(deviceDTOS);
         assertEquals(1, deviceDTOS.length);
         assertEquals("My New Device For Product 3", deviceDTOS[0].name);

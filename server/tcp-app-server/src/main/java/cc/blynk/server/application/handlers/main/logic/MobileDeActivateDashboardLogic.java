@@ -45,7 +45,7 @@ public final class MobileDeActivateDashboardLogic {
         user.lastModifiedTs = System.currentTimeMillis();
 
         SessionDao sessionDao = holder.sessionDao;
-        var session = sessionDao.getOrgSession(state.orgId);
+        var session = sessionDao.getOrgSession(state.user.orgId);
         session.sendToSharedApps(ctx.channel(), sharedToken, message.command, message.id, message.body);
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }

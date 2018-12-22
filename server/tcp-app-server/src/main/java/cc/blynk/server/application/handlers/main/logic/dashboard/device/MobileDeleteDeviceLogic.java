@@ -34,7 +34,7 @@ public final class MobileDeleteDeviceLogic {
         log.debug("Deleting device with id {}.", deviceId);
 
         holder.deviceDao.delete(device.id);
-        Session session = holder.sessionDao.getOrgSession(state.orgId);
+        Session session = holder.sessionDao.getOrgSession(state.user.orgId);
         session.closeHardwareChannelByDeviceId(deviceId);
         user.deleteDevice(deviceId);
 

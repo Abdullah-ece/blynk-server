@@ -401,7 +401,7 @@ public class OrganizationDao {
     }
 
     public List<Device> getDevices(BaseUserStateHolder state) {
-        return getDevices(state.orgId, state.role, state.user.email);
+        return getDevices(state.selectedOrgId, state.role, state.user.email);
     }
 
     public List<Device> getDevices(int userOrgId, Role userRole, String email) {

@@ -45,7 +45,7 @@ public final class WebCanDeleteProductLogic implements PermissionBasedLogic<WebA
             orgId = Integer.parseInt(split[0]);
             productId = Integer.parseInt(split[1]);
         } else {
-            orgId = state.orgId;
+            orgId = state.selectedOrgId;
             productId = Integer.parseInt(split[0]);
         }
 

@@ -88,6 +88,7 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_OWN_ORG;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ACCOUNT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICES;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICES_BY_REFERENCE_METAFIELD;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICE_COUNT_FOR_ORG;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICE_TIMELINE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_METAFIELD;
@@ -379,6 +380,8 @@ public final class CommandParserUtil {
                 return WEB_OTA_STOP;
             case "getusercountersbyrole" :
                 return WEB_GET_USER_COUNTERS_BY_ROLE;
+            case "webgetdevicesbyreferencemetafield" :
+                return WEB_GET_DEVICES_BY_REFERENCE_METAFIELD;
 
             default:
                 throw new IllegalArgumentException("Unsupported command");

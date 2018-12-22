@@ -33,7 +33,7 @@ public final class MobileRefreshTokenLogic {
         Product product = holder.organizationDao.getProductById(device.productId);
         String token = holder.deviceDao.assignNewToken(user.orgId, user.email, product, device);
 
-        Session session = holder.sessionDao.getOrgSession(state.orgId);
+        Session session = holder.sessionDao.getOrgSession(state.user.orgId);
         session.closeHardwareChannelByDeviceId(deviceId);
 
         if (ctx.channel().isWritable()) {

@@ -104,7 +104,7 @@ public class WebAppLoginHandler extends SimpleChannelInboundHandler<LoginMessage
 
         Channel channel = ctx.channel();
 
-        Session session = holder.sessionDao.getOrCreateSessionForOrg(appStateHolder.orgId, channel.eventLoop());
+        Session session = holder.sessionDao.getOrCreateSessionForOrg(user.orgId, channel.eventLoop());
         if (session.initialEventLoop != channel.eventLoop()) {
             log.debug("Re registering websocket app channel. {}", ctx.channel());
             ReregisterChannelUtil.reRegisterChannel(ctx, session, channelFuture ->

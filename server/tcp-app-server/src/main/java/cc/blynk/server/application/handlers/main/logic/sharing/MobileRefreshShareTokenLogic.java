@@ -45,7 +45,7 @@ public final class MobileRefreshShareTokenLogic {
         String token = holder.sharedTokenManager.refreshSharedToken(user, dash);
 
         //todo move to session class?
-        Session session = holder.sessionDao.getOrgSession(state.orgId);
+        Session session = holder.sessionDao.getOrgSession(state.user.orgId);
         for (Channel appChannel : session.appChannels) {
             MobileShareStateHolder localState = getShareState(appChannel);
             if (localState != null && localState.dashId == dashId) {

@@ -56,7 +56,7 @@ public class MobileShareHardwareLogic extends BaseProcessorHandler {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, MobileShareStateHolder state, StringMessage message) {
-        Session session = sessionDao.getOrgSession(state.orgId);
+        Session session = sessionDao.getOrgSession(state.user.orgId);
 
         //here expecting command in format "1-200000 vw 88 1"
         String[] split = split2(message.body);

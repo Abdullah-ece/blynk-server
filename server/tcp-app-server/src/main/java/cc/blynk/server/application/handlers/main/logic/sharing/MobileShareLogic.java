@@ -37,7 +37,7 @@ public final class MobileShareLogic {
                 break;
         }
 
-        Session session = holder.sessionDao.getOrgSession(state.orgId);
+        Session session = holder.sessionDao.getOrgSession(state.user.orgId);
         session.sendToSharedApps(ctx.channel(), dash.sharedToken, message.command, message.id, message.body);
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }

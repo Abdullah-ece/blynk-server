@@ -43,7 +43,7 @@ public final class MobileDeleteAppLogic {
         var result = new ArrayList<DashBoard>();
         for (DashBoard dash : user.profile.dashBoards) {
             if (ArrayUtil.contains(projectIds, dash.id)) {
-                timerWorker.deleteTimers(state.orgId, state.user.email, dash);
+                timerWorker.deleteTimers(state.user.orgId, state.user.email, dash);
             } else {
                 result.add(dash);
             }

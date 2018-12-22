@@ -37,7 +37,7 @@ public final class WebTrackOrganizationLogic {
     //we do override basic method, because this is very special handler.
     public void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         int requestedOrgId = Integer.parseInt(message.body);
-        int userOrgId = state.orgId;
+        int userOrgId = state.user.orgId;
 
         //user is not in own organization, so security checks are required here
         String email = state.user.email;

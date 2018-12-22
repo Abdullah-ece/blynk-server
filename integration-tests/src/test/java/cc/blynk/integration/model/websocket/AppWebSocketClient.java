@@ -461,4 +461,9 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         send("webStopOta " + otaDTO);
     }
 
+    public void getDevicesByReferenceMetafield(int deviceId, int metafieldId) {
+        send("webGetDevicesByReferenceMetafield " + deviceId + BODY_SEPARATOR + metafieldId);
+    }
+
+
 }

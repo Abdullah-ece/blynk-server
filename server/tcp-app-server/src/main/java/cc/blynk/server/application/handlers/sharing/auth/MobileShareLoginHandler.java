@@ -93,7 +93,7 @@ public class MobileShareLoginHandler extends SimpleChannelInboundHandler<ShareLo
         ctx.pipeline().addLast("AAppSHareHandler", new MobileShareHandler(holder, mobileShareStateHolder));
 
         Session session = holder.sessionDao.getOrCreateSessionForOrg(
-                mobileShareStateHolder.orgId, ctx.channel().eventLoop());
+                user.orgId, ctx.channel().eventLoop());
 
         if (session.isSameEventLoop(ctx)) {
             completeLogin(ctx.channel(), session, user.email, messageId);

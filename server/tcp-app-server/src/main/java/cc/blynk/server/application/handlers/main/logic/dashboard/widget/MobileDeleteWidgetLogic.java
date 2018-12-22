@@ -104,10 +104,10 @@ public final class MobileDeleteWidgetLogic {
         dash.updatedAt = System.currentTimeMillis();
 
         if (widgetToDelete instanceof Timer) {
-            timerWorker.delete(state.orgId, state.user.email,
+            timerWorker.delete(state.user.orgId, state.user.email,
                     (Timer) widgetToDelete, dashId, deviceTilesId, templateId);
         } else if (widgetToDelete instanceof Eventor) {
-            timerWorker.delete(state.orgId, state.user.email, (Eventor) widgetToDelete, dashId);
+            timerWorker.delete(state.user.orgId, state.user.email, (Eventor) widgetToDelete, dashId);
         }
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());

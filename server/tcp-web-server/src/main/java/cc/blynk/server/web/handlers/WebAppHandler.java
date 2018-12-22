@@ -3,6 +3,7 @@ package cc.blynk.server.web.handlers;
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.logic.MobileLogoutLogic;
 import cc.blynk.server.common.JsonBasedSimpleChannelInboundHandler;
+import cc.blynk.server.common.handlers.CommonGetDevicesByReferenceMetafieldLogic;
 import cc.blynk.server.common.handlers.logic.PingLogic;
 import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -79,6 +80,7 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_OWN_ORG;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ACCOUNT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICES;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICES_BY_REFERENCE_METAFIELD;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICE_COUNT_FOR_ORG;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICE_TIMELINE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_METAFIELD;
@@ -366,8 +368,11 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
             case WEB_TRACK_ORG :
                 webTrackOrganizationLogic.messageReceived(ctx, state, msg);
                 break;
-            case WEB_GET_USER_COUNTERS_BY_ROLE:
+            case WEB_GET_USER_COUNTERS_BY_ROLE :
                 webGetUserCountersByRoleLogic.messageReceived(ctx, state, msg);
+                break;
+            case WEB_GET_DEVICES_BY_REFERENCE_METAFIELD :
+                CommonGetDevicesByReferenceMetafieldLogic.messageReceived(holder, ctx, state, msg);
                 break;
         }
     }

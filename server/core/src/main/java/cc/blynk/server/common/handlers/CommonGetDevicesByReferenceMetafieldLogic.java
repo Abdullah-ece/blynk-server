@@ -1,4 +1,4 @@
-package cc.blynk.server.application.handlers.main.logic.dashboard.device;
+package cc.blynk.server.common.handlers;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.device.Device;
@@ -10,7 +10,7 @@ import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.metafields.DeviceReferenceMetaField;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.core.session.mobile.MobileStateHolder;
+import cc.blynk.server.core.session.mobile.BaseUserStateHolder;
 import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
@@ -28,15 +28,15 @@ import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
  * Created by Dmitriy Dumanskiy.
  * Created on 11.09.18.
  */
-public final class GetDevicesByReferenceMetafieldLogic {
+public final class CommonGetDevicesByReferenceMetafieldLogic {
 
-    private static final Logger log = LogManager.getLogger(GetDevicesByReferenceMetafieldLogic.class);
+    private static final Logger log = LogManager.getLogger(CommonGetDevicesByReferenceMetafieldLogic.class);
 
-    private GetDevicesByReferenceMetafieldLogic() {
+    private CommonGetDevicesByReferenceMetafieldLogic() {
     }
 
     public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
-                                       MobileStateHolder state, StringMessage message) {
+                                       BaseUserStateHolder state, StringMessage message) {
         String[] split = StringUtils.split2(message.body);
         int deviceId = Integer.parseInt(split[0]);
         Device device = holder.deviceDao.getByIdOrThrow(deviceId);
@@ -51,7 +51,7 @@ public final class GetDevicesByReferenceMetafieldLogic {
 
         //we allow to view devices only from the current org of this user
         //todo security checks
-        int orgId = state.orgId;
+        int orgId = state.selectedOrgId;
         Organization org = holder.organizationDao.getOrgByIdOrThrow(orgId);
 
         DeviceReferenceMetaField deviceReferenceMetaField = (DeviceReferenceMetaField) metaField;

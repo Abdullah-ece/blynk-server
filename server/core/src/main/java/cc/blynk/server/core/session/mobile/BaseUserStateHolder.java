@@ -10,16 +10,16 @@ import cc.blynk.server.core.model.permissions.Role;
  */
 public abstract class BaseUserStateHolder {
 
-    public final int orgId;
     public final User user;
     public final Version version;
     public Role role;
+    public int selectedOrgId;
 
     public BaseUserStateHolder(User user, Version version, Role role) {
-        this.orgId = user.orgId; //for quick lookup
         this.user = user;
         this.version = version;
         this.role = role;
+        this.selectedOrgId = user.orgId; //for quick lookup
     }
 
     public boolean isSameUser(String email) {

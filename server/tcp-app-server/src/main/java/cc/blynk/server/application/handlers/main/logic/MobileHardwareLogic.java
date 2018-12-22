@@ -147,7 +147,7 @@ public class MobileHardwareLogic extends BaseProcessorHandler {
                     }
                 }
 
-                Session session = sessionDao.getOrgSession(state.orgId);
+                Session session = sessionDao.getOrgSession(state.user.orgId);
                 //sending to shared dashes and master-master apps
                 //session.sendToSharedApps(ctx.channel(), dash.sharedToken, DEVICE_SYNC, message.id, message.body);
                 session.sendToApps(ctx.channel(), DEVICE_SYNC, message.id, message.body);

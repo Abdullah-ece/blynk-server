@@ -26,7 +26,6 @@ import cc.blynk.server.application.handlers.main.logic.dashboard.MobileCreateDas
 import cc.blynk.server.application.handlers.main.logic.dashboard.MobileDeleteDashLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.MobileUpdateDashLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.MobileUpdateDashSettingLogic;
-import cc.blynk.server.application.handlers.main.logic.dashboard.device.GetDevicesByReferenceMetafieldLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.MobileCreateDeviceLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.MobileDeleteDeviceLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.MobileGetDeviceLogic;
@@ -60,6 +59,7 @@ import cc.blynk.server.application.handlers.main.logic.sharing.MobileGetShareTok
 import cc.blynk.server.application.handlers.main.logic.sharing.MobileRefreshShareTokenLogic;
 import cc.blynk.server.application.handlers.main.logic.sharing.MobileShareLogic;
 import cc.blynk.server.common.JsonBasedSimpleChannelInboundHandler;
+import cc.blynk.server.common.handlers.CommonGetDevicesByReferenceMetafieldLogic;
 import cc.blynk.server.common.handlers.logic.PingLogic;
 import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -286,7 +286,7 @@ public class MobileHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
                 MobileUpdateDeviceMetafieldLogic.messageReceived(holder, ctx, state, msg);
                 break;
             case MOBILE_GET_DEVICES_BY_REFERENCE_METAFIELD :
-                GetDevicesByReferenceMetafieldLogic.messageReceived(holder, ctx, state, msg);
+                CommonGetDevicesByReferenceMetafieldLogic.messageReceived(holder, ctx, state, msg);
                 break;
             case MOBILE_GET_DEVICE :
                 MobileGetDeviceLogic.messageReceived(holder, ctx, msg);

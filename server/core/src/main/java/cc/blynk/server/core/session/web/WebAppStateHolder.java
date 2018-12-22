@@ -16,12 +16,10 @@ public class WebAppStateHolder extends BaseUserStateHolder {
     public static final int NO_DEVICE = -1;
 
     public int selectedDeviceId;
-    public int selectedOrgId;
 
     public WebAppStateHolder(User user, Role role, Version version) {
         super(user, version, role);
         this.selectedDeviceId = NO_DEVICE;
-        this.selectedOrgId = orgId;
     }
 
     public boolean isSelected(int deviceId) {

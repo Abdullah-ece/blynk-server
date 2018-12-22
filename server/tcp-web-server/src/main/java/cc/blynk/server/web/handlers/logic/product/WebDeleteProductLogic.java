@@ -67,7 +67,7 @@ public final class WebDeleteProductLogic implements PermissionBasedLogic<WebAppS
         int productId;
         int orgId;
         if (split.length == 1) {
-            orgId = state.orgId;
+            orgId = state.selectedOrgId;
             productId = Integer.parseInt(message.body);
         } else {
             orgId = Integer.parseInt(split[0]);

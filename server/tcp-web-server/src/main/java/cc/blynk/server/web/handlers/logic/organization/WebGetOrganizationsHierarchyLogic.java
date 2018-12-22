@@ -44,7 +44,7 @@ public final class WebGetOrganizationsHierarchyLogic implements PermissionBasedL
 
     @Override
     public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
-        Organization userOrg = organizationDao.getOrgByIdOrThrow(state.orgId);
+        Organization userOrg = organizationDao.getOrgByIdOrThrow(state.user.orgId);
         allOrgs = new HashSet<>(organizationDao.getAll());
         invocationCounter = 0;
         OrganizationsHierarchyDTO result = buildOrgHierarchy(userOrg);
