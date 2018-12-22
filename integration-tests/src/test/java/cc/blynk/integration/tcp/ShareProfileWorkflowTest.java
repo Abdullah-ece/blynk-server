@@ -36,10 +36,10 @@ import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.integration.TestUtil.parseProfile;
 import static cc.blynk.integration.TestUtil.readTestUserProfile;
 import static cc.blynk.integration.TestUtil.setProperty;
-import static cc.blynk.server.core.protocol.enums.Command.ACTIVATE_DASHBOARD;
-import static cc.blynk.server.core.protocol.enums.Command.DEACTIVATE_DASHBOARD;
 import static cc.blynk.server.core.protocol.enums.Command.DEVICE_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_ACTIVATE_DASHBOARD;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DEACTIVATE_DASHBOARD;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_ENERGY;
 import static cc.blynk.server.core.protocol.enums.Command.SHARING;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
@@ -577,14 +577,14 @@ public class ShareProfileWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.deactivate(1);
         clientPair.appClient.verifyResult(ok(2));
 
-        verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(2, DEACTIVATE_DASHBOARD, "1")));
-        verify(appClient3.responseMock, timeout(500)).channelRead(any(), eq(produce(2, DEACTIVATE_DASHBOARD, "1")));
+        verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(2, MOBILE_DEACTIVATE_DASHBOARD, "1")));
+        verify(appClient3.responseMock, timeout(500)).channelRead(any(), eq(produce(2, MOBILE_DEACTIVATE_DASHBOARD, "1")));
 
         clientPair.appClient.activate(1);
         clientPair.appClient.verifyResult(ok(3));
 
-        verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(3, ACTIVATE_DASHBOARD, "1")));
-        verify(appClient3.responseMock, timeout(500)).channelRead(any(), eq(produce(3, ACTIVATE_DASHBOARD, "1")));
+        verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(3, MOBILE_ACTIVATE_DASHBOARD, "1")));
+        verify(appClient3.responseMock, timeout(500)).channelRead(any(), eq(produce(3, MOBILE_ACTIVATE_DASHBOARD, "1")));
     }
 
     @Test
@@ -609,8 +609,8 @@ public class ShareProfileWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.send("deactivate");
         clientPair.appClient.verifyResult(ok(2));
 
-        verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(2, DEACTIVATE_DASHBOARD, "")));
-        verify(appClient3.responseMock, timeout(500)).channelRead(any(), eq(produce(2, DEACTIVATE_DASHBOARD, "")));
+        verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(2, MOBILE_DEACTIVATE_DASHBOARD, "")));
+        verify(appClient3.responseMock, timeout(500)).channelRead(any(), eq(produce(2, MOBILE_DEACTIVATE_DASHBOARD, "")));
     }
 
     public static byte[] compress(String value) throws IOException {

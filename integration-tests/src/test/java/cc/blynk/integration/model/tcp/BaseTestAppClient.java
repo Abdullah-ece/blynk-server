@@ -63,6 +63,14 @@ public abstract class BaseTestAppClient extends AppClient {
         msgId = 0;
     }
 
+    public void send(short command) {
+        send(produceMessage(command, ++msgId, ""));
+    }
+
+    public void send(short command, Object body) {
+        send(produceMessage(command, ++msgId, body.toString()));
+    }
+
     public void send(String line) {
         send(produceMessageBaseOnUserInput(line, ++msgId));
     }

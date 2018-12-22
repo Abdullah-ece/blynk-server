@@ -43,7 +43,7 @@ import static cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod.THIRT
 import static cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod.THREE_HOURS;
 import static cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod.TWELVE_HOURS;
 import static cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod.TWO_DAYS;
-import static cc.blynk.server.core.protocol.enums.Command.GET_ENHANCED_GRAPH_DATA;
+import static cc.blynk.server.core.protocol.enums.Command.GET_SUPERCHART_DATA;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeBinaryMessage;
 import static cc.blynk.server.internal.WebByteBufUtil.json;
 import static cc.blynk.utils.ByteUtils.REPORTING_RECORD_SIZE_BYTES;
@@ -184,7 +184,7 @@ public final class WebGetGraphDataLogic {
 
                 if (channel.isWritable()) {
                     channel.writeAndFlush(
-                            makeBinaryMessage(GET_ENHANCED_GRAPH_DATA, msgId, data),
+                            makeBinaryMessage(GET_SUPERCHART_DATA, msgId, data),
                             channel.voidPromise()
                     );
                 }

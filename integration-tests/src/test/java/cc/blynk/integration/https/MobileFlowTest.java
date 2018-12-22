@@ -39,7 +39,7 @@ public class MobileFlowTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         ConcurrentHashMap<String, String> tokensMap = new ConcurrentHashMap<>();
         tokensMap.put("123", "1234");
         profileSettings.notificationSettings = new NotificationSettings(tokensMap, tokensMap, true, -1, Priority.normal);
-        appClient.updateProfileSettings(profileSettings);
+        appClient.editProfileSettings(profileSettings);
         appClient.verifyResult(ok(2));
 
         appClient.loadProfileGzipped();
@@ -74,7 +74,7 @@ public class MobileFlowTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         ConcurrentHashMap<String, String> tokensMap = new ConcurrentHashMap<>();
         tokensMap.put("123", "1234");
         profileSettings.notificationSettings = new NotificationSettings(tokensMap, tokensMap, true, -1, Priority.normal);
-        appClient.updateProfileSettings(profileSettings);
+        appClient.editProfileSettings(profileSettings);
         appClient.verifyResult(ok(3));
 
         appClient.loadProfileGzipped();

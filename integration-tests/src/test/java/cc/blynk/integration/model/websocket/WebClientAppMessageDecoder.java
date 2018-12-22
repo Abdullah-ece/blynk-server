@@ -19,7 +19,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.nio.charset.StandardCharsets;
 
-import static cc.blynk.server.core.protocol.enums.Command.GET_ENHANCED_GRAPH_DATA;
+import static cc.blynk.server.core.protocol.enums.Command.GET_SUPERCHART_DATA;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static cc.blynk.server.internal.WebByteBufUtil.quotaLimit;
 
@@ -64,7 +64,7 @@ public class WebClientAppMessageDecoder extends ChannelInboundHandlerAdapter {
                     int length = in.capacity() - 3;
 
                     ByteBuf buf = in.readSlice(length);
-                    if (command == GET_ENHANCED_GRAPH_DATA) {
+                    if (command == GET_SUPERCHART_DATA) {
                         byte[] bytes = new byte[buf.readableBytes()];
                         buf.readBytes(bytes);
                         message = new BinaryMessage(messageId, command, bytes);

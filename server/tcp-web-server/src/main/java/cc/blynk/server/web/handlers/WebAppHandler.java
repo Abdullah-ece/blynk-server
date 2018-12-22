@@ -58,7 +58,7 @@ import cc.blynk.server.web.handlers.logic.product.ota.WebStartOtaLogic;
 import cc.blynk.server.web.handlers.logic.product.ota.WebStopOtaLogic;
 import io.netty.channel.ChannelHandlerContext;
 
-import static cc.blynk.server.core.protocol.enums.Command.GET_ENHANCED_GRAPH_DATA;
+import static cc.blynk.server.core.protocol.enums.Command.GET_SUPERCHART_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.LOGOUT;
 import static cc.blynk.server.core.protocol.enums.Command.PING;
@@ -233,7 +233,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
             case WEB_TRACK_DEVICE:
                 webTrackDeviceLogic.messageReceived(ctx, state, msg);
                 break;
-            case GET_ENHANCED_GRAPH_DATA :
+            case GET_SUPERCHART_DATA:
                 getWebGraphDataLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_RESOLVE_EVENT:

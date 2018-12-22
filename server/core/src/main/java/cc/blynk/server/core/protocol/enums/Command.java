@@ -12,17 +12,17 @@ public final class Command {
     public static final short RESPONSE = 0;
 
     //app commands
-    public static final short REGISTER = 1;
+    public static final short MOBILE_REGISTER = 1;
     public static final short LOGIN = 2;
     public static final short REDEEM = 3;
     public static final short DEVICE_CONNECTED = 4;
 
     public static final short DASH_SYNC = 5;
     public static final short PING = 6;
-    public static final short ACTIVATE_DASHBOARD = 7;
-    public static final short DEACTIVATE_DASHBOARD = 8;
+    public static final short MOBILE_ACTIVATE_DASHBOARD = 7;
+    public static final short MOBILE_DEACTIVATE_DASHBOARD = 8;
     public static final short REFRESH_TOKEN = 9;
-    public static final short EDIT_PROFILE_SETTINGS = 10;
+    public static final short MOBILE_EDIT_PROFILE_SETTINGS = 10;
 
     public static final short MOBILE_EDIT_DEVICE_METAFIELD = 11;
 
@@ -43,7 +43,7 @@ public final class Command {
     public static final short MOBILE_LOAD_PROFILE_GZIPPED = 24;
     public static final short DEVICE_SYNC = 25;
     public static final short SHARING = 26;
-    public static final short ADD_PUSH_TOKEN = 27;
+    public static final short MOBILE_ADD_PUSH_TOKEN = 27;
 
     public static final short HARDWARE_LOGIN = 29;
     //app sharing commands
@@ -59,7 +59,7 @@ public final class Command {
     public static final short MOBILE_GET_ENERGY = 36;
     public static final short MOBILE_ADD_ENERGY = 37;
 
-    public static final short EDIT_PROJECT_SETTINGS = 38;
+    public static final short MOBILE_EDIT_PROJECT_SETTINGS = 38;
 
     public static final short ASSIGN_TOKEN = 39;
 
@@ -92,7 +92,7 @@ public final class Command {
     public static final short MOBILE_DELETE_APP = 57;
     public static final short GET_PROJECT_BY_TOKEN = 58;
     public static final short EMAIL_QR = 59;
-    public static final short GET_ENHANCED_GRAPH_DATA = 60;
+    public static final short GET_SUPERCHART_DATA = 60;
     public static final short MOBILE_DELETE_ENHANCED_GRAPH_DATA = 61;
 
     public static final short GET_CLONE_CODE = 62;
@@ -195,7 +195,7 @@ public final class Command {
             Map.entry(RESPONSE, "Response"),
             Map.entry(REDEEM, "Redeem"),
             Map.entry(DEVICE_CONNECTED, "HardwareConnected"),
-            Map.entry(REGISTER, "Register"),
+            Map.entry(MOBILE_REGISTER, "Register"),
             Map.entry(DASH_SYNC, "DashSync"),
             Map.entry(LOGIN, "Login"),
             Map.entry(HARDWARE_LOGIN, "LoginHardware"),
@@ -205,10 +205,10 @@ public final class Command {
             Map.entry(SHARING, "Sharing"),
             Map.entry(ASSIGN_TOKEN, "AssignToken"),
             Map.entry(PING, "Ping"), Map.entry(SMS, "Sms"),
-            Map.entry(ACTIVATE_DASHBOARD, "Activate"),
-            Map.entry(DEACTIVATE_DASHBOARD, "Deactivate"),
+            Map.entry(MOBILE_ACTIVATE_DASHBOARD, "Activate"),
+            Map.entry(MOBILE_DEACTIVATE_DASHBOARD, "Deactivate"),
             Map.entry(REFRESH_TOKEN, "RefreshToken"),
-            Map.entry(GET_ENHANCED_GRAPH_DATA, "GetEnhancedGraphDataRequest"),
+            Map.entry(GET_SUPERCHART_DATA, "GetEnhancedGraphDataRequest"),
             Map.entry(MOBILE_DELETE_ENHANCED_GRAPH_DATA, "DeleteEnhancedGraphDataRequest"),
             Map.entry(SET_WIDGET_PROPERTY, "setWidgetProperty"),
             Map.entry(BRIDGE, "Bridge"),
@@ -221,8 +221,8 @@ public final class Command {
             Map.entry(MOBILE_DELETE_DASH, "DeleteProject"),
             Map.entry(HARDWARE_SYNC, "HardwareSync"),
             Map.entry(BLYNK_INTERNAL, "Internal"),
-            Map.entry(ADD_PUSH_TOKEN, "AddPushToken"),
-            Map.entry(EDIT_PROFILE_SETTINGS, "EditProfileSettings"),
+            Map.entry(MOBILE_ADD_PUSH_TOKEN, "AddPushToken"),
+            Map.entry(MOBILE_EDIT_PROFILE_SETTINGS, "EditProfileSettings"),
             Map.entry(TWEET, "Tweet"), Map.entry(EMAIL, "Email"),
             Map.entry(PUSH_NOTIFICATION, "Push"),
             Map.entry(MOBILE_CREATE_WIDGET, "CreateWidget"),
@@ -239,7 +239,7 @@ public final class Command {
             Map.entry(MOBILE_GET_DEVICES, "GetDevices"),
             Map.entry(MOBILE_ADD_ENERGY, "AddEnergy"),
             Map.entry(MOBILE_GET_ENERGY, "GetEnergy"),
-            Map.entry(EDIT_PROJECT_SETTINGS, "EditProjectSettings"),
+            Map.entry(MOBILE_EDIT_PROJECT_SETTINGS, "EditProjectSettings"),
             Map.entry(GET_SERVER, "GetServer"),
             Map.entry(CONNECT_REDIRECT, "ConnectRedirect"),
             Map.entry(MOBILE_CREATE_APP, "CreateApp"),

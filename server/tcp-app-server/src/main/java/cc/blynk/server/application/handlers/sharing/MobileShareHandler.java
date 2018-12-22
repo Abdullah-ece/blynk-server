@@ -16,12 +16,12 @@ import cc.blynk.server.common.handlers.logic.PingLogic;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import io.netty.channel.ChannelHandlerContext;
 
-import static cc.blynk.server.core.protocol.enums.Command.ADD_PUSH_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.DASH_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.DEVICE_SYNC;
-import static cc.blynk.server.core.protocol.enums.Command.GET_ENHANCED_GRAPH_DATA;
+import static cc.blynk.server.core.protocol.enums.Command.GET_SUPERCHART_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.LOGOUT;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_ADD_PUSH_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_DEVICE_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICES;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_LOAD_PROFILE_GZIPPED;
@@ -58,10 +58,10 @@ public class MobileShareHandler extends JsonBasedSimpleChannelInboundHandler<Str
             case MOBILE_LOAD_PROFILE_GZIPPED:
                 LoadSharedProfileGzippedLogic.messageReceived(ctx, state, msg);
                 break;
-            case ADD_PUSH_TOKEN :
+            case MOBILE_ADD_PUSH_TOKEN:
                 MobileAddPushLogic.messageReceived(ctx, state, msg);
                 break;
-            case GET_ENHANCED_GRAPH_DATA :
+            case GET_SUPERCHART_DATA:
                 MobileGetEnhancedGraphDataLogic.messageReceived(holder, ctx, state, msg);
                 break;
             case MOBILE_GET_DEVICES:

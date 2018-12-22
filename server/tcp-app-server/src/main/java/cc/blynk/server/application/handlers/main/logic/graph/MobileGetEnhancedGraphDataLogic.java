@@ -24,7 +24,7 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.core.protocol.enums.Command.GET_ENHANCED_GRAPH_DATA;
+import static cc.blynk.server.core.protocol.enums.Command.GET_SUPERCHART_DATA;
 import static cc.blynk.server.core.protocol.enums.Response.SERVER_ERROR;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeBinaryMessage;
 import static cc.blynk.server.internal.WebByteBufUtil.noData;
@@ -133,7 +133,7 @@ public final class MobileGetEnhancedGraphDataLogic {
 
                 if (channel.isWritable()) {
                     channel.writeAndFlush(
-                            makeBinaryMessage(GET_ENHANCED_GRAPH_DATA, msgId, compressed),
+                            makeBinaryMessage(GET_SUPERCHART_DATA, msgId, compressed),
                             channel.voidPromise()
                     );
                 }

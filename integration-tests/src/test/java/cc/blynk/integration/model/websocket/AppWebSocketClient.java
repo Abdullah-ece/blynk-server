@@ -69,7 +69,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-import static cc.blynk.server.core.protocol.enums.Command.GET_ENHANCED_GRAPH_DATA;
+import static cc.blynk.server.core.protocol.enums.Command.GET_SUPERCHART_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.LOGIN;
 import static cc.blynk.server.core.protocol.enums.Command.LOGOUT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_CAN_DELETE_PRODUCT;
@@ -476,16 +476,17 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         send(produceWebSocketFrame(produceMessage(command, ++msgId, "")));
     }
 
+    @Override
     public void send(short command, Object body) {
         send(produceWebSocketFrame(produceMessage(command, ++msgId, body.toString())));
     }
 
     public void getGraphData(int deviceId, long widgetId, GraphPeriod graphPeriod) {
-        send(GET_ENHANCED_GRAPH_DATA, "" + deviceId + BODY_SEPARATOR_STRING + widgetId + BODY_SEPARATOR_STRING + graphPeriod);
+        send(GET_SUPERCHART_DATA, "" + deviceId + BODY_SEPARATOR_STRING + widgetId + BODY_SEPARATOR_STRING + graphPeriod);
     }
 
     public void getGraphDataCustom(int deviceId, long widgetId, long from, long to) {
-        send(GET_ENHANCED_GRAPH_DATA, "" + deviceId + BODY_SEPARATOR_STRING
+        send(GET_SUPERCHART_DATA, "" + deviceId + BODY_SEPARATOR_STRING
                 + widgetId + BODY_SEPARATOR_STRING + GraphPeriod.CUSTOM
                 + BODY_SEPARATOR_STRING + from + BODY_SEPARATOR_STRING + to);
     }

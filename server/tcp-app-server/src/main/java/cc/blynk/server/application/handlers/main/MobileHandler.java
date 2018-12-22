@@ -66,25 +66,22 @@ import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.mobile.MobileStateHolder;
 import io.netty.channel.ChannelHandlerContext;
 
-import static cc.blynk.server.core.protocol.enums.Command.ACTIVATE_DASHBOARD;
-import static cc.blynk.server.core.protocol.enums.Command.ADD_PUSH_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.ASSIGN_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.DASH_SYNC;
-import static cc.blynk.server.core.protocol.enums.Command.DEACTIVATE_DASHBOARD;
 import static cc.blynk.server.core.protocol.enums.Command.DEVICE_SYNC;
-import static cc.blynk.server.core.protocol.enums.Command.EDIT_PROFILE_SETTINGS;
-import static cc.blynk.server.core.protocol.enums.Command.EDIT_PROJECT_SETTINGS;
 import static cc.blynk.server.core.protocol.enums.Command.EMAIL;
 import static cc.blynk.server.core.protocol.enums.Command.EMAIL_QR;
 import static cc.blynk.server.core.protocol.enums.Command.GET_CLONE_CODE;
-import static cc.blynk.server.core.protocol.enums.Command.GET_ENHANCED_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_CLONE_CODE;
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.GET_SHARE_TOKEN;
+import static cc.blynk.server.core.protocol.enums.Command.GET_SUPERCHART_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_RESEND_FROM_BLUETOOTH;
 import static cc.blynk.server.core.protocol.enums.Command.LOGOUT;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_ACTIVATE_DASHBOARD;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_ADD_ENERGY;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_ADD_PUSH_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_APP;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_DEVICE;
@@ -92,6 +89,7 @@ import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_REPORT;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_TAG;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_TILE_TEMPLATE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_WIDGET;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DEACTIVATE_DASHBOARD;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_APP;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_DEVICE;
@@ -106,6 +104,8 @@ import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_DEVICE_METAFIELD;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_FACE;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_PROFILE_SETTINGS;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_PROJECT_SETTINGS;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_REPORT;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_TAG;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_TILE_TEMPLATE;
@@ -172,10 +172,10 @@ public class MobileHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
                 }
                 hardwareResendFromBTLogic.messageReceived(state, msg);
                 break;
-            case ACTIVATE_DASHBOARD :
+            case MOBILE_ACTIVATE_DASHBOARD:
                 MobileActivateDashboardLogic.messageReceived(holder, ctx, state, msg);
                 break;
-            case DEACTIVATE_DASHBOARD :
+            case MOBILE_DEACTIVATE_DASHBOARD:
                 MobileDeActivateDashboardLogic.messageReceived(holder, ctx, state, msg);
                 break;
             case MOBILE_LOAD_PROFILE_GZIPPED:
@@ -188,14 +188,14 @@ public class MobileHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
             case ASSIGN_TOKEN :
                 MobileAssignTokenLogic.messageReceived(holder, ctx, state.user, msg);
                 break;
-            case ADD_PUSH_TOKEN :
+            case MOBILE_ADD_PUSH_TOKEN:
                 MobileAddPushLogic.messageReceived(ctx, state, msg);
                 break;
             case REFRESH_TOKEN :
                 MobileRefreshTokenLogic.messageReceived(holder, ctx, state, msg);
                 break;
 
-            case GET_ENHANCED_GRAPH_DATA :
+            case GET_SUPERCHART_DATA:
                 MobileGetEnhancedGraphDataLogic.messageReceived(holder, ctx, state, msg);
                 break;
             case MOBILE_DELETE_ENHANCED_GRAPH_DATA:
@@ -266,7 +266,7 @@ public class MobileHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
                 purchaseLogic.messageReceived(ctx, state, msg);
                 break;
 
-            case EDIT_PROJECT_SETTINGS:
+            case MOBILE_EDIT_PROJECT_SETTINGS:
                 MobileUpdateDashSettingLogic.messageReceived(ctx, state, msg, holder.limits.widgetSizeLimitBytes);
                 break;
 
@@ -370,7 +370,7 @@ public class MobileHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
             case MOBILE_EXPORT_REPORT:
                 MobileExportReportLogic.messageReceived(holder, ctx, state.user, msg);
                 break;
-            case EDIT_PROFILE_SETTINGS:
+            case MOBILE_EDIT_PROFILE_SETTINGS:
                 MobileUpdateProfileSettingLogic.messageReceived(ctx, state, msg);
                 break;
         }

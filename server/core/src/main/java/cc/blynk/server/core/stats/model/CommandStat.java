@@ -1,11 +1,8 @@
 package cc.blynk.server.core.stats.model;
 
-import static cc.blynk.server.core.protocol.enums.Command.ACTIVATE_DASHBOARD;
-import static cc.blynk.server.core.protocol.enums.Command.ADD_PUSH_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.BLYNK_INTERNAL;
 import static cc.blynk.server.core.protocol.enums.Command.BRIDGE;
 import static cc.blynk.server.core.protocol.enums.Command.CONNECT_REDIRECT;
-import static cc.blynk.server.core.protocol.enums.Command.DEACTIVATE_DASHBOARD;
 import static cc.blynk.server.core.protocol.enums.Command.DEVICE_CONNECTED;
 import static cc.blynk.server.core.protocol.enums.Command.DEVICE_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.EMAIL;
@@ -17,11 +14,14 @@ import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_LOGIN;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_LOG_EVENT;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.LOGIN;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_ACTIVATE_DASHBOARD;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_ADD_ENERGY;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_ADD_PUSH_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_TAG;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_WIDGET;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DEACTIVATE_DASHBOARD;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_TAG;
@@ -34,12 +34,12 @@ import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICES;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_ENERGY;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_TAGS;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_LOAD_PROFILE_GZIPPED;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_REGISTER;
 import static cc.blynk.server.core.protocol.enums.Command.PING;
 import static cc.blynk.server.core.protocol.enums.Command.PUSH_NOTIFICATION;
 import static cc.blynk.server.core.protocol.enums.Command.REDEEM;
 import static cc.blynk.server.core.protocol.enums.Command.REFRESH_SHARE_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.REFRESH_TOKEN;
-import static cc.blynk.server.core.protocol.enums.Command.REGISTER;
 import static cc.blynk.server.core.protocol.enums.Command.RESPONSE;
 import static cc.blynk.server.core.protocol.enums.Command.SET_WIDGET_PROPERTY;
 import static cc.blynk.server.core.protocol.enums.Command.SHARE_LOGIN;
@@ -130,7 +130,7 @@ public class CommandStat {
             case DEVICE_CONNECTED:
                 this.hardwareConnected = val;
                 break;
-            case REGISTER :
+            case MOBILE_REGISTER:
                 this.register = val;
                 break;
             case LOGIN :
@@ -154,10 +154,10 @@ public class CommandStat {
             case SMS :
                 this.sms = val;
                 break;
-            case ACTIVATE_DASHBOARD :
+            case MOBILE_ACTIVATE_DASHBOARD:
                 this.activate = val;
                 break;
-            case DEACTIVATE_DASHBOARD :
+            case MOBILE_DEACTIVATE_DASHBOARD:
                 this.deactivate = val;
                 break;
             case REFRESH_TOKEN :
@@ -199,7 +199,7 @@ public class CommandStat {
             case BLYNK_INTERNAL :
                 this.internal = val;
                 break;
-            case ADD_PUSH_TOKEN :
+            case MOBILE_ADD_PUSH_TOKEN:
                 this.addPushToken = val;
                 break;
             case TWEET :

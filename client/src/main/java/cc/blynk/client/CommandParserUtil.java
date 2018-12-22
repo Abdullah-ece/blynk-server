@@ -1,22 +1,17 @@
 package cc.blynk.client;
 
-import static cc.blynk.server.core.protocol.enums.Command.ACTIVATE_DASHBOARD;
-import static cc.blynk.server.core.protocol.enums.Command.ADD_PUSH_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.ASSIGN_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.BLYNK_INTERNAL;
 import static cc.blynk.server.core.protocol.enums.Command.BRIDGE;
-import static cc.blynk.server.core.protocol.enums.Command.DEACTIVATE_DASHBOARD;
 import static cc.blynk.server.core.protocol.enums.Command.DEVICE_SYNC;
-import static cc.blynk.server.core.protocol.enums.Command.EDIT_PROFILE_SETTINGS;
-import static cc.blynk.server.core.protocol.enums.Command.EDIT_PROJECT_SETTINGS;
 import static cc.blynk.server.core.protocol.enums.Command.EMAIL;
 import static cc.blynk.server.core.protocol.enums.Command.EMAIL_QR;
 import static cc.blynk.server.core.protocol.enums.Command.GET_CLONE_CODE;
-import static cc.blynk.server.core.protocol.enums.Command.GET_ENHANCED_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_CLONE_CODE;
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.GET_SERVER;
 import static cc.blynk.server.core.protocol.enums.Command.GET_SHARE_TOKEN;
+import static cc.blynk.server.core.protocol.enums.Command.GET_SUPERCHART_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_LOGIN;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_LOG_EVENT;
@@ -24,7 +19,9 @@ import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_RESEND_FROM_B
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.LOGIN;
 import static cc.blynk.server.core.protocol.enums.Command.LOGOUT;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_ACTIVATE_DASHBOARD;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_ADD_ENERGY;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_ADD_PUSH_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_APP;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_DEVICE;
@@ -32,6 +29,7 @@ import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_REPORT;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_TAG;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_TILE_TEMPLATE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_WIDGET;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DEACTIVATE_DASHBOARD;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_APP;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_DEVICE;
@@ -46,6 +44,8 @@ import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_DEVICE_METAFIELD;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_FACE;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_PROFILE_SETTINGS;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_PROJECT_SETTINGS;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_REPORT;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_TAG;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_TILE_TEMPLATE;
@@ -59,11 +59,11 @@ import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_PROVISION_T
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_TAGS;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_LOAD_PROFILE_GZIPPED;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_REGISTER;
 import static cc.blynk.server.core.protocol.enums.Command.PING;
 import static cc.blynk.server.core.protocol.enums.Command.PUSH_NOTIFICATION;
 import static cc.blynk.server.core.protocol.enums.Command.REFRESH_SHARE_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.REFRESH_TOKEN;
-import static cc.blynk.server.core.protocol.enums.Command.REGISTER;
 import static cc.blynk.server.core.protocol.enums.Command.RESET_PASSWORD;
 import static cc.blynk.server.core.protocol.enums.Command.SET_WIDGET_PROPERTY;
 import static cc.blynk.server.core.protocol.enums.Command.SHARE_LOGIN;
@@ -157,15 +157,15 @@ public final class CommandParserUtil {
             case "logout" :
                 return LOGOUT;
             case "getenhanceddata" :
-                return GET_ENHANCED_GRAPH_DATA;
+                return GET_SUPERCHART_DATA;
             case "deleteenhanceddata" :
                 return MOBILE_DELETE_ENHANCED_GRAPH_DATA;
             case "activate" :
-                return ACTIVATE_DASHBOARD;
+                return MOBILE_ACTIVATE_DASHBOARD;
             case "deactivate" :
-                return DEACTIVATE_DASHBOARD;
+                return MOBILE_DEACTIVATE_DASHBOARD;
             case "register" :
-                return REGISTER;
+                return MOBILE_REGISTER;
             case "setproperty" :
                 return SET_WIDGET_PROPERTY;
 
@@ -178,7 +178,7 @@ public final class CommandParserUtil {
             case "sms" :
                 return SMS;
             case "addpushtoken" :
-                return ADD_PUSH_TOKEN;
+                return MOBILE_ADD_PUSH_TOKEN;
 
             case "bridge" :
                 return BRIDGE;
@@ -190,7 +190,7 @@ public final class CommandParserUtil {
             case "deletedash" :
                 return MOBILE_DELETE_DASH;
             case "updatesettings" :
-                return EDIT_PROJECT_SETTINGS;
+                return MOBILE_EDIT_PROJECT_SETTINGS;
 
             case "createwidget" :
                 return MOBILE_CREATE_WIDGET;
@@ -369,7 +369,7 @@ public final class CommandParserUtil {
             case "webgetdevicecountfororg" :
                 return WEB_GET_DEVICE_COUNT_FOR_ORG;
             case "mobileupdateprofilesettings" :
-                return EDIT_PROFILE_SETTINGS;
+                return MOBILE_EDIT_PROFILE_SETTINGS;
             case "webtrackorg" :
                 return WEB_TRACK_ORG;
             case "webotagetfirmwareinfo" :

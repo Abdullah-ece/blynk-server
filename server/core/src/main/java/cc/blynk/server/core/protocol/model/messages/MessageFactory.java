@@ -17,7 +17,7 @@ import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_LOGIN;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_LOG_EVENT;
 import static cc.blynk.server.core.protocol.enums.Command.LOGIN;
-import static cc.blynk.server.core.protocol.enums.Command.REGISTER;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_REGISTER;
 import static cc.blynk.server.core.protocol.enums.Command.RESET_PASSWORD;
 import static cc.blynk.server.core.protocol.enums.Command.SHARE_LOGIN;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_JSON;
@@ -35,7 +35,7 @@ public final class MessageFactory {
 
     public static MessageBase produce(int messageId, short commandId, String body) {
         switch (commandId) {
-            case REGISTER :
+            case MOBILE_REGISTER:
                 return new RegisterMessage(messageId, body);
             case LOGIN :
                 return new LoginMessage(messageId, body);

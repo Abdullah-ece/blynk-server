@@ -30,6 +30,40 @@ import java.util.Collections;
 import java.util.Random;
 import java.util.StringJoiner;
 
+import static cc.blynk.server.core.protocol.enums.Command.DEVICE_SYNC;
+import static cc.blynk.server.core.protocol.enums.Command.GET_SUPERCHART_DATA;
+import static cc.blynk.server.core.protocol.enums.Command.LOGIN;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_ACTIVATE_DASHBOARD;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_ADD_PUSH_TOKEN;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_APP;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_DASH;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_DEVICE;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_REPORT;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_TAG;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_TILE_TEMPLATE;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_WIDGET;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DEACTIVATE_DASHBOARD;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_DASH;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_DEVICE;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_DEVICE_DATA;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_REPORT;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_TAG;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_WIDGET;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_DASH;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_DEVICE;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_DEVICE_METAFIELD;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_PROFILE_SETTINGS;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_REPORT;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_TAG;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_TILE_TEMPLATE;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_WIDGET;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EXPORT_REPORT;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICE;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICES_BY_REFERENCE_METAFIELD;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_PROVISION_TOKEN;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_WIDGET;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_LOAD_PROFILE_GZIPPED;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_REGISTER;
 import static cc.blynk.utils.AppNameUtil.BLYNK;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
@@ -90,14 +124,6 @@ public class TestAppClient extends BaseTestAppClient {
         return parseDevices(1);
     }
 
-    public MetaField[] parseMetafields() throws Exception {
-        return parseMetafields(1);
-    }
-
-    public MetaField[] parseMetafields(int expectedMessageOrder) throws Exception {
-        return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), MetaField[].class);
-    }
-
     public Device[] parseDevices(int expectedMessageOrder) throws Exception {
         return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), Device[].class);
     }
@@ -148,23 +174,23 @@ public class TestAppClient extends BaseTestAppClient {
     }
 
     public void createTag(int dashId, Tag tag) {
-        send("createTag " + dashId + BODY_SEPARATOR + tag.toString());
+        send(MOBILE_CREATE_TAG, "" + dashId + BODY_SEPARATOR + tag.toString());
     }
 
     public void updateTag(int dashId, Tag tag) {
-        send("updateTag " + dashId + BODY_SEPARATOR + tag.toString());
+        send(MOBILE_EDIT_TAG, "" + dashId + BODY_SEPARATOR + tag.toString());
     }
 
     public void createDevice(Device device) {
-        send("createDevice " + device.toString());
+        send(MOBILE_CREATE_DEVICE, device);
     }
 
     public void updateDevice(int dashId, Device device) {
-        send("updateDevice " + dashId + BODY_SEPARATOR + device.toString());
+        send(MOBILE_EDIT_DEVICE, "" + dashId + BODY_SEPARATOR + device.toString());
     }
 
     public void deleteDevice(int dashId, int deviceId) {
-        send("deleteDevice " + dashId + BODY_SEPARATOR + deviceId);
+        send(MOBILE_DELETE_DEVICE, "" + dashId + BODY_SEPARATOR + deviceId);
     }
 
     public void createWidget(int dashId, Widget widget) throws Exception {
@@ -172,17 +198,17 @@ public class TestAppClient extends BaseTestAppClient {
     }
 
     public void createWidget(int dashId, long widgetId, long templateId, String widgetJson) {
-        send("createWidget " + dashId + BODY_SEPARATOR + widgetId
+        send(MOBILE_CREATE_WIDGET, "" + dashId + BODY_SEPARATOR + widgetId
                 + BODY_SEPARATOR + templateId + BODY_SEPARATOR + widgetJson);
     }
 
     public void createWidget(int dashId, long widgetId, long templateId, Widget widget) throws Exception {
-        send("createWidget " + dashId + BODY_SEPARATOR + widgetId
+        send(MOBILE_CREATE_WIDGET, "" + dashId + BODY_SEPARATOR + widgetId
                 + BODY_SEPARATOR + templateId + BODY_SEPARATOR + JsonParser.MAPPER.writeValueAsString(widget));
     }
 
     public void createWidget(int dashId, String widgetJson) {
-        send("createWidget " + dashId + BODY_SEPARATOR + widgetJson);
+        send(MOBILE_CREATE_WIDGET, "" + dashId + BODY_SEPARATOR + widgetJson);
     }
 
     public void updateWidget(int dashId, Widget widget) throws Exception {
@@ -190,19 +216,19 @@ public class TestAppClient extends BaseTestAppClient {
     }
 
     public void updateWidget(int dashId, String widgetJson) {
-        send("updateWidget " + dashId + BODY_SEPARATOR + widgetJson);
+        send(MOBILE_EDIT_WIDGET, "" + dashId + BODY_SEPARATOR + widgetJson);
     }
 
     public void deleteWidget(int dashId, long widgetId) {
-        send("deleteWidget " + dashId + " " + widgetId);
+        send(MOBILE_DELETE_WIDGET, "" + dashId + " " + widgetId);
     }
 
     public void activate(int dashId) {
-        send("activate " + dashId);
+        send(MOBILE_ACTIVATE_DASHBOARD, dashId);
     }
 
     public void deactivate(int dashId) {
-        send("deactivate " + dashId);
+        send(MOBILE_DEACTIVATE_DASHBOARD, dashId);
     }
 
     public void updateDash(DashBoard dashBoard) {
@@ -210,15 +236,15 @@ public class TestAppClient extends BaseTestAppClient {
     }
 
     public void updateDash(String dashJson) {
-        send("updateDash " + dashJson);
+        send(MOBILE_EDIT_DASH, dashJson);
     }
 
     public void deleteDash(int dashId) {
-        send("deleteSharedToken " + dashId);
+        send(MOBILE_DELETE_DASH, dashId);
     }
 
     public void deleteTag(int dashId, int tagId) {
-        send("deleteTag " + dashId + BODY_SEPARATOR + tagId);
+        send(MOBILE_DELETE_TAG, "" + dashId + BODY_SEPARATOR + tagId);
     }
 
     public void createDash(DashBoard dashBoard) {
@@ -226,19 +252,15 @@ public class TestAppClient extends BaseTestAppClient {
     }
 
     public void createDash(String dashJson) {
-        send("createDash " + dashJson);
-    }
-
-    public void register(String email, String pass) {
-        send("register " + email + BODY_SEPARATOR + SHA256Util.makeHash(pass, email) + BODY_SEPARATOR + BLYNK);
+        send(MOBILE_CREATE_DASH, dashJson);
     }
 
     public void register(String email, String pass, String appName) {
-        send("register " + email + BODY_SEPARATOR + SHA256Util.makeHash(pass, email) + BODY_SEPARATOR + appName);
+        send(MOBILE_REGISTER, email + BODY_SEPARATOR + SHA256Util.makeHash(pass, email) + BODY_SEPARATOR + appName);
     }
 
     public void loginNoHash(String email, String pass) {
-        send("login " + email + BODY_SEPARATOR +pass
+        send(LOGIN, email + BODY_SEPARATOR +pass
                 + BODY_SEPARATOR + "Android" + BODY_SEPARATOR + "2.27.0" + BODY_SEPARATOR + BLYNK);
     }
 
@@ -251,20 +273,20 @@ public class TestAppClient extends BaseTestAppClient {
     }
 
     public void login(String email, String pass, String os, String version, String appName) {
-        send("login " + email + BODY_SEPARATOR + SHA256Util.makeHash(pass, email)
+        send(LOGIN, email + BODY_SEPARATOR + SHA256Util.makeHash(pass, email)
                 + BODY_SEPARATOR + os + BODY_SEPARATOR + version + BODY_SEPARATOR + appName);
     }
 
     public void sync(int dashId) {
-        send("appsync " + dashId);
+        send(DEVICE_SYNC, dashId);
     }
 
     public void sync(int dashId, int deviceId) {
-        send("appsync " + dashId + DEVICE_SEPARATOR + deviceId);
+        send(DEVICE_SYNC, "" + dashId + DEVICE_SEPARATOR + deviceId);
     }
 
     public void deleteDeviceData(int dashId, int deviceId) {
-        send("deletedevicedata " + dashId + DEVICE_SEPARATOR + deviceId);
+        send(MOBILE_DELETE_DEVICE_DATA, "" + dashId + DEVICE_SEPARATOR + deviceId);
     }
 
     public void deleteDeviceData(int dashId, int deviceId, String... pins) {
@@ -272,15 +294,15 @@ public class TestAppClient extends BaseTestAppClient {
         for (String pin : pins) {
             sj.add(pin);
         }
-        send("deletedevicedata " + dashId + DEVICE_SEPARATOR + deviceId + BODY_SEPARATOR + sj.toString());
+        send(MOBILE_DELETE_DEVICE_DATA, "" + dashId + DEVICE_SEPARATOR + deviceId + BODY_SEPARATOR + sj.toString());
     }
 
     public void getEnhancedGraphData(int dashId, long widgetId, GraphPeriod period) {
-        send("getenhanceddata " + dashId + BODY_SEPARATOR + widgetId + BODY_SEPARATOR + period.name());
+        send(GET_SUPERCHART_DATA, "" + dashId + BODY_SEPARATOR + widgetId + BODY_SEPARATOR + period.name());
     }
 
     public void getEnhancedGraphData(int dashId, long widgetId, GraphPeriod period, int page) {
-        send("getenhanceddata " + dashId + BODY_SEPARATOR + widgetId + BODY_SEPARATOR + period.name() + BODY_SEPARATOR + page);
+        send(GET_SUPERCHART_DATA, "" + dashId + BODY_SEPARATOR + widgetId + BODY_SEPARATOR + period.name() + BODY_SEPARATOR + page);
     }
 
     public void createTemplate(int dashId, long widgetId, TileTemplate tileTemplate) throws Exception {
@@ -288,28 +310,28 @@ public class TestAppClient extends BaseTestAppClient {
     }
 
     public void createTemplate(int dashId, long widgetId, String tileTemplate) {
-        send("createTemplate " + dashId + BODY_SEPARATOR + widgetId + BODY_SEPARATOR + tileTemplate);
+        send(MOBILE_CREATE_TILE_TEMPLATE, "" + dashId + BODY_SEPARATOR + widgetId + BODY_SEPARATOR + tileTemplate);
     }
 
     public void updateTemplate(int dashId, long widgetId, TileTemplate tileTemplate) throws Exception {
-        send("updateTemplate " + dashId + BODY_SEPARATOR + widgetId + BODY_SEPARATOR
+        send(MOBILE_EDIT_TILE_TEMPLATE, "" + dashId + BODY_SEPARATOR + widgetId + BODY_SEPARATOR
                 + JsonParser.MAPPER.writeValueAsString(tileTemplate));
     }
 
     public void getDevice(int deviceId) {
-        send("getDevice " + deviceId);
+        send(MOBILE_GET_DEVICE, "" + deviceId);
     }
 
     public void getDevice(int deviceId, boolean includeInProvisionOnly) {
-        send("getDevice " + deviceId + BODY_SEPARATOR + includeInProvisionOnly);
+        send(MOBILE_GET_DEVICE, "" + deviceId + BODY_SEPARATOR + includeInProvisionOnly);
     }
 
     public void updateDeviceMetafield(int deviceId, MetaField metaField) {
-        send("updateDeviceMetafield " + deviceId + BODY_SEPARATOR + metaField.toString());
+        send(MOBILE_EDIT_DEVICE_METAFIELD, "" + deviceId + BODY_SEPARATOR + metaField.toString());
     }
 
     public void updateDeviceMetafields(int deviceId, MetaField[] metaFields) {
-        send("updateDeviceMetafield " + deviceId + BODY_SEPARATOR + JsonParser.toJson(metaFields));
+        send(MOBILE_EDIT_DEVICE_METAFIELD, "" + deviceId + BODY_SEPARATOR + JsonParser.toJson(metaFields));
     }
 
     public void createReport(int dashId, Report report) {
@@ -317,19 +339,19 @@ public class TestAppClient extends BaseTestAppClient {
     }
 
     public void createReport(int dashId, String report) {
-        send("createReport " + dashId + BODY_SEPARATOR + report);
+        send(MOBILE_CREATE_REPORT, "" + dashId + BODY_SEPARATOR + report);
     }
 
     public void updateReport(int dashId, Report report) {
-        send("updateReport " + dashId + BODY_SEPARATOR + report.toString());
+        send(MOBILE_EDIT_REPORT, "" + dashId + BODY_SEPARATOR + report.toString());
     }
 
     public void getDevicesByReferenceMetafield(int deviceId, int metafieldId) {
-        send("getDevicesByReferenceMetafield " + deviceId + BODY_SEPARATOR + metafieldId);
+        send(MOBILE_GET_DEVICES_BY_REFERENCE_METAFIELD, "" + deviceId + BODY_SEPARATOR + metafieldId);
     }
 
     public void getWidget(int dashId, long widgetId) {
-        send("getWidget " + dashId + BODY_SEPARATOR + widgetId);
+        send(MOBILE_GET_WIDGET, "" + dashId + BODY_SEPARATOR + widgetId);
     }
 
     public Widget parseWidget(int expectedMessageOrder) throws Exception {
@@ -337,19 +359,15 @@ public class TestAppClient extends BaseTestAppClient {
     }
 
     public void deleteReport(int dashId, int reportId) {
-        send("deleteReport " + dashId + BODY_SEPARATOR + reportId);
+        send(MOBILE_DELETE_REPORT, "" + dashId + BODY_SEPARATOR + reportId);
     }
 
     public void exportReport(int dashId, int reportId) {
-        send("exportReport " + dashId + BODY_SEPARATOR + reportId);
+        send(MOBILE_EXPORT_REPORT, "" + dashId + BODY_SEPARATOR + reportId);
     }
 
     public void getDevice(int dashId, int deviceId) {
-        send("getDevice " + dashId + BODY_SEPARATOR + deviceId);
-    }
-
-    public void send(String line) {
-        send(produceMessageBaseOnUserInput(line, ++msgId));
+        send(MOBILE_GET_DEVICE, "" + dashId + BODY_SEPARATOR + deviceId);
     }
 
     public void send(String line, int id) {
@@ -357,23 +375,23 @@ public class TestAppClient extends BaseTestAppClient {
     }
 
     public void getProvisionToken(Device device) {
-        send("getProvisionToken " + device.toString());
+        send(MOBILE_GET_PROVISION_TOKEN, device);
     }
 
     public void addPushToken(String uid, String token) {
-        send("addPushToken " + uid + BODY_SEPARATOR + token);
+        send(MOBILE_ADD_PUSH_TOKEN, uid + BODY_SEPARATOR + token);
     }
 
-    public void updateProfileSettings(ProfileSettings profileSettings) {
-        send("mobileUpdateProfileSettings " + profileSettings.toString());
+    public void editProfileSettings(ProfileSettings profileSettings) {
+        send(MOBILE_EDIT_PROFILE_SETTINGS, profileSettings);
     }
 
     public void createApp(App app) {
-        send("createApp " + app.toString());
+        send(MOBILE_CREATE_APP, app);
     }
 
     public void loadProfileGzipped() {
-        send("loadProfileGzipped");
+        send(MOBILE_LOAD_PROFILE_GZIPPED);
     }
 
     public void replace(SimpleClientHandler simpleClientHandler) {

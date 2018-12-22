@@ -2,7 +2,7 @@ package cc.blynk.server.core.protocol.model.messages.appllication;
 
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 
-import static cc.blynk.server.core.protocol.enums.Command.REGISTER;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_REGISTER;
 
 /**
  * The Blynk Project.
@@ -12,7 +12,7 @@ import static cc.blynk.server.core.protocol.enums.Command.REGISTER;
 public class RegisterMessage extends StringMessage {
 
     public RegisterMessage(int messageId, String body) {
-        super(messageId, REGISTER, body);
+        super(messageId, MOBILE_REGISTER, body);
     }
 
     @Override
