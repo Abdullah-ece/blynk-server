@@ -28,12 +28,12 @@ import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_TAG;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_DEVICE;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_TAG;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICES;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_ENERGY;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_TAGS;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_LOAD_PROFILE_GZIPPED;
-import static cc.blynk.server.core.protocol.enums.Command.MOBILE_UPDATE_TAG;
 import static cc.blynk.server.core.protocol.enums.Command.PING;
 import static cc.blynk.server.core.protocol.enums.Command.PUSH_NOTIFICATION;
 import static cc.blynk.server.core.protocol.enums.Command.REDEEM;
@@ -235,7 +235,7 @@ public class CommandStat {
             case MOBILE_CREATE_TAG:
                 this.createTag = val;
                 break;
-            case MOBILE_UPDATE_TAG:
+            case MOBILE_EDIT_TAG:
                 this.updateTag = val;
                 break;
             case MOBILE_DELETE_TAG:

@@ -1,5 +1,6 @@
 package cc.blynk.server.core.stats.model;
 
+import static cc.blynk.server.core.protocol.enums.Command.HTTP_EDIT_PIN_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.HTTP_EMAIL;
 import static cc.blynk.server.core.protocol.enums.Command.HTTP_GET_HISTORY_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.HTTP_GET_PIN_DATA;
@@ -9,7 +10,6 @@ import static cc.blynk.server.core.protocol.enums.Command.HTTP_IS_HARDWARE_CONNE
 import static cc.blynk.server.core.protocol.enums.Command.HTTP_NOTIFY;
 import static cc.blynk.server.core.protocol.enums.Command.HTTP_QR;
 import static cc.blynk.server.core.protocol.enums.Command.HTTP_TOTAL;
-import static cc.blynk.server.core.protocol.enums.Command.HTTP_UPDATE_PIN_DATA;
 
 /**
  * The Blynk Project.
@@ -40,7 +40,7 @@ public class HttpStat {
             case HTTP_GET_PIN_DATA :
                 this.getPinData = val;
                 break;
-            case HTTP_UPDATE_PIN_DATA :
+            case HTTP_EDIT_PIN_DATA:
                 this.updatePinData = val;
                 break;
             case HTTP_NOTIFY :

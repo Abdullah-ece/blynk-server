@@ -47,10 +47,10 @@ import static cc.blynk.core.http.Response.serverError;
 import static cc.blynk.server.core.model.serialization.JsonParser.init;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_LOG_EVENT;
+import static cc.blynk.server.core.protocol.enums.Command.HTTP_EDIT_PIN_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.HTTP_GET_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.HTTP_GET_PIN_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.HTTP_IS_HARDWARE_CONNECTED;
-import static cc.blynk.server.core.protocol.enums.Command.HTTP_UPDATE_PIN_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.SET_WIDGET_PROPERTY;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 
@@ -223,7 +223,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
     @GET
     @Path("/{token}/update/{pin}")
     @Consumes(value = MediaType.APPLICATION_JSON)
-    @Metric(HTTP_UPDATE_PIN_DATA)
+    @Metric(HTTP_EDIT_PIN_DATA)
     public Response updateWidgetPinDataViaGet(@Context ChannelHandlerContext ctx,
                                               @PathParam("token") String token,
                                               @PathParam("pin") String pinString,
@@ -263,7 +263,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
     @PUT
     @Path("/{token}/update/{pin}")
     @Consumes(value = MediaType.APPLICATION_JSON)
-    @Metric(HTTP_UPDATE_PIN_DATA)
+    @Metric(HTTP_EDIT_PIN_DATA)
     public Response updateWidgetPinDataNew(@Context ChannelHandlerContext ctx,
                                            @PathParam("token") String token,
                                            @PathParam("pin") String pinString,
@@ -322,7 +322,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
     @PUT
     @Path("/{token}/pin/{pin}")
     @Consumes(value = MediaType.APPLICATION_JSON)
-    @Metric(HTTP_UPDATE_PIN_DATA)
+    @Metric(HTTP_EDIT_PIN_DATA)
     public Response updateWidgetPinData(@Context ChannelHandlerContext ctx,
                                         @PathParam("token") String token,
                                         @PathParam("pin") String pinString,

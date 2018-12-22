@@ -21,8 +21,8 @@ import java.util.List;
 
 import static cc.blynk.integration.TestUtil.consumeJsonPinValues;
 import static cc.blynk.integration.TestUtil.getDefaultHttpsClient;
+import static cc.blynk.server.core.protocol.enums.Command.HTTP_EDIT_PIN_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.HTTP_GET_PIN_DATA;
-import static cc.blynk.server.core.protocol.enums.Command.HTTP_UPDATE_PIN_DATA;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -113,7 +113,7 @@ public class HttpAPIKeepAliveServerTest extends BaseTest {
         HttpGet getRequest = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/update/v11?value=11");
         try (CloseableHttpResponse response = httpsClient.execute(getRequest)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            assertEquals(1, holder.stats.specificCounters[HTTP_UPDATE_PIN_DATA].intValue());
+            assertEquals(1, holder.stats.specificCounters[HTTP_EDIT_PIN_DATA].intValue());
             assertEquals(0, holder.stats.specificCounters[HTTP_GET_PIN_DATA].intValue());
             assertEquals(1, holder.stats.totalMessages.getCount());
         }
@@ -121,7 +121,7 @@ public class HttpAPIKeepAliveServerTest extends BaseTest {
         getRequest = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/getOrgSession/v11");
         try (CloseableHttpResponse response = httpsClient.execute(getRequest)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            assertEquals(1, holder.stats.specificCounters[HTTP_UPDATE_PIN_DATA].intValue());
+            assertEquals(1, holder.stats.specificCounters[HTTP_EDIT_PIN_DATA].intValue());
             assertEquals(1, holder.stats.specificCounters[HTTP_GET_PIN_DATA].intValue());
             assertEquals(2, holder.stats.totalMessages.getCount());
         }

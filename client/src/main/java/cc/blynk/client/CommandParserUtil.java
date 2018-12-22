@@ -5,10 +5,7 @@ import static cc.blynk.server.core.protocol.enums.Command.ADD_PUSH_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.ASSIGN_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.BLYNK_INTERNAL;
 import static cc.blynk.server.core.protocol.enums.Command.BRIDGE;
-import static cc.blynk.server.core.protocol.enums.Command.CREATE_APP;
 import static cc.blynk.server.core.protocol.enums.Command.DEACTIVATE_DASHBOARD;
-import static cc.blynk.server.core.protocol.enums.Command.DELETE_APP;
-import static cc.blynk.server.core.protocol.enums.Command.DELETE_ENHANCED_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.DEVICE_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.EDIT_PROFILE_SETTINGS;
 import static cc.blynk.server.core.protocol.enums.Command.EDIT_PROJECT_SETTINGS;
@@ -28,23 +25,29 @@ import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.LOGIN;
 import static cc.blynk.server.core.protocol.enums.Command.LOGOUT;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_ADD_ENERGY;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_APP;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_REPORT;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_TAG;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_TILE_TEMPLATE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_WIDGET;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_APP;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_DEVICE_DATA;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_ENHANCED_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_REPORT;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_TAG;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_TILE_TEMPLATE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_WIDGET;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_APP;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_DEVICE_METAFIELD;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_FACE;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_REPORT;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_TAG;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_TILE_TEMPLATE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EXPORT_REPORT;
@@ -56,8 +59,6 @@ import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_PROVISION_T
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_TAGS;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_LOAD_PROFILE_GZIPPED;
-import static cc.blynk.server.core.protocol.enums.Command.MOBILE_UPDATE_REPORT;
-import static cc.blynk.server.core.protocol.enums.Command.MOBILE_UPDATE_TAG;
 import static cc.blynk.server.core.protocol.enums.Command.PING;
 import static cc.blynk.server.core.protocol.enums.Command.PUSH_NOTIFICATION;
 import static cc.blynk.server.core.protocol.enums.Command.REFRESH_SHARE_TOKEN;
@@ -69,7 +70,6 @@ import static cc.blynk.server.core.protocol.enums.Command.SHARE_LOGIN;
 import static cc.blynk.server.core.protocol.enums.Command.SHARING;
 import static cc.blynk.server.core.protocol.enums.Command.SMS;
 import static cc.blynk.server.core.protocol.enums.Command.TWEET;
-import static cc.blynk.server.core.protocol.enums.Command.UPDATE_APP;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_CAN_DELETE_PRODUCT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_CAN_INVITE_USER;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_CREATE_DEVICE;
@@ -159,7 +159,7 @@ public final class CommandParserUtil {
             case "getenhanceddata" :
                 return GET_ENHANCED_GRAPH_DATA;
             case "deleteenhanceddata" :
-                return DELETE_ENHANCED_GRAPH_DATA;
+                return MOBILE_DELETE_ENHANCED_GRAPH_DATA;
             case "activate" :
                 return ACTIVATE_DASHBOARD;
             case "deactivate" :
@@ -227,7 +227,7 @@ public final class CommandParserUtil {
             case "createtag" :
                 return MOBILE_CREATE_TAG;
             case "updatetag" :
-                return MOBILE_UPDATE_TAG;
+                return MOBILE_EDIT_TAG;
             case "deletetag" :
                 return MOBILE_DELETE_TAG;
             case "gettags" :
@@ -250,11 +250,11 @@ public final class CommandParserUtil {
                 return REFRESH_SHARE_TOKEN;
 
             case "createapp" :
-                return CREATE_APP;
+                return MOBILE_CREATE_APP;
             case "updateapp" :
-                return UPDATE_APP;
+                return MOBILE_EDIT_APP;
             case "deleteapp" :
-                return DELETE_APP;
+                return MOBILE_DELETE_APP;
             case "getprojectbytoken" :
                 return GET_PROJECT_BY_TOKEN;
             case "emailqr" :
@@ -279,7 +279,7 @@ public final class CommandParserUtil {
             case "deletereport" :
                 return MOBILE_DELETE_REPORT;
             case "updatereport" :
-                return MOBILE_UPDATE_REPORT;
+                return MOBILE_EDIT_REPORT;
             case "exportreport" :
                 return MOBILE_EXPORT_REPORT;
             case "resetpass" :

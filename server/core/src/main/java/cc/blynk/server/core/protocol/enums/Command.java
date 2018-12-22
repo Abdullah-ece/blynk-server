@@ -72,7 +72,7 @@ public final class Command {
     public static final short MOBILE_GET_DEVICES = 45;
 
     public static final short MOBILE_CREATE_TAG = 46;
-    public static final short MOBILE_UPDATE_TAG = 47;
+    public static final short MOBILE_EDIT_TAG = 47;
     public static final short MOBILE_DELETE_TAG = 48;
     public static final short MOBILE_GET_TAGS = 49;
     public static final short MOBILE_GET_DEVICE = 50;
@@ -87,13 +87,13 @@ public final class Command {
     public static final short EVENTOR = 53;
     public static final short WEB_HOOKS = 54;
 
-    public static final short CREATE_APP = 55;
-    public static final short UPDATE_APP = 56;
-    public static final short DELETE_APP = 57;
+    public static final short MOBILE_CREATE_APP = 55;
+    public static final short MOBILE_EDIT_APP = 56;
+    public static final short MOBILE_DELETE_APP = 57;
     public static final short GET_PROJECT_BY_TOKEN = 58;
     public static final short EMAIL_QR = 59;
     public static final short GET_ENHANCED_GRAPH_DATA = 60;
-    public static final short DELETE_ENHANCED_GRAPH_DATA = 61;
+    public static final short MOBILE_DELETE_ENHANCED_GRAPH_DATA = 61;
 
     public static final short GET_CLONE_CODE = 62;
     public static final short GET_PROJECT_BY_CLONE_CODE = 63;
@@ -114,7 +114,7 @@ public final class Command {
     public static final short MOBILE_DELETE_DEVICE_DATA = 76;
 
     public static final short MOBILE_CREATE_REPORT = 77;
-    public static final short MOBILE_UPDATE_REPORT = 78;
+    public static final short MOBILE_EDIT_REPORT = 78;
     public static final short MOBILE_DELETE_REPORT = 79;
     public static final short MOBILE_EXPORT_REPORT = 80;
 
@@ -124,7 +124,7 @@ public final class Command {
     public static final short HTTP_IS_HARDWARE_CONNECTED = 82;
     public static final short HTTP_IS_APP_CONNECTED = 83;
     public static final short HTTP_GET_PIN_DATA = 84;
-    public static final short HTTP_UPDATE_PIN_DATA = 85;
+    public static final short HTTP_EDIT_PIN_DATA = 85;
     public static final short HTTP_NOTIFY = 86;
     public static final short HTTP_EMAIL = 87;
     public static final short HTTP_GET_PROJECT = 88;
@@ -209,7 +209,7 @@ public final class Command {
             Map.entry(DEACTIVATE_DASHBOARD, "Deactivate"),
             Map.entry(REFRESH_TOKEN, "RefreshToken"),
             Map.entry(GET_ENHANCED_GRAPH_DATA, "GetEnhancedGraphDataRequest"),
-            Map.entry(DELETE_ENHANCED_GRAPH_DATA, "DeleteEnhancedGraphDataRequest"),
+            Map.entry(MOBILE_DELETE_ENHANCED_GRAPH_DATA, "DeleteEnhancedGraphDataRequest"),
             Map.entry(SET_WIDGET_PROPERTY, "setWidgetProperty"),
             Map.entry(BRIDGE, "Bridge"),
             Map.entry(HARDWARE, "Hardware"),
@@ -242,9 +242,9 @@ public final class Command {
             Map.entry(EDIT_PROJECT_SETTINGS, "EditProjectSettings"),
             Map.entry(GET_SERVER, "GetServer"),
             Map.entry(CONNECT_REDIRECT, "ConnectRedirect"),
-            Map.entry(CREATE_APP, "CreateApp"),
-            Map.entry(UPDATE_APP, "EditApp"),
-            Map.entry(DELETE_APP, "DeleteApp"),
+            Map.entry(MOBILE_CREATE_APP, "CreateApp"),
+            Map.entry(MOBILE_EDIT_APP, "EditApp"),
+            Map.entry(MOBILE_DELETE_APP, "DeleteApp"),
             Map.entry(GET_PROJECT_BY_TOKEN, "GetProjectByToken"),
             Map.entry(EMAIL_QR, "MailQRs"),
             Map.entry(MOBILE_EDIT_FACE, "EditFace"),
@@ -259,7 +259,7 @@ public final class Command {
             Map.entry(OUTDATED_APP_NOTIFICATION, "outdatedAppNotification"),
             Map.entry(WEB_TRACK_DEVICE, "webTrackDevice"),
             Map.entry(MOBILE_CREATE_REPORT, "createReport"),
-            Map.entry(MOBILE_UPDATE_REPORT, "editReport"),
+            Map.entry(MOBILE_EDIT_REPORT, "editReport"),
             Map.entry(MOBILE_DELETE_REPORT, "deleteReport"),
             Map.entry(MOBILE_EXPORT_REPORT, "exportReport"),
             Map.entry(RESET_PASSWORD, "resetPass"),
@@ -267,7 +267,7 @@ public final class Command {
             Map.entry(HTTP_IS_HARDWARE_CONNECTED, "HttpIsHardwareConnected"),
             Map.entry(HTTP_IS_APP_CONNECTED, "HttpIsAppConnected"),
             Map.entry(HTTP_GET_PIN_DATA, "HttpGetPinData"),
-            Map.entry(HTTP_UPDATE_PIN_DATA, "HttpEditPinData"),
+            Map.entry(HTTP_EDIT_PIN_DATA, "HttpEditPinData"),
             Map.entry(HTTP_NOTIFY, "HttpNotify"),
             Map.entry(HTTP_EMAIL, "HttpEmail"),
             Map.entry(HTTP_GET_PROJECT, "HttpGetProject"),

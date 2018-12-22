@@ -11,7 +11,7 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.core.protocol.enums.Command.CREATE_APP;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_APP;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 
 /**
@@ -63,7 +63,7 @@ public final class MobileCreateAppLogic {
         user.profile.apps = ArrayUtil.add(user.profile.apps, newApp, App.class);
         user.lastModifiedTs = System.currentTimeMillis();
 
-        ctx.writeAndFlush(makeUTF8StringMessage(CREATE_APP, message.id, JsonParser.toJson(newApp)), ctx.voidPromise());
+        ctx.writeAndFlush(makeUTF8StringMessage(MOBILE_CREATE_APP, message.id, JsonParser.toJson(newApp)), ctx.voidPromise());
     }
 
 }
