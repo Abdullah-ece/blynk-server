@@ -10,8 +10,6 @@ package cc.blynk.utils;
 public final class NumberUtil {
 
     public static final double NO_RESULT = Double.MIN_VALUE;
-    private static final NumberFormatException cachedNumberFormatException =
-            new NumberFormatException("Not a valid double number.");
     private static final NumberFormatException cachedNumberFormatExceptionForPin =
             new NumberFormatException("Not a valid pin number.");
 
@@ -40,14 +38,6 @@ public final class NumberUtil {
             }
         }
         return Math.pow(10., exp);
-    }
-
-    public static double parseDoubleOrThrow(final String s) {
-        double result = parseDouble(s);
-        if (result == NO_RESULT) {
-            throw cachedNumberFormatException;
-        }
-        return result;
     }
 
     public static double parseDouble(final String s) {

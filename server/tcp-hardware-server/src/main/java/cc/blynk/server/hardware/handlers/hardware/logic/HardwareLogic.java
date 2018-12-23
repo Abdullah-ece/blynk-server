@@ -57,7 +57,7 @@ public class HardwareLogic extends BaseProcessorHandler {
 
         //minimum command - "ar 1"
         if (body.length() < 4) {
-            log.debug("HardwareLogic command body too short.");
+            log.trace("HardwareLogic command body too short.");
             ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
             return;
         }
@@ -66,7 +66,7 @@ public class HardwareLogic extends BaseProcessorHandler {
             String[] splitBody = split3(body);
 
             if (splitBody.length < 3 || splitBody[0].isEmpty() || splitBody[2].isEmpty()) {
-                log.debug("Write command is wrong {} for deviceId {}.", body, device.id);
+                log.trace("Write command is wrong {} for deviceId {}.", body, device.id);
                 ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
                 return;
             }
@@ -74,7 +74,6 @@ public class HardwareLogic extends BaseProcessorHandler {
             PinType pinType = PinType.getPinType(splitBody[0].charAt(0));
             short pin = NumberUtil.parsePin(splitBody[1]);
             String value = splitBody[2];
-            int deviceId = device.id;
 
             long now = System.currentTimeMillis();
             reportingDao.process(device, pin, pinType, value, now);
@@ -82,6 +81,7 @@ public class HardwareLogic extends BaseProcessorHandler {
 
             Session session = sessionDao.getOrgSession(orgId);
 
+            int deviceId = device.id;
             session.sendToApps(HARDWARE, message.id, deviceId, body);
             session.sendToSelectedDeviceOnWeb(HARDWARE, message.id, body, deviceId);
         }
