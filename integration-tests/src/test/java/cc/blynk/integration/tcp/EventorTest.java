@@ -19,14 +19,14 @@ import cc.blynk.server.core.model.widgets.others.eventor.model.action.notificati
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.TwitAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.condition.BaseCondition;
 import cc.blynk.server.core.model.widgets.others.eventor.model.condition.ValueChanged;
-import cc.blynk.server.core.model.widgets.others.eventor.model.condition.number.Between;
-import cc.blynk.server.core.model.widgets.others.eventor.model.condition.number.Equal;
-import cc.blynk.server.core.model.widgets.others.eventor.model.condition.number.GreaterThan;
-import cc.blynk.server.core.model.widgets.others.eventor.model.condition.number.GreaterThanOrEqual;
-import cc.blynk.server.core.model.widgets.others.eventor.model.condition.number.LessThan;
-import cc.blynk.server.core.model.widgets.others.eventor.model.condition.number.LessThanOrEqual;
-import cc.blynk.server.core.model.widgets.others.eventor.model.condition.number.NotBetween;
-import cc.blynk.server.core.model.widgets.others.eventor.model.condition.number.NotEqual;
+import cc.blynk.server.core.model.widgets.others.eventor.model.condition.number.BetweenCondition;
+import cc.blynk.server.core.model.widgets.others.eventor.model.condition.number.EqualCondition;
+import cc.blynk.server.core.model.widgets.others.eventor.model.condition.number.GreaterThanCondition;
+import cc.blynk.server.core.model.widgets.others.eventor.model.condition.number.GreaterThanOrEqualCondition;
+import cc.blynk.server.core.model.widgets.others.eventor.model.condition.number.LessThanCondition;
+import cc.blynk.server.core.model.widgets.others.eventor.model.condition.number.LessThanOrEqualCondition;
+import cc.blynk.server.core.model.widgets.others.eventor.model.condition.number.NotBetweenCondition;
+import cc.blynk.server.core.model.widgets.others.eventor.model.condition.number.NotEqualCondition;
 import cc.blynk.server.core.model.widgets.others.eventor.model.condition.string.StringEqual;
 import cc.blynk.server.core.model.widgets.others.eventor.model.condition.string.StringNotEqual;
 import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
@@ -112,17 +112,17 @@ public class EventorTest extends SingleServerInstancePerTest {
     private static BaseCondition resolveCondition(String conditionString, double value) {
         switch (conditionString) {
             case ">" :
-                return new GreaterThan(value);
+                return new GreaterThanCondition(value);
             case ">=" :
-                return new GreaterThanOrEqual(value);
+                return new GreaterThanOrEqualCondition(value);
             case "<" :
-                return new LessThan(value);
+                return new LessThanCondition(value);
             case "<=" :
-                return new LessThanOrEqual(value);
+                return new LessThanOrEqualCondition(value);
             case "=" :
-                return new Equal(value);
+                return new EqualCondition(value);
             case "!=" :
-                return new NotEqual(value);
+                return new NotEqualCondition(value);
 
             default: throw new RuntimeException("Not supported operation. " + conditionString);
         }
@@ -255,7 +255,7 @@ public class EventorTest extends SingleServerInstancePerTest {
         DataStream triggerDataStream = new DataStream((short) 1, PinType.VIRTUAL);
         DataStream dataStream = new DataStream((short) 2, PinType.VIRTUAL);
         SetPinAction setPinAction = new SetPinAction(dataStream, "123", SetPinActionType.CUSTOM);
-        Rule rule = new Rule(triggerDataStream, null, new Between(10, 12), new BaseAction[] {setPinAction}, true);
+        Rule rule = new Rule(triggerDataStream, null, new BetweenCondition(10, 12), new BaseAction[] {setPinAction}, true);
 
         Eventor eventor = new Eventor(new Rule[] {rule});
 
@@ -273,7 +273,7 @@ public class EventorTest extends SingleServerInstancePerTest {
         DataStream triggerDataStream = new DataStream((short) 1, PinType.VIRTUAL);
         DataStream dataStream = new DataStream((short) 2, PinType.VIRTUAL);
         SetPinAction setPinAction = new SetPinAction(dataStream, "123", SetPinActionType.CUSTOM);
-        Rule rule = new Rule(triggerDataStream, null, new NotBetween(10, 12), new BaseAction[] {setPinAction}, true);
+        Rule rule = new Rule(triggerDataStream, null, new NotBetweenCondition(10, 12), new BaseAction[] {setPinAction}, true);
 
         Eventor eventor = new Eventor(new Rule[] {rule});
 
@@ -519,7 +519,7 @@ public class EventorTest extends SingleServerInstancePerTest {
     @Test
     public void testSimpleRuleWith2Actions() throws Exception {
         DataStream triggerDataStream = new DataStream((short) 1, PinType.VIRTUAL);
-        Rule rule = new Rule(triggerDataStream, null, new GreaterThan(37),
+        Rule rule = new Rule(triggerDataStream, null, new GreaterThanCondition(37),
                 new BaseAction[] {
                         new SetPinAction((short) 0, PinType.VIRTUAL, "0"),
                         new SetPinAction((short) 1, PinType.VIRTUAL, "1")

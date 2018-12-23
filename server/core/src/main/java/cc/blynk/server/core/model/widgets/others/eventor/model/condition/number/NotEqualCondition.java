@@ -9,18 +9,18 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Created by Dmitriy Dumanskiy.
  * Created on 01.08.16.
  */
-public class LessThanOrEqual extends BaseCondition {
+public class NotEqualCondition extends BaseCondition {
 
     private final double value;
 
     @JsonCreator
-    public LessThanOrEqual(@JsonProperty("value") double value) {
+    public NotEqualCondition(@JsonProperty("value") double value) {
         this.value = value;
     }
 
     @Override
     public boolean matches(String inString, double in) {
-        return in <= value;
+        return in != value;
     }
 
 }
