@@ -9,10 +9,12 @@ import connect from "react-redux/es/connect/connect";
 import { bindActionCreators } from "redux";
 import { SetAuthToken } from 'data/Devices/api';
 import PropTypes from "prop-types";
+import { VerifyPermission, PERMISSIONS_INDEX } from "services/Roles";
 
 @connect((state) => ({
   account: state.Account,
   orgId: state.Account.selectedOrgId,
+  permissions: state.RolesAndPermissions.currentRole.permissionGroup1,
 }), (dispatch) => ({
   setAuthToken: bindActionCreators(SetAuthToken, dispatch)
 }))
@@ -25,7 +27,8 @@ class DeviceAuthToken extends React.Component {
     setAuthToken: PropTypes.func,
     orgId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     modalWrapClassName: PropTypes.string,
-    errors: PropTypes.object
+    errors: PropTypes.object,
+    permissions: React.PropTypes.number,
   };
 
   constructor(props) {
@@ -186,8 +189,9 @@ class DeviceAuthToken extends React.Component {
                          onCopy={this.handleCopyClick.bind(this)}>
           <Button icon="copy" size="small" className={className}/>
         </CopyToClipboard>
-        <Button icon="edit" size="small" className={className}
-                onClick={this.handleEdit}/>
+        {VerifyPermission(this.props.permissions, PERMISSIONS_INDEX.SET_AUTH_TOKEN) && (
+          <Button icon="edit" size="small" className={className}
+                  onClick={this.handleEdit}/>)}
         <Modal visible={this.state.editVisible}
                wrapClassName={`device-metadata-modal ${this.props.modalWrapClassName || ''}`}
                closable={false}
