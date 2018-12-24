@@ -1,6 +1,7 @@
 const initialState = {
   roles: [],
-  usersPerRole: {}
+  usersPerRole: {},
+  currentRole: {}
 };
 
 export default function RolesAndPermissions(state = initialState, action) {
