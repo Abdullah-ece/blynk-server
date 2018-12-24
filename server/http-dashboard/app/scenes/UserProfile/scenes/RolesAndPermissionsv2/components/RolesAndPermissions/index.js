@@ -5,204 +5,10 @@ import React from 'react';
 import { Table, Collapse, Switch } from 'antd';
 import './styles.less';
 import PropTypes from 'prop-types';
-import LinearIcon from "../../../../../../components/LinearIcon";
+import LinearIcon from "components/LinearIcon";
+import { PERMISSIONS_TABLE } from "services/Roles";
 
 const Panel = Collapse.Panel;
-
-const PERMISSIONS_TABLE = [
-  {
-    dependentPermsToActivate: [6],
-    dependentPermsToRemove: [],
-    key: 'ORG_SWITCH',
-    value: 'Switch to Sub-Organizations'
-  },
-  {
-    dependentPermsToActivate: [6],
-    dependentPermsToRemove: [],
-    key: 'OWN_ORG_EDIT',
-    value: 'Access Organization Settings'
-  },
-  {
-    dependentPermsToActivate: [],
-    dependentPermsToRemove: [],
-    key: 'OTA_VIEW',
-    value: 'Get Access'
-  },
-  {
-    dependentPermsToActivate: [],
-    dependentPermsToRemove: [],
-    key: 'OTA_START',
-    value: 'Initiate FOTA'
-  },
-  {
-    dependentPermsToActivate: [],
-    dependentPermsToRemove: [],
-    key: 'OTA_STOP',
-    value: 'Stop/Pause FOTA'
-  },
-  {
-    dependentPermsToActivate: [6],
-    dependentPermsToRemove: [],
-    key: 'ORG_CREATE',
-    value: 'Create'
-  },
-  {
-    dependentPermsToActivate: [],
-    dependentPermsToRemove: [5, 7, 8, 0, 1],
-    key: 'ORG_VIEW',
-    value: 'View'
-  },
-  {
-    dependentPermsToActivate: [6],
-    dependentPermsToRemove: [],
-    key: 'ORG_EDIT',
-    value: 'Edit'
-  },
-  {
-    dependentPermsToActivate: [6],
-    dependentPermsToRemove: [],
-    key: 'ORG_DELETE',
-    value: 'Delete'
-  },
-  {
-    dependentPermsToActivate: [10],
-    dependentPermsToRemove: [],
-    key: 'ORG_INVITE_USERS',
-    value: 'Invite new users'
-  },
-  {
-    dependentPermsToActivate: [],
-    dependentPermsToRemove: [9, 11, 12],
-    key: 'ORG_VIEW_USERS',
-    value: 'View'
-  },
-  {
-    dependentPermsToActivate: [10],
-    dependentPermsToRemove: [],
-    key: 'ORG_EDIT_USERS',
-    value: 'Edit'
-  },
-  {
-    dependentPermsToActivate: [10],
-    dependentPermsToRemove: [],
-    key: 'ORG_DELETE_USERS',
-    value: 'Delete'
-  },
-  {
-    dependentPermsToActivate: [14],
-    dependentPermsToRemove: [],
-    key: 'PRODUCT_CREATE',
-    value: 'Add new'
-  },
-  {
-    dependentPermsToActivate: [],
-    dependentPermsToRemove: [13, 15, 16],
-    key: 'PRODUCT_VIEW',
-    value: 'View'
-  },
-  {
-    dependentPermsToActivate: [14],
-    dependentPermsToRemove: [],
-    key: 'PRODUCT_EDIT',
-    value: 'Edit'
-  },
-  {
-    dependentPermsToActivate: [14],
-    dependentPermsToRemove: [],
-    key: 'PRODUCT_DELETE',
-    value: 'Delete'
-  },
-  {
-    dependentPermsToActivate: [],
-    dependentPermsToRemove: [],
-    key: 'ROLE_CREATE',
-    value: 'Create new roles'
-  },
-  {
-    dependentPermsToActivate: [],
-    dependentPermsToRemove: [],
-    key: 'ROLE_VIEW',
-    value: 'View roles and permissions'
-  },
-  {
-    dependentPermsToActivate: [],
-    dependentPermsToRemove: [],
-    key: 'ROLE_EDIT',
-    value: 'Edit roles'
-  },
-  {
-    dependentPermsToActivate: [],
-    dependentPermsToRemove: [],
-    key: 'ROLE_DELETE',
-    value: 'Delete roles'
-  },
-  {
-    dependentPermsToActivate: [],
-    dependentPermsToRemove: [],
-    key: 'ORG_DEVICES_CREATE',
-    value: 'Add new devices'
-  },
-  {
-    dependentPermsToActivate: [],
-    dependentPermsToRemove: [23, 24, 31],
-    key: 'ORG_DEVICES_VIEW',
-    value: 'View'
-  },
-  {
-    dependentPermsToActivate: [22],
-    dependentPermsToRemove: [31],
-    key: 'ORG_DEVICES_EDIT',
-    value: 'Edit'
-  },
-  {
-    dependentPermsToActivate: [22],
-    dependentPermsToRemove: [],
-    key: 'ORG_DEVICES_DELETE',
-    value: 'Delete'
-  },
-  {
-    dependentPermsToActivate: [],
-    dependentPermsToRemove: [],
-    key: 'ORG_DEVICES_SHARE',
-    value: 'Share access'
-  },
-  {
-    dependentPermsToActivate: [],
-    dependentPermsToRemove: [],
-    key: 'OWN_DEVICES_CREATE',
-    value: 'Add new devices'
-  },
-  {
-    dependentPermsToActivate: [],
-    dependentPermsToRemove: [28, 29, 31],
-    key: 'OWN_DEVICES_VIEW',
-    value: 'View'
-  },
-  {
-    dependentPermsToActivate: [27],
-    dependentPermsToRemove: [31],
-    key: 'OWN_DEVICES_EDIT',
-    value: 'Edit'
-  },
-  {
-    dependentPermsToActivate: [27],
-    dependentPermsToRemove: [],
-    key: 'OWN_DEVICES_DELETE',
-    value: 'Delete'
-  },
-  {
-    dependentPermsToActivate: [],
-    dependentPermsToRemove: [],
-    key: 'OWN_DEVICES_SHARE',
-    value: 'Share access'
-  },
-  {
-    dependentPermsToActivate: [27, 28],
-    dependentPermsToRemove: [],
-    key: 'SET_AUTH_TOKEN',
-    value: 'Enable Auth Token Edit'
-  },
-];
 
 class RolesAndPermissions extends React.Component {
 
@@ -243,7 +49,7 @@ class RolesAndPermissions extends React.Component {
 
   handleExpandAll() {
     this.setState({
-      currentActiveKeys: ['1', '2', '3', '4', '5', '6', '7', '8']
+      currentActiveKeys: ['1', '2', '3', '4', '5', '6']
     });
   }
 
@@ -320,12 +126,8 @@ class RolesAndPermissions extends React.Component {
                          columns={this.buildColumns('permissions-table-main-column--level2')}/>
                 </div>
               </Panel>
-              {/*{this.buildGenericPermissionsPanel(7, 'Own Devices', 26, 5)}*/}
-              {/*{this.buildGenericPermissionsPanel(6, 'Organization Devices', 21, 5)}*/}
-              {/*{this.buildGenericPermissionsPanel(8, 'Auth Token', 31, 1)}*/}
               {this.buildGenericPermissionsPanel(4, 'Blynk.Air: Firmware Over-The-Air Updates', 2, 3)}
               {this.buildGenericPermissionsPanel(5, 'Products', 13, 4)}
-              {/*{this.buildGenericPermissionsPanel(6, 'Organizations', 5, 4)}*/}
               <Panel header={<div>
                 <LinearIcon
                   type={this.state.currentActiveKeys.indexOf('6') < 0 ? "plus-square" : "minus-square"}/> Organizations
