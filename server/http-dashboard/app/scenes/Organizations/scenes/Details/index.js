@@ -26,6 +26,8 @@ import {
   OrganizationSendInvite
 } from 'data/Organization/actions';
 
+import { VerifyPermission, PERMISSIONS_INDEX } from "services/Roles";
+
 import {
   Info,
   Products
@@ -42,6 +44,7 @@ import './styles.less';
   list: state.Organizations.get('list') || null,
   details: state.Organizations.get('details'),
   admins: state.Organizations.get('adminsEdit') || null,
+  permissions: state.RolesAndPermissions.currentRole.permissionGroup1,
 }), (dispatch) => ({
   resetForm: bindActionCreators(reset, dispatch),
   fetchProducts: bindActionCreators(ProductsFetch, dispatch),
@@ -65,6 +68,7 @@ class Details extends React.Component {
 
     account: PropTypes.object,
     params: PropTypes.object,
+    permissions: React.PropTypes.number,
 
     resetForm: PropTypes.func,
     fetchProducts: PropTypes.func,
@@ -161,7 +165,6 @@ class Details extends React.Component {
   }
 
   render() {
-
     if (!this.props.list)
       return null;
 
@@ -175,10 +178,13 @@ class Details extends React.Component {
       return null;
     const activeTab = Object.values(this.TABS).indexOf(this.props.params.tab) > -1 ?
       this.props.params.tab : this.TABS.INFO;
+
+    const canEditOrgs = VerifyPermission(this.props.permissions, PERMISSIONS_INDEX.ORG_EDIT);
+
     return (
       <MainLayout>
         <MainLayout.Header title={organization.get('name')}
-                           options={(
+                           options={canEditOrgs && (
                              <div>
                                <Button type="primary"
                                        loading={this.props.details.get('loading')}
