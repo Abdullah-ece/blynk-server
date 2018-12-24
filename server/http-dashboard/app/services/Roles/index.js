@@ -334,6 +334,7 @@ export const PERMISSIONS_TABLE = [
 
 export const VerifyPermission = (userPermissions, permissionToCheck) => {
   const newPermissions = Math.pow(2, permissionToCheck);
-  const result = (userPermissions & newPermissions) == newPermissions;
-  return result;
+  let result = (userPermissions & newPermissions);
+  result = result < 0 ? result * -1 : result;
+  return result == newPermissions;
 };
