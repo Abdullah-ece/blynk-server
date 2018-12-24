@@ -4,9 +4,11 @@ import cc.blynk.server.core.protocol.model.messages.WebJsonMessage;
 
 import static cc.blynk.server.core.protocol.enums.Response.DEVICE_NOT_IN_NETWORK;
 import static cc.blynk.server.core.protocol.enums.Response.FACEBOOK_USER_LOGIN_WITH_PASS;
+import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND;
 import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND_BODY;
 import static cc.blynk.server.core.protocol.enums.Response.NOT_ALLOWED;
 import static cc.blynk.server.core.protocol.enums.Response.NO_DATA;
+import static cc.blynk.server.core.protocol.enums.Response.SERVER_ERROR;
 import static cc.blynk.server.core.protocol.enums.Response.USER_NOT_AUTHENTICATED;
 
 /**
@@ -41,6 +43,18 @@ public final class WebByteBufUtil {
 
     public static WebJsonMessage illegalCommandBody(int msgId) {
         return new WebJsonMessage(msgId, "Wrong income message format.", ILLEGAL_COMMAND_BODY);
+    }
+
+    public static WebJsonMessage illegalCommand(int msgId) {
+        return new WebJsonMessage(msgId, "Wrong income message format.", ILLEGAL_COMMAND);
+    }
+
+    public static WebJsonMessage illegalCommand(int msgId, String message) {
+        return new WebJsonMessage(msgId, message, ILLEGAL_COMMAND);
+    }
+
+    public static WebJsonMessage serverError(int msgId, String message) {
+        return new WebJsonMessage(msgId, message, SERVER_ERROR);
     }
 
     public static WebJsonMessage notAllowed(int msgId, String msg) {
