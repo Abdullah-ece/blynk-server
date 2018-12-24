@@ -13,7 +13,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Created by Dmitriy Dumanskiy.
  * Created on 01.08.16.
  */
-public class Rule {
+public class EventorRule {
 
     @JsonProperty("triggerPin") //todo "triggerPin" for back compatibility
     public final DataStream triggerDataStream;
@@ -29,11 +29,11 @@ public class Rule {
     public transient boolean isProcessed;
 
     @JsonCreator
-    public Rule(@JsonProperty("triggerPin") DataStream triggerDataStream,
-                @JsonProperty("triggerTime") TimerTime triggerTime,
-                @JsonProperty("condition") BaseCondition condition,
-                @JsonProperty("actions") BaseAction[] actions,
-                @JsonProperty("isActive") boolean isActive) {
+    public EventorRule(@JsonProperty("triggerPin") DataStream triggerDataStream,
+                       @JsonProperty("triggerTime") TimerTime triggerTime,
+                       @JsonProperty("condition") BaseCondition condition,
+                       @JsonProperty("actions") BaseAction[] actions,
+                       @JsonProperty("isActive") boolean isActive) {
         this.triggerDataStream = triggerDataStream;
         this.triggerTime = triggerTime;
         this.condition = condition;

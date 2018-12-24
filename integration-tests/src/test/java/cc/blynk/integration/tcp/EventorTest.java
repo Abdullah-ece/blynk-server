@@ -9,7 +9,7 @@ import cc.blynk.server.core.model.profile.Profile;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
-import cc.blynk.server.core.model.widgets.others.eventor.Rule;
+import cc.blynk.server.core.model.widgets.others.eventor.EventorRule;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.BaseAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinActionType;
@@ -61,7 +61,7 @@ import static org.mockito.Mockito.verify;
 @RunWith(MockitoJUnitRunner.class)
 public class EventorTest extends SingleServerInstancePerTest {
 
-    private static Rule buildRule(String s, boolean isActive) {
+    private static EventorRule buildRule(String s, boolean isActive) {
         //example "if V1 > 37 then setpin V2 123"
 
         String[] splitted = s.split(" ");
@@ -85,7 +85,7 @@ public class EventorTest extends SingleServerInstancePerTest {
                                             //setpin
         BaseAction action = resolveAction(splitted[5], dataStream, value);
 
-        return new Rule(triggerDataStream, null, ifCondition, new BaseAction[] { action }, isActive);
+        return new EventorRule(triggerDataStream, null, ifCondition, new BaseAction[] { action }, isActive);
     }
 
     private static DataStream parsePin(String pinString) {
@@ -129,13 +129,13 @@ public class EventorTest extends SingleServerInstancePerTest {
     }
 
     public static Eventor oneRuleEventor(String ruleString, boolean isActive) {
-        Rule rule = buildRule(ruleString, isActive);
-        return new Eventor(new Rule[] {rule});
+        EventorRule eventorRule = buildRule(ruleString, isActive);
+        return new Eventor(new EventorRule[] {eventorRule});
     }
 
     public static Eventor oneRuleEventor(String ruleString) {
-        Rule rule = buildRule(ruleString, true);
-        return new Eventor(new Rule[] {rule});
+        EventorRule eventorRule = buildRule(ruleString, true);
+        return new Eventor(new EventorRule[] {eventorRule});
     }
 
     @Test
@@ -255,9 +255,9 @@ public class EventorTest extends SingleServerInstancePerTest {
         DataStream triggerDataStream = new DataStream((short) 1, PinType.VIRTUAL);
         DataStream dataStream = new DataStream((short) 2, PinType.VIRTUAL);
         SetPinAction setPinAction = new SetPinAction(dataStream, "123", SetPinActionType.CUSTOM);
-        Rule rule = new Rule(triggerDataStream, null, new BetweenCondition(10, 12), new BaseAction[] {setPinAction}, true);
+        EventorRule eventorRule = new EventorRule(triggerDataStream, null, new BetweenCondition(10, 12), new BaseAction[] {setPinAction}, true);
 
-        Eventor eventor = new Eventor(new Rule[] {rule});
+        Eventor eventor = new Eventor(new EventorRule[] {eventorRule});
 
         clientPair.appClient.createWidget(1, eventor);
         clientPair.appClient.verifyResult(ok(1));
@@ -273,9 +273,9 @@ public class EventorTest extends SingleServerInstancePerTest {
         DataStream triggerDataStream = new DataStream((short) 1, PinType.VIRTUAL);
         DataStream dataStream = new DataStream((short) 2, PinType.VIRTUAL);
         SetPinAction setPinAction = new SetPinAction(dataStream, "123", SetPinActionType.CUSTOM);
-        Rule rule = new Rule(triggerDataStream, null, new NotBetweenCondition(10, 12), new BaseAction[] {setPinAction}, true);
+        EventorRule eventorRule = new EventorRule(triggerDataStream, null, new NotBetweenCondition(10, 12), new BaseAction[] {setPinAction}, true);
 
-        Eventor eventor = new Eventor(new Rule[] {rule});
+        Eventor eventor = new Eventor(new EventorRule[] {eventorRule});
 
         clientPair.appClient.createWidget(1, eventor);
         clientPair.appClient.verifyResult(ok(1));
@@ -519,14 +519,14 @@ public class EventorTest extends SingleServerInstancePerTest {
     @Test
     public void testSimpleRuleWith2Actions() throws Exception {
         DataStream triggerDataStream = new DataStream((short) 1, PinType.VIRTUAL);
-        Rule rule = new Rule(triggerDataStream, null, new GreaterThanCondition(37),
+        EventorRule eventorRule = new EventorRule(triggerDataStream, null, new GreaterThanCondition(37),
                 new BaseAction[] {
                         new SetPinAction((short) 0, PinType.VIRTUAL, "0"),
                         new SetPinAction((short) 1, PinType.VIRTUAL, "1")
                 },
                 true);
 
-        Eventor eventor = new Eventor(new Rule[] {rule});
+        Eventor eventor = new Eventor(new EventorRule[] {eventorRule});
 
         clientPair.appClient.createWidget(1, eventor);
         clientPair.appClient.verifyResult(ok(1));
@@ -560,8 +560,8 @@ public class EventorTest extends SingleServerInstancePerTest {
         SetPinAction setPinAction = new SetPinAction(new DataStream((short) 2, PinType.VIRTUAL),
                 "123", SetPinActionType.CUSTOM);
 
-        Eventor eventor = new Eventor(new Rule[] {
-                new Rule(triggerStream, null, new StringEqual("abc"), new BaseAction[] {setPinAction}, true)
+        Eventor eventor = new Eventor(new EventorRule[] {
+                new EventorRule(triggerStream, null, new StringEqual("abc"), new BaseAction[] {setPinAction}, true)
         });
 
         clientPair.appClient.createWidget(1, eventor);
@@ -579,8 +579,8 @@ public class EventorTest extends SingleServerInstancePerTest {
         SetPinAction setPinAction = new SetPinAction(new DataStream((short) 2, PinType.VIRTUAL),
                 "123", SetPinActionType.CUSTOM);
 
-        Eventor eventor = new Eventor(new Rule[] {
-                new Rule(triggerStream, null, new ValueChanged("abc"), new BaseAction[] {setPinAction}, true)
+        Eventor eventor = new Eventor(new EventorRule[] {
+                new EventorRule(triggerStream, null, new ValueChanged("abc"), new BaseAction[] {setPinAction}, true)
         });
 
         clientPair.appClient.createWidget(1, eventor);
@@ -606,8 +606,8 @@ public class EventorTest extends SingleServerInstancePerTest {
         SetPinAction setPinAction = new SetPinAction(new DataStream((short) 2, PinType.VIRTUAL),
                 "123", SetPinActionType.CUSTOM);
 
-        Eventor eventor = new Eventor(new Rule[] {
-                new Rule(triggerStream, null, new StringNotEqual("abc"), new BaseAction[] {setPinAction}, true)
+        Eventor eventor = new Eventor(new EventorRule[] {
+                new EventorRule(triggerStream, null, new StringNotEqual("abc"), new BaseAction[] {setPinAction}, true)
         });
 
         clientPair.appClient.createWidget(1, eventor);
@@ -625,8 +625,8 @@ public class EventorTest extends SingleServerInstancePerTest {
         SetPinAction setPinAction = new SetPinAction(new DataStream((short) 2, PinType.VIRTUAL),
                 "123", SetPinActionType.CUSTOM);
 
-        Eventor eventor = new Eventor(new Rule[] {
-                new Rule(triggerStream, null, new StringEqual("abc"), new BaseAction[] {setPinAction}, true)
+        Eventor eventor = new Eventor(new EventorRule[] {
+                new EventorRule(triggerStream, null, new StringEqual("abc"), new BaseAction[] {setPinAction}, true)
         });
 
         clientPair.appClient.createWidget(1, eventor);
@@ -651,8 +651,8 @@ public class EventorTest extends SingleServerInstancePerTest {
         SetPropertyPinAction setPropertyPinAction = new SetPropertyPinAction(new DataStream((short) 4, PinType.VIRTUAL),
                 WidgetProperty.LABEL, "MyNewLabel");
 
-        Eventor eventor = new Eventor(new Rule[] {
-                new Rule(triggerStream, null, new StringEqual("abc"), new BaseAction[] {setPropertyPinAction}, true)
+        Eventor eventor = new Eventor(new EventorRule[] {
+                new EventorRule(triggerStream, null, new StringEqual("abc"), new BaseAction[] {setPropertyPinAction}, true)
         });
 
         clientPair.appClient.createWidget(1, eventor);

@@ -11,7 +11,7 @@ import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.notifications.Mail;
 import cc.blynk.server.core.model.widgets.notifications.Twitter;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
-import cc.blynk.server.core.model.widgets.others.eventor.Rule;
+import cc.blynk.server.core.model.widgets.others.eventor.EventorRule;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.BaseAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPropertyPinAction;
@@ -75,11 +75,11 @@ public class EventorProcessor {
 
         double valueParsed = NumberUtil.parseDouble(triggerValue);
 
-        for (Rule rule : eventor.rules) {
-            if (rule.isReady(pin, type)) {
-                if (rule.matchesCondition(triggerValue, valueParsed)) {
-                    if (!rule.isProcessed) {
-                        for (BaseAction action : rule.actions) {
+        for (EventorRule eventorRule : eventor.rules) {
+            if (eventorRule.isReady(pin, type)) {
+                if (eventorRule.matchesCondition(triggerValue, valueParsed)) {
+                    if (!eventorRule.isProcessed) {
+                        for (BaseAction action : eventorRule.actions) {
                             if (action.isValid()) {
                                 if (action instanceof SetPinAction) {
                                     execute(session, dash, device, (SetPinAction) action);
@@ -91,10 +91,10 @@ public class EventorProcessor {
                                 globalStats.mark(EVENTOR);
                             }
                         }
-                        rule.isProcessed = true;
+                        eventorRule.isProcessed = true;
                     }
                 } else {
-                    rule.isProcessed = false;
+                    eventorRule.isProcessed = false;
                 }
             }
         }

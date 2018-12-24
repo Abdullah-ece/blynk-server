@@ -13,7 +13,7 @@ import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
-import cc.blynk.server.core.model.widgets.others.eventor.Rule;
+import cc.blynk.server.core.model.widgets.others.eventor.EventorRule;
 import cc.blynk.server.core.model.widgets.others.eventor.TimerTime;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.BaseAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinAction;
@@ -116,10 +116,10 @@ public class TimerWorker implements Runnable {
 
     public void add(int orgId, String userKey, Eventor eventor, int dashId) {
         if (eventor.rules != null) {
-            for (Rule rule : eventor.rules) {
-                if (rule.isValidTimerRule()) {
+            for (EventorRule eventorRule : eventor.rules) {
+                if (eventorRule.isValidTimerRule()) {
                     add(orgId, userKey, dashId, eventor.deviceId, eventor.id,
-                            rule.triggerTime.id, rule.triggerTime, rule.actions);
+                            eventorRule.triggerTime.id, eventorRule.triggerTime, eventorRule.actions);
                 }
             }
         }
@@ -162,10 +162,10 @@ public class TimerWorker implements Runnable {
 
     public void delete(int orgId, String userKey, Eventor eventor, int dashId) {
         if (eventor.rules != null) {
-            for (Rule rule : eventor.rules) {
-                if (rule.isValidTimerRule()) {
+            for (EventorRule eventorRule : eventor.rules) {
+                if (eventorRule.isValidTimerRule()) {
                     delete(orgId, userKey, dashId, eventor.deviceId,
-                            eventor.id, rule.triggerTime.id, -1L, -1L, rule.triggerTime);
+                            eventor.id, eventorRule.triggerTime.id, -1L, -1L, eventorRule.triggerTime);
                 }
             }
         }

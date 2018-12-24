@@ -12,7 +12,7 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.controls.RGB;
 import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
-import cc.blynk.server.core.model.widgets.others.eventor.Rule;
+import cc.blynk.server.core.model.widgets.others.eventor.EventorRule;
 import cc.blynk.server.core.model.widgets.others.eventor.TimerTime;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.BaseAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinAction;
@@ -221,8 +221,8 @@ public class HttpAndTCPSameJVMTest extends SingleServerInstancePerTest {
         DataStream dataStream = new DataStream((short) 4, VIRTUAL);
         SetPinAction setPinAction = new SetPinAction(dataStream, "1", SetPinActionType.CUSTOM);
 
-        Eventor eventor = new Eventor(new Rule[] {
-                new Rule(dataStream, timerTime, null, new BaseAction[] {setPinAction}, true)
+        Eventor eventor = new Eventor(new EventorRule[] {
+                new EventorRule(dataStream, timerTime, null, new BaseAction[] {setPinAction}, true)
         });
         eventor.id = 1000;
 

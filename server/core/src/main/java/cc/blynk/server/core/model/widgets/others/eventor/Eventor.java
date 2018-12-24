@@ -12,7 +12,7 @@ import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinActi
  */
 public class Eventor extends NoPinWidget {
 
-    public Rule[] rules;
+    public EventorRule[] rules;
 
     public int deviceId;
 
@@ -21,9 +21,9 @@ public class Eventor extends NoPinWidget {
         this.height = 1;
     }
 
-    public Eventor(Rule[] rules) {
+    public Eventor(EventorRule[] eventorRules) {
         this();
-        this.rules = rules;
+        this.rules = eventorRules;
     }
 
     @Override
@@ -34,9 +34,9 @@ public class Eventor extends NoPinWidget {
     @Override
     public void append(StringBuilder sb, int deviceId) {
         if (rules != null && this.deviceId == deviceId) {
-            for (Rule rule : rules) {
-                if (rule.actions != null) {
-                    for (BaseAction action : rule.actions) {
+            for (EventorRule eventorRule : rules) {
+                if (eventorRule.actions != null) {
+                    for (BaseAction action : eventorRule.actions) {
                         if (action instanceof SetPinAction) {
                             SetPinAction setPinActionAction = (SetPinAction) action;
                             if (setPinActionAction.dataStream != null) {

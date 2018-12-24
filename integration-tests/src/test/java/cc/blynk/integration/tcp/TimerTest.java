@@ -12,7 +12,7 @@ import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
-import cc.blynk.server.core.model.widgets.others.eventor.Rule;
+import cc.blynk.server.core.model.widgets.others.eventor.EventorRule;
 import cc.blynk.server.core.model.widgets.others.eventor.TimerTime;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.BaseAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinAction;
@@ -94,8 +94,8 @@ public class TimerTest extends SingleServerInstancePerTest {
         DataStream dataStream = new DataStream((short) 1,PinType.VIRTUAL);
         SetPinAction setPinAction = new SetPinAction(dataStream, "1", SetPinActionType.CUSTOM);
 
-        Eventor eventor = new Eventor(new Rule[] {
-                new Rule(dataStream, timerTime, null, new BaseAction[] {setPinAction}, true)
+        Eventor eventor = new Eventor(new EventorRule[] {
+                new EventorRule(dataStream, timerTime, null, new BaseAction[] {setPinAction}, true)
         });
 
         clientPair.appClient.createWidget(1, eventor);
@@ -122,8 +122,8 @@ public class TimerTest extends SingleServerInstancePerTest {
         DataStream dataStream = new DataStream((short)1,PinType.VIRTUAL);
         SetPinAction setPinAction = new SetPinAction(dataStream, "1", SetPinActionType.CUSTOM);
 
-        Eventor eventor = new Eventor(new Rule[] {
-                new Rule(dataStream, timerTime, null, new BaseAction[] {setPinAction}, true)
+        Eventor eventor = new Eventor(new EventorRule[] {
+                new EventorRule(dataStream, timerTime, null, new BaseAction[] {setPinAction}, true)
         });
 
         clientPair.appClient.createWidget(1, eventor);
@@ -136,8 +136,8 @@ public class TimerTest extends SingleServerInstancePerTest {
         clientPair.hardwareClient.reset();
 
 
-        eventor = new Eventor(new Rule[] {
-                new Rule(dataStream, new TimerTime(
+        eventor = new Eventor(new EventorRule[] {
+                new EventorRule(dataStream, new TimerTime(
                         0,
                         new int[] {1,2,3,4,5,6,7},
                         //adding 2 seconds just to be sure we no gonna miss timer event
@@ -171,10 +171,10 @@ public class TimerTest extends SingleServerInstancePerTest {
         DataStream dataStream2 = new DataStream((short)2,PinType.VIRTUAL);
         SetPinAction setPinAction2 = new SetPinAction(dataStream2, "2", SetPinActionType.CUSTOM);
 
-        Rule rule = new Rule(null, timerTime, null, new BaseAction[] {setPinAction, setPinAction2}, true);
+        EventorRule eventorRule = new EventorRule(null, timerTime, null, new BaseAction[] {setPinAction, setPinAction2}, true);
 
-        Eventor eventor = new Eventor(new Rule[] {
-                rule
+        Eventor eventor = new Eventor(new EventorRule[] {
+                eventorRule
         });
 
         clientPair.appClient.createWidget(1, eventor);
@@ -203,10 +203,10 @@ public class TimerTest extends SingleServerInstancePerTest {
         DataStream dataStream = new DataStream((short) 1,PinType.VIRTUAL);
         SetPinAction setPinAction = new SetPinAction(dataStream, "1", SetPinActionType.CUSTOM);
         NotifyAction notifyAction = new NotifyAction("Hello");
-        Rule rule = new Rule(null, timerTime, null, new BaseAction[] {setPinAction, notifyAction}, true);
+        EventorRule eventorRule = new EventorRule(null, timerTime, null, new BaseAction[] {setPinAction, notifyAction}, true);
 
-        Eventor eventor = new Eventor(new Rule[] {
-                rule
+        Eventor eventor = new Eventor(new EventorRule[] {
+                eventorRule
         });
 
         clientPair.appClient.createWidget(1, eventor);
@@ -252,10 +252,10 @@ public class TimerTest extends SingleServerInstancePerTest {
 
         DataStream dataStream = new DataStream((short)1,PinType.VIRTUAL);
         SetPinAction setPinAction = new SetPinAction(dataStream, "1", SetPinActionType.CUSTOM);
-        Rule rule = new Rule(null, timerTime, null,  new BaseAction[] {setPinAction}, true);
+        EventorRule eventorRule = new EventorRule(null, timerTime, null,  new BaseAction[] {setPinAction}, true);
 
-        Eventor eventor = new Eventor(new Rule[] {
-                rule
+        Eventor eventor = new Eventor(new EventorRule[] {
+                eventorRule
         });
 
         clientPair.appClient.createWidget(1, eventor);

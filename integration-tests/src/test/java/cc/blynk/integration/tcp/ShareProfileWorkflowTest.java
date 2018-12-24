@@ -14,7 +14,7 @@ import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.notifications.Twitter;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
-import cc.blynk.server.core.model.widgets.others.eventor.Rule;
+import cc.blynk.server.core.model.widgets.others.eventor.EventorRule;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.BaseAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinActionType;
@@ -438,11 +438,11 @@ public class ShareProfileWorkflowTest extends SingleServerInstancePerTest {
         DataStream triggerDataStream = new DataStream((short) 1, PinType.VIRTUAL);
         DataStream dataStream = new DataStream((short) 2, PinType.VIRTUAL);
         SetPinAction setPinAction = new SetPinAction(dataStream, "123", SetPinActionType.CUSTOM);
-        Rule rule = new Rule(triggerDataStream, null, new GreaterThanCondition(37), new BaseAction[] {setPinAction}, true);
+        EventorRule eventorRule = new EventorRule(triggerDataStream, null, new GreaterThanCondition(37), new BaseAction[] {setPinAction}, true);
 
         Eventor eventor = new Eventor();
-        eventor.rules = new Rule[] {
-                rule
+        eventor.rules = new EventorRule[] {
+                eventorRule
         };
 
         clientPair.appClient.createWidget(1, eventor);
