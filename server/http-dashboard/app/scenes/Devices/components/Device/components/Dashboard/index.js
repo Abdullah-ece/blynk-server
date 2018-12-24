@@ -1,12 +1,13 @@
 import React from 'react';
 import './styles.less';
-import {Link} from 'react-router';
-import {Icon} from 'antd';
+import { Link } from 'react-router';
+import { Icon } from 'antd';
 // import {Map} from 'immutable';
 import PropTypes from 'prop-types';
 // import {Icon} from 'antd';
 // import {TIMELINE_TIME_FILTERS} from 'services/Devices';
-// import {connect} from 'react-redux';
+import {connect} from 'react-redux';
+import { VerifyPermission, PERMISSIONS_INDEX } from "services/Roles";
 // import {bindActionCreators} from 'redux';
 // import {WidgetsHistory} from 'data/Widgets/api';
 // import {TimeFiltering} from './scenes';
@@ -22,19 +23,14 @@ import PropTypes from 'prop-types';
 
 // const DEVICE_DASHBOARD_TIME_FILTERING_FORM_NAME = 'device-dashboard-time-filtering';
 
-// @connect((state) => ({
-//   widgets: state.Devices && state.Devices.getIn(['Widgets', 'widgetsData']),
-//   timeFilteringValues: getFormValues(DEVICE_DASHBOARD_TIME_FILTERING_FORM_NAME)(state) || {}
-// }), (dispatch) => ({
-//   initializeForm: bindActionCreators(initialize, dispatch),
-//   fetchWidgetHistory: bindActionCreators(WidgetsHistory, dispatch),
-//   blynkWsHardware: bindActionCreators(blynkWsHardware, dispatch),
-//   deviceTimeFilterUpdate: bindActionCreators(DeviceTimeFilterUpdate, dispatch),
-// }))
+import TimeFiltering
+  from 'scenes/Devices/scenes/DeviceDetails/scenes/TimeFiltering';
+import WidgetsDashboard
+  from 'scenes/Devices/scenes/DeviceDetails/scenes/Dashboard';
 
-import TimeFiltering from 'scenes/Devices/scenes/DeviceDetails/scenes/TimeFiltering';
-import WidgetsDashboard from 'scenes/Devices/scenes/DeviceDetails/scenes/Dashboard';
-
+@connect((state) => ({
+  permissions: state.RolesAndPermissions.currentRole.permissionGroup1,
+}), () => ({}))
 class Dashboard extends React.Component {
 
   static propTypes = {
@@ -42,6 +38,7 @@ class Dashboard extends React.Component {
     // widgets: PropTypes.instanceOf(Map),
     params: PropTypes.object,
     productId: PropTypes.number,
+    permissions: React.PropTypes.number,
     // timeFilteringValues: PropTypes.object,
     // fetchWidgetHistory: PropTypes.func,
     // initializeForm: PropTypes.func,
@@ -230,14 +227,18 @@ class Dashboard extends React.Component {
         <div>
           <div className="devices--device-dashboard-header-container">
             <TimeFiltering params={this.props.params}/>
-            <div className="devices--device-dashboard-edit-link">
-              <Link to={"/products/edit/"+this.props.productId+"/dashboard"}>
-                <Icon type="edit"  style={{ fontSize: 25, color: 'rgba(32, 34, 39, 0.75)' }} />
+            {VerifyPermission(this.props.permissions, PERMISSIONS_INDEX.PRODUCT_EDIT)  && (<div className="devices--device-dashboard-edit-link">
+              <Link
+                to={"/products/edit/" + this.props.productId + "/dashboard"}>
+                <Icon type="edit" style={{
+                  fontSize: 25,
+                  color: 'rgba(32, 34, 39, 0.75)'
+                }}/>
               </Link>
-            </div>
+            </div>)}
           </div>
 
-          <WidgetsDashboard params={this.props.params} />
+          <WidgetsDashboard params={this.props.params}/>
         </div>
 
       </div>

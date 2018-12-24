@@ -17,11 +17,12 @@ import {displayError}           from 'services/ErrorHandling';
 import './styles.less';
 
 import {MainLayout} from 'components';
+import { VerifyPermission, PERMISSIONS_INDEX } from "services/Roles";
 
 @connect((state) => ({
   account: state.Account,
   Product: state.Product.products,
-  canEditProduct: state.Organization && state.Organization.parentId && state.Organization.parentId === -1,
+  permissions: state.RolesAndPermissions.currentRole.permissionGroup1,
 }), (dispatch) => ({
   Fetch: bindActionCreators(API.ProductFetch, dispatch),
   FetchAll: bindActionCreators(API.ProductsFetch, dispatch),
@@ -39,7 +40,7 @@ class ProductDetails extends React.Component {
 
     Product: React.PropTypes.array,
 
-    canEditProduct: React.PropTypes.bool,
+    permissions: React.PropTypes.number,
   };
 
   static contextTypes = {
@@ -138,7 +139,7 @@ class ProductDetails extends React.Component {
     return (
       <MainLayout>
         <MainLayout.Header title={this.state.product.name}
-                           options={this.props.canEditProduct && (
+                           options={VerifyPermission(this.props.permissions, PERMISSIONS_INDEX.PRODUCT_EDIT)  && (
                              <div>
                                <Button type="default"
                                        onClick={this.handleClone}>
