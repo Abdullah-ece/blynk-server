@@ -333,10 +333,7 @@ export const PERMISSIONS_TABLE = [
 ];
 
 export const VerifyPermission = (userPermissions, permissionToCheck) => {
-  console.log(permissionToCheck)
   const newPermissions = Math.pow(2, permissionToCheck);
-  console.log(newPermissions, userPermissions & newPermissions)
   const result = (userPermissions & newPermissions) == newPermissions;
-  console.log(result);
   return result;
 };
