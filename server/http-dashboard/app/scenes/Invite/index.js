@@ -7,6 +7,7 @@ import InviteForm from './components/InviteForm';
 import {encryptUserPassword} from 'services/Crypto';
 import {Invite as SendInvite} from './data/actions';
 import * as AccountAPI from 'data/Account/actions';
+import { GetPermissionsForRole } from 'data/RolesAndPermissions/actions';
 import {LoginWsSuccess} from 'data/Login/actions';
 import {
   blynkWsLoginViaInvite
@@ -14,16 +15,21 @@ import {
 import {displayError} from "../../services/ErrorHandling";
 
 
-@connect(() => ({}), (dispatch) => ({
+@connect((state) => ({
+  roleId: state.Account.roleId,
+}), (dispatch) => ({
   LoginWsSuccess: bindActionCreators(LoginWsSuccess, dispatch),
   blynkWsLogin: bindActionCreators(blynkWsLoginViaInvite, dispatch),
   SendInvite: bindActionCreators(SendInvite, dispatch),
   AccountFetch: bindActionCreators(AccountAPI.Account, dispatch),
   AccountSaveCredentials: bindActionCreators(AccountAPI.AccountSaveCredentials, dispatch),
+  GetPermissionsForRole: bindActionCreators(GetPermissionsForRole, dispatch),
 }))
 class Invite extends React.Component {
 
   static propTypes = {
+    roleId: React.PropTypes.number,
+    GetPermissionsForRole: React.PropTypes.func,
     location: React.PropTypes.object,
     SendInvite: React.PropTypes.func,
     blynkWsLogin: React.PropTypes.func,
@@ -51,7 +57,9 @@ class Invite extends React.Component {
       //todo this is not required since api send back user data on successful login
       this.props.AccountFetch().then(() => {
         this.props.LoginWsSuccess();
-        this.context.router.push('/devices');
+        this.props.GetPermissionsForRole({ roleId: this.props.roleId }).then(() => {
+          this.context.router.push('/devices');
+        });
       });
     }).catch((err) => {
       displayError(err, message.error);

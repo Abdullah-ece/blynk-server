@@ -12,6 +12,8 @@ import { connect } from 'react-redux';
 
 import * as AccountAPI from 'data/Account/actions';
 
+import { GetPermissionsForRole } from 'data/RolesAndPermissions/actions';
+
 import {
   blynkWsLogin
 } from 'store/blynk-websocket-middleware/actions';
@@ -23,12 +25,14 @@ import { OrganizationSwitch } from "../../data/Organization/actions";
 @connect((state) => {
   return {
     orgId: state.Account.selectedOrgId,
+    roleId: state.Account.roleId,
   };
 }, (dispatch) => {
   return {
     LoginWsSuccess: bindActionCreators(LoginWsSuccess, dispatch),
     AccountSaveCredentials: bindActionCreators(AccountAPI.AccountSaveCredentials, dispatch),
     AccountFetch: bindActionCreators(AccountAPI.Account, dispatch),
+    GetPermissionsForRole: bindActionCreators(GetPermissionsForRole, dispatch),
     blynkWsLogin: bindActionCreators(blynkWsLogin, dispatch),
     organizationSwitch: bindActionCreators(OrganizationSwitch, dispatch),
   };
@@ -40,6 +44,8 @@ export default class Login extends React.Component {
   };
 
   static propTypes = {
+    roleId: React.PropTypes.number,
+    GetPermissionsForRole: React.PropTypes.func,
     blynkWsLogin: React.PropTypes.func,
     LoginWsSuccess: React.PropTypes.func,
     UnmarkAsRecentRegistered: React.PropTypes.func,
@@ -88,7 +94,9 @@ export default class Login extends React.Component {
             orgId: this.props.orgId
           });
         }
-        this.context.router.push('/devices');
+        this.props.GetPermissionsForRole({ roleId: this.props.roleId }).then(() => {
+          this.context.router.push('/devices');
+        });
       });
     });
   }

@@ -1,4 +1,5 @@
 import * as AccountAPI from "data/Account/actions";
+import { GetPermissionsForRole } from 'data/RolesAndPermissions/actions';
 import React from 'react';
 import * as API from "scenes/Login/data/actions";
 import {displayError} from "services/ErrorHandling";
@@ -41,6 +42,7 @@ import {bindActionCreators} from 'redux';
   Account         : state.Account,
   connectionStatus: state.Connection.connection,
   credentials     : state.Account.credentials || {},
+  roleId: state.Account.roleId,
 }), (dispatch) => ({
   AccountFetch           : bindActionCreators(AccountAPI.Account, dispatch),
   LoginWsSuccess         : bindActionCreators(LoginWsSuccess, dispatch),
@@ -51,6 +53,7 @@ import {bindActionCreators} from 'redux';
   connectFailed          : bindActionCreators(ConnectFailed, dispatch),
   LoginWsLogout          : bindActionCreators(LoginWsLogout, dispatch),
   AccountClearCredentials: bindActionCreators(AccountAPI.AccountClearCredentials, dispatch),
+  GetPermissionsForRole: bindActionCreators(GetPermissionsForRole, dispatch),
 }))
 class Connection extends React.Component {
 
@@ -59,6 +62,8 @@ class Connection extends React.Component {
   };
 
   static propTypes = {
+    roleId: React.PropTypes.number,
+    GetPermissionsForRole: React.PropTypes.func,
     connectionStatus       : PropTypes.number,
     isUserLoggedIn         : PropTypes.bool,
     router                 : PropTypes.object,
@@ -97,8 +102,10 @@ class Connection extends React.Component {
       }).then(() => {
         this.props.AccountFetch().then(() => {
           this.props.LoginWsSuccess();
-          this.context.router.push('/devices');
           this.props.connectSuccess();
+          this.props.GetPermissionsForRole({ roleId: this.props.roleId }).then(() => {
+            this.context.router.push('/devices');
+          });
         });
       }).catch((err) => {
         displayError(err, message.error);

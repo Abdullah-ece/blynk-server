@@ -54,7 +54,11 @@ export default function RolesAndPermissions(state = initialState, action) {
           } : role;
         })
       };
-
+    case "WEB_GET_ROLE_SUCCESS":
+      return {
+        ...state,
+        currentRole: action.payload.data
+      };
     case "WEB_GET_USER_COUNTERS_BY_ROLE_SUCCESS":
       return {
         ...state,
