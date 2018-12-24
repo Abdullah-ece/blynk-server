@@ -12,6 +12,7 @@ import {DEVICES_FILTERS} from 'services/Devices';
 @connect((state) => ({
   smartSearch: state.Storage.deviceSmartSearch,
   devicesFilter: state.Devices.devicesListFilterValue,
+  permissions: state.RolesAndPermissions.currentRole.permissionGroup1,
 }), (dispatch) => ({
   changeSmartSearch: bindActionCreators(DeviceSmartSearchState, dispatch),
   changeFilter: bindActionCreators(DevicesListFilterValueChange, dispatch)
@@ -26,6 +27,7 @@ class DevicesToolbarScene extends React.Component {
 
     location: PropTypes.object,
     params: PropTypes.object,
+    permissions: React.PropTypes.number,
 
     devicesFilter: PropTypes.oneOf([
       DEVICES_FILTERS.ALL_DEVICES,
@@ -59,12 +61,14 @@ class DevicesToolbarScene extends React.Component {
       smartSearch,
       location,
       params,
-      devicesFilter
+      devicesFilter,
+      permissions
     } = this.props;
 
     return (
       <DevicesToolbar location={location}
                       params={params}
+                      permissions={permissions}
                       devicesFilter={devicesFilter}
                       onDevicesFilterChange={this.handleDevicesFilterChange}
                       smartSearch={smartSearch}

@@ -6,6 +6,7 @@ import {
 } from 'services/Devices';
 import './styles.less';
 import PropTypes from 'prop-types';
+import { VerifyPermission, PERMISSIONS_INDEX } from "services/Roles";
 
 class DevicesToolbar extends React.Component {
 
@@ -23,6 +24,7 @@ class DevicesToolbar extends React.Component {
     params  : PropTypes.object,
 
     smartSearch: PropTypes.bool,
+    permissions: React.PropTypes.number,
   };
 
   constructor(props) {
@@ -129,7 +131,10 @@ class DevicesToolbar extends React.Component {
                   className={devicesFilter === DEVICES_FILTERS.BY_PRODUCT ? 'active' : null}/>
         </Tooltip>
         <span/>
-        {process.env.BLYNK_CREATE_DEVICE && JSON.parse(process.env.BLYNK_CREATE_DEVICE) && <Tooltip placement="top" title="Create new device">
+        {VerifyPermission(this.props.permissions, PERMISSIONS_INDEX.OWN_DEVICES_CREATE)
+        && process.env.BLYNK_CREATE_DEVICE
+        && JSON.parse(process.env.BLYNK_CREATE_DEVICE)
+        && <Tooltip placement="top" title="Create new device">
           <Button icon="plus-square-o" size="small" onClick={this.handleDeviceCreateClick.bind(this)}/>
         </Tooltip>}
         <Tooltip placement="topRight" title="Smart Search" mouseEnterDelay={.75}>

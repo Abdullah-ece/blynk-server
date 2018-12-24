@@ -1,6 +1,6 @@
 import React from 'react';
-import {Link} from 'react-router';
-import {DeviceCreateModal} from 'scenes/Devices/scenes';
+import { Link } from 'react-router';
+import { DeviceCreateModal } from 'scenes/Devices/scenes';
 import { Button } from 'antd';
 import './styles.less';
 import { VerifyPermission, PERMISSIONS_INDEX } from "services/Roles";
@@ -46,12 +46,13 @@ class NoDevices extends React.Component {
     }
   }
 
-  renderNoDevice(){
-    if(this.props.organization.parentId !== -1){
+  renderNoDevice() {
+    if (this.props.organization.parentId !== -1) {
       return (
         <div>
           <div className="devices-no-items-description">
-            Here you will find a list of all of your activated devices and their data visualized
+            Here you will find a list of all of your activated devices and their
+            data visualized
           </div>
         </div>
       );
@@ -62,7 +63,8 @@ class NoDevices extends React.Component {
             You don’t have any devices yet. <br/>
             Start with creating a New Product
           </div>
-          { VerifyPermission(this.props.permissions, PERMISSIONS_INDEX.PRODUCT_CREATE) && <div className="devices-no-items-action">
+          {VerifyPermission(this.props.permissions, PERMISSIONS_INDEX.PRODUCT_CREATE) &&
+          <div className="devices-no-items-action">
             <Link to="/products/create">
               <Button icon="plus" type="primary">New Product</Button>
             </Link>
@@ -81,12 +83,16 @@ class NoDevices extends React.Component {
           <div className="devices-no-items-title">
             All of your devices and their data will be here.
           </div>
-          { !this.props.isAnyProductExist && this.renderNoDevice() || (
+          {!this.props.isAnyProductExist && this.renderNoDevice() || (
             <div>
               <div className="devices-no-items-description">
-                Here you will find a list of all of your activated devices and their data visualized
+                Here you will find a list of all of your activated devices and
+                their data visualized
               </div>
-              {process.env.BLYNK_CREATE_DEVICE && JSON.parse(process.env.BLYNK_CREATE_DEVICE) && <div className="devices-no-items-action">
+              {VerifyPermission(this.props.permissions, PERMISSIONS_INDEX.OWN_DEVICES_CREATE)
+              && process.env.BLYNK_CREATE_DEVICE
+              && JSON.parse(process.env.BLYNK_CREATE_DEVICE)
+              && <div className="devices-no-items-action">
                 <Link to="/devices/create">
                   <Button icon="plus" type="primary">Create New Device</Button>
                 </Link>
