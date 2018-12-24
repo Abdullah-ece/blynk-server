@@ -14,6 +14,7 @@ import {message} from "antd";
   devices: state.Devices.devices,
   organization: state.Organization,
   account: state.Account,
+  permissions: state.RolesAndPermissions.currentRole.permissionGroup1,
 }), (dispatch) => ({
   fetchDevices: bindActionCreators(DevicesFetch, dispatch),
   deviceDelete: bindActionCreators(DeviceDelete, dispatch),
@@ -38,6 +39,7 @@ class Devices extends React.Component {
     location    : PropTypes.object,
     params      : PropTypes.object,
     organization: PropTypes.object,
+    permissions: PropTypes.number,
 
     blynkWsSetTrackDeviceId: PropTypes.func,
 
@@ -111,6 +113,7 @@ class Devices extends React.Component {
         <NoDevices isAnyProductExist={!!this.props.productsCount}
                    location={this.props.location}
                    params={this.props.params}
+                   permissions={this.props.permissions}
                    organization={this.props.organization}/>);
     } else {
 

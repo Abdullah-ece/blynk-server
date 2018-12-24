@@ -3,6 +3,7 @@ import {Link} from 'react-router';
 import {DeviceCreateModal} from 'scenes/Devices/scenes';
 import { Button } from 'antd';
 import './styles.less';
+import { VerifyPermission, PERMISSIONS_INDEX } from "services/Roles";
 
 class NoDevices extends React.Component {
 
@@ -14,6 +15,7 @@ class NoDevices extends React.Component {
     location: React.PropTypes.object,
     isAnyProductExist: React.PropTypes.bool,
     organization: React.PropTypes.object,
+    permissions: React.PropTypes.number,
   };
 
   state = {
@@ -60,11 +62,11 @@ class NoDevices extends React.Component {
             You don’t have any devices yet. <br/>
             Start with creating a New Product
           </div>
-          <div className="devices-no-items-action">
+          { VerifyPermission(this.props.permissions, PERMISSIONS_INDEX.PRODUCT_CREATE) && <div className="devices-no-items-action">
             <Link to="/products/create">
               <Button icon="plus" type="primary">New Product</Button>
             </Link>
-          </div>
+          </div>}
         </div>
       );
     }
