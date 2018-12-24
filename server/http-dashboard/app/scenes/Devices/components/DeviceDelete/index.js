@@ -7,6 +7,7 @@ class DeviceDelete extends Component {
     deviceId: React.PropTypes.number,
     orgId: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.number]),
     onDelete: React.PropTypes.func,
+    canDeleteDevice: React.PropTypes.bool,
   };
   constructor(props) {
     super(props);
@@ -25,7 +26,7 @@ class DeviceDelete extends Component {
                           cancelText="No"
                           onConfirm={this.handleDeviceDelete}
                           overlayClassName="danger">
-           <Button type="danger">Delete</Button>
+           {this.props.canDeleteDevice && (<Button type="danger">Delete</Button>)}
          </Popconfirm>
        </div>
     );
