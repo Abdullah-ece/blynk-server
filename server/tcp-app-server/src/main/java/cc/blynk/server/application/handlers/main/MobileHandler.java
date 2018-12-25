@@ -61,6 +61,8 @@ import cc.blynk.server.application.handlers.main.logic.sharing.MobileShareLogic;
 import cc.blynk.server.common.JsonBasedSimpleChannelInboundHandler;
 import cc.blynk.server.common.handlers.CommonGetDevicesByReferenceMetafieldLogic;
 import cc.blynk.server.common.handlers.logic.PingLogic;
+import cc.blynk.server.common.handlers.logic.timeline.WebGetDeviceTimelineLogic;
+import cc.blynk.server.common.handlers.logic.timeline.WebResolveLogEventLogic;
 import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.mobile.MobileStateHolder;
@@ -114,11 +116,13 @@ import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EXPORT_REPORT;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICES;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICES_BY_REFERENCE_METAFIELD;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICE_TIMELINE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_ENERGY;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_PROVISION_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_TAGS;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_LOAD_PROFILE_GZIPPED;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_RESOLVE_DEVICE_TIMELINE;
 import static cc.blynk.server.core.protocol.enums.Command.PING;
 import static cc.blynk.server.core.protocol.enums.Command.REDEEM;
 import static cc.blynk.server.core.protocol.enums.Command.REFRESH_SHARE_TOKEN;
@@ -144,9 +148,11 @@ public class MobileHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
     private MobileDeleteAppLogic deleteAppLogic;
     private MobileMailQRsLogic mailQRsLogic;
     private MobileGetProjectByClonedTokenLogic getProjectByCloneCodeLogic;
-    private MobileGetOrgDevicesLogic mobileGetOrgDevicesLogic;
+    private final MobileGetOrgDevicesLogic mobileGetOrgDevicesLogic;
     private final MobileLoadProfileGzippedLogic mobileLoadProfileGzippedLogic;
     private final MobileGetWidgetLogic mobileGetWidgetLogic;
+    private final WebGetDeviceTimelineLogic webGetDeviceTimelineLogic;
+    private final WebResolveLogEventLogic webResolveLogEventLogic;
 
     public MobileHandler(Holder holder, MobileStateHolder state) {
         super(StringMessage.class);
@@ -157,6 +163,8 @@ public class MobileHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
         this.mobileGetOrgDevicesLogic = new MobileGetOrgDevicesLogic(holder);
         this.mobileLoadProfileGzippedLogic = new MobileLoadProfileGzippedLogic(holder);
         this.mobileGetWidgetLogic = new MobileGetWidgetLogic(holder);
+        this.webGetDeviceTimelineLogic = new WebGetDeviceTimelineLogic(holder);
+        this.webResolveLogEventLogic = new WebResolveLogEventLogic(holder);
     }
 
     @Override
@@ -172,13 +180,13 @@ public class MobileHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
                 }
                 hardwareResendFromBTLogic.messageReceived(state, msg);
                 break;
-            case MOBILE_ACTIVATE_DASHBOARD:
+            case MOBILE_ACTIVATE_DASHBOARD :
                 MobileActivateDashboardLogic.messageReceived(holder, ctx, state, msg);
                 break;
-            case MOBILE_DEACTIVATE_DASHBOARD:
+            case MOBILE_DEACTIVATE_DASHBOARD :
                 MobileDeActivateDashboardLogic.messageReceived(holder, ctx, state, msg);
                 break;
-            case MOBILE_LOAD_PROFILE_GZIPPED:
+            case MOBILE_LOAD_PROFILE_GZIPPED :
                 mobileLoadProfileGzippedLogic.messageReceived(ctx, state, msg);
                 break;
             case SHARING :
@@ -188,17 +196,17 @@ public class MobileHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
             case ASSIGN_TOKEN :
                 MobileAssignTokenLogic.messageReceived(holder, ctx, state.user, msg);
                 break;
-            case MOBILE_ADD_PUSH_TOKEN:
+            case MOBILE_ADD_PUSH_TOKEN :
                 MobileAddPushLogic.messageReceived(ctx, state, msg);
                 break;
             case REFRESH_TOKEN :
                 MobileRefreshTokenLogic.messageReceived(holder, ctx, state, msg);
                 break;
 
-            case GET_SUPERCHART_DATA:
+            case GET_SUPERCHART_DATA :
                 MobileGetEnhancedGraphDataLogic.messageReceived(holder, ctx, state, msg);
                 break;
-            case MOBILE_DELETE_ENHANCED_GRAPH_DATA:
+            case MOBILE_DELETE_ENHANCED_GRAPH_DATA :
                 MobileDeleteEnhancedGraphDataLogic.messageReceived(holder, ctx, state.user, msg);
                 break;
             case PING :
@@ -219,36 +227,36 @@ public class MobileHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
                 mailLogic.messageReceived(ctx, state.user, msg);
                 break;
 
-            case MOBILE_CREATE_DASH:
+            case MOBILE_CREATE_DASH :
                 MobileCreateDashLogic.messageReceived(holder, ctx, state, msg);
                 break;
-            case MOBILE_EDIT_DASH:
+            case MOBILE_EDIT_DASH :
                 MobileUpdateDashLogic.messageReceived(holder, ctx, state, msg);
                 break;
-            case MOBILE_DELETE_DASH:
+            case MOBILE_DELETE_DASH :
                 MobileDeleteDashLogic.messageReceived(holder, ctx, state, msg);
                 break;
 
-            case MOBILE_CREATE_WIDGET:
+            case MOBILE_CREATE_WIDGET :
                 MobileCreateWidgetLogic.messageReceived(holder, ctx, state, msg);
                 break;
-            case MOBILE_EDIT_WIDGET:
+            case MOBILE_EDIT_WIDGET :
                 MobileUpdateWidgetLogic.messageReceived(holder, ctx, state, msg);
                 break;
-            case MOBILE_DELETE_WIDGET:
+            case MOBILE_DELETE_WIDGET :
                 MobileDeleteWidgetLogic.messageReceived(holder, ctx, state, msg);
                 break;
-            case MOBILE_GET_WIDGET:
+            case MOBILE_GET_WIDGET :
                 mobileGetWidgetLogic.messageReceived(ctx, state, msg);
                 break;
 
-            case MOBILE_CREATE_TILE_TEMPLATE:
+            case MOBILE_CREATE_TILE_TEMPLATE :
                 MobileCreateTileTemplateLogic.messageReceived(ctx, state, msg);
                 break;
-            case MOBILE_EDIT_TILE_TEMPLATE:
+            case MOBILE_EDIT_TILE_TEMPLATE :
                 MobileUpdateTileTemplateLogic.messageReceived(ctx, state, msg);
                 break;
-            case MOBILE_DELETE_TILE_TEMPLATE:
+            case MOBILE_DELETE_TILE_TEMPLATE :
                 MobileDeleteTileTemplateLogic.messageReceived(holder, ctx, state, msg);
                 break;
 
@@ -256,33 +264,33 @@ public class MobileHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
                 MobileRedeemLogic.messageReceived(holder, ctx, state.user, msg);
                 break;
 
-            case MOBILE_GET_ENERGY:
+            case MOBILE_GET_ENERGY :
                 MobileGetEnergyLogic.messageReceived(ctx, state.user, msg);
                 break;
-            case MOBILE_ADD_ENERGY:
+            case MOBILE_ADD_ENERGY :
                 if (purchaseLogic == null) {
                     this.purchaseLogic = new MobilePurchaseLogic(holder);
                 }
                 purchaseLogic.messageReceived(ctx, state, msg);
                 break;
 
-            case MOBILE_EDIT_PROJECT_SETTINGS:
+            case MOBILE_EDIT_PROJECT_SETTINGS :
                 MobileUpdateDashSettingLogic.messageReceived(ctx, state, msg, holder.limits.widgetSizeLimitBytes);
                 break;
 
-            case MOBILE_CREATE_DEVICE:
+            case MOBILE_CREATE_DEVICE :
                 MobileCreateDeviceLogic.messageReceived(holder, ctx, state.user, msg);
                 break;
-            case MOBILE_EDIT_DEVICE:
+            case MOBILE_EDIT_DEVICE :
                 MobileUpdateDeviceLogic.messageReceived(holder, ctx, state.user, msg);
                 break;
-            case MOBILE_DELETE_DEVICE:
+            case MOBILE_DELETE_DEVICE :
                 MobileDeleteDeviceLogic.messageReceived(holder, ctx, state, msg);
                 break;
-            case MOBILE_GET_DEVICES:
+            case MOBILE_GET_DEVICES :
                 mobileGetOrgDevicesLogic.messageReceived(ctx, state, msg);
                 break;
-            case MOBILE_EDIT_DEVICE_METAFIELD:
+            case MOBILE_EDIT_DEVICE_METAFIELD :
                 MobileUpdateDeviceMetafieldLogic.messageReceived(holder, ctx, state, msg);
                 break;
             case MOBILE_GET_DEVICES_BY_REFERENCE_METAFIELD :
@@ -292,16 +300,16 @@ public class MobileHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
                 MobileGetDeviceLogic.messageReceived(holder, ctx, msg);
                 break;
 
-            case MOBILE_CREATE_TAG:
+            case MOBILE_CREATE_TAG :
                 MobileCreateTagLogic.messageReceived(ctx, state.user, msg);
                 break;
-            case MOBILE_EDIT_TAG:
+            case MOBILE_EDIT_TAG :
                 MobileUpdateTagLogic.messageReceived(ctx, state.user, msg);
                 break;
-            case MOBILE_DELETE_TAG:
+            case MOBILE_DELETE_TAG :
                 MobileDeleteTagLogic.messageReceived(ctx, state.user, msg);
                 break;
-            case MOBILE_GET_TAGS:
+            case MOBILE_GET_TAGS :
                 MobileGetTagsLogic.messageReceived(ctx, state.user, msg);
                 break;
 
@@ -312,13 +320,13 @@ public class MobileHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
                 DashSyncLogic.messageReceived(holder, ctx, state, msg);
                 break;
 
-            case MOBILE_CREATE_APP:
+            case MOBILE_CREATE_APP :
                 MobileCreateAppLogic.messageReceived(ctx, state, msg, holder.limits.widgetSizeLimitBytes);
                 break;
-            case MOBILE_EDIT_APP:
+            case MOBILE_EDIT_APP :
                 MobileUpdateAppLogic.messageReceived(ctx, state, msg, holder.limits.widgetSizeLimitBytes);
                 break;
-            case MOBILE_DELETE_APP:
+            case MOBILE_DELETE_APP :
                 if (deleteAppLogic == null) {
                     this.deleteAppLogic = new MobileDeleteAppLogic(holder);
                 }
@@ -334,7 +342,7 @@ public class MobileHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
                 }
                 mailQRsLogic.messageReceived(ctx, state.user, msg);
                 break;
-            case MOBILE_EDIT_FACE:
+            case MOBILE_EDIT_FACE :
                 MobileUpdateFaceLogic.messageReceived(holder, ctx, state.user, msg);
                 break;
             case GET_CLONE_CODE :
@@ -352,26 +360,32 @@ public class MobileHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
             case SET_WIDGET_PROPERTY :
                 MobileSetWidgetPropertyLogic.messageReceived(ctx, state.user, msg);
                 break;
-            case MOBILE_GET_PROVISION_TOKEN:
+            case MOBILE_GET_PROVISION_TOKEN :
                 MobileGetProvisionTokenLogic.messageReceived(holder, ctx, state.user, msg);
                 break;
-            case MOBILE_DELETE_DEVICE_DATA:
+            case MOBILE_DELETE_DEVICE_DATA :
                 MobileDeleteDeviceDataLogic.messageReceived(holder, ctx, state, msg);
                 break;
-            case MOBILE_CREATE_REPORT:
+            case MOBILE_CREATE_REPORT :
                 MobileCreateReportLogic.messageReceived(holder, ctx, state.user, msg);
                 break;
-            case MOBILE_EDIT_REPORT:
+            case MOBILE_EDIT_REPORT :
                 MobileUpdateReportLogic.messageReceived(holder, ctx, state.user, msg);
                 break;
-            case MOBILE_DELETE_REPORT:
+            case MOBILE_DELETE_REPORT :
                 MobileDeleteReportLogic.messageReceived(holder, ctx, state.user, msg);
                 break;
-            case MOBILE_EXPORT_REPORT:
+            case MOBILE_EXPORT_REPORT :
                 MobileExportReportLogic.messageReceived(holder, ctx, state.user, msg);
                 break;
-            case MOBILE_EDIT_PROFILE_SETTINGS:
+            case MOBILE_EDIT_PROFILE_SETTINGS :
                 MobileUpdateProfileSettingLogic.messageReceived(ctx, state, msg);
+                break;
+            case MOBILE_GET_DEVICE_TIMELINE :
+                webGetDeviceTimelineLogic.messageReceived(ctx, state, msg);
+                break;
+            case MOBILE_RESOLVE_DEVICE_TIMELINE :
+                webResolveLogEventLogic.messageReceived(ctx, state, msg);
                 break;
         }
     }

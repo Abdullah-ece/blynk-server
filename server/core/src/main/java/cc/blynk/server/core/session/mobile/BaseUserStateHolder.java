@@ -34,4 +34,19 @@ public abstract class BaseUserStateHolder {
         this.role = role;
     }
 
+    /**
+     * If we get hardware control action like hardware/getTimeline/resolveEvent
+     * we have to check that currently "selected device" is
+     * matches to the deviceId in hardware command, so we can be sure
+     * user doesn't try to access another device.
+     *
+     * This is required because we do security check only on trackDevice handler,
+     * so in order to control device user should have it selected on the UI.
+     */
+    public void checkControlledDeviceIsSelected(int deviceId) {
+        //todo
+        //all states should implement this in future
+        //do nothing for now.
+    }
+
 }

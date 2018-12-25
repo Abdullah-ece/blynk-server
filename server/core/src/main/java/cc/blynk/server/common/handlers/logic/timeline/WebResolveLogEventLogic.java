@@ -1,10 +1,10 @@
-package cc.blynk.server.web.handlers.logic.device.timeline;
+package cc.blynk.server.common.handlers.logic.timeline;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.PermissionBasedLogic;
 import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.core.session.web.WebAppStateHolder;
+import cc.blynk.server.core.session.mobile.BaseUserStateHolder;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_DEVICES_EDIT;
@@ -14,7 +14,7 @@ import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_DEVICE
  * Created by Dmitriy Dumanskiy.
  * Created on 13.04.18.
  */
-public final class WebResolveLogEventLogic implements PermissionBasedLogic<WebAppStateHolder> {
+public final class WebResolveLogEventLogic implements PermissionBasedLogic<BaseUserStateHolder> {
 
     private final WebResolveOwnLogEventLogic webResolveOwnLogEventLogic;
 
@@ -33,12 +33,12 @@ public final class WebResolveLogEventLogic implements PermissionBasedLogic<WebAp
     }
 
     @Override
-    public void noPermissionAction(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage msg) {
+    public void noPermissionAction(ChannelHandlerContext ctx, BaseUserStateHolder state, StringMessage msg) {
         webResolveOwnLogEventLogic.messageReceived(ctx, state, msg);
     }
 
     @Override
-    public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage msg) {
+    public void messageReceived0(ChannelHandlerContext ctx, BaseUserStateHolder state, StringMessage msg) {
         webResolveOwnLogEventLogic.messageReceived0(ctx, state, msg);
     }
 }

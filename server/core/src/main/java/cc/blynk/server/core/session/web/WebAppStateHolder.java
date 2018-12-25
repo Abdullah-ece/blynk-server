@@ -26,15 +26,7 @@ public class WebAppStateHolder extends BaseUserStateHolder {
         return selectedDeviceId == deviceId;
     }
 
-    /**
-     * If we get hardware control action like hardware/getTimeline/resolveEvent
-     * we have to check that currently "selected device" is
-     * matches to the deviceId in hardware command, so we can be sure
-     * user doesn't try to access another device.
-     *
-     * This is required because we do security check only on trackDevice handler,
-     * so in order to control device user should have it selected on the UI.
-     */
+    @Override
     public void checkControlledDeviceIsSelected(int deviceId) {
         if (deviceId != selectedDeviceId) {
             throw new NoPermissionException("You can control only selected on UI device.");

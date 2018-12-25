@@ -1,4 +1,4 @@
-package cc.blynk.server.web.handlers.logic.device.timeline;
+package cc.blynk.server.common.handlers.logic.timeline;
 
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.EventType;

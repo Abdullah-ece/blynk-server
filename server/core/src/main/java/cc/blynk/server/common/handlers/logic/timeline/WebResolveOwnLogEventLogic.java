@@ -1,4 +1,4 @@
-package cc.blynk.server.web.handlers.logic.device.timeline;
+package cc.blynk.server.common.handlers.logic.timeline;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
@@ -11,7 +11,7 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.core.session.web.WebAppStateHolder;
+import cc.blynk.server.core.session.mobile.BaseUserStateHolder;
 import cc.blynk.server.db.ReportingDBManager;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -21,7 +21,7 @@ import static cc.blynk.server.core.model.permissions.PermissionsTable.OWN_DEVICE
 import static cc.blynk.server.core.protocol.enums.Command.WEB_RESOLVE_EVENT;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 import static cc.blynk.server.internal.WebByteBufUtil.json;
-import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
+import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 import static cc.blynk.utils.StringUtils.split3;
 
 /**
@@ -29,7 +29,7 @@ import static cc.blynk.utils.StringUtils.split3;
  * Created by Dmitriy Dumanskiy.
  * Created on 13.04.18.
  */
-public final class WebResolveOwnLogEventLogic implements PermissionBasedLogic<WebAppStateHolder> {
+public final class WebResolveOwnLogEventLogic implements PermissionBasedLogic<BaseUserStateHolder> {
 
     private static final Logger log = LogManager.getLogger(WebResolveOwnLogEventLogic.class);
 
@@ -55,8 +55,15 @@ public final class WebResolveOwnLogEventLogic implements PermissionBasedLogic<We
         return OWN_DEVICES_EDIT;
     }
 
+    private static String buildEventBody(long logEventId, String resolverEmail, String resolveComment) {
+        if (resolveComment == null) {
+            return "" + logEventId + BODY_SEPARATOR + resolverEmail;
+        }
+        return "" + logEventId + BODY_SEPARATOR + resolverEmail + BODY_SEPARATOR + resolveComment;
+    }
+
     @Override
-    public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
+    public void messageReceived0(ChannelHandlerContext ctx, BaseUserStateHolder state, StringMessage message) {
         //deviceId logEventId comment
         String[] messageParts = split3(message.body);
 
@@ -86,13 +93,10 @@ public final class WebResolveOwnLogEventLogic implements PermissionBasedLogic<We
             MessageBase response;
             try {
                 if (reportingDBManager.eventDBDao.resolveEvent(logEventId, user.name, comment)) {
-                    response = ok(message.id);
+                    String body = buildEventBody(logEventId, user.email, comment);
                     Session session = sessionDao.getOrgSession(orgId);
-                    String body = messageParts[1] + BODY_SEPARATOR_STRING + user.email;
-                    if (comment != null) {
-                        body = body + BODY_SEPARATOR_STRING + comment;
-                    }
                     session.sendToSelectedDeviceOnWeb(ctx.channel(), WEB_RESOLVE_EVENT, message.id, body, deviceId);
+                    response = ok(message.id);
                 } else {
                     log.warn("Event with id {} for user {} not resolved.", logEventId, user.email);
                     response = json(message.id, "Event for user not resolved.");

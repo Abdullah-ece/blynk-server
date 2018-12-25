@@ -19,6 +19,8 @@ import cc.blynk.integration.model.tcp.BaseTestAppClient;
 import cc.blynk.server.Limits;
 import cc.blynk.server.api.http.dashboard.dto.ProductAndOrgIdDTO;
 import cc.blynk.server.api.http.dashboard.dto.RoleDTO;
+import cc.blynk.server.common.handlers.logic.timeline.TimelineDTO;
+import cc.blynk.server.common.handlers.logic.timeline.TimelineResponseDTO;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.dto.DeviceDTO;
@@ -34,8 +36,6 @@ import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.stats.GlobalStats;
-import cc.blynk.server.web.handlers.logic.device.timeline.TimelineDTO;
-import cc.blynk.server.web.handlers.logic.device.timeline.TimelineResponseDTO;
 import cc.blynk.server.web.handlers.logic.organization.dto.CountDTO;
 import cc.blynk.server.web.handlers.logic.organization.dto.LocationDTO;
 import cc.blynk.server.web.handlers.logic.organization.dto.OrganizationsHierarchyDTO;
@@ -362,11 +362,11 @@ public final class AppWebSocketClient extends BaseTestAppClient {
                 + JsonParser.valueToJsonAsString(Arrays.asList(users)));
     }
 
-    public void getTimeline(int orgId, int deviceId,
+    public void getTimeline(int deviceId,
                             EventType eventType, Boolean isResolved,
                             long form, long to,
                             int offset, int limit) {
-        send(WEB_GET_DEVICE_TIMELINE, new TimelineDTO(orgId, deviceId, eventType, isResolved, form, to, offset, limit));
+        send(WEB_GET_DEVICE_TIMELINE, new TimelineDTO(deviceId, eventType, isResolved, form, to, offset, limit));
     }
 
     public void updateDeviceMetafield(int deviceId, MetaField metaField) {

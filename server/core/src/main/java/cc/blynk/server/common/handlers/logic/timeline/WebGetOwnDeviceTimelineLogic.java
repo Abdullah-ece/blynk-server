@@ -1,4 +1,4 @@
-package cc.blynk.server.web.handlers.logic.device.timeline;
+package cc.blynk.server.common.handlers.logic.timeline;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
@@ -12,7 +12,7 @@ import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.events.Event;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.core.session.web.WebAppStateHolder;
+import cc.blynk.server.core.session.mobile.BaseUserStateHolder;
 import cc.blynk.server.db.ReportingDBManager;
 import cc.blynk.server.db.model.LogEvent;
 import cc.blynk.server.db.model.LogEventCountKey;
@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import static cc.blynk.server.core.model.permissions.PermissionsTable.OWN_DEVICES_VIEW;
-import static cc.blynk.server.internal.CommonByteBufUtil.makeASCIIStringMessage;
+import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.server.internal.WebByteBufUtil.json;
 
 /**
@@ -30,7 +30,7 @@ import static cc.blynk.server.internal.WebByteBufUtil.json;
  * Created by Dmitriy Dumanskiy.
  * Created on 13.04.18.
  */
-public final class WebGetOwnDeviceTimelineLogic implements PermissionBasedLogic<WebAppStateHolder> {
+public final class WebGetOwnDeviceTimelineLogic implements PermissionBasedLogic<BaseUserStateHolder> {
 
     private final DeviceDao deviceDao;
     private final BlockingIOProcessor blockingIOProcessor;
@@ -64,7 +64,7 @@ public final class WebGetOwnDeviceTimelineLogic implements PermissionBasedLogic<
     }
 
     @Override
-    public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
+    public void messageReceived0(ChannelHandlerContext ctx, BaseUserStateHolder state, StringMessage message) {
         TimelineDTO timelineDTO = JsonParser.readAny(message.body, TimelineDTO.class);
 
         User user = state.user;
@@ -122,7 +122,7 @@ public final class WebGetOwnDeviceTimelineLogic implements PermissionBasedLogic<
 
                 String responseJson = new TimelineResponseDTO(timelineDTO.deviceId,
                         totalCounters, eventList).toString();
-                response = makeASCIIStringMessage(message.command, message.id, responseJson);
+                response = makeUTF8StringMessage(message.command, message.id, responseJson);
             } catch (Exception e) {
                 log.error("Error retrieving timeline for deviceId {}, limit {}, offset {}.",
                         timelineDTO.deviceId, timelineDTO.limit, timelineDTO.offset, e);

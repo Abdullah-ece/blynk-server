@@ -184,6 +184,8 @@ public final class Command {
     public static final short WEB_TRACK_ORG = 145;
     public static final short WEB_GET_USER_COUNTERS_BY_ROLE = 146;
     public static final short WEB_GET_DEVICES_BY_REFERENCE_METAFIELD = 147;
+    public static final short MOBILE_GET_DEVICE_TIMELINE = 148;
+    public static final short MOBILE_RESOLVE_DEVICE_TIMELINE = 149;
 
     public static final int LAST_COMMAND_INDEX = 150;
 
@@ -325,7 +327,9 @@ public final class Command {
             Map.entry(WEB_OTA_CLEAN, "WebOtaClean"),
             Map.entry(WEB_TRACK_ORG, "WebTrackOrg"),
             Map.entry(WEB_GET_USER_COUNTERS_BY_ROLE, "WebGetUserCountersByRole"),
-            Map.entry(WEB_GET_DEVICES_BY_REFERENCE_METAFIELD, "WebGetDevicesByReferenceMetafield")
+            Map.entry(WEB_GET_DEVICES_BY_REFERENCE_METAFIELD, "WebGetDevicesByReferenceMetafield"),
+            Map.entry(MOBILE_GET_DEVICE_TIMELINE, "MobileGetDeviceTimeline"),
+            Map.entry(MOBILE_RESOLVE_DEVICE_TIMELINE, "MobileResolveDeviceTimeline")
     );
 
     public static String getNameByValue(short val) {

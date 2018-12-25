@@ -3,6 +3,7 @@ package cc.blynk.integration.https;
 import cc.blynk.integration.SingleServerInstancePerTestWithDBAndNewOrg;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
+import cc.blynk.server.common.handlers.logic.timeline.TimelineResponseDTO;
 import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.dto.ProductDTO;
@@ -17,7 +18,6 @@ import cc.blynk.server.core.model.web.product.events.OfflineEvent;
 import cc.blynk.server.core.model.web.product.events.OnlineEvent;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.db.model.LogEvent;
-import cc.blynk.server.web.handlers.logic.device.timeline.TimelineResponseDTO;
 import cc.blynk.utils.StringUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -82,7 +82,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         client.reset();
 
         long now = System.currentTimeMillis();
-        client.getTimeline(orgId, device.id, EventType.CRITICAL, null, 0, now, 0, 10);
+        client.getTimeline(device.id, EventType.CRITICAL, null, 0, now, 0, 10);
         TimelineResponseDTO timeLineResponse = client.parseTimelineResponse(1);
         assertNotNull(timeLineResponse);
         assertEquals(1, timeLineResponse.totalCritical);
@@ -113,7 +113,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         client.reset();
 
         long now = System.currentTimeMillis();
-        client.getTimeline(orgId, device.id, EventType.CRITICAL, null, 0, now, 0, 10);
+        client.getTimeline(device.id, EventType.CRITICAL, null, 0, now, 0, 10);
         TimelineResponseDTO timeLineResponse = client.parseTimelineResponse(1);
         assertNotNull(timeLineResponse);
         assertEquals(1, timeLineResponse.totalCritical);
@@ -248,7 +248,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
 
         long logEventId;
         client.reset();
-        client.getTimeline(orgId, device.id, EventType.CRITICAL, false, 0, now, 0, 10);
+        client.getTimeline(device.id, EventType.CRITICAL, false, 0, now, 0, 10);
         TimelineResponseDTO timeLineResponse = client.parseTimelineResponse(1);
         assertNotNull(timeLineResponse);
         assertNotNull(timeLineResponse);
@@ -269,7 +269,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         client.resolveEvent(device.id, logEventId, "resolve comment");
         client.verifyResult(ok(2));
 
-        client.getTimeline(orgId, device.id, EventType.CRITICAL, null, 0, System.currentTimeMillis(), 0, 10);
+        client.getTimeline(device.id, EventType.CRITICAL, null, 0, System.currentTimeMillis(), 0, 10);
         timeLineResponse = client.parseTimelineResponse(3);
         assertNotNull(timeLineResponse);
 
@@ -324,7 +324,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
 
         long logEventId;
         client.reset();
-        client.getTimeline(orgId, device.id, EventType.CRITICAL, false, 0, now, 0, 10);
+        client.getTimeline(device.id, EventType.CRITICAL, false, 0, now, 0, 10);
         TimelineResponseDTO timeLineResponse = client.parseTimelineResponse(1);
         assertNotNull(timeLineResponse);
         List<LogEvent> logEvents = timeLineResponse.eventList;
@@ -343,7 +343,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         client2.verifyResult(new StringMessage(2, WEB_RESOLVE_EVENT,
                 b(device.id + " " + logEventId + " " + getUserName() + " ") + "resolve comment"));
 
-        client.getTimeline(orgId, device.id, EventType.CRITICAL, null, 0, System.currentTimeMillis(), 0, 10);
+        client.getTimeline(device.id, EventType.CRITICAL, null, 0, System.currentTimeMillis(), 0, 10);
         timeLineResponse = client.parseTimelineResponse(3);
         assertNotNull(timeLineResponse);
 
@@ -378,7 +378,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
 
         client.reset();
 
-        client.getTimeline(orgId, device.id, EventType.ONLINE, null, 0, System.currentTimeMillis(), 0, 10);
+        client.getTimeline(device.id, EventType.ONLINE, null, 0, System.currentTimeMillis(), 0, 10);
         TimelineResponseDTO timeLineResponse = client.parseTimelineResponse(1);
         assertNotNull(timeLineResponse);
 
@@ -408,7 +408,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         newHardClient.verifyResult(ok(2));
         client.reset();
 
-        client.getTimeline(orgId, device.id, EventType.CRITICAL, null, 0, System.currentTimeMillis(), 0, 10);
+        client.getTimeline(device.id, EventType.CRITICAL, null, 0, System.currentTimeMillis(), 0, 10);
         TimelineResponseDTO timeLineResponse = client.parseTimelineResponse(1);
         assertNotNull(timeLineResponse);
 
@@ -438,7 +438,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         newHardClient.verifyResult(ok(2));
         client.reset();
 
-        client.getTimeline(orgId, device.id, EventType.CRITICAL, null, 0, System.currentTimeMillis(), 0, 10);
+        client.getTimeline(device.id, EventType.CRITICAL, null, 0, System.currentTimeMillis(), 0, 10);
         TimelineResponseDTO timeLineResponse = client.parseTimelineResponse(1);
         assertNotNull(timeLineResponse);
 
@@ -478,7 +478,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         }
 
         client.reset();
-        client.getTimeline(orgId, device.id, EventType.CRITICAL, null, 0, System.currentTimeMillis(), 0, 10);
+        client.getTimeline(device.id, EventType.CRITICAL, null, 0, System.currentTimeMillis(), 0, 10);
         TimelineResponseDTO timeLineResponse = client.parseTimelineResponse(1);
         assertNotNull(timeLineResponse);
 
@@ -530,7 +530,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         newHardClient.verifyResult(ok(2));
         client.reset();
 
-        client.getTimeline(orgId, device.id, EventType.CRITICAL, true, 0, System.currentTimeMillis(), 0, 10);
+        client.getTimeline(device.id, EventType.CRITICAL, true, 0, System.currentTimeMillis(), 0, 10);
         TimelineResponseDTO timeLineResponse = client.parseTimelineResponse(1);
         assertNotNull(timeLineResponse);
 
@@ -623,7 +623,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         client.reset();
 
         long logEventId;
-        client.getTimeline(orgId, device.id, EventType.CRITICAL, null, 0, System.currentTimeMillis(), 0, 10);
+        client.getTimeline(device.id, EventType.CRITICAL, null, 0, System.currentTimeMillis(), 0, 10);
         TimelineResponseDTO timeLineResponse = client.parseTimelineResponse(1);
         assertNotNull(timeLineResponse);
         assertEquals(1, timeLineResponse.totalCritical);
@@ -641,7 +641,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         client.resolveEvent(device.id, logEventId, "123");
         client.verifyResult(ok(3));
 
-        client.getTimeline(orgId, device.id, EventType.CRITICAL, true, 0, System.currentTimeMillis(), 0, 10);
+        client.getTimeline(device.id, EventType.CRITICAL, true, 0, System.currentTimeMillis(), 0, 10);
         timeLineResponse = client.parseTimelineResponse(4);
         assertNotNull(timeLineResponse);
 
@@ -659,7 +659,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         assertEquals(System.currentTimeMillis(), logEvents.get(0).resolvedAt, 5000);
         assertEquals("123", logEvents.get(0).resolvedComment);
 
-        client.getTimeline(orgId, device.id, EventType.CRITICAL, false, 0, System.currentTimeMillis(), 0, 10);
+        client.getTimeline(device.id, EventType.CRITICAL, false, 0, System.currentTimeMillis(), 0, 10);
         timeLineResponse = client.parseTimelineResponse(5);
         assertNotNull(timeLineResponse);
 
@@ -691,7 +691,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         newHardClient.verifyResult(ok(4));
 
         client.reset();
-        client.getTimeline(orgId, device.id, EventType.CRITICAL, null, 0, System.currentTimeMillis(), 0, 10);
+        client.getTimeline(device.id, EventType.CRITICAL, null, 0, System.currentTimeMillis(), 0, 10);
         TimelineResponseDTO timeLineResponse = client.parseTimelineResponse(1);
         assertNotNull(timeLineResponse);
 
@@ -706,7 +706,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         client.resolveEvent(device.id, logEventId);
         client.verifyResult(ok(2));
 
-        client.getTimeline(orgId, device.id, EventType.CRITICAL, null, 0, System.currentTimeMillis(), 0, 10);
+        client.getTimeline(device.id, EventType.CRITICAL, null, 0, System.currentTimeMillis(), 0, 10);
         timeLineResponse = client.parseTimelineResponse(3);
         assertNotNull(timeLineResponse);
 
@@ -736,7 +736,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
 
         sleep(500);
 
-        client.getTimeline(orgId, device.id, null, null, 0, System.currentTimeMillis(), 0, 10);
+        client.getTimeline(device.id, null, null, 0, System.currentTimeMillis(), 0, 10);
         TimelineResponseDTO timeLineResponse = client.parseTimelineResponse(1);
         assertNotNull(timeLineResponse);
         assertEquals(0, timeLineResponse.totalCritical);
@@ -754,7 +754,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         sleep(1100);
         client.reset();
 
-        client.getTimeline(orgId, device.id, EventType.OFFLINE, null, 0, System.currentTimeMillis(), 0, 10);
+        client.getTimeline(device.id, EventType.OFFLINE, null, 0, System.currentTimeMillis(), 0, 10);
         timeLineResponse = client.parseTimelineResponse(1);
         assertNotNull(timeLineResponse);
         assertEquals(0, timeLineResponse.totalCritical);
@@ -908,7 +908,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
 
         client.reset();
         long now = System.currentTimeMillis();
-        client.getTimeline(orgId, device.id, null, null, 0, now, 0, 10);
+        client.getTimeline(device.id, null, null, 0, now, 0, 10);
         TimelineResponseDTO timeLineResponse = client.parseTimelineResponse(1);
         assertNotNull(timeLineResponse);
         assertEquals(0, timeLineResponse.totalCritical);
