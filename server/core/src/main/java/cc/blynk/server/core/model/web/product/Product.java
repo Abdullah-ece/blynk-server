@@ -150,9 +150,11 @@ public class Product {
         if (name == null || name.isEmpty()) {
             throw new IllegalCommandBodyException("Product name is empty.");
         }
+
         for (MetaField metaField : metaFields) {
             metaField.basicValidate();
         }
+
         checkForDuplicateTemplateId();
         if (!hasMetafield(DeviceNameMetaField.class)) {
             throw new IllegalCommandBodyException("Product has no device name metafield.");
@@ -161,6 +163,8 @@ public class Product {
         if (!hasMetafield(DeviceOwnerMetaField.class)) {
             throw new IllegalCommandBodyException("Product has no device owner metafield.");
         }
+
+        checkForDuplicateDataStreams();
     }
 
     private boolean hasMetafield(Class<?> type) {
@@ -181,6 +185,16 @@ public class Product {
                 }
                 hasAlready = true;
             }
+        }
+    }
+
+    private void checkForDuplicateDataStreams() {
+        Set<Short> pinSet = new HashSet<>();
+        for (DataStream dataStream : dataStreams) {
+            pinSet.add(dataStream.pin);
+        }
+        if (pinSet.size() != dataStreams.length) {
+            throw new IllegalCommandBodyException("Product has more than 1 Datastream on the same pin.");
         }
     }
 

@@ -336,6 +336,31 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
     }
 
     @Test
+    public void createProductWithWrongDatastreams() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+
+        Product product = new Product();
+        product.name = "createProductWithMetafields2";
+        product.description = "Description";
+        product.boardType = "ESP8266";
+        product.connectionType = ConnectionType.WI_FI;
+        product.logoUrl = "/static/logo.png";
+
+        product.metaFields = new MetaField[] {
+                createDeviceNameMeta(10, "DEvice Name", "123", true),
+                createDeviceOwnerMeta(11, "Owner", "123", true)
+        };
+
+        product.dataStreams = new DataStream[] {
+                new DataStream(0, (short) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius),
+                new DataStream(1, (short) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius)
+        };
+
+        client.createProduct(orgId, product);
+        client.verifyResult(webJson(1, "Product has more than 1 Datastream on the same pin."));
+    }
+
+    @Test
     public void createProductWithDuplicatedTemplateIdMetafields() throws Exception {
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
 
