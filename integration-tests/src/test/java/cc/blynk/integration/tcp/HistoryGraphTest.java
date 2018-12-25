@@ -16,8 +16,8 @@ import cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType;
 import cc.blynk.server.core.model.widgets.outputs.graph.FontSize;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
-import cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphType;
+import cc.blynk.server.core.model.widgets.outputs.graph.Period;
 import cc.blynk.server.core.model.widgets.outputs.graph.Superchart;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.model.widgets.ui.reporting.Report;
@@ -63,8 +63,8 @@ import static cc.blynk.integration.TestUtil.createTag;
 import static cc.blynk.integration.TestUtil.illegalCommand;
 import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.server.core.model.serialization.JsonParser.MAPPER;
-import static cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod.ONE_HOUR;
-import static cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod.SIX_HOURS;
+import static cc.blynk.server.core.model.widgets.outputs.graph.Period.ONE_HOUR;
+import static cc.blynk.server.core.model.widgets.outputs.graph.Period.SIX_HOURS;
 import static cc.blynk.server.core.model.widgets.ui.reporting.ReportOutput.CSV_FILE_PER_DEVICE_PER_PIN;
 import static cc.blynk.server.core.protocol.enums.Response.NO_DATA;
 import static java.nio.file.StandardOpenOption.APPEND;
@@ -140,15 +140,15 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         }
 
         Path pinReportingDataPath1 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.DIGITAL, (short) 8, GraphPeriod.THREE_MONTHS.granularityType));
+                ReportingDiskDao.generateFilename(PinType.DIGITAL, (short) 8, Period.THREE_MONTHS.granularityType));
         Path pinReportingDataPath2 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.DIGITAL, (short) 9, GraphPeriod.THREE_MONTHS.granularityType));
+                ReportingDiskDao.generateFilename(PinType.DIGITAL, (short) 9, Period.THREE_MONTHS.granularityType));
         Path pinReportingDataPath3 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.DIGITAL, (short) 10, GraphPeriod.THREE_MONTHS.granularityType));
+                ReportingDiskDao.generateFilename(PinType.DIGITAL, (short) 10, Period.THREE_MONTHS.granularityType));
         Path pinReportingDataPath4 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.DIGITAL, (short) 11, GraphPeriod.THREE_MONTHS.granularityType));
+                ReportingDiskDao.generateFilename(PinType.DIGITAL, (short) 11, Period.THREE_MONTHS.granularityType));
 
-        for (int i = 0; i < GraphPeriod.THREE_MONTHS.numberOfPoints; i++) {
+        for (int i = 0; i < Period.THREE_MONTHS.numberOfPoints; i++) {
             long now = System.currentTimeMillis();
             FileUtils.write(pinReportingDataPath1, ThreadLocalRandom.current().nextDouble(), now);
             FileUtils.write(pinReportingDataPath2, ThreadLocalRandom.current().nextDouble(), now);
@@ -157,7 +157,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         }
 
         appClient.reset();
-        appClient.getEnhancedGraphData(1, 432, GraphPeriod.THREE_MONTHS);
+        appClient.getEnhancedGraphData(1, 432, Period.THREE_MONTHS);
         BinaryMessage graphDataResponse = appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
@@ -193,7 +193,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 88, GraphPeriod.DAY.granularityType));
+                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 88, Period.DAY.granularityType));
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
@@ -214,7 +214,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(3));
         clientPair.appClient.reset();
 
-        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.DAY);
+        clientPair.appClient.getEnhancedGraphData(1, 432, Period.DAY);
         BinaryMessage graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
@@ -257,12 +257,12 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 88, GraphPeriod.DAY.granularityType));
+                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 88, Period.DAY.granularityType));
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
         Path pinReportingDataPath2 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 88, GraphPeriod.DAY.granularityType));
+                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 88, Period.DAY.granularityType));
         FileUtils.write(pinReportingDataPath2, 1.112D, 1111111);
         FileUtils.write(pinReportingDataPath2, 1.222D, 2222222);
 
@@ -280,7 +280,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(3));
         clientPair.appClient.reset();
 
-        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.DAY);
+        clientPair.appClient.getEnhancedGraphData(1, 432, Period.DAY);
         BinaryMessage graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
@@ -323,12 +323,12 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 88, GraphPeriod.DAY.granularityType));
+                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 88, Period.DAY.granularityType));
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
         Path pinReportingDataPath2 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 88, GraphPeriod.DAY.granularityType));
+                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 88, Period.DAY.granularityType));
         FileUtils.write(pinReportingDataPath2, 1.112D, 1111111);
         FileUtils.write(pinReportingDataPath2, 1.222D, 2222222);
 
@@ -346,7 +346,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(3));
         clientPair.appClient.reset();
 
-        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.DAY);
+        clientPair.appClient.getEnhancedGraphData(1, 432, Period.DAY);
         BinaryMessage graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
@@ -389,12 +389,12 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 88, GraphPeriod.DAY.granularityType));
+                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 88, Period.DAY.granularityType));
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
         Path pinReportingDataPath2 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 88, GraphPeriod.DAY.granularityType));
+                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 88, Period.DAY.granularityType));
         FileUtils.write(pinReportingDataPath2, 1.112D, 1111111);
         FileUtils.write(pinReportingDataPath2, 1.222D, 2222222);
 
@@ -412,7 +412,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(3));
         clientPair.appClient.reset();
 
-        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.DAY);
+        clientPair.appClient.getEnhancedGraphData(1, 432, Period.DAY);
         BinaryMessage graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
@@ -455,12 +455,12 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 88, GraphPeriod.DAY.granularityType));
+                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 88, Period.DAY.granularityType));
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
         Path pinReportingDataPath2 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 88, GraphPeriod.DAY.granularityType));
+                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 88, Period.DAY.granularityType));
         FileUtils.write(pinReportingDataPath2, 1.112D, 1111111);
         FileUtils.write(pinReportingDataPath2, 1.222D, 2222222);
 
@@ -478,7 +478,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(3));
         clientPair.appClient.reset();
 
-        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.DAY);
+        clientPair.appClient.getEnhancedGraphData(1, 432, Period.DAY);
         BinaryMessage graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
@@ -521,12 +521,12 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 88, GraphPeriod.DAY.granularityType));
+                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 88, Period.DAY.granularityType));
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
         Path pinReportingDataPath2 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 88, GraphPeriod.DAY.granularityType));
+                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 88, Period.DAY.granularityType));
         FileUtils.write(pinReportingDataPath2, 1.112D, 1111111);
         FileUtils.write(pinReportingDataPath2, 1.222D, 2222222);
 
@@ -544,7 +544,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(3));
         clientPair.appClient.reset();
 
-        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.DAY);
+        clientPair.appClient.getEnhancedGraphData(1, 432, Period.DAY);
         BinaryMessage graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
@@ -594,17 +594,17 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 88, GraphPeriod.DAY.granularityType));
+                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 88, Period.DAY.granularityType));
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
         Path pinReportingDataPath2 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 88, GraphPeriod.DAY.granularityType));
+                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 88, Period.DAY.granularityType));
         FileUtils.write(pinReportingDataPath2, 1.112D, 1111111);
         FileUtils.write(pinReportingDataPath2, 1.222D, 2222222);
 
         Path pinReportingDataPath3 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename( PinType.VIRTUAL, (short) 88, GraphPeriod.DAY.granularityType));
+                ReportingDiskDao.generateFilename( PinType.VIRTUAL, (short) 88, Period.DAY.granularityType));
         FileUtils.write(pinReportingDataPath3, 1.113D, 1111111);
         FileUtils.write(pinReportingDataPath3, 1.223D, 2222222);
 
@@ -622,7 +622,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(4));
         clientPair.appClient.reset();
 
-        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.DAY);
+        clientPair.appClient.getEnhancedGraphData(1, 432, Period.DAY);
         BinaryMessage graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
@@ -664,7 +664,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         clientPair.appClient.createWidget(1, enhancedHistoryGraph);
         clientPair.appClient.verifyResult(ok(1));
 
-        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.DAY);
+        clientPair.appClient.getEnhancedGraphData(1, 432, Period.DAY);
 
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, NO_DATA)));
     }
@@ -679,9 +679,9 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.DIGITAL, (short) 8, GraphPeriod.ONE_HOUR.granularityType));
+                ReportingDiskDao.generateFilename(PinType.DIGITAL, (short) 8, Period.ONE_HOUR.granularityType));
 
-        for (int point = 0; point < GraphPeriod.ONE_HOUR.numberOfPoints + 1; point++) {
+        for (int point = 0; point < Period.ONE_HOUR.numberOfPoints + 1; point++) {
             FileUtils.write(pinReportingDataPath, (double) point, 1111111 + point);
         }
 
@@ -699,7 +699,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(1));
         clientPair.appClient.reset();
 
-        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.ONE_HOUR);
+        clientPair.appClient.getEnhancedGraphData(1, 432, Period.ONE_HOUR);
 
         BinaryMessage graphDataResponse = clientPair.appClient.getBinaryBody();
 
@@ -709,7 +709,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
         assertEquals(1, bb.getInt());
         assertEquals(60, bb.getInt());
-        for (int point = 1; point < GraphPeriod.ONE_HOUR.numberOfPoints + 1; point++) {
+        for (int point = 1; point < Period.ONE_HOUR.numberOfPoints + 1; point++) {
             assertEquals(point, bb.getDouble(), 0.1);
             assertEquals(1111111 + point , bb.getLong());
         }
@@ -725,7 +725,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.DIGITAL, (short) 8, GraphPeriod.DAY.granularityType));
+                ReportingDiskDao.generateFilename(PinType.DIGITAL, (short) 8, Period.DAY.granularityType));
 
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
@@ -747,7 +747,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(1));
         clientPair.appClient.reset();
 
-        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.DAY);
+        clientPair.appClient.getEnhancedGraphData(1, 432, Period.DAY);
         BinaryMessage graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
@@ -792,7 +792,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(1));
         clientPair.appClient.reset();
 
-        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.DAY);
+        clientPair.appClient.getEnhancedGraphData(1, 432, Period.DAY);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NO_DATA)));
     }
 
@@ -865,7 +865,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
         //no live
-        enhancedHistoryGraph.selectedPeriods = new GraphPeriod[] {
+        enhancedHistoryGraph.selectedPeriods = new Period[] {
                 ONE_HOUR, SIX_HOURS
         };
         DataStream dataStream = new DataStream((short) 88, PinType.VIRTUAL);
@@ -1183,14 +1183,14 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(1));
         clientPair.appClient.reset();
 
-        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.LIVE);
+        clientPair.appClient.getEnhancedGraphData(1, 432, Period.LIVE);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NO_DATA)));
 
         clientPair.hardwareClient.send("hardware vw 88 111");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 88 111"))));
         clientPair.appClient.reset();
 
-        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.LIVE);
+        clientPair.appClient.getEnhancedGraphData(1, 432, Period.LIVE);
         BinaryMessage graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
@@ -1209,7 +1209,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         verify(clientPair.appClient.responseMock, timeout(10000)).channelRead(any(), eq(new HardwareMessage(61, b("1-0 vw 88 60"))));
         clientPair.appClient.reset();
 
-        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.LIVE);
+        clientPair.appClient.getEnhancedGraphData(1, 432, Period.LIVE);
         graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
@@ -1249,7 +1249,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         clientPair.appClient.createWidget(1, enhancedHistoryGraph);
         clientPair.appClient.verifyResult(ok(1));
 
-        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.LIVE);
+        clientPair.appClient.getEnhancedGraphData(1, 432, Period.LIVE);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, NO_DATA)));
     }
 
@@ -1278,14 +1278,14 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         clientPair.appClient.createWidget(1, enhancedHistoryGraph);
         clientPair.appClient.verifyResult(ok(1));
 
-        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.LIVE);
+        clientPair.appClient.getEnhancedGraphData(1, 432, Period.LIVE);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, NO_DATA)));
 
         clientPair.hardwareClient.send("hardware vw 88 111");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(2, b("1-0 vw 88 111"))));
         clientPair.appClient.reset();
 
-        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.LIVE);
+        clientPair.appClient.getEnhancedGraphData(1, 432, Period.LIVE);
         BinaryMessage graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
@@ -1344,14 +1344,14 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(1));
         clientPair.appClient.reset();
 
-        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.LIVE);
+        clientPair.appClient.getEnhancedGraphData(1, 432, Period.LIVE);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NO_DATA)));
 
         clientPair.hardwareClient.send("hardware vw 88 111");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 88 111"))));
         clientPair.appClient.reset();
 
-        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.LIVE);
+        clientPair.appClient.getEnhancedGraphData(1, 432, Period.LIVE);
         BinaryMessage graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
@@ -1370,7 +1370,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         verify(clientPair.appClient.responseMock, timeout(10000)).channelRead(any(), eq(new HardwareMessage(61, b("1-0 vw 88 60"))));
         clientPair.appClient.reset();
 
-        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.LIVE);
+        clientPair.appClient.getEnhancedGraphData(1, 432, Period.LIVE);
         graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
@@ -1421,7 +1421,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(1));
         clientPair.appClient.reset();
 
-        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.ONE_HOUR, 1);
+        clientPair.appClient.getEnhancedGraphData(1, 432, Period.ONE_HOUR, 1);
         BinaryMessage graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
@@ -1470,7 +1470,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(1));
         clientPair.appClient.reset();
 
-        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.ONE_HOUR, 1);
+        clientPair.appClient.getEnhancedGraphData(1, 432, Period.ONE_HOUR, 1);
         BinaryMessage graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
@@ -1521,7 +1521,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(1));
         clientPair.appClient.reset();
 
-        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.ONE_HOUR, 5);
+        clientPair.appClient.getEnhancedGraphData(1, 432, Period.ONE_HOUR, 5);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NO_DATA)));
     }
 
@@ -1560,7 +1560,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(1));
         clientPair.appClient.reset();
 
-        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.ONE_HOUR, 1);
+        clientPair.appClient.getEnhancedGraphData(1, 432, Period.ONE_HOUR, 1);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NO_DATA)));
     }
 
@@ -1583,7 +1583,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(2)));
         clientPair.appClient.reset();
 
-        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.DAY);
+        clientPair.appClient.getEnhancedGraphData(1, 432, Period.DAY);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NO_DATA)));
     }
 

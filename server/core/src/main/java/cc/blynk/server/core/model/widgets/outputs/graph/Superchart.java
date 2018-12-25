@@ -4,13 +4,13 @@ import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.TextAlignment;
 
-import static cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod.LIVE;
-import static cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod.N_DAY;
-import static cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod.N_MONTH;
-import static cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod.N_THREE_MONTHS;
-import static cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod.N_WEEK;
-import static cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod.ONE_HOUR;
-import static cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod.SIX_HOURS;
+import static cc.blynk.server.core.model.widgets.outputs.graph.Period.LIVE;
+import static cc.blynk.server.core.model.widgets.outputs.graph.Period.N_DAY;
+import static cc.blynk.server.core.model.widgets.outputs.graph.Period.N_MONTH;
+import static cc.blynk.server.core.model.widgets.outputs.graph.Period.N_THREE_MONTHS;
+import static cc.blynk.server.core.model.widgets.outputs.graph.Period.N_WEEK;
+import static cc.blynk.server.core.model.widgets.outputs.graph.Period.ONE_HOUR;
+import static cc.blynk.server.core.model.widgets.outputs.graph.Period.SIX_HOURS;
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_GRAPH_DATA_STREAMS;
 
 /**
@@ -20,13 +20,13 @@ import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_GRAPH_DATA_STREAMS;
  */
 public class Superchart extends Widget {
 
-    private static final GraphPeriod[] DEFAULT_PERIODS = new GraphPeriod[] {
+    private static final Period[] DEFAULT_PERIODS = new Period[] {
             LIVE, ONE_HOUR, SIX_HOURS, N_DAY, N_WEEK, N_MONTH, N_THREE_MONTHS
     };
 
     public GraphDataStream[] dataStreams = EMPTY_GRAPH_DATA_STREAMS;
 
-    public GraphPeriod period;
+    public Period period;
 
     public TextAlignment textAlignment;
 
@@ -62,11 +62,11 @@ public class Superchart extends Widget {
 
     public LineType lineType;
 
-    public GraphPeriod[] selectedPeriods = DEFAULT_PERIODS;
+    public Period[] selectedPeriods = DEFAULT_PERIODS;
 
     public boolean hasLivePeriodsSelected() {
-        for (GraphPeriod graphPeriod : selectedPeriods) {
-            if (graphPeriod == LIVE) {
+        for (Period period : selectedPeriods) {
+            if (period == LIVE) {
                 return true;
             }
         }

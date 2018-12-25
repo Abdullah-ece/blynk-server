@@ -19,7 +19,7 @@ import cc.blynk.server.core.model.web.product.WebDashboard;
 import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
-import cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod;
+import cc.blynk.server.core.model.widgets.outputs.graph.Period;
 import cc.blynk.server.core.model.widgets.web.WebLineGraph;
 import cc.blynk.server.core.model.widgets.web.WebSource;
 import cc.blynk.server.core.model.widgets.web.WebSwitch;
@@ -58,7 +58,7 @@ import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.integration.TestUtil.webJson;
 import static cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType.AVG;
 import static cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType.RAW_DATA;
-import static cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod.LIVE;
+import static cc.blynk.server.core.model.widgets.outputs.graph.Period.LIVE;
 import static cc.blynk.server.core.protocol.enums.Command.GET_SUPERCHART_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_TRACK_DEVICE;
 import static cc.blynk.server.core.reporting.average.AverageAggregatorProcessor.MINUTE;
@@ -438,7 +438,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         data.put(aggregationKey3, aggregationValue3);
         holder.reportingDBManager.reportingDBDao.insert(data, GraphGranularityType.MINUTE);
 
-        appWebSocketClient.getGraphData(1, 432, GraphPeriod.DAY);
+        appWebSocketClient.getGraphData(1, 432, Period.DAY);
 
         BinaryMessage graphDataResponse = appWebSocketClient.getBinaryBody();
         assertNotNull(graphDataResponse);

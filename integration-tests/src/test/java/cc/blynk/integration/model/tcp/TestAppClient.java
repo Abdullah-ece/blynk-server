@@ -13,7 +13,7 @@ import cc.blynk.server.core.model.profile.ProfileSettings;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.widgets.Widget;
-import cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod;
+import cc.blynk.server.core.model.widgets.outputs.graph.Period;
 import cc.blynk.server.core.model.widgets.ui.reporting.Report;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.protocol.handlers.encoders.MobileMessageEncoder;
@@ -301,11 +301,11 @@ public class TestAppClient extends BaseTestAppClient {
         send(MOBILE_DELETE_DEVICE_DATA, "" + dashId + DEVICE_SEPARATOR + deviceId + BODY_SEPARATOR + sj.toString());
     }
 
-    public void getEnhancedGraphData(int dashId, long widgetId, GraphPeriod period) {
+    public void getEnhancedGraphData(int dashId, long widgetId, Period period) {
         send(GET_SUPERCHART_DATA, "" + dashId + BODY_SEPARATOR + widgetId + BODY_SEPARATOR + period.name());
     }
 
-    public void getEnhancedGraphData(int dashId, long widgetId, GraphPeriod period, int page) {
+    public void getEnhancedGraphData(int dashId, long widgetId, Period period, int page) {
         send(GET_SUPERCHART_DATA, "" + dashId + BODY_SEPARATOR + widgetId + BODY_SEPARATOR + period.name() + BODY_SEPARATOR + page);
     }
 

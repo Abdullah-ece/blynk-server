@@ -8,7 +8,7 @@ import cc.blynk.server.core.model.profile.Profile;
 import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
-import cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod;
+import cc.blynk.server.core.model.widgets.outputs.graph.Period;
 import cc.blynk.server.core.model.widgets.outputs.graph.Superchart;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
@@ -60,12 +60,12 @@ public final class MobileGetEnhancedGraphDataLogic {
         int dashId = Integer.parseInt(dashIdAndTargetIdString[0]);
 
         long widgetId = Long.parseLong(messageParts[1]);
-        GraphPeriod graphPeriod = GraphPeriod.valueOf(messageParts[2]);
+        Period period = Period.valueOf(messageParts[2]);
         int page = 0;
         if (messageParts.length == 4) {
             page = Integer.parseInt(messageParts[3]);
         }
-        int skipCount = graphPeriod.numberOfPoints * page;
+        int skipCount = period.numberOfPoints * page;
 
         Profile profile = state.user.profile;
         DashBoard dash = profile.getDashByIdOrThrow(dashId);
@@ -108,14 +108,14 @@ public final class MobileGetEnhancedGraphDataLogic {
             }
             if (target == null) {
                 requestedPins[i] = new GraphPinRequest(dashId, -1,
-                        graphDataStream.dataStream, graphPeriod, skipCount, graphDataStream.functionType);
+                        graphDataStream.dataStream, period, skipCount, graphDataStream.functionType);
             } else {
                 if (target.isTag()) {
                     requestedPins[i] = new GraphPinRequest(dashId, target.getDeviceIds(),
-                            graphDataStream.dataStream, graphPeriod, skipCount, graphDataStream.functionType);
+                            graphDataStream.dataStream, period, skipCount, graphDataStream.functionType);
                 } else {
                     requestedPins[i] = new GraphPinRequest(dashId, target.getDeviceId(),
-                            graphDataStream.dataStream, graphPeriod, skipCount, graphDataStream.functionType);
+                            graphDataStream.dataStream, period, skipCount, graphDataStream.functionType);
                 }
             }
             i++;

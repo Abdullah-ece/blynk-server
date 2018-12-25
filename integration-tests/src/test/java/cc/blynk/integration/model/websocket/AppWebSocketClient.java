@@ -34,7 +34,7 @@ import cc.blynk.server.core.model.web.UserInviteDTO;
 import cc.blynk.server.core.model.web.product.EventType;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
-import cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod;
+import cc.blynk.server.core.model.widgets.outputs.graph.Period;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.web.handlers.logic.organization.dto.CountDTO;
@@ -496,13 +496,13 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         send(RESET_PASSWORD, "reset" + BODY_SEPARATOR_STRING + token + BODY_SEPARATOR_STRING + hash);
     }
 
-    public void getGraphData(int deviceId, long widgetId, GraphPeriod graphPeriod) {
-        send(GET_SUPERCHART_DATA, "" + deviceId + BODY_SEPARATOR_STRING + widgetId + BODY_SEPARATOR_STRING + graphPeriod);
+    public void getGraphData(int deviceId, long widgetId, Period period) {
+        send(GET_SUPERCHART_DATA, "" + deviceId + BODY_SEPARATOR_STRING + widgetId + BODY_SEPARATOR_STRING + period);
     }
 
     public void getGraphDataCustom(int deviceId, long widgetId, long from, long to) {
         send(GET_SUPERCHART_DATA, "" + deviceId + BODY_SEPARATOR_STRING
-                + widgetId + BODY_SEPARATOR_STRING + GraphPeriod.CUSTOM
+                + widgetId + BODY_SEPARATOR_STRING + Period.CUSTOM
                 + BODY_SEPARATOR_STRING + from + BODY_SEPARATOR_STRING + to);
     }
 

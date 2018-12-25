@@ -6,7 +6,7 @@ import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.widgets.Widget;
-import cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod;
+import cc.blynk.server.core.model.widgets.outputs.graph.Period;
 import cc.blynk.server.core.model.widgets.web.BaseWebGraph;
 import cc.blynk.server.core.model.widgets.web.WebSource;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
@@ -28,21 +28,21 @@ import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import java.util.Collection;
 
-import static cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod.FIFTEEN_MINUTES;
-import static cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod.N_DAY;
-import static cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod.N_MONTH;
-import static cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod.N_THREE_DAYS;
-import static cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod.N_THREE_MONTHS;
-import static cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod.N_TWO_WEEKS;
-import static cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod.N_WEEK;
-import static cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod.ONE_HOUR;
-import static cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod.ONE_YEAR;
-import static cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod.SIX_HOURS;
-import static cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod.SIX_MONTHS;
-import static cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod.THIRTY_MINUTES;
-import static cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod.THREE_HOURS;
-import static cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod.TWELVE_HOURS;
-import static cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod.TWO_DAYS;
+import static cc.blynk.server.core.model.widgets.outputs.graph.Period.FIFTEEN_MINUTES;
+import static cc.blynk.server.core.model.widgets.outputs.graph.Period.N_DAY;
+import static cc.blynk.server.core.model.widgets.outputs.graph.Period.N_MONTH;
+import static cc.blynk.server.core.model.widgets.outputs.graph.Period.N_THREE_DAYS;
+import static cc.blynk.server.core.model.widgets.outputs.graph.Period.N_THREE_MONTHS;
+import static cc.blynk.server.core.model.widgets.outputs.graph.Period.N_TWO_WEEKS;
+import static cc.blynk.server.core.model.widgets.outputs.graph.Period.N_WEEK;
+import static cc.blynk.server.core.model.widgets.outputs.graph.Period.ONE_HOUR;
+import static cc.blynk.server.core.model.widgets.outputs.graph.Period.ONE_YEAR;
+import static cc.blynk.server.core.model.widgets.outputs.graph.Period.SIX_HOURS;
+import static cc.blynk.server.core.model.widgets.outputs.graph.Period.SIX_MONTHS;
+import static cc.blynk.server.core.model.widgets.outputs.graph.Period.THIRTY_MINUTES;
+import static cc.blynk.server.core.model.widgets.outputs.graph.Period.THREE_HOURS;
+import static cc.blynk.server.core.model.widgets.outputs.graph.Period.TWELVE_HOURS;
+import static cc.blynk.server.core.model.widgets.outputs.graph.Period.TWO_DAYS;
 import static cc.blynk.server.core.protocol.enums.Command.GET_SUPERCHART_DATA;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeBinaryMessage;
 import static cc.blynk.server.internal.WebByteBufUtil.json;
@@ -80,7 +80,25 @@ public final class WebGetGraphDataLogic {
         return byteBuffer.array();
     }
 
-    private static GraphPeriod calcGraphPeriod(long from, long to) {
+    private static final Period[] CUSTOM_DATE_PERIODS = new Period[] {
+            FIFTEEN_MINUTES,
+            THIRTY_MINUTES,
+            ONE_HOUR,
+            THREE_HOURS,
+            SIX_HOURS,
+            TWELVE_HOURS,
+            N_DAY,
+            TWO_DAYS,
+            N_THREE_DAYS,
+            N_WEEK,
+            N_TWO_WEEKS,
+            N_MONTH,
+            N_THREE_MONTHS,
+            SIX_MONTHS,
+            ONE_YEAR
+    };
+
+    private static Period calcGraphPeriod(long from, long to) {
         long diff = to - from;
         for (var graphPeriod : CUSTOM_DATE_PERIODS) {
             if (diff < graphPeriod.millis) {
@@ -88,81 +106,7 @@ public final class WebGetGraphDataLogic {
             }
         }
 
-        return GraphPeriod.ONE_YEAR;
-    }
-
-    public void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
-        String[] messageParts = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
-
-        if (messageParts.length < 3) {
-            log.error("Wrong income message format for {}.", state.user.email);
-            ctx.writeAndFlush(json(message.id, "Wrong income message format."), ctx.voidPromise());
-            return;
-        }
-
-        int deviceId = Integer.parseInt(messageParts[0]);
-        long widgetId = Long.parseLong(messageParts[1]);
-        GraphPeriod graphPeriod = GraphPeriod.valueOf(messageParts[2]);
-
-        //todo check user has access
-        Device device = deviceDao.getByIdOrThrow(deviceId);
-        if (device == null) {
-            log.debug("Device with passed id {} not found.", deviceId);
-            ctx.writeAndFlush(json(message.id, "Device with passed id not found."), ctx.voidPromise());
-            return;
-        }
-
-        Widget widget = device.webDashboard.getWidgetById(widgetId);
-
-        if (!(widget instanceof BaseWebGraph)) {
-            log.debug("Widget with passed id {} is not graph for deviceId {}.", widgetId, deviceId);
-            ctx.writeAndFlush(json(message.id, "Widget with passed id is not graph."), ctx.voidPromise());
-            return;
-        }
-
-        BaseWebGraph baseWebGraph = (BaseWebGraph) widget;
-
-        int numberOfStreams = baseWebGraph.sources.length;
-        if (numberOfStreams == 0) {
-            log.debug("No data streams for web graph with id {} for deviceId {}.", widgetId, deviceId);
-            throw new JsonException("No data streams for web graph.");
-        }
-
-        int i = 0;
-        long fromTS;
-        long toTS;
-        GraphSourceFunction sourceFunction;
-
-        switch (graphPeriod) {
-            case LIVE :
-                sourceFunction = rawDataCacheForGraphProcessor::getLiveGraphData;
-                fromTS = -1; //not used
-                toTS = -1; //not used
-                break;
-            case CUSTOM :
-                fromTS = Long.parseLong(messageParts[3]);
-                toTS = Long.parseLong(messageParts[4]);
-                graphPeriod = calcGraphPeriod(fromTS, toTS);
-                sourceFunction = reportingDBDao::getReportingDataByTs;
-                log.trace("Selected granularity fro custom range: {}", graphPeriod);
-                break;
-            default :
-                long now = System.currentTimeMillis();
-                fromTS = now - graphPeriod.millis;
-                toTS = now;
-                sourceFunction = reportingDBDao::getReportingDataByTs;
-                break;
-        }
-
-        WebGraphRequest[] webGraphDataStreamRequests = new WebGraphRequest[numberOfStreams];
-        for (WebSource webSource : baseWebGraph.sources) {
-            webGraphDataStreamRequests[i++] = new WebGraphRequest(deviceId,
-                    webSource.dataStream, graphPeriod, 0, webSource.sourceType, fromTS, toTS);
-        }
-
-        readGraphDataFromDB(ctx.channel(), state.user, deviceId,
-                message.id, webGraphDataStreamRequests, sourceFunction);
-
+        return Period.ONE_YEAR;
     }
 
     private void readGraphDataFromDB(Channel channel, User user, int deviceId, int msgId,
@@ -197,23 +141,79 @@ public final class WebGetGraphDataLogic {
         });
     }
 
-    private static final GraphPeriod[] CUSTOM_DATE_PERIODS = new GraphPeriod[] {
-            FIFTEEN_MINUTES,
-            THIRTY_MINUTES,
-            ONE_HOUR,
-            THREE_HOURS,
-            SIX_HOURS,
-            TWELVE_HOURS,
-            N_DAY,
-            TWO_DAYS,
-            N_THREE_DAYS,
-            N_WEEK,
-            N_TWO_WEEKS,
-            N_MONTH,
-            N_THREE_MONTHS,
-            SIX_MONTHS,
-            ONE_YEAR
-    };
+    public void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
+        String[] messageParts = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
+
+        if (messageParts.length < 3) {
+            log.error("Wrong income message format for {}.", state.user.email);
+            ctx.writeAndFlush(json(message.id, "Wrong income message format."), ctx.voidPromise());
+            return;
+        }
+
+        int deviceId = Integer.parseInt(messageParts[0]);
+        long widgetId = Long.parseLong(messageParts[1]);
+        Period period = Period.valueOf(messageParts[2]);
+
+        //todo check user has access
+        Device device = deviceDao.getByIdOrThrow(deviceId);
+        if (device == null) {
+            log.debug("Device with passed id {} not found.", deviceId);
+            ctx.writeAndFlush(json(message.id, "Device with passed id not found."), ctx.voidPromise());
+            return;
+        }
+
+        Widget widget = device.webDashboard.getWidgetById(widgetId);
+
+        if (!(widget instanceof BaseWebGraph)) {
+            log.debug("Widget with passed id {} is not graph for deviceId {}.", widgetId, deviceId);
+            ctx.writeAndFlush(json(message.id, "Widget with passed id is not graph."), ctx.voidPromise());
+            return;
+        }
+
+        BaseWebGraph baseWebGraph = (BaseWebGraph) widget;
+
+        int numberOfStreams = baseWebGraph.sources.length;
+        if (numberOfStreams == 0) {
+            log.debug("No data streams for web graph with id {} for deviceId {}.", widgetId, deviceId);
+            throw new JsonException("No data streams for web graph.");
+        }
+
+        int i = 0;
+        long fromTS;
+        long toTS;
+        GraphSourceFunction sourceFunction;
+
+        switch (period) {
+            case LIVE :
+                sourceFunction = rawDataCacheForGraphProcessor::getLiveGraphData;
+                fromTS = -1; //not used
+                toTS = -1; //not used
+                break;
+            case CUSTOM :
+                fromTS = Long.parseLong(messageParts[3]);
+                toTS = Long.parseLong(messageParts[4]);
+                period = calcGraphPeriod(fromTS, toTS);
+                sourceFunction = reportingDBDao::getReportingDataByTs;
+                log.trace("Selected granularity fro custom range: {}", period);
+                break;
+            default :
+                long now = System.currentTimeMillis();
+                fromTS = now - period.millis;
+                toTS = now;
+                sourceFunction = reportingDBDao::getReportingDataByTs;
+                break;
+        }
+
+        WebGraphRequest[] webGraphDataStreamRequests = new WebGraphRequest[numberOfStreams];
+        for (WebSource webSource : baseWebGraph.sources) {
+            webGraphDataStreamRequests[i++] = new WebGraphRequest(deviceId,
+                    webSource.dataStream, period, 0, webSource.sourceType, fromTS, toTS);
+        }
+
+        readGraphDataFromDB(ctx.channel(), state.user, deviceId,
+                message.id, webGraphDataStreamRequests, sourceFunction);
+
+    }
 
     @FunctionalInterface
     public interface GraphSourceFunction {

@@ -5,7 +5,7 @@ import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
-import cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod;
+import cc.blynk.server.core.model.widgets.outputs.graph.Period;
 import cc.blynk.server.core.reporting.WebGraphRequest;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
@@ -65,7 +65,7 @@ public class ReportingDBTest {
     @Test
     public void testSelectFromEmptyReportingAverageTable() throws Exception {
         DataStream dataStream = new DataStream((byte) 1, VIRTUAL);
-        WebGraphRequest graphPinRequest = new WebGraphRequest(0, dataStream, GraphPeriod.N_DAY,
+        WebGraphRequest graphPinRequest = new WebGraphRequest(0, dataStream, Period.N_DAY,
                 0, AggregationFunctionType.AVG, 0L, 1L);
         List<RawEntry> rawEntries = reportingDBManager.reportingDBDao.getReportingDataByTs(graphPinRequest);
         assertNotNull(rawEntries);
@@ -84,7 +84,7 @@ public class ReportingDBTest {
         reportingDBManager.reportingDBDao.insert(data, GraphGranularityType.MINUTE);
 
         DataStream dataStream = new DataStream((byte) 1, VIRTUAL);
-        WebGraphRequest graphPinRequest = new WebGraphRequest(1, dataStream, GraphPeriod.TWELVE_HOURS,
+        WebGraphRequest graphPinRequest = new WebGraphRequest(1, dataStream, Period.TWELVE_HOURS,
                 0, AggregationFunctionType.AVG, System.currentTimeMillis() - 61000, System.currentTimeMillis());
         List<RawEntry> rawEntries = reportingDBManager.reportingDBDao.getReportingDataByTs(graphPinRequest);
         assertNotNull(rawEntries);

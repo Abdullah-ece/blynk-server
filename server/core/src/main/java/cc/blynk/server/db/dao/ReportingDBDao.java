@@ -3,7 +3,7 @@ package cc.blynk.server.db.dao;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
-import cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod;
+import cc.blynk.server.core.model.widgets.outputs.graph.Period;
 import cc.blynk.server.core.model.widgets.web.FieldType;
 import cc.blynk.server.core.model.widgets.web.SelectedColumn;
 import cc.blynk.server.core.reporting.WebGraphRequest;
@@ -368,11 +368,11 @@ public class ReportingDBDao {
              PreparedStatement psHour = connection.prepareStatement(deleteHour)) {
 
             //for minute table we store only data for last 24 hours
-            psMinute.setTimestamp(1, new Timestamp(now.minus(GraphPeriod.DAY.numberOfPoints + 1,
+            psMinute.setTimestamp(1, new Timestamp(now.minus(Period.DAY.numberOfPoints + 1,
                     ChronoUnit.MINUTES).toEpochMilli()), DateTimeUtils.UTC_CALENDAR);
 
             //for hour table we store only data for last 3 months
-            psHour.setTimestamp(1, new Timestamp(now.minus(GraphPeriod.THREE_MONTHS.numberOfPoints + 1,
+            psHour.setTimestamp(1, new Timestamp(now.minus(Period.THREE_MONTHS.numberOfPoints + 1,
                     ChronoUnit.HOURS).toEpochMilli()), DateTimeUtils.UTC_CALENDAR);
 
             minuteRecordsRemoved = psMinute.executeUpdate();

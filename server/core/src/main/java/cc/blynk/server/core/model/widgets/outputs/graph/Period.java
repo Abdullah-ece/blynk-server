@@ -9,7 +9,7 @@ import static cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityT
  * Created by Dmitriy Dumanskiy.
  * Created on 12.08.15.
  */
-public enum GraphPeriod {
+public enum Period {
 
     LIVE(60, MINUTE),
     FIFTEEN_MINUTES(15, MINUTE),
@@ -45,7 +45,7 @@ public enum GraphPeriod {
     public final GraphGranularityType granularityType;
     public final long millis;
 
-    GraphPeriod(int numberOfPoints, GraphGranularityType granularityType) {
+    Period(int numberOfPoints, GraphGranularityType granularityType) {
         this.numberOfPoints = numberOfPoints;
         this.granularityType = granularityType;
         this.millis = numberOfPoints * getMillisForGranularity(granularityType);

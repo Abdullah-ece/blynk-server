@@ -4,11 +4,11 @@ import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
-import cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod;
+import cc.blynk.server.core.model.widgets.outputs.graph.Period;
 
 import java.util.Arrays;
 
-import static cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod.LIVE;
+import static cc.blynk.server.core.model.widgets.outputs.graph.Period.LIVE;
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_INTS;
 
 /**
@@ -30,7 +30,7 @@ public class GraphPinRequest {
 
     public final short pin;
 
-    private final GraphPeriod graphPeriod;
+    private final Period graphPeriod;
 
     public final AggregationFunctionType functionType;
 
@@ -45,7 +45,7 @@ public class GraphPinRequest {
     public long to;
 
     public GraphPinRequest(int dashId, int[] deviceIds, DataStream dataStream,
-                           GraphPeriod graphPeriod, int skipCount, AggregationFunctionType function) {
+                           Period period, int skipCount, AggregationFunctionType function) {
         this.dashId = dashId;
         this.deviceId = -1;
         this.deviceIds = deviceIds == null ? EMPTY_INTS : deviceIds;
@@ -57,23 +57,23 @@ public class GraphPinRequest {
             this.pinType = (dataStream.pinType == null ? PinType.VIRTUAL : dataStream.pinType);
             this.pin = dataStream.pin;
         }
-        this.graphPeriod = graphPeriod;
+        this.graphPeriod = period;
         this.functionType = function;
-        this.count = graphPeriod.numberOfPoints;
-        this.type = graphPeriod.granularityType;
+        this.count = period.numberOfPoints;
+        this.type = period.granularityType;
         this.skipCount = skipCount;
     }
 
     public GraphPinRequest(int dashId, int deviceId, DataStream dataStream,
-                           GraphPeriod graphPeriod, int skipCount,
+                           Period period, int skipCount,
                            AggregationFunctionType function, long from, long to) {
-        this(dashId, deviceId, dataStream, graphPeriod, skipCount, function);
+        this(dashId, deviceId, dataStream, period, skipCount, function);
         this.from = from;
         this.to = to;
     }
 
     public GraphPinRequest(int dashId, int deviceId, DataStream dataStream,
-                           GraphPeriod graphPeriod, int skipCount, AggregationFunctionType function) {
+                           Period period, int skipCount, AggregationFunctionType function) {
         this.dashId = dashId;
         this.deviceId = deviceId;
         this.deviceIds = EMPTY_INTS;
@@ -85,10 +85,10 @@ public class GraphPinRequest {
             this.pinType = (dataStream.pinType == null ? PinType.VIRTUAL : dataStream.pinType);
             this.pin = dataStream.pin;
         }
-        this.graphPeriod = graphPeriod;
+        this.graphPeriod = period;
         this.functionType = (function == null ? AggregationFunctionType.AVG : function);
-        this.count = graphPeriod.numberOfPoints;
-        this.type = graphPeriod.granularityType;
+        this.count = period.numberOfPoints;
+        this.type = period.granularityType;
         this.skipCount = skipCount;
     }
 
