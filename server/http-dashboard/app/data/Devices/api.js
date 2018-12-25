@@ -158,11 +158,11 @@ export const TimelineResolve = (params) => {
     ws: {
       request: {
         command: API_COMMANDS.LOG_EVENT_RESOLVE,
-        query: [
-          params.deviceId,
-          params.eventId,
-          params.comment,
-        ],
+        query: [JSON.stringify({
+          deviceId: params.deviceId,
+          logEventId: params.eventId,
+          resolveComment: params.comment,
+        })],
       }
     }
   };
