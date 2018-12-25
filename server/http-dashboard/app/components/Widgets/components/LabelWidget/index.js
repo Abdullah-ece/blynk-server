@@ -91,8 +91,28 @@ class LabelWidget extends React.Component {
     if (!isNaN(Number(value)) && Number(value) === 0)
       return 0;
 
-    let finalFormat = this.props.data.decimalFormat === '#.#' ? '#0.#0' : this.props.data.decimalFormat;
-    return Canvasjs.formatNumber(value, finalFormat);
+    let finalFormat = '';
+    let decimalLength = 0;
+
+    if (this.props.data.decimalFormat.indexOf('#.#') >= 0) {
+      let parts = this.props.data.decimalFormat.split('.');
+      finalFormat += parts[0] + '0.';
+      finalFormat += parts[1];
+      decimalLength = parts[1].length;
+    }
+
+    let result = Canvasjs.formatNumber(value, finalFormat);
+    let resultParts = result.split('.');
+    let resultDecimalLength = resultParts.length < 2 ? 0 : resultParts[1].length;
+    result = resultDecimalLength == 0 ? result += '.' : result;
+
+    if (decimalLength != resultDecimalLength) {
+      for (let i = 0; i < decimalLength - resultDecimalLength; i++) {
+        result += '0';
+      }
+    }
+
+    return result;
   }
 
   renderLabelByParams(params = {
