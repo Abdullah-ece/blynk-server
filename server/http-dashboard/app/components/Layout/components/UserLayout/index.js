@@ -1,4 +1,7 @@
-import { OrganizationFetch, OrganizationSwitch } from "data/Organization/actions";
+import {
+  OrganizationFetch,
+  OrganizationSwitch
+} from "data/Organization/actions";
 import {
   OrganizationsFetch,
   OrganizationsHierarchyFetch
@@ -15,6 +18,7 @@ import {
   blynkWsLogin
 } from 'store/blynk-websocket-middleware/actions';
 import { StartLoading, FinishLoading } from 'data/PageLoading/actions';
+import { VerifyPermission, PERMISSIONS_INDEX } from "services/Roles";
 
 import './styles.less';
 import Watermark from "../Watermark";
@@ -25,6 +29,7 @@ const DEFAULT_LOGO = '/static/logo.png';
   Account: state.Account,
   Organization: state.Organization,
   hierarchy: state.Organizations.get('hierarchy'),
+  permissions: state.RolesAndPermissions.currentRole.permissionGroup1,
 }), (dispatch) => ({
   organizationsHierarchyFetch: bindActionCreators(OrganizationsHierarchyFetch, dispatch),
   organizationSwitch: bindActionCreators(OrganizationSwitch, dispatch),
@@ -58,6 +63,8 @@ class UserLayout extends React.Component {
     OrganizationFetch: React.PropTypes.func,
     OrganizationsFetch: React.PropTypes.func,
     organizationsHierarchyFetch: React.PropTypes.func,
+    organizationSwitch: React.PropTypes.func,
+    permissions: React.PropTypes.number,
   };
 
   constructor(props) {
@@ -281,16 +288,21 @@ class UserLayout extends React.Component {
           >
             <div
               className={this.state.collapsed ? 'user-layout-left-navigation-fold-company-logo' : 'user-layout-left-navigation-unfold-company-logo'}>
-              <Dropdown
-                overlayClassName={`user-layout--organization-select--overlay ${this.state.collapsed ? '' : 'user-layout--organization-select--overlay--open'}`}
-                overlay={this.OrgSelection()} trigger={['hover']}
-                placement="topLeft"
-                className="my-custom-dropdown">
-                <Link to="/">
+              {VerifyPermission(this.props.permissions, PERMISSIONS_INDEX.ORG_SWITCH) ? (
+                  <Dropdown
+                    overlayClassName={`user-layout--organization-select--overlay ${this.state.collapsed ? '' : 'user-layout--organization-select--overlay--open'}`}
+                    overlay={this.OrgSelection()} trigger={['hover']}
+                    placement="topLeft"
+                    className="my-custom-dropdown">
+                    <Link to="/">
+                      <img src={this.state.logoUrl} onError={this.onImageError}
+                           alt=""/>
+                    </Link>
+                  </Dropdown>) :
+                (<Link to="/">
                   <img src={this.state.logoUrl} onError={this.onImageError}
                        alt=""/>
-                </Link>
-              </Dropdown>
+                </Link>)}
             </div>
             <div className={`user-layout-left-navigation-collapse-btn`}>
               <Icon type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'}
