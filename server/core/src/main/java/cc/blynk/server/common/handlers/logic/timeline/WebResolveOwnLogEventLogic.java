@@ -9,6 +9,8 @@ import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.permissions.Role;
+import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.mobile.BaseUserStateHolder;
@@ -22,7 +24,6 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_RESOLVE_EVENT;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 import static cc.blynk.server.internal.WebByteBufUtil.json;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
-import static cc.blynk.utils.StringUtils.split3;
 
 /**
  * The Blynk Project.
@@ -64,41 +65,41 @@ public final class WebResolveOwnLogEventLogic implements PermissionBasedLogic<Ba
 
     @Override
     public void messageReceived0(ChannelHandlerContext ctx, BaseUserStateHolder state, StringMessage message) {
-        //deviceId logEventId comment
-        String[] messageParts = split3(message.body);
+        ResolveEventDTO resolveEventDTO = JsonParser.readAny(message.body, ResolveEventDTO.class);
 
-        int deviceId = Integer.parseInt(messageParts[0]);
+        if (resolveEventDTO == null) {
+            log.error("Wrong income resolve event command for {}.", state.user.email);
+            throw new JsonException("Wrong income resolve event command.");
+        }
+
+        int deviceId = resolveEventDTO.deviceId;
         state.checkControlledDeviceIsSelected(deviceId);
-
-        //logEventId comment
-        long logEventId = Long.parseLong(messageParts[1]);
-        String comment = messageParts.length == 3 ? messageParts[2] : null;
 
         User user = state.user;
         DeviceValue deviceValue = deviceDao.getDeviceValueById(deviceId);
         if (deviceValue == null) {
             log.error("Device {} not found for {}.", deviceId, user.email);
-            ctx.writeAndFlush(json(message.id, "Requested device not found."), ctx.voidPromise());
-            return;
+            throw new JsonException("Requested device not found.");
         }
 
         int orgId = deviceValue.orgId;
         if (!user.hasAccess(orgId)) {
             log.error("User {} tries to access device {} he has no access.", user.email, deviceId);
-            ctx.writeAndFlush(json(message.id, "User tries to access device he has no access."), ctx.voidPromise());
-            return;
+            throw new JsonException("User tries to access device he has no access.");
         }
 
         blockingIOProcessor.executeEvent(() -> {
             MessageBase response;
             try {
-                if (reportingDBManager.eventDBDao.resolveEvent(logEventId, user.name, comment)) {
-                    String body = buildEventBody(logEventId, user.email, comment);
+                if (reportingDBManager.eventDBDao.resolveEvent(
+                        resolveEventDTO.logEventId, user.name, resolveEventDTO.resolveComment)) {
+                    String body = buildEventBody(
+                            resolveEventDTO.logEventId, user.email, resolveEventDTO.resolveComment);
                     Session session = sessionDao.getOrgSession(orgId);
                     session.sendToSelectedDeviceOnWeb(ctx.channel(), WEB_RESOLVE_EVENT, message.id, body, deviceId);
                     response = ok(message.id);
                 } else {
-                    log.warn("Event with id {} for user {} not resolved.", logEventId, user.email);
+                    log.warn("Event with id {} for user {} not resolved.", resolveEventDTO.logEventId, user.email);
                     response = json(message.id, "Event for user not resolved.");
                 }
             } catch (Exception e) {

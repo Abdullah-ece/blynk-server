@@ -19,6 +19,7 @@ import cc.blynk.integration.model.tcp.BaseTestAppClient;
 import cc.blynk.server.Limits;
 import cc.blynk.server.api.http.dashboard.dto.ProductAndOrgIdDTO;
 import cc.blynk.server.api.http.dashboard.dto.RoleDTO;
+import cc.blynk.server.common.handlers.logic.timeline.ResolveEventDTO;
 import cc.blynk.server.common.handlers.logic.timeline.TimelineDTO;
 import cc.blynk.server.common.handlers.logic.timeline.TimelineResponseDTO;
 import cc.blynk.server.core.model.auth.User;
@@ -203,11 +204,11 @@ public final class AppWebSocketClient extends BaseTestAppClient {
     }
 
     public void resolveEvent(int deviceId, long logEventId) {
-        send(WEB_RESOLVE_EVENT, "" + deviceId + BODY_SEPARATOR_STRING + logEventId);
+        resolveEvent(deviceId, logEventId, null);
     }
 
     public void resolveEvent(int deviceId, long logEventId, String comment) {
-        send(WEB_RESOLVE_EVENT, "" + deviceId + BODY_SEPARATOR_STRING + logEventId + BODY_SEPARATOR_STRING + comment);
+        send(WEB_RESOLVE_EVENT, new ResolveEventDTO(deviceId, logEventId, comment));
     }
 
     public void createOrganization(Organization organization) {
