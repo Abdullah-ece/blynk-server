@@ -103,9 +103,8 @@ class Connection extends React.Component {
         this.props.AccountFetch().then(() => {
           this.props.LoginWsSuccess();
           this.props.connectSuccess();
-          this.props.GetPermissionsForRole({ roleId: this.props.roleId }).then(() => {
-            this.context.router.push('/devices');
-          });
+          this.context.router.push('/devices');
+          this.props.GetPermissionsForRole({ roleId: this.props.roleId });
         });
       }).catch((err) => {
         displayError(err, message.error);
