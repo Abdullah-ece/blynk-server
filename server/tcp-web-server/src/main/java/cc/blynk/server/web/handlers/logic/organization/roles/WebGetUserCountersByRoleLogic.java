@@ -5,7 +5,6 @@ import cc.blynk.server.core.PermissionBasedLogic;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.permissions.PermissionsTable;
-import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
@@ -28,11 +27,6 @@ public final class WebGetUserCountersByRoleLogic implements PermissionBasedLogic
 
     public WebGetUserCountersByRoleLogic(Holder holder) {
         this.userDao = holder.userDao;
-    }
-
-    @Override
-    public boolean hasPermission(Role role) {
-        return role.canViewRole();
     }
 
     @Override

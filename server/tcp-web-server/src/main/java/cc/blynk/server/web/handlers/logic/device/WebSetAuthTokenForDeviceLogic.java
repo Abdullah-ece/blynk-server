@@ -8,7 +8,6 @@ import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
@@ -35,11 +34,6 @@ public final class WebSetAuthTokenForDeviceLogic implements PermissionBasedLogic
     public WebSetAuthTokenForDeviceLogic(Holder holder) {
         this.deviceDao = holder.deviceDao;
         this.sessionDao = holder.sessionDao;
-    }
-
-    @Override
-    public boolean hasPermission(Role role) {
-        return role.canSetAuthToken();
     }
 
     @Override

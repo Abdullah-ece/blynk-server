@@ -33,11 +33,6 @@ public final class WebEditRoleLogic implements PermissionBasedLogic<WebAppStateH
     }
 
     @Override
-    public boolean hasPermission(Role role) {
-        return role.canEditRole();
-    }
-
-    @Override
     public int getPermission() {
         return PermissionsTable.ROLE_EDIT;
     }

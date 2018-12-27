@@ -12,7 +12,6 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.ota.DeviceOtaInfo;
 import cc.blynk.server.core.model.device.ota.OTAStatus;
 import cc.blynk.server.core.model.dto.OtaDTO;
-import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.OtaProgress;
 import cc.blynk.server.core.model.web.product.Product;
@@ -54,11 +53,6 @@ public final class WebStartOtaLogic implements PermissionBasedLogic<WebAppStateH
         this.sessionDao = holder.sessionDao;
         this.tokensPool = holder.tokensPool;
         this.props = holder.props;
-    }
-
-    @Override
-    public boolean hasPermission(Role role) {
-        return role.canStartOta();
     }
 
     @Override

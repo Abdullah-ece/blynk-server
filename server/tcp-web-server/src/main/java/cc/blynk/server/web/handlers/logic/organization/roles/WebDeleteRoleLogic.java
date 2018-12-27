@@ -4,7 +4,6 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.PermissionBasedLogic;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.permissions.PermissionsTable;
-import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
@@ -23,11 +22,6 @@ public final class WebDeleteRoleLogic implements PermissionBasedLogic<WebAppStat
 
     public WebDeleteRoleLogic(Holder holder) {
         this.organizationDao = holder.organizationDao;
-    }
-
-    @Override
-    public boolean hasPermission(Role role) {
-        return role.canDeleteRole();
     }
 
     @Override

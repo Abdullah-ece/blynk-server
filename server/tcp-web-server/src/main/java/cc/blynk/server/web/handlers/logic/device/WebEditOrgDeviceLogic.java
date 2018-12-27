@@ -2,7 +2,6 @@ package cc.blynk.server.web.handlers.logic.device;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.PermissionBasedLogic;
-import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
 import io.netty.channel.ChannelHandlerContext;
@@ -20,11 +19,6 @@ public final class WebEditOrgDeviceLogic implements PermissionBasedLogic<WebAppS
 
     public WebEditOrgDeviceLogic(Holder holder) {
         this.webEditOwnDeviceLogic = new WebEditOwnDeviceLogic(holder);
-    }
-
-    @Override
-    public boolean hasPermission(Role role) {
-        return role.canEditOrgDevice();
     }
 
     @Override

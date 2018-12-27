@@ -7,7 +7,6 @@ import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
@@ -34,11 +33,6 @@ public final class WebUpdateOwnDeviceMetafieldLogic implements PermissionBasedLo
     WebUpdateOwnDeviceMetafieldLogic(Holder holder) {
         this.sessionDao = holder.sessionDao;
         this.deviceDao = holder.deviceDao;
-    }
-
-    @Override
-    public boolean hasPermission(Role role) {
-        return role.canEditOwnDevice();
     }
 
     @Override

@@ -19,9 +19,6 @@ public class NoPermissionException extends RuntimeException {
 
     private static String buildMessage(String email, int permission) {
         String text = PermissionsTable.PERMISSION1_NAMES.get(permission);
-        if (text == null) {
-            text = PermissionsTable.PERMISSION2_NAMES.get(permission);
-        }
         return buildMessage(email, text);
     }
 

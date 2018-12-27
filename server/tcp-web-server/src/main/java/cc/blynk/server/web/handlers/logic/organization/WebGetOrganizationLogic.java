@@ -5,7 +5,6 @@ import cc.blynk.server.core.PermissionBasedLogic;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.dto.OrganizationDTO;
-import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
@@ -27,11 +26,6 @@ public final class WebGetOrganizationLogic implements PermissionBasedLogic<WebAp
     public WebGetOrganizationLogic(Holder holder) {
         this.organizationDao = holder.organizationDao;
         this.webGetOwnOrganizationLogic = new WebGetOwnOrganizationLogic(holder);
-    }
-
-    @Override
-    public boolean hasPermission(Role role) {
-        return role.canViewOrg();
     }
 
     @Override

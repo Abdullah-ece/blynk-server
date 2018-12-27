@@ -4,7 +4,6 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.PermissionBasedLogic;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.UserInviteDTO;
 import cc.blynk.server.core.protocol.exceptions.NoPermissionException;
@@ -28,11 +27,6 @@ public final class WebEditUserInfoLogic implements PermissionBasedLogic<WebAppSt
 
     public WebEditUserInfoLogic(Holder holder) {
         this.userDao = holder.userDao;
-    }
-
-    @Override
-    public boolean hasPermission(Role role) {
-        return role.canEditOrgUsers();
     }
 
     @Override

@@ -7,7 +7,6 @@ import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.dto.DeviceDTO;
-import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
@@ -33,11 +32,6 @@ public final class WebCreateOwnDeviceLogic implements PermissionBasedLogic<WebAp
     WebCreateOwnDeviceLogic(Holder holder) {
         this.deviceDao = holder.deviceDao;
         this.organizationDao = holder.organizationDao;
-    }
-
-    @Override
-    public boolean hasPermission(Role role) {
-        return role.canCreateOwnDevice();
     }
 
     @Override

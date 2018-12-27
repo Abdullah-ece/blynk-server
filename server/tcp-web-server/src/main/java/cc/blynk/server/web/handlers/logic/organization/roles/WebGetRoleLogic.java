@@ -26,11 +26,6 @@ public final class WebGetRoleLogic implements PermissionBasedLogic<WebAppStateHo
     }
 
     @Override
-    public boolean hasPermission(Role role) {
-        return role.canViewRole();
-    }
-
-    @Override
     public int getPermission() {
         return PermissionsTable.ROLE_VIEW;
     }

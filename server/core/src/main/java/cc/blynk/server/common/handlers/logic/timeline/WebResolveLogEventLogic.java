@@ -2,7 +2,6 @@ package cc.blynk.server.common.handlers.logic.timeline;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.PermissionBasedLogic;
-import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.mobile.BaseUserStateHolder;
 import io.netty.channel.ChannelHandlerContext;
@@ -20,11 +19,6 @@ public final class WebResolveLogEventLogic implements PermissionBasedLogic<BaseU
 
     public WebResolveLogEventLogic(Holder holder) {
         this.webResolveOwnLogEventLogic = new WebResolveOwnLogEventLogic(holder);
-    }
-
-    @Override
-    public boolean hasPermission(Role role) {
-        return role.canEditOrgDevice();
     }
 
     @Override

@@ -12,8 +12,6 @@ public interface PermissionBasedLogic<T extends BaseUserStateHolder> {
 
     Logger log = LogManager.getLogger(PermissionBasedLogic.class);
 
-    boolean hasPermission(Role role);
-
     int getPermission();
 
     default void messageReceived(ChannelHandlerContext ctx, T state, StringMessage msg) {
@@ -22,6 +20,10 @@ public interface PermissionBasedLogic<T extends BaseUserStateHolder> {
         } else {
             noPermissionAction(ctx, state, msg);
         }
+    }
+
+    default boolean hasPermission(Role role) {
+        return role.hasPermission1(getPermission());
     }
 
     /**

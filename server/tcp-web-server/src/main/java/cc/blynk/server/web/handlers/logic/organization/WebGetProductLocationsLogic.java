@@ -4,7 +4,6 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.PermissionBasedLogic;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.metafields.LocationMetaField;
@@ -32,11 +31,6 @@ public final class WebGetProductLocationsLogic implements PermissionBasedLogic<W
 
     public WebGetProductLocationsLogic(Holder holder) {
         this.deviceDao = holder.deviceDao;
-    }
-
-    @Override
-    public boolean hasPermission(Role role) {
-        return role.canViewProduct();
     }
 
     @Override

@@ -11,7 +11,6 @@ import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
@@ -48,11 +47,6 @@ public final class WebDeleteProductLogic implements PermissionBasedLogic<WebAppS
         this.blockingIOProcessor = holder.blockingIOProcessor;
         this.reportingDiskDao = holder.reportingDiskDao;
         this.userDao = holder.userDao;
-    }
-
-    @Override
-    public boolean hasPermission(Role role) {
-        return role.canDeleteProduct();
     }
 
     @Override

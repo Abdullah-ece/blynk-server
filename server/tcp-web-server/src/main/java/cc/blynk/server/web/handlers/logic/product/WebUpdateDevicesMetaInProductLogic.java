@@ -7,7 +7,6 @@ import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
@@ -40,11 +39,6 @@ public final class WebUpdateDevicesMetaInProductLogic implements PermissionBased
     public WebUpdateDevicesMetaInProductLogic(Holder holder) {
         this.organizationDao = holder.organizationDao;
         this.deviceDao = holder.deviceDao;
-    }
-
-    @Override
-    public boolean hasPermission(Role role) {
-        return role.canEditProduct();
     }
 
     @Override

@@ -8,7 +8,6 @@ import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.dto.DeviceDTO;
-import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -35,11 +34,6 @@ public final class WebGetOrgDeviceLogic implements PermissionBasedLogic<WebAppSt
         this.organizationDao = holder.organizationDao;
         this.deviceDao = holder.deviceDao;
         this.webGetOwnDeviceLogic = new WebGetOwnDeviceLogic(holder);
-    }
-
-    @Override
-    public boolean hasPermission(Role role) {
-        return role.canViewOrgDevices();
     }
 
     @Override

@@ -29,11 +29,6 @@ public final class WebCreateRoleLogic implements PermissionBasedLogic<WebAppStat
     }
 
     @Override
-    public boolean hasPermission(Role role) {
-        return role.canCreateRole();
-    }
-
-    @Override
     public int getPermission() {
         return PermissionsTable.ROLE_CREATE;
     }

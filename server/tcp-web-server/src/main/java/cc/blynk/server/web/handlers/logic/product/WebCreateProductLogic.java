@@ -5,7 +5,6 @@ import cc.blynk.server.api.http.dashboard.dto.ProductAndOrgIdDTO;
 import cc.blynk.server.core.PermissionBasedLogic;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
@@ -28,11 +27,6 @@ public final class WebCreateProductLogic implements PermissionBasedLogic<WebAppS
 
     public WebCreateProductLogic(Holder holder) {
         this.organizationDao = holder.organizationDao;
-    }
-
-    @Override
-    public boolean hasPermission(Role role) {
-        return role.canCreateProduct();
     }
 
     @Override

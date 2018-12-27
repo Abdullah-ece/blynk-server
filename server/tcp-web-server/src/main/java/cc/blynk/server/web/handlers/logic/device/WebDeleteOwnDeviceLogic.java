@@ -9,7 +9,6 @@ import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.protocol.exceptions.NoPermissionException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
@@ -37,11 +36,6 @@ public final class WebDeleteOwnDeviceLogic implements PermissionBasedLogic<WebAp
         this.sessionDao = holder.sessionDao;
         this.blockingIOProcessor = holder.blockingIOProcessor;
         this.reportingDiskDao = holder.reportingDiskDao;
-    }
-
-    @Override
-    public boolean hasPermission(Role role) {
-        return role.canDeleteOwnDevice();
     }
 
     @Override

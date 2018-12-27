@@ -3,7 +3,6 @@ package cc.blynk.server.web.handlers.logic.organization;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.PermissionBasedLogic;
 import cc.blynk.server.core.dao.OrganizationDao;
-import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.processors.rules.RuleGroup;
@@ -25,11 +24,6 @@ public final class WebEditRuleGroupLogic implements PermissionBasedLogic<WebAppS
 
     public WebEditRuleGroupLogic(Holder holder) {
         this.organizationDao = holder.organizationDao;
-    }
-
-    @Override
-    public boolean hasPermission(Role role) {
-        return role.canEditRuleGroup();
     }
 
     @Override

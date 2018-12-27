@@ -2,7 +2,6 @@ package cc.blynk.server.common.handlers.logic.timeline;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.PermissionBasedLogic;
-import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.mobile.BaseUserStateHolder;
 import io.netty.channel.ChannelHandlerContext;
@@ -20,11 +19,6 @@ public final class WebGetDeviceTimelineLogic implements PermissionBasedLogic<Bas
 
     public WebGetDeviceTimelineLogic(Holder holder) {
         this.webGetOwnDeviceTimelineLogic = new WebGetOwnDeviceTimelineLogic(holder);
-    }
-
-    @Override
-    public boolean hasPermission(Role role) {
-        return role.canViewOrgDevices();
     }
 
     @Override

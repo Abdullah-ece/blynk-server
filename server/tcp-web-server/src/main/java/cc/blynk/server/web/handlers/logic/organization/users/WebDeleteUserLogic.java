@@ -7,7 +7,6 @@ import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -39,11 +38,6 @@ public final class WebDeleteUserLogic implements PermissionBasedLogic<WebAppStat
         this.dbManager = holder.dbManager;
         this.sessionDao = holder.sessionDao;
         this.organizationDao = holder.organizationDao;
-    }
-
-    @Override
-    public boolean hasPermission(Role role) {
-        return role.canDeleteOrgUsers();
     }
 
     @Override

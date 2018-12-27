@@ -5,7 +5,6 @@ import cc.blynk.server.core.PermissionBasedLogic;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.dto.ProductDTO;
-import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
@@ -28,11 +27,6 @@ public final class WebGetProductLogic implements PermissionBasedLogic<WebAppStat
 
     public WebGetProductLogic(Holder holder) {
         this.organizationDao = holder.organizationDao;
-    }
-
-    @Override
-    public boolean hasPermission(Role role) {
-        return role.canViewProduct();
     }
 
     @Override

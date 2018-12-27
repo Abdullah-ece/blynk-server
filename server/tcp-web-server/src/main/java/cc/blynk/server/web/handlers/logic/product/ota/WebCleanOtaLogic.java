@@ -3,7 +3,6 @@ package cc.blynk.server.web.handlers.logic.product.ota;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.PermissionBasedLogic;
 import cc.blynk.server.core.dao.OrganizationDao;
-import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -24,11 +23,6 @@ public final class WebCleanOtaLogic implements PermissionBasedLogic<WebAppStateH
 
     public WebCleanOtaLogic(Holder holder) {
         this.organizationDao = holder.organizationDao;
-    }
-
-    @Override
-    public boolean hasPermission(Role role) {
-        return role.canStopOTA();
     }
 
     @Override

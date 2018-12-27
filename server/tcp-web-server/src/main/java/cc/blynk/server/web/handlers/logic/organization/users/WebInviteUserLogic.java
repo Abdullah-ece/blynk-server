@@ -6,7 +6,6 @@ import cc.blynk.server.core.PermissionBasedLogic;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.UserInviteDTO;
@@ -57,11 +56,6 @@ public final class WebInviteUserLogic implements PermissionBasedLogic<WebAppStat
         this.productName = holder.props.productName;
         this.inviteURL = holder.props.getInviteUrl();
         this.httpsServerUrl = holder.props.httpsServerUrl;
-    }
-
-    @Override
-    public boolean hasPermission(Role role) {
-        return role.canInviteOrgUsers();
     }
 
     @Override

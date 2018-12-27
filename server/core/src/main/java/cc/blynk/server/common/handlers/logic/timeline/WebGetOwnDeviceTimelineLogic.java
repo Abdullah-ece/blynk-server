@@ -6,7 +6,6 @@ import cc.blynk.server.core.PermissionBasedLogic;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.DeviceValue;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.events.Event;
@@ -51,11 +50,6 @@ public final class WebGetOwnDeviceTimelineLogic implements PermissionBasedLogic<
                 logEvent.update(templateEvent);
             }
         }
-    }
-
-    @Override
-    public boolean hasPermission(Role role) {
-        return role.canViewOwnDevices();
     }
 
     @Override

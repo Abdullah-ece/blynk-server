@@ -2,7 +2,6 @@ package cc.blynk.server.web.handlers.logic.product.ota;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.PermissionBasedLogic;
-import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
@@ -27,11 +26,6 @@ public final class WebGetOtaFirmwareInfoLogic implements PermissionBasedLogic<We
 
     public WebGetOtaFirmwareInfoLogic(Holder holder) {
         this.staticFilesFolder = holder.props.jarPath;
-    }
-
-    @Override
-    public boolean hasPermission(Role role) {
-        return role.canViewOta();
     }
 
     @Override

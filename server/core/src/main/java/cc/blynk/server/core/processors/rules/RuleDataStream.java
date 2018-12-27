@@ -27,15 +27,15 @@ public class RuleDataStream {
     }
 
     public boolean isSame(int productId, short pin, PinType pinType) {
-        return this.productId ==productId &&this.pin ==pin &&this.pinType == pinType;
+        return this.productId == productId && this.pin == pin && this.pinType == pinType;
     }
 
     @Override
     public String toString() {
-        return "RuleDataStream{" +
-                "productId=" + productId +
-                ", pin=" + pin +
-                ", pinType=" + pinType +
-                '}';
+        return "RuleDataStream{"
+                + "productId=" + productId
+                + ", pin=" + pin
+                + ", pinType=" + pinType
+                + '}';
     }
 }

@@ -8,7 +8,6 @@ import cc.blynk.server.core.dao.DeviceValue;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
@@ -44,11 +43,6 @@ public final class WebResolveOwnLogEventLogic implements PermissionBasedLogic<Ba
         this.blockingIOProcessor = holder.blockingIOProcessor;
         this.reportingDBManager = holder.reportingDBManager;
         this.sessionDao = holder.sessionDao;
-    }
-
-    @Override
-    public boolean hasPermission(Role role) {
-        return role.canEditOwnDevice();
     }
 
     @Override

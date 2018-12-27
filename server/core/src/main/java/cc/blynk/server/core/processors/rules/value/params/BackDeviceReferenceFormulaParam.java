@@ -57,7 +57,8 @@ public class BackDeviceReferenceFormulaParam extends FormulaParamBase {
             }
         }
 
-        log.trace("Error processing BackDeviceReferenceFormulaParam. No value in all devices for {}.", targetDataStream);
+        log.trace("Error processing BackDeviceReferenceFormulaParam. No value in all devices for {}.",
+                targetDataStream);
         return null;
     }
 

@@ -7,7 +7,6 @@ import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
-import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
@@ -43,11 +42,6 @@ public final class WebAppOwnControlHardwareLogic implements PermissionBasedLogic
     WebAppOwnControlHardwareLogic(Holder holder) {
         this.sessionDao = holder.sessionDao;
         this.deviceDao = holder.deviceDao;
-    }
-
-    @Override
-    public boolean hasPermission(Role role) {
-        return role.canEditOwnDevice();
     }
 
     @Override

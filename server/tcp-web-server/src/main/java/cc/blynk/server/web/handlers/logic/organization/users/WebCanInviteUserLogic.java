@@ -5,7 +5,6 @@ import cc.blynk.server.core.PermissionBasedLogic;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.auth.UserStatus;
-import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
@@ -26,11 +25,6 @@ public final class WebCanInviteUserLogic implements PermissionBasedLogic<WebAppS
 
     public WebCanInviteUserLogic(Holder holder) {
         this.userDao = holder.userDao;
-    }
-
-    @Override
-    public boolean hasPermission(Role role) {
-        return role.canInviteOrgUsers();
     }
 
     @Override

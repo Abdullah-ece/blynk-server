@@ -40,8 +40,8 @@ public class DeviceDataStreamFormulaParam extends FormulaParamBase {
 
     @Override
     public String toString() {
-        return "DeviceDataStreamFormulaParam{" +
-                "targetDataStream=" + targetDataStream +
-                '}';
+        return "DeviceDataStreamFormulaParam{"
+                + "targetDataStream=" + targetDataStream
+                + '}';
     }
 }
