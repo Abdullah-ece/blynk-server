@@ -45,7 +45,7 @@ public final class WebGetOwnOrganizationLogic implements PermissionBasedLogic<We
         User user = state.user;
         if (orgId != user.orgId) {
             log.debug("User {} don't have permission to view another organizations.", user.email);
-            throw new NoPermissionException(user.email, getPermission());
+            throw new NoPermissionException(user.email, "view organization");
         }
 
         Organization organization = organizationDao.getOrgByIdOrThrow(orgId);

@@ -71,14 +71,11 @@ public class Role implements CopyObject<Role> {
         return hasPermission1(OWN_DEVICES_VIEW);
     }
 
-    /**
-     * Permission check for Group1
-     */
     public boolean hasPermission1(int permission) {
         return hasPermission(permissionGroup1, permission);
     }
 
-    private boolean hasPermission2(int permission) {
+    public boolean hasPermission2(int permission) {
         return hasPermission(permissionGroup2, permission);
     }
 

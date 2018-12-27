@@ -1,7 +1,5 @@
 package cc.blynk.server.core.protocol.exceptions;
 
-import cc.blynk.server.core.model.permissions.PermissionsTable;
-
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -13,13 +11,8 @@ public class NoPermissionException extends RuntimeException {
         super(msg, null, true, false);
     }
 
-    public NoPermissionException(String email, int permission) {
-        this(buildMessage(email, permission));
-    }
-
-    private static String buildMessage(String email, int permission) {
-        String text = PermissionsTable.PERMISSION1_NAMES.get(permission);
-        return buildMessage(email, text);
+    public NoPermissionException(String email, String text) {
+        this(buildMessage(email, text));
     }
 
     private static String buildMessage(String email, String permission) {

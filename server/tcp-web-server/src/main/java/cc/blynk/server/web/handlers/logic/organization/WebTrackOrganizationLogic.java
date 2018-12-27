@@ -11,8 +11,6 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_SWITCH;
-import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_VIEW;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 
 /**
@@ -46,11 +44,11 @@ public final class WebTrackOrganizationLogic {
             //no permission to switch orgs
             if (!role.canSwitchOrg()) {
                 log.warn("{} tries to switch org, but doesn't have ORG_SWITCH permission.", email);
-                throw new NoPermissionException(email, ORG_SWITCH);
+                throw new NoPermissionException(email, "switch organization");
             }
             if (!role.canViewOrg()) {
                 log.warn("{} tries to switch org, but doesn't have ORG_VIEW permission.", email);
-                throw new NoPermissionException(email, ORG_VIEW);
+                throw new NoPermissionException(email, "view organization");
             }
 
             organizationDao.checkInheritanceAccess(email, userOrgId, requestedOrgId);

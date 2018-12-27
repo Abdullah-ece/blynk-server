@@ -49,7 +49,7 @@ public abstract class PermissionsTable {
     //permission2 group
     public static int RULE_GROUP_EDIT =        0b1;
 
-    public static Map<Integer, String> PERMISSION1_NAMES = new HashMap<>() {
+    public static final Map<Integer, String> PERMISSION1_NAMES = new HashMap<>() {
         {
             put(ORG_SWITCH, "switch organization");
             put(OWN_ORG_EDIT, "edit own organization");
@@ -86,7 +86,7 @@ public abstract class PermissionsTable {
         }
     };
 
-    public static Map<Integer, String> PERMISSION2_NAMES = new HashMap<>() {
+    public static final Map<Integer, String> PERMISSION2_NAMES = new HashMap<>() {
         {
             put(RULE_GROUP_EDIT, "edit rule group");
         }

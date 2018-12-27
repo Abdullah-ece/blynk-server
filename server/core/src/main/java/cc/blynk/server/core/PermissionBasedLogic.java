@@ -1,5 +1,6 @@
 package cc.blynk.server.core;
 
+import cc.blynk.server.core.model.permissions.PermissionsTable;
 import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.protocol.exceptions.NoPermissionException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -7,6 +8,8 @@ import cc.blynk.server.core.session.mobile.BaseUserStateHolder;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.Map;
 
 public interface PermissionBasedLogic<T extends BaseUserStateHolder> {
 
@@ -22,10 +25,6 @@ public interface PermissionBasedLogic<T extends BaseUserStateHolder> {
         }
     }
 
-    default boolean hasPermission(Role role) {
-        return role.hasPermission1(getPermission());
-    }
-
     /**
      * Used when API handler should behave differently when 2 permissions overlap.
      * For example, VIEW_ORG_DEVICES permission overlap VIEW_OWN_DEVICES,
@@ -34,7 +33,15 @@ public interface PermissionBasedLogic<T extends BaseUserStateHolder> {
      * if user doesn't have VIEW_ORG_DEVICES - return devices based on VIEW_OWN_DEVICES
      */
     default void noPermissionAction(ChannelHandlerContext ctx, T state, StringMessage msg) {
-        throw new NoPermissionException(state.user.email, getPermission());
+        throw new NoPermissionException(state.user.email, getErrorMap().get(getPermission()));
+    }
+
+    default boolean hasPermission(Role role) {
+        return role.hasPermission1(getPermission());
+    }
+
+    default Map<Integer, String> getErrorMap() {
+        return PermissionsTable.PERMISSION1_NAMES;
     }
 
     void messageReceived0(ChannelHandlerContext ctx, T state, StringMessage message);
