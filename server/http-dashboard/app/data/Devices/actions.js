@@ -1,4 +1,4 @@
-// here should be actions
+import {API_COMMANDS} from "store/blynk-websocket-middleware/commands";
 
 export function DevicesSortChange(value) {
   return {
@@ -51,3 +51,25 @@ export function DeviceTimelineControlsUpdate(params) {
     value: params
   };
 }
+
+export function GetDeviceByReferenceMetafield(params) {
+  // return {
+  //   type: API_COMMANDS.WEB_GET_DEVICES_BY_REFERENCE_METAFIELD,
+  //   value: params
+  // };
+
+  const {deviceId, metafieldId} = params;
+
+  return {
+    type: 'WEB_GET_DEVICES_BY_REFERENCE_METAFIELD',
+    ws: {
+      request: {
+        command: API_COMMANDS.WEB_GET_DEVICES_BY_REFERENCE_METAFIELD,
+        query: [
+          deviceId, metafieldId
+        ],
+      }
+    }
+  };
+}
+

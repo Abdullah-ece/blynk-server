@@ -20,6 +20,7 @@ class Base extends React.Component {
     account: React.PropTypes.object,
     isEditDisabled: React.PropTypes.bool,
     availableLocationsList: React.PropTypes.array,
+    device: React.PropTypes.object,
   };
 
   constructor(props) {
@@ -98,7 +99,7 @@ class Base extends React.Component {
     }
 
     return (
-      <Item isManufacturer={isManufacturer} field={itemField} onEditClick={this.handleEdit} userRole={this.props.account.roleId} fieldRole={field.roleIds} fieldName={field.name} isEditDisabled={this.props.isEditDisabled}>
+      <Item isManufacturer={isManufacturer} field={itemField} onEditClick={this.handleEdit} userRole={this.props.account.roleId} deviceId={this.props.device.id} fieldRole={field.roleIds} fieldName={field.name} isEditDisabled={this.props.isEditDisabled}>
         { this.getPreviewComponent() }
         <Modal visible={this.state.editVisible}
                wrapClassName={`device-metadata-modal ${this.props.modalWrapClassName || ''}`}

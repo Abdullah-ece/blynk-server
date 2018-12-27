@@ -77,7 +77,7 @@ class DeviceInfo extends React.Component {
         return metadataField.type !== Metadata.Fields.LOCATION || (metadataField.type === Metadata.Fields.LOCATION && metadataField.isLocationEnabled);
       });
     };
-    
+
     return (
       <div className="device--device-info">
         <Row className="device--device-info-details">
@@ -229,6 +229,7 @@ class DeviceInfo extends React.Component {
                     onChange: this.onChange.bind(this),
                     account: this.props.account,
                     modalWrapClassName: 'device-metadata-modal--location',
+                    device: this.props.device,
                   };
 
                   if (field.type === Metadata.Fields.LOCATION)

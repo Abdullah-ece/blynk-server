@@ -42,47 +42,48 @@ export const COMMANDS = {
 };
 
 export const API_COMMANDS = {
-  RESET_PASSWORD                : 81,
-  GET_ACCOUNT                   : 100,
-  UPDATE_ACCOUNT                : 101,
-  CREATE_DEVICE                 : 102,
-  UPDATE_DEVICE                 : 103,
-  GET_DEVICES                   : 104,
-  GET_DEVICE                    : 105,
-  GET_ORG                       : 106,
-  GET_ORG_HIERARCHY             : 132,
-  GET_ORGS                      : 107,
-  GET_ORG_USERS                 : 108,
-  GET_ORG_LOCATIONS             : 109,
-  CAN_INVITE_USER               : 110,
-  UPDATE_ORG                    : 111,
-  CREATE_PRODUCT                : 112,
-  UPDATE_PRODUCT                : 113,
-  DELETE_PRODUCT                : 114,
-  GET_PRODUCT                   : 115,
-  GET_PRODUCTS                  : 116,
-  UPDATE_DEVICES_META_IN_PRODUCT: 117,
-  UPDATE_USER_INFO              : 118,
-  DELETE_USER                   : 119,
-  CREATE_ORG                    : 120,
-  DELETE_ORG                    : 122,
-  CAN_DELETE_PRODUCT            : 123,
-  INVITE_USER                   : 124,
-  UPDATE_DEVICE_METAFIELD       : 126,
-  GET_DEVICE_TIMELINE           : 127,
-  LOG_EVENT_RESOLVE             : 75,
-  DELETE_DEVICE                 : 128,
-  LOGOUT                        : 66,
-  WEB_GET_TEMP_SECURE_TOKEN     : 131,
-  WEB_SET_AUTH_TOKEN            : 138,
-  WEB_EDIT_OWN_ORG              : 139,
-  WEB_TRACK_ORG                 : 145,
-  WEB_CREATE_ROLE               : 133, // accepts role json
-  WEB_UPDATE_ROLE               : 134, // accepts role json
-  WEB_GET_ROLE                  : 135, // accepts roleId
-  WEB_GET_ROLES                 : 136, // no params required
-  WEB_DELETE_ROLE               : 137, // accepts roleId
-  WEB_GET_USER_COUNTERS_BY_ROLE : 146
+  RESET_PASSWORD                         : 81,
+  GET_ACCOUNT                            : 100,
+  UPDATE_ACCOUNT                         : 101,
+  CREATE_DEVICE                          : 102,
+  UPDATE_DEVICE                          : 103,
+  GET_DEVICES                            : 104,
+  GET_DEVICE                             : 105,
+  GET_ORG                                : 106,
+  GET_ORG_HIERARCHY                      : 132,
+  GET_ORGS                               : 107,
+  GET_ORG_USERS                          : 108,
+  GET_ORG_LOCATIONS                      : 109,
+  CAN_INVITE_USER                        : 110,
+  UPDATE_ORG                             : 111,
+  CREATE_PRODUCT                         : 112,
+  UPDATE_PRODUCT                         : 113,
+  DELETE_PRODUCT                         : 114,
+  GET_PRODUCT                            : 115,
+  GET_PRODUCTS                           : 116,
+  UPDATE_DEVICES_META_IN_PRODUCT         : 117,
+  UPDATE_USER_INFO                       : 118,
+  DELETE_USER                            : 119,
+  CREATE_ORG                             : 120,
+  DELETE_ORG                             : 122,
+  CAN_DELETE_PRODUCT                     : 123,
+  INVITE_USER                            : 124,
+  UPDATE_DEVICE_METAFIELD                : 126,
+  GET_DEVICE_TIMELINE                    : 127,
+  LOG_EVENT_RESOLVE                      : 75,
+  DELETE_DEVICE                          : 128,
+  LOGOUT                                 : 66,
+  WEB_GET_TEMP_SECURE_TOKEN              : 131,
+  WEB_SET_AUTH_TOKEN                     : 138,
+  WEB_EDIT_OWN_ORG                       : 139,
+  WEB_TRACK_ORG                          : 145,
+  WEB_CREATE_ROLE                        : 133, // accepts role json
+  WEB_UPDATE_ROLE                        : 134, // accepts role json
+  WEB_GET_ROLE                           : 135, // accepts roleId
+  WEB_GET_ROLES                          : 136, // no params required
+  WEB_DELETE_ROLE                        : 137, // accepts roleId
+  WEB_GET_USER_COUNTERS_BY_ROLE          : 146,
+  WEB_GET_DEVICES_BY_REFERENCE_METAFIELD : 147,
 };
 
 export const getCommandKeyName = (value) => {

@@ -1,14 +1,18 @@
 import React from 'react';
 import Base from '../Base';
-import {Fieldset, LinearIcon} from 'components';
+import { Fieldset, LinearIcon } from 'components';
 import DeviceReferenceModal from './modal';
-import {connect} from 'react-redux';
-import {Link} from 'react-router';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { Link } from 'react-router';
 import _ from 'lodash';
+import {GetDeviceByReferenceMetafield} from 'data/Devices/actions';
 
 @connect((state) => ({
   products: state.Product.products,
-  devices : state.Devices.devices,
+  devices: state.Devices.devices,
+}), (dispatch) => ({
+  getDeviceByReferenceMetafield: bindActionCreators(GetDeviceByReferenceMetafield, dispatch)
 }))
 class DeviceReference extends Base {
 
@@ -24,19 +28,20 @@ class DeviceReference extends Base {
 
     return (
       <Fieldset>
-        <Fieldset.Legend type="dark"> <LinearIcon type={field.icon || 'cube'}/> {field.name}         </Fieldset.Legend>
+        <Fieldset.Legend type="dark"> <LinearIcon
+          type={field.icon || 'cube'}/> {field.name}         </Fieldset.Legend>
         {value && value.name && (
           <Link to={`/devices/${value.id}`}>{value.name}</Link>
         ) || (<i>Device is not selected</i>)}
         {/*<i>No Device ={productIds}= ={value}=</i>*/}
         {/*{ !price && !units ? <i>No Value</i> : (*/}
-          {/*<div>*/}
-            {/*{ Number(field.perValue) === 1 ? (*/}
-              {/*<p>{`${Currency[currency].abbreviation} ${price} / ${Unit[units].abbreviation}`}</p>*/}
-            {/*) : (*/}
-              {/*<p>{`${Currency[currency].abbreviation} ${price} / ${perValue} ${Unit[units].abbreviation}`}</p>*/}
-            {/*)}*/}
-          {/*</div>*/}
+        {/*<div>*/}
+        {/*{ Number(field.perValue) === 1 ? (*/}
+        {/*<p>{`${Currency[currency].abbreviation} ${price} / ${Unit[units].abbreviation}`}</p>*/}
+        {/*) : (*/}
+        {/*<p>{`${Currency[currency].abbreviation} ${price} / ${perValue} ${Unit[units].abbreviation}`}</p>*/}
+        {/*)}*/}
+        {/*</div>*/}
         {/*) }*/}
       </Fieldset>
     );
@@ -70,7 +75,11 @@ class DeviceReference extends Base {
 
     return (
       <div>
-        <DeviceReferenceModal form={this.props.form} options={options}/>
+        <DeviceReferenceModal form={this.props.form}
+                              options={options}
+                              deviceId={this.props.device.id}
+                              metafieldId={this.props.data.id}
+                              getDeviceByReferenceMetafield={this.props.getDeviceByReferenceMetafield}/>
       </div>
     );
   }
