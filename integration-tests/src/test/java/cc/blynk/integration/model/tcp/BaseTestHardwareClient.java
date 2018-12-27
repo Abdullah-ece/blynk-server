@@ -9,6 +9,7 @@ import org.mockito.Mockito;
 
 import java.util.Random;
 
+import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_LOGIN;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_LOG_EVENT;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_SYNC;
@@ -68,6 +69,10 @@ public abstract class BaseTestHardwareClient extends BaseClient {
 
     public void login(String token) {
         send(HARDWARE_LOGIN, token);
+    }
+
+    public void hardware(int pin, String value) {
+        send(HARDWARE, "vw" + BODY_SEPARATOR + pin + BODY_SEPARATOR + value);
     }
 
     public void setProperty(int pin, String property, String value) {

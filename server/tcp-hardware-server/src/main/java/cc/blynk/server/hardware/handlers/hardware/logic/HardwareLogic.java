@@ -1,12 +1,15 @@
 package cc.blynk.server.hardware.handlers.hardware.logic;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.processors.BaseProcessorHandler;
+import cc.blynk.server.core.processors.RuleEngineProcessor;
 import cc.blynk.server.core.processors.WebhookProcessor;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
@@ -29,8 +32,11 @@ import static cc.blynk.utils.StringUtils.split3;
  */
 public class HardwareLogic extends BaseProcessorHandler {
 
-    private final ReportingDiskDao reportingDao;
     private final SessionDao sessionDao;
+    private final ReportingDiskDao reportingDiskDao;
+    private final OrganizationDao organizationDao;
+    private final RuleEngineProcessor ruleEngineProcessor;
+    private Organization org;
 
     public HardwareLogic(Holder holder) {
         super(holder.eventorProcessor, new WebhookProcessor(holder.asyncHttpClient,
@@ -40,7 +46,10 @@ public class HardwareLogic extends BaseProcessorHandler {
                 holder.stats),
                 holder.deviceDao);
         this.sessionDao = holder.sessionDao;
-        this.reportingDao = holder.reportingDiskDao;
+        this.reportingDiskDao = holder.reportingDiskDao;
+        this.organizationDao = holder.organizationDao;
+        //todo make it stateless?
+        this.ruleEngineProcessor = new RuleEngineProcessor();
     }
 
     private static boolean isWriteOperation(String body) {
@@ -76,8 +85,12 @@ public class HardwareLogic extends BaseProcessorHandler {
             String value = splitBody[2];
 
             long now = System.currentTimeMillis();
-            reportingDao.process(device, pin, pinType, value, now);
+            reportingDiskDao.process(device, pin, pinType, value, now);
             device.updateValue(pin, pinType, value, now);
+            if (org == null) {
+                org = organizationDao.getOrgByIdOrThrow(orgId);
+            }
+            ruleEngineProcessor.process(org, device, pin, pinType, value);
 
             Session session = sessionDao.getOrgSession(orgId);
 

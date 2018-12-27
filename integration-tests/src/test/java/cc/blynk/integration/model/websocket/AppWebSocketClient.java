@@ -35,6 +35,7 @@ import cc.blynk.server.core.model.web.product.EventType;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.widgets.outputs.graph.Period;
+import cc.blynk.server.core.processors.rules.RuleGroup;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.web.handlers.logic.organization.dto.CountDTO;
@@ -93,6 +94,7 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_DEVICE_METAFI
 import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_OWN_ORG;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_PRODUCT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_ROLE;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_RULE_GROUP;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_USER_INFO;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ACCOUNT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICE;
@@ -209,6 +211,10 @@ public final class AppWebSocketClient extends BaseTestAppClient {
 
     public void resolveEvent(int deviceId, long logEventId, String comment) {
         send(WEB_RESOLVE_EVENT, new ResolveEventDTO(deviceId, logEventId, comment));
+    }
+
+    public void editRuleGroup(RuleGroup ruleGroup) {
+        send(WEB_EDIT_RULE_GROUP, JsonParser.toJson(ruleGroup));
     }
 
     public void createOrganization(Organization organization) {

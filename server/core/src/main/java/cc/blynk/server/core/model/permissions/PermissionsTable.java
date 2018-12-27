@@ -45,7 +45,11 @@ public abstract class PermissionsTable {
 
     public static int SET_AUTH_TOKEN =         0b10000000000000000000000000000000;
 
-    public static Map<Integer, String> PERMISSION_NAMES = new HashMap<>() {
+
+    //permission2 group
+    public static int RULE_GROUP_EDIT =        0b1;
+
+    public static Map<Integer, String> PERMISSION1_NAMES = new HashMap<>() {
         {
             put(ORG_SWITCH, "switch organization");
             put(OWN_ORG_EDIT, "edit own organization");
@@ -79,6 +83,12 @@ public abstract class PermissionsTable {
             put(OWN_DEVICES_DELETE, "delete own devices");
             put(OWN_DEVICES_SHARE, "share own devices");
             put(SET_AUTH_TOKEN, "set auth token");
+        }
+    };
+
+    public static Map<Integer, String> PERMISSION2_NAMES = new HashMap<>() {
+        {
+            put(RULE_GROUP_EDIT, "edit rule group");
         }
     };
 

@@ -36,6 +36,7 @@ import static cc.blynk.server.core.model.permissions.PermissionsTable.ROLE_CREAT
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ROLE_DELETE;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ROLE_EDIT;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ROLE_VIEW;
+import static cc.blynk.server.core.model.permissions.PermissionsTable.RULE_GROUP_EDIT;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.SET_AUTH_TOKEN;
 
 public class Role implements CopyObject<Role> {
@@ -204,11 +205,19 @@ public class Role implements CopyObject<Role> {
         return hasPermission1(SET_AUTH_TOKEN);
     }
 
+    public boolean canEditRuleGroup() {
+        return hasPermission2(RULE_GROUP_EDIT);
+    }
+
     /**
      * Permission check for Group1
      */
     private boolean hasPermission1(int permission) {
         return hasPermission(permissionGroup1, permission);
+    }
+
+    private boolean hasPermission2(int permission) {
+        return hasPermission(permissionGroup2, permission);
     }
 
     public Role copy(int id) {

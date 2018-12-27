@@ -194,6 +194,7 @@
         <javax.mail.version>1.6.2</javax.mail.version>
         <javax.activation.version>1.2.0</javax.activation.version>
         <jooq.version>3.10.8</jooq.version>
+        <exp4j.version>0.4.8</exp4j.version>
 
         <!-- test dependencies -->
         <httpclient.version>4.5.2</httpclient.version>
@@ -214,6 +215,12 @@
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcpg-jdk15on</artifactId>
             <version>${bcpg-jdk15on.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.objecthunter</groupId>
+            <artifactId>exp4j</artifactId>
+            <version>${exp4j.version}</version>
         </dependency>
 
         <!-- Log4j2 dependencies -->

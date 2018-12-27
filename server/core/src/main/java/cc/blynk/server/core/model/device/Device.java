@@ -15,8 +15,10 @@ import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.WebDashboard;
 import cc.blynk.server.core.model.web.product.metafields.DeviceNameMetaField;
 import cc.blynk.server.core.model.web.product.metafields.DeviceOwnerMetaField;
+import cc.blynk.server.core.model.web.product.metafields.DeviceReferenceMetaField;
 import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
+import cc.blynk.server.core.processors.rules.RuleDataStream;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.utils.ArrayUtil;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -398,6 +400,16 @@ public class Device implements Target {
         return -1;
     }
 
+    @SuppressWarnings("unchecked")
+    private <T> T getMetafieldByType(Class<T> clazz) {
+        for (MetaField metaField : metaFields) {
+            if (clazz.isInstance(metaField)) {
+                return (T) metaField;
+            }
+        }
+        return null;
+    }
+
     public boolean reassignOwner(String oldOwner, String newOwner) {
         int index = getOwnerMetaFieldIndex(oldOwner);
         if (index != -1) {
@@ -443,6 +455,14 @@ public class Device implements Target {
         pinStorage.sendPinStorageSyncs(appChannel, this.id);
     }
 
+    public void updateValue(RuleDataStream ruleDataStream, String value) {
+        pinStorage.updateValue(new DeviceStorageKey(ruleDataStream.pin, ruleDataStream.pinType), value);
+    }
+
+    public PinStorageValue getValue(RuleDataStream ruleDataStream) {
+        return pinStorage.get(ruleDataStream.pin, ruleDataStream.pinType);
+    }
+
     public PinStorageValue getValue(short pin, PinType pinType) {
         return pinStorage.get(pin, pinType);
     }
@@ -481,6 +501,14 @@ public class Device implements Target {
                 return;
             }
         }
+    }
+
+    public boolean hasReferenceDevice(int deviceId) {
+        DeviceReferenceMetaField deviceReferenceMetaField = getMetafieldByType(DeviceReferenceMetaField.class);
+        if (deviceReferenceMetaField != null) {
+            return deviceReferenceMetaField.selectedDeviceId == deviceId;
+        }
+        return false;
     }
 
     @Override

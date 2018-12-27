@@ -27,6 +27,7 @@ import cc.blynk.server.web.handlers.logic.organization.WebCreateOrganizationLogi
 import cc.blynk.server.web.handlers.logic.organization.WebDeleteOrganizationLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebEditOrganizationLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebEditOwnOrganizationLogic;
+import cc.blynk.server.web.handlers.logic.organization.WebEditRuleGroupLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebGetDeviceCountLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebGetOrganizationLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebGetOrganizationsHierarchyLogic;
@@ -81,6 +82,7 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_ORG;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_OWN_ORG;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_PRODUCT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_ROLE;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_RULE_GROUP;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_USER_INFO;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ACCOUNT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICE;
@@ -163,6 +165,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
     private final WebTrackDeviceLogic webTrackDeviceLogic;
     private final WebGetDeviceCountLogic webGetDeviceCountLogic;
     private final WebGetUserCountersByRoleLogic webGetUserCountersByRoleLogic;
+    private final WebEditRuleGroupLogic webEditRuleGroupLogic;
 
     private final Holder holder;
 
@@ -212,6 +215,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
         this.webTrackDeviceLogic = new WebTrackDeviceLogic(holder);
         this.webGetDeviceCountLogic = new WebGetDeviceCountLogic(holder);
         this.webGetUserCountersByRoleLogic = new WebGetUserCountersByRoleLogic(holder);
+        this.webEditRuleGroupLogic = new WebEditRuleGroupLogic(holder);
 
         this.state = state;
         this.holder = holder;
@@ -373,6 +377,9 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
                 break;
             case WEB_GET_DEVICES_BY_REFERENCE_METAFIELD :
                 CommonGetDevicesByReferenceMetafieldLogic.messageReceived(holder, ctx, state, msg);
+                break;
+            case WEB_EDIT_RULE_GROUP :
+                webEditRuleGroupLogic.messageReceived(ctx, state, msg);
                 break;
         }
     }

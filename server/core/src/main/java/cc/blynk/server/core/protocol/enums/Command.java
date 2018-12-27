@@ -188,8 +188,9 @@ public final class Command {
     public static final short WEB_GET_DEVICES_BY_REFERENCE_METAFIELD = 147;
     public static final short MOBILE_GET_DEVICE_TIMELINE = 148;
     public static final short MOBILE_RESOLVE_DEVICE_TIMELINE = 149;
+    public static final short WEB_EDIT_RULE_GROUP = 150;
 
-    public static final int LAST_COMMAND_INDEX = 150;
+    public static final int LAST_COMMAND_INDEX = 160;
 
     private Command() {
     }
