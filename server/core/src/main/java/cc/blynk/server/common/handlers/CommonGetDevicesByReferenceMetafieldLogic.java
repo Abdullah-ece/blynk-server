@@ -20,7 +20,6 @@ import org.apache.logging.log4j.Logger;
 import java.util.ArrayList;
 import java.util.List;
 
-import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICES_BY_REFERENCE_METAFIELD;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 
 /**
@@ -70,9 +69,7 @@ public final class CommonGetDevicesByReferenceMetafieldLogic {
         String jsonResponse = JsonParser.toJson(result);
 
         if (ctx.channel().isWritable()) {
-            ctx.writeAndFlush(
-                    makeUTF8StringMessage(
-                            MOBILE_GET_DEVICES_BY_REFERENCE_METAFIELD, message.id, jsonResponse), ctx.voidPromise());
+            ctx.writeAndFlush(makeUTF8StringMessage(message.command, message.id, jsonResponse), ctx.voidPromise());
         }
     }
 
