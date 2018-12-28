@@ -22,7 +22,6 @@ import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.integration.TestUtil.webJson;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 /**
  * The Blynk Project.
@@ -43,7 +42,7 @@ public class PermissionsTest extends SingleServerInstancePerTestWithDBAndNewOrg 
                 createDeviceOwnerMeta(2, "owner", "owner", true)
         };
 
-        client.createProduct(orgId, product);
+        client.createProduct(product);
         ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
@@ -101,7 +100,7 @@ public class PermissionsTest extends SingleServerInstancePerTestWithDBAndNewOrg 
                 createDeviceOwnerMeta(2, "owner", "owner", true)
         };
 
-        client.createProduct(orgId, product);
+        client.createProduct(product);
         ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
@@ -136,7 +135,8 @@ public class PermissionsTest extends SingleServerInstancePerTestWithDBAndNewOrg 
         assertEquals(fromApiOrg2.parentId, fromApiOrg.id);
         assertEquals(organization2.name, fromApiOrg2.name);
         assertEquals(organization2.tzName, fromApiOrg2.tzName);
-        assertNull(fromApiOrg2.products);
+        assertNotNull(fromApiOrg2.products);
+        assertEquals(1, fromApiOrg2.products.length);
     }
 
     @Test
@@ -150,7 +150,7 @@ public class PermissionsTest extends SingleServerInstancePerTestWithDBAndNewOrg 
                 createDeviceOwnerMeta(2, "owner", "owner", true)
         };
 
-        client.createProduct(orgId, product);
+        client.createProduct(product);
         ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 

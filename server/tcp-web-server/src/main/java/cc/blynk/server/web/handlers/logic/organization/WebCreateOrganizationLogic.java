@@ -72,6 +72,10 @@ public final class WebCreateOrganizationLogic implements PermissionBasedLogic<We
             return;
         }
 
+        if (newOrganization.selectedProducts.length == 0) {
+            newOrganization.selectedProducts = parentOrg.selectedProducts;
+        }
+
         newOrganization = organizationDao.create(newOrganization);
         organizationDao.createProductsFromParentOrg(newOrganization.id, newOrganization.selectedProducts);
 

@@ -223,7 +223,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
                 createDeviceNameMeta(2, "Device Name", "My Default device Name", true)
         };
 
-        client.createProduct(orgId, product);
+        client.createProduct(product);
         ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
@@ -234,7 +234,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
                 createDeviceNameMeta(2, "Device Name", "My Default device Name", true),
                 createTemplateIdMeta(3, "Template Id", "TMPL0001")
         };
-        client.createProduct(orgId, product2);
+        client.createProduct(product2);
         ProductDTO fromApiProduct2 = client.parseProductDTO(2);
         assertNotNull(fromApiProduct2);
 
@@ -417,7 +417,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
                 createDeviceNameMeta(2, "Device Name", "My Default device Name", false)
         };
 
-        client.createProduct(orgId, product);
+        client.createProduct(product);
         ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
@@ -452,7 +452,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
                 createDeviceNameMeta(3, "Device Name", "111", true)
         };
 
-        client.createProduct(orgId, product);
+        client.createProduct(product);
         ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
@@ -504,7 +504,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
                 createDeviceNameMeta(2, "Device Name", "111", true)
         };
 
-        client.createProduct(orgId, product);
+        client.createProduct(product);
         ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
@@ -518,7 +518,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
                 deviceReferenceMetaField
         };
 
-        client.createProduct(orgId, product2);
+        client.createProduct(product2);
         ProductDTO fromApiProduct2 = client.parseProductDTO(2);
         assertNotNull(fromApiProduct2);
 
@@ -609,7 +609,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
                 createDeviceNameMeta(2, "Device Name", "My Default device Name", false)
         };
 
-        client.createProduct(orgId, product);
+        client.createProduct(product);
         ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
@@ -620,7 +620,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
                 createDeviceNameMeta(2, "Device Name", "My Default device Name", true),
                 createTemplateIdMeta(3, "Template Id", "TMPL0001", true)
         };
-        client.createProduct(orgId, product2);
+        client.createProduct(product2);
         ProductDTO fromApiProduct2 = client.parseProductDTO(2);
         assertNotNull(fromApiProduct2);
 
@@ -706,7 +706,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
                 createDeviceNameMeta(2, "Device Name", "My Default device Name", false)
         };
 
-        client.createProduct(orgId, product);
+        client.createProduct(product);
         ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
@@ -717,7 +717,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
                 createDeviceNameMeta(2, "Device Name", "My Default device Name", true),
                 createTemplateIdMeta(3, "Template Id", "TMPL0001", true)
         };
-        client.createProduct(orgId, product2);
+        client.createProduct(product2);
         ProductDTO fromApiProduct2 = client.parseProductDTO(2);
         assertNotNull(fromApiProduct2);
 
@@ -782,7 +782,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
                 createDeviceOwnerMeta(3, "Device Owner", null, false)
         };
 
-        client.createProduct(orgId, product);
+        client.createProduct(product);
         ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
@@ -793,7 +793,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
                 createDeviceNameMeta(2, "Device Name", "My Default device Name", true),
                 createTemplateIdMeta(3, "Template Id", "TMPL0001")
         };
-        client.createProduct(orgId, product2);
+        client.createProduct(product2);
         ProductDTO fromApiProduct2 = client.parseProductDTO(2);
         assertNotNull(fromApiProduct2);
 
@@ -920,7 +920,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
                 createTemplateIdMeta(4, "Template Id", "TMPL0001")
         };
 
-        client.createProduct(orgId, product);
+        client.createProduct(product);
         ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
@@ -1041,7 +1041,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
                 criticalEvent
         };
 
-        client.createProduct(orgId, product);
+        client.createProduct(product);
         ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
@@ -1126,7 +1126,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
                 createDeviceNameMeta(2, "Device Name", "My Default device Name", true),
                 createTemplateIdMeta(3, "Template Id", "TMPL0001")
         };
-        client.createProduct(orgId, product);
+        client.createProduct(product);
         ProductDTO fromApiProduct2 = client.parseProductDTO(1);
         assertNotNull(fromApiProduct2);
 
@@ -1249,7 +1249,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
                 createTemplateIdMeta(3, "Template Id", "TMPL0002")
         };
 
-        client.createProduct(orgId, product);
+        client.createProduct(product);
         ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
@@ -1259,7 +1259,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
                 createDeviceOwnerMeta(1, "Device Name", null, true),
                 createDeviceNameMeta(2, "Device Name", "My Default device Name", true)
         };
-        client.createProduct(orgId, product2);
+        client.createProduct(product2);
         ProductDTO fromApiProduct2 = client.parseProductDTO(2);
         assertNotNull(fromApiProduct2);
 
@@ -1319,7 +1319,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
                 createDeviceNameMeta(2, "Device Name", "My Default device Name", true),
         };
 
-        client.createProduct(orgId, product);
+        client.createProduct(product);
         ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
@@ -1330,7 +1330,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
                 createDeviceNameMeta(2, "Device Name", "My Default device Name", true),
                 createTemplateIdMeta(3, "Template Id", "TMPL0001")
         };
-        client.createProduct(orgId, product2);
+        client.createProduct(product2);
         ProductDTO fromApiProduct2 = client.parseProductDTO(2);
         assertNotNull(fromApiProduct2);
 
@@ -1388,7 +1388,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
                 createDeviceNameMeta(2, "Device Name", "My Default device Name", true),
         };
 
-        client.createProduct(orgId, product);
+        client.createProduct(product);
         ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
@@ -1399,7 +1399,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
                 createDeviceNameMeta(2, "Device Name", "My Default device Name", true),
                 createTemplateIdMeta(3, "Template Id", "TMPL0001")
         };
-        client.createProduct(orgId, product2);
+        client.createProduct(product2);
         ProductDTO fromApiProduct2 = client.parseProductDTO(2);
         assertNotNull(fromApiProduct2);
 

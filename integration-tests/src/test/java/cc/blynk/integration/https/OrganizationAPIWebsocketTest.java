@@ -169,7 +169,7 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
                 createDeviceOwnerMeta(5, "owner", "owner", true)
         };
 
-        client.createProduct(orgId, product);
+        client.createProduct(product);
         ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
@@ -236,7 +236,7 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
                 createDeviceOwnerMeta(5, "owner", "owner", true)
         };
 
-        client.createProduct(orgId, product);
+        client.createProduct(product);
         ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 

@@ -213,7 +213,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
                 offlineEvent
         };
 
-        client.createProduct(orgId, product);
+        client.createProduct(product);
         ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
@@ -585,7 +585,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
                 offlineEvent
         };
 
-        client.createProduct(orgId, product);
+        client.createProduct(product);
         ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 

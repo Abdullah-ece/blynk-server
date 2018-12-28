@@ -229,15 +229,15 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         send(WEB_CAN_DELETE_PRODUCT, productId);
     }
 
-    public void createProduct(int orgId, Product product) {
-        createProduct(orgId, new ProductDTO(product));
+    public void createProduct(Product product) {
+        createProduct(new ProductDTO(product));
     }
     public void updateProduct(int orgId, Product product) {
         updateProduct(orgId, new ProductDTO(product));
     }
 
-    public void createProduct(int orgId, ProductDTO product) {
-        send(WEB_CREATE_PRODUCT, new ProductAndOrgIdDTO(orgId, product));
+    public void createProduct(ProductDTO product) {
+        send(WEB_CREATE_PRODUCT, new ProductAndOrgIdDTO(-1, product));
     }
 
     public void updateProduct(int orgId, ProductDTO product) {

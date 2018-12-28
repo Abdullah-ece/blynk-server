@@ -52,7 +52,7 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
                 createDeviceOwnerMeta(2, "Device Owner", null, true)
         };
 
-        client.createProduct(orgId, floorProduct);
+        client.createProduct(floorProduct);
         ProductDTO floorProductFromApi = client.parseProductDTO(1);
         assertNotNull(floorProductFromApi);
 
@@ -64,7 +64,7 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
                 new DeviceReferenceMetaField(3, "Floor reference", null, true, false, false, null, new int[] {floorProductFromApi.id}, -1)
         };
 
-        client.createProduct(orgId, fanProduct);
+        client.createProduct(fanProduct);
         ProductDTO fanProductFromApi = client.parseProductDTO(2);
         assertNotNull(fanProductFromApi);
 

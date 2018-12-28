@@ -68,7 +68,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
                 createNumberMeta(3, "Jopa", 123D)
         };
 
-        client.createProduct(orgId, product);
+        client.createProduct(product);
         ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
@@ -122,7 +122,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
                 createNumberMeta(3, "Jopa", 123D)
         };
 
-        client.createProduct(orgId, product);
+        client.createProduct(product);
         ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
@@ -162,7 +162,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
                 createNumberMeta(3, "Jopa", 123D)
         };
 
-        client.createProduct(orgId, product);
+        client.createProduct(product);
         ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
@@ -191,7 +191,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
                 createDeviceOwnerMeta(2, "Device Owner", null, true)
         };
 
-        client.createProduct(orgId, product);
+        client.createProduct(product);
         ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
@@ -246,7 +246,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
                 createDeviceOwnerMeta(2, "Device Owner", null, true)
         };
 
-        client.createProduct(orgId, product);
+        client.createProduct(product);
         ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
@@ -307,7 +307,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
                 createDeviceOwnerMeta(4, "Device Owner", null, true)
         };
 
-        client.createProduct(orgId, product);
+        client.createProduct(product);
         ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
@@ -359,7 +359,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
                 createDeviceOwnerMeta(4, "Device Owner", null, true)
         };
 
-        client.createProduct(orgId, product);
+        client.createProduct(product);
         ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
@@ -399,7 +399,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
                 createDeviceOwnerMeta(4, "Device Owner", null, true)
         };
 
-        client.createProduct(orgId, product);
+        client.createProduct(product);
         ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
@@ -453,7 +453,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
                 createDeviceOwnerMeta(2, "Device Owner", null, true)
         };
 
-        client.createProduct(orgId, product);
+        client.createProduct(product);
         ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
@@ -484,7 +484,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
                 createDeviceOwnerMeta(3, "Device Owner", null, true)
         };
 
-        client.createProduct(orgId, product);
+        client.createProduct(product);
         ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
@@ -537,7 +537,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
                 createDeviceOwnerMeta(3, "Device Owner", null, true)
         };
 
-        client.createProduct(orgId, product);
+        client.createProduct(product);
         ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
         assertNotNull(fromApiProduct.webDashboard);
@@ -580,7 +580,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
                 createDeviceOwnerMeta(3, "Device Owner", null, true)
         };
 
-        client.createProduct(orgId, product);
+        client.createProduct(product);
         ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
@@ -625,7 +625,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
                 createDeviceOwnerMeta(3, "Device Owner", null, true)
         };
 
-        client.createProduct(orgId, product);
+        client.createProduct(product);
         ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
@@ -686,7 +686,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
                 createDeviceOwnerMeta(3, "Device Owner", null, true)
         };
 
-        client.createProduct(orgId, product);
+        client.createProduct(product);
         ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
@@ -762,7 +762,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
                 createDeviceOwnerMeta(3, "Device Owner", null, true)
         };
 
-        client.createProduct(orgId, product);
+        client.createProduct(product);
         ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
@@ -833,7 +833,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
                 createDeviceOwnerMeta(3, "Device Owner", null, true)
         };
 
-        client.createProduct(orgId, product);
+        client.createProduct(product);
         ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
@@ -888,7 +888,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
                 createDeviceOwnerMeta(3, "Device Owner", null, true)
         };
 
-        client.createProduct(orgId, product);
+        client.createProduct(product);
         ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
@@ -951,7 +951,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
                 createWebLineGraph(2, "graph"),
         });
 
-        client.createProduct(orgId, product);
+        client.createProduct(product);
         ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
@@ -986,7 +986,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
                 createWebLabelWidget(1, "123")
         });
 
-        client.createProduct(orgId, product);
+        client.createProduct(product);
         ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
@@ -1048,7 +1048,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
                 createWebLabelWidget(1, "123")
         });
 
-        client.createProduct(orgId, product);
+        client.createProduct(product);
         ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
@@ -1128,7 +1128,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
                 createWebLineGraph(2, "graph")
         });
 
-        client.createProduct(orgId, product);
+        client.createProduct(product);
         ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
