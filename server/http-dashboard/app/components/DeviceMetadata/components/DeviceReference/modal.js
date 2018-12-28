@@ -15,10 +15,22 @@ class DeviceReference extends React.Component {
     getDeviceByReferenceMetafield: PropTypes.func,
   };
 
+  state = {
+    options: []
+  };
+
   componentDidMount() {
     const { deviceId, metafieldId } = this.props;
-    this.props.getDeviceByReferenceMetafield({ deviceId, metafieldId }).then(
-      data => console.log('PPPPPPPPPPPPPPPPPPPPPP',data));
+    this.props.getDeviceByReferenceMetafield({ deviceId, metafieldId })
+      .then(
+        (data) => {
+          this.setState({
+            options: data.payload.data.map((device) => ({
+              key: String(device.id),
+              value: String(device.name)
+            }))
+          });
+        }).catch(err => console.errord(err));
   }
 
   render() {
@@ -31,7 +43,7 @@ class DeviceReference extends React.Component {
             <MetadataSelect notFoundContent={notFoundContent} allowZero={false}
                             name="selectedDeviceId" type="text"
                             placeholder="Choose Device"
-                            values={this.props.options}
+                            values={this.state.options}
                             style={{ width: '100%' }}/>
           </Item>
         </ItemsGroup>

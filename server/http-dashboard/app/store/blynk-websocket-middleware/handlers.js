@@ -29,7 +29,6 @@ export const Handlers = (params) => {
   const {store, options, action, command, msgId, dataView} = params;
 
   const responseOKHandler = ({ responseCode, message }) => {
-
     if(message && message.previousAction) {
       store.dispatch({
         type: `${message.previousAction.type}_SUCCESS`,
@@ -247,7 +246,7 @@ export const Handlers = (params) => {
     const body = decodeBody(dataView);
 
     if (options.isDebugMode)
-      options.debug("blynkWsMessage ApiCall", action, {
+      options.debug("blynkWsMessage DeviceCreate", action, {
         command     : getCommandKeyName(command),
         msgId       : msgId,
         body: body

@@ -264,7 +264,7 @@ function updateDevicesDashboardLiveData(state, action) {
 }
 
 export default function Devices(state = initialState, action) {
-
+  console.log(action)
   switch (action.type) {
 
     case "DEVICES_TIME_FILTER_UPDATE":
@@ -426,6 +426,10 @@ export default function Devices(state = initialState, action) {
 
       }
 
+      return state;
+
+    case 'WEB_GET_DEVICES_BY_REFERENCE_METAFIELD_SUCCESS':
+      console.log(action)
       return state;
 
     case ACTIONS.BLYNK_WS_LOG_EVENT_RESOLVE:
