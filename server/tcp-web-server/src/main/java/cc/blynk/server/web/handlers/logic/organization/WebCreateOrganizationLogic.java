@@ -74,7 +74,8 @@ public final class WebCreateOrganizationLogic implements PermissionBasedLogic<We
         }
 
         newOrganization = organizationDao.create(newOrganization);
-        createProductsFromParentOrg(newOrganization.id, newOrganization.name, newOrganization.selectedProducts);
+        createProductsFromParentOrg(parentOrg,
+                newOrganization.id, newOrganization.name, newOrganization.selectedProducts);
 
         if (ctx.channel().isWritable()) {
             String orgString = newOrganization.toString();
@@ -83,16 +84,18 @@ public final class WebCreateOrganizationLogic implements PermissionBasedLogic<We
         }
     }
 
-    private void createProductsFromParentOrg(int orgId, String orgName, int[] selectedProducts) {
+    private void createProductsFromParentOrg(Organization parentOrg,
+                                             int orgId, String orgName, int[] selectedProducts) {
         for (int productId : selectedProducts) {
             log.debug("Cloning product for org {} (id={}) and parentProductId {}.", orgName, orgId, productId);
-            Product parentProduct = organizationDao.getProductById(productId);
+            Product parentProduct = parentOrg.getProduct(productId);
             if (parentProduct != null) {
                 Product newProduct = new Product(parentProduct);
                 newProduct.parentId = parentProduct.id;
                 organizationDao.createProduct(orgId, newProduct);
             } else {
-                log.error("Product with id {} not found for org {}.", productId, orgName);
+                log.error("Can't create product for the new org. Product with id {} not found for orgId = {}.",
+                        productId, parentOrg.id);
             }
         }
     }
