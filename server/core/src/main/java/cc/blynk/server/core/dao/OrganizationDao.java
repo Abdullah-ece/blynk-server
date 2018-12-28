@@ -109,14 +109,12 @@ public class OrganizationDao {
                 + " not found in organization with id " + orgId + ".");
     }
 
-    public int[] subProductIds(int parentOrgId, int parentProductId) {
+    public int[] subProductIds(int parentProductId) {
         IntArray subProductIds = new IntArray();
         for (Organization subOrg : organizations.values()) {
-            if (subOrg.parentId == parentOrgId) {
-                for (Product subProduct : subOrg.products) {
-                    if (subProduct.parentId == parentProductId) {
-                        subProductIds.add(subProduct.id);
-                    }
+            for (Product subProduct : subOrg.products) {
+                if (subProduct.parentId == parentProductId) {
+                    subProductIds.add(subProduct.id);
                 }
             }
         }
@@ -394,7 +392,7 @@ public class OrganizationDao {
         //    throw new JsonException("You can't delete product with devices.");
         //}
 
-        int[] subProductIds = subProductIds(orgId, productId);
+        int[] subProductIds = subProductIds(productId);
         if (subProductIds.length != 0) {
             throw new JsonException("You can't delete product that is used in sub organizations.");
         }

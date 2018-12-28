@@ -69,7 +69,7 @@ public final class WebUpdateDevicesMetaInProductLogic implements PermissionBased
 
         Product existingProduct = organizationDao.getProductOrThrow(productAndOrgIdDTO.orgId, updatedProduct.id);
 
-        int[] subProductIds = organizationDao.subProductIds(productAndOrgIdDTO.orgId, updatedProduct.id);
+        int[] subProductIds = organizationDao.subProductIds(updatedProduct.id);
 
         WebDashboard changedWebDashboard = null;
         if (!existingProduct.webDashboard.equals(updatedProduct.webDashboard)) {

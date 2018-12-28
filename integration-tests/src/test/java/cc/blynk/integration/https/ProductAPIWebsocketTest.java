@@ -1489,7 +1489,59 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertEquals(fromApiProduct.id + 2, fromApiProductOrg2.products[0].id);
         assertEquals(fromApiProduct.id, fromApiProductOrg2.products[0].parentId);
 
+        client.trackOrg(fromApiProductOrg2.id);
+        client.verifyResult(ok(5));
 
+        Device newDevice = new Device();
+        newDevice.name = "My New Device for subsubproduct";
+        newDevice.productId = fromApiProductOrg2.products[0].id;
+        client.createDevice(newDevice);
+        Device createdSubDevice = client.parseDevice(6);
+        assertNotNull(createdSubDevice);
+        assertNotNull(createdSubDevice.metaFields);
+        assertEquals(2, createdSubDevice.metaFields.length);
+
+        client.trackOrg(orgId);
+        client.verifyResult(ok(7));
+
+        fromApiProduct = updateProductName(fromApiProduct, "Updated Name");
+        webLabel = new WebLabel();
+        webLabel.label = "4444";
+        webLabel.id = 2;
+        webLabel.x = 4;
+        webLabel.y = 2;
+        webLabel.height = 10;
+        webLabel.width = 20;
+        webLabel.sources = new WebSource[] {
+                new WebSource("some Label", "#334455",
+                        false, RAW_DATA, new DataStream((byte) 2, PinType.VIRTUAL),
+                        null,
+                        null,
+                        null, SortOrder.ASC, 10, false, null, false)
+        };
+        fromApiProduct = updateProductWebDash(fromApiProduct, webLabel);
+        fromApiProduct = updateProductMetafields(fromApiProduct,
+                createTextMeta(1, "My test metafield 2", "Default Device"),
+                createDeviceNameMeta(2, "Device Name", "123", true),
+                createDeviceOwnerMeta(3, "Owner", "123", true)
+        );
+
+        client.updateDevicesMeta(orgId, fromApiProduct);
+        fromApiProduct = client.parseProductDTO(8);
+        assertNotNull(fromApiProduct);
+        assertEquals("Updated Name", fromApiProduct.name);
+        assertNotNull(fromApiProduct.webDashboard.widgets[0]);
+        assertEquals("4444", fromApiProduct.webDashboard.widgets[0].label);
+        assertNotNull(fromApiProduct.metaFields);
+        assertEquals("My test metafield 2", fromApiProduct.metaFields[0].name);
+
+        client.getDevice(-1, createdSubDevice.id);
+        createdSubDevice = client.parseDevice(9);
+        assertNotNull(createdSubDevice);
+        assertNotNull(createdSubDevice.metaFields);
+        assertEquals(3, createdSubDevice.metaFields.length);
+        assertNotNull(createdSubDevice.metaFields);
+        assertEquals("My test metafield 2", createdSubDevice.metaFields[0].name);
     }
 
     @Test

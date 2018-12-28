@@ -81,7 +81,7 @@ public final class WebEditProductLogic implements PermissionBasedLogic<WebAppSta
         Product existingProduct = organization.getProductOrThrow(product.id);
         existingProduct.update(product);
 
-        int[] subProductIds = organizationDao.subProductIds(productAndOrgIdDTO.orgId, product.id);
+        int[] subProductIds = organizationDao.subProductIds(product.id);
         for (int productId : subProductIds) {
             Product subProduct = organizationDao.getProductById(productId);
             if (subProduct != null) {
