@@ -6,7 +6,6 @@ import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
-import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
 import io.netty.channel.ChannelHandlerContext;
@@ -74,29 +73,12 @@ public final class WebCreateOrganizationLogic implements PermissionBasedLogic<We
         }
 
         newOrganization = organizationDao.create(newOrganization);
-        createProductsFromParentOrg(parentOrg,
-                newOrganization.id, newOrganization.name, newOrganization.selectedProducts);
+        organizationDao.createProductsFromParentOrg(parentOrg, newOrganization.id, newOrganization.selectedProducts);
 
         if (ctx.channel().isWritable()) {
             String orgString = newOrganization.toString();
             ctx.writeAndFlush(makeUTF8StringMessage(message.command, message.id, orgString),
                     ctx.voidPromise());
-        }
-    }
-
-    private void createProductsFromParentOrg(Organization parentOrg,
-                                             int orgId, String orgName, int[] selectedProducts) {
-        for (int productId : selectedProducts) {
-            log.debug("Cloning product for org {} (id={}) and parentProductId {}.", orgName, orgId, productId);
-            Product parentProduct = parentOrg.getProduct(productId);
-            if (parentProduct != null) {
-                Product newProduct = new Product(parentProduct);
-                newProduct.parentId = parentProduct.id;
-                organizationDao.createProduct(orgId, newProduct);
-            } else {
-                log.error("Can't create product for the new org. Product with id {} not found for orgId = {}.",
-                        productId, parentOrg.id);
-            }
         }
     }
 
