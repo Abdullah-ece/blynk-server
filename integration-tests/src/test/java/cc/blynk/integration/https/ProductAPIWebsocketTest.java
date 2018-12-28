@@ -29,6 +29,7 @@ import cc.blynk.server.core.model.web.product.metafields.CoordinatesMetaField;
 import cc.blynk.server.core.model.web.product.metafields.CostMetaField;
 import cc.blynk.server.core.model.web.product.metafields.DeviceNameMetaField;
 import cc.blynk.server.core.model.web.product.metafields.DeviceOwnerMetaField;
+import cc.blynk.server.core.model.web.product.metafields.ListMetaField;
 import cc.blynk.server.core.model.web.product.metafields.LocationMetaField;
 import cc.blynk.server.core.model.web.product.metafields.MeasurementUnit;
 import cc.blynk.server.core.model.web.product.metafields.MeasurementUnitMetaField;
@@ -72,6 +73,7 @@ import static cc.blynk.integration.TestUtil.webJson;
 import static cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType.RAW_DATA;
 import static java.time.LocalTime.ofSecondOfDay;
 import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -199,6 +201,30 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         client.getProduct(fromApiProduct.id);
         fromApiProduct = client.parseProductDTO(2);
         assertNotNull(fromApiProduct);
+    }
+
+    @Test
+    public void createProductWithListMetaAndValuesAreTrimmed() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+
+        Product product = new Product();
+        product.name = "123";
+        product.description = "Description";
+        product.boardType = "ESP8266";
+        product.connectionType = ConnectionType.WI_FI;
+        product.logoUrl = "/static/logo.png";
+        product.metaFields = new MetaField[] {
+                createDeviceNameMeta(1, "Device Name", "123", true),
+                createDeviceOwnerMeta(2, "Owner", "123", true),
+                new ListMetaField(3, "!@3", null, false, false, false, null, new String[] {" 123", "124 "}, null)
+        };
+
+        client.createProduct(orgId, product);
+        ProductDTO fromApiProduct= client.parseProductDTO(1);
+        assertNotNull(fromApiProduct);
+        assertEquals(3, fromApiProduct.metaFields.length);
+        ListMetaField listMetaField = (ListMetaField) fromApiProduct.metaFields[2];
+        assertArrayEquals(new String[] {"123", "124"}, listMetaField.options);
     }
 
     @Test

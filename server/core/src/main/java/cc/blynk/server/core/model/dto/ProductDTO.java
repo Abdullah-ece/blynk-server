@@ -100,6 +100,13 @@ public final class ProductDTO {
         return productDTOS;
     }
 
+    private static MetaField[] trim(MetaField[] metaFields) {
+        for (MetaField metaField : metaFields) {
+            metaField.trim();
+        }
+        return metaFields;
+    }
+
     public Product toProduct() {
         Product product = new Product();
         product.id = id;
@@ -111,7 +118,7 @@ public final class ProductDTO {
         product.logoUrl = logoUrl;
         product.lastModifiedTs = lastModifiedTs;
         product.createdAt = createdAt;
-        product.metaFields = metaFields;
+        product.metaFields = trim(metaFields);
         product.dataStreams = dataStreams;
         product.events = events;
         product.webDashboard = webDashboard;

@@ -120,6 +120,9 @@ public abstract class MetaField implements CopyObject<MetaField> {
         return null;
     }
 
+    public void trim() {
+    }
+
     /**
      * Validate must have fields like "name".
      */

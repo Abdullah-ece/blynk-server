@@ -31,6 +31,13 @@ public class ListMetaField extends MetaField {
     }
 
     @Override
+    public void trim() {
+        for (int i = 0; i < options.length; i++) {
+            options[i] = options[i].trim();
+        }
+    }
+
+    @Override
     public MetaField copySpecificFieldsOnly(MetaField metaField) {
         ListMetaField listMetaField = (ListMetaField) metaField;
         return new ListMetaField(id, metaField.name, metaField.roleIds,

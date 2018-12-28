@@ -156,6 +156,7 @@ public class Product {
         }
 
         checkForDuplicateTemplateId();
+
         if (!hasMetafield(DeviceNameMetaField.class)) {
             throw new IllegalCommandBodyException("Product has no device name metafield.");
         }

@@ -160,7 +160,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         assertTrue(appFromApi.id.startsWith("blynk"));
         appClient.send("emailQr " + childDash.id + StringUtils.BODY_SEPARATOR_STRING + appFromApi.id);
         appClient.verifyResult(ok(7));
-        verify(holder.mailWrapper, timeout(1000)).sendWithAttachment(eq(superUser), eq("My app" + " - App details"), eq(holder.textHolder.dynamicMailBody.replace("{project_name}", "Test")), any(QrHolder.class));
+        verify(holder.mailWrapper, timeout(1500)).sendWithAttachment(eq(superUser), eq("My app" + " - App details"), eq(holder.textHolder.dynamicMailBody.replace("{project_name}", "Test")), any(QrHolder.class));
 
         //Step 4. Invite new user
         String invitedUser = "test@gmail.com";
@@ -381,7 +381,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         assertTrue(appFromApi.id.startsWith("blynk"));
         appClient.send("emailQr " + childDash.id + StringUtils.BODY_SEPARATOR_STRING + appFromApi.id);
         appClient.verifyResult(ok(7));
-        verify(holder.mailWrapper, timeout(1000)).sendWithAttachment(eq(superUser), eq("My app" + " - App details"), eq(holder.textHolder.dynamicMailBody.replace("{project_name}", "Test")), any(QrHolder.class));
+        verify(holder.mailWrapper, timeout(1500)).sendWithAttachment(eq(superUser), eq("My app" + " - App details"), eq(holder.textHolder.dynamicMailBody.replace("{project_name}", "Test")), any(QrHolder.class));
 
         //Step 4. No need for invite step as we are already here
 
