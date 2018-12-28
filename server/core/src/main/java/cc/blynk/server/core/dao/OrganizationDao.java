@@ -415,20 +415,21 @@ public class OrganizationDao {
         }
     }
 
-    public void createProductsFromParentOrg(Organization parentOrg,
-                                            int orgId, int[] selectedProducts) {
+    public void createProductsFromParentOrg(int orgId, int[] selectedProducts) {
         for (int productId : selectedProducts) {
-            log.debug("Cloning product for orgId={}) and parentProductId {}.", orgId, productId);
-            Product parentProduct = parentOrg.getProduct(productId);
-            if (parentProduct != null) {
-                Product newProduct = new Product(parentProduct);
-                newProduct.parentId = parentProduct.id;
-                createProduct(orgId, newProduct);
+            if (hasNoProductWithParent(orgId, productId)) {
+                log.debug("Cloning product for orgId = {} and parentProductId = {}.", orgId, productId);
+                Product parentProduct = getProductById(productId);
+                if (parentProduct != null) {
+                    Product newProduct = new Product(parentProduct);
+                    newProduct.parentId = parentProduct.id;
+                    createProduct(orgId, newProduct);
+                }
             } else {
-                log.trace("Can't create product for the new org. Product with id {} not found for orgId = {}.",
-                        productId, parentOrg.id);
+                log.trace("Already has product for orgId = {} with product parent id = {}.", orgId, productId);
             }
         }
     }
+
 
 }

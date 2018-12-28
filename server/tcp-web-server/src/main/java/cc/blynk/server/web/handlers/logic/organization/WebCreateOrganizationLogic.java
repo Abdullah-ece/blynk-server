@@ -73,7 +73,7 @@ public final class WebCreateOrganizationLogic implements PermissionBasedLogic<We
         }
 
         newOrganization = organizationDao.create(newOrganization);
-        organizationDao.createProductsFromParentOrg(parentOrg, newOrganization.id, newOrganization.selectedProducts);
+        organizationDao.createProductsFromParentOrg(newOrganization.id, newOrganization.selectedProducts);
 
         if (ctx.channel().isWritable()) {
             String orgString = newOrganization.toString();

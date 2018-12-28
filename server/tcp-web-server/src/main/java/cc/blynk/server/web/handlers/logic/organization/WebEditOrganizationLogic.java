@@ -66,7 +66,7 @@ public final class WebEditOrganizationLogic implements PermissionBasedLogic<WebA
 
         int[] addedProducts = ArrayUtil.substruct(
                 newOrganization.selectedProducts, existingOrganization.selectedProducts);
-        createProductsFromParentOrg(newOrganization.id, newOrganization.name, addedProducts);
+        organizationDao.createProductsFromParentOrg(newOrganization.id, addedProducts);
 
         int[] removedProducts = ArrayUtil.substruct(
                 existingOrganization.selectedProducts, newOrganization.selectedProducts);
@@ -100,20 +100,6 @@ public final class WebEditOrganizationLogic implements PermissionBasedLogic<WebA
                     }
 
                 }
-            }
-        }
-    }
-
-    private void createProductsFromParentOrg(int orgId, String orgName, int[] selectedProducts) {
-        for (int productId : selectedProducts) {
-            if (organizationDao.hasNoProductWithParent(orgId, productId)) {
-                log.debug("Cloning product for org {} and parentProductId {}.", orgName, productId);
-                Product parentProduct = organizationDao.getProductByIdOrThrow(productId);
-                Product newProduct = new Product(parentProduct);
-                newProduct.parentId = parentProduct.id;
-                organizationDao.createProduct(orgId, newProduct);
-            } else {
-                log.debug("Already has product for org {} with product parent id {}.", orgName, productId);
             }
         }
     }
