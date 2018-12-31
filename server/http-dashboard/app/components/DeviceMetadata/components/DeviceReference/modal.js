@@ -2,6 +2,7 @@ import React from 'react';
 import { ItemsGroup, Item } from 'components/UI';
 import { MetadataSelect } from 'components/Form';
 import PropTypes from 'prop-types';
+/* eslint-disable no-console */
 
 class DeviceReference extends React.Component {
 
@@ -30,7 +31,7 @@ class DeviceReference extends React.Component {
               value: String(device.name)
             }))
           });
-        }).catch(err => console.errord(err));
+        }).catch(err => console.error(err));
   }
 
   render() {
