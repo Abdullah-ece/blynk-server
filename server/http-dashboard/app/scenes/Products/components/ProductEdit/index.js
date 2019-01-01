@@ -1,32 +1,33 @@
-import React                                from 'react';
+import React from 'react';
 import {
   Button,
   Tabs,
   Icon,
   Popover
-}                                           from 'antd';
-import {MainLayout}                         from 'components';
-import {TABS}                               from 'services/Products';
+} from 'antd';
+import { MainLayout } from 'components';
+import { TABS } from 'services/Products';
 import {
-  Info        as InfoTab,
-  Events      as EventsTab,
-  Metadata    as MetadataTab,
+  Info as InfoTab,
+  Events as EventsTab,
+  Metadata as MetadataTab,
   DataStreams as DataStreamsTab,
-  Dashboard   as DashboardTab
-}                                           from '../ProductManage';
+  Dashboard as DashboardTab
+} from '../ProductManage';
 
 // import _                        from 'lodash';
-import MetadataIntroductionMessage          from '../MetadataIntroductionMessage';
-import DeleteModal              from './components/Delete';
+import MetadataIntroductionMessage from '../MetadataIntroductionMessage';
+import DeleteModal from './components/Delete';
 
-import ProductDevicesForceUpdate from 'scenes/Products/components/ProductDevicesForceUpdate';
+import ProductDevicesForceUpdate
+  from 'scenes/Products/components/ProductDevicesForceUpdate';
 
 import {
   FieldArray,
   reduxForm,
 } from 'redux-form';
 import PropTypes from 'prop-types';
-import {Map} from 'immutable';
+import { Map } from 'immutable';
 
 @reduxForm()
 class ProductEdit extends React.Component {
@@ -65,6 +66,7 @@ class ProductEdit extends React.Component {
     dirty: PropTypes.bool,
     invalid: PropTypes.bool,
     handleSubmit: PropTypes.func,
+    canDelete: PropTypes.bool,
     /*end reduxForm props*/
 
     // onTabChange: React.PropTypes.func,
@@ -172,27 +174,33 @@ class ProductEdit extends React.Component {
       this.props.formSyncErrors.has('connectionType') ||
       this.props.formSyncErrors.has('description') ||
       this.props.formSyncErrors.has('logoUrl')
-    ) && (<Icon type="exclamation-circle-o" className="product-tab-invalid"/>) || null;
+    ) && (<Icon type="exclamation-circle-o"
+                className="product-tab-invalid"/>) || null;
   }
 
 
   productDataStreamsInvalidIcon() {
     const isAnyDataStreamHasError = () => {
-      if(!this.props.formSyncErrors.has('dataStreams'))
+      if (!this.props.formSyncErrors.has('dataStreams'))
         return false;
 
-      return this.props.formSyncErrors.get('dataStreams').reduce((acc, item) => {
+      return this.props.formSyncErrors.get('dataStreams').reduce((
+        acc,
+        item
+      ) => {
         return (!acc && item && item.count && item.count() >= 0) || acc;
       }, false);
     };
 
-    return this.props.submitFailed && isAnyDataStreamHasError() && (<Icon type="exclamation-circle-o" className="product-tab-invalid"/>) || null;
+    return this.props.submitFailed && isAnyDataStreamHasError() && (
+      <Icon type="exclamation-circle-o"
+            className="product-tab-invalid"/>) || null;
   }
 
   productMetadataInvalidIcon() {
 
     const isAnyMetaFieldHasError = () => {
-      if(!this.props.formSyncErrors.has('metaFields'))
+      if (!this.props.formSyncErrors.has('metaFields'))
         return false;
 
       return this.props.formSyncErrors.get('metaFields').reduce((acc, item) => {
@@ -200,12 +208,14 @@ class ProductEdit extends React.Component {
       }, false);
     };
 
-    return this.props.submitFailed && isAnyMetaFieldHasError() && (<Icon type="exclamation-circle-o" className="product-tab-invalid"/>) || null;
+    return this.props.submitFailed && isAnyMetaFieldHasError() && (
+      <Icon type="exclamation-circle-o"
+            className="product-tab-invalid"/>) || null;
   }
 
   productEventsInvalidIcon() {
     const isAnyEventHasError = () => {
-      if(!this.props.formSyncErrors.has('events'))
+      if (!this.props.formSyncErrors.has('events'))
         return false;
 
       return this.props.formSyncErrors.get('events').reduce((acc, item) => {
@@ -213,100 +223,122 @@ class ProductEdit extends React.Component {
       }, false);
     };
 
-    return this.props.submitFailed && isAnyEventHasError() && (<Icon type="exclamation-circle-o" className="product-tab-invalid"/>) || null;
+    return this.props.submitFailed && isAnyEventHasError() && (
+      <Icon type="exclamation-circle-o"
+            className="product-tab-invalid"/>) || null;
   }
 
   productDashboardInvalidIcon() {
     const isAnyWidgetHasError = () => {
-      if(!this.props.formSyncErrors.has('webDashboard'))
+      if (!this.props.formSyncErrors.has('webDashboard'))
         return false;
 
-      return this.props.formSyncErrors.get('webDashboard').reduce((acc, item) => {
+      return this.props.formSyncErrors.get('webDashboard').reduce((
+        acc,
+        item
+      ) => {
         return (!acc && item && item.count && item.count() >= 0) || acc;
       }, false);
     };
 
-    return this.props.submitFailed && isAnyWidgetHasError() && (<Icon type="exclamation-circle-o" className="product-tab-invalid"/>) || null;
+    return this.props.submitFailed && isAnyWidgetHasError() && (
+      <Icon type="exclamation-circle-o"
+            className="product-tab-invalid"/>) || null;
   }
 
   render() {
 
     return (
 
-        <div>
-          <MainLayout.Header title={this.props.initialValues.name}
-                             options={(
+      <div>
+        <MainLayout.Header title={this.props.initialValues.name}
+                           options={(
 
-                               <div>
-                                 <Button type="danger" onClick={this.props.onShowDeleteDialog}>Delete</Button>
-                                 <Button type="default"
-                                         onClick={this.props.onCancel}>
-                                   Cancel
-                                 </Button>
-                                 <Button type="primary"
-                                         onClick={this.handleSubmit}
-                                         loading={this.props.submitting}
-                                         disabled={this.props.dirty === false || (this.props.submitFailed && this.props.invalid)}>
-                                   Save
-                                 </Button>
-                               </div>
+                             <div>
+                               {this.props.canDelete && (<Button type="danger"
+                                                                 onClick={this.props.onShowDeleteDialog}>Delete</Button>)}
+                               <Button type="default"
+                                       onClick={this.props.onCancel}>
+                                 Cancel
+                               </Button>
+                               <Button type="primary"
+                                       onClick={this.handleSubmit}
+                                       loading={this.props.submitting}
+                                       disabled={this.props.dirty === false || (this.props.submitFailed && this.props.invalid)}>
+                                 Save
+                               </Button>
+                             </div>
 
-                             )}
-          />
-          <MainLayout.Content className="product-edit-content">
-            {this.props.activeTab === TABS.METADATA && <Popover
-              placement="bottomRight"
-              content={<MetadataIntroductionMessage onGotItClick={this.toggleMetadataIntroductionMessage}/>}
-              visible={this.isMetadataIntroductionMessageVisible()}
-              overlayClassName="products-metadata-introduction-message-popover"
-              trigger="click">
+                           )}
+        />
+        <MainLayout.Content className="product-edit-content">
+          {this.props.activeTab === TABS.METADATA && <Popover
+            placement="bottomRight"
+            content={<MetadataIntroductionMessage
+              onGotItClick={this.toggleMetadataIntroductionMessage}/>}
+            visible={this.isMetadataIntroductionMessageVisible()}
+            overlayClassName="products-metadata-introduction-message-popover"
+            trigger="click">
 
-              <Icon type="info-circle" className="products-metadata-info"
-                    onClick={this.toggleMetadataIntroductionMessage}/>
-            </Popover>}
+            <Icon type="info-circle" className="products-metadata-info"
+                  onClick={this.toggleMetadataIntroductionMessage}/>
+          </Popover>}
 
-            <Tabs defaultActiveKey={TABS.INFO}
-                  activeKey={this.props.activeTab}
-                  onChange={this.handleTabChange} className="products-tabs">
+          <Tabs defaultActiveKey={TABS.INFO}
+                activeKey={this.props.activeTab}
+                onChange={this.handleTabChange} className="products-tabs">
 
-              <Tabs.TabPane tab={<span>{this.productInfoInvalidIcon()}Info</span>} key={TABS.INFO}>
-                <InfoTab />
-              </Tabs.TabPane>
+            <Tabs.TabPane tab={<span>{this.productInfoInvalidIcon()}Info</span>}
+                          key={TABS.INFO}>
+              <InfoTab/>
+            </Tabs.TabPane>
 
-              <Tabs.TabPane tab={<span>{this.productMetadataInvalidIcon()}Metadata</span>} key={TABS.METADATA} forceRender={true}>
-                <FieldArray name={`metaFields`} component={MetadataTab} rerenderOnEveryChange={true}/>
-              </Tabs.TabPane>
+            <Tabs.TabPane
+              tab={<span>{this.productMetadataInvalidIcon()}Metadata</span>}
+              key={TABS.METADATA} forceRender={true}>
+              <FieldArray name={`metaFields`} component={MetadataTab}
+                          rerenderOnEveryChange={true}/>
+            </Tabs.TabPane>
 
-              <Tabs.TabPane tab={<span>{this.productDataStreamsInvalidIcon()}Data Streams</span>} key={TABS.DATA_STREAMS} forceRender={true}>
-                <FieldArray name={`dataStreams`} component={DataStreamsTab}/>
-                {/*</>*/}
-              </Tabs.TabPane>
+            <Tabs.TabPane tab={<span>{this.productDataStreamsInvalidIcon()}Data Streams</span>}
+                          key={TABS.DATA_STREAMS} forceRender={true}>
+              <FieldArray name={`dataStreams`} component={DataStreamsTab}/>
+              {/*</>*/}
+            </Tabs.TabPane>
 
-              <Tabs.TabPane tab={<span>{this.productEventsInvalidIcon()}Events</span>} key={TABS.EVENTS} forceRender={true}>
-                <FieldArray rerenderOnEveryChange={true} component={EventsTab} name={`events`}/>
-              </Tabs.TabPane>
+            <Tabs.TabPane
+              tab={<span>{this.productEventsInvalidIcon()}Events</span>}
+              key={TABS.EVENTS} forceRender={true}>
+              <FieldArray rerenderOnEveryChange={true} component={EventsTab}
+                          name={`events`}/>
+            </Tabs.TabPane>
 
-              <Tabs.TabPane tab={<span>{this.productDashboardInvalidIcon()}Dashboard</span>} key={TABS.DASHBOARD} forceRender={true}>
-                <FieldArray component={DashboardTab} name={`webDashboard.widgets`} isDevicePreviewEnabled={true} productId={this.props.productId || null} rerenderOnEveryChange={true}/>
-              </Tabs.TabPane>
+            <Tabs.TabPane
+              tab={<span>{this.productDashboardInvalidIcon()}Dashboard</span>}
+              key={TABS.DASHBOARD} forceRender={true}>
+              <FieldArray component={DashboardTab} name={`webDashboard.widgets`}
+                          isDevicePreviewEnabled={true}
+                          productId={this.props.productId || null}
+                          rerenderOnEveryChange={true}/>
+            </Tabs.TabPane>
 
-            </Tabs>
+          </Tabs>
 
-            <DeleteModal deviceCount={this.props.initialValues.deviceCount}
-                         onCancel={this.props.onHideDeleteDialog}
-                         handleSubmit={this.handleDelete}
-                         visible={this.props.isDeleteDialogVisible}
-                         productName={this.props.initialValues.name}/>
+          <DeleteModal deviceCount={this.props.initialValues.deviceCount}
+                       onCancel={this.props.onHideDeleteDialog}
+                       handleSubmit={this.handleDelete}
+                       visible={this.props.isDeleteDialogVisible}
+                       productName={this.props.initialValues.name}/>
 
-            <ProductDevicesForceUpdate
-              isModalVisible={this.props.isDevicesForceUpdateVisible}
-              loading={this.props.deviceForceUpdateLoading}
-              product={this.props.initialValues}
-              onSave={this.props.onDevicesForceUpdateSubmit}
-              onCancel={this.props.onDevicesForceUpdateCancel}/>
+          <ProductDevicesForceUpdate
+            isModalVisible={this.props.isDevicesForceUpdateVisible}
+            loading={this.props.deviceForceUpdateLoading}
+            product={this.props.initialValues}
+            onSave={this.props.onDevicesForceUpdateSubmit}
+            onCancel={this.props.onDevicesForceUpdateCancel}/>
 
-          </MainLayout.Content>
-        </div>
+        </MainLayout.Content>
+      </div>
 
     );
   }

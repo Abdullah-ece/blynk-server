@@ -27,6 +27,7 @@ import {
 } from 'services/Products';
 // import {prepareWidgetForProductEdit} from 'services/Widgets';
 import * as API from 'data/Product/api';
+import { VerifyPermission, PERMISSIONS_INDEX } from "services/Roles";
 // import {
 //   ProductSetEdit,
 //   ProductEditEventsFieldsUpdate,
@@ -43,6 +44,7 @@ import PropTypes from 'prop-types';
 
 @connect((state, ownProps) => {
   return {
+    canDelete: VerifyPermission(state.RolesAndPermissions.currentRole.permissionGroup1, PERMISSIONS_INDEX.PRODUCT_DELETE),
 
     account: state.Account,
 
@@ -154,6 +156,8 @@ class Edit extends React.Component {
 
     router: PropTypes.any,
     route: PropTypes.any,
+
+    canDelete: PropTypes.bool,
   };
 
   constructor(props) {
@@ -485,6 +489,7 @@ class Edit extends React.Component {
                      onDevicesForceUpdateCancel={this.handleDevicesForceUpdateCancel}
                      isMetadataInfoRead={!this.props.isMetadataFirstTime}
                      updateMetadataFirstTimeFlag={this.props.updateMetadataFirstTimeFlag}
+                     canDelete={this.props.canDelete}
     //                  invalid={this.props.invalid}
     //                  loading={this.props.loading}
     //                  submitting={this.props.submitting}
