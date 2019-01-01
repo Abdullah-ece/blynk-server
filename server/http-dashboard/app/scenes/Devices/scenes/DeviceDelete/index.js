@@ -46,7 +46,7 @@ class DeviceDelete extends Component {
       <DeviceDeleteComponent deviceId={this.props.deviceId}
                              onDelete={this.handleDelete}
                              orgId={this.props.organization.id}
-                             canDeleteDevice={VerifyPermission(this.props.permissions, PERMISSIONS_INDEX.PRODUCT_DELETE)}/>
+                             canDeleteDevice={VerifyPermission(this.props.permissions, PERMISSIONS_INDEX.ORG_DEVICES_DELETE)}/>
     );
   }
 }
