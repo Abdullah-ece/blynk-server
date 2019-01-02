@@ -9,6 +9,8 @@ import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import {filterSuperAdmin} from 'services/Roles';
 
+import { VerifyPermission, PERMISSIONS_INDEX } from "services/Roles";
+
 import {
   OrganizationUsersFetch,
   OrganizationUpdateUser,
@@ -17,10 +19,12 @@ import {
 
 import './styles.less';
 import {ResendInvite} from "components";
+import PropTypes from "prop-types";
 
 @connect((state) => ({
   Organization: state.Organization,
   Account: state.Account,
+  permissions: state.RolesAndPermissions.currentRole.permissionGroup1,
 }), (dispatch) => ({
   OrganizationUsersFetch: bindActionCreators(OrganizationUsersFetch, dispatch),
   OrganizationUpdateUser: bindActionCreators(OrganizationUpdateUser, dispatch),
@@ -33,7 +37,8 @@ class OrganizationUsers extends React.Component {
     Organization: React.PropTypes.object,
     OrganizationUsersFetch: React.PropTypes.func,
     OrganizationUpdateUser: React.PropTypes.func,
-    OrganizationUsersDelete: React.PropTypes.func
+    OrganizationUsersDelete: React.PropTypes.func,
+    permissions: PropTypes.number,
   };
 
   constructor(props) {
@@ -185,7 +190,7 @@ class OrganizationUsers extends React.Component {
 
     return (
       <div className="users-profile--organization-settings--organization-users">
-        <div className="users-profile--organization-settings--organization-users-delete-button">
+        {VerifyPermission(this.props.permissions, PERMISSIONS_INDEX.ORG_DELETE_USERS) && (<div className="users-profile--organization-settings--organization-users-delete-button">
           <Popconfirm title="Are you sure you want to delete selected users?"
                       okText="Yes"
                       cancelText="No"
@@ -195,7 +200,7 @@ class OrganizationUsers extends React.Component {
                     disabled={!this.state.selectedRows.length}
                     loading={this.state.usersDeleteLoading}>Delete</Button>
           </Popconfirm>
-        </div>
+        </div>)}
         <Table rowKey={(record) => record.email} rowSelection={this.rowSelection} columns={columns}
                dataSource={this.props.Organization.users} onChange={this.handleTableChange.bind(this)}
                pagination={false}/>
