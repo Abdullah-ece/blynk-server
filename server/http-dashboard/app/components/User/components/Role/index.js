@@ -8,6 +8,8 @@ import './styles.less';
 
 import {connect} from 'react-redux';
 
+import { VerifyPermission, PERMISSIONS_INDEX } from "services/Roles";
+
 @connect((state) => ({
   roles: state.Organization.roles,
 }))
@@ -16,7 +18,8 @@ export default class Role extends React.Component {
   static propTypes = {
     role: React.PropTypes.string,
     roles: React.PropTypes.any,
-    onChange: React.PropTypes.func
+    permissions: React.PropTypes.number,
+    onChange: React.PropTypes.func,
   };
 
   constructor(props) {
@@ -45,7 +48,7 @@ export default class Role extends React.Component {
       (role === SUPER_ADMIN_ROLE_ID && <div>{SUPER_ADMIN_ROLE_TITLE}</div> ) || (
         <Select className="user--role-select"
                 value={`${role}`}
-                onChange={this.onChange.bind(this)} disabled={role === SUPER_ADMIN_ROLE_ID}>
+                onChange={this.onChange.bind(this)} disabled={role === SUPER_ADMIN_ROLE_ID || !VerifyPermission(this.props.permissions, PERMISSIONS_INDEX.ROLE_EDIT)}>
         { options }
         </Select>)
     );

@@ -84,7 +84,7 @@ class OrganizationUsers extends React.Component {
       onFilter: (value, record) => {
         return Number(record.roleId) === Number(value);
       },
-      render: (text, record) => <Role role={`${record.roleId}`} onChange={this.onRoleChange.bind(this, record)}/>
+      render: (text, record) => <Role role={`${record.roleId}`} onChange={this.onRoleChange.bind(this, record)} permissions={this.props.permissions}/>
     }, {
       title: 'Status',
       dataIndex: 'status',
