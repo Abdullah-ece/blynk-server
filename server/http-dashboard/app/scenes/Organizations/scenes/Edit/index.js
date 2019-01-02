@@ -59,6 +59,7 @@ import AdminsEditScene from "../AdminsEdit/index";
   formAsyncErrors: fromJS(getFormAsyncErrors(Manage.FORM_NAME)(state) || {}),
   formSubmitErrors: fromJS(getFormSubmitErrors(Manage.FORM_NAME)(state) || {}),
   formValues: fromJS(getFormValues(Manage.FORM_NAME)(state) || {}),
+  permissions: state.RolesAndPermissions.currentRole.permissionGroup1,
 }), (dispatch) => ({
   setTab: bindActionCreators(OrganizationsManageSetActiveTab, dispatch),
   resetForm: bindActionCreators(reset, dispatch),
@@ -115,6 +116,8 @@ class Edit extends React.Component {
 
     list: PropTypes.instanceOf(List),
     products: PropTypes.instanceOf(List),
+
+    permissions: React.PropTypes.number,
 
     activeTab: PropTypes.string
   };
@@ -322,6 +325,7 @@ class Edit extends React.Component {
         onDelete={this.handleOrganizationDelete}
         products={this.props.products}
         onTabChange={this.handleTabChange}
+        permissions={this.props.permissions}
         adminsComponent={<AdminsEditScene params={this.props.params}
                                           allowResendInvite={true}
                                           orgId={Number(this.props.params.id)}/>}

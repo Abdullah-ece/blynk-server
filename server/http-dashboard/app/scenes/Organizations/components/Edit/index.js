@@ -1,10 +1,11 @@
 import React                from 'react';
 import {MainLayout}         from 'components';
-import Manage               from './../Manage';
+import Manage               from '../Manage';
 import {Button, Popconfirm} from 'antd';
 import PropTypes            from 'prop-types';
 import {List, Map}          from 'immutable';
 import {reduxForm}          from 'redux-form';
+import { VerifyPermission, PERMISSIONS_INDEX } from "services/Roles";
 
 @reduxForm()
 class Edit extends React.Component {
@@ -19,6 +20,7 @@ class Edit extends React.Component {
     onTabChange: PropTypes.func,
     handleCancel: PropTypes.func,
     handleSubmit: PropTypes.func,
+    permissions: PropTypes.number,
 
     adminsComponent: PropTypes.element,
     productsComponent: PropTypes.element,
@@ -50,7 +52,7 @@ class Edit extends React.Component {
   render() {
     return (
       <MainLayout>
-        <MainLayout.Header title={this.props.formValues.get('name')}
+        {VerifyPermission(this.props.permissions, PERMISSIONS_INDEX.ORG_DELETE) && (<MainLayout.Header title={this.props.formValues.get('name')}
                            options={(
                              <div>
                                <Popconfirm title="Are you sure?" okText="Yes" cancelText="No"
@@ -68,7 +70,7 @@ class Edit extends React.Component {
                                  Save
                                </Button>
                              </div>
-                           )}/>
+                           )}/>)}
         <MainLayout.Content className="organizations-create-content">
           <Manage
             submitFailed={this.props.submitFailed}
