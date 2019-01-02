@@ -251,18 +251,18 @@ class UserLayout extends React.Component {
         </Menu.ItemGroup>
         <Menu.Divider/>
         <Menu.ItemGroup title="Organization">
-          <Menu.Item key="/user-profile/organization-settings">
+          {VerifyPermission(this.props.permissions, PERMISSIONS_INDEX.ORG_VIEW) && (<Menu.Item key="/user-profile/organization-settings">
             <LinearIcon type="cog"/> Organization Settings
-          </Menu.Item>
-          <Menu.Item key="/user-profile/users">
+          </Menu.Item>)}
+          {VerifyPermission(this.props.permissions, PERMISSIONS_INDEX.ORG_VIEW_USERS) && (<Menu.Item key="/user-profile/users">
             <LinearIcon type="users2"/> Users
-          </Menu.Item>
+          </Menu.Item>)}
           {/*<Menu.Item key="/user-profile/branding">*/}
           {/*Branding*/}
           {/*</Menu.Item>*/}
-          <Menu.Item key="/user-profile/roles-and-permissions">
+          {VerifyPermission(this.props.permissions, PERMISSIONS_INDEX.ROLE_VIEW) && (<Menu.Item key="/user-profile/roles-and-permissions">
             <LinearIcon type="lock"/> Roles & Permissions
-          </Menu.Item>
+          </Menu.Item>)}
         </Menu.ItemGroup>
 
         {/*<Menu.Item key="/billing">*/}
