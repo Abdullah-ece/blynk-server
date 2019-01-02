@@ -14,6 +14,7 @@ import { RolesAndPermissionsv2 } from 'scenes/UserProfile/scenes';
 class UserProfile extends Component {
 
   static propTypes = {
+    permissions: React.PropTypes.number,
     params: React.PropTypes.object,
     Account: React.PropTypes.object,
     Organization: React.PropTypes.object,
@@ -82,6 +83,7 @@ class UserProfile extends Component {
               <Tabs.TabPane tab={<span>{TABS.USERS.value}</span>}
                             key={TABS.USERS.key}>
                 <Users Account={this.props.Account}
+                       permissions={this.props.permissions}
                        onOrganizationUsersFetch={this.props.onOrganizationUsersFetch}
                        onOrganizationSendInvite={this.props.onOrganizationSendInvite}
                        onResetForm={this.props.onResetForm}/>

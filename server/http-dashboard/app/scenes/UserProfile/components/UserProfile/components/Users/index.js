@@ -5,9 +5,11 @@ import InviteUsersForm from './components/InviteUsersForm';
 import OrganizationUsers from './components/OrganizationUsers';
 import {Modal, message} from 'antd';
 import {SubmissionError} from 'redux-form';
+import { VerifyPermission, PERMISSIONS_INDEX } from "services/Roles";
 
 class Users extends Component {
   static propTypes = {
+    permissions: React.PropTypes.number,
     Account: React.PropTypes.object,
     onOrganizationUsersFetch: React.PropTypes.func,
     onOrganizationSendInvite: React.PropTypes.func,
@@ -54,9 +56,9 @@ class Users extends Component {
   render() {
     return(
       <div>
-        <Item>
+        {VerifyPermission(this.props.permissions, PERMISSIONS_INDEX.ORG_INVITE_USERS) && (<Item>
           <InviteUsersForm onSubmit={this.handleInviteSubmit}/>
-        </Item>
+        </Item>)}
         <Section title="Users">
           <Item>
             <OrganizationUsers/>

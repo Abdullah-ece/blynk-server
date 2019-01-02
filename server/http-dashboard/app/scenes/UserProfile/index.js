@@ -36,6 +36,7 @@ import {
     Account: state.Account,
     Organization: state.Organization,
     activeTab: state.UserProfile.activeTab,
+    permissions: state.RolesAndPermissions.currentRole.permissionGroup1,
   };
 },(dispatch) => {
   return {
@@ -64,6 +65,7 @@ class UserProfile extends Component {
   };
 
   static propTypes = {
+    permissions: React.PropTypes.number,
     Account: React.PropTypes.object,
     Organization: React.PropTypes.object,
     params: React.PropTypes.object,
@@ -165,6 +167,7 @@ class UserProfile extends Component {
                             onAccountNameUpdate={this.handleAccountUpdateName}
                             onAccountSave={this.handleAccountSave}
                             onAccountResetPassword={this.handleAccountResetPassword}
+                            permissions={this.props.permissions}
 
                             Organization={this.props.Organization}
                             onOrganizationSave={this.handleOrganizationSave}
