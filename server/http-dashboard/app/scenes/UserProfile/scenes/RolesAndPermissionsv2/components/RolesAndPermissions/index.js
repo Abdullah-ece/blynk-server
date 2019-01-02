@@ -6,7 +6,7 @@ import { Table, Collapse, Switch } from 'antd';
 import './styles.less';
 import PropTypes from 'prop-types';
 import LinearIcon from "components/LinearIcon";
-import { PERMISSIONS_TABLE } from "services/Roles";
+import { PERMISSIONS_TABLE, VerifyPermission, PERMISSIONS_INDEX } from "services/Roles";
 
 const Panel = Collapse.Panel;
 
@@ -18,6 +18,7 @@ class RolesAndPermissions extends React.Component {
     GetPermissions: PropTypes.func,
     UpdateRole: PropTypes.func,
     GetRolesUsers: PropTypes.func,
+    permissions: PropTypes.number,
   };
 
   constructor(props) {
@@ -254,7 +255,7 @@ class RolesAndPermissions extends React.Component {
     result.push(value);
   }
 
-  buildColumns(className) {
+  buildColumns(className, permissions) {
     const result = [
       {
         dataIndex: 'name',
@@ -273,6 +274,7 @@ class RolesAndPermissions extends React.Component {
         key: role.name.toLowerCase().trim(),
         render: value => <Switch className='permissions-table-switch'
                                  size="small"
+                                 disabled={VerifyPermission(permissions, PERMISSIONS_INDEX.ROLE_EDIT)}
                                  checked={value.value} onChange={
           checked => this.onPermissionChange(value.role, value.index, checked)}/>,
       };

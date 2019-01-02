@@ -9,7 +9,8 @@ import { bindActionCreators } from 'redux';
 
 @connect((state) => ({
   roles: state.RolesAndPermissions.roles,
-  usersPerRole: state.RolesAndPermissions.usersPerRole
+  usersPerRole: state.RolesAndPermissions.usersPerRole,
+  permissions: state.RolesAndPermissions.currentRole.permissionGroup1,
 }), (dispatch) => ({
   GetPermissions: bindActionCreators(GetPermissions, dispatch),
   GetRolesUsers: bindActionCreators(GetRolesUsers, dispatch),
