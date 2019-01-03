@@ -1,22 +1,22 @@
-import React                    from 'react';
+import React from 'react';
 import {
   Button, Tabs, message
-}                               from 'antd';
-import Info                     from './scenes/Info';
-import Metadata                 from './scenes/Metadata';
-import DataStreams              from './scenes/DataStreams';
-import Events                   from './scenes/Events';
-import Dashboard                from './scenes/Dashboard';
-// import OTA                      from './scenes/OTA';
-import * as API                 from 'data/Product/api';
-import {connect}                from 'react-redux';
-import {bindActionCreators}     from 'redux';
-import _                        from 'lodash';
-import {TABS}                   from 'services/Products';
-import {displayError}           from 'services/ErrorHandling';
+} from 'antd';
+import Info from './scenes/Info';
+import Metadata from './scenes/Metadata';
+import DataStreams from './scenes/DataStreams';
+import Events from './scenes/Events';
+import Dashboard from './scenes/Dashboard';
+import OTA from './scenes/OTA';
+import * as API from 'data/Product/api';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import _ from 'lodash';
+import { TABS } from 'services/Products';
+import { displayError } from 'services/ErrorHandling';
 import './styles.less';
 
-import {MainLayout} from 'components';
+import { MainLayout } from 'components';
 import { VerifyPermission, PERMISSIONS_INDEX } from "services/Roles";
 
 @connect((state) => ({
@@ -96,7 +96,7 @@ class ProductDetails extends React.Component {
   }
 
   componentWillUnmount() {
-    this.setState({"enteringEditMode" :false});
+    this.setState({ "enteringEditMode": false });
   }
 
   TABS = {
@@ -117,7 +117,7 @@ class ProductDetails extends React.Component {
   enteringEditMode = false;
 
   handleEdit() {
-    this.setState({"enteringEditMode": true});
+    this.setState({ "enteringEditMode": true });
 
     if (this.state.activeTab) {
       this.context.router.push(`/products/edit/${this.props.params.id}/${this.state.activeTab}`);
@@ -133,20 +133,20 @@ class ProductDetails extends React.Component {
   render() {
 
     if (!this.state.product) {
-      return (<div />);
+      return (<div/>);
     }
 
     return (
       <MainLayout>
         <MainLayout.Header title={this.state.product.name}
-                           options={VerifyPermission(this.props.permissions, PERMISSIONS_INDEX.PRODUCT_EDIT)  && (
+                           options={VerifyPermission(this.props.permissions, PERMISSIONS_INDEX.PRODUCT_EDIT) && (
                              <div>
                                <Button type="default"
                                        onClick={this.handleClone}>
                                  Clone
                                </Button>
                                <Button type="primary"
-                                       loading = {this.state.enteringEditMode}
+                                       loading={this.state.enteringEditMode}
                                        onClick={this.handleEdit}>
                                  Edit
                                </Button>
@@ -172,9 +172,10 @@ class ProductDetails extends React.Component {
             <Tabs.TabPane tab="Dashboard" key={TABS.DASHBOARD}>
               <Dashboard webDashboard={this.state.product.webDashboard}/>
             </Tabs.TabPane>
-            {/*<Tabs.TabPane tab="OTA" key={TABS.OTA}>*/}
-              {/*<OTA params={this.props.params}/>*/}
-            {/*</Tabs.TabPane>*/}
+            {process.env.BLYNK_OTA && JSON.parse(process.env.BLYNK_OTA) && VerifyPermission(this.props.permissions, PERMISSIONS_INDEX.OTA_VIEW) && (
+              <Tabs.TabPane tab="OTA" key={TABS.OTA}>
+                <OTA params={this.props.params}/>
+              </Tabs.TabPane>)}
           </Tabs>
         </MainLayout.Content>
       </MainLayout>

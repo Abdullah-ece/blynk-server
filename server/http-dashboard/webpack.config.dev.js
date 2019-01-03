@@ -23,6 +23,7 @@ const GLOBALS = {
   'process.env.BLYNK_DEPLOYMENT_DATE': JSON.stringify(moment().format('HH:mm DD.MM.YYYY')),
   __DEV__: true,
   'process.env.BLYNK_CREATE_DEVICE': JSON.stringify(process.env.BLYNK_CREATE_DEVICE || true), // Allows device creation through the UI
+  'process.env.BLYNK_OTA': JSON.stringify(process.env.BLYNK_OTA || false), // Defines need to display OTA tab on the product page
 };
 
 console.log(GLOBALS);
