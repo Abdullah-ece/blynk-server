@@ -8,8 +8,10 @@ import cc.blynk.server.exp4j.tokenizer.OperatorToken;
 import cc.blynk.server.exp4j.tokenizer.Token;
 import cc.blynk.server.exp4j.tokenizer.VariableToken;
 
+import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -140,7 +142,7 @@ public class Expression {
     }
 
     public double evaluate() {
-        final ArrayStack output = new ArrayStack();
+        final Deque<Double> output = new ArrayDeque<>();
         for (Token token : tokens) {
             token.process(output, this.variables);
         }

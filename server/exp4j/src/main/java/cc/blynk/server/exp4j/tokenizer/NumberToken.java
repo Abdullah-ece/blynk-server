@@ -1,7 +1,6 @@
 package cc.blynk.server.exp4j.tokenizer;
 
-import cc.blynk.server.exp4j.ArrayStack;
-
+import java.util.Deque;
 import java.util.Map;
 
 /**
@@ -33,7 +32,7 @@ public final class NumberToken extends Token {
     }
 
     @Override
-    public void process(ArrayStack output, Map<String, Double> variables) {
+    public void process(Deque<Double> output, Map<String, Double> variables) {
         output.push(value);
     }
 }

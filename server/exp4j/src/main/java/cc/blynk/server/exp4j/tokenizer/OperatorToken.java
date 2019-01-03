@@ -1,8 +1,8 @@
 package cc.blynk.server.exp4j.tokenizer;
 
-import cc.blynk.server.exp4j.ArrayStack;
 import cc.blynk.server.exp4j.operator.Operator;
 
+import java.util.Deque;
 import java.util.Map;
 
 /**
@@ -33,7 +33,7 @@ public class OperatorToken extends Token {
     }
 
     @Override
-    public void process(ArrayStack output, Map<String, Double> variables) {
+    public void process(Deque<Double> output, Map<String, Double> variables) {
         if (output.size() < operator.getNumOperands()) {
             throw new IllegalArgumentException("Invalid number of operands available for '"
                     + operator.getSymbol() + "' operator");

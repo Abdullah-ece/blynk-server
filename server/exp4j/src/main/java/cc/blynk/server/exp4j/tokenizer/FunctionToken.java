@@ -1,12 +1,12 @@
 package cc.blynk.server.exp4j.tokenizer;
 
-import cc.blynk.server.exp4j.ArrayStack;
 import cc.blynk.server.exp4j.function.DynamicArgumentFunction;
 import cc.blynk.server.exp4j.function.Function;
 import cc.blynk.server.exp4j.function.OneArgumentFunction;
 import cc.blynk.server.exp4j.function.PredefinedArgumentFunction;
 import cc.blynk.server.exp4j.function.TwoArgumentFunction;
 
+import java.util.Deque;
 import java.util.Map;
 
 public class FunctionToken extends Token {
@@ -25,12 +25,12 @@ public class FunctionToken extends Token {
     }
 
     @Override
-    public void process(ArrayStack output, Map<String, Double> variables) {
+    public void process(Deque<Double> output, Map<String, Double> variables) {
         double result = apply(output);
         output.push(result);
     }
 
-    private double apply(ArrayStack output) {
+    private double apply(Deque<Double> output) {
         if (this.function instanceof OneArgumentFunction) {
             OneArgumentFunction oneArgumentFunction = (OneArgumentFunction) this.function;
             int functionArguments = oneArgumentFunction.getNumberOfArguments();

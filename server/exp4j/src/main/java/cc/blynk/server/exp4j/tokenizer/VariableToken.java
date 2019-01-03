@@ -1,7 +1,6 @@
 package cc.blynk.server.exp4j.tokenizer;
 
-import cc.blynk.server.exp4j.ArrayStack;
-
+import java.util.Deque;
 import java.util.Map;
 
 /**
@@ -29,7 +28,7 @@ public class VariableToken extends Token {
     }
 
     @Override
-    public void process(ArrayStack output, Map<String, Double> variables) {
+    public void process(Deque<Double> output, Map<String, Double> variables) {
         Double value = variables.get(name);
         if (value == null) {
             throw new IllegalArgumentException("No value has been set for the setVariable '" + name + "'.");
