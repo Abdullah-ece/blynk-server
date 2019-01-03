@@ -13,8 +13,8 @@ import cc.blynk.server.core.processors.rules.value.params.DeviceDataStreamFormul
 import cc.blynk.server.core.processors.rules.value.params.DeviceReferenceFormulaParam;
 import cc.blynk.server.core.processors.rules.value.params.FormulaParamBase;
 import cc.blynk.server.core.processors.rules.value.params.SameDataStreamFormulaParam;
+import cc.blynk.server.exp4j.Expression;
 import cc.blynk.utils.NumberUtil;
-import net.objecthunter.exp4j.Expression;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

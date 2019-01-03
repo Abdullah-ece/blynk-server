@@ -16,6 +16,7 @@
         <module>notifications</module>
 
         <module>utils</module>
+        <module>exp4j</module>
         <module>acme</module>
         <module>core</module>
 

@@ -1,7 +1,7 @@
 package cc.blynk.server.internal;
 
-import net.objecthunter.exp4j.Expression;
-import net.objecthunter.exp4j.ExpressionBuilder;
+import cc.blynk.server.exp4j.Expression;
+import cc.blynk.server.exp4j.ExpressionBuilder;
 import org.junit.Test;
 
 import static junit.framework.TestCase.assertEquals;

@@ -67,6 +67,11 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>cc.blynk.server.exp4j</groupId>
+            <artifactId>exp4j</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>cc.blynk.server.notifications</groupId>
             <artifactId>email</artifactId>
             <version>${project.version}</version>

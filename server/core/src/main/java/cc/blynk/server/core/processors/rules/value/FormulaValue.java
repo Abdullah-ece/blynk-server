@@ -1,10 +1,10 @@
 package cc.blynk.server.core.processors.rules.value;
 
 import cc.blynk.server.core.processors.rules.value.params.FormulaParamBase;
+import cc.blynk.server.exp4j.Expression;
+import cc.blynk.server.exp4j.ExpressionBuilder;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import net.objecthunter.exp4j.Expression;
-import net.objecthunter.exp4j.ExpressionBuilder;
 
 import java.util.Map;
 
@@ -29,7 +29,7 @@ public class FormulaValue extends ValueBase {
         this.expression = new ExpressionBuilder(formula)
                 .variables(formulaParams.keySet())
                 .build();
-        this.expression.validate(false);
+        this.expression.validateExpression();
     }
 
     @Override
