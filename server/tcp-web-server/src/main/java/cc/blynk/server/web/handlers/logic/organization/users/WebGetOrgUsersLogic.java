@@ -2,6 +2,7 @@ package cc.blynk.server.web.handlers.logic.organization.users;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.PermissionBasedLogic;
+import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
@@ -22,9 +23,11 @@ import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 public final class WebGetOrgUsersLogic implements PermissionBasedLogic<WebAppStateHolder> {
 
     private final UserDao userDao;
+    private final OrganizationDao organizationDao;
 
     public WebGetOrgUsersLogic(Holder holder) {
         this.userDao = holder.userDao;
+        this.organizationDao = holder.organizationDao;
     }
 
     @Override
@@ -34,11 +37,13 @@ public final class WebGetOrgUsersLogic implements PermissionBasedLogic<WebAppSta
 
     @Override
     public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
-        int orgId = state.selectedOrgId;
+        int requestedOrgId = Integer.parseInt(message.body);
         User user = state.user;
 
+        organizationDao.checkInheritanceAccess(user.email, user.orgId, requestedOrgId);
+
         if (ctx.channel().isWritable()) {
-            List<User> users = userDao.getUsersByOrgId(orgId, user.email);
+            List<User> users = userDao.getUsersByOrgId(requestedOrgId, user.email);
             String usersString = JsonParser.toJson(users);
             ctx.writeAndFlush(makeUTF8StringMessage(message.command, message.id, usersString),
                     ctx.voidPromise());

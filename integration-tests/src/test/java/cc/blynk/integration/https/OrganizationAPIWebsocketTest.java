@@ -310,6 +310,38 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
     }
 
     @Test
+    public void getUsersIsCorrectForSuborg() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+        client.getOrganization(orgId);
+        OrganizationDTO organizationDTO = client.parseOrganizationDTO(1);
+        assertNotNull(organizationDTO);
+        assertEquals(orgId, organizationDTO.id);
+
+        Organization subOrg = new Organization("getUsersIsCorrectForSuborg", "Europe/Kiev", "/static/logo.png", true, -1);
+        client.createOrganization(subOrg);
+        OrganizationDTO subOrgDTO = client.parseOrganizationDTO(2);
+        assertNotNull(subOrgDTO);
+        assertEquals(organizationDTO.id, subOrgDTO.parentId);
+        assertNotNull(subOrgDTO.roles);
+        assertEquals(3, subOrgDTO.roles.length);
+        assertEquals(1, subOrgDTO.roles[0].id);
+
+        client.inviteUser(subOrgDTO.id, "test@gmail.com", "Dmitriy", 3);
+        client.verifyResult(ok(3));
+
+        client.getOrgUsers(subOrgDTO.id);
+        User[] users = client.parseUsers(4);
+        assertNotNull(users);
+        assertEquals(1, users.length);
+        assertEquals("test@gmail.com", users[0].email);
+
+        client.getOrgUsers(orgId);
+        users = client.parseUsers(5);
+        assertNotNull(users);
+        assertEquals(0, users.length);
+    }
+
+    @Test
     public void createSubOrg() throws Exception {
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
         client.getOrganization(orgId);
