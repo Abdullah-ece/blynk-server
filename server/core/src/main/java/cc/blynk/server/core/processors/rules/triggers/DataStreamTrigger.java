@@ -19,6 +19,10 @@ public class DataStreamTrigger extends BaseTrigger {
         this.ruleDataStream = dataStream;
     }
 
+    public DataStreamTrigger(int productId, short sourcePin) {
+        this(new RuleDataStream(productId, sourcePin, PinType.VIRTUAL));
+    }
+
     @Override
     public boolean isSame(int productId, short pin, PinType pinType) {
         return ruleDataStream != null && ruleDataStream.isSame(productId, pin, pinType);

@@ -1,5 +1,6 @@
 package cc.blynk.server.core.processors.rules.actions;
 
+import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.processors.rules.RuleDataStream;
 import cc.blynk.server.core.processors.rules.value.ValueBase;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -21,6 +22,10 @@ public class SetNumberPinAction extends BaseAction {
                               @JsonProperty("pinValue") ValueBase pinValue) {
         this.targetDataStream = targetDataStream;
         this.pinValue = pinValue;
+    }
+
+    public SetNumberPinAction(int productId, short pin, ValueBase pinValue) {
+        this(new RuleDataStream(productId, pin, PinType.VIRTUAL), pinValue);
     }
 
     @Override
