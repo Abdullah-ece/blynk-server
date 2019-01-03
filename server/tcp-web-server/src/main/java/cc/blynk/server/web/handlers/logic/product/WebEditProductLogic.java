@@ -91,11 +91,9 @@ public final class WebEditProductLogic implements PermissionBasedLogic<WebAppSta
         log.debug("Product with id {} and {} subProducts successfully updated for {}.",
                 product.id, subProductIds.length, user.email);
 
-        if (ctx.channel().isWritable()) {
-            String productString = existingProduct.toString();
-            StringMessage response = makeUTF8StringMessage(message.command, message.id, productString);
-            ctx.writeAndFlush(response, ctx.voidPromise());
-        }
+        String productString = existingProduct.toString();
+        StringMessage response = makeUTF8StringMessage(message.command, message.id, productString);
+        ctx.writeAndFlush(response, ctx.voidPromise());
     }
 
 
