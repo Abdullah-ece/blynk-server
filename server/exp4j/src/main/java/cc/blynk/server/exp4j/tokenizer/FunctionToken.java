@@ -5,6 +5,8 @@ import cc.blynk.server.exp4j.function.Function;
 import cc.blynk.server.exp4j.function.OneArgumentFunction;
 import cc.blynk.server.exp4j.function.PredefinedArgumentFunction;
 import cc.blynk.server.exp4j.function.TwoArgumentFunction;
+import cc.blynk.server.exp4j.tokenizer.variable.DoubleValue;
+import cc.blynk.server.exp4j.tokenizer.variable.VariableValue;
 
 import java.util.Deque;
 import java.util.Map;
@@ -25,23 +27,23 @@ public class FunctionToken extends Token {
     }
 
     @Override
-    public void process(Deque<Double> output, Map<String, Double> variables) {
+    public void process(Deque<VariableValue> output, Map<String, VariableValue> variables) {
         double result = apply(output);
-        output.push(result);
+        output.push(new DoubleValue(result));
     }
 
-    private double apply(Deque<Double> output) {
+    private double apply(Deque<VariableValue> output) {
         if (this.function instanceof OneArgumentFunction) {
             OneArgumentFunction oneArgumentFunction = (OneArgumentFunction) this.function;
             int functionArguments = oneArgumentFunction.getNumberOfArguments();
             verify(output.size(), functionArguments);
-            return oneArgumentFunction.apply(output.pop());
+            return oneArgumentFunction.apply(output.pop().doubleValue());
         } else if (this.function instanceof TwoArgumentFunction) {
             TwoArgumentFunction twoArgumentFunction = (TwoArgumentFunction) this.function;
             int functionArguments = twoArgumentFunction.getNumberOfArguments();
             verify(output.size(), functionArguments);
-            double right = output.pop();
-            double left = output.pop();
+            double right = output.pop().doubleValue();
+            double left = output.pop().doubleValue();
             return twoArgumentFunction.apply(left, right);
         } else if (this.function instanceof PredefinedArgumentFunction) {
             PredefinedArgumentFunction predefinedArgumentFunction = (PredefinedArgumentFunction) this.function;
@@ -51,10 +53,17 @@ public class FunctionToken extends Token {
             /* collect the arguments from the stack */
             int functionArguments = dynamicNumberOfArguments;
             dynamicArgumentFunction.verify(functionArguments);
-            double[] args = new double[functionArguments];
-            for (int j = functionArguments - 1; j >= 0; j--) {
-                args[j] = output.pop();
+
+            double[] args;
+            if (dynamicArgumentFunction.acceptsMultiValues) {
+                args = output.pop().doubleValues();
+            } else {
+                args = new double[functionArguments];
+                for (int j = functionArguments - 1; j >= 0; j--) {
+                    args[j] = output.pop().doubleValue();
+                }
             }
+
             return dynamicArgumentFunction.apply(args);
         }
     }

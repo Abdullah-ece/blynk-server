@@ -1,5 +1,7 @@
 package cc.blynk.server.exp4j.tokenizer;
 
+import cc.blynk.server.exp4j.tokenizer.variable.VariableValue;
+
 import java.util.Deque;
 import java.util.Map;
 
@@ -26,7 +28,7 @@ public abstract class Token {
         return type;
     }
 
-    public void process(Deque<Double> output, Map<String, Double> variables) {
+    public void process(Deque<VariableValue> output, Map<String, VariableValue> variables) {
     }
 
 }

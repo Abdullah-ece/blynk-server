@@ -6,6 +6,8 @@ import cc.blynk.server.core.model.storage.value.PinStorageValue;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.processors.rules.RuleDataStream;
+import cc.blynk.utils.DoubleArray;
+import cc.blynk.utils.NumberUtil;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.logging.log4j.LogManager;
@@ -43,23 +45,30 @@ public class BackDeviceReferenceFormulaParam extends FormulaParamBase {
     //todo this method is real bottleneck
     //we need to refactor it and use cache for referenced devices
     //otherwise we do iteration over all org devices
-    public String resolve(Organization org, Device device) {
+    public double[] resolve(Organization org, Device device) {
         Product product = findProductById(org.products, this.targetDataStream.productId);
         if (product == null) {
             log.trace("BackDeviceReferenceFormulaParam. No back reference product for {} and orgId = {}.",
                     targetDataStream, org.id);
             return null;
         }
+
         int deviceId = device.id;
+        DoubleArray doubleArray = new DoubleArray();
         for (Device iterDevice : product.devices) {
             if (iterDevice.hasReferenceDevice(deviceId)) {
                 PinStorageValue pinStorageValue = iterDevice.getValue(targetDataStream);
-                if (pinStorageValue == null) {
-                    log.trace("Error processing BackDeviceReferenceFormulaParam. No value for {}.", targetDataStream);
-                    return null;
+                if (pinStorageValue != null) {
+                    String value = pinStorageValue.lastValue();
+                    if (value != null) {
+                        doubleArray.add(NumberUtil.parseDouble(value));
+                    }
                 }
-                return pinStorageValue.lastValue();
             }
+        }
+
+        if (doubleArray.size() > 0) {
+            return doubleArray.toArray();
         }
 
         log.trace("Error processing BackDeviceReferenceFormulaParam. No value in all devices for {}.",

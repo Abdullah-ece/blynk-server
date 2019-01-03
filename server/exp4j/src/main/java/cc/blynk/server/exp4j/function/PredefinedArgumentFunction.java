@@ -1,5 +1,7 @@
 package cc.blynk.server.exp4j.function;
 
+import cc.blynk.server.exp4j.tokenizer.variable.VariableValue;
+
 import java.util.Deque;
 
 /**
@@ -13,12 +15,12 @@ public abstract class PredefinedArgumentFunction extends Function {
 
     public abstract double apply(double... args);
 
-    public double apply(Deque<Double> output) {
+    public double apply(Deque<VariableValue> output) {
         /* collect the arguments from the stack */
         verify(output.size());
         double[] args = new double[numberOfArguments];
         for (int j = numberOfArguments - 1; j >= 0; j--) {
-            args[j] = output.pop();
+            args[j] = output.pop().doubleValue();
         }
         return apply(args);
     }

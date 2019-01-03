@@ -1,5 +1,8 @@
 package cc.blynk.server.exp4j.tokenizer;
 
+import cc.blynk.server.exp4j.tokenizer.variable.DoubleValue;
+import cc.blynk.server.exp4j.tokenizer.variable.VariableValue;
+
 import java.util.Deque;
 import java.util.Map;
 
@@ -32,7 +35,7 @@ public final class NumberToken extends Token {
     }
 
     @Override
-    public void process(Deque<Double> output, Map<String, Double> variables) {
-        output.push(value);
+    public void process(Deque<VariableValue> output, Map<String, VariableValue> variables) {
+        output.push(new DoubleValue(value));
     }
 }

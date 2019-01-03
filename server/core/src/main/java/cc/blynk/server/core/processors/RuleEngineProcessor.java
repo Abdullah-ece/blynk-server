@@ -6,19 +6,10 @@ import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.processors.rules.Rule;
 import cc.blynk.server.core.processors.rules.actions.BaseAction;
 import cc.blynk.server.core.processors.rules.actions.SetNumberPinAction;
-import cc.blynk.server.core.processors.rules.value.FormulaValue;
 import cc.blynk.server.core.processors.rules.value.ValueBase;
-import cc.blynk.server.core.processors.rules.value.params.BackDeviceReferenceFormulaParam;
-import cc.blynk.server.core.processors.rules.value.params.DeviceDataStreamFormulaParam;
-import cc.blynk.server.core.processors.rules.value.params.DeviceReferenceFormulaParam;
-import cc.blynk.server.core.processors.rules.value.params.FormulaParamBase;
-import cc.blynk.server.core.processors.rules.value.params.SameDataStreamFormulaParam;
-import cc.blynk.server.exp4j.Expression;
 import cc.blynk.utils.NumberUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.Map;
 
 /**
  * The Blynk Project.
@@ -49,62 +40,12 @@ public class RuleEngineProcessor {
         BaseAction action = rule.action;
         if (action instanceof SetNumberPinAction) {
             SetNumberPinAction setNumberPinAction = (SetNumberPinAction) action;
-            double resolvedValue = resolve(org, device, setNumberPinAction.pinValue, triggerValue);
+            ValueBase valueBase = setNumberPinAction.pinValue;
+            double resolvedValue = valueBase.resolve(org, device, triggerValue);
             if (resolvedValue != NumberUtil.NO_RESULT) {
                 device.updateValue(setNumberPinAction.targetDataStream, String.valueOf(resolvedValue));
             }
         }
     }
-
-    private double resolve(Organization org, Device device, ValueBase value, String triggerValue) {
-        if (value instanceof FormulaValue) {
-            FormulaValue formulaValue = (FormulaValue) value;
-            return resolveFormulaValue(org, device, formulaValue, triggerValue);
-        } else {
-            throw new RuntimeException("Not supported value passed for rule engine.");
-        }
-    }
-
-    private double resolveFormulaValue(Organization org, Device device,
-                                       FormulaValue formulaValue, String triggerValue) {
-        //todo this is not optimal, we may cache expression per device
-        Expression newExpressionCopy = new Expression(formulaValue.expression);
-
-        for (Map.Entry<String, FormulaParamBase> entry : formulaValue.formulaParams.entrySet()) {
-            FormulaParamBase formulaParam = entry.getValue();
-
-            String resolvedValue = resolveParamValue(org, device, formulaParam, triggerValue);
-            if (resolvedValue == null) {
-                return NumberUtil.NO_RESULT;
-            }
-
-            String paramName = entry.getKey();
-            double parsedResolvedValue = NumberUtil.parseDouble(resolvedValue);
-            newExpressionCopy.setVariableWithoutCheck(paramName, parsedResolvedValue);
-        }
-        return newExpressionCopy.evaluate();
-    }
-
-    private String resolveParamValue(Organization org, Device device,
-                                     FormulaParamBase formulaParamBase, String triggerValue) {
-        if (formulaParamBase instanceof SameDataStreamFormulaParam) {
-            return triggerValue;
-        }
-        if (formulaParamBase instanceof DeviceDataStreamFormulaParam) {
-            DeviceDataStreamFormulaParam deviceDataStream = (DeviceDataStreamFormulaParam) formulaParamBase;
-            return deviceDataStream.resolve(device);
-        }
-        if (formulaParamBase instanceof DeviceReferenceFormulaParam) {
-            DeviceReferenceFormulaParam deviceReference = (DeviceReferenceFormulaParam) formulaParamBase;
-            return deviceReference.resolve(org, device);
-        }
-        if (formulaParamBase instanceof BackDeviceReferenceFormulaParam) {
-            BackDeviceReferenceFormulaParam backDeviceReference = (BackDeviceReferenceFormulaParam) formulaParamBase;
-            return backDeviceReference.resolve(org, device);
-        }
-        throw new RuntimeException("Not supported formula parameter passed for rule engine.");
-    }
-
-
 
 }

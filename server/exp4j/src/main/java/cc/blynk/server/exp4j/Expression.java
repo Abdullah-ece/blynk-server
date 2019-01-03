@@ -7,6 +7,9 @@ import cc.blynk.server.exp4j.tokenizer.FunctionToken;
 import cc.blynk.server.exp4j.tokenizer.OperatorToken;
 import cc.blynk.server.exp4j.tokenizer.Token;
 import cc.blynk.server.exp4j.tokenizer.VariableToken;
+import cc.blynk.server.exp4j.tokenizer.variable.DoubleArrayValue;
+import cc.blynk.server.exp4j.tokenizer.variable.DoubleValue;
+import cc.blynk.server.exp4j.tokenizer.variable.VariableValue;
 
 import java.util.ArrayDeque;
 import java.util.Arrays;
@@ -23,7 +26,7 @@ public class Expression {
 
     private final Token[] tokens;
 
-    private final Map<String, Double> variables = new HashMap<>();
+    private final Map<String, VariableValue> variables = new HashMap<>();
 
     private final Set<String> userFunctionNames;
 
@@ -46,18 +49,24 @@ public class Expression {
     Expression(final Token[] tokens, Set<String> userFunctionNames, Map<String, Double> consts) {
         this.tokens = tokens;
         this.userFunctionNames = userFunctionNames;
-        this.variables.putAll(consts);
+        for (var entry : consts.entrySet()) {
+            this.variables.put(entry.getKey(), new DoubleValue(entry.getValue()));
+        }
     }
 
-    public Expression setVariableWithoutCheck(final String name, final double value) {
-        this.variables.put(name, value);
+    public Expression setVariableWithoutCheck(String name, double[] values) {
+        this.variables.put(name, new DoubleArrayValue(values));
         return this;
     }
 
-    public Expression setVariable(final String name, final double value) {
+    public Expression setVariableWithoutCheck(String name, double value) {
+        this.variables.put(name, new DoubleValue(value));
+        return this;
+    }
+
+    public Expression setVariable(String name, double value) {
         this.checkVariableName(name);
-        this.variables.put(name, value);
-        return this;
+        return setVariableWithoutCheck(name, value);
     }
 
     private void checkVariableName(String name) {
@@ -147,7 +156,7 @@ public class Expression {
     }
 
     public double evaluate() {
-        final Deque<Double> output = new ArrayDeque<>();
+        final Deque<VariableValue> output = new ArrayDeque<>();
         for (Token token : tokens) {
             token.process(output, this.variables);
         }
@@ -155,7 +164,8 @@ public class Expression {
             throw new IllegalArgumentException("Invalid number of items on the output queue. "
                     + "Might be caused by an invalid number of arguments for a function.");
         }
-        return output.pop();
+        VariableValue variableValue = output.pop();
+        return variableValue.doubleValue();
     }
 
 }

@@ -170,6 +170,19 @@ public enum Functions {
             }
             return sum / args.length;
         }
+    }),
+    AVG_FOR_GROUP(new DynamicArgumentFunction("avgForGroup", 1, Integer.MAX_VALUE, true) {
+        @Override
+        public double apply(double... args) {
+            if (args.length == 0) {
+                throw new VariableNotSetException("Function 'avgForGroup' has no arguments.");
+            }
+            double sum = 0;
+            for (double arg : args) {
+                sum += arg;
+            }
+            return sum / args.length;
+        }
     });
 
     public static final Map<String, Function> ALL = init();

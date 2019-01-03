@@ -9,14 +9,25 @@ public abstract class DynamicArgumentFunction extends Function {
 
     private final int minArgumentsNumber;
     private final int maxArgumentsNumber;
+    public final boolean acceptsMultiValues;
 
-    public DynamicArgumentFunction(String name, int minArgumentsNumber, int maxArgumentsNumber) {
+    public DynamicArgumentFunction(String name,
+                                   int minArgumentsNumber,
+                                   int maxArgumentsNumber) {
+        this(name, minArgumentsNumber, maxArgumentsNumber, false);
+    }
+
+    public DynamicArgumentFunction(String name,
+                                   int minArgumentsNumber,
+                                   int maxArgumentsNumber,
+                                   boolean acceptsMultiValues) {
         super(name, -1);
         if (minArgumentsNumber < 0 || maxArgumentsNumber < minArgumentsNumber) {
             throw new IllegalArgumentException("Maximum arguments number can't exceed minimum arguments number.");
         }
         this.minArgumentsNumber = minArgumentsNumber;
         this.maxArgumentsNumber = maxArgumentsNumber;
+        this.acceptsMultiValues = acceptsMultiValues;
     }
 
     public abstract double apply(double... args);
