@@ -49,6 +49,11 @@ public class Expression {
         this.variables.putAll(consts);
     }
 
+    public Expression setVariableWithoutCheck(final String name, final double value) {
+        this.variables.put(name, value);
+        return this;
+    }
+
     public Expression setVariable(final String name, final double value) {
         this.checkVariableName(name);
         this.variables.put(name, value);

@@ -79,7 +79,8 @@ public class RuleEngineProcessor {
             }
 
             String paramName = entry.getKey();
-            newExpressionCopy.setVariable(paramName, NumberUtil.parseDouble(resolvedValue));
+            double parsedResolvedValue = NumberUtil.parseDouble(resolvedValue);
+            newExpressionCopy.setVariableWithoutCheck(paramName, parsedResolvedValue);
         }
         return newExpressionCopy.evaluate();
     }
