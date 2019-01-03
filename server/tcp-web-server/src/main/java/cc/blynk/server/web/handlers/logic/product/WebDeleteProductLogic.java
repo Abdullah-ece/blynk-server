@@ -77,7 +77,7 @@ public final class WebDeleteProductLogic implements PermissionBasedLogic<WebAppS
             throw new JsonException("Sub Org can't do anything with the Product Templates created by Meta Org.");
         }
 
-        organizationDao.checkCanDeleteProduct(orgId, productId);
+        organizationDao.checkCanDeleteProduct(state.user, productId);
 
         //todo check access
         Organization org = organizationDao.getOrgById(orgId);

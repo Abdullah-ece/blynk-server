@@ -1657,13 +1657,65 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         client.canDeleteProduct(fromApiProduct.id);
         client.verifyResult(webJson(3, "You can't delete product that is used in sub organizations."));
 
-        client.canDeleteProduct(orgId, fromApiProduct.id);
+        client.canDeleteProduct(fromApiProduct.id);
         client.verifyResult(webJson(4, "You can't delete product that is used in sub organizations."));
 
-        client.canDeleteProduct(fromApiProductOrg.id, fromApiProduct.id);
-        client.verifyResult(webJson(5, "Product with passed id " + fromApiProduct.id +  " not found in organization with id " + fromApiProductOrg.id + "."));
+        client.canDeleteProduct(fromApiProduct.id);
+        client.verifyResult(webJson(5, "You can't delete product that is used in sub organizations."));
 
         client.deleteProduct(fromApiProduct.id);
         client.verifyResult(webJson(6, "You can't delete product that is used in sub organizations."));
+    }
+
+    @Test
+    public void userCanUnselectProduct() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient("super@blynk.cc", "1");
+
+        Product product = new Product();
+        product.name = "My product";
+        product.metaFields = new MetaField[] {
+                createDeviceNameMeta(1, "Device Name", "123", true),
+                createDeviceOwnerMeta(2, "Owner", "123", true)
+        };
+
+        WebLabel webLabel = new WebLabel();
+        webLabel.label = "123";
+        webLabel.id = 2;
+        webLabel.x = 4;
+        webLabel.y = 2;
+        webLabel.height = 10;
+        webLabel.width = 20;
+        webLabel.sources = new WebSource[] {
+                new WebSource("some Label", "#334455",
+                        false, RAW_DATA, new DataStream((byte) 2, PinType.VIRTUAL),
+                        null,
+                        null,
+                        null, SortOrder.ASC, 10, false, null, false)
+        };
+
+        product.webDashboard = new WebDashboard(new Widget[] {
+                webLabel
+        });
+
+        client.createProduct(product);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
+        assertNotNull(fromApiProduct);
+
+        Organization organization = new Organization("userCanUnselectProduct", "Some TimeZone", "/static/logo.png", false, -1);
+        organization.selectedProducts = new int[] {fromApiProduct.id};
+
+        client.createOrganization(organization);
+        OrganizationDTO fromApiProductOrg = client.parseOrganizationDTO(2);
+        assertNotNull(fromApiProductOrg);
+        assertEquals(orgId, fromApiProductOrg.parentId);
+        assertEquals(organization.name, fromApiProductOrg.name);
+        assertEquals(organization.tzName, fromApiProductOrg.tzName);
+        assertNotNull(fromApiProductOrg.products);
+        assertEquals(1, fromApiProductOrg.products.length);
+        assertEquals(fromApiProduct.id + 1, fromApiProductOrg.products[0].id);
+        assertEquals(fromApiProduct.id, fromApiProductOrg.products[0].parentId);
+
+        client.canDeleteProduct(fromApiProductOrg.products[0].id);
+        client.verifyResult(ok(3));
     }
 }

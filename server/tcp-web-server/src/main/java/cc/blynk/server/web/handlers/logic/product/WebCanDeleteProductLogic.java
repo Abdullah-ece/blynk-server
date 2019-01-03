@@ -33,17 +33,14 @@ public final class WebCanDeleteProductLogic implements PermissionBasedLogic<WebA
     public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         String[] split = split2(message.body);
 
-        int orgId;
         int productId;
         if (split.length == 2) {
-            orgId = Integer.parseInt(split[0]);
             productId = Integer.parseInt(split[1]);
         } else {
-            orgId = state.selectedOrgId;
             productId = Integer.parseInt(split[0]);
         }
 
-        organizationDao.checkCanDeleteProduct(orgId, productId);
+        organizationDao.checkCanDeleteProduct(state.user, productId);
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }

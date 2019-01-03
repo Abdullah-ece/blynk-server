@@ -386,16 +386,17 @@ public class OrganizationDao {
         return null;
     }
 
-    public void checkCanDeleteProduct(int orgId, int productId) {
-        Product product = getProductOrThrow(orgId, productId);
-        //if (product.devices.length > 0) {
-        //    throw new JsonException("You can't delete product with devices.");
-        //}
-
+    public void checkCanDeleteProduct(User user, int productId) {
+        Organization org = getOrganizationByProductId(productId);
+        if (org == null) {
+            throw new JsonException("Couldn't find organization for product with passed id " + productId + ".");
+        }
         int[] subProductIds = subProductIds(productId);
         if (subProductIds.length != 0) {
             throw new JsonException("You can't delete product that is used in sub organizations.");
         }
+
+        checkInheritanceAccess(user.email, user.orgId, org.id);
     }
 
     public List<Device> getDevices(BaseUserStateHolder state) {
