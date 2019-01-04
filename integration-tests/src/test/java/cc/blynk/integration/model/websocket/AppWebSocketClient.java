@@ -112,6 +112,7 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_PRODUCTS;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_PRODUCT_LOCATIONS;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ROLE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ROLES;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_RULE_GROUP;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_TEMP_SECURE_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_USER_COUNTERS_BY_ROLE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_INVITE_USER;
@@ -211,6 +212,10 @@ public final class AppWebSocketClient extends BaseTestAppClient {
 
     public void resolveEvent(int deviceId, long logEventId, String comment) {
         send(WEB_RESOLVE_EVENT, new ResolveEventDTO(deviceId, logEventId, comment));
+    }
+
+    public void getRuleGroup() {
+        send(WEB_GET_RULE_GROUP);
     }
 
     public void editRuleGroup(RuleGroup ruleGroup) {
@@ -470,6 +475,10 @@ public final class AppWebSocketClient extends BaseTestAppClient {
 
     public CountDTO parseCountDTO(int expectedMessageOrder) throws Exception {
         return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), CountDTO.class);
+    }
+
+    public RuleGroup parseRuleGroup(int expectedMessageOrder) throws Exception {
+        return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), RuleGroup.class);
     }
 
     @Override

@@ -32,6 +32,7 @@ import static cc.blynk.integration.TestUtil.ok;
 import static net.bytebuddy.matcher.ElementMatchers.any;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 /**
  * The Blynk Project.
@@ -40,6 +41,40 @@ import static org.junit.Assert.assertNotNull;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
+
+    @Test
+    public void CRUDForRuleGroup() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+        client.getRuleGroup();
+        RuleGroup ruleGroup = client.parseRuleGroup(1);
+        assertNull(ruleGroup);
+
+        short floor1SourcePin = 1;
+        short floor1TargetPin = 2;
+        short fanSourcePin = 1;
+
+        //if floorProduct.v1 updated setPin floorProduct.v2 = x - y;
+        //x = floorProduct.v1;
+        //y = back_refefence_for_floorProduct
+
+        DataStreamTrigger trigger = new DataStreamTrigger(1, floor1SourcePin);
+        NumberUpdatedCondition numberUpdatedCondition = new NumberUpdatedCondition();
+        FormulaValue formulaValue = new FormulaValue(
+                "x - avgForGroup(y)",
+                Map.of("x", new SameDataStreamFormulaParam(),
+                        "y", new BackDeviceReferenceFormulaParam(1, fanSourcePin))
+        );
+        SetNumberPinAction setNumberPinAction = new SetNumberPinAction(1, floor1TargetPin, formulaValue);
+        Rule rule = new Rule("Airius rule", trigger, numberUpdatedCondition, setNumberPinAction);
+        client.editRuleGroup(new RuleGroup(new Rule[] {
+                rule
+        }));
+        client.verifyResult(ok(2));
+
+        client.getRuleGroup();
+        ruleGroup = client.parseRuleGroup(3);
+        assertNotNull(ruleGroup);
+    }
 
     @Test
     public void testRuleEngineForAiriusCaseWith0ReferencedDevices() throws Exception {
