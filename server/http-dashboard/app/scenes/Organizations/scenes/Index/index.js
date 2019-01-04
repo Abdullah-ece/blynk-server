@@ -1,25 +1,25 @@
-import React                  from 'react';
-import {List, fromJS}         from 'immutable';
-import {connect}              from 'react-redux';
-import PropTypes              from 'prop-types';
-import {bindActionCreators}   from 'redux';
+import React from 'react';
+import { List, fromJS } from 'immutable';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import { bindActionCreators } from 'redux';
 
 import {
   List as OrgsList,
   Empty
-}                             from './scenes';
+} from './scenes';
 
 import {
   OrganizationsFetch
-}                             from 'data/Organizations/actions';
+} from 'data/Organizations/actions';
 import {
   StartLoading,
   FinishLoading
-}                             from 'data/PageLoading/actions';
+} from 'data/PageLoading/actions';
 
 @connect((state) => ({
-  orgId     : state.Account.selectedOrgId,
-  list        : fromJS(state.Organizations.get('list'))
+  orgId: state.Account.selectedOrgId,
+  list: fromJS(state.Organizations.get('list'))
 }), (dispatch) => ({
   OrganizationsFetch: bindActionCreators(OrganizationsFetch, dispatch),
   startLoading: bindActionCreators(StartLoading, dispatch),
@@ -38,8 +38,7 @@ class Index extends React.Component {
   };
 
   componentWillMount() {
-    if (!this.props.list)
-      this.fetch();
+    this.fetch();
   }
 
   fetch() {
@@ -64,7 +63,7 @@ class Index extends React.Component {
     // if has no organizations display empty scene
     if (!this.props.list.size)
       return (
-        <Empty />
+        <Empty/>
       );
 
   }
