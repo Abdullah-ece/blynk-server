@@ -111,10 +111,10 @@ public class OrganizationDao {
 
     public int[] subProductIds(int parentProductId) {
         IntArray subProductIds = new IntArray();
-        for (Organization subOrg : organizations.values()) {
-            for (Product subProduct : subOrg.products) {
-                if (subProduct.parentId == parentProductId) {
-                    subProductIds.add(subProduct.id);
+        for (Organization org : organizations.values()) {
+            for (Product product : org.products) {
+                if (product.parentId == parentProductId) {
+                    subProductIds.add(product.id);
                 }
             }
         }

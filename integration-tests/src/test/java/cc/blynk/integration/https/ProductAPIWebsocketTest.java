@@ -1456,7 +1456,8 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         ProductDTO fromApiProduct = client.parseProductDTO(1);
         assertNotNull(fromApiProduct);
 
-        Organization organization = new Organization("New Sub Org", "Some TimeZone", "/static/logo.png", false, -1);
+        Organization organization = new Organization("createProductForSubSubOrgAndUpdateItViaParentProduct",
+                "Some TimeZone", "/static/logo.png", false, -1);
         organization.canCreateOrgs = true;
         organization.selectedProducts = new int[] {fromApiProduct.id};
 
@@ -1521,9 +1522,9 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         };
         fromApiProduct = updateProductWebDash(fromApiProduct, webLabel);
         fromApiProduct = updateProductMetafields(fromApiProduct,
-                createTextMeta(1, "My test metafield 2", "Default Device"),
-                createDeviceNameMeta(2, "Device Name", "123", true),
-                createDeviceOwnerMeta(3, "Owner", "123", true)
+                createDeviceNameMeta(1, "Device Name", "123", true),
+                createDeviceOwnerMeta(2, "Owner", "123", true),
+                createTextMeta(3, "My test metafield 2", "Default Device")
         );
 
         client.updateDevicesMeta(orgId, fromApiProduct);
@@ -1533,7 +1534,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertNotNull(fromApiProduct.webDashboard.widgets[0]);
         assertEquals("4444", fromApiProduct.webDashboard.widgets[0].label);
         assertNotNull(fromApiProduct.metaFields);
-        assertEquals("My test metafield 2", fromApiProduct.metaFields[0].name);
+        assertEquals("My test metafield 2", fromApiProduct.metaFields[2].name);
 
         client.getDevice(-1, createdSubDevice.id);
         createdSubDevice = client.parseDevice(9);
@@ -1541,7 +1542,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertNotNull(createdSubDevice.metaFields);
         assertEquals(3, createdSubDevice.metaFields.length);
         assertNotNull(createdSubDevice.metaFields);
-        assertEquals("My test metafield 2", createdSubDevice.metaFields[0].name);
+        assertEquals("My test metafield 2", createdSubDevice.metaFields[2].name);
     }
 
     @Test
