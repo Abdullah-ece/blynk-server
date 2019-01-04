@@ -127,6 +127,7 @@ public class PermissionsTest extends SingleServerInstancePerTestWithDBAndNewOrg 
         Organization organization2 = new Organization(
                 "SubOrg2", "Some TimeZone", "/static/logo.png", true, fromApiOrg.id,
                 new Role(1, "Admin", 0b11111111111111111111, 0));
+        organization2.selectedProducts = new int[] {fromApiOrg.products[0].id};
 
         AppWebSocketClient subUserClient = loggedDefaultClient(subOrgUser1, "1");
         subUserClient.createOrganization(organization2);
@@ -137,6 +138,7 @@ public class PermissionsTest extends SingleServerInstancePerTestWithDBAndNewOrg 
         assertEquals(organization2.tzName, fromApiOrg2.tzName);
         assertNotNull(fromApiOrg2.products);
         assertEquals(1, fromApiOrg2.products.length);
+        assertEquals(fromApiProduct.id + 2, fromApiOrg2.products[0].id);
     }
 
     @Test

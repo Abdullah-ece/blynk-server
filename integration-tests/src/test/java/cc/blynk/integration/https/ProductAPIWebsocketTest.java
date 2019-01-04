@@ -1476,8 +1476,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         client.verifyResult(ok(3));
 
         Organization organization2 = new Organization("New Sub Sub Org", "Some TimeZone", "/static/logo.png", false, -1);
-        //this should be inherited from the parent org
-        //organization.selectedProducts = new int[] {fromApiProduct.id};
+        organization2.selectedProducts = new int[] {fromApiProduct.id};
 
         client.createOrganization(organization2);
         OrganizationDTO fromApiProductOrg2 = client.parseOrganizationDTO(4);
@@ -1543,6 +1542,52 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertEquals(3, createdSubDevice.metaFields.length);
         assertNotNull(createdSubDevice.metaFields);
         assertEquals("My test metafield 2", createdSubDevice.metaFields[2].name);
+    }
+
+    @Test
+    public void doNotSelectAnyProductsForTheSubOrg() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient("super@blynk.cc", "1");
+
+        Product product = new Product();
+        product.name = "My product";
+        product.metaFields = new MetaField[] {
+                createDeviceNameMeta(1, "Device Name", "123", true),
+                createDeviceOwnerMeta(2, "Owner", "123", true)
+        };
+
+        client.createProduct(product);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
+        assertNotNull(fromApiProduct);
+
+        Organization organization = new Organization("doNotSelectAnyProductsForTheOrg",
+                "Some TimeZone", "/static/logo.png", false, -1);
+        organization.canCreateOrgs = true;
+        organization.selectedProducts = new int[] {fromApiProduct.id};
+
+        client.createOrganization(organization);
+        OrganizationDTO fromApiProductOrg = client.parseOrganizationDTO(2);
+        assertNotNull(fromApiProductOrg);
+        assertEquals(orgId, fromApiProductOrg.parentId);
+        assertEquals(organization.name, fromApiProductOrg.name);
+        assertEquals(organization.tzName, fromApiProductOrg.tzName);
+        assertNotNull(fromApiProductOrg.products);
+        assertEquals(1, fromApiProductOrg.products.length);
+        assertEquals(fromApiProduct.id + 1, fromApiProductOrg.products[0].id);
+        assertEquals(fromApiProduct.id, fromApiProductOrg.products[0].parentId);
+
+        client.trackOrg(fromApiProductOrg.id);
+        client.verifyResult(ok(3));
+
+        Organization organization2 = new Organization("doNotSelectAnyProductsForTheSubOrg2",
+                "Some TimeZone", "/static/logo.png", false, -1);
+
+        client.createOrganization(organization2);
+        OrganizationDTO fromApiProductOrg2 = client.parseOrganizationDTO(4);
+        assertNotNull(fromApiProductOrg2);
+        assertEquals(fromApiProductOrg.id, fromApiProductOrg2.parentId);
+        assertEquals(organization2.name, fromApiProductOrg2.name);
+        assertEquals(organization2.tzName, fromApiProductOrg2.tzName);
+        assertNull(fromApiProductOrg2.products);
     }
 
     @Test

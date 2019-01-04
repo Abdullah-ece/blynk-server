@@ -340,11 +340,6 @@ public class OrganizationDao {
         return product;
     }
 
-    public boolean hasNoProductWithParent(int newOrgId, int parentProductId) {
-        Product product = getProductByParentIdOrNull(newOrgId, parentProductId);
-        return product == null;
-    }
-
     public Product getProductById(int productId) {
         for (Organization org : organizations.values()) {
             for (Product product : org.products) {
@@ -356,15 +351,18 @@ public class OrganizationDao {
         return null;
     }
 
-    private Product getProductByParentIdOrNull(int newOrgId, int parentProductId) {
-        for (Organization org : organizations.values()) {
-            for (Product product : org.products) {
-                if (org.id == newOrgId && product.parentId == parentProductId) {
-                    return product;
-                }
-            }
+    public Product getProductInitialParent(int productId) {
+        Product product = getProductById(productId);
+        if (product == null) {
+            return null;
         }
-        return null;
+        //we found top product
+        if (product.parentId == -1) {
+            return product;
+        }
+
+        //todo guard check?
+        return getProductInitialParent(product.parentId);
     }
 
     public void verifyUserAccessToDevice(User user, Device device) {
@@ -416,16 +414,17 @@ public class OrganizationDao {
 
     public void createProductsFromParentOrg(int orgId, int[] selectedProducts) {
         for (int productId : selectedProducts) {
-            if (hasNoProductWithParent(orgId, productId)) {
-                log.debug("Cloning product for orgId = {} and parentProductId = {}.", orgId, productId);
-                Product parentProduct = getProductById(productId);
-                if (parentProduct != null) {
-                    Product newProduct = new Product(parentProduct);
-                    newProduct.parentId = parentProduct.id;
+            Product product = getProductInitialParent(productId);
+            if (product != null) {
+                log.debug("Cloning product for orgId = {}, base parentId = {}, copy productId = {}.",
+                        orgId, product.id, productId);
+                Product copyProduct = getProductById(productId);
+                if (copyProduct != null) {
+                    Product newProduct = new Product(copyProduct);
+                    //parentId for any product should always be only initial/base product
+                    newProduct.parentId = product.id;
                     createProduct(orgId, newProduct);
                 }
-            } else {
-                log.trace("Already has product for orgId = {} with product parent id = {}.", orgId, productId);
             }
         }
     }
