@@ -172,7 +172,7 @@ class ProductDetails extends React.Component {
             <Tabs.TabPane tab="Dashboard" key={TABS.DASHBOARD}>
               <Dashboard webDashboard={this.state.product.webDashboard}/>
             </Tabs.TabPane>
-            {process.env.BLYNK_OTA && JSON.parse(process.env.BLYNK_OTA) && VerifyPermission(this.props.permissions, PERMISSIONS_INDEX.OTA_VIEW) && (
+            {VerifyPermission(this.props.permissions, PERMISSIONS_INDEX.OTA_VIEW) && (
               <Tabs.TabPane tab="OTA" key={TABS.OTA}>
                 <OTA params={this.props.params}/>
               </Tabs.TabPane>)}
