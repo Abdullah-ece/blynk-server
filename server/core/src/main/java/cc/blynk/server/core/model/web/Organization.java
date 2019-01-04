@@ -197,7 +197,8 @@ public class Organization {
     public static Role[] createDefaultRoles(boolean withSuperAdmin) {
         if (withSuperAdmin) {
             return new Role[] {
-                    new Role(Role.SUPER_ADMIN_ROLE_ID, "Super Admin", 0b11111111111111111111111111111111, 0),
+                    new Role(Role.SUPER_ADMIN_ROLE_ID, "Super Admin", 0b11111111111111111111111111111111,
+                            0b11111111111111111111111111111111),
                     new Role(1, "Admin", 0b11111111111111111111111111111111, 0),
                     new Role(2, "Staff", 0b11111111111111111111111111111111, 0),
                     new Role(3, "User", 0b11111111111111111111111111111111, 0)

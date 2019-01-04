@@ -6,7 +6,7 @@ import cc.blynk.server.core.session.mobile.BaseUserStateHolder;
 
 import java.util.Map;
 
-public interface Permission2BasedLogic<T extends BaseUserStateHolder> extends PermissionBasedLogic {
+public interface Permission2BasedLogic<T extends BaseUserStateHolder> extends PermissionBasedLogic<T> {
 
     @Override
     default boolean hasPermission(Role role) {

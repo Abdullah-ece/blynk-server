@@ -45,9 +45,9 @@ public abstract class PermissionsTable {
 
     public static int SET_AUTH_TOKEN =         0b10000000000000000000000000000000;
 
-
     //permission2 group
-    public static int RULE_GROUP_EDIT =        0b1;
+    public static int RULE_GROUP_VIEW =        0b1;
+    public static int RULE_GROUP_EDIT =        0b01;
 
     public static final Map<Integer, String> PERMISSION1_NAMES = new HashMap<>() {
         {
@@ -88,6 +88,7 @@ public abstract class PermissionsTable {
 
     public static final Map<Integer, String> PERMISSION2_NAMES = new HashMap<>() {
         {
+            put(RULE_GROUP_VIEW, "view rule group");
             put(RULE_GROUP_EDIT, "edit rule group");
         }
     };
