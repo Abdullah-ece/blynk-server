@@ -43,6 +43,8 @@ public final class MobileGetOwnDevicesLogic implements PermissionBasedLogic<Mobi
         List<DeviceMobileDTO> deviceDTOs = org.getDevicesByOwnerMobileDTOs(user.email);
         String devicesJson = JsonParser.toJson(deviceDTOs);
 
+        log.debug("Returning {} getOwnDevices for mobile app.", deviceDTOs.size());
+
         if (ctx.channel().isWritable()) {
             ctx.writeAndFlush(
                     makeUTF8StringMessage(message.command, message.id, devicesJson), ctx.voidPromise());

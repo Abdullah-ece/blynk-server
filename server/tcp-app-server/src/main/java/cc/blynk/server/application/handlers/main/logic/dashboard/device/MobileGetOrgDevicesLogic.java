@@ -45,6 +45,8 @@ public final class MobileGetOrgDevicesLogic implements PermissionBasedLogic<Mobi
         List<DeviceMobileDTO> deviceDTOs = org.getAllMobileDeviceDTOs();
         String devicesJson = JsonParser.toJson(deviceDTOs);
 
+        log.debug("Returning {} getOrgDevices for mobile app.", deviceDTOs.size());
+
         if (ctx.channel().isWritable()) {
             ctx.writeAndFlush(
                     makeUTF8StringMessage(message.command, message.id, devicesJson), ctx.voidPromise());
