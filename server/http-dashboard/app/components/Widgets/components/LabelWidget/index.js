@@ -112,6 +112,10 @@ class LabelWidget extends React.Component {
       }
     }
 
+    if (result[result.length - 1] === '.') {
+      result = result.substring(0, result.length - 1, 0);
+    }
+
     return result;
   }
 
