@@ -1427,6 +1427,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         AppWebSocketClient client = loggedDefaultClient("super@blynk.cc", "1");
 
         Product product = new Product();
+        product.parentId = 0;
         product.name = "My product";
         product.metaFields = new MetaField[] {
                 createDeviceNameMeta(1, "Device Name", "123", true),

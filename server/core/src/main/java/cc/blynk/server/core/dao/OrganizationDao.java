@@ -357,7 +357,7 @@ public class OrganizationDao {
             return null;
         }
         //we found top product
-        if (product.parentId == -1) {
+        if (!product.isSubProduct()) {
             return product;
         }
 

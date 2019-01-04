@@ -71,7 +71,7 @@ public final class WebDeleteProductLogic implements PermissionBasedLogic<WebAppS
         User user = state.user;
 
         Product product = organizationDao.getProductByIdOrThrow(productId);
-        if (product.parentId > 0) {
+        if (product.isSubProduct()) {
             log.error("Product {} is reference and can be deleted only via parent product. {}.",
                     product.id, user.email);
             throw new JsonException("Sub Org can't do anything with the Product Templates created by Meta Org.");

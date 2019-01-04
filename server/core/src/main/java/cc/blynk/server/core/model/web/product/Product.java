@@ -29,7 +29,7 @@ public class Product {
 
     public int id;
 
-    public int parentId = -1;
+    public int parentId;
 
     public volatile String name;
 
