@@ -414,17 +414,14 @@ public class OrganizationDao {
 
     public void createProductsFromParentOrg(int orgId, int[] selectedProducts) {
         for (int productId : selectedProducts) {
-            Product product = getProductInitialParent(productId);
-            if (product != null) {
+            Product copyProduct = getProductInitialParent(productId);
+            if (copyProduct != null) {
                 log.debug("Cloning product for orgId = {}, base parentId = {}, copy productId = {}.",
-                        orgId, product.id, productId);
-                Product copyProduct = getProductById(productId);
-                if (copyProduct != null) {
-                    Product newProduct = new Product(copyProduct);
-                    //parentId for any product should always be only initial/base product
-                    newProduct.parentId = product.id;
-                    createProduct(orgId, newProduct);
-                }
+                        orgId, copyProduct.id, productId);
+                Product newProduct = new Product(copyProduct);
+                //parentId for any product should always be only initial/base product
+                newProduct.parentId = copyProduct.id;
+                createProduct(orgId, newProduct);
             }
         }
     }
