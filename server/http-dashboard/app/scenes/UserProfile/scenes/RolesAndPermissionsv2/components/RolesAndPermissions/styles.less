@@ -6,6 +6,9 @@
     display: flex;
     flex-direction: row;
     margin-left: 4px;
+    position: sticky;
+    top: 8px;
+    z-index: 1000;
 
     .user-profile--roles-and-permissions--list-of-permissions--actions {
       width: 284px;
@@ -18,6 +21,7 @@
       font-weight: 500;
       border-radius: 4px;
       box-shadow: 0 10px 30px 0 rgba(33, 34, 39, 0.1);
+      background-color: @color-white;
 
       .user-profile--roles-and-permissions--list-of-permissions--actions-links {
         display: flex;
