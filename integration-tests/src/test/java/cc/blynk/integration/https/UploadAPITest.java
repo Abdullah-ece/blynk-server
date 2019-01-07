@@ -13,6 +13,7 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.ContentBody;
 import org.apache.http.entity.mime.content.InputStreamBody;
 import org.apache.http.entity.mime.content.StringBody;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -21,9 +22,8 @@ import java.io.InputStream;
 
 import static cc.blynk.integration.TestUtil.consumeText;
 import static cc.blynk.integration.TestUtil.loggedDefaultClient;
+import static cc.blynk.integration.TestUtil.upload;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 /**
  * The Blynk Project.
@@ -33,13 +33,20 @@ import static org.junit.Assert.assertTrue;
 @RunWith(MockitoJUnitRunner.class)
 public class UploadAPITest extends APIBaseTest {
 
+    private static String uploadUrl;
+
+    @BeforeClass
+    public static void initUrl() {
+        uploadUrl = httpsAdminServerUrl + "/upload";
+    }
+
     @Test
     //todo fix
     public void uploadFileToServerNoAuth() throws Exception {
         AppWebSocketClient client = loggedDefaultClient("admin@blynk.cc", "admin");
         client.getTempSecureToken();
         String token = client.parseToken(1).token;
-        String pathToImage = upload(token, "logo.png");
+        String pathToImage = upload(httpclient, uploadUrl, token, "logo.png");
 
         HttpGet index = new HttpGet("https://localhost:" + properties.getHttpsPort() + pathToImage);
 
@@ -80,7 +87,7 @@ public class UploadAPITest extends APIBaseTest {
         AppWebSocketClient client = loggedDefaultClient("admin@blynk.cc", "admin");
         client.getTempSecureToken();
         String token = client.parseToken(1).token;
-        String pathToImage = upload(token, "logo.png");
+        String pathToImage = upload(httpclient, uploadUrl, token, "logo.png");
 
         HttpGet index = new HttpGet("https://localhost:" + properties.getHttpsPort() + pathToImage);
 
@@ -96,41 +103,13 @@ public class UploadAPITest extends APIBaseTest {
         AppWebSocketClient client = loggedDefaultClient("admin@blynk.cc", "admin");
         client.getTempSecureToken();
         String token = client.parseToken(1).token;
-        String pathToImage = upload(token, "logo with space in name.png");
+        String pathToImage = upload(httpclient, uploadUrl, token, "logo with space in name.png");
 
         HttpGet index = new HttpGet("https://localhost:" + properties.getHttpsPort()  + pathToImage);
 
         try (CloseableHttpResponse response = httpclient.execute(index)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
-    }
-
-    private String upload(String token, String filename) throws Exception {
-        InputStream logoStream = UploadAPITest.class.getResourceAsStream("/" + filename);
-
-        HttpPost post = new HttpPost(httpsAdminServerUrl + "/upload");
-        ContentBody fileBody = new InputStreamBody(logoStream, ContentType.APPLICATION_OCTET_STREAM, filename);
-        StringBody stringBody1 = new StringBody(token, ContentType.MULTIPART_FORM_DATA);
-
-        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-        builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
-        builder.addPart("upfile", fileBody);
-        builder.addPart("token", stringBody1);
-        HttpEntity entity = builder.build();
-
-        post.setEntity(entity);
-
-        String staticPath;
-        try (CloseableHttpResponse response = httpclient.execute(post)) {
-            assertEquals(200, response.getStatusLine().getStatusCode());
-            staticPath = consumeText(response);
-
-            assertNotNull(staticPath);
-            assertTrue(staticPath.startsWith("/static"));
-            assertTrue(staticPath.endsWith("png"));
-        }
-
-        return staticPath;
     }
 
     @Test
@@ -141,11 +120,11 @@ public class UploadAPITest extends APIBaseTest {
         client.getTempSecureToken();
         String token = client.parseToken(1).token;
 
-        upload(token, "logo.png");
-        upload(token, "logo.png");
-        upload(token, "logo.png");
-        upload(token, "logo.png");
-        upload(token, "logo.png");
+        upload(httpclient, uploadUrl, token, "logo.png");
+        upload(httpclient, uploadUrl, token, "logo.png");
+        upload(httpclient, uploadUrl, token, "logo.png");
+        upload(httpclient, uploadUrl, token, "logo.png");
+        upload(httpclient, uploadUrl, token, "logo.png");
     }
 
 }

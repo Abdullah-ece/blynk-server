@@ -9,11 +9,11 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
  */
 public class OTAInfo {
 
-    final long initiatedAt;
-    final String initiatedBy;
-    final String pathToFirmware;
-    final String build;
-    final String projectName;
+    public final long initiatedAt;
+    public final String initiatedBy;
+    public final String pathToFirmware;
+    public final String build;
+    public final String projectName;
 
     OTAInfo(String initiatedBy, String pathToFirmware, String build, String projectName) {
         this.initiatedAt = System.currentTimeMillis();

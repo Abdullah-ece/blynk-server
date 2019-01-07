@@ -46,10 +46,18 @@ import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.properties.ServerProperties;
 import com.fasterxml.jackson.databind.ObjectReader;
+import org.apache.http.HttpEntity;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.ContentBody;
+import org.apache.http.entity.mime.content.InputStreamBody;
+import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
@@ -92,6 +100,9 @@ import static cc.blynk.server.core.protocol.enums.Response.NOT_ALLOWED;
 import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static cc.blynk.server.core.protocol.enums.Response.SERVER_ERROR;
 import static cc.blynk.utils.StringUtils.WEBSOCKET_WEB_PATH;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -549,5 +560,32 @@ public final class TestUtil {
         Product product = productDTO.toProduct();
         product.metaFields = metaFields;
         return new ProductDTO(product);
+    }
+
+    public static String upload(CloseableHttpClient httpclient, String uploadPath, String token, String filename) throws Exception {
+        InputStream logoStream = TestUtil.class.getResourceAsStream("/" + filename);
+
+        HttpPost post = new HttpPost(uploadPath);
+        ContentBody fileBody = new InputStreamBody(logoStream, ContentType.APPLICATION_OCTET_STREAM, filename);
+        StringBody stringBody1 = new StringBody(token, ContentType.MULTIPART_FORM_DATA);
+
+        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+        builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+        builder.addPart("upfile", fileBody);
+        builder.addPart("token", stringBody1);
+        HttpEntity entity = builder.build();
+
+        post.setEntity(entity);
+
+        String staticPath;
+        try (CloseableHttpResponse response = httpclient.execute(post)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            staticPath = consumeText(response);
+
+            assertNotNull(staticPath);
+            assertTrue(staticPath.startsWith("/static"));
+        }
+
+        return staticPath;
     }
 }

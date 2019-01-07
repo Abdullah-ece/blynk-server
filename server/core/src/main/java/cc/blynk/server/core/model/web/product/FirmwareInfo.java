@@ -1,16 +1,22 @@
 package cc.blynk.server.core.model.web.product;
 
+import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Map;
 
-public class FirmwareInfo {
+import static cc.blynk.utils.FileUtils.BOARD_TYPE;
+import static cc.blynk.utils.FileUtils.BUILD;
+import static cc.blynk.utils.FileUtils.MD5;
+import static cc.blynk.utils.FileUtils.VERSION;
+
+public final class FirmwareInfo {
 
     public final String version;
 
-    public final String boardType;
+    public final BoardType boardType;
 
     public final String buildDate;
 
@@ -18,7 +24,7 @@ public class FirmwareInfo {
 
     @JsonCreator
     public FirmwareInfo(@JsonProperty("version") String version,
-                        @JsonProperty("boardType") String boardType,
+                        @JsonProperty("boardType") BoardType boardType,
                         @JsonProperty("buildDate") String buildDate,
                         @JsonProperty("md5Hash") String md5Hash) {
         this.version = version;
@@ -28,10 +34,10 @@ public class FirmwareInfo {
     }
 
     public FirmwareInfo(Map<String, String> entires) {
-        this(entires.get("ver"),
-                entires.get("dev"),
-                entires.get("build"),
-                entires.get("MD5"));
+        this(entires.get(VERSION),
+                BoardType.valueOf(entires.get(BOARD_TYPE)),
+                entires.get(BUILD),
+                entires.get(MD5));
     }
 
     @Override

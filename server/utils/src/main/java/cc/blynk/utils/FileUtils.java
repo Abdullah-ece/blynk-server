@@ -210,15 +210,20 @@ public final class FileUtils {
         return lastModifiedFile;
     }
 
-    public static Map<String, String> getPatternFromString(Path path) {
-        return getPatternFromString(path, "build", "ver", "dev");
-    }
+    public static final String BUILD = "build";
+    public static final String VERSION = "ver";
+    public static final String BOARD_TYPE = "dev";
+    public static final String MD5 = "md5";
 
-    private static Map<String, String> getPatternFromString(Path path, String... keys) {
+    private static final String[] OTA_FIELDS = new String[] {
+            BUILD, VERSION, BOARD_TYPE
+    };
+
+    public static Map<String, String> getPatternFromString(Path path) {
         try {
             byte[] data = Files.readAllBytes(path);
             Map<String, String> map = new HashMap<>();
-            for (String key : keys) {
+            for (String key : OTA_FIELDS) {
                 String value = findValueForPattern(data, key);
                 if (value != null) {
                     map.put(key, value);
@@ -226,7 +231,7 @@ public final class FileUtils {
             }
             byte[] md5Hash = MessageDigest.getInstance("MD5").digest(data);
             String md5StringHex = String.format("%032X", new BigInteger(1, md5Hash));
-            map.put("MD5", md5StringHex);
+            map.put(MD5, md5StringHex);
             return map;
         } catch (Exception e) {
             throw new RuntimeException("Unable to read build number fro firmware.");

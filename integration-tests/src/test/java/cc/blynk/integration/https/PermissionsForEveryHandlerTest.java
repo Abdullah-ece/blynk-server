@@ -265,13 +265,13 @@ public class PermissionsForEveryHandlerTest extends SingleServerInstancePerTestW
     @Test
     public void OTAView() throws Exception {
         AppWebSocketClient client = createUserForSubOrgSpecificRole(setPermission(OTA_VIEW));
-        client.getOTAInfo(null);
+        client.getFirmwareInfo(null);
         client.verifyResult(webJson(1, "Path to firmware is not provided."));
     }
     @Test
     public void noOTAView() throws Exception {
         AppWebSocketClient client = createUserForSubOrgSpecificRole(removePermission(OTA_VIEW));
-        client.getOTAInfo(null);
+        client.getFirmwareInfo(null);
         client.verifyResult(webJson(1, "User testpermissions@gmail.com has no permission for 'view ota' operation."));
     }
 

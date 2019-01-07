@@ -32,7 +32,9 @@ import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.UserInviteDTO;
 import cc.blynk.server.core.model.web.product.EventType;
+import cc.blynk.server.core.model.web.product.FirmwareInfo;
 import cc.blynk.server.core.model.web.product.MetaField;
+import cc.blynk.server.core.model.web.product.OtaProgress;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.widgets.outputs.graph.Period;
 import cc.blynk.server.core.processors.rules.RuleGroup;
@@ -481,6 +483,14 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), RuleGroup.class);
     }
 
+    public FirmwareInfo parseFirmwareInfo(int expectedMessageOrder) throws Exception {
+        return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), FirmwareInfo.class);
+    }
+
+    public OtaProgress parseOtaProgress(int expectedMessageOrder) throws Exception {
+        return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), OtaProgress.class);
+    }
+
     @Override
     public void send(short command) {
         send(produceWebSocketFrame(produceMessage(command, ++msgId, "")));
@@ -517,7 +527,7 @@ public final class AppWebSocketClient extends BaseTestAppClient {
                 + BODY_SEPARATOR_STRING + from + BODY_SEPARATOR_STRING + to);
     }
 
-    public void getOTAInfo(String firmwareUrl) {
+    public void getFirmwareInfo(String firmwareUrl) {
         if (firmwareUrl == null) {
             send(WEB_OTA_GET_FIRMWARE_INFO);
         } else {

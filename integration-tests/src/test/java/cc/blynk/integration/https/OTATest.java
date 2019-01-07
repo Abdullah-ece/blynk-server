@@ -134,7 +134,7 @@ public class OTATest extends APIBaseTest {
 
         TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
         newHardClient.start();
-        newHardClient.send("login " + newDevice.token);
+        newHardClient.login(newDevice.token);
         newHardClient.verifyResult(ok(1));
 
         String firmwareDownloadUrl = "http://localhost:" + properties.getHttpPort() + pathToFirmware + "?token=";
@@ -178,7 +178,7 @@ public class OTATest extends APIBaseTest {
 
         newHardClient = new TestHardClient("localhost", properties.getHttpPort());
         newHardClient.start();
-        newHardClient.send("login " + newDevice.token);
+        newHardClient.login(newDevice.token);
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         newHardClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build ") + "May  9 2018 12:36:07");
@@ -263,7 +263,7 @@ public class OTATest extends APIBaseTest {
 
         TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
         newHardClient.start();
-        newHardClient.send("login " + newDevice.token);
+        newHardClient.login(newDevice.token);
         newHardClient.verifyResult(ok(1));
 
         newHardClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
@@ -363,7 +363,7 @@ public class OTATest extends APIBaseTest {
 
         TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
         newHardClient.start();
-        newHardClient.send("login " + newDevice.token);
+        newHardClient.login(newDevice.token);
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         newHardClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));

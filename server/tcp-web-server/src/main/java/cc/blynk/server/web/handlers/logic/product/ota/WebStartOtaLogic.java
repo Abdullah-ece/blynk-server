@@ -81,7 +81,7 @@ public final class WebStartOtaLogic implements PermissionBasedLogic<WebAppStateH
 
         if (otaDTO.checkBoardType) {
             for (Device device : filteredDevices) {
-                if (device.boardType == null || !device.boardType.label.equals(otaDTO.firmwareInfo.boardType)) {
+                if (device.boardType == null || device.boardType != otaDTO.firmwareInfo.boardType) {
                     log.error("Device {} ({}) with id {} does't correspond to firmware {}.",
                             device.name, device.boardType, device.id, otaDTO.firmwareInfo.boardType);
                     throw new JsonException(device.name + " board type doesn't correspond to firmware board type.");

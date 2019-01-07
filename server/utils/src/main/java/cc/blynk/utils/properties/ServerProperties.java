@@ -21,7 +21,6 @@ public class ServerProperties extends BaseProperties {
     public static final String SERVER_PROPERTIES_FILENAME = "server.properties";
     public static final String STATIC_FILES_FOLDER = "static";
     public static final String PRODUCT_NAME = "{PRODUCT_NAME}";
-    public static final String DEVICE_NAME = "{DEVICE_NAME}";
 
     //this is reusable properties so we want to fetch them only once
     public final boolean isUnpacked;
@@ -141,6 +140,10 @@ public class ServerProperties extends BaseProperties {
 
     public String getInviteUrl() {
         return httpsServerUrl + rootPath + "/invite?token=";
+    }
+
+    public String getUploadPath() {
+        return "/api/upload";
     }
 
     private String getHttpsServerUrl() {

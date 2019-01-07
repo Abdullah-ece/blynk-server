@@ -2,6 +2,7 @@ package cc.blynk.server.web.handlers.logic.product.ota;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.PermissionBasedLogic;
+import cc.blynk.server.core.model.web.product.FirmwareInfo;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
@@ -45,8 +46,8 @@ public final class WebGetOtaInfoLogic implements PermissionBasedLogic<WebAppStat
         //todo check access
         Path path = Paths.get(staticFilesFolder, pathToFirmware);
         Map<String, String> firmwareInfoDTO = FileUtils.getPatternFromString(path);
-        String firmwareParamsString = firmwareInfoDTO.toString();
-        StringMessage response = makeUTF8StringMessage(message.command, message.id, firmwareParamsString);
+        FirmwareInfo firmwareInfo = new FirmwareInfo(firmwareInfoDTO);
+        StringMessage response = makeUTF8StringMessage(message.command, message.id, firmwareInfo.toString());
         ctx.writeAndFlush(response, ctx.voidPromise());
     }
 }
