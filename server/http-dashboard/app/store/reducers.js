@@ -18,6 +18,7 @@ import PageLoading from '../data/PageLoading/reducers';
 import Devices from '../data/Devices/reducers';
 import Connection from '../data/Connection/reducers';
 import RolesAndPermissions from '../data/RolesAndPermissions/reducers';
+import RulesEngine from '../data/RulesEngine/reducers';
 // import Widgets from '../data/Widgets/reducers';
 import UserProfile from '../data/UserProfile/reducers';
 
@@ -51,6 +52,7 @@ const reducers = {
   UserProfile,
   Connection,
   RolesAndPermissions,
+  RulesEngine,
 };
 
 export default combineReducers(reducers);
