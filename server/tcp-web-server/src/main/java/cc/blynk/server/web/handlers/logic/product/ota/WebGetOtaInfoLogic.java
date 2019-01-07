@@ -20,11 +20,11 @@ import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
  * Created by Dmitriy Dumanskiy.
  * Created on 12.12.18.
  */
-public final class WebGetOtaFirmwareInfoLogic implements PermissionBasedLogic<WebAppStateHolder> {
+public final class WebGetOtaInfoLogic implements PermissionBasedLogic<WebAppStateHolder> {
 
     private final String staticFilesFolder;
 
-    public WebGetOtaFirmwareInfoLogic(Holder holder) {
+    public WebGetOtaInfoLogic(Holder holder) {
         this.staticFilesFolder = holder.props.jarPath;
     }
 
