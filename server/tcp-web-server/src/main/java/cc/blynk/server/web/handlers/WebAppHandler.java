@@ -55,7 +55,7 @@ import cc.blynk.server.web.handlers.logic.product.WebGetProductLogic;
 import cc.blynk.server.web.handlers.logic.product.WebGetProductsLogic;
 import cc.blynk.server.web.handlers.logic.product.WebUpdateDevicesMetaInProductLogic;
 import cc.blynk.server.web.handlers.logic.product.ota.WebCleanOtaLogic;
-import cc.blynk.server.web.handlers.logic.product.ota.WebGetOtaInfoLogic;
+import cc.blynk.server.web.handlers.logic.product.ota.WebGetFirmwareInfoLogic;
 import cc.blynk.server.web.handlers.logic.product.ota.WebStartOtaLogic;
 import cc.blynk.server.web.handlers.logic.product.ota.WebStopOtaLogic;
 import io.netty.channel.ChannelHandlerContext;
@@ -158,7 +158,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
     private final WebEditProductLogic webEditProductLogic;
     private final WebSetAuthTokenForDeviceLogic webSetAuthTokenForDeviceLogic;
     private final WebEditOwnOrganizationLogic webEditOwnOrganizationLogic;
-    private final WebGetOtaInfoLogic webGetOtaInfoLogic;
+    private final WebGetFirmwareInfoLogic webGetFirmwareInfoLogic;
     private final WebStartOtaLogic webStartOtaLogic;
     private final WebStopOtaLogic webStopOtaLogic;
     private final WebCleanOtaLogic webCleanOtaLogic;
@@ -209,7 +209,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
         this.webEditProductLogic = new WebEditProductLogic(holder);
         this.webSetAuthTokenForDeviceLogic = new WebSetAuthTokenForDeviceLogic(holder);
         this.webEditOwnOrganizationLogic = new WebEditOwnOrganizationLogic(holder);
-        this.webGetOtaInfoLogic = new WebGetOtaInfoLogic(holder);
+        this.webGetFirmwareInfoLogic = new WebGetFirmwareInfoLogic(holder);
         this.webStartOtaLogic = new WebStartOtaLogic(holder);
         this.webStopOtaLogic = new WebStopOtaLogic(holder);
         this.webCleanOtaLogic = new WebCleanOtaLogic(holder);
@@ -362,7 +362,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
                 webGetDeviceCountLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_OTA_GET_FIRMWARE_INFO :
-                webGetOtaInfoLogic.messageReceived(ctx, state, msg);
+                webGetFirmwareInfoLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_OTA_START :
                 webStartOtaLogic.messageReceived(ctx, state, msg);
