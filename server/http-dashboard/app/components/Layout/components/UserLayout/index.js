@@ -18,7 +18,7 @@ import {
   blynkWsLogin
 } from 'store/blynk-websocket-middleware/actions';
 import { StartLoading, FinishLoading } from 'data/PageLoading/actions';
-import { VerifyPermission, PERMISSIONS_INDEX } from "services/Roles";
+import { VerifyPermission, PERMISSIONS_INDEX, PERMISSIONS2_INDEX } from "services/Roles";
 
 import './styles.less';
 import Watermark from "../Watermark";
@@ -29,7 +29,7 @@ const DEFAULT_LOGO = '/static/logo.png';
   Account: state.Account,
   Organization: state.Organization,
   hierarchy: state.Organizations.get('hierarchy'),
-  permissions: state.RolesAndPermissions.currentRole.permissionGroup1,
+  currentRole: state.RolesAndPermissions.currentRole,
 }), (dispatch) => ({
   organizationsHierarchyFetch: bindActionCreators(OrganizationsHierarchyFetch, dispatch),
   organizationSwitch: bindActionCreators(OrganizationSwitch, dispatch),
@@ -64,7 +64,7 @@ class UserLayout extends React.Component {
     OrganizationsFetch: React.PropTypes.func,
     organizationsHierarchyFetch: React.PropTypes.func,
     organizationSwitch: React.PropTypes.func,
-    permissions: React.PropTypes.number,
+    currentRole: React.PropTypes.object,
   };
 
   constructor(props) {
@@ -166,6 +166,11 @@ class UserLayout extends React.Component {
 
     if (process.env.BLYNK_ANALYTICS && JSON.parse(process.env.BLYNK_ANALYTICS) && 'analytics' === splitedPath[1])
       return ['/analytics'];
+
+    if ('rules' === splitedPath[1]) {
+      return ['/rules'];
+    }
+
   }
 
   handleMouseEnter() {
@@ -251,16 +256,16 @@ class UserLayout extends React.Component {
         </Menu.ItemGroup>
         <Menu.Divider/>
         <Menu.ItemGroup title="Organization">
-          {VerifyPermission(this.props.permissions, PERMISSIONS_INDEX.ORG_VIEW) && (<Menu.Item key="/user-profile/organization-settings">
+          {VerifyPermission(this.props.currentRole.permissionGroup1, PERMISSIONS_INDEX.ORG_VIEW) && (<Menu.Item key="/user-profile/organization-settings">
             <LinearIcon type="cog"/> Organization Settings
           </Menu.Item>)}
-          {VerifyPermission(this.props.permissions, PERMISSIONS_INDEX.ORG_VIEW_USERS) && (<Menu.Item key="/user-profile/users">
+          {VerifyPermission(this.props.currentRole.permissionGroup1, PERMISSIONS_INDEX.ORG_VIEW_USERS) && (<Menu.Item key="/user-profile/users">
             <LinearIcon type="users2"/> Users
           </Menu.Item>)}
           {/*<Menu.Item key="/user-profile/branding">*/}
           {/*Branding*/}
           {/*</Menu.Item>*/}
-          {VerifyPermission(this.props.permissions, PERMISSIONS_INDEX.ROLE_VIEW) && (<Menu.Item key="/user-profile/roles-and-permissions">
+          {VerifyPermission(this.props.currentRole.permissionGroup1, PERMISSIONS_INDEX.ROLE_VIEW) && (<Menu.Item key="/user-profile/roles-and-permissions">
             <LinearIcon type="lock"/> Roles & Permissions
           </Menu.Item>)}
         </Menu.ItemGroup>
@@ -277,6 +282,7 @@ class UserLayout extends React.Component {
   }
 
   render() {
+
     return (
       <div className="user-layout">
         <div
@@ -288,7 +294,7 @@ class UserLayout extends React.Component {
           >
             <div
               className={this.state.collapsed ? 'user-layout-left-navigation-fold-company-logo' : 'user-layout-left-navigation-unfold-company-logo'}>
-              {VerifyPermission(this.props.permissions, PERMISSIONS_INDEX.ORG_SWITCH) ? (
+              {VerifyPermission(this.props.currentRole.permissionGroup1, PERMISSIONS_INDEX.ORG_SWITCH) ? (
                   <Dropdown
                     overlayClassName={`user-layout--organization-select--overlay ${this.state.collapsed ? '' : 'user-layout--organization-select--overlay--open'}`}
                     overlay={this.OrgSelection()} trigger={['hover']}
@@ -334,6 +340,12 @@ class UserLayout extends React.Component {
                 <Menu.Item key="/organizations">
                   <Icon type="usergroup-add"/>
                   <span>Organizations</span>
+                </Menu.Item>
+              )}
+              {VerifyPermission(this.props.currentRole.permissionGroup2, PERMISSIONS2_INDEX.RULE_GROUP_VIEW) && (
+                <Menu.Item key="/rules">
+                  <Icon type="setting"/>
+                  <span>Rules Engine</span>
                 </Menu.Item>
               )}
             </Menu>

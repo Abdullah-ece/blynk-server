@@ -14,7 +14,7 @@ import './styles.less';
 @connect((state) => ({
   Account: state.Account,
   Organization: state.Organization,
-  currentRole: state.RolesAndPermissions.currentRole
+  currentRole: state.RolesAndPermissions.currentRole,
 }), (dispatch) => ({
   startLoading: bindActionCreators(StartLoading, dispatch),
   finishLoading: bindActionCreators(FinishLoading, dispatch),
@@ -34,7 +34,8 @@ class Header extends React.Component {
     finishLoading: React.PropTypes.func,
     OrganizationFetch: React.PropTypes.func,
     OrganizationsFetch: React.PropTypes.func,
-    location: React.PropTypes.object
+    location: React.PropTypes.object,
+    currentRole: React.PropTypes.object,
   };
 
   constructor(props) {
@@ -134,7 +135,7 @@ class Header extends React.Component {
   }
 
   render() {
-          console.log(this.props, PERMISSIONS2_INDEX.RULE_GROUP_VIEW)
+
     return (
       <div className="user-layout--header">
         <div className="user-layout--header--fixed">
