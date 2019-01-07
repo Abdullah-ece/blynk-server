@@ -137,6 +137,11 @@ export const PERMISSIONS_INDEX = {
   SET_AUTH_TOKEN: 31,
 };
 
+export const PERMISSIONS2_INDEX = {
+  RULE_GROUP_VIEW: 0,
+  RULE_GROUP_EDIT: 1,
+};
+
 export const PERMISSIONS_TABLE = [
   {
     dependentPermsToActivate: [6],
@@ -329,6 +334,21 @@ export const PERMISSIONS_TABLE = [
     dependentPermsToRemove: [],
     key: 'SET_AUTH_TOKEN',
     value: 'Enable Auth Token Edit'
+  },
+];
+
+export const PERMISSIONS2_TABLE = [
+  {
+    dependentPermsToActivate: [],
+    dependentPermsToRemove: [1],
+    key: 'RULE_GROUP_VIEW',
+    value: 'View Rule Group'
+  },
+  {
+    dependentPermsToActivate: [0],
+    dependentPermsToRemove: [],
+    key: 'RULE_GROUP_EDIT',
+    value: 'Edit Rule Group'
   },
 ];
 

@@ -84,6 +84,8 @@ export const API_COMMANDS = {
   WEB_DELETE_ROLE                        : 137, // accepts roleId
   WEB_GET_USER_COUNTERS_BY_ROLE          : 146,
   WEB_GET_DEVICES_BY_REFERENCE_METAFIELD : 147,
+  WEB_GET_RULE_GROUP                     : 150,
+  WEB_EDIT_RULE_GROUP                    : 151,
 };
 
 export const getCommandKeyName = (value) => {

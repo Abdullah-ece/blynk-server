@@ -7,12 +7,14 @@ import { StartLoading, FinishLoading } from 'data/PageLoading/actions';
 
 import { OrganizationFetch } from 'data/Organization/actions';
 import { OrganizationsFetch } from 'data/Organizations/actions';
+import { VerifyPermission, PERMISSIONS2_INDEX } from "services/Roles";
 
 import './styles.less';
 
 @connect((state) => ({
   Account: state.Account,
-  Organization: state.Organization
+  Organization: state.Organization,
+  currentRole: state.RolesAndPermissions.currentRole
 }), (dispatch) => ({
   startLoading: bindActionCreators(StartLoading, dispatch),
   finishLoading: bindActionCreators(FinishLoading, dispatch),
@@ -125,10 +127,14 @@ class Header extends React.Component {
       if (process.env.BLYNK_ANALYTICS && JSON.parse(process.env.BLYNK_ANALYTICS) && 'analytics' === splitedPath[i]) {
         return ['/analytics'];
       }
+      if ('rules' === splitedPath[i]) {
+        return ['/rules'];
+      }
     }
   }
 
   render() {
+          console.log(this.props, PERMISSIONS2_INDEX.RULE_GROUP_VIEW)
     return (
       <div className="user-layout--header">
         <div className="user-layout--header--fixed">
@@ -152,6 +158,8 @@ class Header extends React.Component {
               {this.props.Organization && this.props.Organization.canCreateOrgs && (
                 <Menu.Item key="/organizations">Organizations</Menu.Item>
               ) || (null)}
+              {VerifyPermission(this.props.currentRole.permissionGroup2, PERMISSIONS2_INDEX.RULE_GROUP_VIEW) &&
+              <Menu.Item key="/rules">Rules Engine</Menu.Item>}
             </Menu>
             <div className="user-layout--header-user">
               <div className="dark user-layout--header-user-link">

@@ -17,18 +17,13 @@ export default function RolesAndPermissions(state = initialState, action) {
              permissionGroup2
            }) => {
 
-            let value = (permissionGroup1 >>> 0).toString(2);
-
-            for (let i = 0; value.length < 32; i++) {
-              value = `0${value}`;
-            }
-
             return {
               id,
               name,
               permissionGroup1,
               permissionGroup2,
-              permissionsGroup1Binary: value
+              permissionsGroup1Binary: getBinaryValueFromNumber(permissionGroup1),
+              permissionsGroup2Binary: getBinaryValueFromNumber(permissionGroup2)
             };
           }))
         // Skip super admin!!! This role has id of 0
@@ -38,19 +33,13 @@ export default function RolesAndPermissions(state = initialState, action) {
     case "WEB_UPDATE_ROLE":
       const { id, permissionGroup1 } = JSON.parse(action.ws.request.query);
 
-      let value = (permissionGroup1 >>> 0).toString(2);
-
-      for (let i = 0; value.length < 32; i++) {
-        value = `0${value}`;
-      }
-
       return {
         ...state,
         roles: [...state.roles].map((role) => {
           return role.id === id ? {
             ...role,
             permissionGroup1: permissionGroup1,
-            permissionsGroup1Binary: value
+            permissionsGroup1Binary: getBinaryValueFromNumber(permissionGroup1),
           } : role;
         })
       };
@@ -67,4 +56,15 @@ export default function RolesAndPermissions(state = initialState, action) {
     default:
       return state;
   }
+}
+
+
+function getBinaryValueFromNumber(number) {
+  let value = (number >>> 0).toString(2);
+
+  for (let i = 0; value.length < 32; i++) {
+    value = `0${value}`;
+  }
+
+  return value;
 }
