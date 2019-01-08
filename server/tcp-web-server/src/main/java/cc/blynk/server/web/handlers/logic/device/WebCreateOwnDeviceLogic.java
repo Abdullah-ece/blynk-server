@@ -43,8 +43,10 @@ public final class WebCreateOwnDeviceLogic implements PermissionBasedLogic<WebAp
     public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         String[] split = split2(message.body);
 
-        int orgId = state.selectedOrgId;
         User user = state.user;
+        int requestedOrgId = Integer.parseInt(split[0]);
+        organizationDao.checkInheritanceAccess(user.email, user.orgId, requestedOrgId);
+
         Device newDevice = JsonParser.parseDevice(split[1], message.id);
 
         if (newDevice == null) {
@@ -65,9 +67,9 @@ public final class WebCreateOwnDeviceLogic implements PermissionBasedLogic<WebAp
             return;
         }
 
-        Organization org = organizationDao.getOrgByIdOrThrow(orgId);
+        Organization org = organizationDao.getOrgByIdOrThrow(requestedOrgId);
         Product product = organizationDao.assignToOrgAndAddDevice(org, newDevice);
-        deviceDao.create(orgId, user.email, product, newDevice);
+        deviceDao.create(requestedOrgId, user.email, product, newDevice);
         newDevice.updateDeviceNameMetaFieldFromName();
         newDevice.updatedAt = System.currentTimeMillis();
 

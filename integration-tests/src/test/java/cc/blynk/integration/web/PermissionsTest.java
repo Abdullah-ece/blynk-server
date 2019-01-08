@@ -70,7 +70,7 @@ public class PermissionsTest extends SingleServerInstancePerTestWithDBAndNewOrg 
         newDevice.name = "My New Device";
         newDevice.productId = fromApiProduct.id;
 
-        client.createDevice(newDevice);
+        client.createDevice(orgId, newDevice);
         Device createdDevice = client.parseDevice(3);
         assertNotNull(createdDevice);
         assertEquals("My New Device", createdDevice.name);
@@ -183,7 +183,7 @@ public class PermissionsTest extends SingleServerInstancePerTestWithDBAndNewOrg 
         client.trackOrg(fromApiOrg.id);
         client.verifyResult(ok(3));
 
-        client.createDevice(newDevice);
+        client.createDevice(fromApiOrg.id, newDevice);
         Device createdDevice = client.parseDevice(4);
         assertNotNull(createdDevice);
         assertEquals("My New Device", createdDevice.name);

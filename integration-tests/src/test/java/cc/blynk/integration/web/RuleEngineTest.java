@@ -199,14 +199,14 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         Device floorDevice = new Device();
         floorDevice.name = "Floor Device";
         floorDevice.productId = floorProductFromApi.id;
-        client.createDevice(floorDevice);
+        client.createDevice(orgId, floorDevice);
         Device createdFloorDevice = client.parseDevice(4);
         assertNotNull(createdFloorDevice);
 
         Device fanDevice = new Device();
         fanDevice.name = "Fan Device";
         fanDevice.productId = fanProductFromApi.id;
-        client.createDevice(fanDevice);
+        client.createDevice(orgId, fanDevice);
         Device createdFanDevice = client.parseDevice(5);
         assertNotNull(createdFanDevice);
 
@@ -286,14 +286,14 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         Device floorDevice = new Device();
         floorDevice.name = "Floor Device";
         floorDevice.productId = floorProductFromApi.id;
-        client.createDevice(floorDevice);
+        client.createDevice(orgId, floorDevice);
         Device createdFloorDevice = client.parseDevice(4);
         assertNotNull(createdFloorDevice);
 
         Device fanDevice = new Device();
         fanDevice.name = "Fan Device";
         fanDevice.productId = fanProductFromApi.id;
-        client.createDevice(fanDevice);
+        client.createDevice(orgId, fanDevice);
         Device createdFanDevice = client.parseDevice(5);
         assertNotNull(createdFanDevice);
 
@@ -377,14 +377,14 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         Device floorDevice = new Device();
         floorDevice.name = "Floor Device";
         floorDevice.productId = floorProductFromApi.id;
-        client.createDevice(floorDevice);
+        client.createDevice(orgId, floorDevice);
         Device createdFloorDevice = client.parseDevice(4);
         assertNotNull(createdFloorDevice);
 
         Device fanDevice = new Device();
         fanDevice.name = "Fan Device";
         fanDevice.productId = fanProductFromApi.id;
-        client.createDevice(fanDevice);
+        client.createDevice(orgId, fanDevice);
         Device createdFanDevice = client.parseDevice(5);
         assertNotNull(createdFanDevice);
 
@@ -400,7 +400,7 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         Device fanDevice2 = new Device();
         fanDevice2.name = "Fan Device 2";
         fanDevice2.productId = fanProductFromApi.id;
-        client.createDevice(fanDevice2);
+        client.createDevice(orgId, fanDevice2);
         Device createdFanDevice2 = client.parseDevice(8);
         assertNotNull(createdFanDevice2);
 
@@ -503,14 +503,14 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         Device floorDevice = new Device();
         floorDevice.name = "Floor Device";
         floorDevice.productId = floorProductFromApi.id;
-        client.createDevice(floorDevice);
+        client.createDevice(orgId, floorDevice);
         Device createdFloorDevice = client.parseDevice(4);
         assertNotNull(createdFloorDevice);
 
         Device fanDevice = new Device();
         fanDevice.name = "Fan Device";
         fanDevice.productId = fanProductFromApi.id;
-        client.createDevice(fanDevice);
+        client.createDevice(orgId, fanDevice);
         Device createdFanDevice = client.parseDevice(5);
         assertNotNull(createdFanDevice);
 
@@ -526,7 +526,7 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         Device fanDevice2 = new Device();
         fanDevice2.name = "Fan Device 2";
         fanDevice2.productId = fanProductFromApi.id;
-        client.createDevice(fanDevice2);
+        client.createDevice(orgId, fanDevice2);
         Device createdFanDevice2 = client.parseDevice(8);
         assertNotNull(createdFanDevice2);
 
@@ -649,14 +649,14 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         Device floorDevice = new Device();
         floorDevice.name = "Floor Device";
         floorDevice.productId = floorProductFromApi.id;
-        client.createDevice(floorDevice);
+        client.createDevice(orgId, floorDevice);
         Device createdFloorDevice = client.parseDevice(4);
         assertNotNull(createdFloorDevice);
 
         Device fanDevice = new Device();
         fanDevice.name = "Fan Device";
         fanDevice.productId = fanProductFromApi.id;
-        client.createDevice(fanDevice);
+        client.createDevice(orgId, fanDevice);
         Device createdFanDevice = client.parseDevice(5);
         assertNotNull(createdFanDevice);
 
@@ -672,7 +672,7 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         Device fanDevice2 = new Device();
         fanDevice2.name = "Fan Device 2";
         fanDevice2.productId = fanProductFromApi.id;
-        client.createDevice(fanDevice2);
+        client.createDevice(orgId, fanDevice2);
         Device createdFanDevice2 = client.parseDevice(8);
         assertNotNull(createdFanDevice2);
 

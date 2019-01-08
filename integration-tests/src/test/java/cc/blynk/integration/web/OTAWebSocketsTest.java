@@ -99,7 +99,7 @@ public class OTAWebSocketsTest extends SingleServerInstancePerTestWithDBAndNewOr
         newDevice.name = "My New Device";
         newDevice.boardType = BoardType.NodeMCU;
         newDevice.productId = productDTO.id;
-        client.createDevice(newDevice);
+        client.createDevice(orgId, newDevice);
         Device createdDevice = client.parseDevice(4);
         assertNotNull(createdDevice);
 

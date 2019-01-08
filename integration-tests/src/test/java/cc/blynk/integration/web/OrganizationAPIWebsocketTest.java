@@ -177,7 +177,7 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
         newDevice.name = "My New Device";
         newDevice.productId = fromApiProduct.id;
 
-        client.createDevice(newDevice);
+        client.createDevice(orgId, newDevice);
         Device createdDevice = client.parseDevice(2);
         assertNotNull(createdDevice);
 
@@ -185,7 +185,7 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
         newDevice2.name = "My New Device 2";
         newDevice2.productId = fromApiProduct.id;
 
-        client.createDevice(newDevice2);
+        client.createDevice(orgId, newDevice2);
         Device createdDevice2 = client.parseDevice(3);
         assertNotNull(createdDevice2);
 
@@ -244,7 +244,7 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
         newDevice.name = "My New Device";
         newDevice.productId = fromApiProduct.id;
 
-        client.createDevice(newDevice);
+        client.createDevice(orgId, newDevice);
         Device createdDevice = client.parseDevice(2);
         assertNotNull(createdDevice);
 
@@ -385,7 +385,7 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
 
         client.trackOrg(subOrgDTO.id);
         client.verifyResult(ok(3));
-        client.createDevice(newDevice);
+        client.createDevice(subOrgDTO.id, newDevice);
         newDevice = client.parseDevice(4);
         assertNotNull(newDevice);
 
@@ -439,7 +439,7 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
 
         client.trackOrg(subOrgDTO.id);
         client.verifyResult(ok(3));
-        client.createDevice(newDevice);
+        client.createDevice(subOrgDTO.id, newDevice);
         newDevice = client.parseDevice(4);
         assertNotNull(newDevice);
 

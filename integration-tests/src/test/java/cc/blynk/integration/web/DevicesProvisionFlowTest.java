@@ -425,7 +425,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         newDevice.name = "My New Device";
         newDevice.productId = fromApiProduct.id;
 
-        client.createDevice(newDevice);
+        client.createDevice(orgId, newDevice);
         Device createdDevice = client.parseDevice(2);
         assertNotNull(createdDevice);
 
@@ -470,7 +470,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         newDevice.name = "My New Device";
         newDevice.productId = fromApiProduct.id;
 
-        client.createDevice(newDevice);
+        client.createDevice(orgId, newDevice);
         Device createdDevice = client.parseDevice(3);
         assertNotNull(createdDevice);
 
@@ -537,7 +537,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         Device testDevice = new Device();
         testDevice.name = "My New Device For Product 1";
         testDevice.productId = fromApiProduct.id;
-        client.createDevice(testDevice);
+        client.createDevice(orgId, testDevice);
         client.parseDevice(4);
 
 
@@ -548,7 +548,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         Device referenceDevice = new Device();
         referenceDevice.name = "My New Device For Product 3";
         referenceDevice.productId = product3.id;
-        client.createDevice(referenceDevice);
+        client.createDevice(orgFromApi.id, referenceDevice);
         Device createdReferenceDevice = client.parseDevice(6);
         assertNotNull(createdReferenceDevice);
         assertEquals(product3.id, createdReferenceDevice.productId);
@@ -558,7 +558,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         Device newDevice = new Device();
         newDevice.name = "My New Device For Product 4";
         newDevice.productId = product4.id;
-        client.createDevice(newDevice);
+        client.createDevice(orgFromApi.id, newDevice);
         Device createdDevice = client.parseDevice(7);
         assertNotNull(createdDevice);
         assertEquals(product4.id, createdDevice.productId);

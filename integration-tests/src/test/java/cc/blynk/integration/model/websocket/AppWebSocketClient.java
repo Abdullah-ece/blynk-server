@@ -315,8 +315,8 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         send(WEB_DELETE_DEVICE, "" + orgId + BODY_SEPARATOR + deviceId);
     }
 
-    public void createDevice(Device device) {
-        send(WEB_CREATE_DEVICE, "" + -1 + BODY_SEPARATOR + device);
+    public void createDevice(int orgId, Device device) {
+        send(WEB_CREATE_DEVICE, "" + orgId + BODY_SEPARATOR + device);
     }
 
     public void updateDevice(int orgId, Device device) {
