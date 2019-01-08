@@ -31,6 +31,7 @@ import static org.junit.Assert.assertEquals;
  * Created on 07.01.16.
  */
 @RunWith(MockitoJUnitRunner.class)
+@Ignore
 public class HttpAPIKeepAliveServerTest extends BaseTest {
 
     private BaseServer httpsServer;

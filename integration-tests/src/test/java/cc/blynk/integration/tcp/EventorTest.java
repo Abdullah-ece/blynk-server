@@ -32,6 +32,7 @@ import cc.blynk.server.core.model.widgets.others.eventor.model.condition.string.
 import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
 import cc.blynk.server.notifications.push.enums.Priority;
 import cc.blynk.utils.NumberUtil;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -59,6 +60,7 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
+@Ignore
 public class EventorTest extends SingleServerInstancePerTest {
 
     private static EventorRule buildRule(String s, boolean isActive) {

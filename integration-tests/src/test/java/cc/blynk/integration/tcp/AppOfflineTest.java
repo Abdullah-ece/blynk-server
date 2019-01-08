@@ -9,6 +9,7 @@ import cc.blynk.server.servers.application.MobileAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -25,6 +26,7 @@ import static cc.blynk.integration.TestUtil.ok;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
+@Ignore
 public class AppOfflineTest extends BaseTest {
 
     private BaseServer appServer;

@@ -9,6 +9,7 @@ import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.db.model.FlashedToken;
 import cc.blynk.utils.AppNameUtil;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -27,6 +28,7 @@ import static org.junit.Assert.assertNotNull;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
+@Ignore
 public class AssignTokenTest extends SingleServerInstancePerTestWithDB {
 
     @Before

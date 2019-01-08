@@ -32,6 +32,7 @@ import static org.mockito.Mockito.verify;
  * Created on 07.01.16.
  */
 @RunWith(MockitoJUnitRunner.class)
+@Ignore
 public class AcmeTest extends BaseTest {
 
     private BaseServer httpServer;

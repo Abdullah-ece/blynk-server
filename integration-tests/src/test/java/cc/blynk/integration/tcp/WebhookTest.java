@@ -50,6 +50,7 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
+@Ignore
 public class WebhookTest extends SingleServerInstancePerTest {
 
     private static CloseableHttpClient httpsClient;
