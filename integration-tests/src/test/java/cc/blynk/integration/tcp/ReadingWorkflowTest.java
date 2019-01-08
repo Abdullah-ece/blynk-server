@@ -4,10 +4,7 @@ import cc.blynk.integration.SingleServerInstancePerTest;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.Device;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
@@ -35,6 +32,7 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
+@Ignore
 public class ReadingWorkflowTest extends SingleServerInstancePerTest {
 
     private static int tcpHardPort;

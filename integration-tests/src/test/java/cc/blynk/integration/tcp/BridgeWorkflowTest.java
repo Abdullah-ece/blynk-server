@@ -11,6 +11,7 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.utils.AppNameUtil;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -34,6 +35,7 @@ import static org.junit.Assert.assertNotNull;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
+@Ignore
 public class BridgeWorkflowTest extends SingleServerInstancePerTest {
 
     private static int tcpHardPort;

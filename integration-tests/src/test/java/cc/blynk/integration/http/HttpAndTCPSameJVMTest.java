@@ -43,6 +43,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -85,6 +86,7 @@ import static org.mockito.Mockito.verify;
  * Created on 07.01.16.
  */
 @RunWith(MockitoJUnitRunner.class)
+@Ignore
 public class HttpAndTCPSameJVMTest extends SingleServerInstancePerTest {
 
     private static CloseableHttpClient httpclient;

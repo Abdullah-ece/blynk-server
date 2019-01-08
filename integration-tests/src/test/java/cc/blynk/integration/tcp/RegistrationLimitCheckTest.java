@@ -3,11 +3,13 @@ package cc.blynk.integration.tcp;
 import cc.blynk.integration.SingleServerInstancePerTest;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.utils.AppNameUtil;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static cc.blynk.integration.TestUtil.notAllowed;
 import static cc.blynk.integration.TestUtil.ok;
 
+@Ignore
 public class RegistrationLimitCheckTest extends SingleServerInstancePerTest {
 
     @Test

@@ -29,6 +29,7 @@ import static org.junit.Assert.assertEquals;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
+@Ignore
 public class SimplePerformanceTest extends SingleServerInstancePerTest {
 
     private NioEventLoopGroup sharedNioEventLoopGroup;

@@ -30,6 +30,7 @@ import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.SHA256Util;
 import io.netty.channel.ChannelFuture;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -86,6 +87,7 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
+@Ignore
 public class MainWorkflowTest extends SingleServerInstancePerTest {
 
     @Test

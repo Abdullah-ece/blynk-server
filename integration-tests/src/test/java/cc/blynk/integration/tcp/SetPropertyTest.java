@@ -15,6 +15,7 @@ import cc.blynk.server.core.model.widgets.others.Video;
 import cc.blynk.server.core.model.widgets.ui.Menu;
 import cc.blynk.server.core.model.widgets.ui.image.Image;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -42,6 +43,7 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
+@Ignore
 public class SetPropertyTest extends SingleServerInstancePerTest {
 
     @Test

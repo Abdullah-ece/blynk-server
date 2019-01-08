@@ -10,6 +10,7 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -27,6 +28,7 @@ import static org.junit.Assert.assertNull;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
+@Ignore
 public class CloneWorkFlowTest extends SingleServerInstancePerTestWithDB {
 
     @Before
