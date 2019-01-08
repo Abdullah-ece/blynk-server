@@ -77,6 +77,64 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
     }
 
     @Test
+    public void CRUDForRuleGroupFromJson() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+        client.getRuleGroup();
+        RuleGroup ruleGroup = client.parseRuleGroup(1);
+        assertNull(ruleGroup);
+
+        String json =
+                "{\n" +
+                        "  \"rules\" : [ {\n" +
+                        "    \"name\" : \"Airius rule\",\n" +
+                        "    \"trigger\" : {\n" +
+                        "      \"type\" : \"PIN_TRIGGER\",\n" +
+                        "      \"ruleDataStream\" : {\n" +
+                        "        \"productId\" : 1,\n" +
+                        "        \"pin\" : 1,\n" +
+                        "        \"pinType\" : \"VIRTUAL\"\n" +
+                        "      }\n" +
+                        "    },\n" +
+                        "    \"condition\" : {\n" +
+                        "      \"type\" : \"NUMBER_UPDATED\"\n" +
+                        "    },\n" +
+                        "    \"action\" : {\n" +
+                        "      \"type\" : \"SET_NUMBER_PIN_ACTION\",\n" +
+                        "      \"targetDataStream\" : {\n" +
+                        "        \"productId\" : 1,\n" +
+                        "        \"pin\" : 2,\n" +
+                        "        \"pinType\" : \"VIRTUAL\"\n" +
+                        "      },\n" +
+                        "      \"pinValue\" : {\n" +
+                        "        \"type\" : \"FORMULA_VALUE\",\n" +
+                        "        \"formula\" : \"x - avgForGroup(y)\",\n" +
+                        "        \"formulaParams\" : {\n" +
+                        "          \"y\" : {\n" +
+                        "            \"type\" : \"BACK_DEVICE_REFERENCE_PARAM\",\n" +
+                        "            \"targetDataStream\" : {\n" +
+                        "              \"productId\" : 1,\n" +
+                        "              \"pin\" : 1,\n" +
+                        "              \"pinType\" : \"VIRTUAL\"\n" +
+                        "            }\n" +
+                        "          },\n" +
+                        "          \"x\" : {\n" +
+                        "            \"type\" : \"SAME_STREAM_PARAM\"\n" +
+                        "          }\n" +
+                        "        }\n" +
+                        "      }\n" +
+                        "    }\n" +
+                        "  } ]\n" +
+                        "}";
+
+        client.editRuleGroup(json);
+        client.verifyResult(ok(2));
+
+        client.getRuleGroup();
+        ruleGroup = client.parseRuleGroup(3);
+        assertNotNull(ruleGroup);
+    }
+
+    @Test
     public void testRuleEngineForAiriusCaseWith0ReferencedDevices() throws Exception {
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
 

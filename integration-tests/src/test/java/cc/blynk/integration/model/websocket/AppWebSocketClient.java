@@ -224,6 +224,10 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         send(WEB_EDIT_RULE_GROUP, JsonParser.toJson(ruleGroup));
     }
 
+    public void editRuleGroup(String json) {
+        send(WEB_EDIT_RULE_GROUP, json);
+    }
+
     public void createOrganization(Organization organization) {
         send(WEB_CREATE_ORG, "-1" + BODY_SEPARATOR_STRING + organization);
     }
