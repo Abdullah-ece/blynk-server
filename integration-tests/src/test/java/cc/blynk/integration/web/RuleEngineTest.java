@@ -51,22 +51,22 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         RuleGroup ruleGroup = client.parseRuleGroup(1);
         assertNull(ruleGroup);
 
-        short floor1SourcePin = 1;
-        short floor1TargetPin = 2;
+        short floorSourcePin = 1;
+        short floorTargetPin = 2;
         short fanSourcePin = 1;
 
         //if floorProduct.v1 updated setPin floorProduct.v2 = x - avgForReferences(y);
         //x = floorProduct.v1;
         //y = back_refefence_for_floorProduct
 
-        DataStreamTrigger trigger = new DataStreamTrigger(1, floor1SourcePin);
+        DataStreamTrigger trigger = new DataStreamTrigger(1, floorSourcePin);
         TriggerUpdatedCondition numberUpdatedCondition = new TriggerUpdatedCondition();
         FormulaValue formulaValue = new FormulaValue(
                 "x - avgForReferences(y)",
                 Map.of("x", new SameDataStreamFormulaParam(),
-                        "y", new BackDeviceReferenceFormulaParam(1, fanSourcePin))
+                       "y", new BackDeviceReferenceFormulaParam(1, fanSourcePin))
         );
-        SetNumberPinAction setNumberPinAction = new SetNumberPinAction(1, floor1TargetPin, formulaValue);
+        SetNumberPinAction setNumberPinAction = new SetNumberPinAction(1, floorTargetPin, formulaValue);
         Rule rule = new Rule("Airius rule", trigger, numberUpdatedCondition, setNumberPinAction);
         System.out.println(
                 JsonParser.MAPPER
@@ -171,8 +171,8 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         ProductDTO fanProductFromApi = client.parseProductDTO(2);
         assertNotNull(fanProductFromApi);
 
-        short floor1SourcePin = 1;
-        short floor1TargetPin = 2;
+        short floorSourcePin = 1;
+        short floorTargetPin = 2;
 
         short fanSourcePin = 1;
 
@@ -180,14 +180,14 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         //x = floorProduct.v1;
         //y = back_refefence_for_floorProduct
 
-        DataStreamTrigger trigger = new DataStreamTrigger(floorProductFromApi.id, floor1SourcePin);
+        DataStreamTrigger trigger = new DataStreamTrigger(floorProductFromApi.id, floorSourcePin);
         TriggerUpdatedCondition numberUpdatedCondition = new TriggerUpdatedCondition();
         FormulaValue formulaValue = new FormulaValue(
                 "x - avgForReferences(y)",
                 Map.of("x", new SameDataStreamFormulaParam(),
                         "y", new BackDeviceReferenceFormulaParam(fanProductFromApi.id, fanSourcePin))
         );
-        SetNumberPinAction setNumberPinAction = new SetNumberPinAction(floorProductFromApi.id, floor1TargetPin, formulaValue);
+        SetNumberPinAction setNumberPinAction = new SetNumberPinAction(floorProductFromApi.id, floorTargetPin, formulaValue);
 
         Rule rule = new Rule("Airius rule", trigger, numberUpdatedCondition, setNumberPinAction);
         client.editRuleGroup(new RuleGroup(new Rule[] {
@@ -225,9 +225,9 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         floorHardClient.start();
         floorHardClient.login(createdFloorDevice.token);
         floorHardClient.verifyResult(ok(1));
-        floorHardClient.hardware(floor1SourcePin, "42");
+        floorHardClient.hardware(floorSourcePin, "42");
 
-        floorHardClient.sync(PinType.VIRTUAL, floor1TargetPin);
+        floorHardClient.sync(PinType.VIRTUAL, floorTargetPin);
         floorHardClient.never(any());
     }
 
@@ -258,8 +258,8 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         ProductDTO fanProductFromApi = client.parseProductDTO(2);
         assertNotNull(fanProductFromApi);
 
-        short floor1SourcePin = 1;
-        short floor1TargetPin = 2;
+        short floorSourcePin = 1;
+        short floorTargetPin = 2;
 
         short fanSourcePin = 1;
 
@@ -267,14 +267,14 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         //x = floorProduct.v1;
         //y = back_refefence_for_floorProduct
 
-        DataStreamTrigger trigger = new DataStreamTrigger(floorProductFromApi.id, floor1SourcePin);
+        DataStreamTrigger trigger = new DataStreamTrigger(floorProductFromApi.id, floorSourcePin);
         TriggerUpdatedCondition numberUpdatedCondition = new TriggerUpdatedCondition();
         FormulaValue formulaValue = new FormulaValue(
                 "x - avgForReferences(y)",
                 Map.of("x", new SameDataStreamFormulaParam(),
                        "y", new BackDeviceReferenceFormulaParam(fanProductFromApi.id, fanSourcePin))
         );
-        SetNumberPinAction setNumberPinAction = new SetNumberPinAction(floorProductFromApi.id, floor1TargetPin, formulaValue);
+        SetNumberPinAction setNumberPinAction = new SetNumberPinAction(floorProductFromApi.id, floorTargetPin, formulaValue);
 
         Rule rule = new Rule("Airius rule", trigger, numberUpdatedCondition, setNumberPinAction);
         client.editRuleGroup(new RuleGroup(new Rule[] {
@@ -316,10 +316,10 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         floorHardClient.start();
         floorHardClient.login(createdFloorDevice.token);
         floorHardClient.verifyResult(ok(1));
-        floorHardClient.hardware(floor1SourcePin, "42");
+        floorHardClient.hardware(floorSourcePin, "42");
 
-        floorHardClient.sync(PinType.VIRTUAL, floor1TargetPin);
-        floorHardClient.verifyResult(hardware(3, "vw " + floor1TargetPin + " 2.0"));
+        floorHardClient.sync(PinType.VIRTUAL, floorTargetPin);
+        floorHardClient.verifyResult(hardware(3, "vw " + floorTargetPin + " 2.0"));
     }
 
     @Test
@@ -349,8 +349,8 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         ProductDTO fanProductFromApi = client.parseProductDTO(2);
         assertNotNull(fanProductFromApi);
 
-        short floor1SourcePin = 1;
-        short floor1TargetPin = 2;
+        short floorSourcePin = 1;
+        short floorTargetPin = 2;
 
         short fanSourcePin = 1;
 
@@ -358,14 +358,14 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         //x = floorProduct.v1;
         //y = back_refefence_for_floorProduct
 
-        DataStreamTrigger trigger = new DataStreamTrigger(floorProductFromApi.id, floor1SourcePin);
+        DataStreamTrigger trigger = new DataStreamTrigger(floorProductFromApi.id, floorSourcePin);
         TriggerUpdatedCondition numberUpdatedCondition = new TriggerUpdatedCondition();
         FormulaValue formulaValue = new FormulaValue(
                 "x - avgForReferences(y)",
                 Map.of("x", new SameDataStreamFormulaParam(),
                         "y", new BackDeviceReferenceFormulaParam(fanProductFromApi.id, fanSourcePin))
         );
-        SetNumberPinAction setNumberPinAction = new SetNumberPinAction(floorProductFromApi.id, floor1TargetPin, formulaValue);
+        SetNumberPinAction setNumberPinAction = new SetNumberPinAction(floorProductFromApi.id, floorTargetPin, formulaValue);
 
         Rule rule = new Rule("Airius rule", trigger, numberUpdatedCondition, setNumberPinAction);
         client.editRuleGroup(new RuleGroup(new Rule[] {
@@ -429,11 +429,11 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         floorHardClient.start();
         floorHardClient.login(createdFloorDevice.token);
         floorHardClient.verifyResult(ok(1));
-        floorHardClient.hardware(floor1SourcePin, "42");
+        floorHardClient.hardware(floorSourcePin, "42");
 
         //expecting 42 - avg(40 + 44)
-        floorHardClient.sync(PinType.VIRTUAL, floor1TargetPin);
-        floorHardClient.verifyResult(hardware(3, "vw " + floor1TargetPin + " 0.0"));
+        floorHardClient.sync(PinType.VIRTUAL, floorTargetPin);
+        floorHardClient.verifyResult(hardware(3, "vw " + floorTargetPin + " 0.0"));
     }
 
     @Test
@@ -463,8 +463,8 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         ProductDTO fanProductFromApi = client.parseProductDTO(2);
         assertNotNull(fanProductFromApi);
 
-        short floor1SourcePin = 1;
-        short floor1TargetPin = 2;
+        short floorSourcePin = 1;
+        short floorTargetPin = 2;
 
         short fanSourcePin = 1;
         short fanTargetPin = 2;
@@ -472,14 +472,14 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         //if floorProduct.v1 updated setPin floorProduct.v2 = x - y;
         //x = floorProduct.v1;
         //y = back_refefence_for_floorProduct
-        DataStreamTrigger trigger = new DataStreamTrigger(floorProductFromApi.id, floor1SourcePin);
+        DataStreamTrigger trigger = new DataStreamTrigger(floorProductFromApi.id, floorSourcePin);
         TriggerUpdatedCondition numberUpdatedCondition = new TriggerUpdatedCondition();
         FormulaValue formulaValue = new FormulaValue(
                 "x - avgForReferences(y)",
                 Map.of("x", new SameDataStreamFormulaParam(),
                        "y", new BackDeviceReferenceFormulaParam(fanProductFromApi.id, fanSourcePin))
         );
-        SetNumberPinAction setNumberPinAction = new SetNumberPinAction(floorProductFromApi.id, floor1TargetPin, formulaValue);
+        SetNumberPinAction setNumberPinAction = new SetNumberPinAction(floorProductFromApi.id, floorTargetPin, formulaValue);
         Rule rule1 = new Rule("Airius rule for floor", trigger, numberUpdatedCondition, setNumberPinAction);
 
 
@@ -487,7 +487,7 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         TriggerUpdatedCondition numberUpdatedCondition2 = new TriggerUpdatedCondition();
         FormulaValue formulaValue2 = new FormulaValue(
                 "x - y",
-                Map.of("x", new DeviceReferenceFormulaParam(floorProductFromApi.id, floor1SourcePin),
+                Map.of("x", new DeviceReferenceFormulaParam(floorProductFromApi.id, floorSourcePin),
                        "y", new SameDataStreamFormulaParam())
         );
         SetNumberPinAction setNumberPinAction2 = new SetNumberPinAction(fanProductFromApi.id, fanTargetPin, formulaValue2);
@@ -555,11 +555,11 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         floorHardClient.start();
         floorHardClient.login(createdFloorDevice.token);
         floorHardClient.verifyResult(ok(1));
-        floorHardClient.hardware(floor1SourcePin, "42");
+        floorHardClient.hardware(floorSourcePin, "42");
 
         //expecting 42 - avg(40 + 44)
-        floorHardClient.sync(PinType.VIRTUAL, floor1TargetPin);
-        floorHardClient.verifyResult(hardware(3, "vw " + floor1TargetPin + " 0.0"));
+        floorHardClient.sync(PinType.VIRTUAL, floorTargetPin);
+        floorHardClient.verifyResult(hardware(3, "vw " + floorTargetPin + " 0.0"));
 
         //expecting 42 - 47
         fanHardClient2.hardware(fanSourcePin, "47");
