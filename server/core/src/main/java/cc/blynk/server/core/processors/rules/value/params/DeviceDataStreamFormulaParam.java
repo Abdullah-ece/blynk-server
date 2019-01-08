@@ -1,6 +1,7 @@
 package cc.blynk.server.core.processors.rules.value.params;
 
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.storage.value.PinStorageValue;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.processors.rules.RuleDataStream;
@@ -23,6 +24,10 @@ public class DeviceDataStreamFormulaParam extends FormulaParamBase {
     @JsonCreator
     public DeviceDataStreamFormulaParam(@JsonProperty("targetDataStream") RuleDataStream targetDataStream) {
         this.targetDataStream = targetDataStream;
+    }
+
+    public DeviceDataStreamFormulaParam(int productId, short pin) {
+        this(new RuleDataStream(productId, pin, PinType.VIRTUAL));
     }
 
     @Override
