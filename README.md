@@ -115,6 +115,8 @@ You should see next text in ```postgres.log``` file :
         2017-03-02 16:17:18.367 - DB user : test
         2017-03-02 16:17:18.367 - Connecting to DB...
         2017-03-02 16:17:18.455 - Connected to database successfully.
+        
+In browser type https://localhost:9443/dashboard
 
 
 ### Automatic Let's Encrypt certificates generation
