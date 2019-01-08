@@ -324,6 +324,7 @@ public final class AppWebSocketClient extends BaseTestAppClient {
     }
 
     public void getDevice(int orgId, int deviceId) {
+        //todo orgId not used anymore
         send(WEB_GET_DEVICE, "" + orgId + BODY_SEPARATOR_STRING + deviceId);
     }
 
