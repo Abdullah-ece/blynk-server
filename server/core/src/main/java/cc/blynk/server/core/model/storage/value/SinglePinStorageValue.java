@@ -18,7 +18,7 @@ import static cc.blynk.utils.StringUtils.prependDeviceId;
  * Created on 27/04/2018.
  *
  */
-public class SinglePinStorageValue extends PinStorageValue {
+public final class SinglePinStorageValue extends PinStorageValue {
 
     public volatile String value;
 
@@ -30,8 +30,10 @@ public class SinglePinStorageValue extends PinStorageValue {
     }
 
     @Override
-    public void update(String value) {
+    public String update(String value) {
+        String prev = this.value;
         this.value = value;
+        return prev;
     }
 
     @Override

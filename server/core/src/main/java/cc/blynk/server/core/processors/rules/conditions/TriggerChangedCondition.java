@@ -1,11 +1,13 @@
 package cc.blynk.server.core.processors.rules.conditions;
 
 /**
+ * Trigger condition which means value was changed.
+ *
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 24.12.18.
  */
-public final class TriggerUpdatedCondition extends BaseCondition {
+public final class TriggerChangedCondition extends BaseCondition {
 
     @Override
     public boolean matches(double value) {
@@ -14,6 +16,6 @@ public final class TriggerUpdatedCondition extends BaseCondition {
 
     @Override
     public boolean matches(String prevValue, String triggerValue) {
-        return true;
+        return !triggerValue.equals(prevValue);
     }
 }

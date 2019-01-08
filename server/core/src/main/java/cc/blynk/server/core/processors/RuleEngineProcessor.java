@@ -16,7 +16,7 @@ import org.apache.logging.log4j.Logger;
  * Created by Dmitriy Dumanskiy.
  * Created on 23.12.18.
  */
-public class RuleEngineProcessor {
+public final class RuleEngineProcessor {
 
     private static final Logger log = LogManager.getLogger(RuleEngineProcessor.class);
 
@@ -24,11 +24,12 @@ public class RuleEngineProcessor {
     }
 
     public void process(Organization org, Device device,
-                        short pin, PinType pinType, String triggerValue) {
+                        short pin, PinType pinType,
+                        String prevValue, String triggerValue) {
         if (org.ruleGroup != null) {
             double triggerValueParsed = NumberUtil.parseDouble(triggerValue);
             for (Rule rule : org.ruleGroup.rules) {
-                if (rule.isValid(device.productId, pin, pinType, triggerValue, triggerValueParsed)) {
+                if (rule.isValid(device.productId, pin, pinType, prevValue, triggerValueParsed, triggerValue)) {
                     execute(org, rule, device, triggerValue);
                 }
             }

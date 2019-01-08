@@ -30,7 +30,7 @@ import static cc.blynk.utils.StringUtils.split3;
  * Created on 2/1/2015.
  *
  */
-public class HardwareLogic extends BaseProcessorHandler {
+public final class HardwareLogic extends BaseProcessorHandler {
 
     private final SessionDao sessionDao;
     private final ReportingDiskDao reportingDiskDao;
@@ -86,11 +86,12 @@ public class HardwareLogic extends BaseProcessorHandler {
 
             long now = System.currentTimeMillis();
             reportingDiskDao.process(device, pin, pinType, value, now);
-            device.updateValue(pin, pinType, value, now);
             if (org == null) {
                 org = organizationDao.getOrgByIdOrThrow(orgId);
             }
-            ruleEngineProcessor.process(org, device, pin, pinType, value);
+
+            String prevValue = device.updateValue(pin, pinType, value, now);
+            ruleEngineProcessor.process(org, device, pin, pinType, prevValue, value);
 
             Session session = sessionDao.getOrgSession(orgId);
 

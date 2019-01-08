@@ -14,7 +14,7 @@ import cc.blynk.server.core.model.web.product.metafields.DeviceReferenceMetaFiel
 import cc.blynk.server.core.processors.rules.Rule;
 import cc.blynk.server.core.processors.rules.RuleGroup;
 import cc.blynk.server.core.processors.rules.actions.SetNumberPinAction;
-import cc.blynk.server.core.processors.rules.conditions.TriggerUpdatedCondition;
+import cc.blynk.server.core.processors.rules.conditions.TriggerChangedCondition;
 import cc.blynk.server.core.processors.rules.triggers.DataStreamTrigger;
 import cc.blynk.server.core.processors.rules.value.FormulaValue;
 import cc.blynk.server.core.processors.rules.value.params.BackDeviceReferenceFormulaParam;
@@ -61,7 +61,7 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         //y = back_refefence_for_floorProduct
 
         DataStreamTrigger[] triggers = new DataStreamTrigger[] {new DataStreamTrigger(1, floorSourcePin)};
-        TriggerUpdatedCondition numberUpdatedCondition = new TriggerUpdatedCondition();
+        TriggerChangedCondition numberUpdatedCondition = new TriggerChangedCondition();
         FormulaValue formulaValue = new FormulaValue(
                 "x - avgForReferences(y)",
                 Map.of("x", new SameDataStreamFormulaParam(),
@@ -182,7 +182,7 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         //y = back_refefence_for_floorProduct
 
         DataStreamTrigger[] triggers = new DataStreamTrigger[] {new DataStreamTrigger(floorProductFromApi.id, floorSourcePin)};
-        TriggerUpdatedCondition numberUpdatedCondition = new TriggerUpdatedCondition();
+        TriggerChangedCondition numberUpdatedCondition = new TriggerChangedCondition();
         FormulaValue formulaValue = new FormulaValue(
                 "x - avgForReferences(y)",
                 Map.of("x", new SameDataStreamFormulaParam(),
@@ -269,7 +269,7 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         //y = back_refefence_for_floorProduct
 
         DataStreamTrigger[] triggers = new DataStreamTrigger[] {new DataStreamTrigger(floorProductFromApi.id, floorSourcePin)};
-        TriggerUpdatedCondition numberUpdatedCondition = new TriggerUpdatedCondition();
+        TriggerChangedCondition numberUpdatedCondition = new TriggerChangedCondition();
         FormulaValue formulaValue = new FormulaValue(
                 "x - avgForReferences(y)",
                 Map.of("x", new SameDataStreamFormulaParam(),
@@ -360,7 +360,7 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         //y = back_refefence_for_floorProduct
 
         DataStreamTrigger[] triggers = new DataStreamTrigger[] {new DataStreamTrigger(floorProductFromApi.id, floorSourcePin)};
-        TriggerUpdatedCondition numberUpdatedCondition = new TriggerUpdatedCondition();
+        TriggerChangedCondition numberUpdatedCondition = new TriggerChangedCondition();
         FormulaValue formulaValue = new FormulaValue(
                 "x - avgForReferences(y)",
                 Map.of("x", new SameDataStreamFormulaParam(),
@@ -474,7 +474,7 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         //x = floorProduct.v1;
         //y = back_refefence_for_floorProduct
         DataStreamTrigger[] triggers = new DataStreamTrigger[] {new DataStreamTrigger(floorProductFromApi.id, floorSourcePin)};
-        TriggerUpdatedCondition numberUpdatedCondition = new TriggerUpdatedCondition();
+        TriggerChangedCondition numberUpdatedCondition = new TriggerChangedCondition();
         FormulaValue formulaValue = new FormulaValue(
                 "x - avgForReferences(y)",
                 Map.of("x", new SameDataStreamFormulaParam(),
@@ -485,7 +485,7 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
 
 
         DataStreamTrigger[] triggers2 = new DataStreamTrigger[] {new DataStreamTrigger(fanProductFromApi.id, fanSourcePin)};
-        TriggerUpdatedCondition numberUpdatedCondition2 = new TriggerUpdatedCondition();
+        TriggerChangedCondition numberUpdatedCondition2 = new TriggerChangedCondition();
         FormulaValue formulaValue2 = new FormulaValue(
                 "x - y",
                 Map.of("x", new DeviceReferenceFormulaParam(floorProductFromApi.id, floorSourcePin),
@@ -608,7 +608,7 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
                 new DataStreamTrigger(floorProductFromApi.id, floorSourcePin),
                 new DataStreamTrigger(fanProductFromApi.id, fanSourcePin)
         };
-        TriggerUpdatedCondition numberUpdatedCondition = new TriggerUpdatedCondition();
+        TriggerChangedCondition numberUpdatedCondition = new TriggerChangedCondition();
         FormulaValue formulaValue = new FormulaValue(
                 "x - avgForReferences(y)",
                 Map.of("x", new DeviceDataStreamFormulaParam(floorProductFromApi.id, floorSourcePin),
@@ -622,7 +622,7 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
                 new DataStreamTrigger(floorProductFromApi.id, floorSourcePin),
                 new DataStreamTrigger(fanProductFromApi.id, fanSourcePin)
         };
-        TriggerUpdatedCondition numberUpdatedCondition2 = new TriggerUpdatedCondition();
+        TriggerChangedCondition numberUpdatedCondition2 = new TriggerChangedCondition();
         FormulaValue formulaValue2 = new FormulaValue(
                 "x - y",
                 Map.of("x", new DeviceReferenceFormulaParam(floorProductFromApi.id, floorSourcePin),

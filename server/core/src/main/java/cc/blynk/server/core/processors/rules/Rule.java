@@ -12,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Created by Dmitriy Dumanskiy.
  * Created on 27.12.18.
  */
-public class Rule {
+public final class Rule {
 
     private static final BaseTrigger[] EMPTY_TRIGGERS = {};
 
@@ -35,9 +35,10 @@ public class Rule {
         this.action = action;
     }
 
-    public boolean isValid(int productId, short pin, PinType pinType, String triggerValue, double triggerValueParsed) {
+    public boolean isValid(int productId, short pin, PinType pinType,
+                           String prevValue, double triggerValueParsed, String triggerValue) {
         return isSame(productId, pin, pinType)
-                && isConditionMatches(triggerValue, triggerValueParsed)
+                && isConditionMatches(prevValue, triggerValueParsed, triggerValue)
                 && isValidAction();
     }
 
@@ -50,9 +51,9 @@ public class Rule {
         return false;
     }
 
-    private boolean isConditionMatches(String triggerValueString, double triggerValueDouble) {
+    private boolean isConditionMatches(String prevValue, double triggerValueDouble, String triggerValue) {
         return this.condition != null && this.condition.matches(triggerValueDouble)
-                && this.condition.matches(triggerValueString);
+                && this.condition.matches(prevValue, triggerValue);
     }
 
     private boolean isValidAction() {

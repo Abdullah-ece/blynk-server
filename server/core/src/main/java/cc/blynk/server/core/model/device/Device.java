@@ -447,8 +447,8 @@ public class Device implements Target {
         pinStorage.updateValue(new DeviceStorageKey(dataStream.pin, dataStream.pinType), value, now);
     }
 
-    public void updateValue(short pin, PinType pinType, String value, long now) {
-        pinStorage.updateValue(pin, pinType, value, now);
+    public String updateValue(short pin, PinType pinType, String value, long now) {
+        return pinStorage.updateValue(pin, pinType, value, now);
     }
 
     public void updateValue(DeviceStorageKey key, String value, long now) {

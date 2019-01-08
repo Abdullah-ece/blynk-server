@@ -12,12 +12,13 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         use = JsonTypeInfo.Id.NAME,
         property = "type")
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = TriggerUpdatedCondition.class, name = "UPDATED")
+        @JsonSubTypes.Type(value = TriggerUpdatedCondition.class, name = "UPDATED"),
+        @JsonSubTypes.Type(value = TriggerChangedCondition.class, name = "CHANGED")
 })
 public abstract class BaseCondition {
 
     public abstract boolean matches(double triggerValue);
 
-    public abstract boolean matches(String triggerValue);
+    public abstract boolean matches(String prevValue, String triggerValue);
 
 }
