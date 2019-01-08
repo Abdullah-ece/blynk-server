@@ -1,5 +1,7 @@
 package cc.blynk.server.core.processors.rules.value.params;
 
+import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.web.Organization;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
@@ -20,5 +22,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 public abstract class FormulaParamBase {
 
     public abstract boolean isValid();
+
+    public abstract Object resolve(Organization org, Device device, String triggerValue);
 
 }

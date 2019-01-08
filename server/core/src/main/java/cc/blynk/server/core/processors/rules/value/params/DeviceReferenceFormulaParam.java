@@ -44,7 +44,8 @@ public class DeviceReferenceFormulaParam extends FormulaParamBase {
     //todo this method is real bottleneck
     //we need to refactor it and use cache for referenced devices
     //otherwise we do iteration over all org devices
-    public String resolve(Organization org, Device device) {
+    @Override
+    public String resolve(Organization org, Device device, String triggerValue) {
         DeviceReferenceMetaField deviceReferenceMetaField = device.getDeviceReferenceMetafield();
         if (deviceReferenceMetaField == null) {
             log.trace("DeviceReferenceFormulaParam. No device ref metafield for deviceId = {}.", device.id);

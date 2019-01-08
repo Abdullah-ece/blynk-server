@@ -45,7 +45,8 @@ public class BackDeviceReferenceFormulaParam extends FormulaParamBase {
     //todo this method is real bottleneck
     //we need to refactor it and use cache for referenced devices
     //otherwise we do iteration over all org devices
-    public double[] resolve(Organization org, Device device) {
+    @Override
+    public double[] resolve(Organization org, Device device, String triggerValue) {
         Product product = findProductById(org.products, this.targetDataStream.productId);
         if (product == null) {
             log.trace("BackDeviceReferenceFormulaParam. No back reference product for {} and orgId = {}.",

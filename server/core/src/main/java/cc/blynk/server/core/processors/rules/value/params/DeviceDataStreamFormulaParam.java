@@ -2,6 +2,7 @@ package cc.blynk.server.core.processors.rules.value.params;
 
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.storage.value.PinStorageValue;
+import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.processors.rules.RuleDataStream;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -29,7 +30,8 @@ public class DeviceDataStreamFormulaParam extends FormulaParamBase {
         return targetDataStream != null;
     }
 
-    public String resolve(Device device) {
+    @Override
+    public String resolve(Organization org, Device device, String triggerValue) {
         PinStorageValue pinStorageValue = device.getValue(targetDataStream);
         if (pinStorageValue == null) {
             log.trace("Error processing DeviceDataStreamFormulaParam. No value for {}.", targetDataStream);

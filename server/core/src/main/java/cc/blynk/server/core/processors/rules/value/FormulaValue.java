@@ -2,11 +2,7 @@ package cc.blynk.server.core.processors.rules.value;
 
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.web.Organization;
-import cc.blynk.server.core.processors.rules.value.params.BackDeviceReferenceFormulaParam;
-import cc.blynk.server.core.processors.rules.value.params.DeviceDataStreamFormulaParam;
-import cc.blynk.server.core.processors.rules.value.params.DeviceReferenceFormulaParam;
 import cc.blynk.server.core.processors.rules.value.params.FormulaParamBase;
-import cc.blynk.server.core.processors.rules.value.params.SameDataStreamFormulaParam;
 import cc.blynk.server.exp4j.Expression;
 import cc.blynk.server.exp4j.ExpressionBuilder;
 import cc.blynk.utils.NumberUtil;
@@ -55,23 +51,6 @@ public class FormulaValue extends ValueBase {
         throw new RuntimeException("Unexpected formula value result.");
     }
 
-    private static Object resolveParamValue(Organization org, Device device,
-                                            FormulaParamBase formulaParam, String triggerValue) {
-        if (formulaParam instanceof SameDataStreamFormulaParam) {
-            return triggerValue;
-        } else if (formulaParam instanceof DeviceDataStreamFormulaParam) {
-            DeviceDataStreamFormulaParam deviceDataStream = (DeviceDataStreamFormulaParam) formulaParam;
-            return deviceDataStream.resolve(device);
-        } else if (formulaParam instanceof DeviceReferenceFormulaParam) {
-            DeviceReferenceFormulaParam deviceReference = (DeviceReferenceFormulaParam) formulaParam;
-            return deviceReference.resolve(org, device);
-        } else if (formulaParam instanceof BackDeviceReferenceFormulaParam) {
-            BackDeviceReferenceFormulaParam backDeviceReference = (BackDeviceReferenceFormulaParam) formulaParam;
-            return backDeviceReference.resolve(org, device);
-        }
-        throw new RuntimeException("Not supported formula parameter passed for rule engine.");
-    }
-
     @Override
     public double resolve(Organization org, Device device, String triggerValue) {
         //todo this is not optimal, we may cache expression per device
@@ -80,7 +59,7 @@ public class FormulaValue extends ValueBase {
         for (Map.Entry<String, FormulaParamBase> entry : this.formulaParams.entrySet()) {
             FormulaParamBase formulaParam = entry.getValue();
 
-            Object resolvedValue = resolveParamValue(org, device, formulaParam, triggerValue);
+            Object resolvedValue = formulaParam.resolve(org, device, triggerValue);
             if (resolvedValue == null) {
                 return NumberUtil.NO_RESULT;
             }
