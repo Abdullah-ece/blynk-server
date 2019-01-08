@@ -12,11 +12,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class DataStreamTrigger extends BaseTrigger {
 
-    public final RuleDataStream ruleDataStream;
+    public final RuleDataStream triggerDataStream;
 
     @JsonCreator
-    public DataStreamTrigger(@JsonProperty("dataStream") RuleDataStream dataStream) {
-        this.ruleDataStream = dataStream;
+    public DataStreamTrigger(@JsonProperty("triggerDataStream") RuleDataStream triggerDataStream) {
+        this.triggerDataStream = triggerDataStream;
     }
 
     public DataStreamTrigger(int productId, short sourcePin) {
@@ -25,6 +25,6 @@ public class DataStreamTrigger extends BaseTrigger {
 
     @Override
     public boolean isSame(int productId, short pin, PinType pinType) {
-        return ruleDataStream != null && ruleDataStream.isSame(productId, pin, pinType);
+        return triggerDataStream != null && triggerDataStream.isSame(productId, pin, pinType);
     }
 }

@@ -171,11 +171,11 @@ public enum Functions {
             return sum / args.length;
         }
     }),
-    AVG_FOR_GROUP(new DynamicArgumentFunction("avgForGroup", 1, Integer.MAX_VALUE, true) {
+    AVG_FOR_REFERENCES(new DynamicArgumentFunction("avgForReferences", 1, Integer.MAX_VALUE, true) {
         @Override
         public double apply(double... args) {
             if (args.length == 0) {
-                throw new VariableNotSetException("Function 'avgForGroup' has no arguments.");
+                throw new VariableNotSetException("Function 'avgForReferences' has no arguments.");
             }
             double sum = 0;
             for (double arg : args) {

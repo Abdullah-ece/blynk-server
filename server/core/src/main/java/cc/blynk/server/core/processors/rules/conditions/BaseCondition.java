@@ -12,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         use = JsonTypeInfo.Id.NAME,
         property = "type")
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = NumberUpdatedCondition.class, name = "NUMBER_UPDATED")
+        @JsonSubTypes.Type(value = TriggerUpdatedCondition.class, name = "UPDATED")
 })
 public abstract class BaseCondition {
 

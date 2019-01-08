@@ -7,13 +7,14 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.dto.DeviceDTO;
 import cc.blynk.server.core.model.dto.ProductDTO;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.metafields.DeviceReferenceMetaField;
 import cc.blynk.server.core.processors.rules.Rule;
 import cc.blynk.server.core.processors.rules.RuleGroup;
 import cc.blynk.server.core.processors.rules.actions.SetNumberPinAction;
-import cc.blynk.server.core.processors.rules.conditions.NumberUpdatedCondition;
+import cc.blynk.server.core.processors.rules.conditions.TriggerUpdatedCondition;
 import cc.blynk.server.core.processors.rules.triggers.DataStreamTrigger;
 import cc.blynk.server.core.processors.rules.value.FormulaValue;
 import cc.blynk.server.core.processors.rules.value.params.BackDeviceReferenceFormulaParam;
@@ -53,19 +54,27 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         short floor1TargetPin = 2;
         short fanSourcePin = 1;
 
-        //if floorProduct.v1 updated setPin floorProduct.v2 = x - y;
+        //if floorProduct.v1 updated setPin floorProduct.v2 = x - avgForReferences(y);
         //x = floorProduct.v1;
         //y = back_refefence_for_floorProduct
 
         DataStreamTrigger trigger = new DataStreamTrigger(1, floor1SourcePin);
-        NumberUpdatedCondition numberUpdatedCondition = new NumberUpdatedCondition();
+        TriggerUpdatedCondition numberUpdatedCondition = new TriggerUpdatedCondition();
         FormulaValue formulaValue = new FormulaValue(
-                "x - avgForGroup(y)",
+                "x - avgForReferences(y)",
                 Map.of("x", new SameDataStreamFormulaParam(),
                         "y", new BackDeviceReferenceFormulaParam(1, fanSourcePin))
         );
         SetNumberPinAction setNumberPinAction = new SetNumberPinAction(1, floor1TargetPin, formulaValue);
         Rule rule = new Rule("Airius rule", trigger, numberUpdatedCondition, setNumberPinAction);
+        System.out.println(
+                JsonParser.MAPPER
+                        .writerWithDefaultPrettyPrinter()
+                        .forType(RuleGroup.class)
+                .writeValueAsString(new RuleGroup(new Rule[] {
+                        rule
+                }))
+        );
         client.editRuleGroup(new RuleGroup(new Rule[] {
                 rule
         }));
@@ -89,14 +98,14 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
                         "    \"name\" : \"Airius rule\",\n" +
                         "    \"trigger\" : {\n" +
                         "      \"type\" : \"PIN_TRIGGER\",\n" +
-                        "      \"ruleDataStream\" : {\n" +
+                        "      \"triggerDataStream\" : {\n" +
                         "        \"productId\" : 1,\n" +
                         "        \"pin\" : 1,\n" +
                         "        \"pinType\" : \"VIRTUAL\"\n" +
                         "      }\n" +
                         "    },\n" +
                         "    \"condition\" : {\n" +
-                        "      \"type\" : \"NUMBER_UPDATED\"\n" +
+                        "      \"type\" : \"UPDATED\"\n" +
                         "    },\n" +
                         "    \"action\" : {\n" +
                         "      \"type\" : \"SET_NUMBER_PIN_ACTION\",\n" +
@@ -107,7 +116,7 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
                         "      },\n" +
                         "      \"pinValue\" : {\n" +
                         "        \"type\" : \"FORMULA_VALUE\",\n" +
-                        "        \"formula\" : \"x - avgForGroup(y)\",\n" +
+                        "        \"formula\" : \"x - avgForReferences(y)\",\n" +
                         "        \"formulaParams\" : {\n" +
                         "          \"y\" : {\n" +
                         "            \"type\" : \"BACK_DEVICE_REFERENCE_PARAM\",\n" +
@@ -171,9 +180,9 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         //y = back_refefence_for_floorProduct
 
         DataStreamTrigger trigger = new DataStreamTrigger(floorProductFromApi.id, floor1SourcePin);
-        NumberUpdatedCondition numberUpdatedCondition = new NumberUpdatedCondition();
+        TriggerUpdatedCondition numberUpdatedCondition = new TriggerUpdatedCondition();
         FormulaValue formulaValue = new FormulaValue(
-                "x - avgForGroup(y)",
+                "x - avgForReferences(y)",
                 Map.of("x", new SameDataStreamFormulaParam(),
                         "y", new BackDeviceReferenceFormulaParam(fanProductFromApi.id, fanSourcePin))
         );
@@ -258,9 +267,9 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         //y = back_refefence_for_floorProduct
 
         DataStreamTrigger trigger = new DataStreamTrigger(floorProductFromApi.id, floor1SourcePin);
-        NumberUpdatedCondition numberUpdatedCondition = new NumberUpdatedCondition();
+        TriggerUpdatedCondition numberUpdatedCondition = new TriggerUpdatedCondition();
         FormulaValue formulaValue = new FormulaValue(
-                "x - avgForGroup(y)",
+                "x - avgForReferences(y)",
                 Map.of("x", new SameDataStreamFormulaParam(),
                        "y", new BackDeviceReferenceFormulaParam(fanProductFromApi.id, fanSourcePin))
         );
@@ -349,9 +358,9 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         //y = back_refefence_for_floorProduct
 
         DataStreamTrigger trigger = new DataStreamTrigger(floorProductFromApi.id, floor1SourcePin);
-        NumberUpdatedCondition numberUpdatedCondition = new NumberUpdatedCondition();
+        TriggerUpdatedCondition numberUpdatedCondition = new TriggerUpdatedCondition();
         FormulaValue formulaValue = new FormulaValue(
-                "x - avgForGroup(y)",
+                "x - avgForReferences(y)",
                 Map.of("x", new SameDataStreamFormulaParam(),
                         "y", new BackDeviceReferenceFormulaParam(fanProductFromApi.id, fanSourcePin))
         );
