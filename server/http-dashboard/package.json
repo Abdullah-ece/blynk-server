@@ -72,6 +72,7 @@
     "redux-form": "7.0.4",
     "redux-persist": "4.6.0",
     "redux-router": "2.1.2",
+    "redux-saga": "0.16.2",
     "redux-thunk": "2.1.0"
   },
   "devDependencies": {
