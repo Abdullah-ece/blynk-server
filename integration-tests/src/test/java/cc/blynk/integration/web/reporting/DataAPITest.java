@@ -1,4 +1,4 @@
-package cc.blynk.integration.https.reporting;
+package cc.blynk.integration.web.reporting;
 
 import cc.blynk.integration.APIBaseTest;
 import cc.blynk.integration.model.tcp.ClientPair;

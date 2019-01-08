@@ -1,4 +1,4 @@
-package cc.blynk.integration.https;
+package cc.blynk.integration.web;
 
 import cc.blynk.integration.APIBaseTest;
 import cc.blynk.integration.MyHostVerifier;

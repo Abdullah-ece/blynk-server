@@ -1,4 +1,4 @@
-package cc.blynk.integration.https;
+package cc.blynk.integration.web;
 
 import cc.blynk.integration.SingleServerInstancePerTestWithDBAndNewOrg;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
