@@ -400,8 +400,12 @@ public class Device implements Target {
         return -1;
     }
 
+    public DeviceReferenceMetaField getDeviceReferenceMetafield() {
+        return getMetafieldByType(DeviceReferenceMetaField.class);
+    }
+
     @SuppressWarnings("unchecked")
-    private <T> T getMetafieldByType(Class<T> clazz) {
+    public <T> T getMetafieldByType(Class<T> clazz) {
         for (MetaField metaField : metaFields) {
             if (clazz.isInstance(metaField)) {
                 return (T) metaField;

@@ -1,9 +1,9 @@
 package cc.blynk.server.core.processors.rules.value.params;
 
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.storage.value.PinStorageValue;
 import cc.blynk.server.core.model.web.Organization;
-import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.metafields.DeviceReferenceMetaField;
 import cc.blynk.server.core.processors.rules.RuleDataStream;
@@ -21,15 +21,15 @@ public class DeviceReferenceFormulaParam extends FormulaParamBase {
 
     private static final Logger log = LogManager.getLogger(DeviceReferenceFormulaParam.class);
 
-    public final int metafieldId;
-
     public final RuleDataStream targetDataStream;
 
     @JsonCreator
-    public DeviceReferenceFormulaParam(@JsonProperty("targetDataStream") int metafieldId,
-                                       @JsonProperty("targetDataStream") RuleDataStream targetDataStream) {
-        this.metafieldId = metafieldId;
+    public DeviceReferenceFormulaParam(@JsonProperty("targetDataStream") RuleDataStream targetDataStream) {
         this.targetDataStream = targetDataStream;
+    }
+
+    public DeviceReferenceFormulaParam(int productId, short pin) {
+        this(new RuleDataStream(productId, pin, PinType.VIRTUAL));
     }
 
     private static Product findProductById(Product[] products, int productId) {
@@ -45,15 +45,14 @@ public class DeviceReferenceFormulaParam extends FormulaParamBase {
     //we need to refactor it and use cache for referenced devices
     //otherwise we do iteration over all org devices
     public String resolve(Organization org, Device device) {
-        MetaField metaField = device.findMetaFieldByIdOrThrow(metafieldId);
-        if (!(metaField instanceof DeviceReferenceMetaField)) {
-            log.trace("DeviceReferenceFormulaParam. No metafield {} for deviceId = {}.", metafieldId, device.id);
+        DeviceReferenceMetaField deviceReferenceMetaField = device.getDeviceReferenceMetafield();
+        if (deviceReferenceMetaField == null) {
+            log.trace("DeviceReferenceFormulaParam. No device ref metafield for deviceId = {}.", device.id);
             return null;
         }
-        DeviceReferenceMetaField deviceReferenceMetaField = (DeviceReferenceMetaField) metaField;
         if (deviceReferenceMetaField.selectedDeviceId <= 0) {
             log.trace("DeviceReferenceFormulaParam. Metafield {} for deviceId = {} has no device.",
-                    metafieldId, device.id);
+                    deviceReferenceMetaField.id, device.id);
             return null;
         }
 

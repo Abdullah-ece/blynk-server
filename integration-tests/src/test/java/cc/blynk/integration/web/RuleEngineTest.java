@@ -18,6 +18,7 @@ import cc.blynk.server.core.processors.rules.conditions.TriggerUpdatedCondition;
 import cc.blynk.server.core.processors.rules.triggers.DataStreamTrigger;
 import cc.blynk.server.core.processors.rules.value.FormulaValue;
 import cc.blynk.server.core.processors.rules.value.params.BackDeviceReferenceFormulaParam;
+import cc.blynk.server.core.processors.rules.value.params.DeviceReferenceFormulaParam;
 import cc.blynk.server.core.processors.rules.value.params.SameDataStreamFormulaParam;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -433,6 +434,137 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         //expecting 42 - avg(40 + 44)
         floorHardClient.sync(PinType.VIRTUAL, floor1TargetPin);
         floorHardClient.verifyResult(hardware(3, "vw " + floor1TargetPin + " 0.0"));
+    }
+
+    @Test
+    public void testRuleEngineForAiriusCaseWith2ReferencedAndBothSides() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+
+        Product floorProduct = new Product();
+        floorProduct.name = "Airius Floor Sensor";
+        floorProduct.metaFields = new MetaField[] {
+                createDeviceNameMeta(1, "Device Name", "Airius Floor Sensor", true),
+                createDeviceOwnerMeta(2, "Device Owner", null, true)
+        };
+
+        client.createProduct(floorProduct);
+        ProductDTO floorProductFromApi = client.parseProductDTO(1);
+        assertNotNull(floorProductFromApi);
+
+        Product fanProduct = new Product();
+        fanProduct.name = "Airius Fan Product";
+        fanProduct.metaFields = new MetaField[] {
+                createDeviceNameMeta(1, "Device Name", "Airius Fan Product", true),
+                createDeviceOwnerMeta(2, "Device Owner", null, true),
+                new DeviceReferenceMetaField(3, "Floor reference", null, true, false, false, null, new int[] {floorProductFromApi.id}, -1)
+        };
+
+        client.createProduct(fanProduct);
+        ProductDTO fanProductFromApi = client.parseProductDTO(2);
+        assertNotNull(fanProductFromApi);
+
+        short floor1SourcePin = 1;
+        short floor1TargetPin = 2;
+
+        short fanSourcePin = 1;
+        short fanTargetPin = 2;
+
+        //if floorProduct.v1 updated setPin floorProduct.v2 = x - y;
+        //x = floorProduct.v1;
+        //y = back_refefence_for_floorProduct
+        DataStreamTrigger trigger = new DataStreamTrigger(floorProductFromApi.id, floor1SourcePin);
+        TriggerUpdatedCondition numberUpdatedCondition = new TriggerUpdatedCondition();
+        FormulaValue formulaValue = new FormulaValue(
+                "x - avgForReferences(y)",
+                Map.of("x", new SameDataStreamFormulaParam(),
+                       "y", new BackDeviceReferenceFormulaParam(fanProductFromApi.id, fanSourcePin))
+        );
+        SetNumberPinAction setNumberPinAction = new SetNumberPinAction(floorProductFromApi.id, floor1TargetPin, formulaValue);
+        Rule rule1 = new Rule("Airius rule for floor", trigger, numberUpdatedCondition, setNumberPinAction);
+
+
+        DataStreamTrigger trigger2 = new DataStreamTrigger(fanProductFromApi.id, fanSourcePin);
+        TriggerUpdatedCondition numberUpdatedCondition2 = new TriggerUpdatedCondition();
+        FormulaValue formulaValue2 = new FormulaValue(
+                "x - y",
+                Map.of("x", new DeviceReferenceFormulaParam(floorProductFromApi.id, floor1SourcePin),
+                       "y", new SameDataStreamFormulaParam())
+        );
+        SetNumberPinAction setNumberPinAction2 = new SetNumberPinAction(fanProductFromApi.id, fanTargetPin, formulaValue2);
+        Rule rule2 = new Rule("Airius rule for fan", trigger2, numberUpdatedCondition2, setNumberPinAction2);
+
+        client.editRuleGroup(new RuleGroup(new Rule[] {
+                rule1,
+                rule2
+        }));
+        client.verifyResult(ok(3));
+
+        Device floorDevice = new Device();
+        floorDevice.name = "Floor Device";
+        floorDevice.productId = floorProductFromApi.id;
+        client.createDevice(floorDevice);
+        Device createdFloorDevice = client.parseDevice(4);
+        assertNotNull(createdFloorDevice);
+
+        Device fanDevice = new Device();
+        fanDevice.name = "Fan Device";
+        fanDevice.productId = fanProductFromApi.id;
+        client.createDevice(fanDevice);
+        Device createdFanDevice = client.parseDevice(5);
+        assertNotNull(createdFanDevice);
+
+        client.getDevicesByReferenceMetafield(createdFanDevice.id, 3);
+        DeviceDTO[] deviceDTOS = client.parseDevicesDTO(6);
+        assertNotNull(deviceDTOS);
+        assertEquals(1, deviceDTOS.length);
+        assertEquals(floorDevice.name, deviceDTOS[0].name);
+        client.updateDeviceMetafield(createdFanDevice.id,
+                new DeviceReferenceMetaField(3, "Floor reference", null, true, false, false, null, new int[] {floorProductFromApi.id}, deviceDTOS[0].id));
+        client.verifyResult(ok(7));
+
+        Device fanDevice2 = new Device();
+        fanDevice2.name = "Fan Device 2";
+        fanDevice2.productId = fanProductFromApi.id;
+        client.createDevice(fanDevice2);
+        Device createdFanDevice2 = client.parseDevice(8);
+        assertNotNull(createdFanDevice2);
+
+        client.getDevicesByReferenceMetafield(createdFanDevice2.id, 3);
+        DeviceDTO[] deviceDTOS2 = client.parseDevicesDTO(9);
+        assertNotNull(deviceDTOS2);
+        assertEquals(1, deviceDTOS2.length);
+        assertEquals(floorDevice.name, deviceDTOS2[0].name);
+        client.updateDeviceMetafield(createdFanDevice2.id,
+                new DeviceReferenceMetaField(3, "Floor reference", null, true, false, false, null, new int[] {floorProductFromApi.id}, deviceDTOS2[0].id));
+        client.verifyResult(ok(10));
+
+
+        TestHardClient fanHardClient = new TestHardClient("localhost", properties.getHttpPort());
+        fanHardClient.start();
+        fanHardClient.login(createdFanDevice.token);
+        fanHardClient.verifyResult(ok(1));
+        fanHardClient.hardware(fanSourcePin, "40");
+
+        TestHardClient fanHardClient2 = new TestHardClient("localhost", properties.getHttpPort());
+        fanHardClient2.start();
+        fanHardClient2.login(createdFanDevice2.token);
+        fanHardClient2.verifyResult(ok(1));
+        fanHardClient2.hardware(fanSourcePin, "44");
+
+        TestHardClient floorHardClient = new TestHardClient("localhost", properties.getHttpPort());
+        floorHardClient.start();
+        floorHardClient.login(createdFloorDevice.token);
+        floorHardClient.verifyResult(ok(1));
+        floorHardClient.hardware(floor1SourcePin, "42");
+
+        //expecting 42 - avg(40 + 44)
+        floorHardClient.sync(PinType.VIRTUAL, floor1TargetPin);
+        floorHardClient.verifyResult(hardware(3, "vw " + floor1TargetPin + " 0.0"));
+
+        //expecting 42 - 47
+        fanHardClient2.hardware(fanSourcePin, "47");
+        fanHardClient2.sync(PinType.VIRTUAL, fanTargetPin);
+        fanHardClient2.verifyResult(hardware(4, "vw " + fanTargetPin + " -5.0"));
     }
 
 }
