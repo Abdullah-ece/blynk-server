@@ -17,7 +17,7 @@ export function UpdateRuleGroup(data) {
     ws: {
       request: {
         command: API_COMMANDS.WEB_EDIT_RULE_GROUP,
-        query: [JSON.stringify(data)]
+        query: [data]
       }
     }
   };
