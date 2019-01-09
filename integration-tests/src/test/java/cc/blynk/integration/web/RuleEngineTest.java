@@ -714,5 +714,53 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         fanHardClient2.verifyResult(hardware(4, "vw " + fanTargetPin + " -5.0"));
     }
 
+    @Test
+    public void generateRequiredJson() throws Exception {
+        int floorProductId = 7;
+        short floorSourcePin = 1;
+        short floorTargetPin = 31;
+
+        int fanProductId = 2;
+        short fanSourcePin = 1;
+        short fanTargetPin = 31;
+
+        DataStreamTrigger[] triggers = new DataStreamTrigger[] {
+                new DataStreamTrigger(floorProductId, floorSourcePin),
+                new DataStreamTrigger(fanProductId, fanSourcePin)
+        };
+        TriggerChangedCondition numberUpdatedCondition = new TriggerChangedCondition();
+        FormulaValue formulaValue = new FormulaValue(
+                "x - avgForReferences(y)",
+                Map.of("x", new DeviceDataStreamFormulaParam(floorProductId, floorSourcePin),
+                        "y", new BackDeviceReferenceFormulaParam(fanProductId, fanSourcePin))
+        );
+        SetNumberPinAction setNumberPinAction = new SetNumberPinAction(floorProductId, floorTargetPin, formulaValue);
+        Rule rule1 = new Rule("Airius rule for floor", triggers, numberUpdatedCondition, setNumberPinAction);
+
+
+        DataStreamTrigger[] triggers2 = new DataStreamTrigger[] {
+                new DataStreamTrigger(floorProductId, floorSourcePin),
+                new DataStreamTrigger(fanProductId, fanSourcePin)
+        };
+        TriggerChangedCondition numberUpdatedCondition2 = new TriggerChangedCondition();
+        FormulaValue formulaValue2 = new FormulaValue(
+                "x - y",
+                Map.of("x", new DeviceReferenceFormulaParam(floorProductId, floorSourcePin),
+                        "y", new DeviceDataStreamFormulaParam(fanProductId, fanSourcePin))
+        );
+        SetNumberPinAction setNumberPinAction2 = new SetNumberPinAction(fanProductId, fanTargetPin, formulaValue2);
+        Rule rule2 = new Rule("Airius rule for fan", triggers2, numberUpdatedCondition2, setNumberPinAction2);
+
+        System.out.println(
+                JsonParser.MAPPER
+                        .writerWithDefaultPrettyPrinter()
+                        .forType(RuleGroup.class)
+                        .writeValueAsString(new RuleGroup(new Rule[] {
+                                rule1,
+                                rule2
+                        }))
+        );
+    }
+
 }
 
