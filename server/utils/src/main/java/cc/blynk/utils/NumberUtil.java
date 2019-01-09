@@ -1,7 +1,11 @@
 package cc.blynk.utils;
 
 /**
- * Optimized but less precise double parsing method. It is also doesn't spam objects.
+ * Optimized but less precise double parsing method.
+ * It is used instead of Double.parseDouble() because half of our traffic from hardware
+ * holds strings and not numbers and thus Double.parseDouble() spams thousands of exceptions
+ * and exceptions are very expensive, so this method doesn't throw any and just returns
+ * NO_RESULT = Double.MIN_VALUE that means "exception when parsing".
  *
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
