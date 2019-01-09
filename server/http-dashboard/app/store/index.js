@@ -4,9 +4,11 @@ import axios from 'axios';
 import axiosMiddleware from 'redux-axios-middleware';
 import {responseInterceptor as axiosResponseInterceptor} from './axios';
 import {persistStore, autoRehydrate} from 'redux-persist';
+import createSagaMiddleware from 'redux-saga';
 
 import {createWsMiddleware} from "store/redux-websocket-middleware";
 import {createBlynkWsMiddleware} from "store/blynk-websocket-middleware";
+import { blynkSaga, INIT_ACTION_TYPE } from "./blynk-saga";
 
 /* instance for basic API */
 axios.defaults.headers['Content-Type'] = 'application/json';
@@ -50,6 +52,8 @@ const persisStoreConfigProd = {};
 
 function configureStoreProd(initialState) {
 
+  const sagaMiddleware = createSagaMiddleware();
+
   const wsMiddleware = createWsMiddleware({
     defaultEndpoint: `wss://${window.location.hostname}:${window.location.port}/dashws`,
     isDebugMode: true,
@@ -62,7 +66,8 @@ function configureStoreProd(initialState) {
   const middlewares = [
     wsMiddleware,
     blynkWsMiddleware,
-    axiosMiddleware(axiosAPI, axiosMiddlewareOptions)
+    axiosMiddleware(axiosAPI, axiosMiddlewareOptions),
+    sagaMiddleware
   ];
 
   const store = createStore(rootReducer, initialState, compose(
@@ -73,12 +78,16 @@ function configureStoreProd(initialState) {
 
   return new Promise((resolve) => {
     persistStore(store, Object.assign({}, persisStoreConfig, persisStoreConfigProd), () => {
+      sagaMiddleware.run(blynkSaga);
+      store.dispatch({ type: INIT_ACTION_TYPE });
       resolve(store);
     });
   });
 }
 
 function configureStoreDev() {
+
+  const sagaMiddleware = createSagaMiddleware();
 
   const wsMiddleware = createWsMiddleware({
     defaultEndpoint: 'wss://localhost:9443/dashws',
@@ -92,7 +101,8 @@ function configureStoreDev() {
   const middlewares = [
     wsMiddleware,
     blynkWsMiddleware,
-    axiosMiddleware(axiosAPI, axiosMiddlewareOptions)
+    axiosMiddleware(axiosAPI, axiosMiddlewareOptions),
+    sagaMiddleware
   ];
 
   const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose; // add support for Redux dev tools
@@ -111,6 +121,8 @@ function configureStoreDev() {
 
   return new Promise((resolve) => {
     persistStore(store, Object.assign({}, persisStoreConfig, persisStoreConfigDev), () => {
+      sagaMiddleware.run(blynkSaga);
+      store.dispatch({ type: INIT_ACTION_TYPE});
       resolve(store);
     });
   });
