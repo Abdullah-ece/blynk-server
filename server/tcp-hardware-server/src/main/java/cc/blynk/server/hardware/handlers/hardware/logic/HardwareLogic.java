@@ -48,8 +48,7 @@ public final class HardwareLogic extends BaseProcessorHandler {
         this.sessionDao = holder.sessionDao;
         this.reportingDiskDao = holder.reportingDiskDao;
         this.organizationDao = holder.organizationDao;
-        //todo make it stateless?
-        this.ruleEngineProcessor = new RuleEngineProcessor();
+        this.ruleEngineProcessor = holder.ruleEngineProcessor;
     }
 
     private static boolean isWriteOperation(String body) {

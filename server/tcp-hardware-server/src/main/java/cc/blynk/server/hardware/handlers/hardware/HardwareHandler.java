@@ -44,7 +44,7 @@ import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
  * Created by Dmitriy Dumanskiy.
  * Created on 29.07.15.
  */
-public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessage, HardwareStateHolder> {
+public final class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessage, HardwareStateHolder> {
 
     private final HardwareStateHolder state;
     private final Holder holder;
