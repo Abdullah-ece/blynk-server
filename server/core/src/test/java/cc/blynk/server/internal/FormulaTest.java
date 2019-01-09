@@ -42,7 +42,7 @@ public class FormulaTest {
                 Map.of("x", new SameDataStreamFormulaParam(),
                        "y", new BackDeviceReferenceFormulaParam(sourceDataStream))
         );
-        SetNumberPinAction setNumberPinAction = new SetNumberPinAction(setValueDataStream, formulaValue);
+        SetDeviceDataStreamAction setNumberPinAction = new SetDeviceDataStreamAction(setValueDataStream, formulaValue);
 
         Rule rule = new Rule(trigger, numberUpdatedCondition, setNumberPinAction);
 

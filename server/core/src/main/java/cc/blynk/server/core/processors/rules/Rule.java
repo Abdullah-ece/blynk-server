@@ -15,6 +15,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public final class Rule {
 
     private static final BaseTrigger[] EMPTY_TRIGGERS = {};
+    private static final BaseAction[] EMPTY_ACTIONS = {};
 
     public final String name;
 
@@ -22,24 +23,24 @@ public final class Rule {
 
     public final BaseCondition condition;
 
-    public final BaseAction action;
+    public final BaseAction[] actions;
 
     @JsonCreator
     public Rule(@JsonProperty("name") String name,
                 @JsonProperty("triggers") BaseTrigger[] triggers,
                 @JsonProperty("condition") BaseCondition condition,
-                @JsonProperty("action") BaseAction action) {
+                @JsonProperty("actions") BaseAction[] actions) {
         this.name = name;
         this.triggers = triggers == null ? EMPTY_TRIGGERS : triggers;
         this.condition = condition;
-        this.action = action;
+        this.actions = actions == null ? EMPTY_ACTIONS : actions;
     }
 
     public boolean isValid(int productId, short pin, PinType pinType,
                            String prevValue, double triggerValueParsed, String triggerValue) {
         return isSame(productId, pin, pinType)
                 && isConditionMatches(prevValue, triggerValueParsed, triggerValue)
-                && isValidAction();
+                && isValidActions();
     }
 
     private boolean isSame(int productId, short pin, PinType pinType) {
@@ -56,8 +57,8 @@ public final class Rule {
                 && this.condition.matches(prevValue, triggerValue);
     }
 
-    private boolean isValidAction() {
-        return this.action != null && this.action.isValid();
+    private boolean isValidActions() {
+        return this.actions.length > 0;
     }
 
 }
