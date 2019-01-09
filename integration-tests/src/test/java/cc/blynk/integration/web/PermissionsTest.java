@@ -1,4 +1,4 @@
-package cc.blynk.integration.https;
+package cc.blynk.integration.web;
 
 import cc.blynk.integration.SingleServerInstancePerTestWithDBAndNewOrg;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
@@ -70,7 +70,7 @@ public class PermissionsTest extends SingleServerInstancePerTestWithDBAndNewOrg 
         newDevice.name = "My New Device";
         newDevice.productId = fromApiProduct.id;
 
-        client.createDevice(newDevice);
+        client.createDevice(orgId, newDevice);
         Device createdDevice = client.parseDevice(3);
         assertNotNull(createdDevice);
         assertEquals("My New Device", createdDevice.name);
@@ -83,10 +83,12 @@ public class PermissionsTest extends SingleServerInstancePerTestWithDBAndNewOrg 
 
         //wrong org id here
         subUserClient.getDevice(fromApiOrg.id, createdDevice.id);
-        subUserClient.verifyResult(webJson(1, "User has no access to this organization."));
+        subUserClient.verifyResult(webJson(1, "User " + subOrgUser1.toLowerCase()
+                + " has no access to this organization (id=" + orgId + ")."));
 
         subUserClient.getDevice(orgId, createdDevice.id);
-        subUserClient.verifyResult(webJson(2, "User has no access to this organization."));
+        subUserClient.verifyResult(webJson(2, "User " + subOrgUser1.toLowerCase()
+                + " has no access to this organization (id=" + orgId + ")."));
     }
 
     @Test
@@ -183,7 +185,7 @@ public class PermissionsTest extends SingleServerInstancePerTestWithDBAndNewOrg 
         client.trackOrg(fromApiOrg.id);
         client.verifyResult(ok(3));
 
-        client.createDevice(newDevice);
+        client.createDevice(fromApiOrg.id, newDevice);
         Device createdDevice = client.parseDevice(4);
         assertNotNull(createdDevice);
         assertEquals("My New Device", createdDevice.name);

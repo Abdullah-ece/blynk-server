@@ -14,6 +14,7 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.widgets.ui.reporting.ReportScheduler;
 import cc.blynk.server.core.processors.EventorProcessor;
+import cc.blynk.server.core.processors.RuleEngineProcessor;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.ReportingDBManager;
@@ -90,6 +91,8 @@ public class Holder {
     public final SharedTokenManager sharedTokenManager;
 
     public final NotificationsDao notificationsDao;
+
+    public final RuleEngineProcessor ruleEngineProcessor = new RuleEngineProcessor();
 
     public Holder(ServerProperties serverProperties, MailProperties mailProperties,
                   SmsProperties smsProperties, GCMProperties gcmProperties,

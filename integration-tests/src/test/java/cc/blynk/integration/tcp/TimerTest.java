@@ -26,6 +26,7 @@ import cc.blynk.server.notifications.push.enums.Priority;
 import cc.blynk.utils.DateTimeUtils;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -63,6 +64,7 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
+@Ignore
 public class TimerTest extends SingleServerInstancePerTest {
 
     private ScheduledExecutorService ses;

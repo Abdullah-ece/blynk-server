@@ -400,8 +400,12 @@ public class Device implements Target {
         return -1;
     }
 
+    public DeviceReferenceMetaField getDeviceReferenceMetafield() {
+        return getMetafieldByType(DeviceReferenceMetaField.class);
+    }
+
     @SuppressWarnings("unchecked")
-    private <T> T getMetafieldByType(Class<T> clazz) {
+    public <T> T getMetafieldByType(Class<T> clazz) {
         for (MetaField metaField : metaFields) {
             if (clazz.isInstance(metaField)) {
                 return (T) metaField;
@@ -443,8 +447,8 @@ public class Device implements Target {
         pinStorage.updateValue(new DeviceStorageKey(dataStream.pin, dataStream.pinType), value, now);
     }
 
-    public void updateValue(short pin, PinType pinType, String value, long now) {
-        pinStorage.updateValue(pin, pinType, value, now);
+    public String updateValue(short pin, PinType pinType, String value, long now) {
+        return pinStorage.updateValue(pin, pinType, value, now);
     }
 
     public void updateValue(DeviceStorageKey key, String value, long now) {

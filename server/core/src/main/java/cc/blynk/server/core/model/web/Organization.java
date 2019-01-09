@@ -391,6 +391,11 @@ public class Organization {
         return null;
     }
 
+    public void setRuleGroup(RuleGroup ruleGroup) {
+        this.ruleGroup = ruleGroup;
+        this.lastModifiedTs = System.currentTimeMillis();
+    }
+
     @Override
     public String toString() {
         return JsonParser.toJson(this);

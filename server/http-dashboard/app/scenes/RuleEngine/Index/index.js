@@ -51,7 +51,7 @@ class Index extends React.Component {
         <MainLayout.Content
           className="layout-content-rules-engine-text-area product-edit-content">
           <textarea className="rules-engine-text-area"
-                    value={this.state.rules}
+                    value={JSON.stringify(this.state.rules, undefined, 2)}
                     onChange={this.updateRulesText}></textarea>
         </MainLayout.Content>
       </MainLayout>

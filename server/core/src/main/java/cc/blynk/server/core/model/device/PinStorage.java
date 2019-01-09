@@ -49,19 +49,19 @@ public final class PinStorage {
         updateValue(new DeviceStorageKey(dataStream.pin, dataStream.pinType), value, now);
     }
 
-    public void updateValue(short pin, PinType pinType, String value, long now) {
-        updateValue(new DeviceStorageKey(pin, pinType), value, now);
+    public String updateValue(short pin, PinType pinType, String value, long now) {
+        return updateValue(new DeviceStorageKey(pin, pinType), value, now);
     }
 
-    public void updateValue(DeviceStorageKey key, String value, long now) {
+    public String updateValue(DeviceStorageKey key, String value, long now) {
         PinStorageValue pinStorageValue = values.get(key);
         if (pinStorageValue == null) {
             //todo for now supporting only single values
             pinStorageValue = new SinglePinStorageValue();
             values.put(key, pinStorageValue);
         }
-        pinStorageValue.update(value);
         this.lastReportedAt = now;
+        return pinStorageValue.update(value);
     }
 
     void sendPinStorageSyncs(Channel appChannel, int deviceId) {

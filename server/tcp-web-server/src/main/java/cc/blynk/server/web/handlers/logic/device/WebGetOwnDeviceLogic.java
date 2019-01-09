@@ -9,7 +9,6 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.dto.DeviceDTO;
 import cc.blynk.server.core.model.web.Organization;
-import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.protocol.exceptions.NoPermissionException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
@@ -44,7 +43,6 @@ public final class WebGetOwnDeviceLogic implements PermissionBasedLogic<WebAppSt
     public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         String[] split = split2(message.body);
 
-        int orgId = state.selectedOrgId;
         int deviceId = Integer.parseInt(split[1]);
 
         User user = state.user;
@@ -55,18 +53,19 @@ public final class WebGetOwnDeviceLogic implements PermissionBasedLogic<WebAppSt
             return;
         }
 
+        organizationDao.checkInheritanceAccess(user.email, user.orgId, deviceValue.orgId);
+
         Device device = deviceValue.device;
-        if (!device.hasOwner(state.user.email)) {
+        if (!state.role.canViewOrgDevices() && !device.hasOwner(state.user.email)) {
             log.error("User {} is not owner of requested deviceId {}.", user.email, deviceId);
             throw new NoPermissionException("User is not owner of requested device.");
         }
 
-        Organization org = organizationDao.getOrgByIdOrThrow(orgId);
-        Product product = deviceValue.product;
+        Organization org = organizationDao.getOrgByIdOrThrow(deviceValue.orgId);
 
         device.fillWebDashboardValues();
         if (ctx.channel().isWritable()) {
-            String devicesString = new DeviceDTO(device, product, org.name).toString();
+            String devicesString = new DeviceDTO(device,  deviceValue.product, org.name).toString();
             ctx.writeAndFlush(
                     makeUTF8StringMessage(message.command, message.id, devicesString), ctx.voidPromise());
         }

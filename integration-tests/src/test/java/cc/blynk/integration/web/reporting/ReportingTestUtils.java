@@ -1,4 +1,4 @@
-package cc.blynk.integration.https.reporting;
+package cc.blynk.integration.web.reporting;
 
 import cc.blynk.server.core.model.widgets.web.FieldType;
 import cc.blynk.server.core.model.widgets.web.SelectedColumn;

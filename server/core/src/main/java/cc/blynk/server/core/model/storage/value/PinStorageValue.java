@@ -13,7 +13,7 @@ import java.util.Collection;
  */
 public abstract class PinStorageValue {
 
-    public abstract void update(String value);
+    public abstract String update(String value);
 
     public abstract Collection<String> values();
 

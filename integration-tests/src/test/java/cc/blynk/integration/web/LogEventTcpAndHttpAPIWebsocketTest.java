@@ -1,4 +1,4 @@
-package cc.blynk.integration.https;
+package cc.blynk.integration.web;
 
 import cc.blynk.integration.SingleServerInstancePerTestWithDBAndNewOrg;
 import cc.blynk.integration.model.tcp.TestHardClient;
@@ -221,7 +221,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         newDevice.name = "My New Device";
         newDevice.productId = fromApiProduct.id;
 
-        client.createDevice(newDevice);
+        client.createDevice(orgId, newDevice);
         Device device = client.parseDevice(2);
 
         client.trackDevice(device.id);
@@ -593,7 +593,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         newDevice.name = "My New Device";
         newDevice.productId = fromApiProduct.id;
 
-        client.createDevice(newDevice);
+        client.createDevice(orgId, newDevice);
         Device device = client.parseDevice(2);
 
         TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());

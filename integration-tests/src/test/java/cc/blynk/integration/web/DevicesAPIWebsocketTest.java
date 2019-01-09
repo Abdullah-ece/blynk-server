@@ -1,4 +1,4 @@
-package cc.blynk.integration.https;
+package cc.blynk.integration.web;
 
 import cc.blynk.integration.SingleServerInstancePerTestWithDBAndNewOrg;
 import cc.blynk.integration.TestUtil;
@@ -77,7 +77,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         newDevice.productId = fromApiProduct.id;
 
 
-        client.createDevice(newDevice);
+        client.createDevice(orgId, newDevice);
         Device createdDevice = client.parseDevice(2);
         assertNotNull(createdDevice);
         assertEquals("My New Device", createdDevice.name);
@@ -91,7 +91,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertEquals(getUserName(), createdDevice.activatedBy);
 
         newDevice.name = "My New Device2";
-        client.createDevice(newDevice);
+        client.createDevice(orgId, newDevice);
         createdDevice = client.parseDevice(3);
         assertNotNull(createdDevice);
         assertEquals("My New Device2", createdDevice.name);
@@ -130,7 +130,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         newDevice.name = "My New Device";
         newDevice.productId = fromApiProduct.id;
 
-        client.createDevice(newDevice);
+        client.createDevice(orgId, newDevice);
         Device createdDevice = client.parseDevice(2);
         assertNotNull(createdDevice);
         assertEquals("My New Device", createdDevice.name);
@@ -171,7 +171,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         newDevice.productId = fromApiProduct.id;
 
 
-        client.createDevice(newDevice);
+        client.createDevice(orgId, newDevice);
         Device createdDevice = client.parseDevice(2);
         assertNotNull(createdDevice);
         assertEquals("My New Device", createdDevice.name);
@@ -214,7 +214,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
 
         client.trackOrg(fromApi.id);
         client.verifyResult(ok(3));
-        client.createDevice(newDevice);
+        client.createDevice(fromApi.id, newDevice);
         Device createdDevice = client.parseDevice(4);
         assertNotNull(createdDevice);
         assertEquals("My New Device", createdDevice.name);
@@ -269,7 +269,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
 
         client.trackOrg(fromApi.id);
         client.verifyResult(ok(3));
-        client.createDevice(newDevice);
+        client.createDevice(fromApi.id, newDevice);
         Device createdDevice = client.parseDevice(4);
         assertNotNull(createdDevice);
         assertEquals("My New Device", createdDevice.name);
@@ -315,7 +315,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         newDevice.name = "My New Device";
         newDevice.productId = fromApiProduct.id;
 
-        client.createDevice(newDevice);
+        client.createDevice(orgId, newDevice);
         Device device = client.parseDevice(2);
         assertEquals("My New Device", device.name);
         assertNotNull(device.metaFields);
@@ -367,7 +367,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         newDevice.name = "My New Device";
         newDevice.productId = fromApiProduct.id;
 
-        client.createDevice(newDevice);
+        client.createDevice(orgId, newDevice);
         Device device = client.parseDevice(2);
         assertEquals("My New Device", device.name);
         assertNotNull(device.metaFields);
@@ -407,7 +407,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         newDevice.name = "My New Device";
         newDevice.productId = fromApiProduct.id;
 
-        client.createDevice(newDevice);
+        client.createDevice(orgId, newDevice);
         Device device = client.parseDevice(2);
         assertEquals("My New Device", device.name);
         assertNotNull(device.metaFields);
@@ -461,7 +461,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         newDevice.name = "My New Device";
         newDevice.productId = fromApiProduct.id;
 
-        client.createDevice(newDevice);
+        client.createDevice(orgId, newDevice);
         String responseString = client.getBody(2);
         TestDevice device = JsonParser.MAPPER.readValue(responseString, TestDevice.class);
         assertNotNull(device);
@@ -493,7 +493,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         newDevice.productId = fromApiProduct.id;
 
 
-        client.createDevice(newDevice);
+        client.createDevice(orgId, newDevice);
         Device createdDevice = client.parseDevice(2);
         assertNotNull(createdDevice);
 
@@ -547,7 +547,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         newDevice.productId = fromApiProduct.id;
 
 
-        client.createDevice(newDevice);
+        client.createDevice(orgId, newDevice);
         Device createdDevice = client.parseDevice(2);
         assertNotNull(createdDevice);
 
@@ -588,7 +588,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         newDevice.name = "My New Device";
         newDevice.productId = fromApiProduct.id;
 
-        client.createDevice(newDevice);
+        client.createDevice(orgId, newDevice);
         Device createdDevice = client.parseDevice(2);
         assertNotNull(createdDevice);
 
@@ -634,7 +634,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         newDevice.productId = fromApiProduct.id;
 
 
-        client.createDevice(newDevice);
+        client.createDevice(orgId, newDevice);
         Device createdDevice = client.parseDevice(2);
         assertNotNull(createdDevice);
 
@@ -695,7 +695,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         newDevice.productId = fromApiProduct.id;
 
 
-        client.createDevice(newDevice);
+        client.createDevice(orgId, newDevice);
         Device createdDevice = client.parseDevice(2);
         assertNotNull(createdDevice);
 
@@ -771,7 +771,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         newDevice.productId = fromApiProduct.id;
 
 
-        client.createDevice(newDevice);
+        client.createDevice(orgId, newDevice);
         Device createdDevice = client.parseDevice(2);
         assertNotNull(createdDevice);
 
@@ -842,7 +842,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         newDevice.productId = fromApiProduct.id;
 
 
-        client.createDevice(newDevice);
+        client.createDevice(orgId, newDevice);
         Device createdDevice = client.parseDevice(2);
         assertNotNull(createdDevice);
 
@@ -896,7 +896,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         newDevice.name = "My New Device";
         newDevice.productId = fromApiProduct.id;
 
-        client.createDevice(newDevice);
+        client.createDevice(orgId, newDevice);
         Device createdDevice = client.parseDevice(2);
         assertNotNull(createdDevice);
 
@@ -959,7 +959,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         newDevice.name = "My New Device";
         newDevice.productId = fromApiProduct.id;
 
-        client.createDevice(newDevice);
+        client.createDevice(orgId, newDevice);
         Device createdDevice = client.parseDevice(2);
         assertNotNull(createdDevice);
         assertEquals("My New Device", createdDevice.name);
@@ -994,7 +994,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         newDevice.name = "My New Device";
         newDevice.productId = fromApiProduct.id;
 
-        client.createDevice(newDevice);
+        client.createDevice(orgId, newDevice);
         Device createdDevice = client.parseDevice(2);
         assertNotNull(createdDevice);
 
@@ -1056,7 +1056,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         newDevice.name = "My New Device";
         newDevice.productId = fromApiProduct.id;
 
-        client.createDevice(newDevice);
+        client.createDevice(orgId, newDevice);
         Device createdDevice = client.parseDevice(2);
         assertNotNull(createdDevice);
 
@@ -1136,7 +1136,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         newDevice.name = "My New Device";
         newDevice.productId = fromApiProduct.id;
 
-        client.createDevice(newDevice);
+        client.createDevice(orgId, newDevice);
         Device createdDevice = client.parseDevice(2);
         assertNotNull(createdDevice);
 

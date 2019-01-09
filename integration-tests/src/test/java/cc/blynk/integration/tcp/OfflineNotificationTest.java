@@ -13,6 +13,7 @@ import cc.blynk.server.core.model.enums.Theme;
 import cc.blynk.server.core.model.profile.Profile;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -32,6 +33,7 @@ import static org.junit.Assert.assertTrue;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
+@Ignore
 public class OfflineNotificationTest extends SingleServerInstancePerTest {
 
     private static int tcpHardPort;

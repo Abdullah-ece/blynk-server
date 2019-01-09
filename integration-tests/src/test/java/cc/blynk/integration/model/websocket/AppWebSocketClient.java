@@ -224,6 +224,10 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         send(WEB_EDIT_RULE_GROUP, JsonParser.toJson(ruleGroup));
     }
 
+    public void editRuleGroup(String json) {
+        send(WEB_EDIT_RULE_GROUP, json);
+    }
+
     public void createOrganization(Organization organization) {
         send(WEB_CREATE_ORG, "-1" + BODY_SEPARATOR_STRING + organization);
     }
@@ -311,8 +315,8 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         send(WEB_DELETE_DEVICE, "" + orgId + BODY_SEPARATOR + deviceId);
     }
 
-    public void createDevice(Device device) {
-        send(WEB_CREATE_DEVICE, "" + -1 + BODY_SEPARATOR + device);
+    public void createDevice(int orgId, Device device) {
+        send(WEB_CREATE_DEVICE, "" + orgId + BODY_SEPARATOR + device);
     }
 
     public void updateDevice(int orgId, Device device) {
@@ -320,6 +324,7 @@ public final class AppWebSocketClient extends BaseTestAppClient {
     }
 
     public void getDevice(int orgId, int deviceId) {
+        //todo orgId not used anymore
         send(WEB_GET_DEVICE, "" + orgId + BODY_SEPARATOR_STRING + deviceId);
     }
 

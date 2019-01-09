@@ -20,7 +20,7 @@ import static cc.blynk.utils.StringUtils.prependDeviceId;
  * Created on 27/04/2018.
  *
  */
-public class MultiPinStorageValue extends PinStorageValue {
+public final class MultiPinStorageValue extends PinStorageValue {
 
     public final MultiPinStorageValueType type;
 
@@ -76,7 +76,9 @@ public class MultiPinStorageValue extends PinStorageValue {
     }
 
     @Override
-    public void update(String value) {
+    public String update(String value) {
         values.add(value);
+        //todo fix or remove?
+        return value;
     }
 }

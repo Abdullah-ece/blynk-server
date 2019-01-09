@@ -5,6 +5,7 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.profile.Profile;
 import cc.blynk.server.core.model.widgets.ui.table.Row;
 import cc.blynk.server.core.model.widgets.ui.table.Table;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -29,6 +30,7 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
+@Ignore
 public class TableCommandsTest extends SingleServerInstancePerTest {
 
     @Test

@@ -38,7 +38,7 @@ public final class WebEditRuleGroupLogic implements Permission2BasedLogic<WebApp
         int orgId = state.selectedOrgId;
         Organization org = organizationDao.getOrgByIdOrThrow(orgId);
 
-        org.ruleGroup = ruleGroup;
+        org.setRuleGroup(ruleGroup);
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }

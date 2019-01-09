@@ -12,11 +12,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Created by Dmitriy Dumanskiy.
  * Created on 27.12.18.
  */
-public class Rule {
+public final class Rule {
+
+    private static final BaseTrigger[] EMPTY_TRIGGERS = {};
 
     public final String name;
 
-    public final BaseTrigger trigger;
+    public final BaseTrigger[] triggers;
 
     public final BaseCondition condition;
 
@@ -24,28 +26,34 @@ public class Rule {
 
     @JsonCreator
     public Rule(@JsonProperty("name") String name,
-                @JsonProperty("trigger") BaseTrigger trigger,
+                @JsonProperty("triggers") BaseTrigger[] triggers,
                 @JsonProperty("condition") BaseCondition condition,
                 @JsonProperty("action") BaseAction action) {
         this.name = name;
-        this.trigger = trigger;
+        this.triggers = triggers == null ? EMPTY_TRIGGERS : triggers;
         this.condition = condition;
         this.action = action;
     }
 
-    public boolean isValid(int productId, short pin, PinType pinType, String triggerValue, double triggerValueParsed) {
+    public boolean isValid(int productId, short pin, PinType pinType,
+                           String prevValue, double triggerValueParsed, String triggerValue) {
         return isSame(productId, pin, pinType)
-                && isConditionMatches(triggerValue, triggerValueParsed)
+                && isConditionMatches(prevValue, triggerValueParsed, triggerValue)
                 && isValidAction();
     }
 
     private boolean isSame(int productId, short pin, PinType pinType) {
-        return this.trigger != null && this.trigger.isSame(productId, pin, pinType);
+        for (BaseTrigger trigger : triggers) {
+            if (trigger.isSame(productId, pin, pinType)) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    private boolean isConditionMatches(String triggerValueString, double triggerValueDouble) {
+    private boolean isConditionMatches(String prevValue, double triggerValueDouble, String triggerValue) {
         return this.condition != null && this.condition.matches(triggerValueDouble)
-                && this.condition.matches(triggerValueString);
+                && this.condition.matches(prevValue, triggerValue);
     }
 
     private boolean isValidAction() {

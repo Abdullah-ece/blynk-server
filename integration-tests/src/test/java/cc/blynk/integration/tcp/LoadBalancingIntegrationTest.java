@@ -51,6 +51,7 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
+@Ignore
 public class LoadBalancingIntegrationTest extends BaseTest {
 
     private BaseServer appServer1;

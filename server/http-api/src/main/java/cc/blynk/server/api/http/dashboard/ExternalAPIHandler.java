@@ -25,6 +25,8 @@ import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.storage.value.PinStorageValue;
 import cc.blynk.server.core.model.storage.value.SinglePinStorageValue;
+import cc.blynk.server.core.model.web.Organization;
+import cc.blynk.server.core.processors.RuleEngineProcessor;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.db.ReportingDBManager;
 import cc.blynk.server.db.dao.descriptor.TableDataMapper;
@@ -69,6 +71,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
     private final ReportingDiskDao reportingDiskDao;
     private final ReportingDBManager reportingDBManager;
     private final NotificationsDao notificationsDao;
+    private final RuleEngineProcessor ruleEngineProcessor;
 
     public ExternalAPIHandler(Holder holder, String rootPath) {
         super(holder.deviceDao, holder.sessionDao, holder.stats, rootPath);
@@ -77,6 +80,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
         this.reportingDiskDao = holder.reportingDiskDao;
         this.reportingDBManager = holder.reportingDBManager;
         this.notificationsDao = holder.notificationsDao;
+        this.ruleEngineProcessor = holder.ruleEngineProcessor;
     }
 
     @GET
@@ -155,6 +159,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
     @GET
     @Path("/{token}/device")
     @Metric(HTTP_GET_DEVICE)
+    //Used for now for OTA testing
     public Response getDeviceJson(@PathParam("token") String token) throws Exception {
         DeviceValue tokenValue = deviceDao.getDeviceTokenValue(token);
 
@@ -376,9 +381,11 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
         Device device = deviceDao.getByIdOrThrow(deviceId);
 
         reportingDiskDao.process(device, pin, pinType, pinValue, now);
-        device.updateValue(pin, pinType, pinValue, now);
-
+        String prev = device.updateValue(pin, pinType, pinValue, now);
         String body = DataStream.makeHardwareBody(pinType, pin, pinValue);
+
+        Organization org = organizationDao.getOrgByIdOrThrow(tokenValue.orgId);
+        ruleEngineProcessor.process(org, device, pin, pinType, prev, pinValue);
 
         Session session = sessionDao.getOrgSession(tokenValue.orgId);
         if (session == null) {
