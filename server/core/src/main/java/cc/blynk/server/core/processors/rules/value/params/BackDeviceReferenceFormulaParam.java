@@ -38,7 +38,7 @@ public class BackDeviceReferenceFormulaParam extends FormulaParamBase {
     //otherwise we do iteration over all org devices
     @Override
     public double[] resolve(Organization org, Device device, String triggerValue) {
-        Product product = org.findProductByIdOrParentId(this.targetDataStream.productId);
+        Product product = org.getProductByIdOrParentId(this.targetDataStream.productId);
         if (product == null) {
             log.trace("BackDeviceReferenceFormulaParam. No back reference product for {} and orgId = {}.",
                     targetDataStream, org.id);

@@ -396,7 +396,7 @@ public class Organization {
         this.lastModifiedTs = System.currentTimeMillis();
     }
 
-    public Product findProductByIdOrParentId(int productId) {
+    public Product getProductByIdOrParentId(int productId) {
         for (Product product : this.products) {
             if (product.id == productId || product.parentId == productId) {
                 return product;

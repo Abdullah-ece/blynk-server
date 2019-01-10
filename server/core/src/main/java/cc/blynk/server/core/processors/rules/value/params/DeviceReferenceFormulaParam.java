@@ -48,7 +48,7 @@ public class DeviceReferenceFormulaParam extends FormulaParamBase {
             return null;
         }
 
-        Product product = org.findProductByIdOrParentId(this.targetDataStream.productId);
+        Product product = org.getProductByIdOrParentId(this.targetDataStream.productId);
         if (product == null) {
             log.trace("DeviceReferenceFormulaParam. No reference product for {} and orgId = {}.",
                     targetDataStream, org.id);

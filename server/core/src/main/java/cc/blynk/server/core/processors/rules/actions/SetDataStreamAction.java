@@ -38,7 +38,7 @@ public class SetDataStreamAction extends BaseAction {
             for (DeviceRuleDataStream targetDataStream : targetDataStreams) {
                 if (targetDataStream instanceof ProductRuleDataStream) {
                     ProductRuleDataStream productDataStream = (ProductRuleDataStream) targetDataStream;
-                    Product product = org.findProductByIdOrParentId(productDataStream.productId);
+                    Product product = org.getProductByIdOrParentId(productDataStream.productId);
                     if (product != null) {
                         int deviceId = device.id;
                         for (Device backReferenceDevice : product.devices) {
