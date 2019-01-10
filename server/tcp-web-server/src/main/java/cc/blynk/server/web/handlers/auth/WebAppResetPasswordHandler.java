@@ -5,12 +5,14 @@ import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.auth.UserStatus;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.protocol.model.messages.appllication.ResetPasswordMessage;
 import cc.blynk.server.internal.token.BaseToken;
 import cc.blynk.server.internal.token.ResetPassToken;
 import cc.blynk.server.internal.token.TokensPool;
 import cc.blynk.server.notifications.mail.MailWrapper;
+import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.TokenGeneratorUtil;
 import cc.blynk.utils.properties.Placeholders;
@@ -48,6 +50,7 @@ public class WebAppResetPasswordHandler extends SimpleChannelInboundHandler<Rese
     private final BlockingIOProcessor blockingIOProcessor;
     private final String host;
     private final OrganizationDao organizationDao;
+    private final TimerWorker timerWorker;
     private final String resetURL;
     private final String httpsServerUrl;
 
@@ -64,6 +67,7 @@ public class WebAppResetPasswordHandler extends SimpleChannelInboundHandler<Rese
         this.blockingIOProcessor = holder.blockingIOProcessor;
         this.host = holder.props.getRestoreHost();
         this.organizationDao = holder.organizationDao;
+        this.timerWorker = holder.timerWorker;
         this.resetURL = holder.props.getResetPasswordUrl();
         this.httpsServerUrl = holder.props.httpsServerUrl;
     }
@@ -116,6 +120,9 @@ public class WebAppResetPasswordHandler extends SimpleChannelInboundHandler<Rese
             Organization org = organizationDao.getOrgByIdOrThrow(user.orgId);
 
             user.resetPass(passHash);
+            if (user.status == UserStatus.Pending) {
+                userDao.createProjectForExportedApp(timerWorker, user, userDao.getAppName());
+            }
             tokensPool.removeToken(token);
             blockingIOProcessor.execute(() -> {
                 try {

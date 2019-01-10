@@ -15,7 +15,6 @@ import cc.blynk.server.core.session.web.WebAppStateHolder;
 import cc.blynk.server.internal.token.InviteToken;
 import cc.blynk.server.internal.token.TokensPool;
 import cc.blynk.server.notifications.mail.MailWrapper;
-import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.FileLoaderUtil;
 import cc.blynk.utils.TokenGeneratorUtil;
 import cc.blynk.utils.properties.Placeholders;
@@ -100,7 +99,7 @@ public final class WebInviteUserLogic implements PermissionBasedLogic<WebAppStat
         blockingIOProcessor.execute(() -> {
             MessageBase response;
             try {
-                tokensPool.addToken(token,  new InviteToken(userInvite.email, orgId, getAppName()));
+                tokensPool.addToken(token,  new InviteToken(userInvite.email, orgId, userDao.getAppName()));
                 String body = inviteTemplate
                         .replace(Placeholders.ORG_LOGO_URL, httpsServerUrl + org.getLogoOrDefault())
                         .replace(Placeholders.ORGANIZATION, org.name)
@@ -116,15 +115,6 @@ public final class WebInviteUserLogic implements PermissionBasedLogic<WebAppStat
             }
             ctx.writeAndFlush(response);
         });
-    }
-
-    //todo for now we take first app name from superadmin
-    private String getAppName() {
-        User superAdmin = userDao.getSuperAdmin();
-        if (superAdmin.profile.apps.length == 0) {
-            return AppNameUtil.BLYNK;
-        }
-        return superAdmin.profile.apps[0].id;
     }
 
 }

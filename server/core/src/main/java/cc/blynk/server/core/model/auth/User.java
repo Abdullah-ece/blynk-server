@@ -41,7 +41,7 @@ public class User {
     public int orgId;
 
     @JsonView(View.WebUser.class)
-    public UserStatus status;
+    public volatile UserStatus status;
 
     //used mostly to understand if user profile was changed,
     // all other fields update ignored as it is not so important

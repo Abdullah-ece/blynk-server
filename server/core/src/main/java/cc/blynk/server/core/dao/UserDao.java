@@ -99,7 +99,7 @@ public class UserDao {
     }
 
     public void createProjectForExportedApp(TimerWorker timerWorker,
-                                            User newUser, String appName, int msgId) {
+                                            User newUser, String appName) {
         if (appName.equals(AppNameUtil.BLYNK)) {
             return;
         }
@@ -129,7 +129,7 @@ public class UserDao {
         DashBoard dash = parentUser.profile.getDashByIdOrThrow(dashId);
 
         //todo ugly, but quick. refactor
-        DashBoard clonedDash = JsonParser.parseDashboard(JsonParser.toJsonRestrictiveDashboard(dash), msgId);
+        DashBoard clonedDash = JsonParser.parseDashboard(JsonParser.toJsonRestrictiveDashboard(dash), 1);
 
         clonedDash.id = 1;
         clonedDash.parentId = dash.parentId;
@@ -138,29 +138,10 @@ public class UserDao {
         clonedDash.isActive = true;
         clonedDash.eraseWidgetValues();
 
-        /*
-        List<Device> list = new ArrayList<>(Arrays.asList(dash.devices));
-        list.removeIf(device -> !dash.hasWidgetsByDeviceId(device.id));
-        dash.devices = list.toArray(new Device[0]);
-        */
-
         clonedDash.addTimers(timerWorker, newUser.orgId, newUser.email);
 
         newUser.profile.dashBoards = new DashBoard[] {clonedDash};
-
-        /*
-        if (app.provisionType == ProvisionType.STATIC) {
-            for (Device device : clonedDash.devices) {
-                device.erase();
-            }
-        } else {
-            for (Device device : clonedDash.devices) {
-                device.erase();
-                String token = TokenGeneratorUtil.generateNewToken();
-                tokenManager.assignNewToken(newUser, clonedDash, device, token);
-            }
-        }
-        */
+        newUser.status = UserStatus.Active;
     }
 
     public User addFacebookUser(String email, int orgId) {
@@ -193,6 +174,15 @@ public class UserDao {
         newUser.status = UserStatus.Pending;
         add(newUser);
         return newUser;
+    }
+
+    //todo for now we take first app name from superadmin
+    public String getAppName() {
+        User superAdmin = getSuperAdmin();
+        if (superAdmin.profile.apps.length == 0) {
+            return AppNameUtil.BLYNK;
+        }
+        return superAdmin.profile.apps[0].id;
     }
 
 }

@@ -5,7 +5,6 @@ import cc.blynk.server.application.handlers.main.auth.MobileGetServerHandler;
 import cc.blynk.server.common.handlers.UserNotLoggedHandler;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.auth.UserStatus;
 import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.protocol.model.messages.web.WebLoginViaInviteMessage;
@@ -92,7 +91,6 @@ public class WebAppLoginViaInviteHandler extends SimpleChannelInboundHandler<Web
         }
 
         user.pass = password;
-        user.status = UserStatus.Active;
         Organization org = holder.organizationDao.getOrgById(user.orgId);
         org.isActive = true;
 
@@ -100,8 +98,7 @@ public class WebAppLoginViaInviteHandler extends SimpleChannelInboundHandler<Web
                 ? new Version(messageParts[2], messageParts[3])
                 : Version.UNKNOWN_VERSION;
 
-        holder.userDao.createProjectForExportedApp(holder.timerWorker,
-                user, inviteToken.appName, message.id);
+        holder.userDao.createProjectForExportedApp(holder.timerWorker, user, inviteToken.appName);
 
         Role role = org.getRoleByIdOrThrow(user.roleId);
         login(ctx, message.id, user, role, version, token);
