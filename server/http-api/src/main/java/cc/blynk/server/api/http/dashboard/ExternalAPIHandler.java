@@ -26,6 +26,7 @@ import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.storage.value.PinStorageValue;
 import cc.blynk.server.core.model.storage.value.SinglePinStorageValue;
 import cc.blynk.server.core.model.web.Organization;
+import cc.blynk.server.core.model.web.product.events.Event;
 import cc.blynk.server.core.processors.RuleEngineProcessor;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.db.ReportingDBManager;
@@ -105,7 +106,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
             return (badRequest("Product not exists for device."));
         }
 
-        var event = product.findEventByCode(eventCode.hashCode());
+        Event event = product.findEventByCode(eventCode.hashCode());
 
         if (event == null) {
             log.error("Event with code {} not found in product {}.", eventCode, product.id);
@@ -128,9 +129,11 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
             }
         });
 
-        String finalDesc = event.getDescription(desc);
-        notificationsDao.sendLogEventEmails(device, event, finalDesc);
-        notificationsDao.sendLogEventPushNotifications(device, event, finalDesc);
+        if (event.isNotificationsEnabled) {
+            String finalDesc = event.getDescription(desc);
+            notificationsDao.sendLogEventEmails(device, event, finalDesc);
+            notificationsDao.sendLogEventPushNotifications(device, event, finalDesc);
+        }
 
         return null;
     }
