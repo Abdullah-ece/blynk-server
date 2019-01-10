@@ -5,7 +5,9 @@ import cc.blynk.server.core.PermissionBasedLogic;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.device.HardwareInfo;
 import cc.blynk.server.core.model.dto.DeviceDTO;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
@@ -14,6 +16,7 @@ import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
 import io.netty.channel.ChannelHandlerContext;
 
+import static cc.blynk.server.core.model.device.HardwareInfo.DEFAULT_HARDWARE_BUFFER_SIZE;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.OWN_DEVICES_CREATE;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.server.internal.WebByteBufUtil.json;
@@ -71,7 +74,14 @@ public final class WebCreateOwnDeviceLogic implements PermissionBasedLogic<WebAp
         Product product = organizationDao.assignToOrgAndAddDevice(org, newDevice);
         deviceDao.create(requestedOrgId, user.email, product, newDevice);
         newDevice.updateDeviceNameMetaFieldFromName();
-        newDevice.updatedAt = System.currentTimeMillis();
+        String tmplId = product.getFirstTemplateId();
+        //for now setting fake device info.
+        HardwareInfo hardwareInfo = new HardwareInfo(
+                null, null, newDevice.boardType.label,
+                null, ConnectionType.WI_FI.name(),
+                null, tmplId, DEFAULT_HARDWARE_BUFFER_SIZE, 1024
+        );
+        newDevice.setHardwareInfo(hardwareInfo);
 
         if (ctx.channel().isWritable()) {
             String deviceString = new DeviceDTO(newDevice, product, org.name).toString();
