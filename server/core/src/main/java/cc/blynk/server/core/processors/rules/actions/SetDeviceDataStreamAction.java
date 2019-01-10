@@ -3,7 +3,7 @@ package cc.blynk.server.core.processors.rules.actions;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.web.Organization;
-import cc.blynk.server.core.processors.rules.RuleDataStream;
+import cc.blynk.server.core.processors.rules.DeviceDataStream;
 import cc.blynk.server.core.processors.rules.value.ValueBase;
 import cc.blynk.utils.NumberUtil;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -16,19 +16,19 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class SetDeviceDataStreamAction extends BaseAction {
 
-    public final RuleDataStream targetDataStream;
+    public final DeviceDataStream targetDataStream;
 
     public final ValueBase pinValue;
 
     @JsonCreator
-    public SetDeviceDataStreamAction(@JsonProperty("targetDataStream") RuleDataStream targetDataStream,
+    public SetDeviceDataStreamAction(@JsonProperty("targetDataStream") DeviceDataStream targetDataStream,
                                      @JsonProperty("pinValue") ValueBase pinValue) {
         this.targetDataStream = targetDataStream;
         this.pinValue = pinValue;
     }
 
-    public SetDeviceDataStreamAction(int productId, short pin, ValueBase pinValue) {
-        this(new RuleDataStream(productId, pin, PinType.VIRTUAL), pinValue);
+    public SetDeviceDataStreamAction(short pin, ValueBase pinValue) {
+        this(new DeviceDataStream(pin, PinType.VIRTUAL), pinValue);
     }
 
     @Override

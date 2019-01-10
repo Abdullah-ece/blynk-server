@@ -9,21 +9,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Created by Dmitriy Dumanskiy.
  * Created on 27.12.18.
  */
-public class RuleDataStream {
+public class ProductDataStream extends DeviceDataStream {
 
     public final int productId;
 
-    public final short pin;
-
-    public final PinType pinType;
-
     @JsonCreator
-    public RuleDataStream(@JsonProperty("productId") int productId,
-                          @JsonProperty("pin") short pin,
-                          @JsonProperty("pinType") PinType pinType) {
+    public ProductDataStream(@JsonProperty("productId") int productId,
+                             @JsonProperty("pin") short pin,
+                             @JsonProperty("pinType") PinType pinType) {
+        super(pin, pinType);
         this.productId = productId;
-        this.pin = pin;
-        this.pinType = pinType;
     }
 
     public boolean isSame(int productId, short pin, PinType pinType) {
@@ -32,7 +27,7 @@ public class RuleDataStream {
 
     @Override
     public String toString() {
-        return "RuleDataStream{"
+        return "ProductDataStream{"
                 + "productId=" + productId
                 + ", pin=" + pin
                 + ", pinType=" + pinType

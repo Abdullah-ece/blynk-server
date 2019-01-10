@@ -13,7 +13,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         use = JsonTypeInfo.Id.NAME,
         property = "type")
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = DataStreamTrigger.class, name = "PIN_TRIGGER")
+        @JsonSubTypes.Type(value = ProductDataStreamTrigger.class, name = "PIN_TRIGGER")
 })
 public abstract class BaseTrigger {
 

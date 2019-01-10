@@ -5,7 +5,7 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.storage.value.PinStorageValue;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
-import cc.blynk.server.core.processors.rules.RuleDataStream;
+import cc.blynk.server.core.processors.rules.ProductDataStream;
 import cc.blynk.utils.DoubleArray;
 import cc.blynk.utils.NumberUtil;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -22,24 +22,15 @@ public class BackDeviceReferenceFormulaParam extends FormulaParamBase {
 
     private static final Logger log = LogManager.getLogger(BackDeviceReferenceFormulaParam.class);
 
-    public final RuleDataStream targetDataStream;
+    public final ProductDataStream targetDataStream;
 
     @JsonCreator
-    public BackDeviceReferenceFormulaParam(@JsonProperty("targetDataStream") RuleDataStream targetDataStream) {
+    public BackDeviceReferenceFormulaParam(@JsonProperty("targetDataStream") ProductDataStream targetDataStream) {
         this.targetDataStream = targetDataStream;
     }
 
     public BackDeviceReferenceFormulaParam(int productId, short pin) {
-        this(new RuleDataStream(productId, pin, PinType.VIRTUAL));
-    }
-
-    private static Product findProductById(Product[] products, int productId) {
-        for (Product product : products) {
-            if (product.id == productId || product.parentId == productId) {
-                return product;
-            }
-        }
-        return null;
+        this(new ProductDataStream(productId, pin, PinType.VIRTUAL));
     }
 
     //todo this method is real bottleneck
@@ -47,7 +38,7 @@ public class BackDeviceReferenceFormulaParam extends FormulaParamBase {
     //otherwise we do iteration over all org devices
     @Override
     public double[] resolve(Organization org, Device device, String triggerValue) {
-        Product product = findProductById(org.products, this.targetDataStream.productId);
+        Product product = org.findProductByIdOrParentId(this.targetDataStream.productId);
         if (product == null) {
             log.trace("BackDeviceReferenceFormulaParam. No back reference product for {} and orgId = {}.",
                     targetDataStream, org.id);

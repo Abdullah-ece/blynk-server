@@ -16,7 +16,7 @@ import cc.blynk.server.core.processors.rules.RuleGroup;
 import cc.blynk.server.core.processors.rules.actions.BaseAction;
 import cc.blynk.server.core.processors.rules.actions.SetDeviceDataStreamAction;
 import cc.blynk.server.core.processors.rules.conditions.TriggerChangedCondition;
-import cc.blynk.server.core.processors.rules.triggers.DataStreamTrigger;
+import cc.blynk.server.core.processors.rules.triggers.ProductDataStreamTrigger;
 import cc.blynk.server.core.processors.rules.value.FormulaValue;
 import cc.blynk.server.core.processors.rules.value.params.BackDeviceReferenceFormulaParam;
 import cc.blynk.server.core.processors.rules.value.params.DeviceDataStreamFormulaParam;
@@ -70,7 +70,7 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         //x = floorProduct.v1;
         //y = back_refefence_for_floorProduct
 
-        DataStreamTrigger[] triggers = new DataStreamTrigger[] {new DataStreamTrigger(1, floorSourcePin)};
+        ProductDataStreamTrigger[] triggers = new ProductDataStreamTrigger[] {new ProductDataStreamTrigger(1, floorSourcePin)};
         TriggerChangedCondition numberUpdatedCondition = new TriggerChangedCondition();
         FormulaValue formulaValue = new FormulaValue(
                 "x - avgForReferences(y)",
@@ -78,7 +78,7 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
                        "y", new BackDeviceReferenceFormulaParam(1, fanSourcePin))
         );
         BaseAction[] setDeviceDataStreamAction = new BaseAction[] {
-                new SetDeviceDataStreamAction(1, floorTargetPin, formulaValue)
+                new SetDeviceDataStreamAction(floorTargetPin, formulaValue)
         };
         Rule rule = new Rule("Airius rule", triggers, numberUpdatedCondition, setDeviceDataStreamAction);
         client.editRuleGroup(new RuleGroup(new Rule[] {
@@ -185,7 +185,7 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         //x = floorProduct.v1;
         //y = back_refefence_for_floorProduct
 
-        DataStreamTrigger[] triggers = new DataStreamTrigger[] {new DataStreamTrigger(floorProductFromApi.id, floorSourcePin)};
+        ProductDataStreamTrigger[] triggers = new ProductDataStreamTrigger[] {new ProductDataStreamTrigger(floorProductFromApi.id, floorSourcePin)};
         TriggerChangedCondition numberUpdatedCondition = new TriggerChangedCondition();
         FormulaValue formulaValue = new FormulaValue(
                 "x - avgForReferences(y)",
@@ -193,7 +193,7 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
                         "y", new BackDeviceReferenceFormulaParam(fanProductFromApi.id, fanSourcePin))
         );
         BaseAction[] setDeviceDataStreamAction = new BaseAction[] {
-                new SetDeviceDataStreamAction(floorProductFromApi.id, floorTargetPin, formulaValue)
+                new SetDeviceDataStreamAction(floorTargetPin, formulaValue)
         };
 
         Rule rule = new Rule("Airius rule", triggers, numberUpdatedCondition, setDeviceDataStreamAction);
@@ -274,7 +274,7 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         //x = floorProduct.v1;
         //y = back_refefence_for_floorProduct
 
-        DataStreamTrigger[] triggers = new DataStreamTrigger[] {new DataStreamTrigger(floorProductFromApi.id, floorSourcePin)};
+        ProductDataStreamTrigger[] triggers = new ProductDataStreamTrigger[] {new ProductDataStreamTrigger(floorProductFromApi.id, floorSourcePin)};
         TriggerChangedCondition numberUpdatedCondition = new TriggerChangedCondition();
         FormulaValue formulaValue = new FormulaValue(
                 "x - avgForReferences(y)",
@@ -282,7 +282,7 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
                        "y", new BackDeviceReferenceFormulaParam(fanProductFromApi.id, fanSourcePin))
         );
         BaseAction[] setDeviceDataStreamAction = new BaseAction[] {
-                new SetDeviceDataStreamAction(floorProductFromApi.id, floorTargetPin, formulaValue)
+                new SetDeviceDataStreamAction(floorTargetPin, formulaValue)
         };
 
         Rule rule = new Rule("Airius rule", triggers, numberUpdatedCondition, setDeviceDataStreamAction);
@@ -367,7 +367,7 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         //x = floorProduct.v1;
         //y = back_refefence_for_floorProduct
 
-        DataStreamTrigger[] triggers = new DataStreamTrigger[] {new DataStreamTrigger(floorProductFromApi.id, floorSourcePin)};
+        ProductDataStreamTrigger[] triggers = new ProductDataStreamTrigger[] {new ProductDataStreamTrigger(floorProductFromApi.id, floorSourcePin)};
         TriggerChangedCondition numberUpdatedCondition = new TriggerChangedCondition();
         FormulaValue formulaValue = new FormulaValue(
                 "x - avgForReferences(y)",
@@ -375,7 +375,7 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
                         "y", new BackDeviceReferenceFormulaParam(fanProductFromApi.id, fanSourcePin))
         );
         BaseAction[] setDeviceDataStreamAction = new BaseAction[] {
-                new SetDeviceDataStreamAction(floorProductFromApi.id, floorTargetPin, formulaValue)
+                new SetDeviceDataStreamAction(floorTargetPin, formulaValue)
         };
 
         Rule rule = new Rule("Airius rule", triggers, numberUpdatedCondition, setDeviceDataStreamAction);
@@ -483,7 +483,7 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         //if floorProduct.v1 updated setPin floorProduct.v2 = x - y;
         //x = floorProduct.v1;
         //y = back_refefence_for_floorProduct
-        DataStreamTrigger[] triggers = new DataStreamTrigger[] {new DataStreamTrigger(floorProductFromApi.id, floorSourcePin)};
+        ProductDataStreamTrigger[] triggers = new ProductDataStreamTrigger[] {new ProductDataStreamTrigger(floorProductFromApi.id, floorSourcePin)};
         TriggerChangedCondition numberUpdatedCondition = new TriggerChangedCondition();
         FormulaValue formulaValue = new FormulaValue(
                 "x - avgForReferences(y)",
@@ -491,12 +491,12 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
                        "y", new BackDeviceReferenceFormulaParam(fanProductFromApi.id, fanSourcePin))
         );
         BaseAction[] setDeviceDataStreamAction = new BaseAction[] {
-                new SetDeviceDataStreamAction(floorProductFromApi.id, floorTargetPin, formulaValue)
+                new SetDeviceDataStreamAction(floorTargetPin, formulaValue)
         };
         Rule rule1 = new Rule("Airius rule for floor", triggers, numberUpdatedCondition, setDeviceDataStreamAction);
 
 
-        DataStreamTrigger[] triggers2 = new DataStreamTrigger[] {new DataStreamTrigger(fanProductFromApi.id, fanSourcePin)};
+        ProductDataStreamTrigger[] triggers2 = new ProductDataStreamTrigger[] {new ProductDataStreamTrigger(fanProductFromApi.id, fanSourcePin)};
         TriggerChangedCondition numberUpdatedCondition2 = new TriggerChangedCondition();
         FormulaValue formulaValue2 = new FormulaValue(
                 "x - y",
@@ -504,7 +504,7 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
                        "y", new SameDataStreamFormulaParam())
         );
         BaseAction[] setDeviceDataStreamAction2 = new BaseAction[] {
-                new SetDeviceDataStreamAction(fanProductFromApi.id, fanTargetPin, formulaValue2)
+                new SetDeviceDataStreamAction(fanTargetPin, formulaValue2)
         };
         Rule rule2 = new Rule("Airius rule for fan", triggers2, numberUpdatedCondition2, setDeviceDataStreamAction2);
 
@@ -618,9 +618,9 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         //if floorProduct.v1 updated setPin floorProduct.v2 = x - y;
         //x = floorProduct.v1;
         //y = back_refefence_for_floorProduct
-        DataStreamTrigger[] triggers = new DataStreamTrigger[] {
-                new DataStreamTrigger(floorProductFromApi.id, floorSourcePin),
-                new DataStreamTrigger(fanProductFromApi.id, fanSourcePin)
+        ProductDataStreamTrigger[] triggers = new ProductDataStreamTrigger[] {
+                new ProductDataStreamTrigger(floorProductFromApi.id, floorSourcePin),
+                new ProductDataStreamTrigger(fanProductFromApi.id, fanSourcePin)
         };
         TriggerChangedCondition numberUpdatedCondition = new TriggerChangedCondition();
         FormulaValue formulaValue = new FormulaValue(
@@ -629,14 +629,14 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
                        "y", new BackDeviceReferenceFormulaParam(fanProductFromApi.id, fanSourcePin))
         );
         BaseAction[] setDeviceDataStreamAction = new BaseAction[]{
-                new SetDeviceDataStreamAction(floorProductFromApi.id, floorTargetPin, formulaValue)
+                new SetDeviceDataStreamAction(floorTargetPin, formulaValue)
         };
         Rule rule1 = new Rule("Airius rule for floor", triggers, numberUpdatedCondition, setDeviceDataStreamAction);
 
 
-        DataStreamTrigger[] triggers2 = new DataStreamTrigger[] {
-                new DataStreamTrigger(floorProductFromApi.id, floorSourcePin),
-                new DataStreamTrigger(fanProductFromApi.id, fanSourcePin)
+        ProductDataStreamTrigger[] triggers2 = new ProductDataStreamTrigger[] {
+                new ProductDataStreamTrigger(floorProductFromApi.id, floorSourcePin),
+                new ProductDataStreamTrigger(fanProductFromApi.id, fanSourcePin)
         };
         TriggerChangedCondition numberUpdatedCondition2 = new TriggerChangedCondition();
         FormulaValue formulaValue2 = new FormulaValue(
@@ -645,7 +645,7 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
                        "y", new DeviceDataStreamFormulaParam(fanProductFromApi.id, fanSourcePin))
         );
         BaseAction[] setDeviceDataStreamAction2 = new BaseAction[]{
-                new SetDeviceDataStreamAction(fanProductFromApi.id, fanTargetPin, formulaValue2)
+                new SetDeviceDataStreamAction(fanTargetPin, formulaValue2)
         };
         Rule rule2 = new Rule("Airius rule for fan", triggers2, numberUpdatedCondition2, setDeviceDataStreamAction2);
 
@@ -762,8 +762,8 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         //if floorProduct.v1 updated setPin floorProduct.v2 = x - y;
         //x = floorProduct.v1;
         //y = back_refefence_for_floorProduct
-        DataStreamTrigger[] triggers = new DataStreamTrigger[] {
-                new DataStreamTrigger(floorProductFromApi.id, floorSourcePin)
+        ProductDataStreamTrigger[] triggers = new ProductDataStreamTrigger[] {
+                new ProductDataStreamTrigger(floorProductFromApi.id, floorSourcePin)
         };
         TriggerChangedCondition numberUpdatedCondition = new TriggerChangedCondition();
         FormulaValue formulaValue = new FormulaValue(
@@ -772,13 +772,13 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
                         "y", new BackDeviceReferenceFormulaParam(fanProductFromApi.id, fanSourcePin))
         );
         BaseAction[] setDeviceDataStreamAction = new BaseAction[] {
-                new SetDeviceDataStreamAction(floorProductFromApi.id, floorTargetPin, formulaValue)
+                new SetDeviceDataStreamAction(floorTargetPin, formulaValue)
         };
         Rule rule1 = new Rule("Airius rule for floor", triggers, numberUpdatedCondition, setDeviceDataStreamAction);
 
 
-        DataStreamTrigger[] triggers2 = new DataStreamTrigger[] {
-                new DataStreamTrigger(fanProductFromApi.id, fanSourcePin)
+        ProductDataStreamTrigger[] triggers2 = new ProductDataStreamTrigger[] {
+                new ProductDataStreamTrigger(fanProductFromApi.id, fanSourcePin)
         };
         TriggerChangedCondition numberUpdatedCondition2 = new TriggerChangedCondition();
         FormulaValue formulaValue2 = new FormulaValue(
@@ -787,7 +787,7 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
                         "y", new DeviceDataStreamFormulaParam(fanProductFromApi.id, fanSourcePin))
         );
         BaseAction[] setDeviceDataStreamAction2 = new BaseAction[]{
-                new SetDeviceDataStreamAction(fanProductFromApi.id, fanTargetPin, formulaValue2)
+                new SetDeviceDataStreamAction(fanTargetPin, formulaValue2)
         };
         Rule rule2 = new Rule("Airius rule for fan", triggers2, numberUpdatedCondition2, setDeviceDataStreamAction2);
         client.editRuleGroup(new RuleGroup(new Rule[] {
@@ -899,9 +899,9 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         short fanSourcePin = 1;
         short fanTargetPin = 31;
 
-        DataStreamTrigger[] triggers = new DataStreamTrigger[] {
-                new DataStreamTrigger(floorProductId, floorSourcePin),
-                new DataStreamTrigger(fanProductId, fanSourcePin)
+        ProductDataStreamTrigger[] triggers = new ProductDataStreamTrigger[] {
+                new ProductDataStreamTrigger(floorProductId, floorSourcePin),
+                new ProductDataStreamTrigger(fanProductId, fanSourcePin)
         };
         TriggerChangedCondition numberUpdatedCondition = new TriggerChangedCondition();
         FormulaValue formulaValue = new FormulaValue(
@@ -910,14 +910,14 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
                         "y", new BackDeviceReferenceFormulaParam(fanProductId, fanSourcePin))
         );
         BaseAction[] setDeviceDataStreamAction = new BaseAction[] {
-                new SetDeviceDataStreamAction(floorProductId, floorTargetPin, formulaValue)
+                new SetDeviceDataStreamAction(floorTargetPin, formulaValue)
         };
         Rule rule1 = new Rule("Airius rule for floor", triggers, numberUpdatedCondition, setDeviceDataStreamAction);
 
 
-        DataStreamTrigger[] triggers2 = new DataStreamTrigger[] {
-                new DataStreamTrigger(floorProductId, floorSourcePin),
-                new DataStreamTrigger(fanProductId, fanSourcePin)
+        ProductDataStreamTrigger[] triggers2 = new ProductDataStreamTrigger[] {
+                new ProductDataStreamTrigger(floorProductId, floorSourcePin),
+                new ProductDataStreamTrigger(fanProductId, fanSourcePin)
         };
         TriggerChangedCondition numberUpdatedCondition2 = new TriggerChangedCondition();
         FormulaValue formulaValue2 = new FormulaValue(
@@ -926,7 +926,7 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
                         "y", new DeviceDataStreamFormulaParam(fanProductId, fanSourcePin))
         );
         BaseAction[] setDeviceDataStreamAction2 = new BaseAction[] {
-                new SetDeviceDataStreamAction(fanProductId, fanTargetPin, formulaValue2)
+                new SetDeviceDataStreamAction(fanTargetPin, formulaValue2)
         };
         Rule rule2 = new Rule("Airius rule for fan", triggers2, numberUpdatedCondition2, setDeviceDataStreamAction2);
 
