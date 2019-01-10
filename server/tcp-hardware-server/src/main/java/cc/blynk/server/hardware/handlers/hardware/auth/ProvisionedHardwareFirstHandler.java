@@ -115,7 +115,7 @@ public class ProvisionedHardwareFirstHandler extends SimpleChannelInboundHandler
                             product = org.getFirstProduct();
                             log.warn("No templateId {} in products for deviceId {}. "
                                             + "Getting first product (id={}) for provisioned device.",
-                                    device.id, templateId, product.id);
+                                    templateId, device.id, product.id);
                         }
                     }
 
