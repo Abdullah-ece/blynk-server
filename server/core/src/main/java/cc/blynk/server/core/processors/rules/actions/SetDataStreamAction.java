@@ -31,8 +31,8 @@ public class SetDataStreamAction extends BaseAction {
     }
 
     @Override
-    public void execute(Organization org, Device device, String triggerValue) {
-        double resolvedValue = pinValue.resolve(org, device, triggerValue);
+    public void execute(Organization org, Device triggerDevice, String triggerValue) {
+        double resolvedValue = pinValue.resolve(org, triggerDevice, triggerValue);
         if (resolvedValue != NumberUtil.NO_RESULT) {
             String result = String.valueOf(resolvedValue);
             for (DeviceRuleDataStream targetDataStream : targetDataStreams) {
@@ -40,7 +40,7 @@ public class SetDataStreamAction extends BaseAction {
                     ProductRuleDataStream productDataStream = (ProductRuleDataStream) targetDataStream;
                     Product product = org.getProductByIdOrParentId(productDataStream.productId);
                     if (product != null) {
-                        int deviceId = device.id;
+                        int deviceId = triggerDevice.id;
                         for (Device backReferenceDevice : product.devices) {
                             if (backReferenceDevice.hasReferenceDevice(deviceId)) {
                                 backReferenceDevice.updateValue(targetDataStream, result);
@@ -48,7 +48,7 @@ public class SetDataStreamAction extends BaseAction {
                         }
                     }
                 } else {
-                    device.updateValue(targetDataStream, result);
+                    triggerDevice.updateValue(targetDataStream, result);
                 }
             }
         }

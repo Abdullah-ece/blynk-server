@@ -20,6 +20,6 @@ public abstract class BaseAction {
 
     public abstract boolean isValid();
 
-    public abstract void execute(Organization org, Device device, String triggerValue);
+    public abstract void execute(Organization org, Device triggerDevice, String triggerValue);
 
 }
