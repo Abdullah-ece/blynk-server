@@ -326,6 +326,8 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
                 new DeviceReferenceMetaField(3, "Floor reference", null, true, false, false, null, new int[] {floorProductFromApi.id}, deviceDTOS[0].id));
         client.verifyResult(ok(7));
 
+        client.trackDevice(createdFloorDevice.id);
+        client.verifyResult(ok(8));
 
         TestHardClient fanHardClient = new TestHardClient("localhost", properties.getHttpPort());
         fanHardClient.start();
@@ -337,7 +339,10 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         floorHardClient.start();
         floorHardClient.login(createdFloorDevice.token);
         floorHardClient.verifyResult(ok(1));
+        client.reset();
+
         floorHardClient.hardware(floorSourcePin, "42");
+        client.verifyResult(hardware(777, createdFloorDevice.id + " vw " + floorTargetPin + " 2.0"));
 
         floorHardClient.sync(PinType.VIRTUAL, floorTargetPin);
         floorHardClient.verifyResult(hardware(3, "vw " + floorTargetPin + " 2.0"));

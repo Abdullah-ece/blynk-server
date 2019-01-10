@@ -95,7 +95,7 @@ public final class HardwareLogic extends BaseProcessorHandler {
             Session session = sessionDao.getOrgSession(orgId);
 
             int deviceId = device.id;
-            session.sendToApps(HARDWARE, message.id, deviceId, body);
+            session.sendToApps(HARDWARE, message.id, body, deviceId);
             session.sendToSelectedDeviceOnWeb(HARDWARE, message.id, body, deviceId);
         }
     }

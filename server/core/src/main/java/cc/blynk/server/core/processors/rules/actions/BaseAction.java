@@ -1,5 +1,6 @@
 package cc.blynk.server.core.processors.rules.actions;
 
+import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.web.Organization;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -20,6 +21,6 @@ public abstract class BaseAction {
 
     public abstract boolean isValid();
 
-    public abstract void execute(Organization org, Device triggerDevice, String triggerValue);
+    public abstract void execute(SessionDao sessionDao, Organization org, Device triggerDevice, String triggerValue);
 
 }

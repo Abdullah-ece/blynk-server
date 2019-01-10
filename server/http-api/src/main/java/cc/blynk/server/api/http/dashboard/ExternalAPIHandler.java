@@ -320,7 +320,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
 
         Session session = sessionDao.getOrgSession(tokenValue.orgId);
         session.sendToApps(SET_WIDGET_PROPERTY, 111,
-                deviceId, "" + pin + BODY_SEPARATOR + property + BODY_SEPARATOR + values[0]);
+                "" + pin + BODY_SEPARATOR + property + BODY_SEPARATOR + values[0], deviceId);
         return ok();
     }
 
@@ -394,7 +394,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
         }
 
         session.sendMessageToHardware(HARDWARE, 111, body, deviceId);
-        session.sendToApps(HARDWARE, 111, deviceId, body);
+        session.sendToApps(HARDWARE, 111, body, deviceId);
         session.sendToSelectedDeviceOnWeb(HARDWARE, 111, body, deviceId);
 
         return ok();

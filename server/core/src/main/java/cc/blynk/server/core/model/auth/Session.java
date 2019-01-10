@@ -204,7 +204,7 @@ public class Session {
         }
     }
 
-    public void sendToApps(short cmd, int msgId, int deviceId, String body) {
+    public void sendToApps(short cmd, int msgId, String body, int deviceId) {
         if (isAppConnected()) {
             String finalBody = prependDeviceId(deviceId, body);
             sendToApps(cmd, msgId, finalBody);

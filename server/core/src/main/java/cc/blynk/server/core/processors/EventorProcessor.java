@@ -168,14 +168,14 @@ public class EventorProcessor {
         String body = action.makeHardwareBody();
         int deviceId = device.id;
         session.sendMessageToHardware(HARDWARE, 888, body, deviceId);
-        session.sendToApps(HARDWARE, 888, deviceId, body);
+        session.sendToApps(HARDWARE, 888, body, deviceId);
         device.updateValue(action.dataStream.pin, action.dataStream.pinType, action.value);
     }
 
     private void execute(Session session, DashBoard dash,
                          Device device, SetPropertyPinAction action) {
         String body = action.makeHardwareBody();
-        session.sendToApps(SET_WIDGET_PROPERTY, 888, device.id, body);
+        session.sendToApps(SET_WIDGET_PROPERTY, 888, body, device.id);
 
         Widget widget = dash.updateProperty(device.id, action.dataStream.pin, action.property, action.value);
         //this is possible case for device selector

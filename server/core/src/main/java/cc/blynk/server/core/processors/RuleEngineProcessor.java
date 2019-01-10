@@ -1,5 +1,6 @@
 package cc.blynk.server.core.processors;
 
+import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.web.Organization;
@@ -14,7 +15,10 @@ import cc.blynk.utils.NumberUtil;
  */
 public final class RuleEngineProcessor {
 
-    public RuleEngineProcessor() {
+    private final SessionDao sessionDao;
+
+    public RuleEngineProcessor(SessionDao sessionDao) {
+        this.sessionDao = sessionDao;
     }
 
     public void process(Organization org, Device device,
@@ -26,7 +30,7 @@ public final class RuleEngineProcessor {
                 if (rule.isValid(device.productId, pin, pinType, prevValue, triggerValueParsed, triggerValue)) {
                     for (BaseAction action : rule.actions) {
                         if (action.isValid()) {
-                            action.execute(org, device, triggerValue);
+                            action.execute(sessionDao, org, device, triggerValue);
                         }
                     }
                 }
