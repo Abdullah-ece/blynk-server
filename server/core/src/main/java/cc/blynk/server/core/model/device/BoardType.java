@@ -83,6 +83,8 @@ public enum BoardType {
     Konekt_Dash_Pro("Konekt Dash Pro");
 
     public final String label;
+    //cached value for values field to avoid allocations
+    private static final BoardType[] values = values();
 
     BoardType(String label) {
         this.label = label;
@@ -90,7 +92,7 @@ public enum BoardType {
 
     @JsonCreator
     public static BoardType fromLabel(String label) {
-        for (BoardType type : BoardType.values()) {
+        for (BoardType type : values) {
             if (type.label.equals(label)) {
                 return type;
             }

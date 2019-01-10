@@ -75,7 +75,7 @@ public class HistoryGraphUnusedPinDataCleanerWorker implements Runnable {
                 int[] deviceIds = reportSource.getDeviceIds();
                 for (ReportDataStream reportDataStream : reportSource.reportDataStreams) {
                     for (int deviceId : deviceIds) {
-                        for (GraphGranularityType type : GraphGranularityType.values()) {
+                        for (GraphGranularityType type : GraphGranularityType.getValues()) {
                             String filename = ReportingDiskDao.generateFilename(
                                     reportDataStream.pinType, reportDataStream.pin, type);
                             doNotRemovePaths.add(new DeviceFile(deviceId, filename));
@@ -126,7 +126,7 @@ public class HistoryGraphUnusedPinDataCleanerWorker implements Runnable {
                 }
 
                 for (int deviceId : resultIds) {
-                    for (GraphGranularityType type : GraphGranularityType.values()) {
+                    for (GraphGranularityType type : GraphGranularityType.getValues()) {
                         String filename =
                                 ReportingDiskDao.generateFilename(dataStream.pinType, dataStream.pin, type);
                         doNotRemovePaths.add(new DeviceFile(deviceId, filename));
