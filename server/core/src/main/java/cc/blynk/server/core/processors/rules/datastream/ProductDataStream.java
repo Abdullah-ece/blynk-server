@@ -1,4 +1,4 @@
-package cc.blynk.server.core.processors.rules;
+package cc.blynk.server.core.processors.rules.datastream;
 
 import cc.blynk.server.core.model.enums.PinType;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -21,8 +21,9 @@ public class ProductDataStream extends DeviceDataStream {
         this.productId = productId;
     }
 
+    @Override
     public boolean isSame(int productId, short pin, PinType pinType) {
-        return this.productId == productId && this.pin == pin && this.pinType == pinType;
+        return this.productId == productId && super.isSame(productId, pin, pinType);
     }
 
     @Override

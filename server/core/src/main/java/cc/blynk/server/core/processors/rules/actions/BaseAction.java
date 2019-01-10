@@ -14,8 +14,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         use = JsonTypeInfo.Id.NAME,
         property = "type")
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = SetDeviceDataStreamAction.class, name = "SET_DEVICE_PIN_ACTION"),
-        @JsonSubTypes.Type(value = SetReferenceDeviceDataStreamAction.class, name = "SET_REFERENCE_DEVICE_PIN_ACTION")
+        @JsonSubTypes.Type(value = SetDataStreamAction.class, name = "SET_DEVICE_PIN_ACTION")
 })
 public abstract class BaseAction {
 

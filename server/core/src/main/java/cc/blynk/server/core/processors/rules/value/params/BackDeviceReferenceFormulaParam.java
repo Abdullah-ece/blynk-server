@@ -5,7 +5,7 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.storage.value.PinStorageValue;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
-import cc.blynk.server.core.processors.rules.ProductDataStream;
+import cc.blynk.server.core.processors.rules.datastream.ProductDataStream;
 import cc.blynk.utils.DoubleArray;
 import cc.blynk.utils.NumberUtil;
 import com.fasterxml.jackson.annotation.JsonCreator;

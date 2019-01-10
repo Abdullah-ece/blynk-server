@@ -1,4 +1,4 @@
-package cc.blynk.server.core.processors.rules;
+package cc.blynk.server.core.processors.rules.datastream;
 
 import cc.blynk.server.core.model.enums.PinType;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Created by Dmitriy Dumanskiy.
  * Created on 27.12.18.
  */
-public class DeviceDataStream {
+public class DeviceDataStream extends RuleDataStreamBase {
 
     public final short pin;
 
@@ -22,6 +22,7 @@ public class DeviceDataStream {
         this.pinType = pinType;
     }
 
+    @Override
     public boolean isSame(int productId, short pin, PinType pinType) {
         return this.pin == pin && this.pinType == pinType;
     }
