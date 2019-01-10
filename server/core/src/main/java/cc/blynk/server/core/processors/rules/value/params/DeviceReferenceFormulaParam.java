@@ -6,7 +6,7 @@ import cc.blynk.server.core.model.storage.value.PinStorageValue;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.metafields.DeviceReferenceMetaField;
-import cc.blynk.server.core.processors.rules.datastream.ProductDataStream;
+import cc.blynk.server.core.processors.rules.datastream.ProductRuleDataStream;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.logging.log4j.LogManager;
@@ -21,15 +21,15 @@ public class DeviceReferenceFormulaParam extends FormulaParamBase {
 
     private static final Logger log = LogManager.getLogger(DeviceReferenceFormulaParam.class);
 
-    public final ProductDataStream targetDataStream;
+    public final ProductRuleDataStream targetDataStream;
 
     @JsonCreator
-    public DeviceReferenceFormulaParam(@JsonProperty("targetDataStream") ProductDataStream targetDataStream) {
+    public DeviceReferenceFormulaParam(@JsonProperty("targetDataStream") ProductRuleDataStream targetDataStream) {
         this.targetDataStream = targetDataStream;
     }
 
     public DeviceReferenceFormulaParam(int productId, short pin) {
-        this(new ProductDataStream(productId, pin, PinType.VIRTUAL));
+        this(new ProductRuleDataStream(productId, pin, PinType.VIRTUAL));
     }
 
     private static Product findProductById(Product[] products, int productId) {

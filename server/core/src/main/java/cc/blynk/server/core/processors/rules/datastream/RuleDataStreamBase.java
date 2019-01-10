@@ -13,8 +13,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         use = JsonTypeInfo.Id.NAME,
         property = "type")
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = DeviceDataStream.class, name = "DEVICE_DATA_STREAM"),
-        @JsonSubTypes.Type(value = ProductDataStream.class, name = "PRODUCT_DATA_STREAM")
+        @JsonSubTypes.Type(value = DeviceRuleDataStream.class, name = "DEVICE_DATA_STREAM"),
+        @JsonSubTypes.Type(value = ProductRuleDataStream.class, name = "PRODUCT_DATA_STREAM")
 })
 public abstract class RuleDataStreamBase {
 

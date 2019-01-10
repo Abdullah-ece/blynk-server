@@ -5,7 +5,7 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.storage.value.PinStorageValue;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
-import cc.blynk.server.core.processors.rules.datastream.ProductDataStream;
+import cc.blynk.server.core.processors.rules.datastream.ProductRuleDataStream;
 import cc.blynk.utils.DoubleArray;
 import cc.blynk.utils.NumberUtil;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -22,15 +22,15 @@ public class BackDeviceReferenceFormulaParam extends FormulaParamBase {
 
     private static final Logger log = LogManager.getLogger(BackDeviceReferenceFormulaParam.class);
 
-    public final ProductDataStream targetDataStream;
+    public final ProductRuleDataStream targetDataStream;
 
     @JsonCreator
-    public BackDeviceReferenceFormulaParam(@JsonProperty("targetDataStream") ProductDataStream targetDataStream) {
+    public BackDeviceReferenceFormulaParam(@JsonProperty("targetDataStream") ProductRuleDataStream targetDataStream) {
         this.targetDataStream = targetDataStream;
     }
 
     public BackDeviceReferenceFormulaParam(int productId, short pin) {
-        this(new ProductDataStream(productId, pin, PinType.VIRTUAL));
+        this(new ProductRuleDataStream(productId, pin, PinType.VIRTUAL));
     }
 
     //todo this method is real bottleneck

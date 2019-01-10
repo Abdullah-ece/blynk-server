@@ -9,14 +9,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Created by Dmitriy Dumanskiy.
  * Created on 27.12.18.
  */
-public class ProductDataStream extends DeviceDataStream {
+public class ProductRuleDataStream extends DeviceRuleDataStream {
 
     public final int productId;
 
     @JsonCreator
-    public ProductDataStream(@JsonProperty("productId") int productId,
-                             @JsonProperty("pin") short pin,
-                             @JsonProperty("pinType") PinType pinType) {
+    public ProductRuleDataStream(@JsonProperty("productId") int productId,
+                                 @JsonProperty("pin") short pin,
+                                 @JsonProperty("pinType") PinType pinType) {
         super(pin, pinType);
         this.productId = productId;
     }
@@ -28,7 +28,7 @@ public class ProductDataStream extends DeviceDataStream {
 
     @Override
     public String toString() {
-        return "ProductDataStream{"
+        return "ProductRuleDataStream{"
                 + "productId=" + productId
                 + ", pin=" + pin
                 + ", pinType=" + pinType

@@ -18,7 +18,7 @@ import cc.blynk.server.core.model.web.product.metafields.DeviceOwnerMetaField;
 import cc.blynk.server.core.model.web.product.metafields.DeviceReferenceMetaField;
 import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
-import cc.blynk.server.core.processors.rules.datastream.DeviceDataStream;
+import cc.blynk.server.core.processors.rules.datastream.DeviceRuleDataStream;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.utils.ArrayUtil;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -459,11 +459,11 @@ public class Device implements Target {
         pinStorage.sendPinStorageSyncs(appChannel, this.id);
     }
 
-    public void updateValue(DeviceDataStream ruleDataStream, String value) {
+    public void updateValue(DeviceRuleDataStream ruleDataStream, String value) {
         pinStorage.updateValue(new DeviceStorageKey(ruleDataStream.pin, ruleDataStream.pinType), value);
     }
 
-    public PinStorageValue getValue(DeviceDataStream ruleDataStream) {
+    public PinStorageValue getValue(DeviceRuleDataStream ruleDataStream) {
         return pinStorage.get(ruleDataStream.pin, ruleDataStream.pinType);
     }
 

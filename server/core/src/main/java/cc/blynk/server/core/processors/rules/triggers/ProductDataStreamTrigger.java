@@ -1,7 +1,7 @@
 package cc.blynk.server.core.processors.rules.triggers;
 
 import cc.blynk.server.core.model.enums.PinType;
-import cc.blynk.server.core.processors.rules.datastream.ProductDataStream;
+import cc.blynk.server.core.processors.rules.datastream.ProductRuleDataStream;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -12,15 +12,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class ProductDataStreamTrigger extends BaseTrigger {
 
-    public final ProductDataStream triggerDataStream;
+    public final ProductRuleDataStream triggerDataStream;
 
     @JsonCreator
-    public ProductDataStreamTrigger(@JsonProperty("triggerDataStream") ProductDataStream triggerDataStream) {
+    public ProductDataStreamTrigger(@JsonProperty("triggerDataStream") ProductRuleDataStream triggerDataStream) {
         this.triggerDataStream = triggerDataStream;
     }
 
     public ProductDataStreamTrigger(int productId, short sourcePin) {
-        this(new ProductDataStream(productId, sourcePin, PinType.VIRTUAL));
+        this(new ProductRuleDataStream(productId, sourcePin, PinType.VIRTUAL));
     }
 
     @Override

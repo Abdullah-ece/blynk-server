@@ -4,8 +4,8 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.storage.value.PinStorageValue;
 import cc.blynk.server.core.model.web.Organization;
-import cc.blynk.server.core.processors.rules.datastream.DeviceDataStream;
-import cc.blynk.server.core.processors.rules.datastream.ProductDataStream;
+import cc.blynk.server.core.processors.rules.datastream.DeviceRuleDataStream;
+import cc.blynk.server.core.processors.rules.datastream.ProductRuleDataStream;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.logging.log4j.LogManager;
@@ -20,15 +20,15 @@ public class DeviceDataStreamFormulaParam extends FormulaParamBase {
 
     private static final Logger log = LogManager.getLogger(DeviceDataStreamFormulaParam.class);
 
-    public final DeviceDataStream targetDataStream;
+    public final DeviceRuleDataStream targetDataStream;
 
     @JsonCreator
-    public DeviceDataStreamFormulaParam(@JsonProperty("targetDataStream") DeviceDataStream targetDataStream) {
+    public DeviceDataStreamFormulaParam(@JsonProperty("targetDataStream") DeviceRuleDataStream targetDataStream) {
         this.targetDataStream = targetDataStream;
     }
 
     public DeviceDataStreamFormulaParam(int productId, short pin) {
-        this(new ProductDataStream(productId, pin, PinType.VIRTUAL));
+        this(new ProductRuleDataStream(productId, pin, PinType.VIRTUAL));
     }
 
     @Override

@@ -9,15 +9,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Created by Dmitriy Dumanskiy.
  * Created on 27.12.18.
  */
-public class DeviceDataStream extends RuleDataStreamBase {
+public class DeviceRuleDataStream extends RuleDataStreamBase {
 
     public final short pin;
 
     public final PinType pinType;
 
     @JsonCreator
-    public DeviceDataStream(@JsonProperty("pin") short pin,
-                            @JsonProperty("pinType") PinType pinType) {
+    public DeviceRuleDataStream(@JsonProperty("pin") short pin,
+                                @JsonProperty("pinType") PinType pinType) {
         this.pin = pin;
         this.pinType = pinType;
     }
@@ -29,7 +29,7 @@ public class DeviceDataStream extends RuleDataStreamBase {
 
     @Override
     public String toString() {
-        return "DeviceDataStream{"
+        return "DeviceRuleDataStream{"
                 + "pin=" + pin
                 + ", pinType=" + pinType
                 + '}';

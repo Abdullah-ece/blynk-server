@@ -16,8 +16,8 @@ import cc.blynk.server.core.processors.rules.RuleGroup;
 import cc.blynk.server.core.processors.rules.actions.BaseAction;
 import cc.blynk.server.core.processors.rules.actions.SetDataStreamAction;
 import cc.blynk.server.core.processors.rules.conditions.TriggerChangedCondition;
-import cc.blynk.server.core.processors.rules.datastream.DeviceDataStream;
-import cc.blynk.server.core.processors.rules.datastream.ProductDataStream;
+import cc.blynk.server.core.processors.rules.datastream.DeviceRuleDataStream;
+import cc.blynk.server.core.processors.rules.datastream.ProductRuleDataStream;
 import cc.blynk.server.core.processors.rules.triggers.ProductDataStreamTrigger;
 import cc.blynk.server.core.processors.rules.value.FormulaValue;
 import cc.blynk.server.core.processors.rules.value.params.BackDeviceReferenceFormulaParam;
@@ -80,8 +80,8 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
                        "y", new BackDeviceReferenceFormulaParam(1, fanSourcePin))
         );
 
-        DeviceDataStream[] actionDataStreams = new DeviceDataStream[] {
-            new DeviceDataStream(floorTargetPin, PinType.VIRTUAL)
+        DeviceRuleDataStream[] actionDataStreams = new DeviceRuleDataStream[] {
+            new DeviceRuleDataStream(floorTargetPin, PinType.VIRTUAL)
         };
         BaseAction[] setDeviceDataStreamAction = new BaseAction[] {
                 new SetDataStreamAction(actionDataStreams, formulaValue)
@@ -198,8 +198,8 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
                 Map.of("x", new SameDataStreamFormulaParam(),
                         "y", new BackDeviceReferenceFormulaParam(fanProductFromApi.id, fanSourcePin))
         );
-        DeviceDataStream[] actionDataStreams = new DeviceDataStream[] {
-                new DeviceDataStream(floorTargetPin, PinType.VIRTUAL)
+        DeviceRuleDataStream[] actionDataStreams = new DeviceRuleDataStream[] {
+                new DeviceRuleDataStream(floorTargetPin, PinType.VIRTUAL)
         };
         BaseAction[] setDeviceDataStreamAction = new BaseAction[] {
                 new SetDataStreamAction(actionDataStreams, formulaValue)
@@ -290,8 +290,8 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
                 Map.of("x", new SameDataStreamFormulaParam(),
                        "y", new BackDeviceReferenceFormulaParam(fanProductFromApi.id, fanSourcePin))
         );
-        DeviceDataStream[] actionDataStreams = new DeviceDataStream[] {
-                new DeviceDataStream(floorTargetPin, PinType.VIRTUAL)
+        DeviceRuleDataStream[] actionDataStreams = new DeviceRuleDataStream[] {
+                new DeviceRuleDataStream(floorTargetPin, PinType.VIRTUAL)
         };
         BaseAction[] setDeviceDataStreamAction = new BaseAction[] {
                 new SetDataStreamAction(actionDataStreams, formulaValue)
@@ -386,8 +386,8 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
                 Map.of("x", new SameDataStreamFormulaParam(),
                         "y", new BackDeviceReferenceFormulaParam(fanProductFromApi.id, fanSourcePin))
         );
-        DeviceDataStream[] actionDataStreams = new DeviceDataStream[] {
-                new DeviceDataStream(floorTargetPin, PinType.VIRTUAL)
+        DeviceRuleDataStream[] actionDataStreams = new DeviceRuleDataStream[] {
+                new DeviceRuleDataStream(floorTargetPin, PinType.VIRTUAL)
         };
         BaseAction[] setDeviceDataStreamAction = new BaseAction[] {
                 new SetDataStreamAction(actionDataStreams, formulaValue)
@@ -505,8 +505,8 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
                 Map.of("x", new SameDataStreamFormulaParam(),
                        "y", new BackDeviceReferenceFormulaParam(fanProductFromApi.id, fanSourcePin))
         );
-        DeviceDataStream[] actionDataStreams = new DeviceDataStream[] {
-                new DeviceDataStream(floorTargetPin, PinType.VIRTUAL)
+        DeviceRuleDataStream[] actionDataStreams = new DeviceRuleDataStream[] {
+                new DeviceRuleDataStream(floorTargetPin, PinType.VIRTUAL)
         };
         BaseAction[] setDeviceDataStreamAction = new BaseAction[] {
                 new SetDataStreamAction(actionDataStreams, formulaValue)
@@ -521,8 +521,8 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
                 Map.of("x", new DeviceReferenceFormulaParam(floorProductFromApi.id, floorSourcePin),
                        "y", new SameDataStreamFormulaParam())
         );
-        DeviceDataStream[] facActionDataStreams = new DeviceDataStream[] {
-                new DeviceDataStream(fanTargetPin, PinType.VIRTUAL)
+        DeviceRuleDataStream[] facActionDataStreams = new DeviceRuleDataStream[] {
+                new DeviceRuleDataStream(fanTargetPin, PinType.VIRTUAL)
         };
         BaseAction[] setDeviceDataStreamAction2 = new BaseAction[] {
                 new SetDataStreamAction(facActionDataStreams, formulaValue2)
@@ -649,8 +649,8 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
                 Map.of("x", new DeviceDataStreamFormulaParam(floorProductFromApi.id, floorSourcePin),
                        "y", new BackDeviceReferenceFormulaParam(fanProductFromApi.id, fanSourcePin))
         );
-        DeviceDataStream[] actionDataStreams = new DeviceDataStream[] {
-                new DeviceDataStream(floorTargetPin, PinType.VIRTUAL)
+        DeviceRuleDataStream[] actionDataStreams = new DeviceRuleDataStream[] {
+                new DeviceRuleDataStream(floorTargetPin, PinType.VIRTUAL)
         };
         BaseAction[] setDeviceDataStreamAction = new BaseAction[]{
                 new SetDataStreamAction(actionDataStreams, formulaValue)
@@ -668,8 +668,8 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
                 Map.of("x", new DeviceReferenceFormulaParam(floorProductFromApi.id, floorSourcePin),
                        "y", new DeviceDataStreamFormulaParam(fanProductFromApi.id, fanSourcePin))
         );
-        DeviceDataStream[] facActionDataStreams = new DeviceDataStream[] {
-                new DeviceDataStream(fanTargetPin, PinType.VIRTUAL)
+        DeviceRuleDataStream[] facActionDataStreams = new DeviceRuleDataStream[] {
+                new DeviceRuleDataStream(fanTargetPin, PinType.VIRTUAL)
         };
         BaseAction[] setDeviceDataStreamAction2 = new BaseAction[]{
                 new SetDataStreamAction(facActionDataStreams, formulaValue2)
@@ -799,8 +799,8 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
                         "y", new BackDeviceReferenceFormulaParam(fanProductFromApi.id, fanSourcePin))
         );
 
-        DeviceDataStream[] actionDataStreams = new DeviceDataStream[] {
-                new DeviceDataStream(floorTargetPin, PinType.VIRTUAL)
+        DeviceRuleDataStream[] actionDataStreams = new DeviceRuleDataStream[] {
+                new DeviceRuleDataStream(floorTargetPin, PinType.VIRTUAL)
         };
         BaseAction[] setDeviceDataStreamAction = new BaseAction[] {
                 new SetDataStreamAction(actionDataStreams, formulaValue)
@@ -817,8 +817,8 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
                 Map.of("x", new DeviceReferenceFormulaParam(floorProductFromApi.id, floorSourcePin),
                         "y", new DeviceDataStreamFormulaParam(fanProductFromApi.id, fanSourcePin))
         );
-        DeviceDataStream[] facActionDataStreams = new DeviceDataStream[] {
-                new DeviceDataStream(fanTargetPin, PinType.VIRTUAL)
+        DeviceRuleDataStream[] facActionDataStreams = new DeviceRuleDataStream[] {
+                new DeviceRuleDataStream(fanTargetPin, PinType.VIRTUAL)
         };
         BaseAction[] setDeviceDataStreamAction2 = new BaseAction[]{
                 new SetDataStreamAction(facActionDataStreams, formulaValue2)
@@ -966,9 +966,9 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
                 Map.of("x", new SameDataStreamFormulaParam(),
                        "y", new BackDeviceReferenceFormulaParam(fanProductFromApi.id, fanSourcePin))
         );
-        DeviceDataStream[] actionDataStreams = new DeviceDataStream[] {
-                new DeviceDataStream(floorTargetPin, PinType.VIRTUAL),
-                new ProductDataStream(fanProductFromApi.id, fanTargetPin, PinType.VIRTUAL)
+        DeviceRuleDataStream[] actionDataStreams = new DeviceRuleDataStream[] {
+                new DeviceRuleDataStream(floorTargetPin, PinType.VIRTUAL),
+                new ProductRuleDataStream(fanProductFromApi.id, fanTargetPin, PinType.VIRTUAL)
         };
         BaseAction[] setDeviceDataStreamAction = new BaseAction[] {
                 new SetDataStreamAction(actionDataStreams, formulaValue)
@@ -1070,8 +1070,8 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
                 Map.of("x", new DeviceDataStreamFormulaParam(floorProductId, floorSourcePin),
                         "y", new BackDeviceReferenceFormulaParam(fanProductId, fanSourcePin))
         );
-        DeviceDataStream[] actionDataStreams = new DeviceDataStream[] {
-                new DeviceDataStream(floorTargetPin, PinType.VIRTUAL)
+        DeviceRuleDataStream[] actionDataStreams = new DeviceRuleDataStream[] {
+                new DeviceRuleDataStream(floorTargetPin, PinType.VIRTUAL)
         };
         BaseAction[] setDeviceDataStreamAction = new BaseAction[] {
                 new SetDataStreamAction(actionDataStreams, formulaValue)
@@ -1089,8 +1089,8 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
                 Map.of("x", new DeviceReferenceFormulaParam(floorProductId, floorSourcePin),
                         "y", new DeviceDataStreamFormulaParam(fanProductId, fanSourcePin))
         );
-        DeviceDataStream[] facActionDataStreams = new DeviceDataStream[] {
-                new DeviceDataStream(fanTargetPin, PinType.VIRTUAL)
+        DeviceRuleDataStream[] facActionDataStreams = new DeviceRuleDataStream[] {
+                new DeviceRuleDataStream(fanTargetPin, PinType.VIRTUAL)
         };
         BaseAction[] setDeviceDataStreamAction2 = new BaseAction[] {
                 new SetDataStreamAction(facActionDataStreams, formulaValue2)
