@@ -70,7 +70,8 @@ public class MobileHardwareResendFromBTLogic extends BaseProcessorHandler {
             String value = splitBody[2];
             long now = System.currentTimeMillis();
 
-            reportingDao.process(device, pin, pinType, value, now);
+            double parsedValue = NumberUtil.parseDouble(value);
+            reportingDao.process(device, pin, pinType, parsedValue, now);
             device.updateValue(pin, pinType, value, now);
         }
     }

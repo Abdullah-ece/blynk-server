@@ -380,12 +380,13 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
 
         Device device = deviceDao.getByIdOrThrow(deviceId);
 
-        reportingDiskDao.process(device, pin, pinType, pinValue, now);
+        double parsedValue = NumberUtil.parseDouble(pinValue);
+        reportingDiskDao.process(device, pin, pinType, parsedValue, now);
         String prev = device.updateValue(pin, pinType, pinValue, now);
         String body = DataStream.makeHardwareBody(pinType, pin, pinValue);
 
         Organization org = organizationDao.getOrgByIdOrThrow(tokenValue.orgId);
-        ruleEngineProcessor.process(org, device, pin, pinType, prev, pinValue);
+        ruleEngineProcessor.process(org, device, pin, pinType, prev, parsedValue, pinValue);
 
         Session session = sessionDao.getOrgSession(tokenValue.orgId);
         if (session == null) {

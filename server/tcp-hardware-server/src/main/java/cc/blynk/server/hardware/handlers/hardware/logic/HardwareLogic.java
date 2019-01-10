@@ -82,15 +82,15 @@ public final class HardwareLogic extends BaseProcessorHandler {
             PinType pinType = PinType.getPinType(splitBody[0].charAt(0));
             short pin = NumberUtil.parsePin(splitBody[1]);
             String value = splitBody[2];
-
             long now = System.currentTimeMillis();
-            reportingDiskDao.process(device, pin, pinType, value, now);
+            double parsedValue = NumberUtil.parseDouble(value);
+
+            reportingDiskDao.process(device, pin, pinType, parsedValue, now);
+            String prevValue = device.updateValue(pin, pinType, value, now);
             if (org == null) {
                 org = organizationDao.getOrgByIdOrThrow(orgId);
             }
-
-            String prevValue = device.updateValue(pin, pinType, value, now);
-            ruleEngineProcessor.process(org, device, pin, pinType, prevValue, value);
+            ruleEngineProcessor.process(org, device, pin, pinType, prevValue, parsedValue, value);
 
             Session session = sessionDao.getOrgSession(orgId);
 

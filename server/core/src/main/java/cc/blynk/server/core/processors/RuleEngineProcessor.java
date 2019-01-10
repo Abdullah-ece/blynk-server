@@ -6,7 +6,6 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.processors.rules.Rule;
 import cc.blynk.server.core.processors.rules.actions.BaseAction;
-import cc.blynk.utils.NumberUtil;
 
 /**
  * The Blynk Project.
@@ -23,9 +22,8 @@ public final class RuleEngineProcessor {
 
     public void process(Organization org, Device device,
                         short pin, PinType pinType,
-                        String prevValue, String triggerValue) {
+                        String prevValue, double triggerValueParsed, String triggerValue) {
         if (org.ruleGroup != null) {
-            double triggerValueParsed = NumberUtil.parseDouble(triggerValue);
             for (Rule rule : org.ruleGroup.rules) {
                 if (rule.isValid(device.productId, pin, pinType, prevValue, triggerValueParsed, triggerValue)) {
                     for (BaseAction action : rule.actions) {
