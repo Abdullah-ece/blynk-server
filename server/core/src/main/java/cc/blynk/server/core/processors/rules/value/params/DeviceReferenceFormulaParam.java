@@ -6,7 +6,7 @@ import cc.blynk.server.core.model.storage.value.PinStorageValue;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.metafields.DeviceReferenceMetaField;
-import cc.blynk.server.core.processors.rules.RuleDataStream;
+import cc.blynk.server.core.processors.rules.datastream.ProductRuleDataStream;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.logging.log4j.LogManager;
@@ -21,24 +21,15 @@ public class DeviceReferenceFormulaParam extends FormulaParamBase {
 
     private static final Logger log = LogManager.getLogger(DeviceReferenceFormulaParam.class);
 
-    public final RuleDataStream targetDataStream;
+    public final ProductRuleDataStream targetDataStream;
 
     @JsonCreator
-    public DeviceReferenceFormulaParam(@JsonProperty("targetDataStream") RuleDataStream targetDataStream) {
+    public DeviceReferenceFormulaParam(@JsonProperty("targetDataStream") ProductRuleDataStream targetDataStream) {
         this.targetDataStream = targetDataStream;
     }
 
     public DeviceReferenceFormulaParam(int productId, short pin) {
-        this(new RuleDataStream(productId, pin, PinType.VIRTUAL));
-    }
-
-    private static Product findProductById(Product[] products, int productId) {
-        for (Product product : products) {
-            if (product.id == productId || product.parentId == productId) {
-                return product;
-            }
-        }
-        return null;
+        this(new ProductRuleDataStream(productId, pin, PinType.VIRTUAL));
     }
 
     //todo this method is real bottleneck
@@ -57,7 +48,7 @@ public class DeviceReferenceFormulaParam extends FormulaParamBase {
             return null;
         }
 
-        Product product = findProductById(org.products, this.targetDataStream.productId);
+        Product product = org.getProductByIdOrParentId(this.targetDataStream.productId);
         if (product == null) {
             log.trace("DeviceReferenceFormulaParam. No reference product for {} and orgId = {}.",
                     targetDataStream, org.id);

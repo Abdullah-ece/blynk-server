@@ -15,19 +15,16 @@ public enum GraphGranularityType {
     public final char type;
     public final long period;
 
+    //cached value for values field to avoid allocations
+    private static final GraphGranularityType[] values = values();
+
     GraphGranularityType(String label, char type, long period) {
         this.label = label;
         this.type = type;
         this.period = period;
     }
 
-    public static GraphGranularityType getPeriodByType(char type) {
-        for (GraphGranularityType graphGranularityType : values()) {
-            if (type == graphGranularityType.type) {
-                return graphGranularityType;
-            }
-        }
-        return MINUTE;
+    public static GraphGranularityType[] getValues() {
+        return values;
     }
-
 }

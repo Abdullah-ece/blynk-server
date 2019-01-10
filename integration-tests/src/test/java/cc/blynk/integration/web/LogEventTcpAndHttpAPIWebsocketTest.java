@@ -50,8 +50,10 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.after;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 
 /**
  * The Blynk Project.
@@ -172,7 +174,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
                 1,
                 "Temp is super high",
                 "This is my description",
-                false,
+                true,
                 "temp_is_high" ,
                 new EventReceiver[] {
                         new EventReceiver(6, MetadataType.Contact, "Farm of Smith"),
@@ -186,7 +188,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
                 2,
                 "Device is online!",
                 null,
-                false,
+                true,
                 new EventReceiver[] {
                         new EventReceiver(6, MetadataType.Contact, "Farm of Smith")
                 },
@@ -198,7 +200,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
                 3,
                 "Device is offline!",
                 null,
-                false,
+                true,
                 new EventReceiver[] {
                         new EventReceiver(6, MetadataType.Contact, "Farm of Smith")
                 },
@@ -207,10 +209,25 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
                 0
         );
 
+        Event neverWorkingEvent = new CriticalEvent(
+                1,
+                "NeverWorkingEvent",
+                "This is my description",
+                false,
+                "never" ,
+                new EventReceiver[] {
+                        new EventReceiver(6, MetadataType.Contact, "Farm of Smith"),
+                        new EventReceiver(7, MetadataType.Text, "Device Owner")
+                },
+                null,
+                null
+        );
+
         product.events = new Event[] {
                 criticalEvent,
                 onlineEvent,
-                offlineEvent
+                offlineEvent,
+                neverWorkingEvent
         };
 
         client.createProduct(product);
@@ -456,6 +473,40 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
 
         verify(holder.mailWrapper, timeout(1000)).sendHtml(eq("dmitriy@blynk.cc"), eq("My New Device: Temp is super high"), contains("Temp is super high"));
         verify(holder.mailWrapper, timeout(1000)).sendHtml(eq("owner@blynk.cc"), eq("My New Device: Temp is super high"), contains("Temp is super high"));
+    }
+
+    @Test
+    public void testEmailNotificationNotWorkForTurnedOffEvent() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+        Device device = createProductAndDevice(client, orgId);
+
+        TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
+        newHardClient.start();
+        newHardClient.login(device.token);
+        newHardClient.verifyResult(ok(1));
+        newHardClient.logEvent("never", "MyNewDescription");
+        newHardClient.verifyResult(ok(2));
+        client.reset();
+
+        client.getTimeline(device.id, EventType.CRITICAL, null, 0, System.currentTimeMillis(), 0, 10);
+        TimelineResponseDTO timeLineResponse = client.parseTimelineResponse(1);
+        assertNotNull(timeLineResponse);
+
+        assertEquals(1, timeLineResponse.totalCritical);
+        assertEquals(0, timeLineResponse.totalWarning);
+        assertEquals(0, timeLineResponse.totalResolved);
+        List<LogEvent> logEvents = timeLineResponse.eventList;
+        assertNotNull(logEvents);
+        assertEquals(1, logEvents.size());
+        assertEquals(device.id, logEvents.get(0).deviceId);
+        assertEquals(EventType.CRITICAL, logEvents.get(0).eventType);
+        assertFalse(logEvents.get(0).isResolved);
+        assertEquals("NeverWorkingEvent", logEvents.get(0).name);
+        assertEquals("MyNewDescription", logEvents.get(0).description);
+
+        verify(holder.mailWrapper, after(500).never()).sendHtml(eq("dmitriy@blynk.cc"), eq("My New Device: NeverWorkingEvent"), contains("NeverWorkingEvent"));
+        verify(holder.mailWrapper, after(500).never()).sendHtml(eq("owner@blynk.cc"), eq("My New Device: NeverWorkingEvent"), contains("NeverWorkingEvent"));
+        verifyZeroInteractions(holder.mailWrapper);
     }
 
     @Test

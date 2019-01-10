@@ -30,19 +30,19 @@ public class FormulaTest {
         int product2 = 2;
         short product2SourcePin = 1;
 
-        RuleDataStream triggerDataStream = new RuleDataStream(product1, product1SourcePin, PinType.VIRTUAL);
-        DataStreamTrigger trigger = new DataStreamTrigger(triggerDataStream);
+        DeviceRuleDataStream triggerDataStream = new DeviceRuleDataStream(product1, product1SourcePin, PinType.VIRTUAL);
+        ProductDataStreamTrigger trigger = new ProductDataStreamTrigger(triggerDataStream);
 
         NumberUpdatedCondition numberUpdatedCondition = new NumberUpdatedCondition();
 
-        RuleDataStream setValueDataStream = new RuleDataStream(product1, product1TargetPin, PinType.VIRTUAL);
-        RuleDataStream sourceDataStream = new RuleDataStream(product2, product2SourcePin, PinType.VIRTUAL);
+        DeviceRuleDataStream setValueDataStream = new DeviceRuleDataStream(product1, product1TargetPin, PinType.VIRTUAL);
+        DeviceRuleDataStream sourceDataStream = new DeviceRuleDataStream(product2, product2SourcePin, PinType.VIRTUAL);
         FormulaValue formulaValue = new FormulaValue(
                 "x - y",
-                Map.of("x", new SameDataStreamFormulaParam(),
+                Map.of("x", new TriggerDataStreamFormulaParam(),
                        "y", new BackDeviceReferenceFormulaParam(sourceDataStream))
         );
-        SetNumberPinAction setNumberPinAction = new SetNumberPinAction(setValueDataStream, formulaValue);
+        SetDataStreamAction setNumberPinAction = new SetDataStreamAction(setValueDataStream, formulaValue);
 
         Rule rule = new Rule(trigger, numberUpdatedCondition, setNumberPinAction);
 

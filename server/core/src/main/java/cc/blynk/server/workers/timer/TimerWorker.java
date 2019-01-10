@@ -316,7 +316,7 @@ public class TimerWorker implements Runnable {
                 actuallySendTimers++;
             }
             for (int deviceId : deviceIds) {
-                session.sendToApps(HARDWARE, TIMER_MSG_ID, deviceId, value);
+                session.sendToApps(HARDWARE, TIMER_MSG_ID, value, deviceId);
             }
         }
     }

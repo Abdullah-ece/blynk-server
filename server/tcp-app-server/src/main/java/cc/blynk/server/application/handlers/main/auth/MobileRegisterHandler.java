@@ -89,7 +89,7 @@ public class MobileRegisterHandler extends SimpleChannelInboundHandler<RegisterM
 
         log.info("Registered {}.", email);
 
-        userDao.createProjectForExportedApp(timerWorker, newUser, appName, message.id);
+        userDao.createProjectForExportedApp(timerWorker, newUser, appName);
 
         ctx.pipeline().remove(this);
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());

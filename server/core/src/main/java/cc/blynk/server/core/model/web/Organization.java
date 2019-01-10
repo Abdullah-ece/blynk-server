@@ -396,6 +396,15 @@ public class Organization {
         this.lastModifiedTs = System.currentTimeMillis();
     }
 
+    public Product getProductByIdOrParentId(int productId) {
+        for (Product product : this.products) {
+            if (product.id == productId || product.parentId == productId) {
+                return product;
+            }
+        }
+        return null;
+    }
+
     @Override
     public String toString() {
         return JsonParser.toJson(this);

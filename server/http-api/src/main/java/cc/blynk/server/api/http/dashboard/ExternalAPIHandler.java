@@ -26,6 +26,7 @@ import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.storage.value.PinStorageValue;
 import cc.blynk.server.core.model.storage.value.SinglePinStorageValue;
 import cc.blynk.server.core.model.web.Organization;
+import cc.blynk.server.core.model.web.product.events.Event;
 import cc.blynk.server.core.processors.RuleEngineProcessor;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.db.ReportingDBManager;
@@ -105,7 +106,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
             return (badRequest("Product not exists for device."));
         }
 
-        var event = product.findEventByCode(eventCode.hashCode());
+        Event event = product.findEventByCode(eventCode.hashCode());
 
         if (event == null) {
             log.error("Event with code {} not found in product {}.", eventCode, product.id);
@@ -128,9 +129,11 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
             }
         });
 
-        String finalDesc = event.getDescription(desc);
-        notificationsDao.sendLogEventEmails(device, event, finalDesc);
-        notificationsDao.sendLogEventPushNotifications(device, event, finalDesc);
+        if (event.isNotificationsEnabled) {
+            String finalDesc = event.getDescription(desc);
+            notificationsDao.sendLogEventEmails(device, event, finalDesc);
+            notificationsDao.sendLogEventPushNotifications(device, event, finalDesc);
+        }
 
         return null;
     }
@@ -320,7 +323,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
 
         Session session = sessionDao.getOrgSession(tokenValue.orgId);
         session.sendToApps(SET_WIDGET_PROPERTY, 111,
-                deviceId, "" + pin + BODY_SEPARATOR + property + BODY_SEPARATOR + values[0]);
+                "" + pin + BODY_SEPARATOR + property + BODY_SEPARATOR + values[0], deviceId);
         return ok();
     }
 
@@ -380,12 +383,13 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
 
         Device device = deviceDao.getByIdOrThrow(deviceId);
 
-        reportingDiskDao.process(device, pin, pinType, pinValue, now);
+        double parsedValue = NumberUtil.parseDouble(pinValue);
+        reportingDiskDao.process(device, pin, pinType, parsedValue, now);
         String prev = device.updateValue(pin, pinType, pinValue, now);
         String body = DataStream.makeHardwareBody(pinType, pin, pinValue);
 
         Organization org = organizationDao.getOrgByIdOrThrow(tokenValue.orgId);
-        ruleEngineProcessor.process(org, device, pin, pinType, prev, pinValue);
+        ruleEngineProcessor.process(org, device, pin, pinType, prev, parsedValue, pinValue);
 
         Session session = sessionDao.getOrgSession(tokenValue.orgId);
         if (session == null) {
@@ -394,7 +398,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
         }
 
         session.sendMessageToHardware(HARDWARE, 111, body, deviceId);
-        session.sendToApps(HARDWARE, 111, deviceId, body);
+        session.sendToApps(HARDWARE, 111, body, deviceId);
         session.sendToSelectedDeviceOnWeb(HARDWARE, 111, body, deviceId);
 
         return ok();

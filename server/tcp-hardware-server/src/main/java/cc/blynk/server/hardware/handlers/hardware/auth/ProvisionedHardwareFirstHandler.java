@@ -115,7 +115,7 @@ public class ProvisionedHardwareFirstHandler extends SimpleChannelInboundHandler
                             product = org.getFirstProduct();
                             log.warn("No templateId {} in products for deviceId {}. "
                                             + "Getting first product (id={}) for provisioned device.",
-                                    device.id, templateId, product.id);
+                                    templateId, device.id, product.id);
                         }
                     }
 
@@ -127,7 +127,7 @@ public class ProvisionedHardwareFirstHandler extends SimpleChannelInboundHandler
                     log.info("Provisioning new deviceId {}, productId {}, templId {}.",
                             device.id, product.id, templateId);
                     device.productId = product.id;
-                    device.hardwareInfo = hardwareInfo;
+                    device.setHardwareInfo(hardwareInfo);
 
                     holder.organizationDao.assignToOrgAndAddDevice(org, device);
                     MetaField[] metaFields = device.metaFields;

@@ -82,7 +82,7 @@ public final class WebAppOwnControlHardwareLogic implements PermissionBasedLogic
 
         Channel channel = ctx.channel();
         //sending to shared dashes and master-master apps
-        session.sendToApps(DEVICE_SYNC, message.id, deviceId, split[1]);
+        session.sendToApps(DEVICE_SYNC, message.id, split[1], deviceId);
         session.sendToSelectedDeviceOnWeb(channel, DEVICE_SYNC, message.id, split[1], deviceId);
 
         if (session.sendMessageToHardware(HARDWARE, message.id, split[1], deviceId)) {

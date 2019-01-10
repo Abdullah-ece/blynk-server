@@ -231,22 +231,16 @@ public class ReportingDiskDao implements Closeable {
         log.debug("Deleting {}{} pin data for deviceId {}.", pinType.pintTypeChar, pin, deviceId);
         String userReportingDir = getDeviceFolderPath(deviceId).toString();
 
-        for (GraphGranularityType reportGranularity : GraphGranularityType.values()) {
+        for (GraphGranularityType reportGranularity : GraphGranularityType.getValues()) {
             Path userDataFile = Paths.get(userReportingDir, generateFilename(pinType, pin, reportGranularity));
             FileUtils.deleteQuietly(userDataFile);
         }
     }
 
-    public void process(Device device, short pin, PinType pinType, String value, long ts) {
-        try {
-            double doubleVal = NumberUtil.parseDouble(value);
-            //not a number, nothing to aggregate
-            if (doubleVal != NumberUtil.NO_RESULT) {
-                process(device, pin, pinType, ts, doubleVal);
-            }
-        } catch (Exception e) {
-            //just in case
-            log.trace("Error collecting reporting entry.");
+    public void process(Device device, short pin, PinType pinType, double doubleVal, long ts) {
+        //not a number, nothing to aggregate
+        if (doubleVal != NumberUtil.NO_RESULT) {
+            process(device, pin, pinType, ts, doubleVal);
         }
     }
 

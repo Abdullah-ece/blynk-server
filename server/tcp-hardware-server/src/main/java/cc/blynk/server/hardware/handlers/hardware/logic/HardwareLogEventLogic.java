@@ -6,6 +6,7 @@ import cc.blynk.server.core.dao.NotificationsDao;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.auth.Session;
+import cc.blynk.server.core.model.web.product.events.Event;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.db.ReportingDBManager;
@@ -65,7 +66,7 @@ public class HardwareLogEventLogic {
         }
 
         var eventCode = splitBody[0];
-        var event = product.findEventByCode(eventCode.hashCode());
+        Event event = product.findEventByCode(eventCode.hashCode());
 
         if (event == null) {
             log.error("Event with code {} not found in product {}.", eventCode, product.id);
@@ -90,9 +91,11 @@ public class HardwareLogEventLogic {
             }
         });
 
-        String finalDesc = event.getDescription(desc);
-        notificationsDao.sendLogEventEmails(device, event, finalDesc);
-        notificationsDao.sendLogEventPushNotifications(device, event, finalDesc);
+        if (event.isNotificationsEnabled) {
+            String finalDesc = event.getDescription(desc);
+            notificationsDao.sendLogEventEmails(device, event, finalDesc);
+            notificationsDao.sendLogEventPushNotifications(device, event, finalDesc);
+        }
     }
 
 }

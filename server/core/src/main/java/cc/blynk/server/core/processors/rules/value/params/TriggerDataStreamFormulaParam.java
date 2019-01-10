@@ -8,7 +8,7 @@ import cc.blynk.server.core.model.web.Organization;
  * Created by Dmitriy Dumanskiy.
  * Created on 27.12.18.
  */
-public class SameDataStreamFormulaParam extends FormulaParamBase {
+public class TriggerDataStreamFormulaParam extends FormulaParamBase {
 
     @Override
     public boolean isValid() {

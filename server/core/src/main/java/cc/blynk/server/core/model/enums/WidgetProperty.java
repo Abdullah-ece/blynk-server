@@ -31,6 +31,8 @@ public enum WidgetProperty {
     SORT_TPYE("sortType");
 
     public final String label;
+    //cached value for values field to avoid allocations
+    private static final WidgetProperty[] values = values();
 
     WidgetProperty(String label) {
         this.label = label;
@@ -90,5 +92,9 @@ public enum WidgetProperty {
     @Override
     public String toString() {
         return label;
+    }
+
+    public static WidgetProperty[] getValues() {
+        return values;
     }
 }

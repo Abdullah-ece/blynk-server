@@ -26,7 +26,7 @@ public final class PinStorage {
     void removePinValue(PinType pinType, short pin, boolean removeProperties) {
         this.values.remove(new DeviceStorageKey(pin, pinType));
         if (removeProperties) {
-            for (WidgetProperty widgetProperty : WidgetProperty.values()) {
+            for (WidgetProperty widgetProperty : WidgetProperty.getValues()) {
                 values.remove(new DevicePropertyStorageKey(pinType, pin, widgetProperty));
             }
         }

@@ -92,7 +92,7 @@ public class Holder {
 
     public final NotificationsDao notificationsDao;
 
-    public final RuleEngineProcessor ruleEngineProcessor = new RuleEngineProcessor();
+    public final RuleEngineProcessor ruleEngineProcessor;
 
     public Holder(ServerProperties serverProperties, MailProperties mailProperties,
                   SmsProperties smsProperties, GCMProperties gcmProperties,
@@ -168,6 +168,7 @@ public class Holder {
         String contactEmail = serverProperties.getProperty("contact.email", mailProperties.getSMTPUsername());
         this.sslContextHolder = new SslContextHolder(props, contactEmail);
         this.tokensPool = new TokensPool(serverProperties.getReportingFolder());
+        this.ruleEngineProcessor = new RuleEngineProcessor(this.sessionDao);
     }
 
     //for tests only
@@ -228,6 +229,7 @@ public class Holder {
 
         this.sslContextHolder = new SslContextHolder(props, "test@blynk.cc");
         this.tokensPool = new TokensPool(serverProperties.getReportingFolder());
+        this.ruleEngineProcessor = new RuleEngineProcessor(this.sessionDao);
     }
 
     private static void disableNettyLeakDetector() {
