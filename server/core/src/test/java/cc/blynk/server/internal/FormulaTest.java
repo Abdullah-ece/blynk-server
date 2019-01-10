@@ -39,7 +39,7 @@ public class FormulaTest {
         DeviceRuleDataStream sourceDataStream = new DeviceRuleDataStream(product2, product2SourcePin, PinType.VIRTUAL);
         FormulaValue formulaValue = new FormulaValue(
                 "x - y",
-                Map.of("x", new SameDataStreamFormulaParam(),
+                Map.of("x", new TriggerDataStreamFormulaParam(),
                        "y", new BackDeviceReferenceFormulaParam(sourceDataStream))
         );
         SetDataStreamAction setNumberPinAction = new SetDataStreamAction(setValueDataStream, formulaValue);

@@ -16,18 +16,19 @@ import org.apache.logging.log4j.Logger;
  * Created by Dmitriy Dumanskiy.
  * Created on 27.12.18.
  */
-public class DeviceDataStreamFormulaParam extends FormulaParamBase {
+public class TriggerDeviceDataStreamFormulaParam extends FormulaParamBase {
 
-    private static final Logger log = LogManager.getLogger(DeviceDataStreamFormulaParam.class);
+    private static final Logger log = LogManager.getLogger(TriggerDeviceDataStreamFormulaParam.class);
 
     public final DeviceRuleDataStream targetDataStream;
 
     @JsonCreator
-    public DeviceDataStreamFormulaParam(@JsonProperty("targetDataStream") DeviceRuleDataStream targetDataStream) {
+    public TriggerDeviceDataStreamFormulaParam(@JsonProperty("targetDataStream")
+                                                           DeviceRuleDataStream targetDataStream) {
         this.targetDataStream = targetDataStream;
     }
 
-    public DeviceDataStreamFormulaParam(int productId, short pin) {
+    public TriggerDeviceDataStreamFormulaParam(int productId, short pin) {
         this(new ProductRuleDataStream(productId, pin, PinType.VIRTUAL));
     }
 
@@ -40,7 +41,7 @@ public class DeviceDataStreamFormulaParam extends FormulaParamBase {
     public String resolve(Organization org, Device device, String triggerValue) {
         PinStorageValue pinStorageValue = device.getValue(targetDataStream);
         if (pinStorageValue == null) {
-            log.trace("Error processing DeviceDataStreamFormulaParam. No value for {}.", targetDataStream);
+            log.trace("Error processing TriggerDeviceDataStreamFormulaParam. No value for {}.", targetDataStream);
             return null;
         }
         return pinStorageValue.lastValue();
@@ -48,7 +49,7 @@ public class DeviceDataStreamFormulaParam extends FormulaParamBase {
 
     @Override
     public String toString() {
-        return "DeviceDataStreamFormulaParam{"
+        return "TriggerDeviceDataStreamFormulaParam{"
                 + "targetDataStream=" + targetDataStream
                 + '}';
     }

@@ -21,9 +21,9 @@ import cc.blynk.server.core.processors.rules.datastream.ProductRuleDataStream;
 import cc.blynk.server.core.processors.rules.triggers.ProductDataStreamTrigger;
 import cc.blynk.server.core.processors.rules.value.FormulaValue;
 import cc.blynk.server.core.processors.rules.value.params.BackDeviceReferenceFormulaParam;
-import cc.blynk.server.core.processors.rules.value.params.DeviceDataStreamFormulaParam;
 import cc.blynk.server.core.processors.rules.value.params.DeviceReferenceFormulaParam;
-import cc.blynk.server.core.processors.rules.value.params.SameDataStreamFormulaParam;
+import cc.blynk.server.core.processors.rules.value.params.TriggerDataStreamFormulaParam;
+import cc.blynk.server.core.processors.rules.value.params.TriggerDeviceDataStreamFormulaParam;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPut;
@@ -76,7 +76,7 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         TriggerChangedCondition numberUpdatedCondition = new TriggerChangedCondition();
         FormulaValue formulaValue = new FormulaValue(
                 "x - avgForReferences(y)",
-                Map.of("x", new SameDataStreamFormulaParam(),
+                Map.of("x", new TriggerDataStreamFormulaParam(),
                        "y", new BackDeviceReferenceFormulaParam(1, fanSourcePin))
         );
 
@@ -195,7 +195,7 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         TriggerChangedCondition numberUpdatedCondition = new TriggerChangedCondition();
         FormulaValue formulaValue = new FormulaValue(
                 "x - avgForReferences(y)",
-                Map.of("x", new SameDataStreamFormulaParam(),
+                Map.of("x", new TriggerDataStreamFormulaParam(),
                         "y", new BackDeviceReferenceFormulaParam(fanProductFromApi.id, fanSourcePin))
         );
         DeviceRuleDataStream[] actionDataStreams = new DeviceRuleDataStream[] {
@@ -287,7 +287,7 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         TriggerChangedCondition numberUpdatedCondition = new TriggerChangedCondition();
         FormulaValue formulaValue = new FormulaValue(
                 "x - avgForReferences(y)",
-                Map.of("x", new SameDataStreamFormulaParam(),
+                Map.of("x", new TriggerDataStreamFormulaParam(),
                        "y", new BackDeviceReferenceFormulaParam(fanProductFromApi.id, fanSourcePin))
         );
         DeviceRuleDataStream[] actionDataStreams = new DeviceRuleDataStream[] {
@@ -383,7 +383,7 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         TriggerChangedCondition numberUpdatedCondition = new TriggerChangedCondition();
         FormulaValue formulaValue = new FormulaValue(
                 "x - avgForReferences(y)",
-                Map.of("x", new SameDataStreamFormulaParam(),
+                Map.of("x", new TriggerDataStreamFormulaParam(),
                         "y", new BackDeviceReferenceFormulaParam(fanProductFromApi.id, fanSourcePin))
         );
         DeviceRuleDataStream[] actionDataStreams = new DeviceRuleDataStream[] {
@@ -502,7 +502,7 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         TriggerChangedCondition numberUpdatedCondition = new TriggerChangedCondition();
         FormulaValue formulaValue = new FormulaValue(
                 "x - avgForReferences(y)",
-                Map.of("x", new SameDataStreamFormulaParam(),
+                Map.of("x", new TriggerDataStreamFormulaParam(),
                        "y", new BackDeviceReferenceFormulaParam(fanProductFromApi.id, fanSourcePin))
         );
         DeviceRuleDataStream[] actionDataStreams = new DeviceRuleDataStream[] {
@@ -519,7 +519,7 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         FormulaValue formulaValue2 = new FormulaValue(
                 "x - y",
                 Map.of("x", new DeviceReferenceFormulaParam(floorProductFromApi.id, floorSourcePin),
-                       "y", new SameDataStreamFormulaParam())
+                       "y", new TriggerDataStreamFormulaParam())
         );
         DeviceRuleDataStream[] facActionDataStreams = new DeviceRuleDataStream[] {
                 new DeviceRuleDataStream(fanTargetPin, PinType.VIRTUAL)
@@ -646,7 +646,7 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         TriggerChangedCondition numberUpdatedCondition = new TriggerChangedCondition();
         FormulaValue formulaValue = new FormulaValue(
                 "x - avgForReferences(y)",
-                Map.of("x", new DeviceDataStreamFormulaParam(floorProductFromApi.id, floorSourcePin),
+                Map.of("x", new TriggerDeviceDataStreamFormulaParam(floorProductFromApi.id, floorSourcePin),
                        "y", new BackDeviceReferenceFormulaParam(fanProductFromApi.id, fanSourcePin))
         );
         DeviceRuleDataStream[] actionDataStreams = new DeviceRuleDataStream[] {
@@ -666,7 +666,7 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         FormulaValue formulaValue2 = new FormulaValue(
                 "x - y",
                 Map.of("x", new DeviceReferenceFormulaParam(floorProductFromApi.id, floorSourcePin),
-                       "y", new DeviceDataStreamFormulaParam(fanProductFromApi.id, fanSourcePin))
+                       "y", new TriggerDeviceDataStreamFormulaParam(fanProductFromApi.id, fanSourcePin))
         );
         DeviceRuleDataStream[] facActionDataStreams = new DeviceRuleDataStream[] {
                 new DeviceRuleDataStream(fanTargetPin, PinType.VIRTUAL)
@@ -786,17 +786,18 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         short fanSourcePin = 1;
         short fanTargetPin = 2;
 
-        //if floorProduct.v1 updated setPin floorProduct.v2 = x - y;
+        //if floorProduct.v1 or fanProduct.v1 changed setPin trigger.v2 = x - y;
         //x = floorProduct.v1;
         //y = back_refefence_for_floorProduct
         ProductDataStreamTrigger[] triggers = new ProductDataStreamTrigger[] {
-                new ProductDataStreamTrigger(floorProductFromApi.id, floorSourcePin)
+                new ProductDataStreamTrigger(floorProductFromApi.id, floorSourcePin),
+                new ProductDataStreamTrigger(fanProductFromApi.id, fanSourcePin)
         };
-        TriggerChangedCondition numberUpdatedCondition = new TriggerChangedCondition();
+        TriggerChangedCondition valueChangedCondition = new TriggerChangedCondition();
         FormulaValue formulaValue = new FormulaValue(
                 "x - avgForReferences(y)",
-                Map.of("x", new DeviceDataStreamFormulaParam(floorProductFromApi.id, floorSourcePin),
-                        "y", new BackDeviceReferenceFormulaParam(fanProductFromApi.id, fanSourcePin))
+                Map.of("x", new TriggerDeviceDataStreamFormulaParam(floorProductFromApi.id, floorSourcePin),
+                       "y", new BackDeviceReferenceFormulaParam(fanProductFromApi.id, fanSourcePin))
         );
 
         DeviceRuleDataStream[] actionDataStreams = new DeviceRuleDataStream[] {
@@ -805,7 +806,7 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         BaseAction[] setDeviceDataStreamAction = new BaseAction[] {
                 new SetDataStreamAction(actionDataStreams, formulaValue)
         };
-        Rule rule1 = new Rule("Airius rule for floor", triggers, numberUpdatedCondition, setDeviceDataStreamAction);
+        Rule rule1 = new Rule("Airius rule for floor", triggers, valueChangedCondition, setDeviceDataStreamAction);
 
 
         ProductDataStreamTrigger[] triggers2 = new ProductDataStreamTrigger[] {
@@ -815,7 +816,7 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         FormulaValue formulaValue2 = new FormulaValue(
                 "x - y",
                 Map.of("x", new DeviceReferenceFormulaParam(floorProductFromApi.id, floorSourcePin),
-                        "y", new DeviceDataStreamFormulaParam(fanProductFromApi.id, fanSourcePin))
+                        "y", new TriggerDeviceDataStreamFormulaParam(fanProductFromApi.id, fanSourcePin))
         );
         DeviceRuleDataStream[] facActionDataStreams = new DeviceRuleDataStream[] {
                 new DeviceRuleDataStream(fanTargetPin, PinType.VIRTUAL)
@@ -963,7 +964,7 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         TriggerChangedCondition numberUpdatedCondition = new TriggerChangedCondition();
         FormulaValue formulaValue = new FormulaValue(
                 "x - avgForReferences(y)",
-                Map.of("x", new SameDataStreamFormulaParam(),
+                Map.of("x", new TriggerDataStreamFormulaParam(),
                        "y", new BackDeviceReferenceFormulaParam(fanProductFromApi.id, fanSourcePin))
         );
         DeviceRuleDataStream[] actionDataStreams = new DeviceRuleDataStream[] {
@@ -1067,11 +1068,12 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         TriggerChangedCondition numberUpdatedCondition = new TriggerChangedCondition();
         FormulaValue formulaValue = new FormulaValue(
                 "x - avgForReferences(y)",
-                Map.of("x", new DeviceDataStreamFormulaParam(floorProductId, floorSourcePin),
-                        "y", new BackDeviceReferenceFormulaParam(fanProductId, fanSourcePin))
+                Map.of("x", new TriggerDeviceDataStreamFormulaParam(floorProductId, floorSourcePin),
+                       "y", new BackDeviceReferenceFormulaParam(fanProductId, fanSourcePin))
         );
         DeviceRuleDataStream[] actionDataStreams = new DeviceRuleDataStream[] {
-                new DeviceRuleDataStream(floorTargetPin, PinType.VIRTUAL)
+                new DeviceRuleDataStream(floorTargetPin, PinType.VIRTUAL),
+                new ProductRuleDataStream(fanProductId, fanTargetPin, PinType.VIRTUAL)
         };
         BaseAction[] setDeviceDataStreamAction = new BaseAction[] {
                 new SetDataStreamAction(actionDataStreams, formulaValue)
@@ -1087,7 +1089,7 @@ public class RuleEngineTest extends SingleServerInstancePerTestWithDBAndNewOrg {
         FormulaValue formulaValue2 = new FormulaValue(
                 "x - y",
                 Map.of("x", new DeviceReferenceFormulaParam(floorProductId, floorSourcePin),
-                        "y", new DeviceDataStreamFormulaParam(fanProductId, fanSourcePin))
+                        "y", new TriggerDeviceDataStreamFormulaParam(fanProductId, fanSourcePin))
         );
         DeviceRuleDataStream[] facActionDataStreams = new DeviceRuleDataStream[] {
                 new DeviceRuleDataStream(fanTargetPin, PinType.VIRTUAL)

@@ -14,8 +14,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         use = JsonTypeInfo.Id.NAME,
         property = "type")
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = SameDataStreamFormulaParam.class, name = "SAME_STREAM_PARAM"),
-        @JsonSubTypes.Type(value = DeviceDataStreamFormulaParam.class, name = "DEVICE_STREAM_PARAM"),
+        @JsonSubTypes.Type(value = TriggerDataStreamFormulaParam.class, name = "TRIGGER_STREAM_PARAM"),
+        @JsonSubTypes.Type(value = TriggerDeviceDataStreamFormulaParam.class, name = "TRIGGER_DEVICE_STREAM_PARAM"),
         @JsonSubTypes.Type(value = DeviceReferenceFormulaParam.class, name = "DEVICE_REFERENCE_PARAM"),
         @JsonSubTypes.Type(value = BackDeviceReferenceFormulaParam.class, name = "BACK_DEVICE_REFERENCE_PARAM")
 })

@@ -32,15 +32,6 @@ public class DeviceReferenceFormulaParam extends FormulaParamBase {
         this(new ProductRuleDataStream(productId, pin, PinType.VIRTUAL));
     }
 
-    private static Product findProductById(Product[] products, int productId) {
-        for (Product product : products) {
-            if (product.id == productId || product.parentId == productId) {
-                return product;
-            }
-        }
-        return null;
-    }
-
     //todo this method is real bottleneck
     //we need to refactor it and use cache for referenced devices
     //otherwise we do iteration over all org devices
