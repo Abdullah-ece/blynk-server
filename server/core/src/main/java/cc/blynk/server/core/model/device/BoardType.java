@@ -54,6 +54,7 @@ public enum BoardType {
     RedBearLab_BLE_Nano("RedBearLab BLE Nano"),
     RedBear_Duo("RedBear Duo"),
     TI_CC3200_LaunchXL("TI CC3200-LaunchXL"),
+    TI_CC3220("TI CC3220"),
     Digistump_Oak("Digistump Oak"),
     Seeed_Wio_Link("Seeed Wio Link"),
     TI_Tiva_C_Connected("TI Tiva C Connected"),

@@ -515,6 +515,11 @@ public class Device implements Target {
         return false;
     }
 
+    public void setHardwareInfo(HardwareInfo hardwareInfo) {
+        this.hardwareInfo = hardwareInfo;
+        this.updatedAt = System.currentTimeMillis();
+    }
+
     @Override
     public String toString() {
         return JsonParser.toJson(this);

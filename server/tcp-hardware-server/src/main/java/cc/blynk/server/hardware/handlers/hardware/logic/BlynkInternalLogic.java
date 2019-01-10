@@ -149,7 +149,7 @@ public final class BlynkInternalLogic {
                 templateId = product.getFirstTemplateId();
                 hardwareInfo.templateId = templateId;
             }
-            device.hardwareInfo = hardwareInfo;
+            device.setHardwareInfo(hardwareInfo);
         }
 
         ctx.writeAndFlush(ok(msgId), ctx.voidPromise());

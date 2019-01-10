@@ -127,7 +127,7 @@ public class ProvisionedHardwareFirstHandler extends SimpleChannelInboundHandler
                     log.info("Provisioning new deviceId {}, productId {}, templId {}.",
                             device.id, product.id, templateId);
                     device.productId = product.id;
-                    device.hardwareInfo = hardwareInfo;
+                    device.setHardwareInfo(hardwareInfo);
 
                     holder.organizationDao.assignToOrgAndAddDevice(org, device);
                     MetaField[] metaFields = device.metaFields;
