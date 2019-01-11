@@ -3,8 +3,13 @@ package cc.blynk.integration.web;
 import cc.blynk.integration.SingleServerInstancePerTestWithDBAndNewOrg;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
+import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.auth.App;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.auth.UserStatus;
 import cc.blynk.server.core.model.dto.OrganizationDTO;
+import cc.blynk.server.core.model.enums.ProvisionType;
+import cc.blynk.server.core.model.enums.Theme;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.protocol.enums.Response;
 import cc.blynk.utils.SHA256Util;
@@ -141,6 +146,103 @@ public class InvitationAPIWebsocketTest extends SingleServerInstancePerTestWithD
         appWebSocketClient.verifyResult(webJson(1, "Invitation expired or was used already."));
 
         newHttpClient.close();
+    }
+
+    //https://github.com/blynkkk/dash/issues/2010
+    @Test
+    public void invitationFlowViaResetPassBackdoor() throws Exception {
+        //Step 1. Create minimal project with 1 widget.
+        TestAppClient appClient = new TestAppClient(properties);
+        appClient.start();
+        appClient.login("super@blynk.cc", "1");
+        appClient.verifyResult(ok(1));
+        DashBoard dashBoard = new DashBoard();
+        dashBoard.id = 0;
+        dashBoard.name = "123";
+        appClient.createDash(dashBoard);
+        appClient.verifyResult(ok(2));
+
+        DashBoard childDash = new DashBoard();
+        childDash.id = 123;
+        childDash.name = "Test";
+        childDash.isPreview = true;
+        appClient.createDash(childDash);
+        appClient.verifyResult(ok(3));
+
+        App app = new App(null, Theme.BlynkLight,
+                ProvisionType.DYNAMIC,
+                0, false, "My app", null, new int[] {childDash.id});
+        appClient.createApp(app);
+        appClient.stop();
+
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+        String email = "test@gmail.com";
+        client.inviteUser(orgId, email, "Dmitriy", 3);
+        client.verifyResult(ok(1));
+
+        ArgumentCaptor<String> bodyArgumentCapture = ArgumentCaptor.forClass(String.class);
+        verify(holder.mailWrapper, timeout(1000).times(1)).sendHtml(eq(email),
+                eq("Invitation to Blynk Inc. dashboard."), bodyArgumentCapture.capture());
+        String body = bodyArgumentCapture.getValue();
+
+        String token = body.substring(body.indexOf("token=") + 6, body.indexOf("&"));
+        assertEquals(32, token.length());
+
+        verify(holder.mailWrapper).sendHtml(eq(email),
+                eq("Invitation to Blynk Inc. dashboard."), contains("/dashboard/invite?token="));
+
+        HttpGet inviteGet = new HttpGet("https://localhost:" + properties.getHttpsPort() + "/dashboard" + "/invite?token=" + token);
+
+        //we don't need cookie from initial login here
+        CloseableHttpClient newHttpClient = getDefaultHttpsClient();
+
+        try (CloseableHttpResponse response = newHttpClient.execute(inviteGet)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+
+        AppWebSocketClient anonym = defaultClient();
+        anonym.start();
+        anonym.resetPass("start", email, "Blynk");
+        anonym.verifyResult(ok(1));
+
+        bodyArgumentCapture = ArgumentCaptor.forClass(String.class);
+        verify(holder.mailWrapper, timeout(1000).times(1)).sendHtml(eq(email), eq("Reset your Blynk Inc. Dashboard password"), bodyArgumentCapture.capture());
+        body = bodyArgumentCapture.getValue();
+
+        token = body.substring(body.indexOf("token=") + 6, body.indexOf("&"));
+        assertEquals(32, token.length());
+
+        verify(holder.mailWrapper).sendHtml(eq(email), eq("Reset your Blynk Inc. Dashboard password"), contains("/dashboard" + "/resetPass?token="));
+
+        inviteGet = new HttpGet("https://localhost:" + properties.getHttpsPort() + "/dashboard" + "/resetPass?token=" + token);
+
+        //we don't need cookie from initial login here
+        newHttpClient = getDefaultHttpsClient();
+
+        try (CloseableHttpResponse response = newHttpClient.execute(inviteGet)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        client = defaultClient();
+        client.start();
+
+        String hash = SHA256Util.makeHash("123", email);
+        client.resetPassReset(token, hash);
+        client.verifyResult(ok(1));
+
+        client.login(email, "123");
+        client.verifyResult(ok(2));
+        client.getAccount();
+        User user = client.parseAccount(3);
+        assertNotNull(user);
+        assertEquals(email, user.email);
+        assertEquals(UserStatus.Active, user.status);
+
+        User daoUser =  holder.userDao.getByName(email);
+        assertNotNull(daoUser.profile.dashBoards);
+        assertEquals(1, daoUser.profile.dashBoards.length);
+        assertEquals("Test", daoUser.profile.dashBoards[0].name);
     }
 
     @Test
