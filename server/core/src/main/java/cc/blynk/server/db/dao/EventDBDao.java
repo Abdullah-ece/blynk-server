@@ -83,7 +83,7 @@ public class EventDBDao {
                 while (rs.next()) {
                     LogEventCountKey logEvent = new LogEventCountKey(
                             rs.getInt("device_id"),
-                            EventType.values()[rs.getInt("type")],
+                            EventType.getValues()[rs.getInt("type")],
                             false
                     );
                     events.put(logEvent, rs.getInt("count"));
@@ -110,7 +110,7 @@ public class EventDBDao {
                 while (rs.next()) {
                     LogEventCountKey logEvent = new LogEventCountKey(
                             deviceId,
-                            EventType.values()[rs.getInt("type")],
+                            EventType.getValues()[rs.getInt("type")],
                             rs.getBoolean("is_resolved")
                     );
                     events.put(logEvent, rs.getInt("count"));
@@ -235,7 +235,7 @@ public class EventDBDao {
         return new LogEvent(
                 rs.getInt("id"),
                 rs.getInt("device_id"),
-                EventType.values()[rs.getInt("type")],
+                EventType.getValues()[rs.getInt("type")],
                 rs.getTimestamp("ts", UTC_CALENDAR).getTime(),
                 rs.getInt("event_hashcode"),
                 rs.getString("description"),
