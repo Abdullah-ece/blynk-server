@@ -8,7 +8,7 @@ import cc.blynk.server.application.handlers.main.logic.MobileAddPushLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileLogoutLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.MobileGetOrgDevicesLogic;
 import cc.blynk.server.application.handlers.main.logic.graph.MobileDeleteDeviceDataLogic;
-import cc.blynk.server.application.handlers.main.logic.graph.MobileGetEnhancedGraphDataLogic;
+import cc.blynk.server.application.handlers.main.logic.graph.MobileGetSuperChartDataLogic;
 import cc.blynk.server.application.handlers.sharing.auth.MobileShareStateHolder;
 import cc.blynk.server.application.handlers.sharing.logic.MobileShareHardwareLogic;
 import cc.blynk.server.common.JsonBasedSimpleChannelInboundHandler;
@@ -62,7 +62,7 @@ public class MobileShareHandler extends JsonBasedSimpleChannelInboundHandler<Str
                 MobileAddPushLogic.messageReceived(ctx, state, msg);
                 break;
             case GET_SUPERCHART_DATA:
-                MobileGetEnhancedGraphDataLogic.messageReceived(holder, ctx, state, msg);
+                MobileGetSuperChartDataLogic.messageReceived(holder, ctx, state, msg);
                 break;
             case MOBILE_GET_DEVICES:
                 mobileGetOrgDevicesLogic.messageReceived(ctx, state, msg);

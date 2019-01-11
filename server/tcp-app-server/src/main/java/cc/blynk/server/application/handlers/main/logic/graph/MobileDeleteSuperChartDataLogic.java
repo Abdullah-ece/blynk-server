@@ -27,11 +27,11 @@ import static cc.blynk.utils.StringUtils.split2Device;
  * Created on 2/1/2015.
  *
  */
-public final class MobileDeleteEnhancedGraphDataLogic {
+public final class MobileDeleteSuperChartDataLogic {
 
-    private static final Logger log = LogManager.getLogger(MobileDeleteEnhancedGraphDataLogic.class);
+    private static final Logger log = LogManager.getLogger(MobileDeleteSuperChartDataLogic.class);
 
-    private MobileDeleteEnhancedGraphDataLogic() {
+    private MobileDeleteSuperChartDataLogic() {
     }
 
     public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
@@ -63,15 +63,15 @@ public final class MobileDeleteEnhancedGraphDataLogic {
         Superchart enhancedHistoryGraph = (Superchart) widget;
 
         if (streamIndex == -1 || streamIndex > enhancedHistoryGraph.dataStreams.length - 1) {
-            delete(holder, ctx.channel(), message.id, user, dash, targetId, enhancedHistoryGraph.dataStreams);
+            delete(holder, ctx.channel(), message.id, dash, targetId, enhancedHistoryGraph.dataStreams);
         } else {
             delete(holder, ctx.channel(),
-                    message.id, user, dash, targetId, enhancedHistoryGraph.dataStreams[streamIndex]);
+                    message.id, dash, targetId, enhancedHistoryGraph.dataStreams[streamIndex]);
         }
     }
 
     private static void delete(Holder holder, Channel channel, int msgId,
-                               User user, DashBoard dash, int targetId, GraphDataStream... dataStreams) {
+                               DashBoard dash, int targetId, GraphDataStream... dataStreams) {
         holder.blockingIOProcessor.executeHistory(() -> {
             try {
                 for (GraphDataStream graphDataStream : dataStreams) {

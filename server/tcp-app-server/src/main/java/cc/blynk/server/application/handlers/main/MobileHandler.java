@@ -45,8 +45,8 @@ import cc.blynk.server.application.handlers.main.logic.face.MobileMailQRsLogic;
 import cc.blynk.server.application.handlers.main.logic.face.MobileUpdateAppLogic;
 import cc.blynk.server.application.handlers.main.logic.face.MobileUpdateFaceLogic;
 import cc.blynk.server.application.handlers.main.logic.graph.MobileDeleteDeviceDataLogic;
-import cc.blynk.server.application.handlers.main.logic.graph.MobileDeleteEnhancedGraphDataLogic;
-import cc.blynk.server.application.handlers.main.logic.graph.MobileGetEnhancedGraphDataLogic;
+import cc.blynk.server.application.handlers.main.logic.graph.MobileDeleteSuperChartDataLogic;
+import cc.blynk.server.application.handlers.main.logic.graph.MobileGetSuperChartDataLogic;
 import cc.blynk.server.application.handlers.main.logic.reporting.MobileCreateReportLogic;
 import cc.blynk.server.application.handlers.main.logic.reporting.MobileDeleteReportLogic;
 import cc.blynk.server.application.handlers.main.logic.reporting.MobileExportReportLogic;
@@ -196,10 +196,10 @@ public class MobileHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
                 break;
 
             case GET_SUPERCHART_DATA :
-                MobileGetEnhancedGraphDataLogic.messageReceived(holder, ctx, state, msg);
+                MobileGetSuperChartDataLogic.messageReceived(holder, ctx, state, msg);
                 break;
             case MOBILE_DELETE_ENHANCED_GRAPH_DATA :
-                MobileDeleteEnhancedGraphDataLogic.messageReceived(holder, ctx, state.user, msg);
+                MobileDeleteSuperChartDataLogic.messageReceived(holder, ctx, state.user, msg);
                 break;
             case PING :
                 PingLogic.messageReceived(ctx, msg.id);

@@ -36,11 +36,11 @@ import static cc.blynk.utils.StringUtils.split2Device;
  * Created on 2/1/2015.
  *
  */
-public final class MobileGetEnhancedGraphDataLogic {
+public final class MobileGetSuperChartDataLogic {
 
-    private static final Logger log = LogManager.getLogger(MobileGetEnhancedGraphDataLogic.class);
+    private static final Logger log = LogManager.getLogger(MobileGetSuperChartDataLogic.class);
 
-    private MobileGetEnhancedGraphDataLogic() {
+    private MobileGetSuperChartDataLogic() {
     }
 
     public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
