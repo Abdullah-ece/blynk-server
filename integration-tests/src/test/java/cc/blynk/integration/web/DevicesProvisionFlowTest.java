@@ -1029,7 +1029,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
                 1,
                 "Temp is super high",
                 "This is my description",
-                false,
+                true,
                 "temp_is_high" ,
                 null,
                 new EventReceiver[] {
