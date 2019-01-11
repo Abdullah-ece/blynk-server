@@ -73,10 +73,6 @@ public final class Command {
     public static final short MOBILE_DELETE_DEVICE = 44;
     public static final short MOBILE_GET_DEVICES = 45;
 
-    public static final short MOBILE_CREATE_TAG = 46;
-    public static final short MOBILE_EDIT_TAG = 47;
-    public static final short MOBILE_DELETE_TAG = 48;
-    public static final short MOBILE_GET_TAGS = 49;
     public static final short MOBILE_GET_DEVICE = 50;
 
     public static final short MOBILE_EDIT_FACE = 51;

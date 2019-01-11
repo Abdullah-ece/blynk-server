@@ -6,7 +6,6 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DashboardSettings;
 import cc.blynk.server.core.model.auth.App;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.dto.DeviceDTO;
 import cc.blynk.server.core.model.profile.Profile;
 import cc.blynk.server.core.model.profile.ProfileSettings;
@@ -41,7 +40,6 @@ import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_APP;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_REPORT;
-import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_TAG;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_TILE_TEMPLATE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DEACTIVATE_DASHBOARD;
@@ -57,7 +55,6 @@ import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_DEVICE_MET
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_PROFILE_SETTINGS;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_PROJECT_SETTINGS;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_REPORT;
-import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_TAG;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_TILE_TEMPLATE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EXPORT_REPORT;
@@ -136,10 +133,6 @@ public class TestAppClient extends BaseTestAppClient {
         return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), DeviceDTO[].class);
     }
 
-    public Tag[] parseTags(int expectedMessageOrder) throws Exception {
-        return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), Tag[].class);
-    }
-
     public App parseApp(int expectedMessageOrder) throws Exception {
         return JsonParser.parseApp(getBody(expectedMessageOrder), 0);
     }
@@ -175,14 +168,6 @@ public class TestAppClient extends BaseTestAppClient {
                 );
             }
         };
-    }
-
-    public void createTag(int dashId, Tag tag) {
-        send(MOBILE_CREATE_TAG, "" + dashId + BODY_SEPARATOR + tag.toString());
-    }
-
-    public void updateTag(int dashId, Tag tag) {
-        send(MOBILE_EDIT_TAG, "" + dashId + BODY_SEPARATOR + tag.toString());
     }
 
     public void createDevice(Device device) {

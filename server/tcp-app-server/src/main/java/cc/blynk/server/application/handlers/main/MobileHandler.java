@@ -32,10 +32,6 @@ import cc.blynk.server.application.handlers.main.logic.dashboard.device.MobileGe
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.MobileGetOrgDevicesLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.MobileUpdateDeviceLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.MobileUpdateDeviceMetafieldLogic;
-import cc.blynk.server.application.handlers.main.logic.dashboard.tags.MobileCreateTagLogic;
-import cc.blynk.server.application.handlers.main.logic.dashboard.tags.MobileDeleteTagLogic;
-import cc.blynk.server.application.handlers.main.logic.dashboard.tags.MobileGetTagsLogic;
-import cc.blynk.server.application.handlers.main.logic.dashboard.tags.MobileUpdateTagLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.MobileCreateWidgetLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.MobileDeleteWidgetLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.MobileGetWidgetLogic;
@@ -88,7 +84,6 @@ import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_APP;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_REPORT;
-import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_TAG;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_TILE_TEMPLATE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DEACTIVATE_DASHBOARD;
@@ -98,7 +93,6 @@ import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_DEVICE_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_ENHANCED_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_REPORT;
-import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_TAG;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_TILE_TEMPLATE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_APP;
@@ -109,7 +103,6 @@ import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_FACE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_PROFILE_SETTINGS;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_PROJECT_SETTINGS;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_REPORT;
-import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_TAG;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_TILE_TEMPLATE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EXPORT_REPORT;
@@ -119,7 +112,6 @@ import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICES_BY_
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICE_TIMELINE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_ENERGY;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_PROVISION_TOKEN;
-import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_TAGS;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_LOAD_PROFILE_GZIPPED;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_RESOLVE_DEVICE_TIMELINE;
@@ -298,19 +290,6 @@ public class MobileHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
                 break;
             case MOBILE_GET_DEVICE :
                 MobileGetDeviceLogic.messageReceived(holder, ctx, msg);
-                break;
-
-            case MOBILE_CREATE_TAG :
-                MobileCreateTagLogic.messageReceived(ctx, state.user, msg);
-                break;
-            case MOBILE_EDIT_TAG :
-                MobileUpdateTagLogic.messageReceived(ctx, state.user, msg);
-                break;
-            case MOBILE_DELETE_TAG :
-                MobileDeleteTagLogic.messageReceived(ctx, state.user, msg);
-                break;
-            case MOBILE_GET_TAGS :
-                MobileGetTagsLogic.messageReceived(ctx, state.user, msg);
                 break;
 
             case DEVICE_SYNC :

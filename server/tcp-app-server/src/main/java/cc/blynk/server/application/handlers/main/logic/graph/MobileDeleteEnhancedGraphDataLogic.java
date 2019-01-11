@@ -4,7 +4,6 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
@@ -78,10 +77,8 @@ public final class MobileDeleteEnhancedGraphDataLogic {
                 for (GraphDataStream graphDataStream : dataStreams) {
                     Target target;
                     int targetIdUpdated = graphDataStream.getTargetId(targetId);
-                    if (targetIdUpdated < Tag.START_TAG_ID) {
+                    if (targetIdUpdated < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
                         target = holder.deviceDao.getById(targetIdUpdated);
-                    } else if (targetIdUpdated < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
-                        target = user.profile.getTagById(targetIdUpdated);
                     } else {
                         target = dash.getDeviceSelector(targetIdUpdated);
                     }

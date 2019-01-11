@@ -8,7 +8,6 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Timer;
@@ -271,10 +270,8 @@ public class TimerWorker implements Runnable {
             } else {
                 Target target;
                 int targetId = key.deviceId;
-                if (targetId < Tag.START_TAG_ID) {
+                if (targetId < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
                     target = deviceDao.getById(targetId);
-                } else if (targetId < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
-                    target = user.profile.getTagById(targetId);
                 } else {
                     //means widget assigned to device selector widget.
                     target = dash.getDeviceSelector(targetId);

@@ -3,7 +3,6 @@ package cc.blynk.server.application.handlers.main.logic.graph;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.profile.Profile;
 import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.Widget;
@@ -99,10 +98,8 @@ public final class MobileGetEnhancedGraphDataLogic {
             //special case, for device tiles widget targetID may be overrided
             Target target;
             int targetIdUpdated = graphDataStream.getTargetId(targetId);
-            if (targetIdUpdated < Tag.START_TAG_ID) {
+            if (targetIdUpdated < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
                 target = holder.deviceDao.getById(targetIdUpdated);
-            } else if (targetIdUpdated < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
-                target = profile.getTagById(targetIdUpdated);
             } else {
                 target = dash.getDeviceSelector(targetIdUpdated);
             }

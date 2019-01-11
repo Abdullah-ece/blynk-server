@@ -8,7 +8,6 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
-import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.controls.Terminal;
 import cc.blynk.server.core.model.widgets.outputs.ValueDisplay;
@@ -35,7 +34,6 @@ import java.nio.file.Paths;
 import static cc.blynk.integration.TestUtil.appSync;
 import static cc.blynk.integration.TestUtil.b;
 import static cc.blynk.integration.TestUtil.createDevice;
-import static cc.blynk.integration.TestUtil.createTag;
 import static cc.blynk.integration.TestUtil.deviceConnected;
 import static cc.blynk.integration.TestUtil.hardware;
 import static cc.blynk.integration.TestUtil.ok;
@@ -253,47 +251,6 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
 
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, DEVICE_NOT_IN_NETWORK)));
-    }
-
-    @Test
-    public void testTagWorks() throws Exception {
-        Tag tag = new Tag(100_000, "My New Tag");
-        tag.deviceIds = new int[] {1};
-
-        clientPair.appClient.createTag(1, tag);
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(createTag(1, tag)));
-
-        clientPair.appClient.createWidget(1, "{\"id\":188, \"width\":1, \"height\":1, \"deviceId\":100000, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":33, \"value\":1}");
-        clientPair.appClient.verifyResult(ok(2));
-
-        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
-
-        clientPair.appClient.createDevice(device1);
-        Device device = clientPair.appClient.parseDevice(3);
-        assertNotNull(device);
-        assertNotNull(device.token);
-        clientPair.appClient.verifyResult(createDevice(3, device));
-
-        TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
-        hardClient2.start();
-
-        hardClient2.login(device.token);
-        hardClient2.verifyResult(ok(1));
-
-        clientPair.appClient.reset();
-
-        clientPair.appClient.send("hardware 1-100000 dw 33 1");
-        verify(clientPair.hardwareClient.responseMock, timeout(500).times(0)).channelRead(any(), eq(new HardwareMessage(3, b("dw 33 10"))));
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("dw 33 1"))));
-
-        tag.deviceIds = new int[] {0, 1};
-
-        clientPair.appClient.updateTag(1, tag);
-        clientPair.appClient.verifyResult(ok(2));
-
-        clientPair.appClient.send("hardware 1-100000 dw 33 10");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(3, b("dw 33 10"))));
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(3, b("dw 33 10"))));
     }
 
     @Test
@@ -626,52 +583,6 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
 
         assertFalse(holder.deviceDao.getDeviceTokenValue(device1.token) instanceof ProvisionTokenValue);
         assertFalse(holder.deviceDao.clearTemporaryTokens());
-    }
-
-    @Test
-    public void testCorrectRemovalForTags() throws Exception {
-        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
-
-        clientPair.appClient.createDevice(device1);
-        Device device = clientPair.appClient.parseDevice();
-        assertNotNull(device);
-        assertNotNull(device.token);
-        clientPair.appClient.verifyResult(createDevice(1, device));
-
-        Tag tag1 = new Tag(100_001, "tag1");
-        Tag tag2 = new Tag(100_002, "tag2", new int[] {0});
-        Tag tag3 = new Tag(100_003, "tag3", new int[] {1});
-        Tag tag4 = new Tag(100_004, "tag4", new int[] {0, 1});
-
-        clientPair.appClient.createTag(1, tag1);
-        clientPair.appClient.createTag(1, tag2);
-        clientPair.appClient.createTag(1, tag3);
-        clientPair.appClient.createTag(1, tag4);
-        clientPair.appClient.verifyResult(createTag(2, tag1));
-        clientPair.appClient.verifyResult(createTag(3, tag2));
-        clientPair.appClient.verifyResult(createTag(4, tag3));
-        clientPair.appClient.verifyResult(createTag(5, tag4));
-
-        clientPair.appClient.deleteDevice(1, 1);
-        clientPair.appClient.verifyResult(ok(6));
-
-        clientPair.appClient.send("getTags 1");
-        Tag[] tags = clientPair.appClient.parseTags(7);
-        assertNotNull(tags);
-
-        assertEquals(100_001, tags[0].id);
-        assertEquals(0, tags[0].deviceIds.length);
-
-        assertEquals(100_002, tags[1].id);
-        assertEquals(1, tags[1].deviceIds.length);
-        assertEquals(0, tags[1].deviceIds[0]);
-
-        assertEquals(100_003, tags[2].id);
-        assertEquals(0, tags[2].deviceIds.length);
-
-        assertEquals(100_004, tags[3].id);
-        assertEquals(1, tags[3].deviceIds.length);
-        assertEquals(0, tags[3].deviceIds[0]);
     }
 
     @Test

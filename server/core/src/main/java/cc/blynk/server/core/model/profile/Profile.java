@@ -5,7 +5,6 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.auth.App;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
@@ -15,13 +14,11 @@ import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
-import cc.blynk.utils.ArrayUtil;
 
 import java.util.Arrays;
 
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_APPS;
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_DASHBOARDS;
-import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_TAGS;
 
 /**
  * User: ddumanskiy
@@ -34,39 +31,10 @@ public class Profile {
 
     public volatile App[] apps = EMPTY_APPS;
 
-    public volatile Tag[] tags = EMPTY_TAGS;
-
     public final ProfileSettings settings = new ProfileSettings();
 
     public void updateSettings(ProfileSettings updatedSettings) {
         this.settings.update(updatedSettings);
-    }
-
-    public void deleteTag(int tagId) {
-        int existingTagIndex = getTagIndexByIdOrThrow(tagId);
-        this.tags = ArrayUtil.remove(this.tags, existingTagIndex, Tag.class);
-    }
-
-    public void addTag(Tag newTag) {
-        this.tags = ArrayUtil.add(this.tags, newTag, Tag.class);
-    }
-
-    private int getTagIndexByIdOrThrow(int id) {
-        for (int i = 0; i < this.tags.length; i++) {
-            if (this.tags[i].id == id) {
-                return i;
-            }
-        }
-        throw new IllegalCommandException("Tag with passed id not found.");
-    }
-
-    public Tag getTagById(int id) {
-        for (Tag tag : this.tags) {
-            if (tag.id == id) {
-                return tag;
-            }
-        }
-        return null;
     }
 
     public void cleanPinStorageForTileTemplate(DeviceDao deviceDao, DashBoard dash, TileTemplate tileTemplate,
@@ -107,10 +75,8 @@ public class Profile {
     private void removePinStorageValue(DeviceDao deviceDao, DashBoard dash, int targetId,
                                        PinType pinType, short pin, boolean removeProperties) {
         Target target;
-        if (targetId < Tag.START_TAG_ID) {
+        if (targetId < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
             target = deviceDao.getById(targetId);
-        } else if (targetId < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
-            target = getTagById(targetId);
         } else {
             //means widget assigned to device selector widget.
             target = dash.getDeviceSelector(targetId);
@@ -166,12 +132,6 @@ public class Profile {
             }
         }
         return null;
-    }
-
-    public void deleteDeviceFromTags(int deviceId) {
-        for (Tag tag : this.tags) {
-            tag.deleteDevice(deviceId);
-        }
     }
 
     @Override

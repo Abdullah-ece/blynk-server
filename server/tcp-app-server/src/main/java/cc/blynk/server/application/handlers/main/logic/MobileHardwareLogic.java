@@ -7,7 +7,6 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.Widget;
@@ -96,10 +95,8 @@ public class MobileHardwareLogic extends BaseProcessorHandler {
 
         //sending message only if widget assigned to device or tag has assigned devices
         Target target = null;
-        if (targetId < Tag.START_TAG_ID) {
+        if (targetId < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
             target = deviceDao.getById(targetId);
-        } else if (targetId < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
-            target = user.profile.getTagById(targetId);
         }
         //else {
             //means widget assigned to device selector widget.

@@ -12,7 +12,6 @@ import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.dto.ProductDTO;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.SortOrder;
@@ -208,10 +207,6 @@ public final class TestUtil {
 
     public static StringMessage deviceOffline(int msgId, int deviceId) {
         return new StringMessage(msgId, DEVICE_DISCONNECTED, String.valueOf(deviceId));
-    }
-
-    public static StringMessage createTag(int msgId, Tag tag) {
-        return createTag(msgId, tag.toString());
     }
 
     public static StringMessage createTag(int msgId, String body) {

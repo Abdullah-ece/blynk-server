@@ -6,7 +6,6 @@ import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.profile.Profile;
 import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.Widget;
@@ -108,10 +107,8 @@ public class HistoryGraphUnusedPinDataCleanerWorker implements Runnable {
                 if (deviceIds == null) {
                     Target target;
                     int targetId = graphDataStream.targetId;
-                    if (targetId < Tag.START_TAG_ID) {
+                    if (targetId < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
                         target = deviceDao.getById(targetId);
-                    } else if (targetId < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
-                        target = profile.getTagById(targetId);
                     } else {
                         //means widget assigned to device selector widget.
                         target = dash.getDeviceSelector(targetId);

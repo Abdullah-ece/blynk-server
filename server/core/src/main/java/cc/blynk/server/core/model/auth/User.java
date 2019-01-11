@@ -184,7 +184,6 @@ public class User {
         for (DashBoard dash : profile.dashBoards) {
             dash.eraseWidgetValuesForDevice(deviceId);
         }
-        profile.deleteDeviceFromTags(deviceId);
     }
 
     @Override
