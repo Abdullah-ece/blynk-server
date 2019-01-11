@@ -17,7 +17,7 @@ import cc.blynk.server.core.model.web.product.events.Event;
 import cc.blynk.server.core.model.web.product.events.OfflineEvent;
 import cc.blynk.server.core.model.web.product.events.OnlineEvent;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.db.model.LogEvent;
+import cc.blynk.server.db.dao.descriptor.LogEventDTO;
 import cc.blynk.utils.StringUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -27,6 +27,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 
 import static cc.blynk.integration.APIBaseTest.createContactMeta;
@@ -50,10 +54,8 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.after;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
 
 /**
  * The Blynk Project.
@@ -90,7 +92,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         assertEquals(1, timeLineResponse.totalCritical);
         assertEquals(0, timeLineResponse.totalWarning);
         assertEquals(0, timeLineResponse.totalResolved);
-        List<LogEvent> logEvents = timeLineResponse.eventList;
+        List<LogEventDTO> logEvents = timeLineResponse.eventList;
         assertNotNull(timeLineResponse.eventList);
         assertEquals(1, logEvents.size());
         assertEquals(device.id, logEvents.get(0).deviceId);
@@ -121,7 +123,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         assertEquals(1, timeLineResponse.totalCritical);
         assertEquals(0, timeLineResponse.totalWarning);
         assertEquals(0, timeLineResponse.totalResolved);
-        List<LogEvent> logEvents = timeLineResponse.eventList;
+        List<LogEventDTO> logEvents = timeLineResponse.eventList;
         assertNotNull(timeLineResponse.eventList);
         assertEquals(1, logEvents.size());
         assertEquals(device.id, logEvents.get(0).deviceId);
@@ -174,7 +176,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
                 1,
                 "Temp is super high",
                 "This is my description",
-                true,
+                false,
                 "temp_is_high" ,
                 new EventReceiver[] {
                         new EventReceiver(6, MetadataType.Contact, "Farm of Smith"),
@@ -188,7 +190,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
                 2,
                 "Device is online!",
                 null,
-                true,
+                false,
                 new EventReceiver[] {
                         new EventReceiver(6, MetadataType.Contact, "Farm of Smith")
                 },
@@ -200,7 +202,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
                 3,
                 "Device is offline!",
                 null,
-                true,
+                false,
                 new EventReceiver[] {
                         new EventReceiver(6, MetadataType.Contact, "Farm of Smith")
                 },
@@ -209,25 +211,10 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
                 0
         );
 
-        Event neverWorkingEvent = new CriticalEvent(
-                1,
-                "NeverWorkingEvent",
-                "This is my description",
-                false,
-                "never" ,
-                new EventReceiver[] {
-                        new EventReceiver(6, MetadataType.Contact, "Farm of Smith"),
-                        new EventReceiver(7, MetadataType.Text, "Device Owner")
-                },
-                null,
-                null
-        );
-
         product.events = new Event[] {
                 criticalEvent,
                 onlineEvent,
-                offlineEvent,
-                neverWorkingEvent
+                offlineEvent
         };
 
         client.createProduct(product);
@@ -271,17 +258,17 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         assertNotNull(timeLineResponse);
         assertEquals(1, timeLineResponse.totalCritical);
         assertEquals(0, timeLineResponse.totalResolved);
-        List<LogEvent> logEvents = timeLineResponse.eventList;
+        List<LogEventDTO> logEvents = timeLineResponse.eventList;
         assertNotNull(logEvents);
         assertEquals(1, logEvents.size());
 
-        LogEvent logEvent = logEvents.get(0);
-        assertEquals(device.id, logEvent.deviceId);
-        assertEquals(EventType.CRITICAL, logEvent.eventType);
-        assertFalse(logEvent.isResolved);
-        assertEquals("Temp is super high", logEvent.name);
-        assertEquals("This is my description", logEvent.description);
-        logEventId = logEvent.id;
+        LogEventDTO logEventDTO = logEvents.get(0);
+        assertEquals(device.id, logEventDTO.deviceId);
+        assertEquals(EventType.CRITICAL, logEventDTO.eventType);
+        assertFalse(logEventDTO.isResolved);
+        assertEquals("Temp is super high", logEventDTO.name);
+        assertEquals("This is my description", logEventDTO.description);
+        logEventId = logEventDTO.id;
 
         client.resolveEvent(device.id, logEventId, "resolve comment");
         client.verifyResult(ok(2));
@@ -296,14 +283,14 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         assertNotNull(logEvents);
         assertEquals(1, logEvents.size());
 
-        logEvent = logEvents.get(0);
-        assertEquals(device.id, logEvent.deviceId);
-        assertEquals(EventType.CRITICAL, logEvent.eventType);
-        assertTrue(logEvent.isResolved);
-        assertEquals("Temp is super high", logEvent.name);
-        assertEquals("This is my description", logEvent.description);
-        assertEquals("resolve comment", logEvent.resolvedComment);
-        assertEquals(logEventId, logEvent.id);
+        logEventDTO = logEvents.get(0);
+        assertEquals(device.id, logEventDTO.deviceId);
+        assertEquals(EventType.CRITICAL, logEventDTO.eventType);
+        assertTrue(logEventDTO.isResolved);
+        assertEquals("Temp is super high", logEventDTO.name);
+        assertEquals("This is my description", logEventDTO.description);
+        assertEquals("resolve comment", logEventDTO.resolvedComment);
+        assertEquals(logEventId, logEventDTO.id);
     }
 
     @Test
@@ -344,11 +331,11 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         client.getTimeline(device.id, EventType.CRITICAL, false, 0, now, 0, 10);
         TimelineResponseDTO timeLineResponse = client.parseTimelineResponse(1);
         assertNotNull(timeLineResponse);
-        List<LogEvent> logEvents = timeLineResponse.eventList;
+        List<LogEventDTO> logEvents = timeLineResponse.eventList;
         assertNotNull(logEvents);
         assertEquals(1, logEvents.size());
-        LogEvent logEvent = logEvents.get(0);
-        logEventId = logEvent.id;
+        LogEventDTO logEventDTO = logEvents.get(0);
+        logEventId = logEventDTO.id;
 
         AppWebSocketClient client2 = loggedDefaultClient(getUserName(), "1");
         client2.trackDevice(device.id);
@@ -370,14 +357,14 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         assertNotNull(logEvents);
         assertEquals(1, logEvents.size());
 
-        logEvent = logEvents.get(0);
-        assertEquals(device.id, logEvent.deviceId);
-        assertEquals(EventType.CRITICAL, logEvent.eventType);
-        assertTrue(logEvent.isResolved);
-        assertEquals("Temp is super high", logEvent.name);
-        assertEquals("This is my description", logEvent.description);
-        assertEquals("resolve comment", logEvent.resolvedComment);
-        assertEquals(logEventId, logEvent.id);
+        logEventDTO = logEvents.get(0);
+        assertEquals(device.id, logEventDTO.deviceId);
+        assertEquals(EventType.CRITICAL, logEventDTO.eventType);
+        assertTrue(logEventDTO.isResolved);
+        assertEquals("Temp is super high", logEventDTO.name);
+        assertEquals("This is my description", logEventDTO.description);
+        assertEquals("resolve comment", logEventDTO.resolvedComment);
+        assertEquals(logEventId, logEventDTO.id);
     }
 
     @Test
@@ -402,7 +389,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         assertEquals(0, timeLineResponse.totalCritical);
         assertEquals(0, timeLineResponse.totalWarning);
         assertEquals(0, timeLineResponse.totalResolved);
-        List<LogEvent> logEvents = timeLineResponse.eventList;
+        List<LogEventDTO> logEvents = timeLineResponse.eventList;
         assertNotNull(logEvents);
         assertNotNull(logEvents);
         assertEquals(1, logEvents.size());
@@ -432,7 +419,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         assertEquals(1, timeLineResponse.totalCritical);
         assertEquals(0, timeLineResponse.totalWarning);
         assertEquals(0, timeLineResponse.totalResolved);
-        List<LogEvent> logEvents = timeLineResponse.eventList;
+        List<LogEventDTO> logEvents = timeLineResponse.eventList;
         assertNotNull(logEvents);
         assertEquals(1, logEvents.size());
         assertEquals(device.id, logEvents.get(0).deviceId);
@@ -462,7 +449,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         assertEquals(1, timeLineResponse.totalCritical);
         assertEquals(0, timeLineResponse.totalWarning);
         assertEquals(0, timeLineResponse.totalResolved);
-        List<LogEvent> logEvents = timeLineResponse.eventList;
+        List<LogEventDTO> logEvents = timeLineResponse.eventList;
         assertNotNull(logEvents);
         assertEquals(1, logEvents.size());
         assertEquals(device.id, logEvents.get(0).deviceId);
@@ -473,40 +460,6 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
 
         verify(holder.mailWrapper, timeout(1000)).sendHtml(eq("dmitriy@blynk.cc"), eq("My New Device: Temp is super high"), contains("Temp is super high"));
         verify(holder.mailWrapper, timeout(1000)).sendHtml(eq("owner@blynk.cc"), eq("My New Device: Temp is super high"), contains("Temp is super high"));
-    }
-
-    @Test
-    public void testEmailNotificationNotWorkForTurnedOffEvent() throws Exception {
-        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
-        Device device = createProductAndDevice(client, orgId);
-
-        TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
-        newHardClient.start();
-        newHardClient.login(device.token);
-        newHardClient.verifyResult(ok(1));
-        newHardClient.logEvent("never", "MyNewDescription");
-        newHardClient.verifyResult(ok(2));
-        client.reset();
-
-        client.getTimeline(device.id, EventType.CRITICAL, null, 0, System.currentTimeMillis(), 0, 10);
-        TimelineResponseDTO timeLineResponse = client.parseTimelineResponse(1);
-        assertNotNull(timeLineResponse);
-
-        assertEquals(1, timeLineResponse.totalCritical);
-        assertEquals(0, timeLineResponse.totalWarning);
-        assertEquals(0, timeLineResponse.totalResolved);
-        List<LogEvent> logEvents = timeLineResponse.eventList;
-        assertNotNull(logEvents);
-        assertEquals(1, logEvents.size());
-        assertEquals(device.id, logEvents.get(0).deviceId);
-        assertEquals(EventType.CRITICAL, logEvents.get(0).eventType);
-        assertFalse(logEvents.get(0).isResolved);
-        assertEquals("NeverWorkingEvent", logEvents.get(0).name);
-        assertEquals("MyNewDescription", logEvents.get(0).description);
-
-        verify(holder.mailWrapper, after(500).never()).sendHtml(eq("dmitriy@blynk.cc"), eq("My New Device: NeverWorkingEvent"), contains("NeverWorkingEvent"));
-        verify(holder.mailWrapper, after(500).never()).sendHtml(eq("owner@blynk.cc"), eq("My New Device: NeverWorkingEvent"), contains("NeverWorkingEvent"));
-        verifyZeroInteractions(holder.mailWrapper);
     }
 
     @Test
@@ -536,7 +489,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         assertEquals(1, timeLineResponse.totalCritical);
         assertEquals(0, timeLineResponse.totalWarning);
         assertEquals(0, timeLineResponse.totalResolved);
-        List<LogEvent> logEvents = timeLineResponse.eventList;
+        List<LogEventDTO> logEvents = timeLineResponse.eventList;
         assertNotNull(logEvents);
         assertEquals(1, logEvents.size());
         assertEquals(device.id, logEvents.get(0).deviceId);
@@ -680,7 +633,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         assertEquals(1, timeLineResponse.totalCritical);
         assertEquals(0, timeLineResponse.totalWarning);
         assertEquals(0, timeLineResponse.totalResolved);
-        List<LogEvent> logEvents = timeLineResponse.eventList;
+        List<LogEventDTO> logEvents = timeLineResponse.eventList;
         assertNotNull(logEvents);
         assertEquals(1, logEvents.size());
         assertTrue(logEvents.get(0).id > 1);
@@ -707,6 +660,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
 
         assertEquals(logEventId, oldLogEventId);
         assertTrue(logEvents.get(0).isResolved);
+
         assertEquals(System.currentTimeMillis(), logEvents.get(0).resolvedAt, 5000);
         assertEquals("123", logEvents.get(0).resolvedComment);
 
@@ -749,7 +703,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         assertEquals(3, timeLineResponse.totalCritical);
         assertEquals(0, timeLineResponse.totalWarning);
         assertEquals(0, timeLineResponse.totalResolved);
-        List<LogEvent> logEvents = timeLineResponse.eventList;
+        List<LogEventDTO> logEvents = timeLineResponse.eventList;
         assertNotNull(logEvents);
         assertEquals(3, logEvents.size());
         long logEventId = logEvents.get(2).id;
@@ -793,7 +747,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         assertEquals(0, timeLineResponse.totalCritical);
         assertEquals(0, timeLineResponse.totalWarning);
         assertEquals(0, timeLineResponse.totalResolved);
-        List<LogEvent> logEvents = timeLineResponse.eventList;
+        List<LogEventDTO> logEvents = timeLineResponse.eventList;
         assertNotNull(timeLineResponse.eventList);
         assertEquals(1, logEvents.size());
         assertEquals(device.id, logEvents.get(0).deviceId);
@@ -965,7 +919,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         assertEquals(0, timeLineResponse.totalCritical);
         assertEquals(0, timeLineResponse.totalWarning);
         assertEquals(0, timeLineResponse.totalResolved);
-        List<LogEvent> logEvents = timeLineResponse.eventList;
+        List<LogEventDTO> logEvents = timeLineResponse.eventList;
         assertNotNull(timeLineResponse.eventList);
         assertEquals(4, logEvents.size());
         assertEquals(EventType.OFFLINE, logEvents.get(0).eventType);

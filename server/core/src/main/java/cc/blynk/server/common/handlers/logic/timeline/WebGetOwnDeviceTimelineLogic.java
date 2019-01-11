@@ -13,7 +13,7 @@ import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.mobile.BaseUserStateHolder;
 import cc.blynk.server.db.ReportingDBManager;
-import cc.blynk.server.db.model.LogEvent;
+import cc.blynk.server.db.dao.descriptor.LogEventDTO;
 import cc.blynk.server.db.model.LogEventCountKey;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -41,13 +41,13 @@ public final class WebGetOwnDeviceTimelineLogic implements PermissionBasedLogic<
         this.reportingDBManager = holder.reportingDBManager;
     }
 
-    private static void joinLogEventName(Product product, List<LogEvent> logEvents) {
-        for (LogEvent logEvent : logEvents) {
-            Event templateEvent = product.findEventByCode(logEvent.eventHashcode);
+    private static void joinLogEventName(Product product, List<LogEventDTO> logEvents) {
+        for (LogEventDTO logEventDTO : logEvents) {
+            Event templateEvent = product.findEventByCode(logEventDTO.eventHashcode);
             if (templateEvent == null) {
-                log.warn("Can't find template for event: {}", logEvent);
+                log.warn("Can't find template for event: {}", logEventDTO);
             } else {
-                logEvent.update(templateEvent);
+                logEventDTO.update(templateEvent);
             }
         }
     }
@@ -82,27 +82,9 @@ public final class WebGetOwnDeviceTimelineLogic implements PermissionBasedLogic<
         blockingIOProcessor.executeDB(() -> {
             MessageBase response;
             try {
-                List<LogEvent> eventList;
-                //todo introduce some query builder? jOOQ?
-                if (timelineDTO.eventType == null && timelineDTO.isResolved == null) {
-                    eventList = reportingDBManager.eventDBDao.getEvents(timelineDTO.deviceId,
-                            timelineDTO.from, timelineDTO.to, timelineDTO.offset, timelineDTO.limit);
-                } else {
-                    if (timelineDTO.eventType == null) {
-                        eventList = reportingDBManager.eventDBDao.getEvents(
-                                timelineDTO.deviceId, timelineDTO.from, timelineDTO.to,
-                                timelineDTO.offset, timelineDTO.limit, timelineDTO.isResolved);
-                    } else if (timelineDTO.isResolved == null) {
-                        eventList = reportingDBManager.eventDBDao.getEvents(
-                                timelineDTO.deviceId, timelineDTO.eventType,
-                                timelineDTO.from, timelineDTO.to, timelineDTO.offset, timelineDTO.limit);
-                    } else {
-                        eventList = reportingDBManager.eventDBDao.getEvents(
-                                timelineDTO.deviceId, timelineDTO.eventType, timelineDTO.from,
-                                timelineDTO.to, timelineDTO.offset, timelineDTO.limit,
-                                timelineDTO.isResolved);
-                    }
-                }
+                List<LogEventDTO> eventList;
+
+                eventList = reportingDBManager.eventDBDao.getEvents(timelineDTO);
 
                 reportingDBManager.eventDBDao.upsertLastSeen(timelineDTO.deviceId, user.email);
 

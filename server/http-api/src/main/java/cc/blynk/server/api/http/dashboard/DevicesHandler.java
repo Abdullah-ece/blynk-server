@@ -33,7 +33,7 @@ import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.events.Event;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.db.ReportingDBManager;
-import cc.blynk.server.db.model.LogEvent;
+import cc.blynk.server.db.dao.descriptor.LogEventDTO;
 import cc.blynk.server.db.model.LogEventCountKey;
 import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.http.MediaType;
@@ -294,23 +294,10 @@ public class DevicesHandler extends BaseHttpHandler {
         blockingIOProcessor.executeDB(() -> {
             Response response;
             try {
-                List<LogEvent> eventList;
-                //todo introduce some query builder? jOOQ?
-                if (eventType == null && isResolved == null) {
-                    eventList = reportingDBManager.eventDBDao.getEvents(deviceId, from, to, offset, limit);
-                } else {
-                    if (eventType == null) {
-                        eventList = reportingDBManager.eventDBDao.getEvents(
-                                deviceId, from, to, offset, limit, isResolved);
-                    } else if (isResolved == null) {
-                        eventList = reportingDBManager.eventDBDao.getEvents(
-                                deviceId, eventType, from, to, offset, limit);
-                    } else {
-                        eventList = reportingDBManager.eventDBDao.getEvents(
-                                deviceId, eventType, from, to, offset, limit,
-                                isResolved);
-                    }
-                }
+                List<LogEventDTO> eventList;
+
+                eventList = reportingDBManager.eventDBDao
+                        .getEvents(deviceId, eventType, from, to, offset, limit, isResolved);
 
                 reportingDBManager.eventDBDao.upsertLastSeen(deviceId, user.email);
 
@@ -352,13 +339,13 @@ public class DevicesHandler extends BaseHttpHandler {
         return totalResolved;
     }
 
-    private List<LogEvent> joinLogEventName(Product product, List<LogEvent> logEvents) {
-        for (LogEvent logEvent : logEvents) {
-            Event templateEvent = product.findEventByCode(logEvent.eventHashcode);
+    private List<LogEventDTO> joinLogEventName(Product product, List<LogEventDTO> logEvents) {
+        for (LogEventDTO logEventDTO : logEvents) {
+            Event templateEvent = product.findEventByCode(logEventDTO.eventHashcode);
             if (templateEvent == null) {
-                log.warn("Can't find template for event: {}", logEvent);
+                log.warn("Can't find template for event: {}", logEventDTO);
             } else {
-                logEvent.update(templateEvent);
+                logEventDTO.update(templateEvent);
             }
         }
         return logEvents;

@@ -1,7 +1,9 @@
 package cc.blynk.server.db;
 
+import cc.blynk.server.common.handlers.logic.timeline.TimelineDTO;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.model.web.product.EventType;
+import cc.blynk.server.db.dao.descriptor.LogEventDTO;
 import cc.blynk.server.db.model.LogEvent;
 import cc.blynk.server.db.model.LogEventCountKey;
 import org.junit.AfterClass;
@@ -199,6 +201,26 @@ public class EventLogDBTest {
     }
 
     @Test
+    public void selectBasicQueryForSingleEntryThatIsResolvedWithAnotherMethod() throws Exception {
+        long now = System.currentTimeMillis();
+        String eventCode = "something";
+
+        LogEvent logEvent = new LogEvent(1, 1, EventType.INFORMATION, now, eventCode.hashCode(), null, true, "Pupkin Vasya", 0, null);
+        reportingDBManager.eventDBDao.insert(logEvent);
+
+        TimelineDTO timelineDTO = new TimelineDTO(1, EventType.INFORMATION, true, now, now, 0, 1);
+        List<LogEventDTO> logEvents = reportingDBManager.eventDBDao.getEvents(timelineDTO);
+        assertNotNull(logEvents);
+        assertEquals(1, logEvents.size());
+
+        timelineDTO = new TimelineDTO(1, EventType.INFORMATION, false, now, now, 0, 1);
+
+        logEvents = reportingDBManager.eventDBDao.getEvents(timelineDTO);
+        assertNotNull(logEvents);
+        assertEquals(0, logEvents.size());
+    }
+
+    @Test
     public void selectBasicQueryFor100Entries() throws Exception {
         long now = System.currentTimeMillis();
         String eventCode = "something";
@@ -224,6 +246,113 @@ public class EventLogDBTest {
             }
         }
     }
+
+    @Test
+    public void selectBasicQueryFor100EntriesWithAnotherMethod() throws Exception {
+        long now = System.currentTimeMillis();
+        String eventCode = "something";
+
+
+        for (int i = 0; i < 100; i++) {
+            LogEvent logEvent = new LogEvent(1, EventType.INFORMATION, now++, eventCode.hashCode(), null);
+            reportingDBManager.eventDBDao.insert(logEvent);
+        }
+
+        for (int i = 0; i < 10; i += 10) {
+            List<LogEventDTO> logEvents = reportingDBManager.eventDBDao.getEvents(
+                    new TimelineDTO(1, EventType.INFORMATION, null, now - 100, now, i * 10, 10));
+            assertNotNull(logEvents);
+            assertEquals(10, logEvents.size());
+            for (LogEventDTO logEventDTO : logEvents) {
+                assertEquals(--now, logEventDTO.ts);
+
+                assertEquals(1, logEventDTO.deviceId);
+                assertEquals(EventType.INFORMATION, logEventDTO.eventType);
+                assertEquals(eventCode.hashCode(), logEventDTO.eventHashcode);
+                assertNull(logEventDTO.description);
+                assertFalse(logEventDTO.isResolved);
+            }
+        }
+    }
+
+    @Test
+    public void selectBasicQueryWithNullIsResolved() throws Exception {
+        long now = System.currentTimeMillis();
+        String eventCode = "something";
+
+        LogEvent logEvent = new LogEvent(1, 1, EventType.INFORMATION, now, eventCode.hashCode(), null, true, "Pupkin Vasya", 0, null);
+        reportingDBManager.eventDBDao.insert(logEvent);
+
+        TimelineDTO timelineDTO = new TimelineDTO(1, EventType.INFORMATION, null, now, now, 0, 1);
+        List<LogEventDTO> logEvents = reportingDBManager.eventDBDao.getEvents(timelineDTO);
+        assertNotNull(logEvents);
+        assertEquals(1, logEvents.size());
+
+        timelineDTO = new TimelineDTO(1, EventType.INFORMATION, true, now, now, 0, 1);
+
+        logEvents = reportingDBManager.eventDBDao.getEvents(timelineDTO);
+        assertNotNull(logEvents);
+        assertEquals(1, logEvents.size());
+
+        timelineDTO = new TimelineDTO(1, EventType.INFORMATION, false, now, now, 0, 1);
+
+        logEvents = reportingDBManager.eventDBDao.getEvents(timelineDTO);
+        assertNotNull(logEvents);
+        assertEquals(0, logEvents.size());
+    }
+
+    @Test
+    public void selectBasicQueryWithNullEventType() throws Exception {
+        long now = System.currentTimeMillis();
+        String eventCode = "something";
+
+        LogEvent logEvent = new LogEvent(1, 1, EventType.INFORMATION, now, eventCode.hashCode(), null, true, "Pupkin Vasya", 0, null);
+        reportingDBManager.eventDBDao.insert(logEvent);
+
+        TimelineDTO timelineDTO = new TimelineDTO(1, null, true, now, now, 0, 1);
+        List<LogEventDTO> logEvents = reportingDBManager.eventDBDao.getEvents(timelineDTO);
+        assertNotNull(logEvents);
+        assertEquals(1, logEvents.size());
+
+        timelineDTO = new TimelineDTO(1, EventType.INFORMATION, true, now, now, 0, 1);
+
+        logEvents = reportingDBManager.eventDBDao.getEvents(timelineDTO);
+        assertNotNull(logEvents);
+        assertEquals(1, logEvents.size());
+
+        timelineDTO = new TimelineDTO(1, EventType.WARNING, true, now, now, 0, 1);
+
+        logEvents = reportingDBManager.eventDBDao.getEvents(timelineDTO);
+        assertNotNull(logEvents);
+        assertEquals(0, logEvents.size());
+    }
+
+    @Test
+    public void selectBasicQueryWithNullEventTypeAndIsResolved() throws Exception {
+        long now = System.currentTimeMillis();
+        String eventCode = "something";
+
+        LogEvent logEvent = new LogEvent(1, 1, EventType.INFORMATION, now, eventCode.hashCode(), null, true, "Pupkin Vasya", 0, null);
+        reportingDBManager.eventDBDao.insert(logEvent);
+
+        TimelineDTO timelineDTO = new TimelineDTO(1, null, null, now, now, 0, 1);
+        List<LogEventDTO> logEvents = reportingDBManager.eventDBDao.getEvents(timelineDTO);
+        assertNotNull(logEvents);
+        assertEquals(1, logEvents.size());
+
+        timelineDTO = new TimelineDTO(1, null, null, now, now, 0, 1);
+
+        logEvents = reportingDBManager.eventDBDao.getEvents(timelineDTO);
+        assertNotNull(logEvents);
+        assertEquals(1, logEvents.size());
+
+        timelineDTO = new TimelineDTO(1, EventType.WARNING, false, now, now, 0, 1);
+
+        logEvents = reportingDBManager.eventDBDao.getEvents(timelineDTO);
+        assertNotNull(logEvents);
+        assertEquals(0, logEvents.size());
+    }
+
 
     @Test
     public void selectEventsSinceLastView() throws Exception {
