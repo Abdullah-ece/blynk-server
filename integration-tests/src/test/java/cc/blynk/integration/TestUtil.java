@@ -87,7 +87,6 @@ import static cc.blynk.server.core.protocol.enums.Command.DEVICE_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_CLONE_CODE;
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_DEVICE;
-import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_TAG;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_PROVISION_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_LOAD_PROFILE_GZIPPED;
 import static cc.blynk.server.core.protocol.enums.Command.OUTDATED_APP_NOTIFICATION;
@@ -207,10 +206,6 @@ public final class TestUtil {
 
     public static StringMessage deviceOffline(int msgId, int deviceId) {
         return new StringMessage(msgId, DEVICE_DISCONNECTED, String.valueOf(deviceId));
-    }
-
-    public static StringMessage createTag(int msgId, String body) {
-        return new StringMessage(msgId, MOBILE_CREATE_TAG, body);
     }
 
     public static StringMessage appIsOutdated(int msgId, String body) {
