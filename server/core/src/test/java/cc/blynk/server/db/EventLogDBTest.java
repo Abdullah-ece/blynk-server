@@ -17,7 +17,6 @@ import java.sql.Statement;
 import java.util.List;
 import java.util.Map;
 
-import static cc.blynk.utils.DateTimeUtils.UTC_CALENDAR;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -66,7 +65,7 @@ public class EventLogDBTest {
             while (rs.next()) {
                 assertEquals(1, rs.getInt("device_id"));
                 assertEquals("test@blynk.cc", rs.getString("email"));
-                ts = rs.getTimestamp("ts", UTC_CALENDAR).getTime();
+                ts = rs.getTimestamp("ts").getTime();
                 assertEquals(System.currentTimeMillis(), ts, 10000);
             }
 
@@ -81,7 +80,7 @@ public class EventLogDBTest {
             while (rs.next()) {
                 assertEquals(1, rs.getInt("device_id"));
                 assertEquals("test@blynk.cc", rs.getString("email"));
-                long newTs = rs.getTimestamp("ts", UTC_CALENDAR).getTime();
+                long newTs = rs.getTimestamp("ts").getTime();
                 assertEquals(System.currentTimeMillis(), newTs, 10000);
                 assertNotEquals(ts, newTs);
             }

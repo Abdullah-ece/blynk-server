@@ -30,8 +30,6 @@ import cc.blynk.server.core.model.web.product.events.Event;
 import cc.blynk.server.core.processors.RuleEngineProcessor;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.db.ReportingDBManager;
-import cc.blynk.server.db.dao.descriptor.TableDataMapper;
-import cc.blynk.server.db.dao.descriptor.TableDescriptor;
 import cc.blynk.utils.NumberUtil;
 import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.http.MediaType;
@@ -41,7 +39,6 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 
 import static cc.blynk.core.http.Response.badRequest;
@@ -361,22 +358,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
             return Response.badRequest("Wrong pin format.");
         }
 
-        TableDescriptor tableDescriptor = TableDescriptor.BLYNK_DEFAULT_INSTANCE;
-        blockingIOProcessor.executeDB(() -> {
-            try {
-                TableDataMapper tableDataMapper = new TableDataMapper(
-                        tableDescriptor,
-                        deviceId, pin, pinType, LocalDateTime.now(),
-                        pinValues);
-                reportingDBManager.reportingDBDao.insertDataPoint(tableDataMapper);
-                ctx.writeAndFlush(ok());
-            } catch (Exception e) {
-                log.error("Error insert record.", e);
-                ctx.writeAndFlush(serverError("Error insert record. " + e.getMessage()));
-            }
-        });
-
-        final long now = System.currentTimeMillis();
+        long now = System.currentTimeMillis();
 
         String pinValue = String.join(StringUtils.BODY_SEPARATOR_STRING,
                 Arrays.copyOf(pinValues, pinValues.length, String[].class));

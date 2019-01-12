@@ -28,7 +28,6 @@ public class DataQueryRequestDTO {
     public final long from;
     public final long to;
 
-    public transient TableDescriptor tableDescriptor;
     public int deviceId;
 
     public DataQueryRequestDTO(AggregationFunctionType sourceType,
@@ -70,7 +69,6 @@ public class DataQueryRequestDTO {
         this.limit = limit;
         this.from = from;
         this.to = to;
-        this.tableDescriptor = TableDescriptor.BLYNK_DEFAULT_INSTANCE;
     }
 
     public void setDeviceId(int deviceId) {

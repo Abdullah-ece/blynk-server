@@ -19,18 +19,18 @@ CREATE INDEX reporting_events_main_idx ON reporting_events (device_id, type, ts)
 CREATE TABLE reporting_events_last_seen (
   device_id int4,
   email text,
-  ts timestamptz default (now() at time zone 'utc'),
+  ts timestamptz default now(),
   PRIMARY KEY(device_id, email)
 );
 
-CREATE TABLE blynk_default (
+CREATE TABLE reporting_device_raw_data (
    device_id int4,
    pin int2,
    pin_type int2,
-   created timestamptz,
+   ts timestamptz,
    value float8
 );
-create index on blynk_default (device_id, pin, pin_type, created);
+create index on reporting_device_raw_data (device_id, pin, pin_type, created);
 
 CREATE TABLE reporting_raw_data (
   device_id int4,

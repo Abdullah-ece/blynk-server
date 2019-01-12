@@ -50,7 +50,7 @@ public class RawDataDBTest {
     @Before
     public void cleanAll() throws Exception {
         //clean everything just in case
-        reportingDBManager.executeSQL("DELETE FROM blynk_default");
+        reportingDBManager.executeSQL("DELETE FROM reporting_device_raw_data");
     }
 
     @Test

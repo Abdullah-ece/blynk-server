@@ -68,7 +68,7 @@ public class EventDBDao {
             + "from reporting_events where ts BETWEEN ? and ? and device_id = ? group by type, is_resolved";
 
     private static final String upsertLastSeen = "INSERT INTO reporting_events_last_seen (device_id, email) "
-            + "VALUES (?, ?) ON CONFLICT (device_id, email) DO UPDATE SET ts = NOW() at time zone 'utc'";
+            + "VALUES (?, ?) ON CONFLICT (device_id, email) DO UPDATE SET ts = NOW()";
 
     private final HikariDataSource ds;
 

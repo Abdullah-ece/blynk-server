@@ -5,3 +5,15 @@ alter table blynk_default alter column created TYPE timestamptz;
 alter table reporting_app_stat_minute alter column ts TYPE timestamptz;
 alter table reporting_app_command_stat_minute alter column ts TYPE timestamptz;
 alter table reporting_http_command_stat_minute alter column ts TYPE timestamptz;
+
+ALTER TABLE blynk_default RENAME COLUMN created to ts;
+ALTER TABLE blynk_default RENAME TO reporting_device_raw_data;
+
+DROP TABLE reporting_events_last_seen;
+CREATE TABLE reporting_events_last_seen (
+  device_id int4,
+  email text,
+  ts timestamptz default now(),
+  PRIMARY KEY(device_id, email)
+);
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO test;

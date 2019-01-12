@@ -20,13 +20,9 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.db.ReportingDBManager;
 import cc.blynk.server.db.dao.descriptor.DataQueryRequestDTO;
-import cc.blynk.server.db.dao.descriptor.TableDataMapper;
-import cc.blynk.server.db.dao.descriptor.TableDescriptor;
 import cc.blynk.utils.NumberUtil;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
-
-import java.time.LocalDateTime;
 
 import static cc.blynk.core.http.Response.badRequest;
 import static cc.blynk.core.http.Response.ok;
@@ -68,14 +64,12 @@ public class DataHandler extends BaseHttpHandler {
 
         PinType pinType = PinType.getPinType(dataStream.charAt(0));
         short pin = NumberUtil.parsePin(dataStream.substring(1));
-
         long ts = (inTs == null ? System.currentTimeMillis() : inTs);
-
-        TableDescriptor descriptor = TableDescriptor.BLYNK_DEFAULT_INSTANCE;
+        double valueParsed = NumberUtil.parseDouble(value);
 
         blockingIOProcessor.executeDB(() -> {
-            reportingDBManager.reportingDBDao.insertDataPoint(new TableDataMapper(
-                    descriptor, deviceId, pin, pinType, LocalDateTime.now(), value));
+            reportingDBManager.reportingDBDao.insertDataPoint(
+                    deviceId, pin, pinType, ts, valueParsed);
             ctx.writeAndFlush(ok(), ctx.voidPromise());
         });
 

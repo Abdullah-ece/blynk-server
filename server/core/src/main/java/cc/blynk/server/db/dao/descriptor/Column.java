@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jooq.Record;
 
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -181,7 +180,7 @@ public class Column {
         }
     }
 
-    public Object get(Record rs) throws SQLException {
+    public Object get(Record rs) {
         return rs.get(columnName);
     }
 
