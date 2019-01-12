@@ -32,17 +32,6 @@ CREATE TABLE reporting_device_raw_data (
 );
 create index on reporting_device_raw_data (device_id, pin, pin_type, created);
 
-CREATE TABLE reporting_raw_data (
-  device_id int4,
-  pin int2,
-  pinType char,
-  ts timestamp,
-  stringValue text,
-  doubleValue float8,
-
-  PRIMARY KEY (device_id, pin, pinType, ts)
-);
-
 CREATE TABLE reporting_average_minute (
   device_id int8,
   pin int2,
