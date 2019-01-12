@@ -1,11 +1,17 @@
 package cc.blynk.server.db.dao;
 
+import cc.blynk.server.common.handlers.logic.timeline.TimelineDTO;
 import cc.blynk.server.core.model.web.product.EventType;
+import cc.blynk.server.db.dao.descriptor.LogEventTableDescriptor;
+import cc.blynk.server.db.dao.descriptor.LogEventDTO;
 import cc.blynk.server.db.model.LogEvent;
 import cc.blynk.server.db.model.LogEventCountKey;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jooq.Condition;
+import org.jooq.DSLContext;
+import org.jooq.impl.DSL;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -17,6 +23,8 @@ import java.util.List;
 import java.util.Map;
 
 import static cc.blynk.utils.DateTimeUtils.UTC_CALENDAR;
+import static org.jooq.SQLDialect.POSTGRES_9_4;
+import static org.jooq.impl.DSL.coalesce;
 
 /**
  * The Blynk Project.
@@ -120,32 +128,43 @@ public class EventDBDao {
             }
         }
 
+
         return events;
     }
 
-    public List<LogEvent> getEvents(int deviceId, EventType eventType, long from, long to,
-                                    int offset, int limit, boolean isResolved) throws Exception {
-        List<LogEvent> events = new ArrayList<>(limit);
+
+    public List<LogEventDTO> getEvents(TimelineDTO timelineDTO) throws Exception {
+        return getEvents(timelineDTO.deviceId, timelineDTO.eventType, timelineDTO.from,
+                timelineDTO.to, timelineDTO.offset, timelineDTO.limit, timelineDTO.isResolved);
+    }
+
+    public List<LogEventDTO> getEvents(int deviceId, EventType eventType, long from, long to,
+                                    int offset, int limit, Boolean isResolved) throws Exception {
+        List<LogEventDTO> events;
 
         try (Connection connection = ds.getConnection();
-             PreparedStatement statement = connection.prepareStatement(selectEventsTypeAndResolvedFilter)) {
+             DSLContext create = DSL.using(connection, POSTGRES_9_4)) {
+            Condition condition = LogEventTableDescriptor.DEVICE_ID.eq(deviceId)
+                    .and(LogEventTableDescriptor.TS
+                            .between(new Timestamp(from))
+                            .and(new Timestamp(to)));
 
-            statement.setInt(1, deviceId);
-            statement.setInt(2, eventType.ordinal());
-            statement.setTimestamp(3, new Timestamp(from), UTC_CALENDAR);
-            statement.setTimestamp(4, new Timestamp(to), UTC_CALENDAR);
-            statement.setBoolean(5, isResolved);
-            statement.setInt(6, offset);
-            statement.setInt(7, limit);
-
-            try (ResultSet rs = statement.executeQuery()) {
-                while (rs.next()) {
-                    LogEvent logEvent = readEvent(rs);
-                    events.add(logEvent);
-                }
-
-                connection.commit();
+            if (eventType  != null) {
+                condition = condition.and(LogEventTableDescriptor.TYPE.eq(eventType.ordinal()));
             }
+            if (isResolved != null) {
+                condition = condition.and(LogEventTableDescriptor.IS_RESOLVED.eq(isResolved));
+            }
+
+            events = create.select()
+                    .from(LogEventTableDescriptor.tableName)
+                    .where(condition)
+                    .orderBy(coalesce(LogEventTableDescriptor.RESOLVED_AT, LogEventTableDescriptor.TS).desc())
+                    .offset(offset)
+                    .limit(limit)
+                    .fetchInto(LogEventDTO.class);
+
+            connection.commit();
         }
 
         return events;

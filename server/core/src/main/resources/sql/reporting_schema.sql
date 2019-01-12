@@ -6,12 +6,12 @@ CREATE TABLE reporting_events (
   id bigserial,
   device_id int4,
   type smallint,
-  ts timestamp without time zone default (now() at time zone 'utc'),
+  ts timestamptz default (now() at time zone 'utc'),
   event_hashcode int4 DEFAULT 0,
   description text,
   is_resolved boolean DEFAULT FALSE,
   resolved_by text,
-  resolved_at timestamp,
+  resolved_at timestamptz,
   resolved_comment text
 );
 CREATE INDEX reporting_events_main_idx ON reporting_events (device_id, type, ts);
@@ -19,7 +19,7 @@ CREATE INDEX reporting_events_main_idx ON reporting_events (device_id, type, ts)
 CREATE TABLE reporting_events_last_seen (
   device_id int4,
   email text,
-  ts timestamp without time zone default (now() at time zone 'utc'),
+  ts timestamptz default (now() at time zone 'utc'),
   PRIMARY KEY(device_id, email)
 );
 
