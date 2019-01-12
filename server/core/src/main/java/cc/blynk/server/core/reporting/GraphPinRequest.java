@@ -9,7 +9,7 @@ import cc.blynk.server.core.model.widgets.outputs.graph.Period;
 import java.util.Arrays;
 
 import static cc.blynk.server.core.model.widgets.outputs.graph.Period.LIVE;
-import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_INTS;
+import static cc.blynk.utils.IntArray.EMPTY_INTS;
 
 /**
  * The Blynk Project.

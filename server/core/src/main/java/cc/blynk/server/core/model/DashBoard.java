@@ -34,7 +34,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_WIDGETS;
+import static cc.blynk.server.core.model.widgets.Widget.EMPTY_WIDGETS;
 
 /**
  * User: ddumanskiy

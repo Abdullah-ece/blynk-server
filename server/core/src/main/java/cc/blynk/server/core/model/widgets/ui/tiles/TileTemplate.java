@@ -12,8 +12,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_INTS;
-import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_WIDGETS;
+import static cc.blynk.server.core.model.widgets.Widget.EMPTY_WIDGETS;
+import static cc.blynk.utils.IntArray.EMPTY_INTS;
 
 /**
  * The Blynk Project.

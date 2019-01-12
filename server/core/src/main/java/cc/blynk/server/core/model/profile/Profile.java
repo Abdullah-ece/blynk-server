@@ -17,15 +17,15 @@ import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 
 import java.util.Arrays;
 
-import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_APPS;
-import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_DASHBOARDS;
-
 /**
  * User: ddumanskiy
  * Date: 21.11.13
  * Time: 13:04
  */
 public class Profile {
+
+    private static final DashBoard[] EMPTY_DASHBOARDS = {};
+    private static final App[] EMPTY_APPS = {};
 
     public volatile DashBoard[] dashBoards = EMPTY_DASHBOARDS;
 

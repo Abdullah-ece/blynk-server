@@ -2,9 +2,9 @@ package cc.blynk.server.core.model.widgets.others.eventor;
 
 import cc.blynk.server.core.model.widgets.others.rtc.StringToZoneId;
 import cc.blynk.server.core.model.widgets.others.rtc.ZoneIdToString;
-import cc.blynk.server.internal.EmptyArraysUtil;
 import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.DateTimeUtils;
+import cc.blynk.utils.IntArray;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -40,7 +40,7 @@ public class TimerTime {
                      @JsonProperty("time") int time,
                      @JsonProperty("tzName") ZoneId tzName) {
         this.id = id;
-        this.days = days == null ? EmptyArraysUtil.EMPTY_INTS : days;
+        this.days = days == null ? IntArray.EMPTY_INTS : days;
         this.time = time;
         this.tzName = tzName;
     }

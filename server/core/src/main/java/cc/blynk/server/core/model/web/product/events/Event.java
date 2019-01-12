@@ -7,8 +7,6 @@ import cc.blynk.utils.CopyObject;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_RECEIVERS;
-
 
 /**
  * The Blynk Project.
@@ -28,6 +26,9 @@ import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_RECEIVERS;
 
 })
 public abstract class Event implements CopyObject<Event> {
+
+    public static final Event[] EMPTY_EVENTS = {};
+    private static final EventReceiver[] EMPTY_RECEIVERS = {};
 
     public final int id;
 

@@ -2,7 +2,6 @@ package cc.blynk.server.db.dao.descriptor;
 
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.db.dao.descriptor.fucntions.ColumnFunction;
-import cc.blynk.server.internal.EmptyArraysUtil;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jooq.Record;
@@ -34,7 +33,7 @@ public class Column {
     public final int type;
     public final MetaDataFormatters formatterTemplate;
     public final ColumnFunction<String, String> filterFunction;
-    public MetaField[] metaFields = EmptyArraysUtil.EMPTY_META_FIELDS;
+    public MetaField[] metaFields = MetaField.EMPTY_META_FIELDS;
 
     @JsonCreator
     public Column(@JsonProperty("label") String label,

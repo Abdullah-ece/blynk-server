@@ -34,7 +34,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicReferenceArray;
 
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
-import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_INTS;
+import static cc.blynk.utils.IntArray.EMPTY_INTS;
 
 /**
  * Timer worker class responsible for triggering all timers at specified time.

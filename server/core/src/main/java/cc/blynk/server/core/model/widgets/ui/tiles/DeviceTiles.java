@@ -19,9 +19,7 @@ import java.util.List;
 
 import static cc.blynk.server.core.protocol.enums.Command.DEVICE_SYNC;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
-import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_DEVICE_TILES;
-import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_INTS;
-import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_TEMPLATES;
+import static cc.blynk.utils.IntArray.EMPTY_INTS;
 import static cc.blynk.utils.StringUtils.prependDeviceId;
 
 /**
@@ -30,6 +28,9 @@ import static cc.blynk.utils.StringUtils.prependDeviceId;
  * Created on 02.10.17.
  */
 public class DeviceTiles extends Widget implements MobileSyncWidget, DeviceCleaner {
+
+    private static final Tile[] EMPTY_DEVICE_TILES = {};
+    private static final TileTemplate[] EMPTY_TEMPLATES = {};
 
     public volatile TileTemplate[] templates = EMPTY_TEMPLATES;
 

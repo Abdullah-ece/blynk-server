@@ -160,6 +160,8 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 })
 public abstract class Widget implements CopyObject<Widget> {
 
+    public static final Widget[] EMPTY_WIDGETS = {};
+
     public long id;
 
     public int x;

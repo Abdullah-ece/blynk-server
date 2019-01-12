@@ -29,9 +29,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_BYTES;
 import static cc.blynk.utils.FileUtils.CSV_DIR;
 import static cc.blynk.utils.FileUtils.SIZE_OF_REPORT_ENTRY;
+import static io.netty.util.internal.EmptyArrays.EMPTY_BYTES;
 
 /**
  * The Blynk Project.

@@ -19,7 +19,7 @@ import cc.blynk.server.core.model.widgets.ui.reporting.source.ReportDataStream;
 import cc.blynk.server.core.model.widgets.ui.reporting.source.ReportSource;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
-import cc.blynk.server.internal.EmptyArraysUtil;
+import cc.blynk.utils.IntArray;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -116,7 +116,7 @@ public class HistoryGraphUnusedPinDataCleanerWorker implements Runnable {
                     if (target != null) {
                         resultIds = target.getAssignedDeviceIds();
                     } else {
-                        resultIds = EmptyArraysUtil.EMPTY_INTS;
+                        resultIds = IntArray.EMPTY_INTS;
                     }
                 } else {
                     resultIds = deviceIds;

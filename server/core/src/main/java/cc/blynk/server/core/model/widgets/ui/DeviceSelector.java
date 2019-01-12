@@ -6,7 +6,7 @@ import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.outputs.graph.FontSize;
 import cc.blynk.utils.ArrayUtil;
 
-import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_INTS;
+import static cc.blynk.utils.IntArray.EMPTY_INTS;
 
 /**
  * The Blynk Project.

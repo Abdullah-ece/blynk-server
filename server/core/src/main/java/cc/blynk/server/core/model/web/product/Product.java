@@ -15,10 +15,9 @@ import cc.blynk.utils.ArrayUtil;
 import java.util.HashSet;
 import java.util.Set;
 
-import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_DATA_STREAMS;
-import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_DEVICES;
-import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_EVENTS;
-import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_META_FIELDS;
+import static cc.blynk.server.core.model.DataStream.EMPTY_DATA_STREAMS;
+import static cc.blynk.server.core.model.web.product.MetaField.EMPTY_META_FIELDS;
+import static cc.blynk.server.core.model.web.product.events.Event.EMPTY_EVENTS;
 
 /**
  * The Blynk Project.
@@ -26,6 +25,9 @@ import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_META_FIELDS;
  * Created on 04.04.17.
  */
 public class Product {
+
+    public static final Product[] EMPTY_PRODUCTS = {};
+    private static final Device[] EMPTY_DEVICES = {};
 
     public int id;
 

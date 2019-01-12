@@ -4,7 +4,7 @@ import cc.blynk.utils.ArrayUtil;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_INTS;
+import static cc.blynk.utils.IntArray.EMPTY_INTS;
 
 /**
  * The Blynk Project.

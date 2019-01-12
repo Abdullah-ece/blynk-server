@@ -4,6 +4,7 @@ import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.TextAlignment;
 
+import static cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream.EMPTY_GRAPH_DATA_STREAMS;
 import static cc.blynk.server.core.model.widgets.outputs.graph.Period.LIVE;
 import static cc.blynk.server.core.model.widgets.outputs.graph.Period.N_DAY;
 import static cc.blynk.server.core.model.widgets.outputs.graph.Period.N_MONTH;
@@ -11,7 +12,6 @@ import static cc.blynk.server.core.model.widgets.outputs.graph.Period.N_THREE_MO
 import static cc.blynk.server.core.model.widgets.outputs.graph.Period.N_WEEK;
 import static cc.blynk.server.core.model.widgets.outputs.graph.Period.ONE_HOUR;
 import static cc.blynk.server.core.model.widgets.outputs.graph.Period.SIX_HOURS;
-import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_GRAPH_DATA_STREAMS;
 
 /**
  * The Blynk Project.

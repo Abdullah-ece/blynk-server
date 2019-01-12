@@ -28,7 +28,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static cc.blynk.server.core.model.device.HardwareInfo.DEFAULT_HARDWARE_BUFFER_SIZE;
-import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_META_FIELDS;
+import static cc.blynk.server.core.model.web.product.MetaField.EMPTY_META_FIELDS;
 import static cc.blynk.utils.ArrayUtil.arrayToList;
 import static cc.blynk.utils.ArrayUtil.concat;
 

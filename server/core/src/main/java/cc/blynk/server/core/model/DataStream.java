@@ -19,6 +19,7 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 public class DataStream implements CopyObject<DataStream> {
 
     public static final int NO_PIN = -1;
+    public static final DataStream[] EMPTY_DATA_STREAMS = {};
 
     public final int id;
 

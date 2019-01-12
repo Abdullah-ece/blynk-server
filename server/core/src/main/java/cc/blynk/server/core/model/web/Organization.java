@@ -18,9 +18,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_INTS;
-import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_PRODUCTS;
+import static cc.blynk.server.core.model.web.product.Product.EMPTY_PRODUCTS;
 import static cc.blynk.utils.ArrayUtil.remove;
+import static cc.blynk.utils.IntArray.EMPTY_INTS;
 
 /**
  * The Blynk Project.
