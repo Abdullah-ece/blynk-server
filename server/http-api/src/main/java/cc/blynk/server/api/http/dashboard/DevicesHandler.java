@@ -294,9 +294,7 @@ public class DevicesHandler extends BaseHttpHandler {
         blockingIOProcessor.executeDB(() -> {
             Response response;
             try {
-                List<LogEventDTO> eventList;
-
-                eventList = reportingDBManager.eventDBDao
+                List<LogEventDTO> eventList = reportingDBManager.eventDBDao
                         .getEvents(deviceId, eventType, from, to, offset, limit, isResolved);
 
                 reportingDBManager.eventDBDao.upsertLastSeen(deviceId, user.email);

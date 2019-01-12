@@ -2,8 +2,8 @@ package cc.blynk.server.db.dao;
 
 import cc.blynk.server.common.handlers.logic.timeline.TimelineDTO;
 import cc.blynk.server.core.model.web.product.EventType;
-import cc.blynk.server.db.dao.descriptor.LogEventTableDescriptor;
 import cc.blynk.server.db.dao.descriptor.LogEventDTO;
+import cc.blynk.server.db.dao.descriptor.LogEventTableDescriptor;
 import cc.blynk.server.db.model.LogEvent;
 import cc.blynk.server.db.model.LogEventCountKey;
 import com.zaxxer.hikari.HikariDataSource;
@@ -132,14 +132,13 @@ public class EventDBDao {
         return events;
     }
 
-
     public List<LogEventDTO> getEvents(TimelineDTO timelineDTO) throws Exception {
         return getEvents(timelineDTO.deviceId, timelineDTO.eventType, timelineDTO.from,
                 timelineDTO.to, timelineDTO.offset, timelineDTO.limit, timelineDTO.isResolved);
     }
 
     public List<LogEventDTO> getEvents(int deviceId, EventType eventType, long from, long to,
-                                    int offset, int limit, Boolean isResolved) throws Exception {
+                                       int offset, int limit, Boolean isResolved) throws Exception {
         List<LogEventDTO> events;
 
         try (Connection connection = ds.getConnection();
@@ -157,7 +156,7 @@ public class EventDBDao {
             }
 
             events = create.select()
-                    .from(LogEventTableDescriptor.tableName)
+                    .from(LogEventTableDescriptor.NAME)
                     .where(condition)
                     .orderBy(coalesce(LogEventTableDescriptor.RESOLVED_AT, LogEventTableDescriptor.TS).desc())
                     .offset(offset)

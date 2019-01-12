@@ -27,10 +27,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Date;
 import java.util.List;
 
 import static cc.blynk.integration.APIBaseTest.createContactMeta;
@@ -176,7 +172,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
                 1,
                 "Temp is super high",
                 "This is my description",
-                false,
+                true,
                 "temp_is_high" ,
                 new EventReceiver[] {
                         new EventReceiver(6, MetadataType.Contact, "Farm of Smith"),
@@ -190,7 +186,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
                 2,
                 "Device is online!",
                 null,
-                false,
+                true,
                 new EventReceiver[] {
                         new EventReceiver(6, MetadataType.Contact, "Farm of Smith")
                 },
@@ -202,7 +198,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
                 3,
                 "Device is offline!",
                 null,
-                false,
+                true,
                 new EventReceiver[] {
                         new EventReceiver(6, MetadataType.Contact, "Farm of Smith")
                 },
@@ -211,10 +207,25 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
                 0
         );
 
+        Event neverWorkingEvent = new CriticalEvent(
+                1,
+                "NeverWorkingEvent",
+                "This is my description",
+                false,
+                "never" ,
+                new EventReceiver[] {
+                        new EventReceiver(6, MetadataType.Contact, "Farm of Smith"),
+                        new EventReceiver(7, MetadataType.Text, "Device Owner")
+                },
+                null,
+                null
+        );
+
         product.events = new Event[] {
                 criticalEvent,
                 onlineEvent,
-                offlineEvent
+                offlineEvent,
+                neverWorkingEvent
         };
 
         client.createProduct(product);
