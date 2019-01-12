@@ -1,7 +1,5 @@
 package cc.blynk.server.db.dao;
 
-import java.sql.Timestamp;
-
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -16,10 +14,6 @@ public class RawEntry {
     public RawEntry(long ts, double value) {
         this.ts = ts;
         this.value = value;
-    }
-
-    public RawEntry(Timestamp ts, double value) {
-        this(ts.getTime(), value);
     }
 
     public long getTs() {

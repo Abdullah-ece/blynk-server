@@ -27,7 +27,7 @@ CREATE TABLE blynk_default (
    device_id int4,
    pin int2,
    pin_type int2,
-   created timestamp,
+   created timestamptz,
    value float8
 );
 create index on blynk_default (device_id, pin, pin_type, created);
@@ -47,7 +47,7 @@ CREATE TABLE reporting_average_minute (
   device_id int8,
   pin int2,
   pin_type int2,
-  ts timestamp with time zone,
+  ts timestamptz,
   value float8,
   PRIMARY KEY (device_id, pin, pin_type, ts)
 );
@@ -56,7 +56,7 @@ CREATE TABLE reporting_average_hourly (
   device_id int8,
   pin int2,
   pin_type int2,
-  ts timestamp with time zone,
+  ts timestamptz,
   value float8,
   PRIMARY KEY (device_id, pin, pin_type, ts)
 );
@@ -65,14 +65,14 @@ CREATE TABLE reporting_average_daily (
   device_id int8,
   pin int2,
   pin_type int2,
-  ts timestamp with time zone,
+  ts timestamptz,
   value float8,
   PRIMARY KEY (device_id, pin, pin_type, ts)
 );
 
 CREATE TABLE reporting_app_stat_minute (
   region text,
-  ts timestamp,
+  ts timestamptz,
   active int4,
   active_week int4,
   active_month int4,
@@ -88,7 +88,7 @@ CREATE TABLE reporting_app_stat_minute (
 
 CREATE TABLE reporting_app_command_stat_minute (
   region text,
-  ts timestamp,
+  ts timestamptz,
   response int4,
   register int4,
   login int4,
@@ -145,7 +145,7 @@ CREATE TABLE reporting_app_command_stat_minute (
 
 CREATE TABLE reporting_http_command_stat_minute (
   region text,
-  ts timestamp,
+  ts timestamptz,
   is_hardware_connected int4,
   is_app_connected int4,
   get_pin_data int4,
