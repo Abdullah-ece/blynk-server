@@ -55,7 +55,7 @@ public class DeviceReferenceFormulaParam extends FormulaParamBase {
             return null;
         }
 
-        int deviceId = (int) deviceReferenceMetaField.selectedDeviceId;
+        int deviceId = deviceReferenceMetaField.selectedDeviceId;
 
         for (Device iterDevice : product.devices) {
             if (iterDevice.id == deviceId) {

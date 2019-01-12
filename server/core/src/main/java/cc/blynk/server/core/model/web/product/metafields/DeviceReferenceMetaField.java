@@ -14,7 +14,7 @@ public class DeviceReferenceMetaField extends MetaField {
 
     public final int[] selectedProductIds;
 
-    public final long selectedDeviceId;
+    public final int selectedDeviceId;
 
     @JsonCreator
     public DeviceReferenceMetaField(@JsonProperty("id") int id,
@@ -25,7 +25,7 @@ public class DeviceReferenceMetaField extends MetaField {
                                     @JsonProperty("isDefault") boolean isDefault,
                                     @JsonProperty("icon") String icon,
                                     @JsonProperty("selectedProductIds") int[] selectedProductIds,
-                                    @JsonProperty("selectedDeviceId") long selectedDeviceId) {
+                                    @JsonProperty("selectedDeviceId") int selectedDeviceId) {
         super(id, name, roleIds, includeInProvision, isMandatory, isDefault, icon);
         this.selectedProductIds = selectedProductIds == null ? IntArray.EMPTY_INTS : selectedProductIds;
         this.selectedDeviceId = selectedDeviceId;
