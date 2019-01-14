@@ -36,29 +36,29 @@ public final class WebDeleteOrganizationLogic implements PermissionBasedLogic<We
 
     @Override
     public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
-        int orgId = Integer.parseInt(message.body);
+        int orgIdForRemoval = Integer.parseInt(message.body);
 
         User user = state.user;
-        if (orgId == OrganizationDao.DEFAULT_ORGANIZATION_ID) {
+        if (orgIdForRemoval == OrganizationDao.DEFAULT_ORGANIZATION_ID) {
             log.error("Delete operation for initial organization (orgId = 1) is not allowed for {}.", user.email);
             ctx.writeAndFlush(json(message.id, "Base organization can't be removed."), ctx.voidPromise());
             return;
         }
 
         if (!user.isSuperAdmin()) {
-            log.error("User {} is not superadmin and tries to delete the org {}.", user.email, orgId);
+            log.error("User {} is not superadmin and tries to delete the org {}.", user.email, orgIdForRemoval);
             ctx.writeAndFlush(json(message.id, "Only superadmin can delete organization."), ctx.voidPromise());
             return;
         }
 
-        Organization orgToDelete = organizationDao.getOrgById(orgId);
+        Organization orgToDelete = organizationDao.getOrgById(orgIdForRemoval);
         if (orgToDelete == null) {
             log.error("Organization for removal for {} not found.", user.email);
             ctx.writeAndFlush(json(message.id, "Organization for removal not found."), ctx.voidPromise());
             return;
         }
 
-        if (organizationDao.hasChilds(orgId)) {
+        if (organizationDao.hasChilds(orgIdForRemoval)) {
             log.error("{} are not allowed to remove organization with sub organizations.", user.email);
             ctx.writeAndFlush(json(message.id,
                     "You are not allowed to remove organization with sub organizations."), ctx.voidPromise());
@@ -73,13 +73,13 @@ public final class WebDeleteOrganizationLogic implements PermissionBasedLogic<We
             return;
         }
 
-        if (!organizationDao.delete(orgId)) {
-            log.error("Wasn't able to remove organization with orgId {} for {}.", orgId, user.email);
+        if (!organizationDao.delete(orgIdForRemoval)) {
+            log.error("Wasn't able to remove organization with orgId {} for {}.", orgIdForRemoval, user.email);
             ctx.writeAndFlush(json(message.id, "Can't delete organization."), ctx.voidPromise());
             return;
         }
 
-        deviceDao.deleteAllTokensForOrg(orgId);
+        deviceDao.deleteAllTokensForOrg(orgIdForRemoval);
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }

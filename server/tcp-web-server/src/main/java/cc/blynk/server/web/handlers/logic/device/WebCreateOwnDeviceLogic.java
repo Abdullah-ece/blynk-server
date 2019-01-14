@@ -48,7 +48,7 @@ public final class WebCreateOwnDeviceLogic implements PermissionBasedLogic<WebAp
 
         User user = state.user;
         int requestedOrgId = Integer.parseInt(split[0]);
-        organizationDao.checkInheritanceAccess(user.email, user.orgId, requestedOrgId);
+        organizationDao.checkInheritanceAccess(user, requestedOrgId);
 
         Device newDevice = JsonParser.parseDevice(split[1], message.id);
 

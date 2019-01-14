@@ -71,7 +71,7 @@ public final class WebTrackDeviceLogic {
         }
 
         //user has access to all devices and subdevices, so we check only he doesn't accesses parent org
-        organizationDao.checkInheritanceAccess(email, user.orgId, requestedDeviceOrd);
+        organizationDao.checkInheritanceAccess(user, requestedDeviceOrd);
 
         state.selectedDeviceId = deviceId;
         log.trace("Selecting webapp device {} for {}.", deviceId, email);

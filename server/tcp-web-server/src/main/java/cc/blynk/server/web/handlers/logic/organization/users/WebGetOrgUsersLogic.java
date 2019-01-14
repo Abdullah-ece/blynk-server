@@ -40,7 +40,7 @@ public final class WebGetOrgUsersLogic implements PermissionBasedLogic<WebAppSta
         int requestedOrgId = Integer.parseInt(message.body);
         User user = state.user;
 
-        organizationDao.checkInheritanceAccess(user.email, user.orgId, requestedOrgId);
+        organizationDao.checkInheritanceAccess(user, requestedOrgId);
 
         if (ctx.channel().isWritable()) {
             List<User> users = userDao.getUsersByOrgId(requestedOrgId, user.email);

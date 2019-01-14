@@ -46,7 +46,7 @@ public final class WebGetOrganizationLogic implements PermissionBasedLogic<WebAp
         } else {
             orgId = Integer.parseInt(message.body);
             User user = state.user;
-            organizationDao.checkInheritanceAccess(user.email, user.orgId, orgId);
+            organizationDao.checkInheritanceAccess(user, orgId);
         }
 
         Organization organization = organizationDao.getOrgByIdOrThrow(orgId);
