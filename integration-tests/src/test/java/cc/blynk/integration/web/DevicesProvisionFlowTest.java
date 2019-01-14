@@ -478,8 +478,6 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         appClient.start();
         appClient.login(getUserName(), "1", "Android", "2.27.1");
         appClient.verifyResult(ok(1));
-        appClient.send("addPushToken " + b("1 uid token"));
-        appClient.verifyResult(ok(2));
         appClient.getDevice(createdDevice.id, true);
         Device device = appClient.parseDevice(2);
         MetaField[] metaFields = device.metaFields;
