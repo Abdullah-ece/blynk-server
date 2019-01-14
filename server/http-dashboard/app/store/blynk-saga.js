@@ -1,10 +1,9 @@
-import { LOCATION_CHANGE } from 'react-router-redux';
+// import { LOCATION_CHANGE } from 'react-router-redux';
 
 import { eventChannel } from 'redux-saga';
 import { put, take, call, fork } from 'redux-saga/effects';
 
 export const INIT_ACTION_TYPE = 'CONNECT';
-export const WS_CLIENT_ENDPOINT = '';
 
 let socket_reconnect_retry = 0;
 const MAX_SOCKET_RETRY = 5;
@@ -13,11 +12,12 @@ const MAX_SOCKET_RETRY = 5;
 
 /* eslint-disable require-yield */
 let socket;
+let endpoint;
 
 function connect() {
   return new Promise((resolve, reject) => {
     try {
-      socket = new WebSocket(WS_CLIENT_ENDPOINT);
+      socket = new WebSocket(endpoint);
       socket.addEventListener('open', () => {
         resolve(socket);
       });
@@ -82,14 +82,13 @@ function* subscribeToSocketEventChannel() {
 
 function* handleInput() {
   while (true) {
-    const action = yield take([
-      LOCATION_CHANGE
-    ]);
-    if (action.type === LOCATION_CHANGE) {
-      socket.send(JSON.stringify(action));
-    } else {
-      socket.send(JSON.stringify(action));
-    }
+    const action = yield take('*');
+    console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAA',action)
+    // if (action.type === LOCATION_CHANGE) {
+    //   socket.send(JSON.stringify(action));
+    // } else {
+    //   socket.send(JSON.stringify(action));
+    // }
   }
 }
 
@@ -108,7 +107,8 @@ function* handleSocket() {
 
 export function* blynkSaga() {
   while (true) {
-    yield take(INIT_ACTION_TYPE);
+    const result = yield take(INIT_ACTION_TYPE);
+    endpoint = result.endpoint;
     yield call(connect);
     yield fork(handleSocket);
   }

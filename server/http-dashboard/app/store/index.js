@@ -1,13 +1,13 @@
-import {createStore, compose, applyMiddleware} from 'redux';
+import { createStore, compose, applyMiddleware } from 'redux';
 import rootReducer from './reducers';
 import axios from 'axios';
 import axiosMiddleware from 'redux-axios-middleware';
-import {responseInterceptor as axiosResponseInterceptor} from './axios';
-import {persistStore, autoRehydrate} from 'redux-persist';
+import { responseInterceptor as axiosResponseInterceptor } from './axios';
+import { persistStore, autoRehydrate } from 'redux-persist';
 import createSagaMiddleware from 'redux-saga';
 
-import {createWsMiddleware} from "store/redux-websocket-middleware";
-import {createBlynkWsMiddleware} from "store/blynk-websocket-middleware";
+import { createWsMiddleware } from "store/redux-websocket-middleware";
+import { createBlynkWsMiddleware } from "store/blynk-websocket-middleware";
 import { blynkSaga, INIT_ACTION_TYPE } from "./blynk-saga";
 
 /* instance for basic API */
@@ -79,7 +79,10 @@ function configureStoreProd(initialState) {
   return new Promise((resolve) => {
     persistStore(store, Object.assign({}, persisStoreConfig, persisStoreConfigProd), () => {
       sagaMiddleware.run(blynkSaga);
-      store.dispatch({ type: INIT_ACTION_TYPE });
+      store.dispatch({
+        type: INIT_ACTION_TYPE,
+        endpoint: `wss://${window.location.hostname}:${window.location.port}/dashws`
+      });
       resolve(store);
     });
   });
@@ -122,7 +125,10 @@ function configureStoreDev() {
   return new Promise((resolve) => {
     persistStore(store, Object.assign({}, persisStoreConfig, persisStoreConfigDev), () => {
       sagaMiddleware.run(blynkSaga);
-      store.dispatch({ type: INIT_ACTION_TYPE});
+      store.dispatch({
+        type: INIT_ACTION_TYPE,
+        endpoint: 'wss://localhost:9443/dashws'
+      });
       resolve(store);
     });
   });

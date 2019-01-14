@@ -25,6 +25,8 @@ import CanvasJS from 'canvasjs';
   }
 })();
 
+import 'babel-polyfill';
+
 /* components */
 import Layout, {UserLayout} from './components/Layout';
 import LoginLayout from './components/LoginLayout';
