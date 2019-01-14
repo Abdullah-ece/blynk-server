@@ -716,7 +716,7 @@ public class ShareProfileWorkflowTest extends SingleServerInstancePerTest {
         clientPair.hardwareClient.reset();
         appClient2.reset();
 
-        appClient2.send("addPushToken 1\0uid2\0token2");
+        appClient2.addPushToken(1, "uid2", "token2");
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         appClient2.send("logout uid2");

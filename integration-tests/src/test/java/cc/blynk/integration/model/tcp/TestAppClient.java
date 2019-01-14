@@ -362,8 +362,8 @@ public class TestAppClient extends BaseTestAppClient {
         send(MOBILE_GET_PROVISION_TOKEN, device);
     }
 
-    public void addPushToken(String uid, String token) {
-        send(MOBILE_ADD_PUSH_TOKEN, uid + BODY_SEPARATOR + token);
+    public void addPushToken(int projectId, String uid, String token) {
+        send(MOBILE_ADD_PUSH_TOKEN, projectId + BODY_SEPARATOR + uid + BODY_SEPARATOR + token);
     }
 
     public void editProfileSettings(ProfileSettings profileSettings) {
@@ -388,6 +388,10 @@ public class TestAppClient extends BaseTestAppClient {
 
     public void addEnergy(int energy, String transactionId) {
         send(MOBILE_ADD_ENERGY, "" + energy + BODY_SEPARATOR + transactionId);
+    }
+
+    public void addPushToken(String uid, String token) {
+        send(MOBILE_ADD_PUSH_TOKEN, uid + BODY_SEPARATOR + token);
     }
 
     public void replace(SimpleClientHandler simpleClientHandler) {

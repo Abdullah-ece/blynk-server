@@ -674,7 +674,7 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
         assertEquals(1, dashBoard.parentId);
         assertEquals(16, dashBoard.widgets.length);
 
-        clientPair.appClient.send("addPushToken 1\0uid1\0token1");
+        clientPair.appClient.addPushToken(1, "uid1", "token1");
         clientPair.appClient.verifyResult(ok(5));
 
         clientPair.appClient.updateWidget(1, "{\"orgId\":10, \"height\":2, \"width\":1, \"x\":22, \"y\":23, \"username\":\"pupkin@gmail.com\", \"token\":\"token\", \"secret\":\"secret\", \"type\":\"TWITTER\"}");
