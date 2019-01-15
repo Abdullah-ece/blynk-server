@@ -16,9 +16,7 @@ import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -44,7 +42,6 @@ public class FileManager {
     private static final String ORG_FILE_EXTENSION = ".org";
 
     private static final String DELETED_DATA_DIR_NAME = "deleted";
-    private static final String BACKUP_DATA_DIR_NAME = "backup";
     private static final String ORGANIZATION_DATA_DIR_NAME = "organizations";
     private static final String CLONE_DATA_DIR_NAME = "clone";
 
@@ -54,7 +51,6 @@ public class FileManager {
     private Path dataDir;
     private Path orgDataDir;
     private Path deletedDataDir;
-    private Path backupDataDir;
     private String cloneDataDir;
     private final String host;
 
@@ -70,7 +66,6 @@ public class FileManager {
             this.dataDir = createDirectories(dataFolderPath);
             this.orgDataDir = createDirectories(Paths.get(dataFolder, ORGANIZATION_DATA_DIR_NAME));
             this.deletedDataDir = createDirectories(Paths.get(dataFolder, DELETED_DATA_DIR_NAME));
-            this.backupDataDir = createDirectories(Paths.get(dataFolder, BACKUP_DATA_DIR_NAME));
             this.cloneDataDir = createDirectories(Paths.get(dataFolder, CLONE_DATA_DIR_NAME)).toString();
         } catch (Exception e) {
             Path tempDir = Paths.get(System.getProperty("java.io.tmpdir"), "blynk");
@@ -85,8 +80,6 @@ public class FileManager {
                 this.orgDataDir = createDirectories(Paths.get(this.dataDir.toString(), ORGANIZATION_DATA_DIR_NAME));
                 this.deletedDataDir = createDirectories(
                         Paths.get(this.dataDir.toString(), DELETED_DATA_DIR_NAME));
-                this.backupDataDir = createDirectories(
-                        Paths.get(this.dataDir.toString(), BACKUP_DATA_DIR_NAME));
                 this.cloneDataDir = createDirectories(
                         Paths.get(this.dataDir.toString(), CLONE_DATA_DIR_NAME)).toString();
             } catch (Exception ioe) {
@@ -108,11 +101,6 @@ public class FileManager {
 
     public Path generateFileName(String email) {
         return Paths.get(dataDir.toString(), email + USER_FILE_EXTENSION);
-    }
-
-    public Path generateBackupFileName(String email, int orgId) {
-        return Paths.get(backupDataDir.toString(), email + "." + orgId + ".user."
-                + new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
     }
 
     public boolean deleteOrg(int orgId) {
@@ -198,11 +186,6 @@ public class FileManager {
                         } catch (IOException ioe) {
                             String errorMessage = ioe.getMessage();
                             log.error("Error parsing file '{}'. Error : {}", path, errorMessage);
-                            if (errorMessage != null
-                                    && (errorMessage.contains("end-of-input")
-                                    || errorMessage.contains("Illegal character"))) {
-                                return restoreFromBackup(path.getFileName());
-                            }
                         }
                         return Stream.empty();
                     })
@@ -214,36 +197,6 @@ public class FileManager {
 
         log.debug("Reading user DB finished.");
         return temp;
-    }
-
-    private Stream<User> restoreFromBackup(Path restoreFileNamePath) {
-        log.info("Trying to recover from backup...");
-        String filename = restoreFileNamePath.toString();
-        try {
-            File[] files = backupDataDir.toFile().listFiles(
-                    (dir, name) -> name.startsWith(filename)
-            );
-
-            File backupFile = FileUtils.getLatestFile(files);
-            if (backupFile == null) {
-                log.info("Didn't find any files for recovery :(.");
-                return Stream.empty();
-            }
-            log.info("Found {}. You are lucky today :).", backupFile.getAbsoluteFile());
-
-            User user = JsonParser.parseUserFromFile(backupFile);
-            makeProfileChanges(user);
-            //profile saver thread is launched after file manager is initialized.
-            //so making sure user profile will be saved
-            //this is not very important as profile will be updated by user anyway.
-            user.lastModifiedTs = System.currentTimeMillis() + 10 * 1000;
-            log.info("Restored.", backupFile.getAbsoluteFile());
-            return Stream.of(user);
-        } catch (Exception e) {
-            //ignore
-            log.error("Restoring from backup failed. {}", e.getMessage());
-        }
-        return Stream.empty();
     }
 
     //public is for tests only
