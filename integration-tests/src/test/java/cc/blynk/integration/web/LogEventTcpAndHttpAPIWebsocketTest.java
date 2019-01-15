@@ -1,6 +1,7 @@
 package cc.blynk.integration.web;
 
 import cc.blynk.integration.SingleServerInstancePerTestWithDBAndNewOrg;
+import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
 import cc.blynk.server.common.handlers.logic.timeline.TimelineResponseDTO;
@@ -18,6 +19,7 @@ import cc.blynk.server.core.model.web.product.events.system.OnlineEvent;
 import cc.blynk.server.core.model.web.product.events.user.CriticalEvent;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.db.dao.descriptor.LogEventDTO;
+import cc.blynk.server.notifications.push.enums.Priority;
 import cc.blynk.utils.StringUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -25,9 +27,11 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static cc.blynk.integration.APIBaseTest.createContactMeta;
 import static cc.blynk.integration.APIBaseTest.createDeviceNameMeta;
@@ -48,10 +52,12 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
+
 
 /**
  * The Blynk Project.
@@ -176,9 +182,11 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
                 "temp_is_high" ,
                 new EventReceiver[] {
                         new EventReceiver(6, MetadataType.Contact, "Farm of Smith"),
-                        new EventReceiver(7, MetadataType.Text, "Device Owner")
+                        new EventReceiver(7, MetadataType.Text, "Device Owner"),
                 },
-                null,
+                new EventReceiver[] {
+                        new EventReceiver(2, MetadataType.Contact, "Farm of Smith"),
+                },
                 null
         );
 
@@ -438,6 +446,59 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         assertFalse(logEvents.get(0).isResolved);
         assertEquals("Temp is super high", logEvents.get(0).name);
         assertEquals("MyNewDescription", logEvents.get(0).description);
+    }
+
+
+    @Test
+    // https://github.com/blynkkk/dash/issues/1996
+    public void testLogEventNotificationBody() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+        Device device = createProductAndDevice(client, orgId);
+
+
+        TestAppClient appClient = new TestAppClient("localhost", properties.getHttpsPort());
+        appClient.start();
+        appClient.login(getUserName(), "1", "Android", "2.27.1");
+        appClient.verifyResult(ok(1));
+        appClient.addPushToken("uid", "token");
+        appClient.verifyResult(ok(2));
+
+
+        TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
+        newHardClient.start();
+        newHardClient.login(device.token);
+        newHardClient.verifyResult(ok(1));
+        newHardClient.logEvent("temp_is_high", "MyNewDescription");
+        newHardClient.verifyResult(ok(2));
+        client.reset();
+
+
+        client.getTimeline(device.id, EventType.CRITICAL, null, 0, System.currentTimeMillis(), 0, 10);
+        TimelineResponseDTO timeLineResponse = client.parseTimelineResponse(1);
+        assertNotNull(timeLineResponse);
+        assertEquals(1, timeLineResponse.totalCritical);
+        assertEquals(0, timeLineResponse.totalWarning);
+        assertEquals(0, timeLineResponse.totalResolved);
+
+        List<LogEventDTO> logEvents = timeLineResponse.eventList;
+        assertNotNull(logEvents);
+        assertEquals(1, logEvents.size());
+        assertEquals(device.id, logEvents.get(0).deviceId);
+        assertEquals(EventType.CRITICAL, logEvents.get(0).eventType);
+        assertFalse(logEvents.get(0).isResolved);
+        assertEquals("Temp is super high", logEvents.get(0).name);
+        assertEquals("MyNewDescription", logEvents.get(0).description);
+
+
+        String expected = "My New Device:\nTemp is super high\nMyNewDescription";
+
+        verify(holder.gcmWrapper, timeout(1000)).sendAndroid(
+                any((Class<ConcurrentHashMap<String, String>>)(Class) ConcurrentHashMap.class), any(Priority.class),
+                eq(expected), any(Integer.class));
+
+        verify(holder.gcmWrapper, timeout(1000)).sendIOS(
+                any((Class<ConcurrentHashMap<String, String>>)(Class) ConcurrentHashMap.class), any(Priority.class),
+                eq(expected), any(Integer.class));
     }
 
     @Test
