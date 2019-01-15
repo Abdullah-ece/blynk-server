@@ -258,7 +258,7 @@ public final class ServerLauncher {
             holder.deviceDao.create(superOrg.id, "admin@blynk.cc", product, newDevice);
             for (EventType eventType : EventType.values()) {
                 try {
-                    Event event = product.findEventByType(eventType);
+                    Event event = product.getEventByType(eventType);
                     holder.reportingDBManager.insertEvent(newDevice.id, eventType,
                             System.currentTimeMillis(), event.hashCode(), null);
                 } catch (Exception e) {

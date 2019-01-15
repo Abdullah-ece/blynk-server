@@ -939,4 +939,68 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         assertEquals(EventType.ONLINE, logEvents.get(3).eventType);
     }
 
+    @Test
+    public void testIgnoreOfflinePeriodWorksAsExpected() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+
+        Product product = new Product();
+        product.name = "My product";
+        product.description = "Description";
+        product.boardType = "ESP8266";
+        product.connectionType = ConnectionType.WI_FI;
+        product.metaFields = new MetaField[] {
+                createNumberMeta(1, "Jopa", 123D),
+                createDeviceOwnerMeta(2, "owner", "owner", true),
+                createDeviceNameMeta(3, "anme", "name", true),
+        };
+
+        Event offlineEvent = new OfflineEvent(
+                3,
+                "Device is offline!",
+                null,
+                true,
+                new EventReceiver[] {
+                        new EventReceiver(6, MetadataType.Contact, "Farm of Smith")
+                },
+                null,
+                null,
+                500 //ignore offline period for 1 seconds
+        );
+
+        product.events = new Event[] {
+                offlineEvent
+        };
+
+        client.createProduct(product);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
+        assertNotNull(fromApiProduct);
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.productId = fromApiProduct.id;
+
+        client.createDevice(orgId, newDevice);
+        Device device = client.parseDevice(2);
+
+        client.trackDevice(device.id);
+        client.verifyResult(ok(3));
+        client.reset();
+
+        TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
+        newHardClient.start();
+        newHardClient.login(device.token);
+        newHardClient.verifyResult(ok(1));
+        client.verifyResult(deviceConnected(1, device.id));
+        client.reset();
+
+        newHardClient.stop();
+
+        //waiting for 250 millis and no response, as ignore period if 500 millis
+        client.neverAfter(250, logEvent(0, device.id + " OFFLINE"));
+
+        sleep(260);
+
+        client.verifyResult(logEvent(0, device.id + " OFFLINE"));
+    }
+
 }

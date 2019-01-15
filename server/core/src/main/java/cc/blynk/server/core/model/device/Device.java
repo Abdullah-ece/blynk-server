@@ -520,6 +520,10 @@ public class Device implements Target {
         this.updatedAt = System.currentTimeMillis();
     }
 
+    public boolean isOffline() {
+        return this.status == Status.OFFLINE;
+    }
+
     @Override
     public String toString() {
         return JsonParser.toJson(this);

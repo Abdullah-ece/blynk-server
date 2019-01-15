@@ -106,7 +106,17 @@ public class Product {
         return set.size() == events.length;
     }
 
-    public Event findEventByType(EventType eventType) {
+    @SuppressWarnings("unchecked")
+    public <T> T getEventByType(Class<T> clazz) {
+        for (Event event : events) {
+            if (clazz.isInstance(event)) {
+                return (T) event;
+            }
+        }
+        return null;
+    }
+
+    public Event getEventByType(EventType eventType) {
         for (Event event : events) {
             if (event.getType() == eventType) {
                 return event;

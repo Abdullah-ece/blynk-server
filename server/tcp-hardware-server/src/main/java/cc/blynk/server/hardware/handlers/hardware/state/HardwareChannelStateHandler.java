@@ -1,17 +1,22 @@
-package cc.blynk.server.hardware.handlers.hardware;
+package cc.blynk.server.hardware.handlers.hardware.state;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.web.product.EventType;
+import cc.blynk.server.core.model.web.product.events.system.OfflineEvent;
+import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.db.ReportingDBManager;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.timeout.IdleStateEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.concurrent.TimeUnit;
 
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_LOG_EVENT;
 import static cc.blynk.server.internal.StateHolderUtil.getHardState;
@@ -38,14 +43,14 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) {
-        var hardwareChannel = ctx.channel();
-        var state = getHardState(hardwareChannel);
+        Channel hardwareChannel = ctx.channel();
+        HardwareStateHolder state = getHardState(hardwareChannel);
         if (state != null) {
-            var session = sessionDao.getOrgSession(state.orgId);
+            Session session = sessionDao.getOrgSession(state.orgId);
             if (session != null) {
-                var device = state.device;
+                Device device = state.device;
                 log.trace("Hardware channel disconnect for deviceId {}, token {}.", device.id, device.token);
-                sentOfflineMessage(ctx, session, device);
+                sentOfflineMessage(ctx, session, state, device);
             }
         }
     }
@@ -61,7 +66,8 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
         }
     }
 
-    private void sentOfflineMessage(ChannelHandlerContext ctx, Session session, Device device) {
+    private void sentOfflineMessage(ChannelHandlerContext ctx,
+                                    Session session, HardwareStateHolder state, Device device) {
         //this is special case.
         //in case hardware quickly reconnects we do not mark it as disconnected
         //as it is already online after quick disconnect.
@@ -70,12 +76,47 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
         if (!isHardwareConnected) {
             log.trace("Changing device status. Device {}", device.id);
             device.disconnected();
-            reportingDBManager.insertSystemEvent(device.id, EventType.OFFLINE);
-            session.sendToSelectedDeviceOnWeb(HARDWARE_LOG_EVENT, 0, EventType.OFFLINE.name(), device.id);
+
+            OfflineEvent offlineEvent = state.product.getEventByType(OfflineEvent.class);
+            int ignoreOfflineEventPeriod = offlineEvent == null ? 0 : offlineEvent.ignorePeriod;
+            if (ignoreOfflineEventPeriod > 0) {
+                log.trace("Ignore period is {} for deviceId {}. Delaying event.",
+                        ignoreOfflineEventPeriod, device.id);
+                ctx.executor().schedule(new DelayedOfflineEvent(device, session),
+                        ignoreOfflineEventPeriod, TimeUnit.MILLISECONDS);
+            } else {
+                reportingDBManager.insertSystemEvent(device.id, EventType.OFFLINE);
+                session.sendToSelectedDeviceOnWeb(HARDWARE_LOG_EVENT, 0, EventType.OFFLINE.name(), device.id);
+            }
         }
 
         session.sendOfflineMessageToApps(device.id);
         session.sendOfflineMessageToWeb(device.id);
+    }
+
+    private final class DelayedOfflineEvent implements Runnable {
+
+        private final Device device;
+        private final Session session;
+
+        public DelayedOfflineEvent(Device device, Session session) {
+            this.device = device;
+            this.session = session;
+        }
+
+        @Override
+        public void run() {
+            log.trace("Wake up for offline delayed event and deviceId {}.");
+            //if after wake up we still don't see the device as online, this means we can report the disconnect
+            int deviceId = device.id;
+            if (device.isOffline()) {
+                reportingDBManager.insertSystemEvent(deviceId, EventType.OFFLINE);
+                session.sendToSelectedDeviceOnWeb(HARDWARE_LOG_EVENT, 0, EventType.OFFLINE.name(), deviceId);
+            } else {
+                log.trace("Device {} is already online. No need to report offline event.", deviceId);
+            }
+
+        }
     }
 
 }
