@@ -50,7 +50,10 @@ public class OfflineNotificationTest extends SingleServerInstancePerTest {
 
     @Test
     public void testOfflineTimingIsCorrectForMultipleDevices() throws Exception {
-        Device device2 = new Device(1, "My Device", BoardType.ESP8266);
+        Device device2 = new Device();
+        device2.id = 1;
+        device2.name = "My Device";
+        device2.boardType = BoardType.ESP8266;
         device2.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(device2);
@@ -89,7 +92,10 @@ public class OfflineNotificationTest extends SingleServerInstancePerTest {
 
     @Test
     public void testOfflineTimingIsCorrectForMultipleDevices2() throws Exception {
-        Device device2 = new Device(1, "My Device", BoardType.ESP8266);
+        Device device2 = new Device();
+        device2.id = 1;
+        device2.name = "My Device";
+        device2.boardType = BoardType.ESP8266;
         device2.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(device2);
@@ -146,7 +152,10 @@ public class OfflineNotificationTest extends SingleServerInstancePerTest {
 
         clientPair.appClient.neverAfter(500, deviceOffline(0, 0));
 
-        Device device2 = new Device(1, "My Device", BoardType.ESP8266);
+        Device device2 = new Device();
+        device2.id = 1;
+        device2.name = "My Device";
+        device2.boardType = BoardType.ESP8266;
         device2.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(device2);
@@ -194,7 +203,10 @@ public class OfflineNotificationTest extends SingleServerInstancePerTest {
 
     @Test
     public void deviceGoesOfflineAfterBeingIdle() throws Exception {
-        Device device2 = new Device(1, "My Device", BoardType.ESP8266);
+        Device device2 = new Device();
+        device2.id = 1;
+        device2.name = "My Device";
+        device2.boardType = BoardType.ESP8266;
         device2.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(device2);
@@ -222,7 +234,10 @@ public class OfflineNotificationTest extends SingleServerInstancePerTest {
 
     @Test
     public void sessionDisconnectChangeState() throws Exception {
-        Device device2 = new Device(1, "My Device", BoardType.ESP8266);
+        Device device2 = new Device();
+        device2.id = 1;
+        device2.name = "My Device";
+        device2.boardType = BoardType.ESP8266;
         device2.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(device2);

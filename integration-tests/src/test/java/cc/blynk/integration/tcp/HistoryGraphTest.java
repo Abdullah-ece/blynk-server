@@ -533,7 +533,10 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
     @Test
     public void makeSureReportingIsPresentWhenGraphAssignedToDeviceSelector() throws Exception {
-        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
+        Device device1 = new Device();
+        device1.id = 1;
+        device1.name = "My Device";
+        device1.boardType = BoardType.ESP8266;
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(device1);
@@ -1192,7 +1195,10 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
     @Test
     public void testGeneratedCSVIsCorrectForMultiDevicesNoData() throws Exception {
-        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
+        Device device1 = new Device();
+        device1.id = 1;
+        device1.name = "My Device";
+        device1.boardType = BoardType.ESP8266;
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(device1);
@@ -1463,7 +1469,10 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
     @Test
     public void cleanNotUsedPinDataWorksAsExpectedForSuperChartWithDeviceSelector() throws Exception {
-        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
+        Device device1 = new Device();
+        device1.id = 1;
+        device1.name = "My Device";
+        device1.boardType = BoardType.ESP8266;
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(device1);
@@ -1706,7 +1715,10 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
     @Test
     public void testGeneratedCSVIsCorrectForMultiDevicesAndEnhancedGraph() throws Exception {
-        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
+        Device device1 = new Device();
+        device1.id = 1;
+        device1.name = "My Device";
+        device1.boardType = BoardType.ESP8266;
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(device1);
@@ -1783,7 +1795,10 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
     @Test
     public void testGeneratedCSVIsCorrectForMultiDevices() throws Exception {
-        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
+        Device device1 = new Device();
+        device1.id = 1;
+        device1.name = "My Device";
+        device1.boardType = BoardType.ESP8266;
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(device1);

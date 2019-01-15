@@ -59,9 +59,16 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testSendHardwareCommandViaDeviceSelector() throws Exception {
-        Device device0 = new Device(0, "My Dashboard", BoardType.ESP8266);
+        Device device0 = new Device();
+        device0.id = 0;
+        device0.name = "My Dashboard";
+        device0.boardType = BoardType.ESP8266;
         device0.status = Status.ONLINE;
-        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
+
+        Device device1 = new Device();
+        device1.id = 1;
+        device1.name = "My Device";
+        device1.boardType = BoardType.ESP8266;
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(device1);
@@ -120,9 +127,16 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testSendHardwareCommandViaDeviceSelectorInSharedApp() throws Exception {
-        Device device0 = new Device(0, "My Dashboard", BoardType.ESP8266);
+        Device device0 = new Device();
+        device0.id = 0;
+        device0.name = "My Dashboard";
+        device0.boardType = BoardType.ESP8266;
         device0.status = Status.ONLINE;
-        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
+
+        Device device1 = new Device();
+        device1.id = 1;
+        device1.name = "My Device";
+        device1.boardType = BoardType.ESP8266;
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(device1);
@@ -210,9 +224,16 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testSetPropertyIsSentForDeviceSelectorWidget() throws Exception {
-        Device device0 = new Device(0, "My Dashboard", BoardType.ESP8266);
+        Device device0 = new Device();
+        device0.id = 0;
+        device0.name = "My Dashboard";
+        device0.boardType = BoardType.ESP8266;
         device0.status = Status.ONLINE;
-        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
+
+        Device device1 = new Device();
+        device1.id = 1;
+        device1.name = "My Device";
+        device1.boardType = BoardType.ESP8266;
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(device1);
@@ -256,9 +277,16 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testSetPropertyIsRememberedBetweenDevices() throws Exception {
-        Device device0 = new Device(0, "My Dashboard", BoardType.ESP8266);
+        Device device0 = new Device();
+        device0.id = 0;
+        device0.name = "My Dashboard";
+        device0.boardType = BoardType.ESP8266;
         device0.status = Status.ONLINE;
-        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
+
+        Device device1 = new Device();
+        device1.id = 1;
+        device1.name = "My Device";
+        device1.boardType = BoardType.ESP8266;
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(device1);
@@ -302,9 +330,16 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testBasicSelectorWorkflow() throws Exception {
-        Device device0 = new Device(0, "My Dashboard", BoardType.ESP8266);
+        Device device0 = new Device();
+        device0.id = 0;
+        device0.name = "My Dashboard";
+        device0.boardType = BoardType.ESP8266;
         device0.status = Status.ONLINE;
-        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
+
+        Device device1 = new Device();
+        device1.id = 1;
+        device1.name = "My Device";
+        device1.boardType = BoardType.ESP8266;
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(device1);
@@ -371,9 +406,16 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testDeviceSelectorSyncTimeInput() throws Exception {
-        Device device0 = new Device(0, "My Dashboard", BoardType.ESP8266);
+        Device device0 = new Device();
+        device0.id = 0;
+        device0.name = "My Dashboard";
+        device0.boardType = BoardType.ESP8266;
         device0.status = Status.ONLINE;
-        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
+
+        Device device1 = new Device();
+        device1.id = 1;
+        device1.name = "My Device";
+        device1.boardType = BoardType.ESP8266;
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(device1);
@@ -440,9 +482,16 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testNoSyncForDeviceSelectorWidget() throws Exception {
-        Device device0 = new Device(0, "My Dashboard", BoardType.ESP8266);
+        Device device0 = new Device();
+        device0.id = 0;
+        device0.name = "My Dashboard";
+        device0.boardType = BoardType.ESP8266;
         device0.status = Status.ONLINE;
-        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
+
+        Device device1 = new Device();
+        device1.id = 1;
+        device1.name = "My Device";
+        device1.boardType = BoardType.ESP8266;
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(device1);
@@ -468,9 +517,16 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testDeviceSelectorWorksAfterDeviceRemoval() throws Exception {
-        Device device0 = new Device(0, "My Dashboard", BoardType.ESP8266);
+        Device device0 = new Device();
+        device0.id = 0;
+        device0.name = "My Dashboard";
+        device0.boardType = BoardType.ESP8266;
         device0.status = Status.ONLINE;
-        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
+
+        Device device1 = new Device();
+        device1.id = 1;
+        device1.name = "My Device";
+        device1.boardType = BoardType.ESP8266;
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(device1);
@@ -523,9 +579,16 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void terminalWithDeviceSelectorStoreMultipleCommands() throws Exception {
-        var device0 = new Device(0, "My Dashboard", BoardType.ESP8266);
+        var device0 = new Device();
+        device0.id = 0;
+        device0.name = "My Dashboard";
+        device0.boardType = BoardType.ESP8266;
         device0.status = Status.ONLINE;
-        var device1 = new Device(1, "My Device", BoardType.ESP8266);
+
+        var device1 = new Device();
+        device1.id = 1;
+        device1.name = "My Device";
+        device1.boardType = BoardType.ESP8266;
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(device1);
@@ -573,9 +636,16 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void TableWithDeviceSelectorStoreMultipleCommands() throws Exception {
-        var device0 = new Device(0, "My Dashboard", BoardType.ESP8266);
+        var device0 = new Device();
+        device0.id = 0;
+        device0.name = "My Dashboard";
+        device0.boardType = BoardType.ESP8266;
         device0.status = Status.ONLINE;
-        var device1 = new Device(1, "My Device", BoardType.ESP8266);
+
+        var device1 = new Device();
+        device1.id = 1;
+        device1.name = "My Device";
+        device1.boardType = BoardType.ESP8266;
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(device1);
@@ -623,9 +693,16 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void LCDWithDeviceSelectorStoreMultipleCommands() throws Exception {
-        var device0 = new Device(0, "My Dashboard", BoardType.ESP8266);
+        var device0 = new Device();
+        device0.id = 0;
+        device0.name = "My Dashboard";
+        device0.boardType = BoardType.ESP8266;
         device0.status = Status.ONLINE;
-        var device1 = new Device(1, "My Device", BoardType.ESP8266);
+
+        var device1 = new Device();
+        device1.id = 1;
+        device1.name = "My Device";
+        device1.boardType = BoardType.ESP8266;
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(device1);
@@ -672,9 +749,16 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testDeviceSelectorForSharedApp() throws Exception {
-        Device device0 = new Device(0, "My Dashboard", BoardType.ESP8266);
+        Device device0 = new Device();
+        device0.id = 0;
+        device0.name = "My Dashboard";
+        device0.boardType = BoardType.ESP8266;
         device0.status = Status.ONLINE;
-        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
+
+        Device device1 = new Device();
+        device1.id = 1;
+        device1.name = "My Device";
+        device1.boardType = BoardType.ESP8266;
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(device1);

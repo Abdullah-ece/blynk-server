@@ -190,7 +190,10 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
 
     @Test
     public void testSendDynamicEmailForAppPublishWithFewDevices() throws Exception {
-        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
+        Device device1 = new Device();
+        device1.id = 1;
+        device1.name = "My Device";
+        device1.boardType = BoardType.ESP8266;
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(device1);
@@ -234,7 +237,10 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
 
         clientPair.appClient.createDash(dashBoard);
 
-        Device device0 = new Device(0, "My Dashboard", BoardType.Arduino_UNO);
+        Device device0 = new Device();
+        device0.id = 0;
+        device0.name = "My Dashboard";
+        device0.boardType = BoardType.Arduino_UNO;
         device0.status = Status.ONLINE;
 
         clientPair.appClient.createDevice(device0);
@@ -304,7 +310,10 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
 
         clientPair.appClient.createDash(dashBoard);
 
-        Device device0 = new Device(0, "My Dashboard", BoardType.ESP8266);
+        Device device0 = new Device();
+        device0.id = 0;
+        device0.name = "My Dashboard";
+        device0.boardType = BoardType.ESP8266;
         device0.status = Status.ONLINE;
 
         clientPair.appClient.createDevice(device0);
@@ -434,12 +443,20 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
 
         clientPair.appClient.createDash(dashBoard);
 
-        Device device0 = new Device(0, "My Dashboard", BoardType.Arduino_UNO);
+        Device device0 = new Device();
+        device0.id = 0;
+        device0.name = "My Dashboard";
+        device0.boardType = BoardType.Arduino_UNO;
+
         clientPair.appClient.createDevice(device0);
         device0 = clientPair.appClient.parseDevice(2);
         clientPair.appClient.verifyResult(createDevice(2, device0));
 
-        Device device2 = new Device(2, "My Dashboard", BoardType.Arduino_UNO);
+        Device device2 = new Device();
+        device2.id = 2;
+        device2.name = "My Dashboard";
+        device2.boardType = BoardType.Arduino_UNO;
+
         clientPair.appClient.createDevice(device2);
         device2 = clientPair.appClient.parseDevice(3);
         clientPair.appClient.verifyResult(createDevice(3, device2));
@@ -511,12 +528,20 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
 
         clientPair.appClient.createDash(dashBoard);
 
-        Device device0 = new Device(0, "My Dashboard", BoardType.Arduino_UNO);
+        Device device0 = new Device();
+        device0.id = 0;
+        device0.name = "My Dashboard";
+        device0.boardType = BoardType.Arduino_UNO;
+
         clientPair.appClient.createDevice(device0);
         device0 = clientPair.appClient.parseDevice(2);
         clientPair.appClient.verifyResult(createDevice(2, device0));
 
-        Device device2 = new Device(2, "My Dashboard", BoardType.Arduino_UNO);
+        Device device2 = new Device();
+        device2.id = 2;
+        device2.name = "My Dashboard";
+        device2.boardType = BoardType.Arduino_UNO;
+
         clientPair.appClient.createDevice(device2);
         device2 = clientPair.appClient.parseDevice(3);
         clientPair.appClient.verifyResult(createDevice(3, device2));
@@ -633,7 +658,10 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
         clientPair.appClient.createDash(dashBoard);
         clientPair.appClient.verifyResult(ok(1));
 
-        Device device0 = new Device(0, "My Device", BoardType.Arduino_UNO);
+        Device device0 = new Device();
+        device0.id = 0;
+        device0.name = "My Device";
+        device0.boardType = BoardType.Arduino_UNO;
         device0.status = Status.ONLINE;
 
         clientPair.appClient.createDevice(device0);

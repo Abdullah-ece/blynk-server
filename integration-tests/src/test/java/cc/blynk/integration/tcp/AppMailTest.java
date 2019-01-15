@@ -94,7 +94,10 @@ public class AppMailTest extends SingleServerInstancePerTest {
         appClient.login(getUserName(), "1");
         appClient.verifyResult(ok(1));
 
-        Device device1 = new Device(-1, "My Device2", BoardType.ESP8266);
+        Device device1 = new Device();
+        device1.id = -1;
+        device1.name = "My Device2";
+        device1.boardType = BoardType.ESP8266;
 
         clientPair.appClient.createDevice(device1);
         device1 = clientPair.appClient.parseDevice();
