@@ -184,11 +184,11 @@ However in real world this mostly exceptional situation. In majority of cases th
 find out that connection is not active anymore.
 
 That’s why Blynk uses HEARTBEAT mechanism. With this approach hardware periodically sends ping command with predefined 
-interval (10 seconds by default, BLYNK_HEARTBEAT property). In case hardware don’t send anything within 10 seconds server waits 
+interval (10 seconds by default,  ```BLYNK_HEARTBEAT ``` property). In case hardware don’t send anything within 10 seconds server waits 
 additional 13 seconds and after that connection assumed to be broken and closed by server. 
 So on UI you’ll see connection status update only after 23 seconds when it is actually happened.
 
-You can also change HEARTBEAT interval from hardware side via Blynk.config. In that case newHeartbeatInterval * 2.3 formula will be applied. 
+You can also change HEARTBEAT interval from hardware side via Blynk.config. In that case  ```newHeartbeatInterval * 2.3``` formula will be applied. 
 So in case you you decided to set HEARTBEAT interval to 5 seconds. You’ll get notification regarding connection with 11 sec delay in worst case.
 
         
