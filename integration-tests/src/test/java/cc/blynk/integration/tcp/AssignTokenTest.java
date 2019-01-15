@@ -86,7 +86,11 @@ public class AssignTokenTest extends SingleServerInstancePerTestWithDB {
 
     @Test
     public void testConnectTo443PortForHardware() throws Exception {
-        clientPair.appClient.createDevice(new Device(1, "My Device", BoardType.ESP8266));
+        Device device1 = new Device();
+        device1.id = 1;
+        device1.name = "My Device";
+        device1.boardType = BoardType.ESP8266;
+        clientPair.appClient.createDevice(device1);
         Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);

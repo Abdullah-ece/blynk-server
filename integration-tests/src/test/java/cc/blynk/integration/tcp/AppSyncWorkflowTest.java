@@ -293,7 +293,10 @@ public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testTerminalAndAnotherWidgetOnTheSamePinAndDeviceSelector() throws Exception {
-        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
+        Device device1 = new Device();
+        device1.id = 1;
+        device1.name = "My Device";
+        device1.boardType = BoardType.ESP8266;
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(device1);
@@ -352,7 +355,10 @@ public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testTerminalAndAnotherWidgetOnTheSamePinAndDeviceSelectorAnotherOrder() throws Exception {
-        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
+        Device device1 = new Device();
+        device1.id = 1;
+        device1.name = "My Device";
+        device1.boardType = BoardType.ESP8266;
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(device1);
@@ -411,7 +417,10 @@ public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testTerminalStorageRemembersCommandsInOldFormatAndDeviceSelector() throws Exception {
-        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
+        Device device1 = new Device();
+        device1.id = 1;
+        device1.name = "My Device";
+        device1.boardType = BoardType.ESP8266;
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(device1);
@@ -471,7 +480,10 @@ public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testTerminalStorageRemembersCommandsInNewFormatAndDeviceTiles() throws Exception {
-        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
+        Device device1 = new Device();
+        device1.id = 1;
+        device1.name = "My Device";
+        device1.boardType = BoardType.ESP8266;
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(device1);
@@ -535,7 +547,10 @@ public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testTerminalStorageCleanedAfterTilesAreRemoved() throws Exception {
-        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
+        Device device1 = new Device();
+        device1.id = 1;
+        device1.name = "My Device";
+        device1.boardType = BoardType.ESP8266;
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(device1);
@@ -620,7 +635,10 @@ public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testTerminalStorageRemembersCommandsInNewFormatAndDeviceSelector() throws Exception {
-        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
+        Device device1 = new Device();
+        device1.id = 1;
+        device1.name = "My Device";
+        device1.boardType = BoardType.ESP8266;
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(device1);
@@ -858,9 +876,16 @@ public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testSyncForDeviceSelectorAndSetProperty() throws Exception {
-        Device device0 = new Device(0, "My Dashboard", BoardType.ESP8266);
+        Device device0 = new Device();
+        device0.id = 0;
+        device0.name = "My Dashboard";
+        device0.boardType = BoardType.ESP8266;
         device0.status = Status.ONLINE;
-        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
+
+        Device device1 = new Device();
+        device0.id = 1;
+        device0.name = "My Device";
+        device0.boardType = BoardType.ESP8266;
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(device1);
@@ -903,9 +928,16 @@ public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testSyncForDeviceSelectorAndSetPropertyAndMultiValueWidget() throws Exception {
-        Device device0 = new Device(0, "My Dashboard", BoardType.ESP8266);
+        Device device0 = new Device();
+        device0.id = 0;
+        device0.name = "My Dashboard";
+        device0.boardType = BoardType.ESP8266;
         device0.status = Status.ONLINE;
-        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
+
+        Device device1 = new Device();
+        device1.id = 1;
+        device1.name = "My Device";
+        device1.boardType = BoardType.ESP8266;
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(device1);
@@ -987,7 +1019,10 @@ public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testLCDOnActivateSendsCorrectBodySimpleModeAndAnotherDevice() throws Exception {
-        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
+        Device device1 = new Device();
+        device1.id = 1;
+        device1.name = "My Device";
+        device1.boardType = BoardType.ESP8266;
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(device1);

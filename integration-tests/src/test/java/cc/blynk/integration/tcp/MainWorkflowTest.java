@@ -681,13 +681,18 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.createDash("{\"id\":10, \"name\":\"test board\"}");
         clientPair.appClient.verifyResult(ok(1));
 
-        clientPair.appClient.createDevice(new Device(2, "123", BoardType.ESP8266));
+        Device device2 = new Device();
+        device2.id = 2;
+        device2.name = "123";
+        device2.boardType = BoardType.ESP8266;
+
+        clientPair.appClient.createDevice(device2);
         Device device = clientPair.appClient.parseDevice(2);
         String token = device.token;
         assertNotNull(token);
 
         clientPair.appClient.getDevice(10, 2);
-        Device device2 = clientPair.appClient.parseDevice(3);
+        device2 = clientPair.appClient.parseDevice(3);
         assertNotNull(device2);
         assertEquals(token, device2.token);
 
@@ -709,7 +714,13 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(1));
 
         clientPair.appClient.reset();
-        clientPair.appClient.createDevice(new Device(2, "123", BoardType.ESP8266));
+
+        Device device2 = new Device();
+        device2.id = 2;
+        device2.name = "123";
+        device2.boardType = BoardType.ESP8266;
+
+        clientPair.appClient.createDevice(device2);
         Device device = clientPair.appClient.parseDevice();
         String token = device.token;
         assertNotNull(token);
@@ -847,7 +858,12 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
 
         clientPair.appClient.reset();
 
-        clientPair.appClient.createDevice(new Device(2, "123", BoardType.ESP8266));
+        Device device2 = new Device();
+        device2.id = 2;
+        device2.name = "123";
+        device2.boardType = BoardType.ESP8266;
+
+        clientPair.appClient.createDevice(device2);
         Device device = clientPair.appClient.parseDevice();
         String token2 = device.token;
         hardClient2.login(token2);
@@ -1264,7 +1280,12 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
         clientPair.appClient.reset();
 
-        clientPair.appClient.createDevice(new Device(2, "123", BoardType.ESP8266));
+        Device device2 = new Device();
+        device2.id = 2;
+        device2.name = "123";
+        device2.boardType = BoardType.ESP8266;
+
+        clientPair.appClient.createDevice(device2);
         Device device = clientPair.appClient.parseDevice();
 
         clientPair.appClient.reset();

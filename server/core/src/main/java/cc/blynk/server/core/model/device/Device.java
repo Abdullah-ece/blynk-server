@@ -112,14 +112,6 @@ public class Device implements Target {
         this.connectionType = connectionType;
     }
 
-    //todo remove?
-    public Device(int id, String name, BoardType boardType) {
-        this();
-        this.id = id;
-        this.name = name;
-        this.boardType = boardType;
-    }
-
     public MetaField findMetaFieldById(int id) {
         for (MetaField metaField : metaFields) {
             if (metaField.id == id) {

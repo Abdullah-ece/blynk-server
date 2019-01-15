@@ -519,7 +519,13 @@ public class TimerTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(4));
 
         clientPair.appClient.reset();
-        clientPair.appClient.createDevice(new Device(1, "Device", BoardType.ESP8266));
+
+        Device device1 = new Device();
+        device1.id = 1;
+        device1.name = "Device";
+        device1.boardType = BoardType.ESP8266;
+
+        clientPair.appClient.createDevice(device1);
         Device device = clientPair.appClient.parseDevice();
         hardClient2.login(device.token);
         hardClient2.verifyResult(ok(1));

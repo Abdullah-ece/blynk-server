@@ -236,7 +236,10 @@ public class LoadBalancingIntegrationTest extends BaseTest {
 
     @Test
     public void hardwareCreatedAndServerStoredInDB() throws Exception {
-        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
+        Device device1 = new Device();
+        device1.id = 1;
+        device1.name = "My Device";
+        device1.boardType = BoardType.ESP8266;
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(device1);
@@ -250,7 +253,10 @@ public class LoadBalancingIntegrationTest extends BaseTest {
 
     @Test
     public void hardwareCreatedAndServerStoredInDBAndDelete() throws Exception {
-        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
+        Device device1 = new Device();
+        device1.id = 1;
+        device1.name = "My Device";
+        device1.boardType = BoardType.ESP8266;
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(device1);
@@ -375,7 +381,13 @@ public class LoadBalancingIntegrationTest extends BaseTest {
         appClient.verifyResult(new ResponseMessage(4, DEVICE_NOT_IN_NETWORK));
 
         appClient.reset();
-        appClient.createDevice(new Device(0, "123", BoardType.ESP8266));
+
+        Device device0 = new Device();
+        device0.id = 0;
+        device0.name = "123";
+        device0.boardType = BoardType.ESP8266;
+
+        appClient.createDevice(device0);
         Device device = appClient.parseDevice();
 
         String token = device.token;
