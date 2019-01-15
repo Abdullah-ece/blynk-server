@@ -2,6 +2,11 @@ package cc.blynk.server.core.model.web.product.events;
 
 import cc.blynk.server.core.model.web.product.EventReceiver;
 import cc.blynk.server.core.model.web.product.EventType;
+import cc.blynk.server.core.model.web.product.events.system.OfflineEvent;
+import cc.blynk.server.core.model.web.product.events.system.OnlineEvent;
+import cc.blynk.server.core.model.web.product.events.user.CriticalEvent;
+import cc.blynk.server.core.model.web.product.events.user.InformationEvent;
+import cc.blynk.server.core.model.web.product.events.user.WarningEvent;
 import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.CopyObject;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
