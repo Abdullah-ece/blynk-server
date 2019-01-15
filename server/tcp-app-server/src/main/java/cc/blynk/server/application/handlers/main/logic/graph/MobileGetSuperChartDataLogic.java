@@ -107,13 +107,8 @@ public final class MobileGetSuperChartDataLogic {
                 requestedPins[i] = new GraphPinRequest(dashId, -1,
                         graphDataStream.dataStream, period, skipCount, graphDataStream.functionType);
             } else {
-                if (target.isTag()) {
-                    requestedPins[i] = new GraphPinRequest(dashId, target.getDeviceIds(),
-                            graphDataStream.dataStream, period, skipCount, graphDataStream.functionType);
-                } else {
-                    requestedPins[i] = new GraphPinRequest(dashId, target.getDeviceId(),
-                            graphDataStream.dataStream, period, skipCount, graphDataStream.functionType);
-                }
+                requestedPins[i] = new GraphPinRequest(dashId, target.getDeviceId(),
+                        graphDataStream.dataStream, period, skipCount, graphDataStream.functionType);
             }
             i++;
         }

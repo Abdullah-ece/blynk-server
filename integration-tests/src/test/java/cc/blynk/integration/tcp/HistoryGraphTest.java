@@ -2,7 +2,6 @@ package cc.blynk.integration.tcp;
 
 import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.SingleServerInstancePerTest;
-import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.device.BoardType;
@@ -53,7 +52,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.ZoneId;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.zip.GZIPInputStream;
 
 import static cc.blynk.integration.TestUtil.b;
@@ -99,69 +97,6 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         holder.reportingDiskDao.averageAggregator.getHourly().clear();
         holder.reportingDiskDao.averageAggregator.getDaily().clear();
         holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.clear();
-    }
-
-    @Test
-    public void testTooManyDataForGraphWorkWithNewProtocol() throws Exception {
-        TestAppClient appClient = new TestAppClient(properties);
-        appClient.start();
-        appClient.login(getUserName(), "1", "Android", "2.18.0");
-        appClient.verifyResult(ok(1));
-
-        String tempDir = holder.props.getProperty("data.folder");
-
-        Superchart enhancedHistoryGraph = new Superchart();
-        enhancedHistoryGraph.id = 432;
-        enhancedHistoryGraph.width = 8;
-        enhancedHistoryGraph.height = 4;
-        DataStream dataStream1 = new DataStream((short) 8, PinType.DIGITAL);
-        DataStream dataStream2 = new DataStream((short) 9, PinType.DIGITAL);
-        DataStream dataStream3 = new DataStream((short) 10, PinType.DIGITAL);
-        DataStream dataStream4 = new DataStream((short) 11, PinType.DIGITAL);
-        GraphDataStream graphDataStream1 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream1, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
-        GraphDataStream graphDataStream2 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream2, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
-        GraphDataStream graphDataStream3 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream3, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
-        GraphDataStream graphDataStream4 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream4, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
-        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
-                graphDataStream1,
-                graphDataStream2,
-                graphDataStream3,
-                graphDataStream4
-        };
-
-        appClient.createWidget(1, enhancedHistoryGraph);
-        appClient.verifyResult(ok(1));
-        appClient.reset();
-
-        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
-        if (Files.notExists(userReportFolder)) {
-            Files.createDirectories(userReportFolder);
-        }
-
-        Path pinReportingDataPath1 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.DIGITAL, (short) 8, Period.THREE_MONTHS.granularityType));
-        Path pinReportingDataPath2 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.DIGITAL, (short) 9, Period.THREE_MONTHS.granularityType));
-        Path pinReportingDataPath3 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.DIGITAL, (short) 10, Period.THREE_MONTHS.granularityType));
-        Path pinReportingDataPath4 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.DIGITAL, (short) 11, Period.THREE_MONTHS.granularityType));
-
-        for (int i = 0; i < Period.THREE_MONTHS.numberOfPoints; i++) {
-            long now = System.currentTimeMillis();
-            FileUtils.write(pinReportingDataPath1, ThreadLocalRandom.current().nextDouble(), now);
-            FileUtils.write(pinReportingDataPath2, ThreadLocalRandom.current().nextDouble(), now);
-            FileUtils.write(pinReportingDataPath3, ThreadLocalRandom.current().nextDouble(), now);
-            FileUtils.write(pinReportingDataPath4, ThreadLocalRandom.current().nextDouble(), now);
-        }
-
-        appClient.reset();
-        appClient.getEnhancedGraphData(1, 432, Period.THREE_MONTHS);
-        BinaryMessage graphDataResponse = appClient.getBinaryBody();
-
-        assertNotNull(graphDataResponse);
-        byte[] decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
-        assertNotNull(decompressedGraphData);
     }
 
     @Test
