@@ -37,7 +37,6 @@ public class FileManager {
     private static final String USER_FILE_EXTENSION = ".user";
     private static final String ORG_FILE_EXTENSION = ".org";
 
-    private static final String DELETED_DATA_DIR_NAME = "deleted";
     private static final String ORGANIZATION_DATA_DIR_NAME = "organizations";
 
     /**
@@ -45,7 +44,6 @@ public class FileManager {
      */
     private Path dataDir;
     private Path orgDataDir;
-    private Path deletedDataDir;
     private final String host;
 
     public FileManager(String dataFolder, String host) {
@@ -59,7 +57,6 @@ public class FileManager {
             Path dataFolderPath = Paths.get(dataFolder);
             this.dataDir = createDirectories(dataFolderPath);
             this.orgDataDir = createDirectories(Paths.get(dataFolder, ORGANIZATION_DATA_DIR_NAME));
-            this.deletedDataDir = createDirectories(Paths.get(dataFolder, DELETED_DATA_DIR_NAME));
         } catch (Exception e) {
             Path tempDir = Paths.get(System.getProperty("java.io.tmpdir"), "blynk");
 
@@ -71,8 +68,6 @@ public class FileManager {
             try {
                 this.dataDir = createDirectories(tempDir);
                 this.orgDataDir = createDirectories(Paths.get(this.dataDir.toString(), ORGANIZATION_DATA_DIR_NAME));
-                this.deletedDataDir = createDirectories(
-                        Paths.get(this.dataDir.toString(), DELETED_DATA_DIR_NAME));
             } catch (Exception ioe) {
                 throw new RuntimeException(ioe);
             }
@@ -94,26 +89,14 @@ public class FileManager {
         return Paths.get(dataDir.toString(), email + USER_FILE_EXTENSION);
     }
 
-    boolean deleteOrg(int orgId) {
+    void deleteOrg(int orgId) {
         Path file = generateOrgFileName(orgId);
-        try {
-            FileUtils.move(file, this.deletedDataDir);
-        } catch (IOException e) {
-            log.debug("Failed to move file. {}", e.getMessage());
-            return false;
-        }
-        return true;
+        FileUtils.deleteQuietly(file);
     }
 
-    public boolean delete(String email) {
+    public void delete(String email) {
         Path file = generateFileName(email);
-        try {
-            FileUtils.move(file, this.deletedDataDir);
-        } catch (IOException e) {
-            log.debug("Failed to move file. {}", e.getMessage());
-            return false;
-        }
-        return true;
+        FileUtils.deleteQuietly(file);
     }
 
     public void override(Organization org, boolean isFancy) throws IOException {
