@@ -8,6 +8,7 @@ import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.dto.DeviceDTO;
 import cc.blynk.server.core.model.web.product.EventType;
+import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
@@ -137,7 +138,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
             return;
         }
 
-        createSessionAndReregister(ctx, orgId, device, message.id);
+        createSessionAndReregister(ctx, orgId, tokenValue.product, device, message.id);
     }
 
     @Override
@@ -147,6 +148,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
             log.debug("Triggered user event for provisioned device (id={}).", msg.device.id);
             Session session = createSessionAndReregister(ctx,
                     msg.orgId,
+                    msg.product,
                     msg.device,
                     msg.msgId);
             String body = new DeviceDTO(msg.device, msg.product, msg.orgName).toString();
@@ -157,8 +159,8 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
     }
 
     private Session createSessionAndReregister(ChannelHandlerContext ctx, int orgId,
-                                               Device device, int msgId) {
-        HardwareStateHolder hardwareStateHolder = new HardwareStateHolder(orgId, device);
+                                               Product product, Device device, int msgId) {
+        HardwareStateHolder hardwareStateHolder = new HardwareStateHolder(orgId, product, device);
 
         ChannelPipeline pipeline = ctx.pipeline();
         pipeline.replace(this, "HHArdwareHandler", new HardwareHandler(holder, hardwareStateHolder));
