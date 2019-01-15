@@ -99,7 +99,7 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
         private final Device device;
         private final Session session;
 
-        public DelayedOfflineEvent(Device device, Session session) {
+        DelayedOfflineEvent(Device device, Session session) {
             this.device = device;
             this.session = session;
         }

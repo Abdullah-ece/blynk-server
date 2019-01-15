@@ -9,16 +9,12 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
@@ -43,7 +39,6 @@ public class FileManager {
 
     private static final String DELETED_DATA_DIR_NAME = "deleted";
     private static final String ORGANIZATION_DATA_DIR_NAME = "organizations";
-    private static final String CLONE_DATA_DIR_NAME = "clone";
 
     /**
      * Folder where all user profiles are stored locally.
@@ -51,7 +46,6 @@ public class FileManager {
     private Path dataDir;
     private Path orgDataDir;
     private Path deletedDataDir;
-    private String cloneDataDir;
     private final String host;
 
     public FileManager(String dataFolder, String host) {
@@ -66,7 +60,6 @@ public class FileManager {
             this.dataDir = createDirectories(dataFolderPath);
             this.orgDataDir = createDirectories(Paths.get(dataFolder, ORGANIZATION_DATA_DIR_NAME));
             this.deletedDataDir = createDirectories(Paths.get(dataFolder, DELETED_DATA_DIR_NAME));
-            this.cloneDataDir = createDirectories(Paths.get(dataFolder, CLONE_DATA_DIR_NAME)).toString();
         } catch (Exception e) {
             Path tempDir = Paths.get(System.getProperty("java.io.tmpdir"), "blynk");
 
@@ -80,8 +73,6 @@ public class FileManager {
                 this.orgDataDir = createDirectories(Paths.get(this.dataDir.toString(), ORGANIZATION_DATA_DIR_NAME));
                 this.deletedDataDir = createDirectories(
                         Paths.get(this.dataDir.toString(), DELETED_DATA_DIR_NAME));
-                this.cloneDataDir = createDirectories(
-                        Paths.get(this.dataDir.toString(), CLONE_DATA_DIR_NAME)).toString();
             } catch (Exception ioe) {
                 throw new RuntimeException(ioe);
             }
@@ -95,7 +86,7 @@ public class FileManager {
         return dataDir;
     }
 
-    public Path generateOrgFileName(int orgId) {
+    private Path generateOrgFileName(int orgId) {
         return Paths.get(orgDataDir.toString(), orgId + ORG_FILE_EXTENSION);
     }
 
@@ -103,7 +94,7 @@ public class FileManager {
         return Paths.get(dataDir.toString(), email + USER_FILE_EXTENSION);
     }
 
-    public boolean deleteOrg(int orgId) {
+    boolean deleteOrg(int orgId) {
         Path file = generateOrgFileName(orgId);
         try {
             FileUtils.move(file, this.deletedDataDir);
@@ -136,7 +127,7 @@ public class FileManager {
         JsonParser.writeUser(path.toFile(), user, isFancy);
     }
 
-    public ConcurrentMap<Integer, Organization> deserializeOrganizations() {
+    ConcurrentMap<Integer, Organization> deserializeOrganizations() {
         log.debug("Starting reading organizations DB.");
 
         final File[] files = orgDataDir.toFile().listFiles();
@@ -200,44 +191,10 @@ public class FileManager {
     }
 
     //public is for tests only
-    public void makeProfileChanges(User user) {
+    private void makeProfileChanges(User user) {
         if (user.email == null) {
             user.email = user.name;
         }
         user.ip = host;
-    }
-
-    public Map<String, Integer> getUserProfilesSize() {
-        Map<String, Integer> userProfileSize = new HashMap<>();
-        File[] files = dataDir.toFile().listFiles();
-        if (files != null) {
-            for (File file : files) {
-                if (file.isFile() && file.getName().endsWith(USER_FILE_EXTENSION)) {
-                    userProfileSize.put(file.getName(), (int) file.length());
-                }
-            }
-        }
-        return userProfileSize;
-    }
-
-    public boolean writeCloneProjectToDisk(String token, String json) {
-        try {
-            Path path = Paths.get(cloneDataDir, token);
-            Files.write(path, json.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE);
-            return true;
-        } catch (Exception e) {
-            log.error("Error saving cloned project to disk. {}", e.getMessage());
-        }
-        return false;
-    }
-
-    public String readClonedProjectFromDisk(String token) {
-        Path path = Paths.get(cloneDataDir, token);
-        try {
-            return new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
-        } catch (Exception e) {
-            log.warn("Didn't find cloned project on disk. Path {}. Reason {}", path.toString(), e.getMessage());
-        }
-        return null;
     }
 }

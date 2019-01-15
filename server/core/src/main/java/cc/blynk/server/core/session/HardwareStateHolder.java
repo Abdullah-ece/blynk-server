@@ -23,11 +23,11 @@ public final class HardwareStateHolder  {
 
     @Override
     public String toString() {
-        return "HardwareStateHolder{" +
-                "orgId=" + orgId +
-                ", productId=" + product.id +
-                ", device=" + device +
-                '}';
+        return "HardwareStateHolder{"
+                + "orgId=" + orgId
+                + ", productId=" + product.id
+                + ", device=" + device
+                + '}';
     }
 
     public boolean isSameDevice(int deviceId) {
