@@ -14,7 +14,7 @@ import {
   getTrackDeviceId,
   getTrackOnlyByDeviceId
 } from './selectors';
-import { getCommandKeyName } from "./commands";
+import { getCommandKeyName } from "./selectors";
 
 
 const decodeBody = (dataView) => {

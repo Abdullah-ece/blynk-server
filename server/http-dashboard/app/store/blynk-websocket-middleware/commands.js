@@ -3,6 +3,8 @@ import {
   websocketSend,
 } from '../redux-websocket-middleware/actions';
 
+import { getCommandKeyName } from "./selectors";
+
 import {
   blynkWsRequest
 } from './actions';
@@ -86,22 +88,6 @@ export const API_COMMANDS = {
   WEB_GET_DEVICES_BY_REFERENCE_METAFIELD : 147,
   WEB_GET_RULE_GROUP                     : 150,
   WEB_EDIT_RULE_GROUP                    : 151,
-};
-
-export const getCommandKeyName = (value) => {
-  for(let key in COMMANDS){
-    if(COMMANDS[key] == value){
-      return key;
-    }
-  }
-
-  for(let key in API_COMMANDS){
-    if(API_COMMANDS[key] == value){
-      return key;
-    }
-  }
-
-  return value;
 };
 
 const blynkHeader = (msg_type, msg_id) => {

@@ -6,9 +6,12 @@ import { responseInterceptor as axiosResponseInterceptor } from './axios';
 import { persistStore, autoRehydrate } from 'redux-persist';
 import createSagaMiddleware from 'redux-saga';
 
-import { createWsMiddleware } from "store/redux-websocket-middleware";
-import { createBlynkWsMiddleware } from "store/blynk-websocket-middleware";
-import { blynkSaga, INIT_ACTION_TYPE } from "./blynk-saga";
+// import { createWsMiddleware } from "store/redux-websocket-middleware";
+// import { createBlynkWsMiddleware } from "store/blynk-websocket-middleware";
+import {
+  blynkSaga,
+  INIT_ACTION_TYPE
+} from "./blynk-saga";
 
 /* instance for basic API */
 axios.defaults.headers['Content-Type'] = 'application/json';
@@ -53,19 +56,19 @@ const persisStoreConfigProd = {};
 function configureStoreProd(initialState) {
 
   const sagaMiddleware = createSagaMiddleware();
+  //
+  // const wsMiddleware = createWsMiddleware({
+  //   defaultEndpoint: `wss://${window.location.hostname}:${window.location.port}/dashws`,
+  //   isDebugMode: true,
+  // });
 
-  const wsMiddleware = createWsMiddleware({
-    defaultEndpoint: `wss://${window.location.hostname}:${window.location.port}/dashws`,
-    isDebugMode: true,
-  });
-
-  const blynkWsMiddleware = createBlynkWsMiddleware({
-    isDebugMode: true,
-  });
+  // const blynkWsMiddleware = createBlynkWsMiddleware({
+  //   isDebugMode: true,
+  // });
 
   const middlewares = [
-    wsMiddleware,
-    blynkWsMiddleware,
+    // wsMiddleware,
+    // blynkWsMiddleware,
     axiosMiddleware(axiosAPI, axiosMiddlewareOptions),
     sagaMiddleware
   ];
@@ -81,7 +84,8 @@ function configureStoreProd(initialState) {
       sagaMiddleware.run(blynkSaga);
       store.dispatch({
         type: INIT_ACTION_TYPE,
-        endpoint: `wss://${window.location.hostname}:${window.location.port}/dashws`
+        endpoint: `wss://${window.location.hostname}:${window.location.port}/dashws`,
+        isDebugMode: true,
       });
       resolve(store);
     });
@@ -92,18 +96,18 @@ function configureStoreDev() {
 
   const sagaMiddleware = createSagaMiddleware();
 
-  const wsMiddleware = createWsMiddleware({
-    defaultEndpoint: 'wss://localhost:9443/dashws',
-    isDebugMode: true,
-  });
-
-  const blynkWsMiddleware = createBlynkWsMiddleware({
-    isDebugMode: true,
-  });
+  // const wsMiddleware = createWsMiddleware({
+  //   defaultEndpoint: 'wss://localhost:9443/dashws',
+  //   isDebugMode: true,
+  // });
+  //
+  // const blynkWsMiddleware = createBlynkWsMiddleware({
+  //   isDebugMode: true,
+  // });
 
   const middlewares = [
-    wsMiddleware,
-    blynkWsMiddleware,
+    // wsMiddleware,
+    // blynkWsMiddleware,
     axiosMiddleware(axiosAPI, axiosMiddlewareOptions),
     sagaMiddleware
   ];
@@ -127,7 +131,8 @@ function configureStoreDev() {
       sagaMiddleware.run(blynkSaga);
       store.dispatch({
         type: INIT_ACTION_TYPE,
-        endpoint: 'wss://localhost:9443/dashws'
+        endpoint: 'wss://localhost:9443/dashws',
+        isDebugMode: true,
       });
       resolve(store);
     });
