@@ -1121,6 +1121,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         sleep(100);
 
         client.never(logEvent(0, device.id + " OFFLINE"));
+        client.reset();
 
         newHardClient = new TestHardClient("localhost", properties.getHttpPort());
         newHardClient.start();
