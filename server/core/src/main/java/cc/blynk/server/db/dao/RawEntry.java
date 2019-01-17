@@ -5,7 +5,7 @@ package cc.blynk.server.db.dao;
  * Created by Dmitriy Dumanskiy.
  * Created on 31.10.17.
  */
-public class RawEntry {
+public final class RawEntry {
 
     public final long ts;
 
