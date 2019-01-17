@@ -14,6 +14,8 @@ import static cc.blynk.server.core.model.widgets.outputs.graph.Period.LIVE;
  */
 public class GraphPinRequest {
 
+    public static final GraphPinRequest EMPTY_REQUEST = new GraphPinRequest(-1, -1, null, Period.DAY, -1);
+
     public final int dashId;
 
     public final int deviceId;

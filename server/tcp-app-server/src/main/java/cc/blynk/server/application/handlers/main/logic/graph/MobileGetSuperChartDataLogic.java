@@ -98,8 +98,7 @@ public final class MobileGetSuperChartDataLogic {
             int targetIdUpdated = graphDataStream.getTargetId(targetId);
             Device device = holder.deviceDao.getById(targetIdUpdated);
             if (device == null) {
-                requestedPins[i] = new GraphPinRequest(dashId, -1,
-                        graphDataStream.dataStream, period, skipCount);
+                requestedPins[i] = GraphPinRequest.EMPTY_REQUEST;
             } else {
                 requestedPins[i] = new GraphPinRequest(dashId, device.id,
                         graphDataStream.dataStream, period, skipCount);

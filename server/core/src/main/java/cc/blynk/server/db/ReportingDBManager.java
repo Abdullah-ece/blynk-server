@@ -3,14 +3,12 @@ package cc.blynk.server.db;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.model.web.product.EventType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
-import cc.blynk.server.core.reporting.WebGraphRequest;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
 import cc.blynk.server.core.reporting.raw.BaseReportingKey;
 import cc.blynk.server.core.reporting.raw.BaseReportingValue;
 import cc.blynk.server.core.stats.model.Stat;
 import cc.blynk.server.db.dao.EventDBDao;
-import cc.blynk.server.db.dao.RawEntry;
 import cc.blynk.server.db.dao.ReportingDBDao;
 import cc.blynk.server.db.dao.descriptor.DataQueryRequestDTO;
 import cc.blynk.utils.properties.BaseProperties;
@@ -25,7 +23,6 @@ import java.sql.Connection;
 import java.sql.Statement;
 import java.time.Instant;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
@@ -116,13 +113,6 @@ public class ReportingDBManager implements Closeable {
         if (isDBEnabled() && cleanOldReporting) {
             blockingIOProcessor.executeDB(() -> reportingDBDao.cleanOldReportingRecords(now));
         }
-    }
-
-    public List<RawEntry> getReportingDataByTs(WebGraphRequest webGraphRequest) throws Exception {
-        if (isDBEnabled()) {
-            return reportingDBDao.getReportingDataByTs(webGraphRequest);
-        }
-        return Collections.emptyList();
     }
 
     public void insertBatchDataPoints(Map<BaseReportingKey, Queue<BaseReportingValue>> rawDataBatch) {
