@@ -16,7 +16,6 @@ import cc.blynk.server.core.model.web.product.WebDashboard;
 import cc.blynk.server.core.model.web.product.metafields.DeviceNameMetaField;
 import cc.blynk.server.core.model.web.product.metafields.DeviceOwnerMetaField;
 import cc.blynk.server.core.model.web.product.metafields.DeviceReferenceMetaField;
-import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.processors.rules.datastream.DeviceRuleDataStream;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
@@ -37,7 +36,7 @@ import static cc.blynk.utils.ArrayUtil.concat;
  * Created by Dmitriy Dumanskiy.
  * Created on 16.11.16.
  */
-public class Device implements Target {
+public class Device {
 
     public int id;
 
@@ -228,26 +227,6 @@ public class Device implements Target {
             return hardwareInfo.templateId;
         }
         return null;
-    }
-
-    @Override
-    public int[] getDeviceIds() {
-        return new int[] {id};
-    }
-
-    @Override
-    public boolean isSelected(int deviceId) {
-        return id == deviceId;
-    }
-
-    @Override
-    public int[] getAssignedDeviceIds() {
-        return new int[] {id};
-    }
-
-    @Override
-    public int getDeviceId() {
-        return id;
     }
 
     public void updateFromMobile(Device newDevice) {

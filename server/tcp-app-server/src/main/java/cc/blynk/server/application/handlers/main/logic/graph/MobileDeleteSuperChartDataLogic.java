@@ -4,7 +4,7 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.widgets.Target;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
 import cc.blynk.server.core.model.widgets.outputs.graph.Superchart;
@@ -75,12 +75,11 @@ public final class MobileDeleteSuperChartDataLogic {
             try {
                 for (GraphDataStream graphDataStream : dataStreams) {
                     int targetIdUpdated = graphDataStream.getTargetId(targetId);
-                    Target target = holder.deviceDao.getById(targetIdUpdated);
-
+                    Device device = holder.deviceDao.getById(targetIdUpdated);
 
                     DataStream dataStream = graphDataStream.dataStream;
-                    if (target != null && dataStream != null && dataStream.pinType != null) {
-                        int deviceId = target.getDeviceId();
+                    if (device != null && dataStream != null && dataStream.pinType != null) {
+                        int deviceId = device.id;
                         holder.reportingDiskDao.delete(deviceId, dataStream.pinType, dataStream.pin);
                     }
                 }

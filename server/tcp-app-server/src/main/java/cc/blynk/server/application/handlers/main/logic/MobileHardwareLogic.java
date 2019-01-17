@@ -6,7 +6,6 @@ import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
-import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.processors.BaseProcessorHandler;
 import cc.blynk.server.core.processors.WebhookProcessor;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -58,17 +57,10 @@ public class MobileHardwareLogic extends BaseProcessorHandler {
         int targetId = Integer.parseInt(split[0]);
 
         //sending message only if widget assigned to device or tag has assigned devices
-        Target target = deviceDao.getById(targetId);
+        Device device = deviceDao.getById(targetId);
 
-        if (target == null) {
+        if (device == null) {
             log.debug("No assigned target id for received command.");
-            return;
-        }
-
-        int[] deviceIds = target.getDeviceIds();
-
-        if (deviceIds.length == 0) {
-            log.debug("No devices assigned to target.");
             return;
         }
 
@@ -89,20 +81,15 @@ public class MobileHardwareLogic extends BaseProcessorHandler {
             String value = splitBody[2];
             long now = System.currentTimeMillis();
 
-            for (int deviceId : deviceIds) {
-                Device device = deviceDao.getById(deviceId);
-                if (device != null) {
-                    device.updateValue(pin, pinType, value, now);
-                }
-            }
+            device.updateValue(pin, pinType, value, now);
 
             Session session = sessionDao.getOrgSession(state.user.orgId);
             //sending to shared dashes and master-master apps
             //session.sendToSharedApps(ctx.channel(), dash.sharedToken, DEVICE_SYNC, message.id, message.body);
             session.sendToApps(ctx.channel(), DEVICE_SYNC, message.id, message.body);
-            session.sendToSelectedDeviceOnWeb(DEVICE_SYNC, message.id, split[1], deviceIds);
+            session.sendToSelectedDeviceOnWeb(DEVICE_SYNC, message.id, split[1], device.id);
 
-            if (session.sendMessageToHardware(HARDWARE, message.id, split[1], deviceIds)) {
+            if (session.sendMessageToHardware(HARDWARE, message.id, split[1], device.id)) {
                 log.debug("Device not in the network.");
                 ctx.writeAndFlush(deviceNotInNetwork(message.id), ctx.voidPromise());
             }

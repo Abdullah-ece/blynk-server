@@ -6,8 +6,8 @@ import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.profile.Profile;
-import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
@@ -101,10 +101,10 @@ public class HistoryGraphUnusedPinDataCleanerWorker implements Runnable {
                 int[] resultIds;
                 if (deviceIds == null) {
                     int targetId = graphDataStream.targetId;
-                    Target target = deviceDao.getById(targetId);
+                    Device device = deviceDao.getById(targetId);
 
-                    if (target != null) {
-                        resultIds = target.getAssignedDeviceIds();
+                    if (device != null) {
+                        resultIds = new int[] {device.id};
                     } else {
                         resultIds = IntArray.EMPTY_INTS;
                     }

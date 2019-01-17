@@ -6,9 +6,9 @@ import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.profile.Profile;
 import cc.blynk.server.core.model.widgets.FrequencyWidget;
-import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.Tile;
@@ -130,8 +130,8 @@ public class ReadingWidgetsWorker implements Runnable {
     }
 
     private boolean sameDeviceId(int targetId, int channelDeviceId) {
-        Target target = deviceDao.getById(targetId);
-        return target != null && target.isSelected(channelDeviceId);
+        Device device = deviceDao.getById(targetId);
+        return device != null && device.id == channelDeviceId;
     }
 
 }

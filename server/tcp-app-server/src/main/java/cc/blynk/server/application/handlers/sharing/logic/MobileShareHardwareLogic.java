@@ -9,7 +9,6 @@ import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
-import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.processors.BaseProcessorHandler;
 import cc.blynk.server.core.processors.WebhookProcessor;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
@@ -84,17 +83,10 @@ public class MobileShareHardwareLogic extends BaseProcessorHandler {
         }
 
         //sending message only if widget assigned to device or tag has assigned devices
-        Target target = deviceDao.getById(targetId);
+        Device device = deviceDao.getById(targetId);
 
-        if (target == null) {
+        if (device == null) {
             log.debug("No assigned target id for received command.");
-            return;
-        }
-
-        int[] deviceIds = target.getDeviceIds();
-
-        if (deviceIds.length == 0) {
-            log.debug("No devices assigned to target.");
             return;
         }
 
@@ -113,12 +105,7 @@ public class MobileShareHardwareLogic extends BaseProcessorHandler {
             String value = splitBody[2];
             long now = System.currentTimeMillis();
 
-            for (int deviceId : deviceIds) {
-                Device device = deviceDao.getById(deviceId);
-                if (device != null) {
-                    device.updateValue(pin, pinType, value, now);
-                }
-            }
+            device.updateValue(pin, pinType, value, now);
 
             String sharedToken = state.token;
             if (sharedToken != null) {
@@ -132,7 +119,7 @@ public class MobileShareHardwareLogic extends BaseProcessorHandler {
                 }
             }
 
-            if (session.sendMessageToHardware(HARDWARE, message.id, split[1], deviceIds)
+            if (session.sendMessageToHardware(HARDWARE, message.id, split[1], device.id)
                     && !dash.isNotificationsOff) {
                 log.debug("Device not in the network.");
                 ctx.writeAndFlush(deviceNotInNetwork(message.id), ctx.voidPromise());

@@ -9,7 +9,6 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
-import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
@@ -73,12 +72,9 @@ public class Profile {
 
     private void removePinStorageValue(DeviceDao deviceDao, int targetId,
                                        PinType pinType, short pin, boolean removeProperties) {
-        Target target = deviceDao.getById(targetId);
-        if (target != null) {
-            for (int deviceId : target.getAssignedDeviceIds()) {
-                Device device = deviceDao.getById(deviceId);
-                device.removePinValue(pinType, pin, removeProperties);
-            }
+        Device device = deviceDao.getById(targetId);
+        if (device != null) {
+            device.removePinValue(pinType, pin, removeProperties);
         }
     }
 

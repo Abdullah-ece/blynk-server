@@ -8,7 +8,6 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
@@ -268,13 +267,13 @@ public class TimerWorker implements Runnable {
                 }
             } else {
                 int targetId = key.deviceId;
-                Target target = deviceDao.getById(targetId);
+                Device device = deviceDao.getById(targetId);
 
-                if (target == null) {
+                if (device == null) {
                     return;
                 }
 
-                deviceIds = target.getDeviceIds();
+                deviceIds = new int[] {device.id};
             }
 
             if (deviceIds.length == 0) {
