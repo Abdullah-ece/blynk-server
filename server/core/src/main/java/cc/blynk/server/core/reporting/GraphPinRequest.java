@@ -44,34 +44,6 @@ public class GraphPinRequest {
 
     public long to;
 
-    public GraphPinRequest(int dashId, int[] deviceIds, DataStream dataStream,
-                           Period period, int skipCount, AggregationFunctionType function) {
-        this.dashId = dashId;
-        this.deviceId = -1;
-        this.deviceIds = deviceIds == null ? EMPTY_INTS : deviceIds;
-        this.isTag = true;
-        if (dataStream == null) {
-            this.pinType = PinType.VIRTUAL;
-            this.pin = (short) DataStream.NO_PIN;
-        } else {
-            this.pinType = (dataStream.pinType == null ? PinType.VIRTUAL : dataStream.pinType);
-            this.pin = dataStream.pin;
-        }
-        this.graphPeriod = period;
-        this.functionType = function;
-        this.count = period.numberOfPoints;
-        this.type = period.granularityType;
-        this.skipCount = skipCount;
-    }
-
-    public GraphPinRequest(int dashId, int deviceId, DataStream dataStream,
-                           Period period, int skipCount,
-                           AggregationFunctionType function, long from, long to) {
-        this(dashId, deviceId, dataStream, period, skipCount, function);
-        this.from = from;
-        this.to = to;
-    }
-
     public GraphPinRequest(int dashId, int deviceId, DataStream dataStream,
                            Period period, int skipCount, AggregationFunctionType function) {
         this.dashId = dashId;
