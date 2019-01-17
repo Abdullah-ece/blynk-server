@@ -212,4 +212,46 @@ public class PermissionsTest extends SingleServerInstancePerTestWithDBAndNewOrg 
         subUserClient.verifyResult(appSync(6, createdDevice.id + " vw 2 102"));
     }
 
+    @Test
+    // https://github.com/blynkkk/dash/issues/2025
+    public void adminIsAbleToDeleteSubOrg() throws Exception {
+        String admin = "admin@blynk.cc";
+        String pass = "2";
+        String hash = SHA256Util.makeHash(pass, admin);
+        holder.userDao.add(admin, hash, orgId, 1);
+
+        AppWebSocketClient adminClient = loggedDefaultClient("admin@blynk.cc", "2");
+
+
+        Product product = new Product();
+        product.name = "My product";
+        product.metaFields = new MetaField[] {
+                createDeviceNameMeta(1, "namne", "name", true),
+                createDeviceOwnerMeta(2, "owner", "owner", true)
+        };
+
+        adminClient.createProduct(product);
+        ProductDTO fromApiProduct = adminClient.parseProductDTO(1);
+        assertNotNull(fromApiProduct);
+
+        Organization organization = new Organization(
+                "My Org ffff", "Some TimeZone", "/static/logo.png", false, orgId,
+                new Role(1, "Admin", 0b11111111111111111111, 0));
+        organization.selectedProducts = new int[] {fromApiProduct.id};
+
+        adminClient.createOrganization(organization);
+        OrganizationDTO fromApiOrg = adminClient.parseOrganizationDTO(2);
+        assertNotNull(fromApiOrg);
+        assertEquals(orgId, fromApiOrg.parentId);
+        assertEquals(organization.name, fromApiOrg.name);
+        assertEquals(organization.tzName, fromApiOrg.tzName);
+        assertNotNull(fromApiOrg.products);
+        assertEquals(1, fromApiOrg.products.length);
+        assertEquals(fromApiProduct.id + 1, fromApiOrg.products[0].id);
+
+
+        adminClient.deleteOrg(2);
+        adminClient.verifyResult(ok(3));
+    }
+
 }

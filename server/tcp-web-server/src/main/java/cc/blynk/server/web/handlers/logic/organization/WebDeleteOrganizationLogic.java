@@ -45,11 +45,7 @@ public final class WebDeleteOrganizationLogic implements PermissionBasedLogic<We
             return;
         }
 
-        if (!user.isSuperAdmin()) {
-            log.error("User {} is not superadmin and tries to delete the org {}.", user.email, orgIdForRemoval);
-            ctx.writeAndFlush(json(message.id, "Only superadmin can delete organization."), ctx.voidPromise());
-            return;
-        }
+        organizationDao.checkInheritanceAccess(user, orgIdForRemoval);
 
         Organization orgToDelete = organizationDao.getOrgById(orgIdForRemoval);
         if (orgToDelete == null) {
