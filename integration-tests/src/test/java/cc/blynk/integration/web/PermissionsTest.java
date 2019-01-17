@@ -212,4 +212,146 @@ public class PermissionsTest extends SingleServerInstancePerTestWithDBAndNewOrg 
         subUserClient.verifyResult(appSync(6, createdDevice.id + " vw 2 102"));
     }
 
+    @Test
+    // https://github.com/blynkkk/dash/issues/2025
+    public void adminIsAbleToDeleteSubOrg() throws Exception {
+        String admin = "admin@blynk.cc";
+        String pass = "2";
+        String hash = SHA256Util.makeHash(pass, admin);
+        holder.userDao.add(admin, hash, orgId, 1);
+
+        AppWebSocketClient adminClient = loggedDefaultClient("admin@blynk.cc", "2");
+
+
+        Product product = new Product();
+        product.name = "My product";
+        product.metaFields = new MetaField[] {
+                createDeviceNameMeta(1, "namne", "name", true),
+                createDeviceOwnerMeta(2, "owner", "owner", true)
+        };
+
+        adminClient.createProduct(product);
+        ProductDTO fromApiProduct = adminClient.parseProductDTO(1);
+        assertNotNull(fromApiProduct);
+
+        Organization organization = new Organization(
+                "My Org ffff", "Some TimeZone", "/static/logo.png", false, orgId,
+                new Role(1, "Admin", 0b11111111111111111111, 0));
+        organization.selectedProducts = new int[] {fromApiProduct.id};
+
+        adminClient.createOrganization(organization);
+        OrganizationDTO fromApiOrg = adminClient.parseOrganizationDTO(2);
+        assertNotNull(fromApiOrg);
+        assertEquals(orgId, fromApiOrg.parentId);
+        assertEquals(organization.name, fromApiOrg.name);
+        assertEquals(organization.tzName, fromApiOrg.tzName);
+        assertNotNull(fromApiOrg.products);
+        assertEquals(1, fromApiOrg.products.length);
+        assertEquals(fromApiProduct.id + 1, fromApiOrg.products[0].id);
+
+
+        adminClient.deleteOrg(fromApiOrg.id);
+        adminClient.verifyResult(ok(3));
+    }
+
+    @Test
+    public void adminIsNotAbleToDeleteHisOwnOrg() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient("super@blynk.cc", "1");
+
+        Product product = new Product();
+        product.name = "My product";
+        product.metaFields = new MetaField[] {
+                createDeviceNameMeta(1, "namne", "name", true),
+                createDeviceOwnerMeta(2, "owner", "owner", true)
+        };
+
+        client.createProduct(product);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
+        assertNotNull(fromApiProduct);
+
+        Organization organization = new Organization(
+                "My Org ffff", "Some TimeZone", "/static/logo.png", false, orgId,
+                new Role(1, "Admin", 0b11111111111111111111, 0));
+        organization.selectedProducts = new int[] {fromApiProduct.id};
+
+        client.createOrganization(organization);
+        OrganizationDTO fromApiOrg = client.parseOrganizationDTO(2);
+        assertNotNull(fromApiOrg);
+        assertEquals(orgId, fromApiOrg.parentId);
+        assertEquals(organization.name, fromApiOrg.name);
+        assertEquals(organization.tzName, fromApiOrg.tzName);
+        assertNotNull(fromApiOrg.products);
+        assertEquals(1, fromApiOrg.products.length);
+        assertEquals(fromApiProduct.id + 1, fromApiOrg.products[0].id);
+
+        String admin = "admin@myorg.cc";
+        String pass = "2";
+        String hash = SHA256Util.makeHash(pass, admin);
+        holder.userDao.add(admin, hash, fromApiOrg.id, 1);
+
+        AppWebSocketClient childOrgAdminClient = loggedDefaultClient("admin@myorg.cc", "2");
+
+        childOrgAdminClient.deleteOrg(fromApiOrg.id);
+        childOrgAdminClient.verifyResult(webJson(1, "Removed organization should be a child of current organization."));
+    }
+
+    @Test
+    public void adminIsNotAbleToDeleteOrgHeNotBelongsTo() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient("super@blynk.cc", "1");
+
+        Product product = new Product();
+        product.name = "My product";
+        product.metaFields = new MetaField[] {
+                createDeviceNameMeta(1, "namne", "name", true),
+                createDeviceOwnerMeta(2, "owner", "owner", true)
+        };
+
+        client.createProduct(product);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
+        assertNotNull(fromApiProduct);
+
+        Organization organization = new Organization(
+                "My Org ffff", "Some TimeZone", "/static/logo.png", false, orgId,
+                new Role(1, "Admin", 0b11111111111111111111, 0));
+        organization.selectedProducts = new int[] {fromApiProduct.id};
+
+        client.createOrganization(organization);
+        OrganizationDTO fromApiOrg = client.parseOrganizationDTO(2);
+        assertNotNull(fromApiOrg);
+        assertEquals(orgId, fromApiOrg.parentId);
+        assertEquals(organization.name, fromApiOrg.name);
+        assertEquals(organization.tzName, fromApiOrg.tzName);
+        assertNotNull(fromApiOrg.products);
+        assertEquals(1, fromApiOrg.products.length);
+        assertEquals(fromApiProduct.id + 1, fromApiOrg.products[0].id);
+
+        String admin = "admin@myorg.cc";
+        String pass = "2";
+        String hash = SHA256Util.makeHash(pass, admin);
+        holder.userDao.add(admin, hash, fromApiOrg.id, 1);
+
+        client.reset();
+
+        organization = new Organization(
+                "My Another Org", "Some TimeZone", "/static/logo.png", false, orgId,
+                new Role(1, "Admin", 0b11111111111111111111, 0));
+        organization.selectedProducts = new int[] {fromApiProduct.id};
+
+        client.createOrganization(organization);
+        fromApiOrg = client.parseOrganizationDTO(1);
+        assertNotNull(fromApiOrg);
+        assertEquals(orgId, fromApiOrg.parentId);
+        assertEquals(organization.name, fromApiOrg.name);
+        assertEquals(organization.tzName, fromApiOrg.tzName);
+        assertNotNull(fromApiOrg.products);
+        assertEquals(1, fromApiOrg.products.length);
+        assertEquals(fromApiProduct.id + 2, fromApiOrg.products[0].id);
+
+
+        AppWebSocketClient childOrgAdminClient = loggedDefaultClient("admin@myorg.cc", "2");
+
+        childOrgAdminClient.deleteOrg(fromApiOrg.id);
+        childOrgAdminClient.verifyResult(
+                webJson(1, "User admin@myorg.cc has no access to this organization (id=" + fromApiOrg.id + ")."));
+    }
 }
