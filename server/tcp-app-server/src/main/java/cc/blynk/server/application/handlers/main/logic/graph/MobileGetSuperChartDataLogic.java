@@ -81,28 +81,28 @@ public final class MobileGetSuperChartDataLogic {
             throw new JsonException("Passed wrong widget id.");
         }
 
-        Superchart enhancedHistoryGraph = (Superchart) widget;
+        Superchart superchart = (Superchart) widget;
 
-        int numberOfStreams = enhancedHistoryGraph.dataStreams.length;
+        int numberOfStreams = superchart.dataStreams.length;
         if (numberOfStreams == 0) {
             log.debug("No data streams for enhanced graph with id {}.", widgetId);
             ctx.writeAndFlush(noData(message.id), ctx.voidPromise());
             return;
         }
 
-        GraphPinRequest[] requestedPins = new GraphPinRequest[enhancedHistoryGraph.dataStreams.length];
+        GraphPinRequest[] requestedPins = new GraphPinRequest[superchart.dataStreams.length];
 
         int i = 0;
-        for (GraphDataStream graphDataStream : enhancedHistoryGraph.dataStreams) {
+        for (GraphDataStream graphDataStream : superchart.dataStreams) {
             //special case, for device tiles widget targetID may be overrided
             int targetIdUpdated = graphDataStream.getTargetId(targetId);
             Device device = holder.deviceDao.getById(targetIdUpdated);
             if (device == null) {
                 requestedPins[i] = new GraphPinRequest(dashId, -1,
-                        graphDataStream.dataStream, period, skipCount, graphDataStream.functionType);
+                        graphDataStream.dataStream, period, skipCount);
             } else {
                 requestedPins[i] = new GraphPinRequest(dashId, device.id,
-                        graphDataStream.dataStream, period, skipCount, graphDataStream.functionType);
+                        graphDataStream.dataStream, period, skipCount);
             }
             i++;
         }

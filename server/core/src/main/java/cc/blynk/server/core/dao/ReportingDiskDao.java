@@ -1,9 +1,7 @@
 package cc.blynk.server.core.dao;
 
-import cc.blynk.server.core.dao.functions.GraphFunction;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
-import cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.protocol.exceptions.NoDataException;
 import cc.blynk.server.core.reporting.GraphPinRequest;
@@ -26,11 +24,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 import static cc.blynk.utils.FileUtils.CSV_DIR;
-import static cc.blynk.utils.FileUtils.SIZE_OF_REPORT_ENTRY;
 import static io.netty.util.internal.EmptyArrays.EMPTY_BYTES;
 
 /**
@@ -94,32 +89,6 @@ public class ReportingDiskDao implements Closeable {
         return false;
     }
 
-    private static void addBufferToResult(TreeMap<Long, GraphFunction> data,
-                                          AggregationFunctionType functionType,
-                                          ByteBuffer localByteBuf) {
-        if (localByteBuf != null) {
-            while (localByteBuf.hasRemaining()) {
-                double newVal = localByteBuf.getDouble();
-                Long ts = localByteBuf.getLong();
-                GraphFunction graphFunctionObj = data.get(ts);
-                if (graphFunctionObj == null) {
-                    graphFunctionObj = functionType.produce();
-                    data.put(ts, graphFunctionObj);
-                }
-                graphFunctionObj.apply(newVal);
-            }
-        }
-    }
-
-    private static ByteBuffer toByteBuf(TreeMap<Long, GraphFunction> data) {
-        ByteBuffer result = ByteBuffer.allocate(data.size() * SIZE_OF_REPORT_ENTRY);
-        for (Map.Entry<Long, GraphFunction> entry : data.entrySet()) {
-            result.putDouble(entry.getValue().getResult())
-                    .putLong(entry.getKey());
-        }
-        return result;
-    }
-
     public static String generateFilename(PinType pinType, short pin, GraphGranularityType type) {
         return generateFilename(pinType.pintTypeChar, pin, type.label);
     }
@@ -137,33 +106,14 @@ public class ReportingDiskDao implements Closeable {
         return Paths.get(dataFolder, String.valueOf(deviceId));
     }
 
-    private ByteBuffer getDataForTag(GraphPinRequest graphPinRequest) {
-        TreeMap<Long, GraphFunction> data = new TreeMap<>();
-        for (int deviceId : graphPinRequest.deviceIds) {
-            ByteBuffer localByteBuf = getByteBufferFromDisk(
-                    deviceId,
+    private ByteBuffer getByteBufferFromDisk(GraphPinRequest graphPinRequest) {
+        try {
+            return getByteBufferFromDisk(
+                    graphPinRequest.deviceId,
                     graphPinRequest.pinType, graphPinRequest.pin,
                     graphPinRequest.count, graphPinRequest.type,
                     graphPinRequest.skipCount
             );
-            addBufferToResult(data, graphPinRequest.functionType, localByteBuf);
-        }
-
-        return toByteBuf(data);
-    }
-
-    private ByteBuffer getByteBufferFromDisk(GraphPinRequest graphPinRequest) {
-        try {
-            if (graphPinRequest.isTag) {
-                return getDataForTag(graphPinRequest);
-            } else {
-                return getByteBufferFromDisk(
-                        graphPinRequest.deviceId,
-                        graphPinRequest.pinType, graphPinRequest.pin,
-                        graphPinRequest.count, graphPinRequest.type,
-                        graphPinRequest.skipCount
-                );
-            }
         } catch (Exception e) {
             log.error("Error getting data from disk.", e);
             return null;
