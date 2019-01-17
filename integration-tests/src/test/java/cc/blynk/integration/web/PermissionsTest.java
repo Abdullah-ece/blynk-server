@@ -250,7 +250,7 @@ public class PermissionsTest extends SingleServerInstancePerTestWithDBAndNewOrg 
         assertEquals(fromApiProduct.id + 1, fromApiOrg.products[0].id);
 
 
-        adminClient.deleteOrg(2);
+        adminClient.deleteOrg(fromApiOrg.id);
         adminClient.verifyResult(ok(3));
     }
 
