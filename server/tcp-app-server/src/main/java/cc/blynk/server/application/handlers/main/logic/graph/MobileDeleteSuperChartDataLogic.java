@@ -8,7 +8,6 @@ import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
 import cc.blynk.server.core.model.widgets.outputs.graph.Superchart;
-import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.StringUtils;
@@ -63,25 +62,21 @@ public final class MobileDeleteSuperChartDataLogic {
         Superchart enhancedHistoryGraph = (Superchart) widget;
 
         if (streamIndex == -1 || streamIndex > enhancedHistoryGraph.dataStreams.length - 1) {
-            delete(holder, ctx.channel(), message.id, dash, targetId, enhancedHistoryGraph.dataStreams);
+            delete(holder, ctx.channel(), message.id, targetId, enhancedHistoryGraph.dataStreams);
         } else {
             delete(holder, ctx.channel(),
-                    message.id, dash, targetId, enhancedHistoryGraph.dataStreams[streamIndex]);
+                    message.id, targetId, enhancedHistoryGraph.dataStreams[streamIndex]);
         }
     }
 
     private static void delete(Holder holder, Channel channel, int msgId,
-                               DashBoard dash, int targetId, GraphDataStream... dataStreams) {
+                               int targetId, GraphDataStream... dataStreams) {
         holder.blockingIOProcessor.executeHistory(() -> {
             try {
                 for (GraphDataStream graphDataStream : dataStreams) {
-                    Target target;
                     int targetIdUpdated = graphDataStream.getTargetId(targetId);
-                    if (targetIdUpdated < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
-                        target = holder.deviceDao.getById(targetIdUpdated);
-                    } else {
-                        target = dash.getDeviceSelector(targetIdUpdated);
-                    }
+                    Target target = holder.deviceDao.getById(targetIdUpdated);
+
 
                     DataStream dataStream = graphDataStream.dataStream;
                     if (target != null && dataStream != null && dataStream.pinType != null) {

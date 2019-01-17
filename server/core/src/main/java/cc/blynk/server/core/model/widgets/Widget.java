@@ -51,7 +51,6 @@ import cc.blynk.server.core.model.widgets.sensors.Humidity;
 import cc.blynk.server.core.model.widgets.sensors.Light;
 import cc.blynk.server.core.model.widgets.sensors.Proximity;
 import cc.blynk.server.core.model.widgets.sensors.Temperature;
-import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.model.widgets.ui.Menu;
 import cc.blynk.server.core.model.widgets.ui.Tabs;
 import cc.blynk.server.core.model.widgets.ui.TimeInput;
@@ -152,7 +151,6 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
         @JsonSubTypes.Type(value = BluetoothSerial.class, name = "BLUETOOTH_SERIAL"),
         @JsonSubTypes.Type(value = Eventor.class, name = "EVENTOR"),
         @JsonSubTypes.Type(value = Map.class, name = "MAP"),
-        @JsonSubTypes.Type(value = DeviceSelector.class, name = "DEVICE_SELECTOR"),
         @JsonSubTypes.Type(value = DeviceTiles.class, name = "DEVICE_TILES"),
 
         @JsonSubTypes.Type(value = WebHook.class, name = "WEBHOOK")

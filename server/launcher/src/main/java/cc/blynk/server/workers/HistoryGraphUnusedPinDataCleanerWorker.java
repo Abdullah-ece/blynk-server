@@ -12,7 +12,6 @@ import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.model.widgets.outputs.graph.Superchart;
-import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.model.widgets.ui.reporting.Report;
 import cc.blynk.server.core.model.widgets.ui.reporting.ReportingWidget;
 import cc.blynk.server.core.model.widgets.ui.reporting.source.ReportDataStream;
@@ -40,14 +39,12 @@ public class HistoryGraphUnusedPinDataCleanerWorker implements Runnable {
 
     private final UserDao userDao;
     private final DeviceDao deviceDao;
-    private final ReportingDiskDao reportingDao;
 
     private long lastStart;
 
     public HistoryGraphUnusedPinDataCleanerWorker(UserDao userDao, DeviceDao deviceDao, ReportingDiskDao reportingDao) {
         this.userDao = userDao;
         this.deviceDao = deviceDao;
-        this.reportingDao = reportingDao;
         this.lastStart = System.currentTimeMillis();
     }
 
@@ -85,11 +82,10 @@ public class HistoryGraphUnusedPinDataCleanerWorker implements Runnable {
         }
     }
 
-    private void add(Set<DeviceFile> doNotRemovePaths, Profile profile,
-                     DashBoard dash, Widget widget, int[] deviceIds) {
+    private void add(Set<DeviceFile> doNotRemovePaths, Widget widget, int[] deviceIds) {
         if (widget instanceof Superchart) {
             Superchart enhancedHistoryGraph = (Superchart) widget;
-            add(doNotRemovePaths, profile, dash, enhancedHistoryGraph, deviceIds);
+            add(doNotRemovePaths, enhancedHistoryGraph, deviceIds);
         } else if (widget instanceof ReportingWidget) {
             //reports can't be assigned to device tiles so we ignore deviceIds parameter
             ReportingWidget reportingWidget = (ReportingWidget) widget;
@@ -97,22 +93,16 @@ public class HistoryGraphUnusedPinDataCleanerWorker implements Runnable {
         }
     }
 
-    private void add(Set<DeviceFile> doNotRemovePaths, Profile profile,
-                     DashBoard dash, Superchart graph, int[] deviceIds) {
+    private void add(Set<DeviceFile> doNotRemovePaths, Superchart graph, int[] deviceIds) {
         for (GraphDataStream graphDataStream : graph.dataStreams) {
             if (graphDataStream != null && graphDataStream.dataStream != null && graphDataStream.dataStream.isValid()) {
                 DataStream dataStream = graphDataStream.dataStream;
 
                 int[] resultIds;
                 if (deviceIds == null) {
-                    Target target;
                     int targetId = graphDataStream.targetId;
-                    if (targetId < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
-                        target = deviceDao.getById(targetId);
-                    } else {
-                        //means widget assigned to device selector widget.
-                        target = dash.getDeviceSelector(targetId);
-                    }
+                    Target target = deviceDao.getById(targetId);
+
                     if (target != null) {
                         resultIds = target.getAssignedDeviceIds();
                     } else {
@@ -150,12 +140,11 @@ public class HistoryGraphUnusedPinDataCleanerWorker implements Runnable {
                                 DeviceTiles deviceTiles = (DeviceTiles) widget;
                                 for (TileTemplate tileTemplate : deviceTiles.templates) {
                                     for (Widget tilesWidget : tileTemplate.widgets) {
-                                        add(doNotRemovePaths, profile,
-                                                dashBoard, tilesWidget, tileTemplate.deviceIds);
+                                        add(doNotRemovePaths, tilesWidget, tileTemplate.deviceIds);
                                     }
                                 }
                             } else {
-                                add(doNotRemovePaths, profile, dashBoard, widget, null);
+                                add(doNotRemovePaths, widget, null);
                             }
                         }
                     }

@@ -17,7 +17,6 @@ import cc.blynk.server.core.model.widgets.others.eventor.TimerTime;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.BaseAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.NotifyAction;
-import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.Tile;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
@@ -268,14 +267,9 @@ public class TimerWorker implements Runnable {
                     deviceIds = intArray.toArray();
                 }
             } else {
-                Target target;
                 int targetId = key.deviceId;
-                if (targetId < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
-                    target = deviceDao.getById(targetId);
-                } else {
-                    //means widget assigned to device selector widget.
-                    target = dash.getDeviceSelector(targetId);
-                }
+                Target target = deviceDao.getById(targetId);
+
                 if (target == null) {
                     return;
                 }

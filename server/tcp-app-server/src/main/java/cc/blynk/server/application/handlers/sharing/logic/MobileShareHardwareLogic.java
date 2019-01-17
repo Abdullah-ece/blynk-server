@@ -1,7 +1,6 @@
 package cc.blynk.server.application.handlers.sharing.logic;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.application.handlers.main.logic.MobileHardwareLogic;
 import cc.blynk.server.application.handlers.sharing.auth.MobileShareStateHolder;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.SessionDao;
@@ -11,7 +10,6 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Target;
-import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.processors.BaseProcessorHandler;
 import cc.blynk.server.core.processors.WebhookProcessor;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
@@ -86,13 +84,8 @@ public class MobileShareHardwareLogic extends BaseProcessorHandler {
         }
 
         //sending message only if widget assigned to device or tag has assigned devices
-        Target target;
-        if (targetId < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
-            target = deviceDao.getById(targetId);
-        } else {
-            //means widget assigned to device selector widget.
-            target = dash.getDeviceSelector(targetId);
-        }
+        Target target = deviceDao.getById(targetId);
+
         if (target == null) {
             log.debug("No assigned target id for received command.");
             return;
@@ -106,52 +99,46 @@ public class MobileShareHardwareLogic extends BaseProcessorHandler {
         }
 
         char operation = split[1].charAt(1);
-        switch (operation) {
-            case 'u' :
-                //splitting "vu 200000 1"
-                String[] splitBody = split3(split[1]);
-                MobileHardwareLogic.processDeviceSelectorCommand(ctx, deviceDao, session, dash, message, splitBody);
-                break;
-            case 'w' :
-                splitBody = split3(split[1]);
+        String[] splitBody;
+        if (operation == 'w') {
+            splitBody = split3(split[1]);
 
-                if (splitBody.length < 3) {
-                    log.debug("Not valid write command.");
-                    throw new JsonException("Not valid write command.");
+            if (splitBody.length < 3) {
+                log.debug("Not valid write command.");
+                throw new JsonException("Not valid write command.");
+            }
+
+            PinType pinType = PinType.getPinType(splitBody[0].charAt(0));
+            short pin = NumberUtil.parsePin(splitBody[1]);
+            String value = splitBody[2];
+            long now = System.currentTimeMillis();
+
+            for (int deviceId : deviceIds) {
+                Device device = deviceDao.getById(deviceId);
+                if (device != null) {
+                    device.updateValue(pin, pinType, value, now);
                 }
+            }
 
-                PinType pinType = PinType.getPinType(splitBody[0].charAt(0));
-                short pin = NumberUtil.parsePin(splitBody[1]);
-                String value = splitBody[2];
-                long now = System.currentTimeMillis();
-
-                for (int deviceId : deviceIds) {
-                    Device device = deviceDao.getById(deviceId);
-                    if (device != null) {
-                        device.updateValue(pin, pinType, value, now);
+            String sharedToken = state.token;
+            if (sharedToken != null) {
+                for (Channel appChannel : session.appChannels) {
+                    if (appChannel != ctx.channel() && appChannel.isWritable()
+                            && Session.needSync(appChannel, sharedToken)) {
+                        appChannel.writeAndFlush(
+                                makeUTF8StringMessage(DEVICE_SYNC, message.id, message.body),
+                                appChannel.voidPromise());
                     }
                 }
+            }
 
-                String sharedToken = state.token;
-                if (sharedToken != null) {
-                    for (Channel appChannel : session.appChannels) {
-                        if (appChannel != ctx.channel() && appChannel.isWritable()
-                                && Session.needSync(appChannel, sharedToken)) {
-                            appChannel.writeAndFlush(
-                                    makeUTF8StringMessage(DEVICE_SYNC, message.id, message.body),
-                                    appChannel.voidPromise());
-                        }
-                    }
-                }
+            if (session.sendMessageToHardware(HARDWARE, message.id, split[1], deviceIds)
+                    && !dash.isNotificationsOff) {
+                log.debug("Device not in the network.");
+                ctx.writeAndFlush(deviceNotInNetwork(message.id), ctx.voidPromise());
+            }
 
-                if (session.sendMessageToHardware(HARDWARE, message.id, split[1], deviceIds)
-                        && !dash.isNotificationsOff) {
-                    log.debug("Device not in the network.");
-                    ctx.writeAndFlush(deviceNotInNetwork(message.id), ctx.voidPromise());
-                }
-
-                processEventorAndWebhook(user, dash, targetId, session, pin, pinType, value, now);
-                break;
+            processEventorAndWebhook(user, dash, targetId, session, pin, pinType, value, now);
         }
     }
 }

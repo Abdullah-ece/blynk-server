@@ -16,7 +16,6 @@ import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphType;
 import cc.blynk.server.core.model.widgets.outputs.graph.Period;
 import cc.blynk.server.core.model.widgets.outputs.graph.Superchart;
-import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.model.widgets.ui.reporting.Report;
 import cc.blynk.server.core.model.widgets.ui.reporting.ReportingWidget;
 import cc.blynk.server.core.model.widgets.ui.reporting.source.DeviceReportSource;
@@ -463,62 +462,6 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         assertEquals(2, holder.reportingDiskDao.averageAggregator.getHourly().size());
         assertEquals(2, holder.reportingDiskDao.averageAggregator.getDaily().size());
         assertEquals(2, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
-        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
-    }
-
-    @Test
-    public void makeSureReportingIsPresentWhenGraphAssignedToDeviceSelector() throws Exception {
-        Device device1 = new Device();
-        device1.id = 1;
-        device1.name = "My Device";
-        device1.boardType = BoardType.ESP8266;
-        device1.status = Status.OFFLINE;
-
-        clientPair.appClient.createDevice(device1);
-        Device device = clientPair.appClient.parseDevice();
-        assertNotNull(device);
-        assertNotNull(device.token);
-        clientPair.appClient.verifyResult(createDevice(1, device));
-
-        DeviceSelector deviceSelector = new DeviceSelector();
-        deviceSelector.id = 200000;
-        deviceSelector.x = 0;
-        deviceSelector.y = 0;
-        deviceSelector.width = 1;
-        deviceSelector.height = 1;
-        deviceSelector.deviceIds = new int[] {0, 1};
-
-        clientPair.appClient.createWidget(1, deviceSelector);
-        clientPair.appClient.verifyResult(ok(2));
-
-        Superchart superchart = new Superchart();
-        superchart.id = 432;
-        superchart.width = 8;
-        superchart.height = 4;
-        GraphDataStream graphDataStream = new GraphDataStream(
-                null, GraphType.LINE, 0, (int) deviceSelector.id,
-                new DataStream((short) 88, PinType.VIRTUAL),
-                AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
-        superchart.dataStreams = new GraphDataStream[] {
-                graphDataStream
-        };
-
-        clientPair.appClient.createWidget(1, superchart);
-        clientPair.appClient.verifyResult(ok(3));
-
-        assertEquals(0, holder.reportingDiskDao.averageAggregator.getMinute().size());
-        assertEquals(0, holder.reportingDiskDao.averageAggregator.getHourly().size());
-        assertEquals(0, holder.reportingDiskDao.averageAggregator.getDaily().size());
-        assertEquals(0, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
-        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
-
-        clientPair.hardwareClient.send("hardware vw 88 111");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 88 111"))));
-
-        assertEquals(1, holder.reportingDiskDao.averageAggregator.getMinute().size());
-        assertEquals(1, holder.reportingDiskDao.averageAggregator.getHourly().size());
-        assertEquals(1, holder.reportingDiskDao.averageAggregator.getDaily().size());
-        assertEquals(1, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
         assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
     }
 

@@ -9,7 +9,6 @@ import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
 import cc.blynk.server.core.model.widgets.outputs.graph.Period;
 import cc.blynk.server.core.model.widgets.outputs.graph.Superchart;
-import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.exceptions.NoDataException;
@@ -96,13 +95,8 @@ public final class MobileGetSuperChartDataLogic {
         int i = 0;
         for (GraphDataStream graphDataStream : enhancedHistoryGraph.dataStreams) {
             //special case, for device tiles widget targetID may be overrided
-            Target target;
             int targetIdUpdated = graphDataStream.getTargetId(targetId);
-            if (targetIdUpdated < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
-                target = holder.deviceDao.getById(targetIdUpdated);
-            } else {
-                target = dash.getDeviceSelector(targetIdUpdated);
-            }
+            Target target = holder.deviceDao.getById(targetIdUpdated);
             if (target == null) {
                 requestedPins[i] = new GraphPinRequest(dashId, -1,
                         graphDataStream.dataStream, period, skipCount, graphDataStream.functionType);

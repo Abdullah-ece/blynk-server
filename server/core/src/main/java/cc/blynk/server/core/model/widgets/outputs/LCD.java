@@ -70,12 +70,6 @@ public class LCD extends MultiPinWidget implements FrequencyWidget {
             return;
         }
 
-        //do not send SYNC message for widgets assigned to device selector
-        //as it will be duplicated later.
-        if (isAssignedToDeviceSelector()) {
-            return;
-        }
-
         if (targetId == ANY_TARGET || this.deviceId == targetId) {
             if (advancedMode) {
                 for (String command : lastCommands) {

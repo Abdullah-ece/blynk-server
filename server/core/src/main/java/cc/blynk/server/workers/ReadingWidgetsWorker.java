@@ -10,7 +10,6 @@ import cc.blynk.server.core.model.profile.Profile;
 import cc.blynk.server.core.model.widgets.FrequencyWidget;
 import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.Widget;
-import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.Tile;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
@@ -85,8 +84,7 @@ public class ReadingWidgetsWorker implements Runnable {
                                         int deviceId = stateHolder.device.id;
                                         for (Widget widget : dashBoard.widgets) {
                                             if (widget instanceof FrequencyWidget) {
-                                                process(channel, (FrequencyWidget) widget,
-                                                        profile, dashBoard, deviceId, now);
+                                                process(channel, (FrequencyWidget) widget, deviceId, now);
                                             } else if (widget instanceof DeviceTiles) {
                                                 processDeviceTile(channel, (DeviceTiles) widget, deviceId, now);
                                             }
@@ -122,23 +120,17 @@ public class ReadingWidgetsWorker implements Runnable {
     }
 
     private void process(Channel channel, FrequencyWidget frequencyWidget,
-                         Profile profile, DashBoard dashBoard, int deviceId, long now) {
+                         int deviceId, long now) {
         if (channel.isWritable()
-                && sameDeviceId(profile, dashBoard, frequencyWidget.getDeviceId(), deviceId)
+                && sameDeviceId(frequencyWidget.getDeviceId(), deviceId)
                 && frequencyWidget.isTicked(now)) {
             frequencyWidget.writeReadingCommand(channel);
             tickedWidgets++;
         }
     }
 
-    private boolean sameDeviceId(Profile profile, DashBoard dash, int targetId, int channelDeviceId) {
-        Target target;
-        if (targetId < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
-            target = deviceDao.getById(targetId);
-        } else {
-            //means widget assigned to device selector widget.
-            target = dash.getDeviceSelector(targetId);
-        }
+    private boolean sameDeviceId(int targetId, int channelDeviceId) {
+        Target target = deviceDao.getById(targetId);
         return target != null && target.isSelected(channelDeviceId);
     }
 

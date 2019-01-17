@@ -11,7 +11,6 @@ import cc.blynk.server.core.model.widgets.MultiPinWidget;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.Widget;
-import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 
@@ -37,50 +36,44 @@ public class Profile {
         this.settings.update(updatedSettings);
     }
 
-    public void cleanPinStorageForTileTemplate(DeviceDao deviceDao, DashBoard dash, TileTemplate tileTemplate,
+    public void cleanPinStorageForTileTemplate(DeviceDao deviceDao, TileTemplate tileTemplate,
                                                boolean removeProperties) {
         for (int deviceId : tileTemplate.deviceIds) {
             for (Widget widget : tileTemplate.widgets) {
                 if (widget instanceof OnePinWidget) {
                     OnePinWidget onePinWidget = (OnePinWidget) widget;
-                    cleanPinStorage(deviceDao, dash, onePinWidget, deviceId, removeProperties);
+                    cleanPinStorage(deviceDao, onePinWidget, deviceId, removeProperties);
                 } else if (widget instanceof MultiPinWidget) {
                     MultiPinWidget multiPinWidget = (MultiPinWidget) widget;
-                    cleanPinStorage(deviceDao, dash, multiPinWidget, deviceId, removeProperties);
+                    cleanPinStorage(deviceDao, multiPinWidget, deviceId, removeProperties);
                 }
             }
         }
     }
 
-    private void cleanPinStorage(DeviceDao deviceDao, DashBoard dash,
+    private void cleanPinStorage(DeviceDao deviceDao,
                                  MultiPinWidget multiPinWidget, int targetId, boolean removeProperties) {
         if (multiPinWidget.dataStreams != null) {
             for (DataStream dataStream : multiPinWidget.dataStreams) {
                 if (dataStream != null && dataStream.isValid()) {
-                    removePinStorageValue(deviceDao, dash, targetId == -1 ? multiPinWidget.deviceId : targetId,
+                    removePinStorageValue(deviceDao, targetId == -1 ? multiPinWidget.deviceId : targetId,
                             dataStream.pinType, dataStream.pin, removeProperties);
                 }
             }
         }
     }
 
-    private void cleanPinStorage(DeviceDao deviceDao, DashBoard dash, OnePinWidget onePinWidget,
+    private void cleanPinStorage(DeviceDao deviceDao, OnePinWidget onePinWidget,
                                  int targetId, boolean removeProperties) {
         if (onePinWidget.isValid()) {
-            removePinStorageValue(deviceDao, dash, targetId == -1 ? onePinWidget.deviceId : targetId,
+            removePinStorageValue(deviceDao, targetId == -1 ? onePinWidget.deviceId : targetId,
                     onePinWidget.pinType, onePinWidget.pin, removeProperties);
         }
     }
 
-    private void removePinStorageValue(DeviceDao deviceDao, DashBoard dash, int targetId,
+    private void removePinStorageValue(DeviceDao deviceDao, int targetId,
                                        PinType pinType, short pin, boolean removeProperties) {
-        Target target;
-        if (targetId < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
-            target = deviceDao.getById(targetId);
-        } else {
-            //means widget assigned to device selector widget.
-            target = dash.getDeviceSelector(targetId);
-        }
+        Target target = deviceDao.getById(targetId);
         if (target != null) {
             for (int deviceId : target.getAssignedDeviceIds()) {
                 Device device = deviceDao.getById(deviceId);

@@ -19,7 +19,6 @@ import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
 import cc.blynk.server.core.model.widgets.outputs.graph.Superchart;
-import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.model.widgets.ui.reporting.ReportingWidget;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
@@ -151,14 +150,6 @@ public class DashBoard {
             }
         }
         return false;
-    }
-
-    public DeviceSelector getDeviceSelector(long targetId) {
-        Widget widget = getWidgetById(targetId);
-        if (widget instanceof DeviceSelector) {
-            return (DeviceSelector) widget;
-        }
-        return null;
     }
 
     public Widget getWidgetByIdOrThrow(long id) {
