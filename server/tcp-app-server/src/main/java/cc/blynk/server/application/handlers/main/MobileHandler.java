@@ -145,6 +145,7 @@ public class MobileHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
     private final MobileGetWidgetLogic mobileGetWidgetLogic;
     private final WebGetDeviceTimelineLogic webGetDeviceTimelineLogic;
     private final WebResolveLogEventLogic webResolveLogEventLogic;
+    private final MobileGetSuperChartDataLogic mobileGetSuperChartDataLogic;
 
     public MobileHandler(Holder holder, MobileStateHolder state) {
         super(StringMessage.class);
@@ -157,6 +158,7 @@ public class MobileHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
         this.mobileGetWidgetLogic = new MobileGetWidgetLogic(holder);
         this.webGetDeviceTimelineLogic = new WebGetDeviceTimelineLogic(holder);
         this.webResolveLogEventLogic = new WebResolveLogEventLogic(holder);
+        this.mobileGetSuperChartDataLogic = new MobileGetSuperChartDataLogic(holder);
     }
 
     @Override
@@ -196,7 +198,7 @@ public class MobileHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
                 break;
 
             case GET_SUPERCHART_DATA :
-                MobileGetSuperChartDataLogic.messageReceived(holder, ctx, state, msg);
+                mobileGetSuperChartDataLogic.messageReceived(ctx, state, msg);
                 break;
             case MOBILE_DELETE_ENHANCED_GRAPH_DATA :
                 MobileDeleteSuperChartDataLogic.messageReceived(holder, ctx, state.user, msg);

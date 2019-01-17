@@ -12,9 +12,9 @@ import static cc.blynk.server.core.model.widgets.outputs.graph.Period.LIVE;
  * Created by Dmitriy Dumanskiy.
  * Created on 23.10.15.
  */
-public class GraphPinRequest {
+public class MobileGraphRequest {
 
-    public static final GraphPinRequest EMPTY_REQUEST = new GraphPinRequest(-1, -1, null, Period.DAY, -1);
+    public static final MobileGraphRequest EMPTY_REQUEST = new MobileGraphRequest(-1, -1, null, Period.DAY, -1);
 
     public final int dashId;
 
@@ -26,18 +26,19 @@ public class GraphPinRequest {
 
     private final Period graphPeriod;
 
-    public final int count;
+    public final int limit;
 
     public final GraphGranularityType type;
 
-    public final int skipCount;
+    public final int offset;
 
-    public long from;
+    public final long from;
 
-    public long to;
+    public final long to;
 
-    public GraphPinRequest(int dashId, int deviceId, DataStream dataStream,
-                           Period period, int skipCount) {
+    public MobileGraphRequest(int dashId, int deviceId,
+                              DataStream dataStream,
+                              Period period, int page) {
         this.dashId = dashId;
         this.deviceId = deviceId;
         if (dataStream == null) {
@@ -48,9 +49,14 @@ public class GraphPinRequest {
             this.pin = dataStream.pin;
         }
         this.graphPeriod = period;
-        this.count = period.numberOfPoints;
         this.type = period.granularityType;
-        this.skipCount = skipCount;
+
+        this.limit = period.numberOfPoints;
+        this.offset = period.numberOfPoints * page;
+
+        long now = System.currentTimeMillis();
+        this.from = now - period.millis;
+        this.to = now;
     }
 
     public boolean isLiveData() {
@@ -63,15 +69,15 @@ public class GraphPinRequest {
 
     @Override
     public String toString() {
-        return "GraphPinRequest{"
+        return "MobileGraphRequest{"
                 + "dashId=" + dashId
                 + ", deviceId=" + deviceId
                 + ", pinType=" + pinType
                 + ", pin=" + pin
                 + ", graphPeriod=" + graphPeriod
-                + ", count=" + count
+                + ", limit=" + limit
                 + ", type=" + type
-                + ", skipCount=" + skipCount
+                + ", offset=" + offset
                 + '}';
     }
 }

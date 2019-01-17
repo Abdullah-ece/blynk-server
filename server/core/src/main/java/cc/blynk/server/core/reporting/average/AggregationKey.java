@@ -19,7 +19,7 @@ public final class AggregationKey implements Serializable {
     private final BaseReportingKey baseReportingKey;
     public final long ts;
 
-    public AggregationKey(int orgId, int deviceId, PinType pinType, short pin, long ts) {
+    public AggregationKey(int deviceId, PinType pinType, short pin, long ts) {
         this(new BaseReportingKey(deviceId, pinType, pin), ts);
     }
 

@@ -99,38 +99,6 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
     }
 
     @Test
-    public void testGetGraphDataForEnhancedGraphWithEmptyDataStream() throws Exception {
-        String tempDir = holder.props.getProperty("data.folder");
-
-        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
-        if (Files.notExists(userReportFolder)) {
-            Files.createDirectories(userReportFolder);
-        }
-
-        Path pinReportingDataPath = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.DIGITAL, (short) 8, GraphGranularityType.HOURLY));
-
-        FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
-        FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
-
-        Superchart enhancedHistoryGraph = new Superchart();
-        enhancedHistoryGraph.id = 432;
-        enhancedHistoryGraph.width = 8;
-        enhancedHistoryGraph.height = 4;
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, null, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
-        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
-                graphDataStream
-        };
-
-        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
-        clientPair.appClient.verifyResult(ok(1));
-
-        clientPair.appClient.getEnhancedGraphData(1, 432, Period.DAY);
-
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, NO_DATA)));
-    }
-
-    @Test
     public void testGetGraphDataForEnhancedGraph() throws Exception {
         String tempDir = holder.props.getProperty("data.folder");
 
@@ -146,21 +114,21 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
             FileUtils.write(pinReportingDataPath, (double) point, 1111111 + point);
         }
 
-        Superchart enhancedHistoryGraph = new Superchart();
-        enhancedHistoryGraph.id = 432;
-        enhancedHistoryGraph.width = 8;
-        enhancedHistoryGraph.height = 4;
+        Superchart superchart = new Superchart();
+        superchart.id = 432;
+        superchart.width = 8;
+        superchart.height = 4;
         DataStream dataStream = new DataStream((short) 8, PinType.DIGITAL);
         GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
-        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+        superchart.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
 
-        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
+        clientPair.appClient.createWidget(1, superchart);
         clientPair.appClient.verifyResult(ok(1));
         clientPair.appClient.reset();
 
-        clientPair.appClient.getEnhancedGraphData(1, 432, Period.ONE_HOUR);
+        clientPair.appClient.getSuperChartData(1, 432, Period.ONE_HOUR);
 
         BinaryMessage graphDataResponse = clientPair.appClient.getBinaryBody();
 
@@ -191,24 +159,24 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
-        Superchart enhancedHistoryGraph = new Superchart();
-        enhancedHistoryGraph.id = 432;
-        enhancedHistoryGraph.width = 8;
-        enhancedHistoryGraph.height = 4;
+        Superchart superchart = new Superchart();
+        superchart.id = 432;
+        superchart.width = 8;
+        superchart.height = 4;
         DataStream dataStream = new DataStream((short) 8, PinType.DIGITAL);
         DataStream dataStream2 = new DataStream((short) 9, PinType.DIGITAL);
         GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         GraphDataStream graphDataStream2 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream2, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
-        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+        superchart.dataStreams = new GraphDataStream[] {
                 graphDataStream,
                 graphDataStream2
         };
 
-        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
+        clientPair.appClient.createWidget(1, superchart);
         clientPair.appClient.verifyResult(ok(1));
         clientPair.appClient.reset();
 
-        clientPair.appClient.getEnhancedGraphData(1, 432, Period.DAY);
+        clientPair.appClient.getSuperChartData(1, 432, Period.DAY);
         BinaryMessage graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
@@ -239,37 +207,37 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
-        Superchart enhancedHistoryGraph = new Superchart();
-        enhancedHistoryGraph.id = 432;
-        enhancedHistoryGraph.width = 8;
-        enhancedHistoryGraph.height = 4;
+        Superchart superchart = new Superchart();
+        superchart.id = 432;
+        superchart.width = 8;
+        superchart.height = 4;
         DataStream dataStream = new DataStream((short) 8, null);
         GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
-        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+        superchart.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
 
-        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
+        clientPair.appClient.createWidget(1, superchart);
         clientPair.appClient.verifyResult(ok(1));
         clientPair.appClient.reset();
 
-        clientPair.appClient.getEnhancedGraphData(1, 432, Period.DAY);
+        clientPair.appClient.getSuperChartData(1, 432, Period.DAY);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NO_DATA)));
     }
 
     @Test
     public void makeSureNoReportingWhenNotAGraphPin() throws Exception {
-        Superchart enhancedHistoryGraph = new Superchart();
-        enhancedHistoryGraph.id = 432;
-        enhancedHistoryGraph.width = 8;
-        enhancedHistoryGraph.height = 4;
+        Superchart superchart = new Superchart();
+        superchart.id = 432;
+        superchart.width = 8;
+        superchart.height = 4;
         DataStream dataStream = new DataStream((short) 88, PinType.VIRTUAL);
         GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
-        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+        superchart.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
 
-        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
+        clientPair.appClient.createWidget(1, superchart);
         clientPair.appClient.verifyResult(ok(1));
         clientPair.appClient.reset();
 
@@ -289,17 +257,17 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
     @Test
     public void makeSureReportingIsPresentWhenGraphAssignedToDevice() throws Exception {
-        Superchart enhancedHistoryGraph = new Superchart();
-        enhancedHistoryGraph.id = 432;
-        enhancedHistoryGraph.width = 8;
-        enhancedHistoryGraph.height = 4;
+        Superchart superchart = new Superchart();
+        superchart.id = 432;
+        superchart.width = 8;
+        superchart.height = 4;
         DataStream dataStream = new DataStream((short) 88, PinType.VIRTUAL);
         GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
-        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+        superchart.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
 
-        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
+        clientPair.appClient.createWidget(1, superchart);
         clientPair.appClient.verifyResult(ok(1));
         clientPair.appClient.reset();
 
@@ -321,21 +289,21 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
     @Test
     public void makeSureReportingIsPresentWhenGraphAssignedToDevice2() throws Exception {
-        Superchart enhancedHistoryGraph = new Superchart();
-        enhancedHistoryGraph.id = 432;
-        enhancedHistoryGraph.width = 8;
-        enhancedHistoryGraph.height = 4;
+        Superchart superchart = new Superchart();
+        superchart.id = 432;
+        superchart.width = 8;
+        superchart.height = 4;
         //no live
-        enhancedHistoryGraph.selectedPeriods = new Period[] {
+        superchart.selectedPeriods = new Period[] {
                 ONE_HOUR, SIX_HOURS
         };
         DataStream dataStream = new DataStream((short) 88, PinType.VIRTUAL);
         GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
-        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+        superchart.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
 
-        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
+        clientPair.appClient.createWidget(1, superchart);
         clientPair.appClient.verifyResult(ok(1));
         clientPair.appClient.reset();
 
@@ -371,20 +339,20 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
         int[] deviceIds = new int[] {0};
 
-        Superchart enhancedHistoryGraph = new Superchart();
-        enhancedHistoryGraph.id = 432;
-        enhancedHistoryGraph.width = 8;
-        enhancedHistoryGraph.height = 4;
+        Superchart superchart = new Superchart();
+        superchart.id = 432;
+        superchart.width = 8;
+        superchart.height = 4;
         GraphDataStream graphDataStream = new GraphDataStream(
                 null, GraphType.LINE, 0, -1,
                 new DataStream((short) 88, PinType.VIRTUAL),
                 AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
-        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+        superchart.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
 
         TileTemplate tileTemplate = new PageTileTemplate(1,
-                new Widget[]{enhancedHistoryGraph}, deviceIds, "name", "name", "iconName", BoardType.ESP8266, new DataStream((short)1, PinType.VIRTUAL),
+                new Widget[]{superchart}, deviceIds, "name", "name", "iconName", BoardType.ESP8266, new DataStream((short)1, PinType.VIRTUAL),
                 false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
 
         clientPair.appClient.createTemplate(1, widgetId, tileTemplate);
@@ -422,10 +390,10 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
         int[] deviceIds = new int[] {0};
 
-        Superchart enhancedHistoryGraph = new Superchart();
-        enhancedHistoryGraph.id = 432;
-        enhancedHistoryGraph.width = 8;
-        enhancedHistoryGraph.height = 4;
+        Superchart superchart = new Superchart();
+        superchart.id = 432;
+        superchart.width = 8;
+        superchart.height = 4;
         GraphDataStream graphDataStream = new GraphDataStream(
                 null, GraphType.LINE, 0, -1,
                 new DataStream((short) 88, PinType.VIRTUAL),
@@ -434,13 +402,13 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
                 null, GraphType.LINE, 0, -1,
                 new DataStream((short) 89, PinType.VIRTUAL),
                 AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
-        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+        superchart.dataStreams = new GraphDataStream[] {
                 graphDataStream,
                 graphDataStream2
         };
 
         TileTemplate tileTemplate = new PageTileTemplate(1,
-                new Widget[]{enhancedHistoryGraph}, deviceIds, "name", "name", "iconName", BoardType.ESP8266, new DataStream((short)1, PinType.VIRTUAL),
+                new Widget[]{superchart}, deviceIds, "name", "name", "iconName", BoardType.ESP8266, new DataStream((short)1, PinType.VIRTUAL),
                 false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
 
         clientPair.appClient.createTemplate(1, widgetId, tileTemplate);
@@ -577,28 +545,28 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         }
 
 
-        Superchart enhancedHistoryGraph = new Superchart();
-        enhancedHistoryGraph.id = 432;
-        enhancedHistoryGraph.width = 8;
-        enhancedHistoryGraph.height = 4;
+        Superchart superchart = new Superchart();
+        superchart.id = 432;
+        superchart.width = 8;
+        superchart.height = 4;
         DataStream dataStream = new DataStream((short) 88, PinType.VIRTUAL);
         GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
-        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+        superchart.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
 
-        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
+        clientPair.appClient.createWidget(1, superchart);
         clientPair.appClient.verifyResult(ok(1));
         clientPair.appClient.reset();
 
-        clientPair.appClient.getEnhancedGraphData(1, 432, Period.LIVE);
+        clientPair.appClient.getSuperChartData(1, 432, Period.LIVE);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NO_DATA)));
 
         clientPair.hardwareClient.send("hardware vw 88 111");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 88 111"))));
         clientPair.appClient.reset();
 
-        clientPair.appClient.getEnhancedGraphData(1, 432, Period.LIVE);
+        clientPair.appClient.getSuperChartData(1, 432, Period.LIVE);
         BinaryMessage graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
@@ -617,7 +585,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         verify(clientPair.appClient.responseMock, timeout(10000)).channelRead(any(), eq(new HardwareMessage(61, b("1-0 vw 88 60"))));
         clientPair.appClient.reset();
 
-        clientPair.appClient.getEnhancedGraphData(1, 432, Period.LIVE);
+        clientPair.appClient.getSuperChartData(1, 432, Period.LIVE);
         graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
@@ -644,20 +612,20 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         clientPair.hardwareClient.send("hardware vw 88 111");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 88 111"))));
 
-        Superchart enhancedHistoryGraph = new Superchart();
-        enhancedHistoryGraph.id = 432;
-        enhancedHistoryGraph.width = 8;
-        enhancedHistoryGraph.height = 4;
+        Superchart superchart = new Superchart();
+        superchart.id = 432;
+        superchart.width = 8;
+        superchart.height = 4;
         DataStream dataStream = new DataStream((short) 88, PinType.VIRTUAL);
         GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
-        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+        superchart.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
 
-        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
+        clientPair.appClient.createWidget(1, superchart);
         clientPair.appClient.verifyResult(ok(1));
 
-        clientPair.appClient.getEnhancedGraphData(1, 432, Period.LIVE);
+        clientPair.appClient.getSuperChartData(1, 432, Period.LIVE);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, NO_DATA)));
     }
 
@@ -673,27 +641,27 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         clientPair.hardwareClient.send("hardware vw 88 111");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 88 111"))));
 
-        Superchart enhancedHistoryGraph = new Superchart();
-        enhancedHistoryGraph.id = 432;
-        enhancedHistoryGraph.width = 8;
-        enhancedHistoryGraph.height = 4;
+        Superchart superchart = new Superchart();
+        superchart.id = 432;
+        superchart.width = 8;
+        superchart.height = 4;
         DataStream dataStream = new DataStream((short) 88, PinType.VIRTUAL);
         GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
-        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+        superchart.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
 
-        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
+        clientPair.appClient.createWidget(1, superchart);
         clientPair.appClient.verifyResult(ok(1));
 
-        clientPair.appClient.getEnhancedGraphData(1, 432, Period.LIVE);
+        clientPair.appClient.getSuperChartData(1, 432, Period.LIVE);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, NO_DATA)));
 
         clientPair.hardwareClient.send("hardware vw 88 111");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(2, b("1-0 vw 88 111"))));
         clientPair.appClient.reset();
 
-        clientPair.appClient.getEnhancedGraphData(1, 432, Period.LIVE);
+        clientPair.appClient.getSuperChartData(1, 432, Period.LIVE);
         BinaryMessage graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
@@ -711,7 +679,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         clientPair.hardwareClient.send("hardware vw 88 111");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(3, b("1-0 vw 88 111"))));
 
-        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
+        clientPair.appClient.createWidget(1, superchart);
         clientPair.appClient.verifyResult(ok(3));
 
         clientPair.appClient.send("getenhanceddata 1" + b(" 432 LIVE"));
@@ -738,28 +706,28 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         }
 
 
-        Superchart enhancedHistoryGraph = new Superchart();
-        enhancedHistoryGraph.id = 432;
-        enhancedHistoryGraph.width = 8;
-        enhancedHistoryGraph.height = 4;
+        Superchart superchart = new Superchart();
+        superchart.id = 432;
+        superchart.width = 8;
+        superchart.height = 4;
         DataStream dataStream = new DataStream((short) 88, PinType.VIRTUAL);
         GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
-        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+        superchart.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
 
-        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
+        clientPair.appClient.createWidget(1, superchart);
         clientPair.appClient.verifyResult(ok(1));
         clientPair.appClient.reset();
 
-        clientPair.appClient.getEnhancedGraphData(1, 432, Period.LIVE);
+        clientPair.appClient.getSuperChartData(1, 432, Period.LIVE);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NO_DATA)));
 
         clientPair.hardwareClient.send("hardware vw 88 111");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 88 111"))));
         clientPair.appClient.reset();
 
-        clientPair.appClient.getEnhancedGraphData(1, 432, Period.LIVE);
+        clientPair.appClient.getSuperChartData(1, 432, Period.LIVE);
         BinaryMessage graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
@@ -778,7 +746,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         verify(clientPair.appClient.responseMock, timeout(10000)).channelRead(any(), eq(new HardwareMessage(61, b("1-0 vw 88 60"))));
         clientPair.appClient.reset();
 
-        clientPair.appClient.getEnhancedGraphData(1, 432, Period.LIVE);
+        clientPair.appClient.getSuperChartData(1, 432, Period.LIVE);
         graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
@@ -815,21 +783,21 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
             dos.flush();
         }
 
-        Superchart enhancedHistoryGraph = new Superchart();
-        enhancedHistoryGraph.id = 432;
-        enhancedHistoryGraph.width = 8;
-        enhancedHistoryGraph.height = 4;
+        Superchart superchart = new Superchart();
+        superchart.id = 432;
+        superchart.width = 8;
+        superchart.height = 4;
         DataStream dataStream = new DataStream((short) 8, PinType.DIGITAL);
         GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
-        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+        superchart.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
 
-        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
+        clientPair.appClient.createWidget(1, superchart);
         clientPair.appClient.verifyResult(ok(1));
         clientPair.appClient.reset();
 
-        clientPair.appClient.getEnhancedGraphData(1, 432, Period.ONE_HOUR, 1);
+        clientPair.appClient.getSuperChartData(1, 432, Period.ONE_HOUR, 1);
         BinaryMessage graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
@@ -864,21 +832,21 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
             dos.flush();
         }
 
-        Superchart enhancedHistoryGraph = new Superchart();
-        enhancedHistoryGraph.id = 432;
-        enhancedHistoryGraph.width = 8;
-        enhancedHistoryGraph.height = 4;
+        Superchart superchart = new Superchart();
+        superchart.id = 432;
+        superchart.width = 8;
+        superchart.height = 4;
         DataStream dataStream = new DataStream((short) 8, PinType.DIGITAL);
         GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
-        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+        superchart.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
 
-        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
+        clientPair.appClient.createWidget(1, superchart);
         clientPair.appClient.verifyResult(ok(1));
         clientPair.appClient.reset();
 
-        clientPair.appClient.getEnhancedGraphData(1, 432, Period.ONE_HOUR, 1);
+        clientPair.appClient.getSuperChartData(1, 432, Period.ONE_HOUR, 1);
         BinaryMessage graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
@@ -915,21 +883,21 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
             dos.flush();
         }
 
-        Superchart enhancedHistoryGraph = new Superchart();
-        enhancedHistoryGraph.id = 432;
-        enhancedHistoryGraph.width = 8;
-        enhancedHistoryGraph.height = 4;
+        Superchart superchart = new Superchart();
+        superchart.id = 432;
+        superchart.width = 8;
+        superchart.height = 4;
         DataStream dataStream = new DataStream((short) 8, PinType.DIGITAL);
         GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
-        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+        superchart.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
 
-        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
+        clientPair.appClient.createWidget(1, superchart);
         clientPair.appClient.verifyResult(ok(1));
         clientPair.appClient.reset();
 
-        clientPair.appClient.getEnhancedGraphData(1, 432, Period.ONE_HOUR, 5);
+        clientPair.appClient.getSuperChartData(1, 432, Period.ONE_HOUR, 5);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NO_DATA)));
     }
 
@@ -954,44 +922,44 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
             dos.flush();
         }
 
-        Superchart enhancedHistoryGraph = new Superchart();
-        enhancedHistoryGraph.id = 432;
-        enhancedHistoryGraph.width = 8;
-        enhancedHistoryGraph.height = 4;
+        Superchart superchart = new Superchart();
+        superchart.id = 432;
+        superchart.width = 8;
+        superchart.height = 4;
         DataStream dataStream = new DataStream((short) 8, PinType.DIGITAL);
         GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
-        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+        superchart.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
 
-        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
+        clientPair.appClient.createWidget(1, superchart);
         clientPair.appClient.verifyResult(ok(1));
         clientPair.appClient.reset();
 
-        clientPair.appClient.getEnhancedGraphData(1, 432, Period.ONE_HOUR, 1);
+        clientPair.appClient.getSuperChartData(1, 432, Period.ONE_HOUR, 1);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NO_DATA)));
     }
 
     @Test
     public void testDeleteWorksForEnhancedGraph() throws Exception {
-        Superchart enhancedHistoryGraph = new Superchart();
-        enhancedHistoryGraph.id = 432;
-        enhancedHistoryGraph.width = 8;
-        enhancedHistoryGraph.height = 4;
+        Superchart superchart = new Superchart();
+        superchart.id = 432;
+        superchart.width = 8;
+        superchart.height = 4;
         DataStream dataStream = new DataStream((short) 8, PinType.DIGITAL);
         GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
-        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+        superchart.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
 
-        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
+        clientPair.appClient.createWidget(1, superchart);
         clientPair.appClient.verifyResult(ok(1));
 
         clientPair.appClient.send("deleteEnhancedData 1\0" + "432");
         verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(2)));
         clientPair.appClient.reset();
 
-        clientPair.appClient.getEnhancedGraphData(1, 432, Period.DAY);
+        clientPair.appClient.getSuperChartData(1, 432, Period.DAY);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NO_DATA)));
     }
 
@@ -1145,23 +1113,23 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         HistoryGraphUnusedPinDataCleanerWorker cleaner = new HistoryGraphUnusedPinDataCleanerWorker(
                 holder.userDao, holder.deviceDao, holder.reportingDiskDao);
 
-        Superchart enhancedHistoryGraph = new Superchart();
-        enhancedHistoryGraph.id = 432;
-        enhancedHistoryGraph.width = 8;
-        enhancedHistoryGraph.height = 4;
+        Superchart superchart = new Superchart();
+        superchart.id = 432;
+        superchart.width = 8;
+        superchart.height = 4;
         DataStream dataStream1 = new DataStream((short) 8, PinType.DIGITAL);
         DataStream dataStream2 = new DataStream((short) 9, PinType.DIGITAL);
         DataStream dataStream3 = new DataStream((short) 10, PinType.DIGITAL);
         GraphDataStream graphDataStream1 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream1, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         GraphDataStream graphDataStream2 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream2, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         GraphDataStream graphDataStream3 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream3, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
-        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+        superchart.dataStreams = new GraphDataStream[] {
                 graphDataStream1,
                 graphDataStream2,
                 graphDataStream3,
         };
 
-        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
+        clientPair.appClient.createWidget(1, superchart);
         clientPair.appClient.verifyResult(ok(1));
 
         String tempDir = holder.props.getProperty("data.folder");
@@ -1284,21 +1252,21 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
         int[] deviceIds = new int[] {1};
 
-        Superchart enhancedHistoryGraph = new Superchart();
-        enhancedHistoryGraph.id = 432;
-        enhancedHistoryGraph.width = 8;
-        enhancedHistoryGraph.height = 4;
+        Superchart superchart = new Superchart();
+        superchart.id = 432;
+        superchart.width = 8;
+        superchart.height = 4;
         DataStream dataStream1 = new DataStream((short) 8, PinType.DIGITAL);
         DataStream dataStream2 = new DataStream((short) 9, PinType.DIGITAL);
         GraphDataStream graphDataStream1 = new GraphDataStream(null, GraphType.LINE, 0, -1, dataStream1, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         GraphDataStream graphDataStream2 = new GraphDataStream(null, GraphType.LINE, 0, -1, dataStream2, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
-        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+        superchart.dataStreams = new GraphDataStream[] {
                 graphDataStream1,
                 graphDataStream2,
         };
         PageTileTemplate tileTemplate = new PageTileTemplate(1,
                 new Widget[] {
-                        enhancedHistoryGraph
+                        superchart
                 },
                 deviceIds, "123", "name", "iconName", BoardType.ESP8266, new DataStream((short) 1, PinType.VIRTUAL),
                 false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
@@ -1365,23 +1333,23 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         HistoryGraphUnusedPinDataCleanerWorker cleaner = new HistoryGraphUnusedPinDataCleanerWorker(
                 holder.userDao, holder.deviceDao, holder.reportingDiskDao);
 
-        Superchart enhancedHistoryGraph = new Superchart();
-        enhancedHistoryGraph.id = 432;
-        enhancedHistoryGraph.width = 8;
-        enhancedHistoryGraph.height = 4;
+        Superchart superchart = new Superchart();
+        superchart.id = 432;
+        superchart.width = 8;
+        superchart.height = 4;
         DataStream dataStream1 = new DataStream((short) 8, PinType.DIGITAL);
         DataStream dataStream2 = new DataStream((short) 9, PinType.DIGITAL);
         DataStream dataStream3 = new DataStream((short) 10, PinType.DIGITAL);
         GraphDataStream graphDataStream1 = new GraphDataStream(null, GraphType.LINE, 0, 200000, dataStream1, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         GraphDataStream graphDataStream2 = new GraphDataStream(null, GraphType.LINE, 0, 200000, dataStream2, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         GraphDataStream graphDataStream3 = new GraphDataStream(null, GraphType.LINE, 0, 200000, dataStream3, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
-        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+        superchart.dataStreams = new GraphDataStream[] {
                 graphDataStream1,
                 graphDataStream2,
                 graphDataStream3,
         };
 
-        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
+        clientPair.appClient.createWidget(1, superchart);
         clientPair.appClient.verifyResult(ok(3));
 
         String tempDir = holder.props.getProperty("data.folder");
@@ -1608,17 +1576,17 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         clientPair.appClient.createWidget(1, "{\"id\":200000, \"deviceIds\":[0,1], \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
-        Superchart enhancedHistoryGraph = new Superchart();
-        enhancedHistoryGraph.id = 432;
-        enhancedHistoryGraph.width = 8;
-        enhancedHistoryGraph.height = 4;
+        Superchart superchart = new Superchart();
+        superchart.id = 432;
+        superchart.width = 8;
+        superchart.height = 4;
         DataStream dataStream = new DataStream((short) 8, PinType.DIGITAL);
         GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 200_000, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
-        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+        superchart.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
 
-        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
+        clientPair.appClient.createWidget(1, superchart);
         clientPair.appClient.verifyResult(ok(3));
 
         clientPair.appClient.reset();

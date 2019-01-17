@@ -25,13 +25,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.ByteArrayOutputStream;
-import java.nio.ByteBuffer;
 import java.util.Collection;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_SUPERCHART_DATA;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeBinaryMessage;
 import static cc.blynk.server.internal.WebByteBufUtil.json;
-import static cc.blynk.utils.ByteUtils.REPORTING_RECORD_SIZE_BYTES;
 
 /**
  * The Blynk Project.
@@ -55,16 +53,6 @@ public final class WebGetGraphDataLogic {
         this.rawDataCacheForGraphProcessor = holder.reportingDiskDao.rawDataCacheForGraphProcessor;
     }
 
-    private static byte[] convert(Collection<RawEntry> rawEntries) {
-        var byteBuffer = ByteBuffer.allocate(4 + rawEntries.size() * REPORTING_RECORD_SIZE_BYTES);
-        byteBuffer.putInt(rawEntries.size());
-        for (var rawEntry : rawEntries) {
-            byteBuffer.putDouble(rawEntry.getValue());
-            byteBuffer.putLong(rawEntry.getTs());
-        }
-        return byteBuffer.array();
-    }
-
     private void readGraphDataFromDB(Channel channel, User user, int deviceId, int msgId,
                                      WebGraphRequest[] webGraphRequests, GraphSourceFunction source) {
         blockingIOProcessor.executeDB(() -> {
@@ -74,7 +62,7 @@ public final class WebGetGraphDataLogic {
 
                 for (WebGraphRequest webGraphRequest : webGraphRequests) {
                     Collection<RawEntry> rawEntriesList = source.getEntries(webGraphRequest);
-                    byte[] bytesOfRawEntries = convert(rawEntriesList);
+                    byte[] bytesOfRawEntries = RawEntry.convert(rawEntriesList);
                     out.write(bytesOfRawEntries);
                 }
 

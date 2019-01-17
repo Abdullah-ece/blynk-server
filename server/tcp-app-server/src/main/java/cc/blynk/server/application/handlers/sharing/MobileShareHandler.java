@@ -39,6 +39,7 @@ public class MobileShareHandler extends JsonBasedSimpleChannelInboundHandler<Str
     private final Holder holder;
     private final MobileShareHardwareLogic hardwareApp;
     private final MobileGetOrgDevicesLogic mobileGetOrgDevicesLogic;
+    private final MobileGetSuperChartDataLogic mobileGetSuperChartDataLogic;
 
     public MobileShareHandler(Holder holder, MobileShareStateHolder state) {
         super(StringMessage.class);
@@ -46,6 +47,7 @@ public class MobileShareHandler extends JsonBasedSimpleChannelInboundHandler<Str
         this.holder = holder;
         this.hardwareApp = new MobileShareHardwareLogic(holder);
         this.mobileGetOrgDevicesLogic = new MobileGetOrgDevicesLogic(holder);
+        this.mobileGetSuperChartDataLogic = new MobileGetSuperChartDataLogic(holder);
     }
 
     @Override
@@ -62,7 +64,7 @@ public class MobileShareHandler extends JsonBasedSimpleChannelInboundHandler<Str
                 MobileAddPushLogic.messageReceived(ctx, state, msg);
                 break;
             case GET_SUPERCHART_DATA:
-                MobileGetSuperChartDataLogic.messageReceived(holder, ctx, state, msg);
+                mobileGetSuperChartDataLogic.messageReceived(ctx, state, msg);
                 break;
             case MOBILE_GET_DEVICES:
                 mobileGetOrgDevicesLogic.messageReceived(ctx, state, msg);

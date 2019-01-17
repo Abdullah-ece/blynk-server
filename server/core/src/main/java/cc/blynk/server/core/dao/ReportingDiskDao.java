@@ -3,8 +3,6 @@ package cc.blynk.server.core.dao;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
-import cc.blynk.server.core.protocol.exceptions.NoDataException;
-import cc.blynk.server.core.reporting.GraphPinRequest;
 import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
 import cc.blynk.server.core.reporting.raw.BaseReportingKey;
 import cc.blynk.server.core.reporting.raw.RawDataCacheForGraphProcessor;
@@ -26,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static cc.blynk.utils.FileUtils.CSV_DIR;
-import static io.netty.util.internal.EmptyArrays.EMPTY_BYTES;
 
 /**
  * The Blynk Project.
@@ -80,15 +77,6 @@ public class ReportingDiskDao implements Closeable {
         return "history_" + pin + "_" + type + ".bin";
     }
 
-    private static boolean hasData(byte[][] data) {
-        for (byte[] pinData : data) {
-            if (pinData.length > 0) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public static String generateFilename(PinType pinType, short pin, GraphGranularityType type) {
         return generateFilename(pinType.pintTypeChar, pin, type.label);
     }
@@ -104,20 +92,6 @@ public class ReportingDiskDao implements Closeable {
 
     private Path getDeviceFolderPath(int deviceId) {
         return Paths.get(dataFolder, String.valueOf(deviceId));
-    }
-
-    private ByteBuffer getByteBufferFromDisk(GraphPinRequest graphPinRequest) {
-        try {
-            return getByteBufferFromDisk(
-                    graphPinRequest.deviceId,
-                    graphPinRequest.pinType, graphPinRequest.pin,
-                    graphPinRequest.count, graphPinRequest.type,
-                    graphPinRequest.skipCount
-            );
-        } catch (Exception e) {
-            log.error("Error getting data from disk.", e);
-            return null;
-        }
     }
 
     public ByteBuffer getByteBufferFromDisk(int deviceId,
@@ -205,30 +179,6 @@ public class ReportingDiskDao implements Closeable {
         if (device.webDashboard.needRawDataForGraph(pin, pinType) /* || dash.needRawDataForGraph(pin, pinType)*/) {
             rawDataCacheForGraphProcessor.collect(key, new RawEntry(ts, doubleVal));
         }
-    }
-
-    public byte[][] getReportingData(GraphPinRequest[] requestedPins) throws NoDataException {
-        byte[][] values = new byte[requestedPins.length][];
-
-        for (int i = 0; i < requestedPins.length; i++) {
-            GraphPinRequest graphPinRequest = requestedPins[i];
-            log.debug("Getting data for graph pin : {}.", graphPinRequest);
-            if (graphPinRequest.isValid()) {
-                ByteBuffer byteBuffer = graphPinRequest.isLiveData()
-                        //live graph data is not on disk but in memory
-                        ? rawDataCacheForGraphProcessor.getLiveGraphData(graphPinRequest)
-                        : getByteBufferFromDisk(graphPinRequest);
-                values[i] = byteBuffer == null ? EMPTY_BYTES : byteBuffer.array();
-            } else {
-                values[i] = EMPTY_BYTES;
-            }
-        }
-
-        if (!hasData(values)) {
-            throw new NoDataException();
-        }
-
-        return values;
     }
 
     @Override

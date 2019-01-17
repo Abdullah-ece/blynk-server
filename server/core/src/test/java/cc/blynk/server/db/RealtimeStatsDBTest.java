@@ -268,7 +268,7 @@ public class RealtimeStatsDBTest {
         value.update(1);
         long ts = System.currentTimeMillis();
         for (int i = 0; i < 60; i++) {
-            map.put(new AggregationKey(user.orgId, 0, PinType.ANALOG, (short) i, ts), value);
+            map.put(new AggregationKey(0, PinType.ANALOG, (short) i, ts), value);
             reportingDBManager.insertReporting(map, GraphGranularityType.MINUTE);
             reportingDBManager.insertReporting(map, GraphGranularityType.HOURLY);
             reportingDBManager.insertReporting(map, GraphGranularityType.DAILY);

@@ -3,6 +3,7 @@ package cc.blynk.server.db.dao;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.model.widgets.outputs.graph.Period;
+import cc.blynk.server.core.reporting.MobileGraphRequest;
 import cc.blynk.server.core.reporting.WebGraphRequest;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
@@ -116,9 +117,9 @@ public class ReportingDBDao {
         ps.setDouble(5, value);
     }
 
-    private List<RawEntry> getReportingDataByTs(GraphGranularityType granularityType, int deviceId,
+    public List<RawEntry> getReportingDataByTs(GraphGranularityType granularityType, int deviceId,
                                                short pin, PinType pinType,
-                                               long from, long to, int limit) throws Exception {
+                                               long from, long to, int offset, int limit) throws Exception {
         List<RawEntry> result;
         try (Connection connection = ds.getConnection()) {
             DSLContext create = DSL.using(connection, POSTGRES_9_4);
@@ -132,6 +133,7 @@ public class ReportingDBDao {
                                     .betweenSymmetric(new Timestamp(from))
                                     .and(new Timestamp(to))))
                     .orderBy(DeviceRawDataTableDescriptor.TS.asc())
+                    .offset(offset)
                     .limit(limit)
                     .fetchInto(RawEntry.class);
 
@@ -141,8 +143,21 @@ public class ReportingDBDao {
     }
 
     public List<RawEntry> getReportingDataByTs(WebGraphRequest webGraphRequest) throws Exception {
-        return getReportingDataByTs(webGraphRequest.type, webGraphRequest.deviceId, webGraphRequest.pin,
-                webGraphRequest.pinType, webGraphRequest.from, webGraphRequest.to, webGraphRequest.count);
+        return getReportingDataByTs(
+                webGraphRequest.type, webGraphRequest.deviceId,
+                webGraphRequest.pin, webGraphRequest.pinType,
+                webGraphRequest.from, webGraphRequest.to,
+                0, webGraphRequest.count
+        );
+    }
+
+    public List<RawEntry> getReportingDataByTs(MobileGraphRequest mobileMobileGraphRequest) throws Exception {
+        return getReportingDataByTs(
+                mobileMobileGraphRequest.type, mobileMobileGraphRequest.deviceId,
+                mobileMobileGraphRequest.pin, mobileMobileGraphRequest.pinType,
+                mobileMobileGraphRequest.from, mobileMobileGraphRequest.to,
+                mobileMobileGraphRequest.offset, mobileMobileGraphRequest.limit
+        );
     }
 
     private static String getTableByGranularity(GraphGranularityType graphGranularityType) {

@@ -281,11 +281,11 @@ public class TestAppClient extends BaseTestAppClient {
         send(MOBILE_DELETE_DEVICE_DATA, "" + dashId + DEVICE_SEPARATOR + deviceId + BODY_SEPARATOR + sj.toString());
     }
 
-    public void getEnhancedGraphData(int dashId, long widgetId, Period period) {
+    public void getSuperChartData(int dashId, long widgetId, Period period) {
         send(GET_SUPERCHART_DATA, "" + dashId + BODY_SEPARATOR + widgetId + BODY_SEPARATOR + period.name());
     }
 
-    public void getEnhancedGraphData(int dashId, long widgetId, Period period, int page) {
+    public void getSuperChartData(int dashId, long widgetId, Period period, int page) {
         send(GET_SUPERCHART_DATA, "" + dashId + BODY_SEPARATOR + widgetId + BODY_SEPARATOR + period.name() + BODY_SEPARATOR + page);
     }
 

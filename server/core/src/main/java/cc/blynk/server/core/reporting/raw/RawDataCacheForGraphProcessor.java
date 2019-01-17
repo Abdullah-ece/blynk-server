@@ -1,6 +1,6 @@
 package cc.blynk.server.core.reporting.raw;
 
-import cc.blynk.server.core.reporting.GraphPinRequest;
+import cc.blynk.server.core.reporting.MobileGraphRequest;
 import cc.blynk.server.core.reporting.WebGraphRequest;
 import cc.blynk.server.db.dao.RawEntry;
 import cc.blynk.utils.structure.LimitedArrayDeque;
@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static cc.blynk.utils.FileUtils.SIZE_OF_REPORT_ENTRY;
+import static io.netty.util.internal.EmptyArrays.EMPTY_BYTES;
 
 /**
  * Raw data storage for graph LIVE stream.
@@ -52,20 +53,23 @@ public class RawDataCacheForGraphProcessor {
     }
 
     //todo remove
-    public ByteBuffer getLiveGraphData(GraphPinRequest graphPinRequest) {
+    public byte[] getLiveGraphData(MobileGraphRequest mobileGraphRequest) {
         LimitedArrayDeque<RawEntry> cache = rawStorage.get(
                 new BaseReportingKey(
-                        graphPinRequest.deviceId,
-                        graphPinRequest.pinType,
-                        graphPinRequest.pin
+                        mobileGraphRequest.deviceId,
+                        mobileGraphRequest.pinType,
+                        mobileGraphRequest.pin
                 )
         );
 
-        if (cache != null && cache.size() > graphPinRequest.skipCount) {
-            return toByteBuffer(cache, graphPinRequest.count, graphPinRequest.skipCount);
+        if (cache != null && cache.size() > mobileGraphRequest.offset) {
+            ByteBuffer byteBuffer = toByteBuffer(cache, mobileGraphRequest.limit, mobileGraphRequest.offset);
+            if (byteBuffer != null) {
+                return byteBuffer.array();
+            }
         }
 
-        return null;
+        return EMPTY_BYTES;
     }
 
     private ByteBuffer toByteBuffer(LimitedArrayDeque<RawEntry> cache, int count, int skipCount) {
