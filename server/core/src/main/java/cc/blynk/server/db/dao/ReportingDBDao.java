@@ -116,26 +116,33 @@ public class ReportingDBDao {
         ps.setDouble(5, value);
     }
 
-    public List<RawEntry> getReportingDataByTs(WebGraphRequest webGraphRequest) throws Exception {
+    private List<RawEntry> getReportingDataByTs(GraphGranularityType granularityType, int deviceId,
+                                               short pin, PinType pinType,
+                                               long from, long to, int limit) throws Exception {
         List<RawEntry> result;
         try (Connection connection = ds.getConnection()) {
             DSLContext create = DSL.using(connection, POSTGRES_9_4);
 
             result = create.select(field("ts"), field("value"))
-                    .from(getTableByGranularity(webGraphRequest.type))
-                    .where(DeviceRawDataTableDescriptor.DEVICE_ID.eq(webGraphRequest.deviceId)
-                            .and(DeviceRawDataTableDescriptor.PIN.eq((int) webGraphRequest.pin))
-                            .and(DeviceRawDataTableDescriptor.PIN_TYPE.eq(webGraphRequest.pinType.ordinal()))
+                    .from(getTableByGranularity(granularityType))
+                    .where(DeviceRawDataTableDescriptor.DEVICE_ID.eq(deviceId)
+                            .and(DeviceRawDataTableDescriptor.PIN.eq(pin))
+                            .and(DeviceRawDataTableDescriptor.PIN_TYPE.eq(pinType.ordinal()))
                             .and(DeviceRawDataTableDescriptor.TS
-                                    .betweenSymmetric(new Timestamp(webGraphRequest.from))
-                                    .and(new Timestamp(webGraphRequest.to))))
+                                    .betweenSymmetric(new Timestamp(from))
+                                    .and(new Timestamp(to))))
                     .orderBy(DeviceRawDataTableDescriptor.TS.asc())
-                    .limit(webGraphRequest.count)
+                    .limit(limit)
                     .fetchInto(RawEntry.class);
 
             connection.commit();
             return result;
         }
+    }
+
+    public List<RawEntry> getReportingDataByTs(WebGraphRequest webGraphRequest) throws Exception {
+        return getReportingDataByTs(webGraphRequest.type, webGraphRequest.deviceId, webGraphRequest.pin,
+                webGraphRequest.pinType, webGraphRequest.from, webGraphRequest.to, webGraphRequest.count);
     }
 
     private static String getTableByGranularity(GraphGranularityType graphGranularityType) {
@@ -380,7 +387,7 @@ public class ReportingDBDao {
                     result = create.select(DeviceRawDataTableDescriptor.TS, DeviceRawDataTableDescriptor.VALUE)
                           .from(DeviceRawDataTableDescriptor.NAME)
                           .where(DeviceRawDataTableDescriptor.DEVICE_ID.eq(dataQueryRequest.deviceId)
-                                  .and(DeviceRawDataTableDescriptor.PIN.eq((int) dataQueryRequest.pin))
+                                  .and(DeviceRawDataTableDescriptor.PIN.eq(dataQueryRequest.pin))
                                   .and(DeviceRawDataTableDescriptor.PIN_TYPE.eq(dataQueryRequest.pinType.ordinal()))
                                   .and(DeviceRawDataTableDescriptor.TS
                                           .between(new Timestamp(dataQueryRequest.from))

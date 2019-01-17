@@ -17,7 +17,7 @@ public final class DeviceRawDataTableDescriptor {
     public static final String NAME = "reporting_device_raw_data";
 
     public static final Field<Integer>   DEVICE_ID = field("device_id", Integer.class);
-    public static final Field<Integer>   PIN       = field("pin", Integer.class);
+    public static final Field<Short>     PIN       = field("pin", Short.class);
     public static final Field<Integer>   PIN_TYPE  = field("pin_type", Integer.class);
     public static final Field<Timestamp> TS        = field("ts", Timestamp.class);
     public static final Field<Double>    VALUE     = field("value", Double.class);
