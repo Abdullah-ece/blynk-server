@@ -28,21 +28,6 @@ import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import java.util.Collection;
 
-import static cc.blynk.server.core.model.widgets.outputs.graph.Period.FIFTEEN_MINUTES;
-import static cc.blynk.server.core.model.widgets.outputs.graph.Period.N_DAY;
-import static cc.blynk.server.core.model.widgets.outputs.graph.Period.N_MONTH;
-import static cc.blynk.server.core.model.widgets.outputs.graph.Period.N_THREE_DAYS;
-import static cc.blynk.server.core.model.widgets.outputs.graph.Period.N_THREE_MONTHS;
-import static cc.blynk.server.core.model.widgets.outputs.graph.Period.N_TWO_WEEKS;
-import static cc.blynk.server.core.model.widgets.outputs.graph.Period.N_WEEK;
-import static cc.blynk.server.core.model.widgets.outputs.graph.Period.ONE_HOUR;
-import static cc.blynk.server.core.model.widgets.outputs.graph.Period.ONE_YEAR;
-import static cc.blynk.server.core.model.widgets.outputs.graph.Period.SIX_HOURS;
-import static cc.blynk.server.core.model.widgets.outputs.graph.Period.SIX_MONTHS;
-import static cc.blynk.server.core.model.widgets.outputs.graph.Period.THIRTY_MINUTES;
-import static cc.blynk.server.core.model.widgets.outputs.graph.Period.THREE_HOURS;
-import static cc.blynk.server.core.model.widgets.outputs.graph.Period.TWELVE_HOURS;
-import static cc.blynk.server.core.model.widgets.outputs.graph.Period.TWO_DAYS;
 import static cc.blynk.server.core.protocol.enums.Command.GET_SUPERCHART_DATA;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeBinaryMessage;
 import static cc.blynk.server.internal.WebByteBufUtil.json;
@@ -78,35 +63,6 @@ public final class WebGetGraphDataLogic {
             byteBuffer.putLong(rawEntry.getTs());
         }
         return byteBuffer.array();
-    }
-
-    private static final Period[] CUSTOM_DATE_PERIODS = new Period[] {
-            FIFTEEN_MINUTES,
-            THIRTY_MINUTES,
-            ONE_HOUR,
-            THREE_HOURS,
-            SIX_HOURS,
-            TWELVE_HOURS,
-            N_DAY,
-            TWO_DAYS,
-            N_THREE_DAYS,
-            N_WEEK,
-            N_TWO_WEEKS,
-            N_MONTH,
-            N_THREE_MONTHS,
-            SIX_MONTHS,
-            ONE_YEAR
-    };
-
-    private static Period calcGraphPeriod(long from, long to) {
-        long diff = to - from;
-        for (var graphPeriod : CUSTOM_DATE_PERIODS) {
-            if (diff < graphPeriod.millis) {
-                return graphPeriod;
-            }
-        }
-
-        return Period.ONE_YEAR;
     }
 
     private void readGraphDataFromDB(Channel channel, User user, int deviceId, int msgId,
@@ -192,7 +148,7 @@ public final class WebGetGraphDataLogic {
             case CUSTOM :
                 fromTS = Long.parseLong(messageParts[3]);
                 toTS = Long.parseLong(messageParts[4]);
-                period = calcGraphPeriod(fromTS, toTS);
+                period = Period.calcGraphPeriod(fromTS, toTS);
                 sourceFunction = reportingDBDao::getReportingDataByTs;
                 log.trace("Selected granularity fro custom range: {}", period);
                 break;
