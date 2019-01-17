@@ -99,52 +99,6 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
     }
 
     @Test
-    public void testGetGraphDataForEnhancedGraph() throws Exception {
-        String tempDir = holder.props.getProperty("data.folder");
-
-        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
-        if (Files.notExists(userReportFolder)) {
-            Files.createDirectories(userReportFolder);
-        }
-
-        Path pinReportingDataPath = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.DIGITAL, (short) 8, Period.ONE_HOUR.granularityType));
-
-        for (int point = 0; point < Period.ONE_HOUR.numberOfPoints + 1; point++) {
-            FileUtils.write(pinReportingDataPath, (double) point, 1111111 + point);
-        }
-
-        Superchart superchart = new Superchart();
-        superchart.id = 432;
-        superchart.width = 8;
-        superchart.height = 4;
-        DataStream dataStream = new DataStream((short) 8, PinType.DIGITAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
-        superchart.dataStreams = new GraphDataStream[] {
-                graphDataStream
-        };
-
-        clientPair.appClient.createWidget(1, superchart);
-        clientPair.appClient.verifyResult(ok(1));
-        clientPair.appClient.reset();
-
-        clientPair.appClient.getSuperChartData(1, 432, Period.ONE_HOUR);
-
-        BinaryMessage graphDataResponse = clientPair.appClient.getBinaryBody();
-
-        assertNotNull(graphDataResponse);
-        byte[] decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
-        ByteBuffer bb = ByteBuffer.wrap(decompressedGraphData);
-
-        assertEquals(1, bb.getInt());
-        assertEquals(60, bb.getInt());
-        for (int point = 1; point < Period.ONE_HOUR.numberOfPoints + 1; point++) {
-            assertEquals(point, bb.getDouble(), 0.1);
-            assertEquals(1111111 + point , bb.getLong());
-        }
-    }
-
-    @Test
     public void testGetGraphDataForEnhancedGraphFor2Streams() throws Exception {
         String tempDir = holder.props.getProperty("data.folder");
 

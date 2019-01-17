@@ -15,7 +15,7 @@ public class AggregationValue implements Serializable {
     public AggregationValue() {
     }
 
-    AggregationValue(double value) {
+    public AggregationValue(double value) {
         this.values = value;
         this.count = 1;
     }

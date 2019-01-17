@@ -51,6 +51,7 @@ public final class ByteUtils {
         try (var out = new DeflaterOutputStream(baos)) {
             writeInt(out, dashId);
             for (var data : values) {
+                writeInt(out, data.length / REPORTING_RECORD_SIZE_BYTES);
                 out.write(data);
             }
         }

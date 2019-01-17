@@ -146,6 +146,73 @@ public class MobileGetGraphDataTest extends SingleServerInstancePerTestWithDBAnd
         }
     }
 
+    @Test
+    public void testGetGraphDataForSuperChartAnd2Streams() throws Exception {
+        String user = getUserName();
+
+        //device is mandatory for any test
+        Device device = createProductAndDevice(user);
+
+        TestAppClient appClient = new TestAppClient("localhost", properties.getHttpsPort());
+        appClient.start();
+        appClient.login(user, "1");
+        appClient.verifyResult(ok(1));
+
+        //Step 1. Create minimal project with 1 widget.
+        DashBoard dashBoard = new DashBoard();
+        dashBoard.id = 10;
+        dashBoard.name = "123";
+        appClient.createDash(dashBoard);
+        appClient.verifyResult(ok(2));
+
+        Superchart superchart = new Superchart();
+        superchart.id = 432;
+        superchart.width = 8;
+        superchart.height = 4;
+        DataStream dataStream = new DataStream((short) 4, PinType.VIRTUAL);
+        DataStream dataStream2 = new DataStream((short) 5, PinType.VIRTUAL);
+        GraphDataStream graphDataStream = new GraphDataStream(null,
+                GraphType.LINE, 0, device.id, dataStream, null, 0, null, null, null, 0, 0,
+                false, null, false, false, false, null, 0, false, 0);
+        GraphDataStream graphDataStream2 = new GraphDataStream(null,
+                GraphType.LINE, 0, device.id, dataStream2, null, 0, null, null, null, 0, 0,
+                false, null, false, false, false, null, 0, false, 0);
+        superchart.dataStreams = new GraphDataStream[] {
+                graphDataStream,
+                graphDataStream2
+        };
+
+        appClient.createWidget(dashBoard.id, superchart);
+        appClient.verifyResult(ok(3));
+        appClient.reset();
+
+        long now = System.currentTimeMillis();
+        Map<AggregationKey, AggregationValue> data = Map.of(
+            new AggregationKey(device.id, dataStream.pinType, dataStream.pin, now / MINUTE), new AggregationValue(1.11D)
+        );
+        Map<AggregationKey, AggregationValue> data2 = Map.of(
+            new AggregationKey(device.id, dataStream.pinType, dataStream.pin, now / MINUTE), new AggregationValue(1.22D)
+        );
+
+        holder.reportingDBManager.reportingDBDao.insert(data, GraphGranularityType.MINUTE);
+        holder.reportingDBManager.reportingDBDao.insert(data2, GraphGranularityType.MINUTE);
+
+        appClient.getSuperChartData(dashBoard.id, superchart.id, Period.ONE_HOUR);
+        BinaryMessage graphDataResponse = appClient.getBinaryBody();
+
+        assertNotNull(graphDataResponse);
+        byte[] decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
+        ByteBuffer bb = ByteBuffer.wrap(decompressedGraphData);
+
+        assertEquals(dashBoard.id, bb.getInt());
+        assertEquals(2, bb.getInt());
+        assertEquals(1.11D, bb.getDouble(), 0.1);
+        assertEquals((now / MINUTE) * MINUTE, bb.getLong());
+        assertEquals(1.22D, bb.getDouble(), 0.1);
+        assertEquals((now / MINUTE) * MINUTE, bb.getLong());
+        assertEquals(0, bb.getInt());
+    }
+
     private Device createProductAndDevice(String user) throws Exception {
         AppWebSocketClient client = loggedDefaultClient(user, "1");
 

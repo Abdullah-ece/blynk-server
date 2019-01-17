@@ -28,6 +28,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.Collection;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_SUPERCHART_DATA;
+import static cc.blynk.server.db.dao.RawEntry.convert;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeBinaryMessage;
 import static cc.blynk.server.internal.WebByteBufUtil.json;
 
@@ -62,7 +63,8 @@ public final class WebGetGraphDataLogic {
 
                 for (WebGraphRequest webGraphRequest : webGraphRequests) {
                     Collection<RawEntry> rawEntriesList = source.getEntries(webGraphRequest);
-                    byte[] bytesOfRawEntries = RawEntry.convert(rawEntriesList);
+                    byte[] bytesOfRawEntries = convert(rawEntriesList);
+                    ByteUtils.writeInt(out, rawEntriesList.size());
                     out.write(bytesOfRawEntries);
                 }
 

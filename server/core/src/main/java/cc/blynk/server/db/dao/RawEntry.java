@@ -34,8 +34,7 @@ public final class RawEntry {
         if (rawEntries == null || rawEntries.size() == 0) {
             return EMPTY_BYTES;
         }
-        ByteBuffer byteBuffer = ByteBuffer.allocate(4 + rawEntries.size() * REPORTING_RECORD_SIZE_BYTES);
-        byteBuffer.putInt(rawEntries.size());
+        ByteBuffer byteBuffer = ByteBuffer.allocate(rawEntries.size() * REPORTING_RECORD_SIZE_BYTES);
         for (RawEntry rawEntry : rawEntries) {
             byteBuffer.putDouble(rawEntry.getValue());
             byteBuffer.putLong(rawEntry.getTs());
