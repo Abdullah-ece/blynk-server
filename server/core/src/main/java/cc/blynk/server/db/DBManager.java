@@ -33,49 +33,36 @@ import static cc.blynk.utils.properties.DBProperties.DB_PROPERTIES_FILENAME;
  * Created by Dmitriy Dumanskiy.
  * Created on 19.02.16.
  */
-public class DBManager implements Closeable {
+public final class DBManager implements Closeable {
 
     private static final Logger log = LogManager.getLogger(DBManager.class);
     private final HikariDataSource ds;
 
     private final BlockingIOProcessor blockingIOProcessor;
 
-    public InvitationTokensDBDao invitationTokensDBDao;
-    public UserDBDao userDBDao;
-    private RedeemDBDao redeemDBDao;
-    private PurchaseDBDao purchaseDBDao;
-    private FlashedTokensDBDao flashedTokensDBDao;
-    CloneProjectDBDao cloneProjectDBDao;
-    public ForwardingTokenDBDao forwardingTokenDBDao;
+    public final UserDBDao userDBDao;
+    public final ForwardingTokenDBDao forwardingTokenDBDao;
+    final CloneProjectDBDao cloneProjectDBDao;
+    private final InvitationTokensDBDao invitationTokensDBDao;
+    private final RedeemDBDao redeemDBDao;
+    private final PurchaseDBDao purchaseDBDao;
+    private final FlashedTokensDBDao flashedTokensDBDao;
 
-    public DBManager(BlockingIOProcessor blockingIOProcessor, boolean isEnabled) {
-        this(DB_PROPERTIES_FILENAME, blockingIOProcessor, isEnabled);
+    public DBManager(BlockingIOProcessor blockingIOProcessor) {
+        this(DB_PROPERTIES_FILENAME, blockingIOProcessor);
     }
 
-    public DBManager(String propsFilename, BlockingIOProcessor blockingIOProcessor, boolean isEnabled) {
+    public DBManager(String propsFilename, BlockingIOProcessor blockingIOProcessor) {
         this.blockingIOProcessor = blockingIOProcessor;
 
         DBProperties dbProperties = new DBProperties(propsFilename);
-        if (!isEnabled || dbProperties.size() == 0) {
-            log.info("Separate DB storage disabled.");
-            this.ds = null;
-            return;
-        }
-
         HikariConfig config = initConfig(dbProperties);
 
         log.info("DB url : {}", config.getJdbcUrl());
         log.info("DB user : {}", config.getUsername());
         log.info("Connecting to DB...");
 
-        HikariDataSource hikariDataSource;
-        try {
-            hikariDataSource = new HikariDataSource(config);
-        } catch (Exception e) {
-            log.error("Not able connect to DB. Skipping. Reason : {}", e.getMessage());
-            this.ds = null;
-            return;
-        }
+        HikariDataSource hikariDataSource = new HikariDataSource(config);
 
         this.ds = hikariDataSource;
         this.userDBDao = new UserDBDao(hikariDataSource);
@@ -239,7 +226,7 @@ public class DBManager implements Closeable {
     @Override
     public void close() {
         if (isDBEnabled()) {
-            System.out.println("Closing DB...");
+            System.out.println("Closing Blynk DB...");
             ds.close();
         }
     }

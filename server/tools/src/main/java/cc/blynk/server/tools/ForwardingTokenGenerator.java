@@ -23,7 +23,7 @@ public final class ForwardingTokenGenerator {
     public static void main(String[] args) throws Exception {
         BlockingIOProcessor blockingIOProcessor = new BlockingIOProcessor(6, 100);
 
-        try (DBManager dbManager = new DBManager(blockingIOProcessor, true)) {
+        try (DBManager dbManager = new DBManager(blockingIOProcessor)) {
             process(dbManager, "singapore", "188.166.206.43");
             process(dbManager, "frankfurt", "139.59.206.133");
             process(dbManager, "ny3", "45.55.96.146");

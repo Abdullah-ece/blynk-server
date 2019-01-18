@@ -2,7 +2,6 @@ package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.DeviceDao;
-import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.processors.BaseProcessorHandler;
@@ -10,6 +9,7 @@ import cc.blynk.server.core.processors.WebhookProcessor;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.mobile.MobileStateHolder;
+import cc.blynk.server.db.ReportingDBManager;
 import cc.blynk.utils.NumberUtil;
 
 import static cc.blynk.utils.StringUtils.split2;
@@ -26,7 +26,7 @@ import static cc.blynk.utils.StringUtils.split3;
  */
 public class MobileHardwareResendFromBTLogic extends BaseProcessorHandler {
 
-    private final ReportingDiskDao reportingDao;
+    private final ReportingDBManager reportingDBManager;
     private final DeviceDao deviceDao;
 
     public MobileHardwareResendFromBTLogic(Holder holder) {
@@ -36,7 +36,7 @@ public class MobileHardwareResendFromBTLogic extends BaseProcessorHandler {
                 holder.limits.webhookFailureLimit,
                 holder.stats),
                 holder.deviceDao);
-        this.reportingDao = holder.reportingDiskDao;
+        this.reportingDBManager = holder.reportingDBManager;
         this.deviceDao = holder.deviceDao;
     }
 
@@ -71,7 +71,7 @@ public class MobileHardwareResendFromBTLogic extends BaseProcessorHandler {
             long now = System.currentTimeMillis();
 
             double parsedValue = NumberUtil.parseDouble(value);
-            reportingDao.process(device, pin, pinType, parsedValue, now);
+            reportingDBManager.process(device, pin, pinType, parsedValue, now);
             device.updateValue(pin, pinType, value, now);
         }
     }

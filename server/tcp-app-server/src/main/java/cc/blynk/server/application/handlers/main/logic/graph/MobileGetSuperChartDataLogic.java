@@ -56,7 +56,7 @@ public final class MobileGetSuperChartDataLogic {
         this.deviceDao = holder.deviceDao;
         this.reportingDBDao = holder.reportingDBManager.reportingDBDao;
         this.blockingIOProcessor = holder.blockingIOProcessor;
-        this.rawDataCacheForGraphProcessor = holder.reportingDiskDao.rawDataCacheForGraphProcessor;
+        this.rawDataCacheForGraphProcessor = holder.reportingDBManager.rawDataCacheForGraphProcessor;
     }
 
     private static boolean hasData(byte[][] data) {

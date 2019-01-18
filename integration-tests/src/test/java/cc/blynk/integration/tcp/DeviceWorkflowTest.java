@@ -3,7 +3,6 @@ package cc.blynk.integration.tcp;
 import cc.blynk.integration.SingleServerInstancePerTest;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.core.dao.ProvisionTokenValue;
-import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.Device;
@@ -12,24 +11,18 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.controls.Terminal;
 import cc.blynk.server.core.model.widgets.outputs.ValueDisplay;
 import cc.blynk.server.core.model.widgets.outputs.graph.FontSize;
-import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.templates.PageTileTemplate;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
 import cc.blynk.server.notifications.push.enums.Priority;
-import cc.blynk.utils.FileUtils;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import static cc.blynk.integration.TestUtil.appSync;
 import static cc.blynk.integration.TestUtil.b;
@@ -467,58 +460,6 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
 
         assertTrue(clientPair.hardwareClient.isClosed());
         assertTrue(hardClient2.isClosed());
-    }
-
-    @Test
-    public void testHardwareChannelClosedOnDeviceRemoval() throws Exception {
-        Device device1 = new Device();
-        device1.id = 1;
-        device1.name = "My Device";
-        device1.boardType = BoardType.ESP8266;
-
-        clientPair.appClient.createDevice(device1);
-        Device device = clientPair.appClient.parseDevice();
-        assertNotNull(device);
-        assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(createDevice(1, device)));
-
-        TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
-        hardClient2.start();
-
-        hardClient2.login(device.token);
-        hardClient2.verifyResult(ok(1));
-        clientPair.appClient.verifyResult(deviceConnected(1, "1-1"));
-
-        String tempDir = holder.props.getProperty("data.folder");
-        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
-        if (Files.notExists(userReportFolder)) {
-            Files.createDirectories(userReportFolder);
-        }
-
-        Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.DIGITAL, (short) 8, GraphGranularityType.MINUTE));
-        Path pinReportingDataPath11 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.DIGITAL, (short) 8, GraphGranularityType.HOURLY));
-        Path pinReportingDataPath12 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.DIGITAL, (short) 8, GraphGranularityType.DAILY));
-        Path pinReportingDataPath13 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 9, GraphGranularityType.DAILY));
-
-        FileUtils.write(pinReportingDataPath10, 1.11D, 1111111);
-        FileUtils.write(pinReportingDataPath11, 1.11D, 1111111);
-        FileUtils.write(pinReportingDataPath12, 1.11D, 1111111);
-        FileUtils.write(pinReportingDataPath13, 1.11D, 1111111);
-
-        clientPair.appClient.send("deleteDevice 1\0" + "1");
-        clientPair.appClient.verifyResult(ok(2));
-
-        assertFalse(clientPair.hardwareClient.isClosed());
-        assertTrue(hardClient2.isClosed());
-
-        assertTrue(Files.notExists(pinReportingDataPath10));
-        assertTrue(Files.notExists(pinReportingDataPath11));
-        assertTrue(Files.notExists(pinReportingDataPath12));
-        assertTrue(Files.notExists(pinReportingDataPath13));
     }
 
     @Test

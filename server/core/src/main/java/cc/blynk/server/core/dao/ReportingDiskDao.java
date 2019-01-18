@@ -1,19 +1,11 @@
 package cc.blynk.server.core.dao;
 
-import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
-import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
-import cc.blynk.server.core.reporting.raw.BaseReportingKey;
-import cc.blynk.server.core.reporting.raw.RawDataCacheForGraphProcessor;
-import cc.blynk.server.core.reporting.raw.RawDataProcessor;
-import cc.blynk.server.db.dao.RawEntry;
 import cc.blynk.utils.FileUtils;
-import cc.blynk.utils.NumberUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
@@ -27,21 +19,16 @@ import static cc.blynk.utils.FileUtils.CSV_DIR;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/18/2015.
  */
-public class ReportingDiskDao implements Closeable {
+@Deprecated
+//todo should be removed and DB manager used instead
+public final class ReportingDiskDao {
 
     private static final Logger log = LogManager.getLogger(ReportingDiskDao.class);
 
-    public final AverageAggregatorProcessor averageAggregator;
-    public final RawDataCacheForGraphProcessor rawDataCacheForGraphProcessor;
-    public final RawDataProcessor rawDataProcessor;
+    private final String dataFolder;
 
-    public final String dataFolder;
-
-    public ReportingDiskDao(AverageAggregatorProcessor averageAggregator, String reportingFolder) {
-        this.averageAggregator = averageAggregator;
-        this.rawDataCacheForGraphProcessor = new RawDataCacheForGraphProcessor();
+    public ReportingDiskDao(String reportingFolder) {
         this.dataFolder = reportingFolder;
-        this.rawDataProcessor = new RawDataProcessor();
         createCSVFolder();
     }
 
@@ -82,24 +69,5 @@ public class ReportingDiskDao implements Closeable {
         }
 
         return null;
-    }
-
-    public void process(Device device, short pin, PinType pinType, double doubleVal, long ts) {
-        //not a number, nothing to aggregate
-        if (doubleVal != NumberUtil.NO_RESULT) {
-            BaseReportingKey key = new BaseReportingKey(device.id, pinType, pin);
-
-            rawDataProcessor.collect(key, ts, doubleVal);
-            averageAggregator.collect(key, ts, doubleVal);
-            if (device.webDashboard.needRawDataForGraph(pin, pinType) /* || dash.needRawDataForGraph(pin, pinType)*/) {
-                rawDataCacheForGraphProcessor.collect(key, new RawEntry(ts, doubleVal));
-            }
-        }
-    }
-
-    @Override
-    public void close() {
-        System.out.println("Stopping aggregator...");
-        this.averageAggregator.close();
     }
 }

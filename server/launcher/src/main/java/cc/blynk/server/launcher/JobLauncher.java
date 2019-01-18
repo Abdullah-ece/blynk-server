@@ -36,10 +36,7 @@ final class JobLauncher {
 
         long startDelay;
 
-        ReportingWorker reportingWorker = new ReportingWorker(
-                holder.reportingDiskDao,
-                holder.reportingDBManager
-        );
+        ReportingWorker reportingWorker = new ReportingWorker(holder.reportingDBManager);
 
         //to start at the beggining of an minute
         startDelay = DateTimeUtils.MINUTE

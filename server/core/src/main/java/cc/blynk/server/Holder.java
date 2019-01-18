@@ -15,7 +15,6 @@ import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.widgets.ui.reporting.ReportScheduler;
 import cc.blynk.server.core.processors.EventorProcessor;
 import cc.blynk.server.core.processors.RuleEngineProcessor;
-import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.ReportingDBManager;
@@ -95,8 +94,6 @@ public class Holder {
 
     public final RuleEngineProcessor ruleEngineProcessor;
 
-    public final AverageAggregatorProcessor averageAggregator;
-
     public Holder(ServerProperties serverProperties, MailProperties mailProperties,
                   SmsProperties smsProperties, GCMProperties gcmProperties,
                   TwitterProperties twitterProperties,
@@ -113,9 +110,8 @@ public class Holder {
                 serverProperties.getIntProperty("notifications.queue.limit", 2000)
         );
 
-        boolean enableDB = serverProperties.isDBEnabled();
-        this.dbManager = new DBManager(blockingIOProcessor, enableDB);
-        this.reportingDBManager = new ReportingDBManager(blockingIOProcessor, enableDB);
+        this.dbManager = new DBManager(blockingIOProcessor);
+        this.reportingDBManager = new ReportingDBManager(blockingIOProcessor, props.getReportingFolder());
 
         if (restore) {
             try {
@@ -138,8 +134,7 @@ public class Holder {
         this.sharedTokenManager = new SharedTokenManager(users);
 
         this.stats = new GlobalStats();
-        this.averageAggregator = new AverageAggregatorProcessor(props.getReportingFolder());
-        this.reportingDiskDao = new ReportingDiskDao(this.averageAggregator, serverProperties.getReportingFolder());
+        this.reportingDiskDao = new ReportingDiskDao(serverProperties.getReportingFolder());
 
         this.transportTypeHolder = new TransportTypeHolder(serverProperties);
 
@@ -188,9 +183,8 @@ public class Holder {
         this.userDao = new UserDao(fileManager.deserializeUsers(), serverProperties.region, serverProperties.host);
         this.blockingIOProcessor = blockingIOProcessor;
 
-        boolean enableDB = serverProperties.isDBEnabled();
-        this.dbManager = new DBManager(dbFileName, blockingIOProcessor, enableDB);
-        this.reportingDBManager = new ReportingDBManager(dbFileName, blockingIOProcessor, enableDB);
+        this.dbManager = new DBManager(dbFileName, blockingIOProcessor);
+        this.reportingDBManager = new ReportingDBManager(dbFileName, blockingIOProcessor, props.getReportingFolder());
 
         this.organizationDao = new OrganizationDao(fileManager, userDao);
         Collection<Organization> orgs = organizationDao.organizations.values();
@@ -200,8 +194,7 @@ public class Holder {
         this.sharedTokenManager = new SharedTokenManager(users);
 
         this.stats = new GlobalStats();
-        this.averageAggregator = new AverageAggregatorProcessor(props.getReportingFolder());
-        this.reportingDiskDao = new ReportingDiskDao(this.averageAggregator, serverProperties.getReportingFolder());
+        this.reportingDiskDao = new ReportingDiskDao(serverProperties.getReportingFolder());
 
         this.transportTypeHolder = new TransportTypeHolder(serverProperties);
 
@@ -248,8 +241,6 @@ public class Holder {
 
         transportTypeHolder.close();
         asyncHttpClient.close();
-
-        reportingDiskDao.close();
 
         System.out.println("Stopping BlockingIOProcessor...");
         blockingIOProcessor.close();

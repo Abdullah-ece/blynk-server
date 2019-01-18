@@ -1,6 +1,5 @@
 package cc.blynk.server.workers;
 
-import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
@@ -19,16 +18,13 @@ import java.util.Map;
  * Created by Dmitriy Dumanskiy.
  * Created on 10.08.15.
  */
-public class ReportingWorker implements Runnable {
+public final class ReportingWorker implements Runnable {
 
     private static final Logger log = LogManager.getLogger(ReportingWorker.class);
 
-    private final ReportingDiskDao reportingDao;
     private final ReportingDBManager reportingDBManager;
 
-    public ReportingWorker(ReportingDiskDao reportingDao,
-                           ReportingDBManager reportingDBManager) {
-        this.reportingDao = reportingDao;
+    public ReportingWorker(ReportingDBManager reportingDBManager) {
         this.reportingDBManager = reportingDBManager;
     }
 
@@ -36,11 +32,11 @@ public class ReportingWorker implements Runnable {
     //todo this could be optimized with minute, hour and daily crons
     public void run() {
         try {
-            process(reportingDao.averageAggregator.getMinute(), GraphGranularityType.MINUTE);
-            process(reportingDao.averageAggregator.getHourly(), GraphGranularityType.HOURLY);
-            process(reportingDao.averageAggregator.getDaily(), GraphGranularityType.DAILY);
+            process(reportingDBManager.averageAggregator.getMinute(), GraphGranularityType.MINUTE);
+            process(reportingDBManager.averageAggregator.getHourly(), GraphGranularityType.HOURLY);
+            process(reportingDBManager.averageAggregator.getDaily(), GraphGranularityType.DAILY);
 
-            reportingDBManager.insertBatchDataPoints(reportingDao.rawDataProcessor.rawStorage);
+            reportingDBManager.insertBatchDataPoints(reportingDBManager.rawDataProcessor.rawStorage);
 
             reportingDBManager.cleanOldReportingRecords(Instant.now());
         } catch (Exception e) {

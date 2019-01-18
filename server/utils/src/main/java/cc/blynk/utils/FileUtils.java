@@ -2,7 +2,6 @@ package cc.blynk.utils;
 
 import java.io.BufferedWriter;
 import java.io.DataOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.Buffer;
@@ -12,13 +11,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.nio.file.attribute.FileTime;
 import java.security.MessageDigest;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
@@ -197,19 +193,6 @@ public final class FileUtils {
         return Paths.get(FileUtils.CSV_DIR, email + "_" + orgId + "_" + reportId + "_" + date);
     }
 
-    public static File getLatestFile(File[] files) {
-        if (files == null || files.length == 0) {
-            return null;
-        }
-        File lastModifiedFile = files[0];
-        for (int i = 1; i < files.length; i++) {
-            if (lastModifiedFile.lastModified() < files[i].lastModified()) {
-                lastModifiedFile = files[i];
-            }
-        }
-        return lastModifiedFile;
-    }
-
     public static final String BUILD = "build";
     public static final String VERSION = "ver";
     public static final String BOARD_TYPE = "dev";
@@ -266,19 +249,6 @@ public final class FileUtils {
             }
         }
         return null;
-    }
-
-    public static long getLastModified(Path filePath) throws IOException {
-        BasicFileAttributes attr = Files.readAttributes(filePath, BasicFileAttributes.class);
-        FileTime modifiedTime = attr.lastModifiedTime();
-        return modifiedTime.toMillis();
-    }
-
-    public static void deleteDirectory(Path path) throws IOException {
-        Files.walk(path)
-             .sorted(Comparator.reverseOrder())
-             .map(Path::toFile)
-             .forEach(File::delete);
     }
 
 }

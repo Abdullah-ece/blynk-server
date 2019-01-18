@@ -16,7 +16,6 @@ import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.DeviceValue;
 import cc.blynk.server.core.dao.NotificationsDao;
 import cc.blynk.server.core.dao.OrganizationDao;
-import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.device.Device;
@@ -66,7 +65,6 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
     private static final Logger log = LogManager.getLogger(ExternalAPIHandler.class);
     private final BlockingIOProcessor blockingIOProcessor;
     private final OrganizationDao organizationDao;
-    private final ReportingDiskDao reportingDiskDao;
     private final ReportingDBManager reportingDBManager;
     private final NotificationsDao notificationsDao;
     private final RuleEngineProcessor ruleEngineProcessor;
@@ -75,7 +73,6 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
         super(holder.deviceDao, holder.sessionDao, holder.stats, rootPath);
         this.blockingIOProcessor = holder.blockingIOProcessor;
         this.organizationDao = holder.organizationDao;
-        this.reportingDiskDao = holder.reportingDiskDao;
         this.reportingDBManager = holder.reportingDBManager;
         this.notificationsDao = holder.notificationsDao;
         this.ruleEngineProcessor = holder.ruleEngineProcessor;
@@ -366,7 +363,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
         Device device = deviceDao.getByIdOrThrow(deviceId);
 
         double parsedValue = NumberUtil.parseDouble(pinValue);
-        reportingDiskDao.process(device, pin, pinType, parsedValue, now);
+        reportingDBManager.process(device, pin, pinType, parsedValue, now);
         String prev = device.updateValue(pin, pinType, pinValue, now);
         String body = DataStream.makeHardwareBody(pinType, pin, pinValue);
 

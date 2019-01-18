@@ -2,7 +2,6 @@ package cc.blynk.server.hardware.handlers.hardware.logic;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.OrganizationDao;
-import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.device.Device;
@@ -13,6 +12,7 @@ import cc.blynk.server.core.processors.RuleEngineProcessor;
 import cc.blynk.server.core.processors.WebhookProcessor;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
+import cc.blynk.server.db.ReportingDBManager;
 import cc.blynk.utils.NumberUtil;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -33,7 +33,7 @@ import static cc.blynk.utils.StringUtils.split3;
 public final class HardwareLogic extends BaseProcessorHandler {
 
     private final SessionDao sessionDao;
-    private final ReportingDiskDao reportingDiskDao;
+    private final ReportingDBManager reportingDBManager;
     private final OrganizationDao organizationDao;
     private final RuleEngineProcessor ruleEngineProcessor;
     private Organization org;
@@ -46,7 +46,7 @@ public final class HardwareLogic extends BaseProcessorHandler {
                 holder.stats),
                 holder.deviceDao);
         this.sessionDao = holder.sessionDao;
-        this.reportingDiskDao = holder.reportingDiskDao;
+        this.reportingDBManager = holder.reportingDBManager;
         this.organizationDao = holder.organizationDao;
         this.ruleEngineProcessor = holder.ruleEngineProcessor;
     }
@@ -85,7 +85,7 @@ public final class HardwareLogic extends BaseProcessorHandler {
             long now = System.currentTimeMillis();
             double parsedValue = NumberUtil.parseDouble(value);
 
-            reportingDiskDao.process(device, pin, pinType, parsedValue, now);
+            reportingDBManager.process(device, pin, pinType, parsedValue, now);
             String prevValue = device.updateValue(pin, pinType, value, now);
             if (org == null) {
                 org = organizationDao.getOrgByIdOrThrow(orgId);

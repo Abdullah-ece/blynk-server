@@ -296,21 +296,19 @@ public class MobileGetGraphDataTest extends SingleServerInstancePerTestWithDBAnd
         hardClient.verifyResult(ok(1));
         appClient.verifyResult(deviceConnected(1, device.id));
 
-        assertEquals(0, holder.averageAggregator.getMinute().size());
-        assertEquals(0, holder.averageAggregator.getHourly().size());
-        assertEquals(0, holder.averageAggregator.getDaily().size());
-        assertEquals(0, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
-        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDBManager.averageAggregator.getMinute().size());
+        assertEquals(0, holder.reportingDBManager.averageAggregator.getHourly().size());
+        assertEquals(0, holder.reportingDBManager.averageAggregator.getDaily().size());
+        assertEquals(0, holder.reportingDBManager.rawDataCacheForGraphProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDBManager.rawDataProcessor.rawStorage.size());
 
         hardClient.send("hardware vw 88 111");
         appClient.verifyResult(hardware(2, device.id + " vw 88 111"));
 
-        assertEquals(1, holder.averageAggregator.getMinute().size());
-        assertEquals(1, holder.averageAggregator.getHourly().size());
-        assertEquals(1, holder.averageAggregator.getDaily().size());
-        //todo fix?
-        //assertEquals(1, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
-        assertEquals(1, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+        assertEquals(1, holder.reportingDBManager.averageAggregator.getMinute().size());
+        assertEquals(1, holder.reportingDBManager.averageAggregator.getHourly().size());
+        assertEquals(1, holder.reportingDBManager.averageAggregator.getDaily().size());
+        assertEquals(1, holder.reportingDBManager.rawDataProcessor.rawStorage.size());
     }
 
     @Test

@@ -36,7 +36,7 @@ public class RawDataDBTest {
     @BeforeClass
     public static void init() throws Exception {
         blockingIOProcessor = new BlockingIOProcessor(4, 10000);
-        reportingDBManager = new ReportingDBManager("db-test.properties", blockingIOProcessor, true);
+        reportingDBManager = new ReportingDBManager("db-test.properties", blockingIOProcessor, "");
         assertNotNull(reportingDBManager.getConnection());
         user = new User();
         user.email = "test@test.com";

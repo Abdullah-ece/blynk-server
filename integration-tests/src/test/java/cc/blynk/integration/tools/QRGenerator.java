@@ -24,7 +24,7 @@ import java.util.List;
 public class QRGenerator {
 
     public static void main(String[] args) throws Exception {
-        DBManager dbManager = new DBManager("db.properties", new BlockingIOProcessor(4, 100), true);
+        DBManager dbManager = new DBManager("db.properties", new BlockingIOProcessor(4, 100));
         List<Redeem> redeems = generateQR(10, "/home/doom369/QR/test", "test", 50000);
         dbManager.insertRedeems(redeems);
     }

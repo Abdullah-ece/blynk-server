@@ -1,16 +1,23 @@
 package cc.blynk.server.db;
 
 import cc.blynk.server.core.BlockingIOProcessor;
+import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.web.product.EventType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
+import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
 import cc.blynk.server.core.reporting.raw.BaseReportingKey;
 import cc.blynk.server.core.reporting.raw.BaseReportingValue;
+import cc.blynk.server.core.reporting.raw.RawDataCacheForGraphProcessor;
+import cc.blynk.server.core.reporting.raw.RawDataProcessor;
 import cc.blynk.server.core.stats.model.Stat;
 import cc.blynk.server.db.dao.EventDBDao;
+import cc.blynk.server.db.dao.RawEntry;
 import cc.blynk.server.db.dao.ReportingDBDao;
 import cc.blynk.server.db.dao.descriptor.DataQueryRequestDTO;
+import cc.blynk.utils.NumberUtil;
 import cc.blynk.utils.properties.BaseProperties;
 import cc.blynk.utils.properties.DBProperties;
 import com.zaxxer.hikari.HikariConfig;
@@ -33,52 +40,44 @@ import static cc.blynk.utils.properties.DBProperties.DB_PROPERTIES_FILENAME;
  * Created by Dmitriy Dumanskiy.
  * Created on 19.02.16.
  */
-public class ReportingDBManager implements Closeable {
+public final class ReportingDBManager implements Closeable {
 
     private static final Logger log = LogManager.getLogger(ReportingDBManager.class);
     private final HikariDataSource ds;
 
     private final BlockingIOProcessor blockingIOProcessor;
-    public EventDBDao eventDBDao;
+    public final AverageAggregatorProcessor averageAggregator;
+    public final RawDataCacheForGraphProcessor rawDataCacheForGraphProcessor;
+    public final RawDataProcessor rawDataProcessor;
+
+    public final EventDBDao eventDBDao;
     private final boolean cleanOldReporting;
 
-    public ReportingDBDao reportingDBDao;
+    public final ReportingDBDao reportingDBDao;
 
-    public ReportingDBManager(BlockingIOProcessor blockingIOProcessor, boolean isEnabled) {
-        this(DB_PROPERTIES_FILENAME, blockingIOProcessor, isEnabled);
+    public ReportingDBManager(BlockingIOProcessor blockingIOProcessor, String reportingFolder) {
+        this(DB_PROPERTIES_FILENAME, blockingIOProcessor, reportingFolder);
     }
 
-    public ReportingDBManager(String propsFilename, BlockingIOProcessor blockingIOProcessor, boolean isEnabled) {
+    public ReportingDBManager(String propsFilename, BlockingIOProcessor blockingIOProcessor, String reportingFolder) {
         this.blockingIOProcessor = blockingIOProcessor;
 
         DBProperties dbProperties = new DBProperties(propsFilename);
-        if (!isEnabled || dbProperties.size() == 0) {
-            log.info("Separate DB storage disabled.");
-            this.ds = null;
-            this.cleanOldReporting = false;
-            return;
-        }
-
         HikariConfig config = initConfig(dbProperties);
 
         log.info("Reporting DB url : {}", config.getJdbcUrl());
         log.info("Reporting DB user : {}", config.getUsername());
         log.info("Connecting to reporting DB...");
 
-        HikariDataSource hikariDataSource;
-        try {
-            hikariDataSource = new HikariDataSource(config);
-        } catch (Exception e) {
-            log.error("Not able connect to reporting DB. Skipping. Reason : {}", e.getMessage());
-            this.ds = null;
-            this.cleanOldReporting = false;
-            return;
-        }
+        HikariDataSource hikariDataSource = new HikariDataSource(config);
 
         this.ds = hikariDataSource;
         this.reportingDBDao = new ReportingDBDao(hikariDataSource);
         this.eventDBDao = new EventDBDao(hikariDataSource);
         this.cleanOldReporting = dbProperties.cleanReporting();
+        this.averageAggregator = new AverageAggregatorProcessor(reportingFolder);
+        this.rawDataCacheForGraphProcessor = new RawDataCacheForGraphProcessor();
+        this.rawDataProcessor = new RawDataProcessor();
 
         log.info("Connected to reporting database successfully.");
     }
@@ -95,6 +94,18 @@ public class ReportingDBManager implements Closeable {
         config.setMaxLifetime(0);
         config.setConnectionTestQuery("SELECT 1");
         return config;
+    }
+
+    public void process(Device device, short pin, PinType pinType, double doubleVal, long ts) {
+        if (doubleVal != NumberUtil.NO_RESULT) {
+            BaseReportingKey key = new BaseReportingKey(device.id, pinType, pin);
+
+            rawDataProcessor.collect(key, ts, doubleVal);
+            averageAggregator.collect(key, ts, doubleVal);
+            if (device.webDashboard.needRawDataForGraph(pin, pinType) /* || dash.needRawDataForGraph(pin, pinType)*/) {
+                rawDataCacheForGraphProcessor.collect(key, new RawEntry(ts, doubleVal));
+            }
+        }
     }
 
     public void insertStat(String region, Stat stat) {
@@ -159,6 +170,7 @@ public class ReportingDBManager implements Closeable {
 
     @Override
     public void close() {
+        averageAggregator.close();
         if (isDBEnabled()) {
             System.out.println("Closing Reporting DB...");
             ds.close();

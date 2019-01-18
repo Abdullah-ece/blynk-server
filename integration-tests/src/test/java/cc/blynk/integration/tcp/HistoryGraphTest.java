@@ -83,10 +83,10 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
     @Before
     public void cleanStorage() {
-        holder.averageAggregator.getMinute().clear();
-        holder.averageAggregator.getHourly().clear();
-        holder.averageAggregator.getDaily().clear();
-        holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.clear();
+        holder.reportingDBManager.averageAggregator.getMinute().clear();
+        holder.reportingDBManager.averageAggregator.getHourly().clear();
+        holder.reportingDBManager.averageAggregator.getDaily().clear();
+        holder.reportingDBManager.rawDataCacheForGraphProcessor.rawStorage.clear();
     }
 
     @Test
@@ -105,20 +105,20 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(1));
         clientPair.appClient.reset();
 
-        assertEquals(0, holder.averageAggregator.getMinute().size());
-        assertEquals(0, holder.averageAggregator.getHourly().size());
-        assertEquals(0, holder.averageAggregator.getDaily().size());
-        assertEquals(0, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
-        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDBManager.averageAggregator.getMinute().size());
+        assertEquals(0, holder.reportingDBManager.averageAggregator.getHourly().size());
+        assertEquals(0, holder.reportingDBManager.averageAggregator.getDaily().size());
+        assertEquals(0, holder.reportingDBManager.rawDataCacheForGraphProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDBManager.rawDataProcessor.rawStorage.size());
 
         clientPair.hardwareClient.send("hardware vw 88 111");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 88 111"))));
 
-        assertEquals(1, holder.averageAggregator.getMinute().size());
-        assertEquals(1, holder.averageAggregator.getHourly().size());
-        assertEquals(1, holder.averageAggregator.getDaily().size());
-        assertEquals(1, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
-        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+        assertEquals(1, holder.reportingDBManager.averageAggregator.getMinute().size());
+        assertEquals(1, holder.reportingDBManager.averageAggregator.getHourly().size());
+        assertEquals(1, holder.reportingDBManager.averageAggregator.getDaily().size());
+        assertEquals(1, holder.reportingDBManager.rawDataCacheForGraphProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDBManager.rawDataProcessor.rawStorage.size());
     }
 
     @Test
@@ -141,20 +141,20 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(1));
         clientPair.appClient.reset();
 
-        assertEquals(0, holder.averageAggregator.getMinute().size());
-        assertEquals(0, holder.averageAggregator.getHourly().size());
-        assertEquals(0, holder.averageAggregator.getDaily().size());
-        assertEquals(0, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
-        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDBManager.averageAggregator.getMinute().size());
+        assertEquals(0, holder.reportingDBManager.averageAggregator.getHourly().size());
+        assertEquals(0, holder.reportingDBManager.averageAggregator.getDaily().size());
+        assertEquals(0, holder.reportingDBManager.rawDataCacheForGraphProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDBManager.rawDataProcessor.rawStorage.size());
 
         clientPair.hardwareClient.send("hardware vw 88 111");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 88 111"))));
 
-        assertEquals(1, holder.averageAggregator.getMinute().size());
-        assertEquals(1, holder.averageAggregator.getHourly().size());
-        assertEquals(1, holder.averageAggregator.getDaily().size());
-        assertEquals(0, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
-        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+        assertEquals(1, holder.reportingDBManager.averageAggregator.getMinute().size());
+        assertEquals(1, holder.reportingDBManager.averageAggregator.getHourly().size());
+        assertEquals(1, holder.reportingDBManager.averageAggregator.getDaily().size());
+        assertEquals(0, holder.reportingDBManager.rawDataCacheForGraphProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDBManager.rawDataProcessor.rawStorage.size());
     }
 
     @Test
@@ -192,20 +192,20 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         clientPair.appClient.createTemplate(1, widgetId, tileTemplate);
         clientPair.appClient.verifyResult(ok(2));
 
-        assertEquals(0, holder.averageAggregator.getMinute().size());
-        assertEquals(0, holder.averageAggregator.getHourly().size());
-        assertEquals(0, holder.averageAggregator.getDaily().size());
-        assertEquals(0, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
-        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDBManager.averageAggregator.getMinute().size());
+        assertEquals(0, holder.reportingDBManager.averageAggregator.getHourly().size());
+        assertEquals(0, holder.reportingDBManager.averageAggregator.getDaily().size());
+        assertEquals(0, holder.reportingDBManager.rawDataCacheForGraphProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDBManager.rawDataProcessor.rawStorage.size());
 
         clientPair.hardwareClient.send("hardware vw 88 111");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 88 111"))));
 
-        assertEquals(1, holder.averageAggregator.getMinute().size());
-        assertEquals(1, holder.averageAggregator.getHourly().size());
-        assertEquals(1, holder.averageAggregator.getDaily().size());
-        assertEquals(1, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
-        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+        assertEquals(1, holder.reportingDBManager.averageAggregator.getMinute().size());
+        assertEquals(1, holder.reportingDBManager.averageAggregator.getHourly().size());
+        assertEquals(1, holder.reportingDBManager.averageAggregator.getDaily().size());
+        assertEquals(1, holder.reportingDBManager.rawDataCacheForGraphProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDBManager.rawDataProcessor.rawStorage.size());
     }
 
     @Test
@@ -248,11 +248,11 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         clientPair.appClient.createTemplate(1, widgetId, tileTemplate);
         clientPair.appClient.verifyResult(ok(2));
 
-        assertEquals(0, holder.averageAggregator.getMinute().size());
-        assertEquals(0, holder.averageAggregator.getHourly().size());
-        assertEquals(0, holder.averageAggregator.getDaily().size());
-        assertEquals(0, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
-        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDBManager.averageAggregator.getMinute().size());
+        assertEquals(0, holder.reportingDBManager.averageAggregator.getHourly().size());
+        assertEquals(0, holder.reportingDBManager.averageAggregator.getDaily().size());
+        assertEquals(0, holder.reportingDBManager.rawDataCacheForGraphProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDBManager.rawDataProcessor.rawStorage.size());
 
         clientPair.hardwareClient.send("hardware vw 88 111");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 88 111"))));
@@ -260,11 +260,11 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(2, b("1-0 vw 89 112"))));
 
 
-        assertEquals(2, holder.averageAggregator.getMinute().size());
-        assertEquals(2, holder.averageAggregator.getHourly().size());
-        assertEquals(2, holder.averageAggregator.getDaily().size());
-        assertEquals(2, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
-        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+        assertEquals(2, holder.reportingDBManager.averageAggregator.getMinute().size());
+        assertEquals(2, holder.reportingDBManager.averageAggregator.getHourly().size());
+        assertEquals(2, holder.reportingDBManager.averageAggregator.getDaily().size());
+        assertEquals(2, holder.reportingDBManager.rawDataCacheForGraphProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDBManager.rawDataProcessor.rawStorage.size());
     }
 
     @Test
@@ -284,20 +284,20 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(1));
         clientPair.appClient.reset();
 
-        assertEquals(0, holder.averageAggregator.getMinute().size());
-        assertEquals(0, holder.averageAggregator.getHourly().size());
-        assertEquals(0, holder.averageAggregator.getDaily().size());
-        assertEquals(0, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
-        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDBManager.averageAggregator.getMinute().size());
+        assertEquals(0, holder.reportingDBManager.averageAggregator.getHourly().size());
+        assertEquals(0, holder.reportingDBManager.averageAggregator.getDaily().size());
+        assertEquals(0, holder.reportingDBManager.rawDataCacheForGraphProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDBManager.rawDataProcessor.rawStorage.size());
 
         clientPair.hardwareClient.send("hardware vw 88 111");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 88 111"))));
 
-        assertEquals(1, holder.averageAggregator.getMinute().size());
-        assertEquals(1, holder.averageAggregator.getHourly().size());
-        assertEquals(1, holder.averageAggregator.getDaily().size());
-        assertEquals(0, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
-        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+        assertEquals(1, holder.reportingDBManager.averageAggregator.getMinute().size());
+        assertEquals(1, holder.reportingDBManager.averageAggregator.getHourly().size());
+        assertEquals(1, holder.reportingDBManager.averageAggregator.getDaily().size());
+        assertEquals(0, holder.reportingDBManager.rawDataCacheForGraphProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDBManager.rawDataProcessor.rawStorage.size());
     }
 
     @Test
@@ -318,20 +318,20 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(1));
         clientPair.appClient.reset();
 
-        assertEquals(0, holder.reportingDiskDao.averageAggregator.getMinute().size());
-        assertEquals(0, holder.reportingDiskDao.averageAggregator.getHourly().size());
-        assertEquals(0, holder.reportingDiskDao.averageAggregator.getDaily().size());
-        assertEquals(0, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
-        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDBManager.averageAggregator.getMinute().size());
+        assertEquals(0, holder.reportingDBManager.averageAggregator.getHourly().size());
+        assertEquals(0, holder.reportingDBManager.averageAggregator.getDaily().size());
+        assertEquals(0, holder.reportingDBManager.rawDataCacheForGraphProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDBManager.rawDataProcessor.rawStorage.size());
 
         clientPair.hardwareClient.send("hardware vw 88 111");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 88 111"))));
 
-        assertEquals(1, holder.reportingDiskDao.averageAggregator.getMinute().size());
-        assertEquals(1, holder.reportingDiskDao.averageAggregator.getHourly().size());
-        assertEquals(1, holder.reportingDiskDao.averageAggregator.getDaily().size());
-        assertEquals(0, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
-        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+        assertEquals(1, holder.reportingDBManager.averageAggregator.getMinute().size());
+        assertEquals(1, holder.reportingDBManager.averageAggregator.getHourly().size());
+        assertEquals(1, holder.reportingDBManager.averageAggregator.getDaily().size());
+        assertEquals(0, holder.reportingDBManager.rawDataCacheForGraphProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDBManager.rawDataProcessor.rawStorage.size());
     }
 
     @Test
@@ -353,20 +353,20 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(1));
         clientPair.appClient.reset();
 
-        assertEquals(0, holder.reportingDiskDao.averageAggregator.getMinute().size());
-        assertEquals(0, holder.reportingDiskDao.averageAggregator.getHourly().size());
-        assertEquals(0, holder.reportingDiskDao.averageAggregator.getDaily().size());
-        assertEquals(0, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
-        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDBManager.averageAggregator.getMinute().size());
+        assertEquals(0, holder.reportingDBManager.averageAggregator.getHourly().size());
+        assertEquals(0, holder.reportingDBManager.averageAggregator.getDaily().size());
+        assertEquals(0, holder.reportingDBManager.rawDataCacheForGraphProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDBManager.rawDataProcessor.rawStorage.size());
 
         clientPair.hardwareClient.send("hardware vw 89 111");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 89 111"))));
 
-        assertEquals(1, holder.reportingDiskDao.averageAggregator.getMinute().size());
-        assertEquals(1, holder.reportingDiskDao.averageAggregator.getHourly().size());
-        assertEquals(1, holder.reportingDiskDao.averageAggregator.getDaily().size());
-        assertEquals(0, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
-        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+        assertEquals(1, holder.reportingDBManager.averageAggregator.getMinute().size());
+        assertEquals(1, holder.reportingDBManager.averageAggregator.getHourly().size());
+        assertEquals(1, holder.reportingDBManager.averageAggregator.getDaily().size());
+        assertEquals(0, holder.reportingDBManager.rawDataCacheForGraphProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDBManager.rawDataProcessor.rawStorage.size());
     }
 
     @Test

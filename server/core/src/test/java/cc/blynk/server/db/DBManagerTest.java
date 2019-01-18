@@ -54,7 +54,7 @@ public class DBManagerTest {
     @BeforeClass
     public static void init() throws Exception {
         blockingIOProcessor = new BlockingIOProcessor(4, 10000);
-        dbManager = new DBManager("db-test.properties", blockingIOProcessor, true);
+        dbManager = new DBManager("db-test.properties", blockingIOProcessor);
         assertNotNull(dbManager.getConnection());
     }
 

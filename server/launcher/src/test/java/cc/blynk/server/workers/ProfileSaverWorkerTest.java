@@ -45,7 +45,7 @@ public class ProfileSaverWorkerTest {
 
     @Test
     public void testCorrectProfilesAreSaved() throws IOException {
-        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(userDao, fileManager, new DBManager(blockingIOProcessor, true), organizationDao);
+        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(userDao, fileManager, new DBManager(blockingIOProcessor), organizationDao);
 
         User user1 = new User("1", "", 1, "local", "127.0.0.1", false, 2);
         User user2 = new User("2", "", 1, "local", "127.0.0.1", false, 2);
@@ -83,7 +83,7 @@ public class ProfileSaverWorkerTest {
 
         Thread.sleep(1);
 
-        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(userDao, fileManager, new DBManager(blockingIOProcessor, true), organizationDao);
+        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(userDao, fileManager, new DBManager(blockingIOProcessor), organizationDao);
 
         when(userDao.getUsers()).thenReturn(userMap);
         profileSaverWorker.run();

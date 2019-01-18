@@ -6,7 +6,10 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * The Blynk Project.
@@ -21,7 +24,7 @@ public class CloneProjectTest {
     @BeforeClass
     public static void init() throws Exception {
         blockingIOProcessor = new BlockingIOProcessor(4, 5000);
-        dbManager = new DBManager("db-test.properties", blockingIOProcessor, true);
+        dbManager = new DBManager("db-test.properties", blockingIOProcessor);
         assertNotNull(dbManager.getConnection());
     }
 

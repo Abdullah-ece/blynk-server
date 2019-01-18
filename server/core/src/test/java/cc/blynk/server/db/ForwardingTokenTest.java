@@ -24,7 +24,7 @@ public class ForwardingTokenTest {
     @BeforeClass
     public static void init() throws Exception {
         blockingIOProcessor = new BlockingIOProcessor(4, 5000);
-        dbManager = new DBManager("db-test.properties", blockingIOProcessor, true);
+        dbManager = new DBManager("db-test.properties", blockingIOProcessor);
         assertNotNull(dbManager.getConnection());
     }
 

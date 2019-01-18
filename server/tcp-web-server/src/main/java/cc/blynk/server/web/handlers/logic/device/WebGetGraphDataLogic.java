@@ -51,7 +51,7 @@ public final class WebGetGraphDataLogic {
         this.reportingDBDao = holder.reportingDBManager.reportingDBDao;
         this.blockingIOProcessor = holder.blockingIOProcessor;
         this.deviceDao = holder.deviceDao;
-        this.rawDataCacheForGraphProcessor = holder.reportingDiskDao.rawDataCacheForGraphProcessor;
+        this.rawDataCacheForGraphProcessor = holder.reportingDBManager.rawDataCacheForGraphProcessor;
     }
 
     private void readGraphDataFromDB(Channel channel, User user, int deviceId, int msgId,

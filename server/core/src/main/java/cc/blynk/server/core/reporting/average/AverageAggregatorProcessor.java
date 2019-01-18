@@ -84,6 +84,7 @@ public class AverageAggregatorProcessor implements Closeable {
 
     @Override
     public void close() {
+        System.out.println("Closing average aggregator...");
         if (minute.size() > 100_000) {
             log.info("Too many minute records ({}). "
                     + "This may cause performance issues on server start. Skipping.", minute.size());

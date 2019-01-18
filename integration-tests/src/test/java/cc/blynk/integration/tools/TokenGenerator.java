@@ -31,7 +31,7 @@ public class TokenGenerator {
             redeems.add(new Redeem(token, "SparkFun", 15000));
         }
 
-        DBManager dbManager = new DBManager("db.properties", new BlockingIOProcessor(4, 100), true);
+        DBManager dbManager = new DBManager("db.properties", new BlockingIOProcessor(4, 100));
         dbManager.insertRedeems(redeems);
     }
 
