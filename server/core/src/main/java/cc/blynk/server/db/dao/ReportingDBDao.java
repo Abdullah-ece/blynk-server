@@ -338,6 +338,12 @@ public class ReportingDBDao {
                 graphGranularityType.name(), System.currentTimeMillis() - start, map.size());
     }
 
+    public void delete(int... deviceIds) {
+        for (int deviceId : deviceIds) {
+            delete(deviceId);
+        }
+    }
+
     public void delete(int deviceId) {
         int count = 0;
         count += delete(deleteAllDeviceMinute, deviceId);

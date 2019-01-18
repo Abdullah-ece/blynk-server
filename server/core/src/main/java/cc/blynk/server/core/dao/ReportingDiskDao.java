@@ -68,10 +68,6 @@ public class ReportingDiskDao implements Closeable {
         return generateFilename(pinType.pintTypeChar, pin, type.label);
     }
 
-    private Path getDeviceFolderPath(int deviceId) {
-        return Paths.get(dataFolder, String.valueOf(deviceId));
-    }
-
     public ByteBuffer getByteBufferFromDisk(int deviceId,
                                             PinType pinType, short pin, int count,
                                             GraphGranularityType type, int skipCount) {
@@ -91,41 +87,19 @@ public class ReportingDiskDao implements Closeable {
         return null;
     }
 
-    public void delete(int[] deviceIds) throws IOException {
-        for (int deviceId : deviceIds) {
-            delete(deviceId);
-        }
-    }
-
-    public boolean delete(int deviceId) throws IOException {
-        Path userReportingPath = getDeviceFolderPath(deviceId);
-
-        if (Files.exists(userReportingPath)) {
-            log.debug("Deleting all pin data for deviceId {}.", deviceId);
-            FileUtils.deleteDirectory(userReportingPath);
-            return true;
-        }
-        return false;
-    }
-
     public void process(Device device, short pin, PinType pinType, double doubleVal, long ts) {
         //not a number, nothing to aggregate
         if (doubleVal != NumberUtil.NO_RESULT) {
-            process(device, pin, pinType, ts, doubleVal);
-        }
-    }
+            BaseReportingKey key = new BaseReportingKey(device.id, pinType, pin);
+            if (enableRawDbDataStore) {
+                rawDataProcessor.collect(key, ts, doubleVal);
+            }
 
-    private void process(Device device, short pin, PinType pinType, long ts, double doubleVal) {
-        int deviceId = device.id;
-        BaseReportingKey key = new BaseReportingKey(deviceId, pinType, pin);
-        if (enableRawDbDataStore) {
-            rawDataProcessor.collect(key, ts, doubleVal);
-        }
+            averageAggregator.collect(key, ts, doubleVal);
 
-        averageAggregator.collect(key, ts, doubleVal);
-
-        if (device.webDashboard.needRawDataForGraph(pin, pinType) /* || dash.needRawDataForGraph(pin, pinType)*/) {
-            rawDataCacheForGraphProcessor.collect(key, new RawEntry(ts, doubleVal));
+            if (device.webDashboard.needRawDataForGraph(pin, pinType) /* || dash.needRawDataForGraph(pin, pinType)*/) {
+                rawDataCacheForGraphProcessor.collect(key, new RawEntry(ts, doubleVal));
+            }
         }
     }
 
