@@ -40,7 +40,7 @@ public final class MobileDeleteDeviceLogic {
 
         holder.blockingIOProcessor.executeHistory(() -> {
             try {
-                holder.reportingDiskDao.delete(deviceId);
+                holder.reportingDBManager.reportingDBDao.delete(deviceId);
             } catch (Exception e) {
                 log.warn("Error removing device data. Reason : {}.", e.getMessage());
             }

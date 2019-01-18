@@ -138,7 +138,7 @@ public class ReportingTest extends BaseTest {
         FileUtils.write(pinReportingDataPath12, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath20, 1.22D, 2222222);
 
-        clientPair.appClient.send("deleteDeviceData 1-*");
+        clientPair.appClient.send("delete 1-*");
         clientPair.appClient.verifyResult(ok(2));
 
         assertTrue(Files.notExists(pinReportingDataPath10));

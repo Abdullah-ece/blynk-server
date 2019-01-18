@@ -47,7 +47,9 @@ public final class MobileDeleteDeviceDataLogic {
     private static void delete(Holder holder, Channel channel, int msgId, int... deviceIds) {
         holder.blockingIOProcessor.executeHistory(() -> {
             try {
-                holder.reportingDiskDao.delete(deviceIds);
+                for (int deviceId : deviceIds) {
+                    holder.reportingDBManager.reportingDBDao.delete(deviceId);
+                }
                 if (log.isDebugEnabled()) {
                     log.debug("Removed all files for deviceIds {}", Arrays.toString(deviceIds));
                 }
@@ -66,7 +68,7 @@ public final class MobileDeleteDeviceDataLogic {
                     PinType pinType = PinType.getPinType(pinString.charAt(0));
                     short pin = NumberUtil.parsePin(pinString.substring(1));
                     int removedCounter =
-                            holder.reportingDBManager.reportingDBDao.deleteDataForDevice(deviceId, pin, pinType);
+                            holder.reportingDBManager.reportingDBDao.delete(deviceId, pin, pinType);
                     log.info("Removed {} records for deviceId {} and pin {}.", removedCounter, deviceId, pin);
                 }
                 channel.writeAndFlush(ok(msgId), channel.voidPromise());

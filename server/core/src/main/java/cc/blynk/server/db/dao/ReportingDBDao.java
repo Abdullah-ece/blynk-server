@@ -75,6 +75,13 @@ public class ReportingDBDao {
     private static final String deleteDeviceDaily = "DELETE FROM reporting_average_daily WHERE device_id = ? and pin = ? and pin_type = ?";
     private static final String deleteDeviceRaw = "DELETE FROM reporting_device_raw_data WHERE device_id = ? and pin = ? and pin_type = ?";
 
+    private static final String deleteAllDeviceMinute = "DELETE FROM reporting_average_minute WHERE device_id = ?";
+    private static final String deleteAllDeviceHourly = "DELETE FROM reporting_average_hourly WHERE device_id = ?";
+    private static final String deleteAllDeviceDaily = "DELETE FROM reporting_average_daily WHERE device_id = ?";
+    private static final String deleteAllDeviceRaw = "DELETE FROM reporting_device_raw_data WHERE device_id = ?";
+    private static final String deleteAllDeviceEvents = "DELETE FROM reporting_events WHERE device_id = ?";
+    private static final String deleteAllDeviceEventsLastSeen = "DELETE FROM reporting_events_last_seen WHERE device_id = ?";
+
     private static final String insertStatMinute =
             "INSERT INTO reporting_app_stat_minute (region, ts, active, active_week, active_month, "
                     + "minute_rate, connected, online_apps, online_hards, "
@@ -326,18 +333,45 @@ public class ReportingDBDao {
                 graphGranularityType.name(), System.currentTimeMillis() - start, map.size());
     }
 
-    public int deleteDataForDevice(int deviceId, short pin, PinType pinType) {
+    public void delete(int deviceId) {
         int count = 0;
-        count += deleteDeviceData(deleteDeviceMinute, deviceId, pin, pinType);
-        count += deleteDeviceData(deleteDeviceHourly, deviceId, pin, pinType);
-        count += deleteDeviceData(deleteDeviceDaily, deviceId, pin, pinType);
-        count += deleteDeviceData(deleteDeviceRaw, deviceId, pin, pinType);
-        log.debug("Removed reporting records for device {} {}{} finished. Deleted records: {}",
+        count += delete(deleteAllDeviceMinute, deviceId);
+        count += delete(deleteAllDeviceHourly, deviceId);
+        count += delete(deleteAllDeviceDaily, deviceId);
+        count += delete(deleteAllDeviceRaw, deviceId);
+        count += delete(deleteAllDeviceEvents, deviceId);
+        count += delete(deleteAllDeviceEventsLastSeen, deviceId);
+        log.debug("Removed all reporting records for device {} - {}{}. Deleted records: {}",
+                deviceId, count);
+    }
+
+    private int delete(String query, int deviceId) {
+        try (Connection connection = ds.getConnection();
+             PreparedStatement deleteQuery = connection.prepareStatement(query)) {
+
+            deleteQuery.setInt(1, deviceId);
+
+            int counter = deleteQuery.executeUpdate();
+            connection.commit();
+            return counter;
+        } catch (Exception e) {
+            log.error("Error deleting all reporting data for device.", e);
+        }
+        return 0;
+    }
+
+    public int delete(int deviceId, short pin, PinType pinType) {
+        int count = 0;
+        count += delete(deleteDeviceMinute, deviceId, pin, pinType);
+        count += delete(deleteDeviceHourly, deviceId, pin, pinType);
+        count += delete(deleteDeviceDaily, deviceId, pin, pinType);
+        count += delete(deleteDeviceRaw, deviceId, pin, pinType);
+        log.debug("Removed reporting records for device {} - {}{}. Deleted records: {}",
                 deviceId, pinType.pintTypeChar, pin, count);
         return count;
     }
 
-    private int deleteDeviceData(String query, int deviceId, short pin, PinType pinType) {
+    private int delete(String query, int deviceId, short pin, PinType pinType) {
         try (Connection connection = ds.getConnection();
              PreparedStatement deleteQuery = connection.prepareStatement(query)) {
 

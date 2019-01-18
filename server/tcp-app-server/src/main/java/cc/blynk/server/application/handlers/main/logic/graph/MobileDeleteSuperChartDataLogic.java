@@ -79,7 +79,7 @@ public final class MobileDeleteSuperChartDataLogic {
                     if (device != null && dataStream != null && dataStream.pinType != null) {
                         int deviceId = device.id;
                         holder.reportingDBManager
-                                .reportingDBDao.deleteDataForDevice(deviceId, dataStream.pin, dataStream.pinType);
+                                .reportingDBDao.delete(deviceId, dataStream.pin, dataStream.pinType);
                     }
                 }
                 ctx.writeAndFlush(ok(msgId), ctx.voidPromise());
