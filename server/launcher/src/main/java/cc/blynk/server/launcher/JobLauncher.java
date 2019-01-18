@@ -40,7 +40,6 @@ final class JobLauncher {
 
         ReportingWorker reportingWorker = new ReportingWorker(
                 holder.reportingDiskDao,
-                holder.props.getReportingFolder(),
                 holder.reportingDBManager
         );
 
