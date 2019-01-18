@@ -70,17 +70,22 @@ public class ReportingDBDao {
     private static final String deleteHour = "DELETE FROM reporting_average_hourly WHERE ts < ?";
     public static final String deleteDaily = "DELETE FROM reporting_average_daily WHERE ts < ?";
 
-    private static final String deleteDeviceMinute = "DELETE FROM reporting_average_minute WHERE device_id = ? and pin = ? and pin_type = ?";
-    private static final String deleteDeviceHourly = "DELETE FROM reporting_average_hourly WHERE device_id = ? and pin = ? and pin_type = ?";
-    private static final String deleteDeviceDaily = "DELETE FROM reporting_average_daily WHERE device_id = ? and pin = ? and pin_type = ?";
-    private static final String deleteDeviceRaw = "DELETE FROM reporting_device_raw_data WHERE device_id = ? and pin = ? and pin_type = ?";
+    private static final String deleteDeviceMinute =
+            "DELETE FROM reporting_average_minute WHERE device_id = ? and pin = ? and pin_type = ?";
+    private static final String deleteDeviceHourly =
+            "DELETE FROM reporting_average_hourly WHERE device_id = ? and pin = ? and pin_type = ?";
+    private static final String deleteDeviceDaily =
+            "DELETE FROM reporting_average_daily WHERE device_id = ? and pin = ? and pin_type = ?";
+    private static final String deleteDeviceRaw =
+            "DELETE FROM reporting_device_raw_data WHERE device_id = ? and pin = ? and pin_type = ?";
 
     private static final String deleteAllDeviceMinute = "DELETE FROM reporting_average_minute WHERE device_id = ?";
     private static final String deleteAllDeviceHourly = "DELETE FROM reporting_average_hourly WHERE device_id = ?";
     private static final String deleteAllDeviceDaily = "DELETE FROM reporting_average_daily WHERE device_id = ?";
     private static final String deleteAllDeviceRaw = "DELETE FROM reporting_device_raw_data WHERE device_id = ?";
     private static final String deleteAllDeviceEvents = "DELETE FROM reporting_events WHERE device_id = ?";
-    private static final String deleteAllDeviceEventsLastSeen = "DELETE FROM reporting_events_last_seen WHERE device_id = ?";
+    private static final String deleteAllDeviceEventsLastSeen =
+            "DELETE FROM reporting_events_last_seen WHERE device_id = ?";
 
     private static final String insertStatMinute =
             "INSERT INTO reporting_app_stat_minute (region, ts, active, active_week, active_month, "
