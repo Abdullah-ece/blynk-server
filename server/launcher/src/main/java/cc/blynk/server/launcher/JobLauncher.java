@@ -4,9 +4,7 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.workers.CertificateRenewalWorker;
-import cc.blynk.server.workers.HistoryGraphUnusedPinDataCleanerWorker;
 import cc.blynk.server.workers.ProfileSaverWorker;
-import cc.blynk.server.workers.ReportingTruncateWorker;
 import cc.blynk.server.workers.ReportingWorker;
 import cc.blynk.server.workers.ShutdownHookWorker;
 import cc.blynk.server.workers.StatsWorker;
@@ -68,19 +66,6 @@ final class JobLauncher {
         scheduler.scheduleAtFixedRate(LRUCache.LOGIN_TOKENS_CACHE::clear, 1, 1, HOURS);
         scheduler.scheduleAtFixedRate(holder.deviceDao::clearTemporaryTokens, 1, 1, DAYS);
         scheduler.scheduleAtFixedRate(holder.tokensPool::cleanupExpiredTokens, 1, 1, HOURS);
-
-        //running once every 3 day
-        //todo could be removed?
-        var reportingDataDiskCleaner =
-                new HistoryGraphUnusedPinDataCleanerWorker(holder.userDao, holder.deviceDao, holder.reportingDiskDao);
-        //once every 7 days
-        scheduler.scheduleAtFixedRate(reportingDataDiskCleaner, 1, 7, DAYS);
-
-        ReportingTruncateWorker reportingTruncateWorker = new ReportingTruncateWorker(holder.reportingDiskDao,
-                holder.limits.storeMinuteRecordDays);
-
-        //once every week
-        scheduler.scheduleAtFixedRate(reportingTruncateWorker, 1, 24 * 7, HOURS);
 
         //millis we need to wait to start scheduler at the beginning of a second.
         startDelay = 1000 - (System.currentTimeMillis() % 1000);
