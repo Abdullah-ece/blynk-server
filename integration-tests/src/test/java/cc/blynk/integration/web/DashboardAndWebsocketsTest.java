@@ -61,7 +61,7 @@ import static cc.blynk.server.core.model.widgets.outputs.graph.AggregationFuncti
 import static cc.blynk.server.core.model.widgets.outputs.graph.Period.LIVE;
 import static cc.blynk.server.core.protocol.enums.Command.GET_SUPERCHART_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_TRACK_DEVICE;
-import static cc.blynk.server.core.reporting.average.AverageAggregatorProcessor.MINUTE;
+import static cc.blynk.utils.DateTimeUtils.MINUTE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;

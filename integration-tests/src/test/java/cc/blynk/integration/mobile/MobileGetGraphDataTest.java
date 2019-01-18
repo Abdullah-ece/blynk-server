@@ -35,7 +35,7 @@ import static cc.blynk.integration.TestUtil.hardware;
 import static cc.blynk.integration.TestUtil.loggedDefaultClient;
 import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.integration.TestUtil.webJson;
-import static cc.blynk.server.core.reporting.average.AverageAggregatorProcessor.MINUTE;
+import static cc.blynk.utils.DateTimeUtils.MINUTE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -296,18 +296,18 @@ public class MobileGetGraphDataTest extends SingleServerInstancePerTestWithDBAnd
         hardClient.verifyResult(ok(1));
         appClient.verifyResult(deviceConnected(1, device.id));
 
-        assertEquals(0, holder.reportingDiskDao.averageAggregator.getMinute().size());
-        assertEquals(0, holder.reportingDiskDao.averageAggregator.getHourly().size());
-        assertEquals(0, holder.reportingDiskDao.averageAggregator.getDaily().size());
+        assertEquals(0, holder.averageAggregator.getMinute().size());
+        assertEquals(0, holder.averageAggregator.getHourly().size());
+        assertEquals(0, holder.averageAggregator.getDaily().size());
         assertEquals(0, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
         assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
 
         hardClient.send("hardware vw 88 111");
         appClient.verifyResult(hardware(2, device.id + " vw 88 111"));
 
-        assertEquals(1, holder.reportingDiskDao.averageAggregator.getMinute().size());
-        assertEquals(1, holder.reportingDiskDao.averageAggregator.getHourly().size());
-        assertEquals(1, holder.reportingDiskDao.averageAggregator.getDaily().size());
+        assertEquals(1, holder.averageAggregator.getMinute().size());
+        assertEquals(1, holder.averageAggregator.getHourly().size());
+        assertEquals(1, holder.averageAggregator.getDaily().size());
         //todo fix?
         //assertEquals(1, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
         assertEquals(1, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());

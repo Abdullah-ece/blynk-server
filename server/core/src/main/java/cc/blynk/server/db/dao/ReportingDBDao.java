@@ -7,7 +7,6 @@ import cc.blynk.server.core.reporting.MobileGraphRequest;
 import cc.blynk.server.core.reporting.WebGraphRequest;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
-import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
 import cc.blynk.server.core.reporting.raw.BaseReportingKey;
 import cc.blynk.server.core.reporting.raw.BaseReportingValue;
 import cc.blynk.server.core.stats.model.CommandStat;
@@ -197,7 +196,7 @@ public class ReportingDBDao {
     }
 
     public boolean insertStat(String region, Stat stat) {
-        final long ts = (stat.ts / AverageAggregatorProcessor.MINUTE) * AverageAggregatorProcessor.MINUTE;
+        final long ts = (stat.ts / DateTimeUtils.MINUTE) * DateTimeUtils.MINUTE;
         final Timestamp timestamp = new Timestamp(ts);
 
         try (Connection connection = ds.getConnection();

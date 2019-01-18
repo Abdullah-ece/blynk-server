@@ -42,18 +42,8 @@ public class ReportingDiskDao implements Closeable {
 
     private final boolean enableRawDbDataStore;
 
-    //for test only
-    public ReportingDiskDao(String reportingFolder, AverageAggregatorProcessor averageAggregator,
-                            boolean isEnabled) {
+    public ReportingDiskDao(AverageAggregatorProcessor averageAggregator, String reportingFolder, boolean isEnabled) {
         this.averageAggregator = averageAggregator;
-        this.rawDataCacheForGraphProcessor = new RawDataCacheForGraphProcessor();
-        this.dataFolder = reportingFolder;
-        this.enableRawDbDataStore = isEnabled;
-        this.rawDataProcessor = new RawDataProcessor();
-    }
-
-    public ReportingDiskDao(String reportingFolder, boolean isEnabled) {
-        this.averageAggregator = new AverageAggregatorProcessor(reportingFolder);
         this.rawDataCacheForGraphProcessor = new RawDataCacheForGraphProcessor();
         this.dataFolder = reportingFolder;
         this.enableRawDbDataStore = isEnabled;
@@ -176,6 +166,7 @@ public class ReportingDiskDao implements Closeable {
         }
 
         averageAggregator.collect(key, ts, doubleVal);
+
         if (device.webDashboard.needRawDataForGraph(pin, pinType) /* || dash.needRawDataForGraph(pin, pinType)*/) {
             rawDataCacheForGraphProcessor.collect(key, new RawEntry(ts, doubleVal));
         }

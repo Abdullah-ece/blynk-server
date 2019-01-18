@@ -9,12 +9,12 @@ import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.model.widgets.ui.reporting.ReportScheduler;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
-import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.core.stats.model.CommandStat;
 import cc.blynk.server.core.stats.model.HttpStat;
 import cc.blynk.server.core.stats.model.Stat;
 import cc.blynk.server.db.dao.ReportingDBDao;
+import cc.blynk.utils.DateTimeUtils;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -155,7 +155,7 @@ public class RealtimeStatsDBTest {
 
             while (rs.next()) {
                 assertEquals(region, rs.getString("region"));
-                assertEquals((now / AverageAggregatorProcessor.MINUTE) * AverageAggregatorProcessor.MINUTE, rs.getTimestamp("ts", UTC).getTime());
+                assertEquals((now / DateTimeUtils.MINUTE) * DateTimeUtils.MINUTE, rs.getTimestamp("ts", UTC).getTime());
 
                 assertEquals(0, rs.getInt("minute_rate"));
                 assertEquals(0, rs.getInt("registrations"));
@@ -178,7 +178,7 @@ public class RealtimeStatsDBTest {
             i = 0;
             while (rs.next()) {
                 assertEquals(region, rs.getString("region"));
-                assertEquals((now / AverageAggregatorProcessor.MINUTE) * AverageAggregatorProcessor.MINUTE, rs.getTimestamp("ts", UTC).getTime());
+                assertEquals((now / DateTimeUtils.MINUTE) * DateTimeUtils.MINUTE, rs.getTimestamp("ts", UTC).getTime());
 
                 assertEquals(i++, rs.getInt("is_hardware_connected"));
                 assertEquals(i++, rs.getInt("is_app_connected"));
@@ -201,7 +201,7 @@ public class RealtimeStatsDBTest {
             i = 0;
             while (rs.next()) {
                 assertEquals(region, rs.getString("region"));
-                assertEquals((now / AverageAggregatorProcessor.MINUTE) * AverageAggregatorProcessor.MINUTE, rs.getTimestamp("ts", UTC).getTime());
+                assertEquals((now / DateTimeUtils.MINUTE) * DateTimeUtils.MINUTE, rs.getTimestamp("ts", UTC).getTime());
 
                 assertEquals(i++, rs.getInt("response"));
                 assertEquals(i++, rs.getInt("register"));
@@ -293,12 +293,12 @@ public class RealtimeStatsDBTest {
         try (Connection connection = reportingDBManager.getConnection();
              PreparedStatement ps = connection.prepareStatement(ReportingDBDao.insertMinute)) {
 
-            minute = (System.currentTimeMillis() / AverageAggregatorProcessor.MINUTE) * AverageAggregatorProcessor.MINUTE;
+            minute = (System.currentTimeMillis() / DateTimeUtils.MINUTE) * DateTimeUtils.MINUTE;
 
             for (int i = 0; i < 370; i++) {
                 ReportingDBDao.prepareReportingInsert(ps, 0, (short) 0, PinType.VIRTUAL, minute, (double) i);
                 ps.addBatch();
-                minute += AverageAggregatorProcessor.MINUTE;
+                minute += DateTimeUtils.MINUTE;
             }
 
             ps.executeBatch();
@@ -311,7 +311,7 @@ public class RealtimeStatsDBTest {
         int a = 0;
 
         long start = System.currentTimeMillis();
-        long minute = (start / AverageAggregatorProcessor.MINUTE) * AverageAggregatorProcessor.MINUTE;
+        long minute = (start / DateTimeUtils.MINUTE) * DateTimeUtils.MINUTE;
         long startMinute = minute;
 
         try (Connection connection = reportingDBManager.getConnection();
@@ -320,7 +320,7 @@ public class RealtimeStatsDBTest {
             for (int i = 0; i < 1000; i++) {
                 ReportingDBDao.prepareReportingInsert(ps, 2, (short) 0, PinType.VIRTUAL, minute, (double) i);
                 ps.addBatch();
-                minute += AverageAggregatorProcessor.MINUTE;
+                minute += DateTimeUtils.MINUTE;
                 a++;
             }
 
@@ -342,7 +342,7 @@ public class RealtimeStatsDBTest {
                 assertEquals(PinType.VIRTUAL, PinType.values()[rs.getInt("pin_type")]);
                 assertEquals(startMinute, rs.getTimestamp("ts", UTC).getTime());
                 assertEquals((double) i, rs.getDouble("value"), 0.0001);
-                startMinute += AverageAggregatorProcessor.MINUTE;
+                startMinute += DateTimeUtils.MINUTE;
                 i++;
             }
             connection.commit();

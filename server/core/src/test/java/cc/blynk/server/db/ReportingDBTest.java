@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.TimeZone;
 
 import static cc.blynk.server.core.model.enums.PinType.VIRTUAL;
-import static cc.blynk.server.core.reporting.average.AverageAggregatorProcessor.MINUTE;
+import static cc.blynk.utils.DateTimeUtils.MINUTE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 

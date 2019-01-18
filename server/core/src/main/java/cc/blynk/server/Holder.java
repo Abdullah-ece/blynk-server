@@ -15,6 +15,7 @@ import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.widgets.ui.reporting.ReportScheduler;
 import cc.blynk.server.core.processors.EventorProcessor;
 import cc.blynk.server.core.processors.RuleEngineProcessor;
+import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.ReportingDBManager;
@@ -94,6 +95,8 @@ public class Holder {
 
     public final RuleEngineProcessor ruleEngineProcessor;
 
+    public final AverageAggregatorProcessor averageAggregator;
+
     public Holder(ServerProperties serverProperties, MailProperties mailProperties,
                   SmsProperties smsProperties, GCMProperties gcmProperties,
                   TwitterProperties twitterProperties,
@@ -135,7 +138,8 @@ public class Holder {
         this.sharedTokenManager = new SharedTokenManager(users);
 
         this.stats = new GlobalStats();
-        this.reportingDiskDao = new ReportingDiskDao(serverProperties.getReportingFolder(),
+        this.averageAggregator = new AverageAggregatorProcessor(props.getReportingFolder());
+        this.reportingDiskDao = new ReportingDiskDao(this.averageAggregator, serverProperties.getReportingFolder(),
                 serverProperties.isRawDBEnabled() && reportingDBManager.isDBEnabled());
 
         this.transportTypeHolder = new TransportTypeHolder(serverProperties);
@@ -197,7 +201,8 @@ public class Holder {
         this.sharedTokenManager = new SharedTokenManager(users);
 
         this.stats = new GlobalStats();
-        this.reportingDiskDao = new ReportingDiskDao(serverProperties.getReportingFolder(),
+        this.averageAggregator = new AverageAggregatorProcessor(props.getReportingFolder());
+        this.reportingDiskDao = new ReportingDiskDao(this.averageAggregator, serverProperties.getReportingFolder(),
                 serverProperties.isRawDBEnabled() && reportingDBManager.isDBEnabled());
 
         this.transportTypeHolder = new TransportTypeHolder(serverProperties);

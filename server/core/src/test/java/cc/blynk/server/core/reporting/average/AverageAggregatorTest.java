@@ -13,8 +13,8 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
-import static cc.blynk.server.core.reporting.average.AverageAggregatorProcessor.DAY;
-import static cc.blynk.server.core.reporting.average.AverageAggregatorProcessor.HOUR;
+import static cc.blynk.utils.DateTimeUtils.DAY;
+import static cc.blynk.utils.DateTimeUtils.HOUR;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -149,7 +149,8 @@ public class AverageAggregatorTest {
         assertTrue(Files.notExists(Paths.get(reportingFolder, AverageAggregatorProcessor.HOURLY_TEMP_FILENAME)));
         assertTrue(Files.notExists(Paths.get(reportingFolder, AverageAggregatorProcessor.DAILY_TEMP_FILENAME)));
 
-        ReportingDiskDao reportingDao = new ReportingDiskDao(reportingFolder, true);
+        AverageAggregatorProcessor averageAggregatorProcessor = new AverageAggregatorProcessor(reportingFolder);
+        ReportingDiskDao reportingDao = new ReportingDiskDao(averageAggregatorProcessor, reportingFolder, true);
 
         reportingDao.delete(0, PinType.VIRTUAL, pin);
         assertTrue(Files.notExists(Paths.get(reportingFolder, AverageAggregatorProcessor.HOURLY_TEMP_FILENAME)));

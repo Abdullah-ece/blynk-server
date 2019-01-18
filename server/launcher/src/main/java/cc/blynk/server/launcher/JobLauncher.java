@@ -1,7 +1,6 @@
 package cc.blynk.server.launcher;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.workers.CertificateRenewalWorker;
 import cc.blynk.server.workers.ProfileSaverWorker;
@@ -9,6 +8,7 @@ import cc.blynk.server.workers.ReportingWorker;
 import cc.blynk.server.workers.ShutdownHookWorker;
 import cc.blynk.server.workers.StatsWorker;
 import cc.blynk.utils.BlynkTPFactory;
+import cc.blynk.utils.DateTimeUtils;
 import cc.blynk.utils.structure.LRUCache;
 
 import java.util.concurrent.Executors;
@@ -42,10 +42,10 @@ final class JobLauncher {
         );
 
         //to start at the beggining of an minute
-        startDelay = AverageAggregatorProcessor.MINUTE
-                - (System.currentTimeMillis() % AverageAggregatorProcessor.MINUTE);
+        startDelay = DateTimeUtils.MINUTE
+                - (System.currentTimeMillis() % DateTimeUtils.MINUTE);
         scheduler.scheduleAtFixedRate(reportingWorker, startDelay,
-                AverageAggregatorProcessor.MINUTE, MILLISECONDS);
+                DateTimeUtils.MINUTE, MILLISECONDS);
 
         var profileSaverWorker = new ProfileSaverWorker(holder.userDao, holder.fileManager,
                 holder.dbManager, holder.organizationDao);
