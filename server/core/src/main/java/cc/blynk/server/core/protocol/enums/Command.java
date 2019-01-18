@@ -91,7 +91,7 @@ public final class Command {
     public static final short GET_PROJECT_BY_TOKEN = 58;
     public static final short EMAIL_QR = 59;
     public static final short GET_SUPERCHART_DATA = 60;
-    public static final short MOBILE_DELETE_ENHANCED_GRAPH_DATA = 61;
+    public static final short MOBILE_DELETE_GRAPH_DATA = 61;
 
     public static final short GET_CLONE_CODE = 62;
     public static final short GET_PROJECT_BY_CLONE_CODE = 63;

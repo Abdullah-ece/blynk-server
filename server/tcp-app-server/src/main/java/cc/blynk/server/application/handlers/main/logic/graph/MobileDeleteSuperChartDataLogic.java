@@ -11,7 +11,6 @@ import cc.blynk.server.core.model.widgets.outputs.graph.Superchart;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.StringUtils;
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -59,17 +58,16 @@ public final class MobileDeleteSuperChartDataLogic {
         if (widget == null) {
             widget = dash.getWidgetByIdInDeviceTilesOrThrow(widgetId);
         }
-        Superchart enhancedHistoryGraph = (Superchart) widget;
+        Superchart superchart = (Superchart) widget;
 
-        if (streamIndex == -1 || streamIndex > enhancedHistoryGraph.dataStreams.length - 1) {
-            delete(holder, ctx.channel(), message.id, targetId, enhancedHistoryGraph.dataStreams);
+        if (streamIndex == -1 || streamIndex > superchart.dataStreams.length - 1) {
+            delete(holder, ctx, message.id, targetId, superchart.dataStreams);
         } else {
-            delete(holder, ctx.channel(),
-                    message.id, targetId, enhancedHistoryGraph.dataStreams[streamIndex]);
+            delete(holder, ctx, message.id, targetId, superchart.dataStreams[streamIndex]);
         }
     }
 
-    private static void delete(Holder holder, Channel channel, int msgId,
+    private static void delete(Holder holder, ChannelHandlerContext ctx, int msgId,
                                int targetId, GraphDataStream... dataStreams) {
         holder.blockingIOProcessor.executeHistory(() -> {
             try {
@@ -80,13 +78,14 @@ public final class MobileDeleteSuperChartDataLogic {
                     DataStream dataStream = graphDataStream.dataStream;
                     if (device != null && dataStream != null && dataStream.pinType != null) {
                         int deviceId = device.id;
-                        holder.reportingDiskDao.delete(deviceId, dataStream.pinType, dataStream.pin);
+                        holder.reportingDBManager
+                                .reportingDBDao.deleteDataForDevice(deviceId, dataStream.pin, dataStream.pinType);
                     }
                 }
-                channel.writeAndFlush(ok(msgId), channel.voidPromise());
+                ctx.writeAndFlush(ok(msgId), ctx.voidPromise());
             } catch (Exception e) {
-                log.debug("Error removing enhanced graph data. Reason : {}.", e.getMessage());
-                channel.writeAndFlush(json(msgId, "Error removing enhanced graph data."), channel.voidPromise());
+                log.debug("Error removing superchart data. Reason : {}.", e.getMessage());
+                ctx.writeAndFlush(json(msgId, "Error removing superchart data."), ctx.voidPromise());
             }
         });
     }

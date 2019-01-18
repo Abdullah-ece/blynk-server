@@ -1,6 +1,5 @@
 package cc.blynk.server.core.reporting.average;
 
-import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.reporting.raw.BaseReportingKey;
@@ -146,13 +145,6 @@ public class AverageAggregatorTest {
         assertEquals(1, averageAggregator.getDaily().size());
         assertEquals(expectedDailyAverage, averageAggregator.getDaily().get(new AggregationKey(new BaseReportingKey(0, pinType, pin), getMillis(2015, 8, 1, 0, 0) / DAY)).calcAverage(), 0);
 
-        assertTrue(Files.notExists(Paths.get(reportingFolder, AverageAggregatorProcessor.HOURLY_TEMP_FILENAME)));
-        assertTrue(Files.notExists(Paths.get(reportingFolder, AverageAggregatorProcessor.DAILY_TEMP_FILENAME)));
-
-        AverageAggregatorProcessor averageAggregatorProcessor = new AverageAggregatorProcessor(reportingFolder);
-        ReportingDiskDao reportingDao = new ReportingDiskDao(averageAggregatorProcessor, reportingFolder, true);
-
-        reportingDao.delete(0, PinType.VIRTUAL, pin);
         assertTrue(Files.notExists(Paths.get(reportingFolder, AverageAggregatorProcessor.HOURLY_TEMP_FILENAME)));
         assertTrue(Files.notExists(Paths.get(reportingFolder, AverageAggregatorProcessor.DAILY_TEMP_FILENAME)));
     }

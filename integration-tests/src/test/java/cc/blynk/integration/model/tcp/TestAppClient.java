@@ -46,6 +46,7 @@ import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DEACTIVATE_DASH
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_DEVICE_DATA;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_REPORT;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_DASH;
@@ -279,6 +280,14 @@ public class TestAppClient extends BaseTestAppClient {
             sj.add(pin);
         }
         send(MOBILE_DELETE_DEVICE_DATA, "" + dashId + DEVICE_SEPARATOR + deviceId + BODY_SEPARATOR + sj.toString());
+    }
+
+    public void deleteGraphData(int dashId, long widgetId, String... pins) {
+        StringJoiner sj = new StringJoiner(BODY_SEPARATOR_STRING);
+        for (String pin : pins) {
+            sj.add(pin);
+        }
+        send(MOBILE_DELETE_GRAPH_DATA, "" + dashId + BODY_SEPARATOR + widgetId + BODY_SEPARATOR + sj.toString());
     }
 
     public void getSuperChartData(int dashId, long widgetId, Period period) {

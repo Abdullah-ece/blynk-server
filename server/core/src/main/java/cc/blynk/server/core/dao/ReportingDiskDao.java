@@ -16,12 +16,9 @@ import org.apache.logging.log4j.Logger;
 import java.io.Closeable;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
 
 import static cc.blynk.utils.FileUtils.CSV_DIR;
 
@@ -71,15 +68,6 @@ public class ReportingDiskDao implements Closeable {
         return generateFilename(pinType.pintTypeChar, pin, type.label);
     }
 
-    private static boolean containsPrefix(List<String> prefixes, String filename) {
-        for (String prefix : prefixes) {
-            if (filename.startsWith(prefix)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     private Path getDeviceFolderPath(int deviceId) {
         return Paths.get(dataFolder, String.valueOf(deviceId));
     }
@@ -103,27 +91,6 @@ public class ReportingDiskDao implements Closeable {
         return null;
     }
 
-    public int delete(int deviceId, String[] pins) throws IOException {
-        log.debug("Deleting selected pin data for deviceId {}.", deviceId);
-        Path userReportingPath = getDeviceFolderPath(deviceId);
-
-        int count = 0;
-        List<String> prefixes = new ArrayList<>();
-        for (String pin : pins) {
-            prefixes.add("history_" + pin + "_");
-        }
-        try (DirectoryStream<Path> userReportingFolder = Files.newDirectoryStream(userReportingPath, "*")) {
-            for (Path reportingFile : userReportingFolder) {
-                String userFileName = reportingFile.getFileName().toString();
-                if (containsPrefix(prefixes, userFileName)) {
-                    FileUtils.deleteQuietly(reportingFile);
-                    count++;
-                }
-            }
-        }
-        return count;
-    }
-
     public void delete(int[] deviceIds) throws IOException {
         for (int deviceId : deviceIds) {
             delete(deviceId);
@@ -139,16 +106,6 @@ public class ReportingDiskDao implements Closeable {
             return true;
         }
         return false;
-    }
-
-    public void delete(int deviceId, PinType pinType, short pin) {
-        log.debug("Deleting {}{} pin data for deviceId {}.", pinType.pintTypeChar, pin, deviceId);
-        String userReportingDir = getDeviceFolderPath(deviceId).toString();
-
-        for (GraphGranularityType reportGranularity : GraphGranularityType.getValues()) {
-            Path userDataFile = Paths.get(userReportingDir, generateFilename(pinType, pin, reportGranularity));
-            FileUtils.deleteQuietly(userDataFile);
-        }
     }
 
     public void process(Device device, short pin, PinType pinType, double doubleVal, long ts) {

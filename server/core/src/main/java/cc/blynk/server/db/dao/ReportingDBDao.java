@@ -70,6 +70,11 @@ public class ReportingDBDao {
     private static final String deleteHour = "DELETE FROM reporting_average_hourly WHERE ts < ?";
     public static final String deleteDaily = "DELETE FROM reporting_average_daily WHERE ts < ?";
 
+    private static final String deleteDeviceMinute = "DELETE FROM reporting_average_minute WHERE device_id = ? and pin = ? and pin_type = ?";
+    private static final String deleteDeviceHourly = "DELETE FROM reporting_average_hourly WHERE device_id = ? and pin = ? and pin_type = ?";
+    private static final String deleteDeviceDaily = "DELETE FROM reporting_average_daily WHERE device_id = ? and pin = ? and pin_type = ?";
+    private static final String deleteDeviceRaw = "DELETE FROM reporting_device_raw_data WHERE device_id = ? and pin = ? and pin_type = ?";
+
     private static final String insertStatMinute =
             "INSERT INTO reporting_app_stat_minute (region, ts, active, active_week, active_month, "
                     + "minute_rate, connected, online_apps, online_hards, "
@@ -319,6 +324,34 @@ public class ReportingDBDao {
 
         log.info("Storing {} reporting finished. Time {}. Records saved {}",
                 graphGranularityType.name(), System.currentTimeMillis() - start, map.size());
+    }
+
+    public int deleteDataForDevice(int deviceId, short pin, PinType pinType) {
+        int count = 0;
+        count += deleteDeviceData(deleteDeviceMinute, deviceId, pin, pinType);
+        count += deleteDeviceData(deleteDeviceHourly, deviceId, pin, pinType);
+        count += deleteDeviceData(deleteDeviceDaily, deviceId, pin, pinType);
+        count += deleteDeviceData(deleteDeviceRaw, deviceId, pin, pinType);
+        log.debug("Removed reporting records for device {} {}{} finished. Deleted records: {}",
+                deviceId, pinType.pintTypeChar, pin, count);
+        return count;
+    }
+
+    private int deleteDeviceData(String query, int deviceId, short pin, PinType pinType) {
+        try (Connection connection = ds.getConnection();
+             PreparedStatement deleteQuery = connection.prepareStatement(query)) {
+
+            deleteQuery.setInt(1, deviceId);
+            deleteQuery.setShort(2, pin);
+            deleteQuery.setInt(3, pinType.ordinal());
+
+            int counter = deleteQuery.executeUpdate();
+            connection.commit();
+            return counter;
+        } catch (Exception e) {
+            log.error("Error deleting reporting data for device.", e);
+        }
+        return 0;
     }
 
     public void cleanOldReportingRecords(Instant now) {

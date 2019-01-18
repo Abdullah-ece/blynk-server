@@ -774,29 +774,6 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NO_DATA)));
     }
 
-    @Test
-    public void testDeleteWorksForEnhancedGraph() throws Exception {
-        Superchart superchart = new Superchart();
-        superchart.id = 432;
-        superchart.width = 8;
-        superchart.height = 4;
-        DataStream dataStream = new DataStream((short) 8, PinType.DIGITAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
-        superchart.dataStreams = new GraphDataStream[] {
-                graphDataStream
-        };
-
-        clientPair.appClient.createWidget(1, superchart);
-        clientPair.appClient.verifyResult(ok(1));
-
-        clientPair.appClient.send("deleteEnhancedData 1\0" + "432");
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(2)));
-        clientPair.appClient.reset();
-
-        clientPair.appClient.getSuperChartData(1, 432, Period.DAY);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NO_DATA)));
-    }
-
     private static String getFileNameByMask(String pattern) {
         File dir = new File(blynkTempDir);
         File[] files = dir.listFiles((dir1, name) -> name.startsWith(pattern));

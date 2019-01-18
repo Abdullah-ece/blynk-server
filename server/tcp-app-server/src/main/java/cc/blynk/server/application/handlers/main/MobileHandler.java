@@ -91,7 +91,7 @@ import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_APP;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_DEVICE_DATA;
-import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_ENHANCED_GRAPH_DATA;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_REPORT;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_TILE_TEMPLATE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_WIDGET;
@@ -200,7 +200,7 @@ public class MobileHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
             case GET_SUPERCHART_DATA :
                 mobileGetSuperChartDataLogic.messageReceived(ctx, state, msg);
                 break;
-            case MOBILE_DELETE_ENHANCED_GRAPH_DATA :
+            case MOBILE_DELETE_GRAPH_DATA:
                 MobileDeleteSuperChartDataLogic.messageReceived(holder, ctx, state.user, msg);
                 break;
             case PING :
