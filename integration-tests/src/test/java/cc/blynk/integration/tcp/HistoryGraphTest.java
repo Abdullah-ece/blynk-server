@@ -90,36 +90,6 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
     }
 
     @Test
-    public void makeSureNoReportingWhenNotAGraphPin() throws Exception {
-        Superchart superchart = new Superchart();
-        superchart.id = 432;
-        superchart.width = 8;
-        superchart.height = 4;
-        DataStream dataStream = new DataStream((short) 88, PinType.VIRTUAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
-        superchart.dataStreams = new GraphDataStream[] {
-                graphDataStream
-        };
-
-        clientPair.appClient.createWidget(1, superchart);
-        clientPair.appClient.verifyResult(ok(1));
-        clientPair.appClient.reset();
-
-        assertEquals(0, holder.reportingDiskDao.averageAggregator.getMinute().size());
-        assertEquals(0, holder.reportingDiskDao.averageAggregator.getHourly().size());
-        assertEquals(0, holder.reportingDiskDao.averageAggregator.getDaily().size());
-        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
-
-        clientPair.hardwareClient.send("hardware vw 89 111");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 89 111"))));
-
-        assertEquals(0, holder.reportingDiskDao.averageAggregator.getMinute().size());
-        assertEquals(0, holder.reportingDiskDao.averageAggregator.getHourly().size());
-        assertEquals(0, holder.reportingDiskDao.averageAggregator.getDaily().size());
-        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
-    }
-
-    @Test
     public void makeSureReportingIsPresentWhenGraphAssignedToDevice() throws Exception {
         Superchart superchart = new Superchart();
         superchart.id = 432;

@@ -3,6 +3,7 @@ package cc.blynk.integration.mobile;
 import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.SingleServerInstancePerTestWithDBAndNewOrg;
 import cc.blynk.integration.model.tcp.TestAppClient;
+import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DataStream;
@@ -25,11 +26,12 @@ import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.nio.ByteBuffer;
-import java.util.HashMap;
 import java.util.Map;
 
 import static cc.blynk.integration.APIBaseTest.createDeviceNameMeta;
 import static cc.blynk.integration.APIBaseTest.createDeviceOwnerMeta;
+import static cc.blynk.integration.TestUtil.deviceConnected;
+import static cc.blynk.integration.TestUtil.hardware;
 import static cc.blynk.integration.TestUtil.loggedDefaultClient;
 import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.integration.TestUtil.webJson;
@@ -119,14 +121,10 @@ public class MobileGetGraphDataTest extends SingleServerInstancePerTestWithDBAnd
         appClient.verifyResult(ok(3));
 
         long now = System.currentTimeMillis();
-        for (int point = 0; point < Period.ONE_HOUR.numberOfPoints; point++) {
-            AggregationValue aggregationValue = new AggregationValue();
-            aggregationValue.update((double) point);
-            AggregationKey aggregationKey = new AggregationKey(device.id, dataStream.pinType, dataStream.pin, now / MINUTE);
-            Map<AggregationKey, AggregationValue> data = new HashMap<>();
-            data.put(aggregationKey, aggregationValue);
-            holder.reportingDBManager.reportingDBDao.insert(data, GraphGranularityType.MINUTE);
-        }
+        var data = Map.of(
+            new AggregationKey(device.id, dataStream.pinType, dataStream.pin, now / MINUTE), new AggregationValue(1)
+        );
+        holder.reportingDBManager.reportingDBDao.insert(data, GraphGranularityType.MINUTE);
 
         appClient.getSuperChartData(dashBoard.id, superchart.id, Period.DAY);
         appClient.verifyResult(webJson(4, "No data.", 17));
@@ -169,11 +167,10 @@ public class MobileGetGraphDataTest extends SingleServerInstancePerTestWithDBAnd
 
         long now = System.currentTimeMillis();
         for (int point = 0; point < Period.ONE_HOUR.numberOfPoints; point++) {
-            AggregationValue aggregationValue = new AggregationValue();
-            aggregationValue.update((double) point);
-            AggregationKey aggregationKey = new AggregationKey(device.id, dataStream.pinType, dataStream.pin, now / MINUTE);
-            Map<AggregationKey, AggregationValue> data = new HashMap<>();
-            data.put(aggregationKey, aggregationValue);
+            var data = Map.of(
+                    new AggregationKey(device.id, dataStream.pinType, dataStream.pin, now / MINUTE),
+                    new AggregationValue((double) point)
+            );
             holder.reportingDBManager.reportingDBDao.insert(data, GraphGranularityType.MINUTE);
         }
 
@@ -233,11 +230,13 @@ public class MobileGetGraphDataTest extends SingleServerInstancePerTestWithDBAnd
         appClient.reset();
 
         long now = System.currentTimeMillis();
-        Map<AggregationKey, AggregationValue> data = Map.of(
-            new AggregationKey(device.id, dataStream.pinType, dataStream.pin, now / MINUTE), new AggregationValue(1.11D)
+        var data = Map.of(
+                new AggregationKey(device.id, dataStream.pinType, dataStream.pin, now / MINUTE),
+                new AggregationValue(1.11D)
         );
-        Map<AggregationKey, AggregationValue> data2 = Map.of(
-            new AggregationKey(device.id, dataStream.pinType, dataStream.pin, now / MINUTE), new AggregationValue(1.22D)
+        var data2 = Map.of(
+                new AggregationKey(device.id, dataStream.pinType, dataStream.pin, now / MINUTE),
+                new AggregationValue(1.22D)
         );
 
         holder.reportingDBManager.reportingDBDao.insert(data, GraphGranularityType.MINUTE);
@@ -257,6 +256,61 @@ public class MobileGetGraphDataTest extends SingleServerInstancePerTestWithDBAnd
         assertEquals(1.22D, bb.getDouble(), 0.1);
         assertEquals((now / MINUTE) * MINUTE, bb.getLong());
         assertEquals(0, bb.getInt());
+    }
+
+    @Test
+    public void makeSureReportingIsPresentWhenGraphAssignedToDevice() throws Exception {
+        String user = getUserName();
+
+        //device is mandatory for any test
+        Device device = createProductAndDevice(user);
+
+        TestAppClient appClient = new TestAppClient("localhost", properties.getHttpsPort());
+        appClient.start();
+        appClient.login(user, "1");
+        appClient.verifyResult(ok(1));
+
+        //Step 1. Create minimal project with 1 widget.
+        DashBoard dashBoard = new DashBoard();
+        dashBoard.id = 10;
+        dashBoard.name = "123";
+        appClient.createDash(dashBoard);
+        appClient.verifyResult(ok(2));
+
+        Superchart superchart = new Superchart();
+        superchart.id = 432;
+        superchart.width = 8;
+        superchart.height = 4;
+        DataStream dataStream = new DataStream((short) 8, PinType.VIRTUAL);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
+        superchart.dataStreams = new GraphDataStream[] {
+                graphDataStream
+        };
+
+        appClient.createWidget(dashBoard.id, superchart);
+        appClient.verifyResult(ok(3));
+
+        TestHardClient hardClient = new TestHardClient("localhost", properties.getHttpPort());
+        hardClient.start();
+        hardClient.login(device.token);
+        hardClient.verifyResult(ok(1));
+        appClient.verifyResult(deviceConnected(1, device.id));
+
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getMinute().size());
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getHourly().size());
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getDaily().size());
+        assertEquals(0, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+
+        hardClient.send("hardware vw 88 111");
+        appClient.verifyResult(hardware(2, device.id + " vw 88 111"));
+
+        assertEquals(1, holder.reportingDiskDao.averageAggregator.getMinute().size());
+        assertEquals(1, holder.reportingDiskDao.averageAggregator.getHourly().size());
+        assertEquals(1, holder.reportingDiskDao.averageAggregator.getDaily().size());
+        //todo fix?
+        //assertEquals(1, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
+        assertEquals(1, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
     }
 
     private Device createProductAndDevice(String user) throws Exception {
