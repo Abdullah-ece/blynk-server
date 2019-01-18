@@ -139,8 +139,7 @@ public class Holder {
 
         this.stats = new GlobalStats();
         this.averageAggregator = new AverageAggregatorProcessor(props.getReportingFolder());
-        this.reportingDiskDao = new ReportingDiskDao(this.averageAggregator, serverProperties.getReportingFolder(),
-                serverProperties.isRawDBEnabled() && reportingDBManager.isDBEnabled());
+        this.reportingDiskDao = new ReportingDiskDao(this.averageAggregator, serverProperties.getReportingFolder());
 
         this.transportTypeHolder = new TransportTypeHolder(serverProperties);
 
@@ -202,8 +201,7 @@ public class Holder {
 
         this.stats = new GlobalStats();
         this.averageAggregator = new AverageAggregatorProcessor(props.getReportingFolder());
-        this.reportingDiskDao = new ReportingDiskDao(this.averageAggregator, serverProperties.getReportingFolder(),
-                serverProperties.isRawDBEnabled() && reportingDBManager.isDBEnabled());
+        this.reportingDiskDao = new ReportingDiskDao(this.averageAggregator, serverProperties.getReportingFolder());
 
         this.transportTypeHolder = new TransportTypeHolder(serverProperties);
 

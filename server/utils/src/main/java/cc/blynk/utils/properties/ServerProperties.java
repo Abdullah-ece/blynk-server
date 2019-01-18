@@ -130,10 +130,6 @@ public class ServerProperties extends BaseProperties {
         return getBoolProperty("allow.store.ip");
     }
 
-    public boolean isRawDBEnabled() {
-        return getBoolProperty("enable.raw.db.data.store");
-    }
-
     public String getDeviceUrl() {
         return httpsServerUrl + rootPath + "/devices/";
     }

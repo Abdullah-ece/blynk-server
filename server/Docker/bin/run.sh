@@ -34,7 +34,6 @@ web.request.max.size=${WEB_REQUEST_MAX_SIZE}
 csv.export.data.points.max=${CSV_EXPORT_DATA_POINTS_MAX}
 hard.socket.idle.timeout=${HARD_SOCKET_IDLE_TIMEOUT}
 enable.db=${ENABLE_DB}
-enable.raw.db.data.store=${ENABLE_RAW_DB_DATA_STORE}
 async.logger.ring.buffer.size=${ASYNC_LOGGER_RING_BUFFER_SIZE}
 allow.reading.widget.without.active.app=${ALLOW_READING_WIDGET_WITHOUT_ACTIVE_APP}
 allow.store.ip=${ALLOW_STORE_IP}
