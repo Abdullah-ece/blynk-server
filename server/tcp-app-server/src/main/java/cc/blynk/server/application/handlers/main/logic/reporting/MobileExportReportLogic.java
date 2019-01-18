@@ -13,11 +13,15 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
 
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EXPORT_REPORT;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.server.internal.WebByteBufUtil.json;
+import static cc.blynk.utils.FileUtils.CSV_DIR;
 import static cc.blynk.utils.StringUtils.split2;
 
 /**
@@ -33,6 +37,15 @@ public final class MobileExportReportLogic {
     private final static long runDelay = TimeUnit.MINUTES.toMillis(1);
 
     private MobileExportReportLogic() {
+        createCSVFolder();
+    }
+
+    private static void createCSVFolder() {
+        try {
+            Files.createDirectories(Paths.get(CSV_DIR));
+        } catch (IOException ioe) {
+            log.error("Error creating temp '{}' folder for csv export data.", CSV_DIR);
+        }
     }
 
     public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
@@ -71,7 +84,7 @@ public final class MobileExportReportLogic {
 
         ReportScheduler reportScheduler = holder.reportScheduler;
         reportScheduler.schedule(new BaseReportTask(user, dashId, report,
-                reportScheduler.mailWrapper, reportScheduler.reportingDao, holder.deviceDao,
+                reportScheduler.mailWrapper, reportScheduler.reportingDBDao, holder.deviceDao,
                 reportScheduler.downloadUrl) {
             @Override
             public void run() {

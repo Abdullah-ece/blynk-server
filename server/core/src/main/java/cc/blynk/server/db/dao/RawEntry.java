@@ -4,7 +4,6 @@ import java.nio.ByteBuffer;
 import java.util.Collection;
 
 import static cc.blynk.utils.ByteUtils.REPORTING_RECORD_SIZE_BYTES;
-import static io.netty.util.internal.EmptyArrays.EMPTY_BYTES;
 
 /**
  * The Blynk Project.
@@ -30,15 +29,19 @@ public final class RawEntry {
         return value;
     }
 
-    public static byte[] convert(Collection<RawEntry> rawEntries) {
+    public static ByteBuffer convertToByteBuffer(Collection<RawEntry> rawEntries) {
         if (rawEntries == null || rawEntries.size() == 0) {
-            return EMPTY_BYTES;
+            return ByteBuffer.allocate(0);
         }
         ByteBuffer byteBuffer = ByteBuffer.allocate(rawEntries.size() * REPORTING_RECORD_SIZE_BYTES);
         for (RawEntry rawEntry : rawEntries) {
             byteBuffer.putDouble(rawEntry.getValue());
             byteBuffer.putLong(rawEntry.getTs());
         }
-        return byteBuffer.array();
+        return byteBuffer;
+    }
+
+    public static byte[] convert(Collection<RawEntry> rawEntries) {
+        return convertToByteBuffer(rawEntries).array();
     }
 }

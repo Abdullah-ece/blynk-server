@@ -6,7 +6,6 @@ import cc.blynk.server.core.dao.DeviceTokenManager;
 import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.NotificationsDao;
 import cc.blynk.server.core.dao.OrganizationDao;
-import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.SharedTokenManager;
 import cc.blynk.server.core.dao.UserDao;
@@ -59,9 +58,8 @@ public class Holder {
 
     public final OrganizationDao organizationDao;
 
-    public final ReportingDiskDao reportingDiskDao;
-
     public final DBManager dbManager;
+
     public final ReportingDBManager reportingDBManager;
 
     public final GlobalStats stats;
@@ -134,7 +132,6 @@ public class Holder {
         this.sharedTokenManager = new SharedTokenManager(users);
 
         this.stats = new GlobalStats();
-        this.reportingDiskDao = new ReportingDiskDao(serverProperties.getReportingFolder());
 
         this.transportTypeHolder = new TransportTypeHolder(serverProperties);
 
@@ -161,7 +158,8 @@ public class Holder {
         this.limits = new Limits(props);
 
         this.reportScheduler = new ReportScheduler(
-                1, serverProperties.httpsServerUrl, mailWrapper, reportingDiskDao, userDao.users, deviceDao);
+                1, serverProperties.httpsServerUrl, mailWrapper,
+                reportingDBManager.reportingDBDao, userDao.users, deviceDao);
 
         String contactEmail = serverProperties.getProperty("contact.email", mailProperties.getSMTPUsername());
         this.sslContextHolder = new SslContextHolder(props, contactEmail);
@@ -194,7 +192,6 @@ public class Holder {
         this.sharedTokenManager = new SharedTokenManager(users);
 
         this.stats = new GlobalStats();
-        this.reportingDiskDao = new ReportingDiskDao(serverProperties.getReportingFolder());
 
         this.transportTypeHolder = new TransportTypeHolder(serverProperties);
 
@@ -221,7 +218,8 @@ public class Holder {
         this.limits = new Limits(props);
 
         this.reportScheduler = new ReportScheduler(
-                1, serverProperties.httpsServerUrl, mailWrapper, reportingDiskDao, userDao.users, deviceDao);
+                1, serverProperties.httpsServerUrl, mailWrapper,
+                reportingDBManager.reportingDBDao, userDao.users, deviceDao);
 
         this.sslContextHolder = new SslContextHolder(props, "test@blynk.cc");
         this.tokensPool = new TokensPool(serverProperties.getReportingFolder());

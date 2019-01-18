@@ -127,61 +127,57 @@ public final class FileUtils {
         }
     }
 
+    //todo format data in select query
     public static boolean writeBufToCsvFilterAndFormat(BufferedWriter writer, ByteBuffer onePinData,
-                                                      String pin, String deviceName,
-                                                      long startFrom, DateTimeFormatter formatter) throws IOException {
-        boolean hasData = false;
+                                                       String pin, String deviceName,
+                                                       DateTimeFormatter formatter) throws IOException {
+        if (onePinData.remaining() <= 0) {
+            return false;
+        }
         while (onePinData.remaining() > 0) {
             double value = onePinData.getDouble();
             long ts = onePinData.getLong();
 
-            if (startFrom <= ts) {
-                String formattedTs = formatTS(formatter, ts);
-                writer.write(formattedTs + ',' + pin + ',' + deviceName + ',' + value + '\n');
-                hasData = true;
-            }
+            String formattedTs = formatTS(formatter, ts);
+            writer.write(formattedTs + ',' + pin + ',' + deviceName + ',' + value + '\n');
         }
-        if (hasData) {
-            writer.flush();
-        }
-        return hasData;
+        writer.flush();
+        return true;
     }
 
+    //todo format data in select query
     public static boolean writeBufToCsvFilterAndFormat(BufferedWriter writer, ByteBuffer onePinData, String pin,
-                                                      long startFrom, DateTimeFormatter formatter) throws IOException {
-        boolean hasData = false;
+                                                       DateTimeFormatter formatter) throws IOException {
+        if (onePinData.remaining() <= 0) {
+            return false;
+        }
         while (onePinData.remaining() > 0) {
             double value = onePinData.getDouble();
             long ts = onePinData.getLong();
 
-            if (startFrom <= ts) {
-                String formattedTs = formatTS(formatter, ts);
-                writer.write(formattedTs + ',' + pin + ',' + value + '\n');
-                hasData = true;
-            }
+            String formattedTs = formatTS(formatter, ts);
+            writer.write(formattedTs + ',' + pin + ',' + value + '\n');
         }
-        if (hasData) {
-            writer.flush();
-        }
-        return hasData;
+
+        writer.flush();
+        return true;
     }
 
-    public static String writeBufToCsvFilterAndFormat(ByteBuffer onePinData,
-                                                    long startFrom, DateTimeFormatter formatter) {
+    //todo format data in select query
+    public static String writeBufToCsvFilterAndFormat(ByteBuffer onePinData, DateTimeFormatter formatter) {
         StringBuilder sb = new StringBuilder(onePinData.capacity() * 3);
         while (onePinData.remaining() > 0) {
             double value = onePinData.getDouble();
             long ts = onePinData.getLong();
 
-            if (startFrom <= ts) {
-                String formattedTs = formatTS(formatter, ts);
-                sb.append(formattedTs).append(',')
-                        .append(value).append('\n');
-            }
+            String formattedTs = formatTS(formatter, ts);
+            sb.append(formattedTs).append(',')
+                    .append(value).append('\n');
         }
         return sb.toString();
     }
 
+    //todo format data in select query
     private static String formatTS(DateTimeFormatter formatter, long ts) {
         if (formatter == null) {
             return String.valueOf(ts);

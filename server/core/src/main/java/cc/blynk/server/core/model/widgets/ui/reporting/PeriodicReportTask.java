@@ -18,7 +18,8 @@ public class PeriodicReportTask extends BaseReportTask {
 
     PeriodicReportTask(User user, int dashId, Report report, ReportScheduler reportScheduler, DeviceDao deviceDao) {
         super(user, dashId, report,
-                reportScheduler.mailWrapper, reportScheduler.reportingDao, deviceDao,
+                reportScheduler.mailWrapper,
+                reportScheduler.reportingDBDao, deviceDao,
                 reportScheduler.downloadUrl);
         this.reportScheduler = reportScheduler;
     }

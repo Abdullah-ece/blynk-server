@@ -1,11 +1,11 @@
 package cc.blynk.server.core.model.widgets.ui.reporting;
 
 import cc.blynk.server.core.dao.DeviceDao;
-import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
+import cc.blynk.server.db.dao.ReportingDBDao;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.utils.BlynkTPFactory;
 import org.apache.logging.log4j.LogManager;
@@ -32,12 +32,12 @@ public class ReportScheduler extends ScheduledThreadPoolExecutor {
 
     public final Map<ReportTaskKey, ScheduledFuture<?>> map;
     public final MailWrapper mailWrapper;
-    public final ReportingDiskDao reportingDao;
+    public final ReportingDBDao reportingDBDao;
     public final DeviceDao deviceDao;
     public final String downloadUrl;
 
     public ReportScheduler(int corePoolSize, String downloadUrl,
-                           MailWrapper mailWrapper, ReportingDiskDao reportingDao,
+                           MailWrapper mailWrapper, ReportingDBDao reportingDBDao,
                            Map<String, User> users,
                            DeviceDao deviceDao) {
         super(corePoolSize,  BlynkTPFactory.build("report"));
@@ -46,7 +46,7 @@ public class ReportScheduler extends ScheduledThreadPoolExecutor {
         this.map = new ConcurrentHashMap<>();
         this.downloadUrl = !downloadUrl.endsWith("/") ? downloadUrl + "/" : downloadUrl;
         this.mailWrapper = mailWrapper;
-        this.reportingDao = reportingDao;
+        this.reportingDBDao = reportingDBDao;
         this.deviceDao = deviceDao;
         init(users);
     }

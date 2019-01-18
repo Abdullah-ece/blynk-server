@@ -2,7 +2,7 @@ package cc.blynk.integration.tcp;
 
 import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.SingleServerInstancePerTest;
-import cc.blynk.server.core.dao.ReportingDiskDao;
+import cc.blynk.server.core.dao.PinNameUtil;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.Device;
@@ -606,7 +606,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.DIGITAL, (short) 8, GraphGranularityType.MINUTE));
+                PinNameUtil.generateFilename(PinType.DIGITAL, (short) 8, GraphGranularityType.MINUTE));
 
         try (DataOutputStream dos = new DataOutputStream(
                     Files.newOutputStream(pinReportingDataPath, CREATE, APPEND))) {
@@ -655,7 +655,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.DIGITAL, (short) 8, GraphGranularityType.MINUTE));
+                PinNameUtil.generateFilename(PinType.DIGITAL, (short) 8, GraphGranularityType.MINUTE));
 
         try (DataOutputStream dos = new DataOutputStream(
                 Files.newOutputStream(pinReportingDataPath, CREATE, APPEND))) {
@@ -706,7 +706,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.DIGITAL, (short) 8, GraphGranularityType.MINUTE));
+                PinNameUtil.generateFilename(PinType.DIGITAL, (short) 8, GraphGranularityType.MINUTE));
 
         try (DataOutputStream dos = new DataOutputStream(
                 Files.newOutputStream(pinReportingDataPath, CREATE, APPEND))) {
@@ -745,7 +745,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.DIGITAL, (short) 8, GraphGranularityType.MINUTE));
+                PinNameUtil.generateFilename(PinType.DIGITAL, (short) 8, GraphGranularityType.MINUTE));
 
         try (DataOutputStream dos = new DataOutputStream(
                 Files.newOutputStream(pinReportingDataPath, CREATE, APPEND))) {
@@ -810,7 +810,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         Path userReportDirectory = Paths.get(holder.props.getProperty("data.folder"), "data", getUserName());
         Files.createDirectories(userReportDirectory);
         Path userReportFile = Paths.get(userReportDirectory.toString(),
-                ReportingDiskDao.generateFilename(PinType.ANALOG, (short) 7, GraphGranularityType.MINUTE));
+                PinNameUtil.generateFilename(PinType.ANALOG, (short) 7, GraphGranularityType.MINUTE));
         FileUtils.write(userReportFile, 1.1, 1L);
         FileUtils.write(userReportFile, 2.2, 2L);
 
@@ -823,7 +823,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         //generate fake reporting data
         Path userReportDirectory = Paths.get(holder.props.getProperty("data.folder"), "data", getUserName());
         Files.createDirectories(userReportDirectory);
-        String filename = ReportingDiskDao.generateFilename(PinType.ANALOG, (short) 7, GraphGranularityType.MINUTE);
+        String filename = PinNameUtil.generateFilename(PinType.ANALOG, (short) 7, GraphGranularityType.MINUTE);
         Path userReportFile = Paths.get(userReportDirectory.toString(), filename);
         FileUtils.write(userReportFile, 1.1, 1L);
         FileUtils.write(userReportFile, 2.2, 2L);
@@ -909,12 +909,12 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         Path userReportDirectory = Paths.get(holder.props.getProperty("data.folder"), "data", getUserName());
         Files.createDirectories(userReportDirectory);
 
-        String filename = ReportingDiskDao.generateFilename(PinType.DIGITAL, (short) 8, GraphGranularityType.MINUTE);
+        String filename = PinNameUtil.generateFilename(PinType.DIGITAL, (short) 8, GraphGranularityType.MINUTE);
         Path userReportFile = Paths.get(userReportDirectory.toString(), filename);
         FileUtils.write(userReportFile, 1.1, 1L);
         FileUtils.write(userReportFile, 2.2, 2L);
 
-        filename = ReportingDiskDao.generateFilename(PinType.DIGITAL, (short) 8, GraphGranularityType.MINUTE);
+        filename = PinNameUtil.generateFilename(PinType.DIGITAL, (short) 8, GraphGranularityType.MINUTE);
         userReportFile = Paths.get(userReportDirectory.toString(), filename);
         FileUtils.write(userReportFile, 11.1, 11L);
         FileUtils.write(userReportFile, 12.2, 12L);
@@ -990,12 +990,12 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         Path userReportDirectory = Paths.get(holder.props.getProperty("data.folder"), "data", getUserName());
         Files.createDirectories(userReportDirectory);
 
-        String filename = ReportingDiskDao.generateFilename(PinType.ANALOG, (short) 7, GraphGranularityType.MINUTE);
+        String filename = PinNameUtil.generateFilename(PinType.ANALOG, (short) 7, GraphGranularityType.MINUTE);
         Path userReportFile = Paths.get(userReportDirectory.toString(), filename);
         FileUtils.write(userReportFile, 1.1, 1L);
         FileUtils.write(userReportFile, 2.2, 2L);
 
-        filename = ReportingDiskDao.generateFilename(PinType.ANALOG, (short) 7, GraphGranularityType.MINUTE);
+        filename = PinNameUtil.generateFilename(PinType.ANALOG, (short) 7, GraphGranularityType.MINUTE);
         userReportFile = Paths.get(userReportDirectory.toString(), filename);
         FileUtils.write(userReportFile, 11.1, 11L);
         FileUtils.write(userReportFile, 12.2, 12L);
