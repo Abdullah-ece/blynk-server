@@ -403,10 +403,12 @@ public class PermissionsForEveryHandlerTest extends SingleServerInstancePerTestW
         AppWebSocketClient client = createUserForSubOrgSpecificRole(removePermission(ORG_VIEW));
         client.getOrganizations(NON_EXISTING_ORG_ID);
         verifyPermissionAbsence(client, ORG_VIEW, true);
-        client.reset();
 
         client.getOrganization();
-        verifyPermissionAbsence(client, ORG_VIEW, true); // does not work
+
+        //own org view allowed for every user
+        OrganizationDTO org = client.parseOrganizationDTO(2);
+        assertNotNull(org);
     }
 
     @Test

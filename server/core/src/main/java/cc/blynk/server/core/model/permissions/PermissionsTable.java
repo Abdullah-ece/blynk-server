@@ -43,9 +43,11 @@ public final class PermissionsTable {
     public static final int OWN_DEVICES_DELETE =     0b100000000000000000000000000000;
     public static final int OWN_DEVICES_SHARE =      0b1000000000000000000000000000000;
     public static final int SET_AUTH_TOKEN =         0b10000000000000000000000000000000;
+
     //permission2 group
     public static final int RULE_GROUP_VIEW =        0b1;
-    public static final int RULE_GROUP_EDIT =        0b01;
+    public static final int RULE_GROUP_EDIT =        0b10;
+
     public static final Map<Integer, String> PERMISSION1_NAMES = Map.ofEntries(
             entry(ORG_SWITCH, "switch organization"),
             entry(OWN_ORG_EDIT, "edit own organization"),
@@ -80,6 +82,7 @@ public final class PermissionsTable {
             entry(OWN_DEVICES_SHARE, "share own devices"),
             entry(SET_AUTH_TOKEN, "set auth token")
     );
+
     public static final Map<Integer, String> PERMISSION2_NAMES = Map.ofEntries(
         entry(RULE_GROUP_VIEW, "view rule group"),
         entry(RULE_GROUP_EDIT, "edit rule group")
