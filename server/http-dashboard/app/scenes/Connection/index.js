@@ -20,7 +20,7 @@ import {
 } from 'data/Connection/reducers';
 
 import {
-  blynkWsConnect,
+  // blynkWsConnect,
   blynkWsLogin
 } from 'store/blynk-websocket-middleware/actions';
 
@@ -47,7 +47,7 @@ import {bindActionCreators} from 'redux';
   AccountFetch           : bindActionCreators(AccountAPI.Account, dispatch),
   LoginWsSuccess         : bindActionCreators(LoginWsSuccess, dispatch),
   Login                  : bindActionCreators(API.Login, dispatch),
-  blynkWsConnect         : bindActionCreators(blynkWsConnect, dispatch),
+  // blynkWsConnect         : bindActionCreators(blynkWsConnect, dispatch),
   blynkWsLogin           : bindActionCreators(blynkWsLogin, dispatch),
   connectSuccess         : bindActionCreators(ConnectSuccess, dispatch),
   connectFailed          : bindActionCreators(ConnectFailed, dispatch),
@@ -73,7 +73,7 @@ class Connection extends React.Component {
       username: PropTypes.string,
       password: PropTypes.string,
     }),
-    blynkWsConnect         : PropTypes.func,
+    // blynkWsConnect         : PropTypes.func,
     blynkWsLogin           : PropTypes.func,
     connectSuccess         : PropTypes.func,
     connectFailed          : PropTypes.func,
@@ -89,7 +89,7 @@ class Connection extends React.Component {
     const LOGIN = this.props.credentials.username;
     const PASSWORD = this.props.credentials.password;
 
-    this.props.blynkWsConnect().then(() => {
+    // this.props.blynkWsConnect().then(() => {
 
       if (!LOGIN || !PASSWORD) {
         this.props.connectSuccess();
@@ -114,9 +114,9 @@ class Connection extends React.Component {
         this.context.router.push('/login');
       });
 
-    }).catch(() => {
-      this.props.connectFailed();
-    });
+    // }).catch(() => {
+    //   this.props.connectFailed();
+    // });
   }
 
   render() {

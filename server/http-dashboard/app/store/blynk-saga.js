@@ -1,14 +1,20 @@
 // import { LOCATION_CHANGE } from 'react-router-redux';
 
 import { eventChannel } from 'redux-saga';
-import { put, take, call, fork } from 'redux-saga/effects';
-import WS_ACTIONS from "./redux-websocket-middleware/actions";
-import { Handlers } from "./blynk-websocket-middleware/handlers";
-import {
-  API_COMMANDS,
-  COMMANDS,
-  RESPONSE_CODES
-} from "./blynk-websocket-middleware/commands";
+import { put, take, call, fork, select } from 'redux-saga/effects';
+import WS_ACTIONS, {
+  _websocketMessage,
+  _websocketOpen
+} from "./redux-websocket-middleware/actions";
+import { blynkWsLogin } from "./blynk-websocket-middleware/actions";
+import { browserHistory } from "react-router";
+import { ACTIONS } from './redux-websocket-middleware/actions';
+// import { Handlers } from "./blynk-websocket-middleware/handlers";
+// import {
+//   API_COMMANDS,
+//   COMMANDS,
+//   RESPONSE_CODES
+// } from "./blynk-websocket-middleware/commands";
 
 // import {
 //   getCommandKeyName,
@@ -16,7 +22,7 @@ import {
 
 export const INIT_ACTION_TYPE = 'CONNECT';
 
-let MSG_ID = 0;
+// let MSG_ID = 0;
 let socket_reconnect_retry = 0;
 const MAX_SOCKET_RETRY = 5000;
 
@@ -26,11 +32,23 @@ const MAX_SOCKET_RETRY = 5000;
 let socket;
 let options;
 
-function connect() {
+function* connect() {
+  const state = yield select();
   return new Promise((resolve, reject) => {
     try {
       socket = new WebSocket(options.endpoint);
+      socket.binaryType = 'arraybuffer';
       socket.addEventListener('open', () => {
+        put(_websocketOpen());
+        if (state && state.Account && state.Account.credentials && state.Account.credentials.username) {
+          const { username, password } = state.Account.credentials;
+          put(blynkWsLogin({
+            username,
+            hash: password
+          }));
+        } else {
+          browserHistory.push('/login');
+        }
         resolve(socket);
       });
       socket.addEventListener('error', (err) => {
@@ -46,141 +64,7 @@ function socketSubscribe(emitter) {
   socket.addEventListener('message', socket_message => {
     console.log('BBBBBBBBBBBBBBBBBB', socket_message);
 
-    // const {action, options, store} = params;
-
-    const dataView = new DataView(socket_message.data);
-
-    const command = dataView.getUint8(0);
-
-    const msgId = dataView.getUint16(1);
-
-    let responseCode = -1;
-
-    if (command === COMMANDS.RESPONSE) {
-      responseCode = dataView.getUint32(3);
-    }
-
-    if (options.isDebugMode) {
-      // options.debug("blynkWsMessage", action, {
-      //   command: getCommandKeyName(command),
-      //   msgId  : msgId,
-      //   body: dataView.body
-      // });
-    }
-
-    let handlers = Handlers({
-      // action  : action,
-      options: options,
-      // store   : store,
-      dataView: dataView,
-      command: command,
-      msgId: msgId
-    });
-
-    let message = null;
-
-    // messages.forEach((msg) => {
-    //   if (Number(msg.msgId) === Number(msgId) && message === null) {
-    //     message = msg;
-    //   }
-    // });
-
-    const API_COMMANDS_CODES_ARRAY = Object.keys(API_COMMANDS).map((key) => API_COMMANDS[key]);
-
-    if (command === COMMANDS.RESPONSE && responseCode === RESPONSE_CODES.OK) {
-
-      if (message && typeof message.promiseResolve === 'function')
-        message.promiseResolve();
-
-      handlers.ResponseOKHandler({
-        responseCode: responseCode,
-        message: message // there should be var "message", not var "message.previousAction". Just wrong naming, please keep it as it is
-      });
-
-    } else if (command === COMMANDS.HARDWARE) {
-
-      handlers.HardwareHandler({
-        msgId: ++MSG_ID
-      });
-
-    } else if (command === COMMANDS.UPDATE_DEVICE_METAFIELD) {
-
-      handlers.DeviceMetadataUpdateHandler({
-        msgId: ++MSG_ID
-      });
-
-    } else if (command === COMMANDS.LOG_EVENT) {
-
-      handlers.LogEventHandler({
-        msgId: ++MSG_ID
-      });
-
-    } else if (command === COMMANDS.LOG_EVENT_RESOLVE) {
-
-      handlers.LogEventResolveHandler({
-        msgId: ++MSG_ID
-      });
-
-    } else if (command === COMMANDS.DEVICE_CONNECTED) {
-
-      handlers.DeviceConnectHandler({
-        msgId: ++MSG_ID
-      });
-
-    } else if (command === COMMANDS.DEVICE_DISCONNECTED) {
-
-      handlers.DeviceDisconnectHandler({
-        msgId: ++MSG_ID
-      });
-
-    } else if (command === COMMANDS.APP_SYNC) {
-
-      handlers.AppSyncHandler({
-        msgId: ++MSG_ID
-      });
-
-    } else if (command === COMMANDS.CHART_DATA_FETCH) {
-
-      handlers.ChartDataHandler({
-        msgId: ++MSG_ID,
-        previousAction: message,
-      });
-
-    } else if (command === COMMANDS.WEB_JSON) {
-
-      handlers.JsonHandler({
-        msgId: ++MSG_ID,
-        previousAction: message && message.previousAction,
-        promiseReject: message && message.promiseReject,
-      });
-
-    } else if (command === COMMANDS.RESPONSE && responseCode === RESPONSE_CODES.NO_DATA) {
-
-      handlers.NoDataHandler({
-        msgId: ++MSG_ID,
-        previousAction: message,
-      });
-
-    } else if (command === API_COMMANDS.CREATE_DEVICE) {
-      handlers.DeviceCreateHandler({
-        msgId: ++MSG_ID,
-        previousAction: message && message.previousAction,
-        promiseResolve: message && message.promiseResolve,
-      });
-
-    } else if (API_COMMANDS_CODES_ARRAY.indexOf(command) >= 0) {
-
-      handlers.ApiCallHandler({
-        msgId: ++MSG_ID,
-        previousAction: message && message.previousAction,
-        promiseResolve: message && message.promiseResolve,
-      });
-
-    } else {
-
-      handlers.UnknownCommandHandler();
-
-    }
+    emitter(_websocketMessage(socket_message));
   });
 
   socket.addEventListener('close', () => {
@@ -226,19 +110,19 @@ function* subscribeToSocketEventChannel() {
 
 function* handleInput() {
   while (true) {
-    const action = yield take('*');
+    const action = yield take(WS_ACTIONS.WEBSOCKET_SEND);
     console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAA', action);
 
-    if (action.type === WS_ACTIONS.WEBSOCKET_SEND) {
-      if (!socket)
-        throw new Error(`Cannot write WS. Socket doesn't exists`);
+    // if (action.type === WS_ACTIONS.WEBSOCKET_SEND) {
+    if (!socket)
+      throw new Error(`Cannot write WS. Socket doesn't exists`);
 
-      if (options.isDebugMode) {
-        options.debug('webSocketSend', action.value);
-      }
-
-      socket.send(action.value);
+    if (options.isDebugMode) {
+      options.debug('webSocketSend', action.value);
     }
+
+    socket.send(action.value);
+    // }
   }
 }
 
@@ -268,6 +152,7 @@ export function* blynkSaga() {
     }
 
     yield call(connect);
+    yield take(ACTIONS.WEBSOCKET_OPEN);
     yield fork(handleSocket);
   }
 }

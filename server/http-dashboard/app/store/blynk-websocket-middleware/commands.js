@@ -1,5 +1,5 @@
 import {
-  websocketConnect,
+  // websocketConnect,
   websocketSend,
 } from '../redux-websocket-middleware/actions';
 
@@ -115,14 +115,14 @@ const makeMessage = (msg_type, msg_id, payload) => {
   return result;
 };
 
-export const blynkWsConnect = (params) => {
-  const {store, options} = params;
-
-  if (options.isDebugMode)
-    options.debug("BlynkWsConnect");
-
-  return store.dispatch(websocketConnect());
-};
+// export const blynkWsConnect = (params) => {
+//   const {store, options} = params;
+//
+//   if (options.isDebugMode)
+//     options.debug("BlynkWsConnect");
+//
+//   return store.dispatch(websocketConnect());
+// };
 
 export const blynkWsApiCall = (params) => {
 
