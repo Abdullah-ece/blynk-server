@@ -11,6 +11,7 @@ import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
+import cc.blynk.server.core.protocol.exceptions.NoPermissionException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
 import io.netty.channel.ChannelHandlerContext;
@@ -72,6 +73,11 @@ public final class WebUpdateOwnDeviceMetafieldLogic implements PermissionBasedLo
         }
 
         Device device = deviceDao.getByIdOrThrow(deviceId);
+
+        if (!state.role.canEditOrgDevice()) {
+            log.error("User {} is not owner of requested deviceId {}.", user.email, device.id);
+            throw new NoPermissionException("User is not owner of requested device.");
+        }
 
         log.debug("Updating metafield {} for device {} and user {}.", metafieldString, deviceId, user.email);
         device.updateMetafields(metaFields);

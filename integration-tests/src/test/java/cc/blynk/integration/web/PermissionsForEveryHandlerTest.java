@@ -5,6 +5,7 @@ import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
 import cc.blynk.server.api.http.dashboard.dto.RoleDTO;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.dto.DeviceDTO;
 import cc.blynk.server.core.model.dto.OrganizationDTO;
@@ -86,9 +87,12 @@ public class PermissionsForEveryHandlerTest extends SingleServerInstancePerTestW
         return result;
     }
 
-    private static int removePermission(int exclude) {
+    private static int removePermission(int... permissions) {
         int all = 0b11111111111111111111111111111111;
-        return all ^ exclude;
+        for (int exclude : permissions) {
+            all ^= exclude;
+        }
+        return all;
     }
 
     private static void verifyPermissionAbsence(AppWebSocketClient client, int permission,
@@ -127,8 +131,7 @@ public class PermissionsForEveryHandlerTest extends SingleServerInstancePerTestW
             null,
             null);
 
-
-    private AppWebSocketClient createUserForSubOrgSpecificRole(int permissions1) throws Exception {
+    private AppWebSocketClient createUserForSubOrgSpecificRole(int permissions1, int permissions2) throws Exception {
         AppWebSocketClient client = loggedDefaultClient("super@blynk.cc", "1");
 
         Organization subOrg = new Organization("PermissionTestSuborg", "Europe/Kiev", null, true, -1);
@@ -138,7 +141,7 @@ public class PermissionsForEveryHandlerTest extends SingleServerInstancePerTestW
 
         client.trackOrg(subOrgDTO.id);
         client.verifyResult(ok(2));
-        client.createRole(new RoleDTO(-1, "Test", permissions1, 0));
+        client.createRole(new RoleDTO(-1, "Test", permissions1, permissions2));
         RoleDTO roleDTO = client.parseRoleDTO(3);
         assertNotNull(roleDTO);
 
@@ -150,6 +153,7 @@ public class PermissionsForEveryHandlerTest extends SingleServerInstancePerTestW
         assertEquals(4, createRole.id);
         assertEquals("Test", createRole.name);
         assertEquals(permissions1, createRole.permissionGroup1);
+        assertEquals(permissions2, createRole.permissionGroup2);
 
         client.inviteUser(subOrgDTO.id, "testPermissions@gmail.com", "Dmitriy", createRole.id);
         client.verifyResult(ok(5));
@@ -174,7 +178,7 @@ public class PermissionsForEveryHandlerTest extends SingleServerInstancePerTestW
 
         appWebSocketClient.getAccount();
         User user = appWebSocketClient.parseAccount(2);
-        TestCase.assertNotNull(user);
+        assertNotNull(user);
         assertEquals("testpermissions@gmail.com", user.email);
         assertEquals("Dmitriy", user.name);
         assertEquals(4, user.roleId);
@@ -182,6 +186,10 @@ public class PermissionsForEveryHandlerTest extends SingleServerInstancePerTestW
 
         appWebSocketClient.reset();
         return appWebSocketClient;
+    }
+
+    private AppWebSocketClient createUserForSubOrgSpecificRole(int permissions1) throws Exception {
+        return createUserForSubOrgSpecificRole(permissions1, -1);
     }
 
     @Test
@@ -669,15 +677,21 @@ public class PermissionsForEveryHandlerTest extends SingleServerInstancePerTestW
 
     @Test
     public void createOrgDevices() throws Exception {
-        AppWebSocketClient client = createUserForSubOrgSpecificRole(setPermission(ORG_DEVICES_CREATE));
-        client.createDevice(2, new Device());
-        client.verifyResult(webJson(1, "Command has wrong product id."));
+        AppWebSocketClient client = createUserForSubOrgSpecificRole(setPermission(ORG_DEVICES_CREATE, OWN_DEVICES_CREATE));
+        client.getAccount();
+        User user = client.parseAccount(1);
+        client.createDevice(user.orgId, new Device());
+        client.verifyResult(webJson(2, "Command has wrong product id."));
     }
     @Test
     public void noCreateOrgDevices() throws Exception { // does not work?
-        AppWebSocketClient client = createUserForSubOrgSpecificRole(removePermission(ORG_DEVICES_CREATE));
-        client.createDevice(2, new Device());
-        verifyPermissionAbsence(client, ORG_DEVICES_CREATE, true);
+        AppWebSocketClient client = createUserForSubOrgSpecificRole(removePermission(ORG_DEVICES_CREATE, OWN_DEVICES_CREATE));
+        Device device = new Device();
+        device.productId = 1;
+        device.name = "123";
+        device.boardType = BoardType.Generic_Board;
+        client.createDevice(2, device);
+        verifyPermissionAbsence(client, OWN_DEVICES_CREATE, true);
     }
 
     @Test
@@ -694,13 +708,13 @@ public class PermissionsForEveryHandlerTest extends SingleServerInstancePerTestW
     }
     @Test
     public void noGetOrgDevices() throws Exception { // does not work?
-        AppWebSocketClient client = createUserForSubOrgSpecificRole(removePermission(ORG_DEVICES_VIEW));
+        AppWebSocketClient client = createUserForSubOrgSpecificRole(removePermission(ORG_DEVICES_VIEW, OWN_DEVICES_VIEW));
         client.getDevice(NON_EXISTING_ORG_ID, NON_EXISTING_DEVICE_ID);
-        verifyPermissionAbsence(client, ORG_DEVICES_VIEW, true);
+        verifyPermissionAbsence(client, OWN_DEVICES_VIEW, true);
         client.reset();
 
         client.getDevices(NON_EXISTING_ORG_ID);
-        verifyPermissionAbsence(client, ORG_DEVICES_VIEW, true);
+        verifyPermissionAbsence(client, OWN_DEVICES_VIEW, true);
         client.reset();
     }
 
@@ -708,7 +722,7 @@ public class PermissionsForEveryHandlerTest extends SingleServerInstancePerTestW
     public void updateOrgDevices() throws Exception {
         AppWebSocketClient client = createUserForSubOrgSpecificRole(setPermission(ORG_DEVICES_EDIT));
         client.updateDevice(NON_EXISTING_ORG_ID, new Device());
-        client.verifyResult(webJson(1, "Empty body."));
+        client.verifyResult(webJson(1, "Empty body or productId is wrong."));
         client.reset();
 
         client.updateDeviceMetafield(NON_EXISTING_DEVICE_ID, null);
@@ -716,13 +730,13 @@ public class PermissionsForEveryHandlerTest extends SingleServerInstancePerTestW
     }
     @Test
     public void noUpdateOrgDevices() throws Exception { // does not work?
-        AppWebSocketClient client = createUserForSubOrgSpecificRole(removePermission(ORG_DEVICES_EDIT));
+        AppWebSocketClient client = createUserForSubOrgSpecificRole(removePermission(ORG_DEVICES_EDIT, OWN_DEVICES_EDIT));
         client.updateDevice(NON_EXISTING_ORG_ID, new Device());
-        verifyPermissionAbsence(client, ORG_DEVICES_EDIT, true);
+        verifyPermissionAbsence(client, OWN_DEVICES_EDIT, true);
         client.reset();
 
         client.updateDeviceMetafield(NON_EXISTING_DEVICE_ID, null);
-        verifyPermissionAbsence(client, ORG_DEVICES_EDIT, true);
+        verifyPermissionAbsence(client, OWN_DEVICES_EDIT, true);
     }
 
     @Test
@@ -732,10 +746,10 @@ public class PermissionsForEveryHandlerTest extends SingleServerInstancePerTestW
         client.verifyResult(webJson(1, "Device not found."));
     }
     @Test
-    public void noDeleteOrgDevices() throws Exception { // does not work?
+    public void noDeleteOrgDevices() throws Exception {
         AppWebSocketClient client = createUserForSubOrgSpecificRole(removePermission(ORG_DEVICES_DELETE));
-        client.deleteDevice(NON_EXISTING_ORG_ID, NON_EXISTING_DEVICE_ID);
-        verifyPermissionAbsence(client, ORG_DEVICES_DELETE, true);
+        client.deleteDevice(orgId, 1);
+        client.verifyResult(webJson(1, "User is not owner of requested device."));
     }
 
     // ORG_DEVICES_SHARE is not used anywhere
@@ -745,12 +759,17 @@ public class PermissionsForEveryHandlerTest extends SingleServerInstancePerTestW
     @Test
     public void createOwnDevices() throws Exception {
         AppWebSocketClient client = createUserForSubOrgSpecificRole(setPermission(OWN_DEVICES_CREATE));
-        client.createDevice(2, new Device());
-        client.verifyResult(webJson(1, "Command has wrong product id."));
+        client.getAccount();
+        User user = client.parseAccount(1);
+        Device device = new Device();
+        device.name = "!23";
+        device.boardType = BoardType.Generic_Board;
+        client.createDevice(user.orgId, new Device());
+        client.verifyResult(webJson(2, "Command has wrong product id."));
     }
     @Test
     public void noCreateOwnDevices() throws Exception { // does not work?
-        AppWebSocketClient client = createUserForSubOrgSpecificRole(removePermission(OWN_DEVICES_CREATE));
+        AppWebSocketClient client = createUserForSubOrgSpecificRole(removePermission(ORG_DEVICES_CREATE, OWN_DEVICES_CREATE));
         client.createDevice(orgId, new Device());
         verifyPermissionAbsence(client, OWN_DEVICES_CREATE, true);
     }
@@ -769,7 +788,7 @@ public class PermissionsForEveryHandlerTest extends SingleServerInstancePerTestW
     }
     @Test
     public void noGetOwnDevices() throws Exception { // does not work?
-        AppWebSocketClient client = createUserForSubOrgSpecificRole(removePermission(OWN_DEVICES_VIEW));
+        AppWebSocketClient client = createUserForSubOrgSpecificRole(removePermission(ORG_DEVICES_VIEW, OWN_DEVICES_VIEW));
         client.getDevices(NON_EXISTING_ORG_ID);
         verifyPermissionAbsence(client, OWN_DEVICES_VIEW, true);
     }
@@ -778,7 +797,7 @@ public class PermissionsForEveryHandlerTest extends SingleServerInstancePerTestW
     public void updateOwnDevices() throws Exception {
         AppWebSocketClient client = createUserForSubOrgSpecificRole(setPermission(OWN_DEVICES_EDIT));
         client.updateDevice(NON_EXISTING_ORG_ID, new Device());
-        client.verifyResult(webJson(1, "Empty body."));
+        client.verifyResult(webJson(1, "Empty body or productId is wrong."));
         client.reset();
 
         client.updateDeviceMetafield(NON_EXISTING_DEVICE_ID, null);
@@ -786,7 +805,7 @@ public class PermissionsForEveryHandlerTest extends SingleServerInstancePerTestW
     }
     @Test
     public void noUpdateOwnDevices() throws Exception { // does not work?
-        AppWebSocketClient client = createUserForSubOrgSpecificRole(removePermission(OWN_DEVICES_EDIT));
+        AppWebSocketClient client = createUserForSubOrgSpecificRole(removePermission(ORG_DEVICES_EDIT, OWN_DEVICES_EDIT));
         client.updateDevice(NON_EXISTING_ORG_ID, new Device());
         verifyPermissionAbsence(client, OWN_DEVICES_EDIT, true);
         client.reset();
@@ -803,7 +822,7 @@ public class PermissionsForEveryHandlerTest extends SingleServerInstancePerTestW
     }
     @Test
     public void noDeleteOwnDevices() throws Exception { // does not work?
-        AppWebSocketClient client = createUserForSubOrgSpecificRole(removePermission(OWN_DEVICES_DELETE));
+        AppWebSocketClient client = createUserForSubOrgSpecificRole(removePermission(ORG_DEVICES_DELETE, OWN_DEVICES_DELETE));
         client.deleteDevice(NON_EXISTING_ORG_ID, NON_EXISTING_DEVICE_ID);
         verifyPermissionAbsence(client, OWN_DEVICES_DELETE, true);
     }
@@ -825,27 +844,27 @@ public class PermissionsForEveryHandlerTest extends SingleServerInstancePerTestW
 
     @Test
     public void getRuleGroup() throws Exception { // does not work?
-        AppWebSocketClient client = createUserForSubOrgSpecificRole(setPermission(RULE_GROUP_VIEW));
+        AppWebSocketClient client = createUserForSubOrgSpecificRole(-1, setPermission(RULE_GROUP_VIEW));
         client.getRuleGroup();
         RuleGroup ruleGroup = client.parseRuleGroup(1);
         assertNull(ruleGroup);
     }
     @Test
     public void noGetRuleGroup() throws Exception {
-        AppWebSocketClient client = createUserForSubOrgSpecificRole(removePermission(RULE_GROUP_VIEW));
+        AppWebSocketClient client = createUserForSubOrgSpecificRole(-1, removePermission(RULE_GROUP_VIEW));
         client.getRuleGroup();
         verifyPermissionAbsence(client, RULE_GROUP_VIEW, false);
     }
 
     @Test
-    public void editRuleGroup() throws Exception { // does not work?
-        AppWebSocketClient client = createUserForSubOrgSpecificRole(setPermission(RULE_GROUP_EDIT));
-        client.editRuleGroup("");
-        client.verifyResult(webJson(1, "Set auth token is not valid. Token is empty or length is not 32 chars."));
+    public void editRuleGroup() throws Exception {
+        AppWebSocketClient client = createUserForSubOrgSpecificRole(-1, setPermission(RULE_GROUP_EDIT));
+        client.editRuleGroup("{}");
+        client.verifyResult(ok(1));
     }
     @Test
     public void noEditRuleGroup() throws Exception {
-        AppWebSocketClient client = createUserForSubOrgSpecificRole(removePermission(RULE_GROUP_EDIT));
+        AppWebSocketClient client = createUserForSubOrgSpecificRole(-1, removePermission(RULE_GROUP_EDIT));
         client.editRuleGroup("");
         verifyPermissionAbsence(client, RULE_GROUP_EDIT, false);
     }
