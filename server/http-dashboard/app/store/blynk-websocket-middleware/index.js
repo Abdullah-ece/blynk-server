@@ -58,7 +58,7 @@ export const createBlynkWsMiddleware = (options = {}) => {
       action,
       options
     };
-
+    console.log('MMMMMMM', action);
     /*
       use execCommand(cmd, params) if your command should be executed
       when connection ready and user logged in

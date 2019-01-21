@@ -1,7 +1,14 @@
 // import { LOCATION_CHANGE } from 'react-router-redux';
 
 import { eventChannel } from 'redux-saga';
-import { put, take, call, fork, select } from 'redux-saga/effects';
+import {
+  put,
+  take,
+  call,
+  fork,
+  select,
+  actionChannel
+} from 'redux-saga/effects';
 import WS_ACTIONS, {
   _websocketMessage,
   _websocketOpen
@@ -42,19 +49,23 @@ function* connect() {
         put(_websocketOpen());
         if (state && state.Account && state.Account.credentials && state.Account.credentials.username) {
           const { username, password } = state.Account.credentials;
+          console.log(1);
           put(blynkWsLogin({
             username,
             hash: password
           }));
         } else {
+          console.log(2);
           browserHistory.push('/login');
         }
         resolve(socket);
       });
       socket.addEventListener('error', (err) => {
+        console.error(err);
         reject(err);
       });
     } catch (err) {
+      console.error(err);
       reject(err);
     }
   });
@@ -109,8 +120,11 @@ function* subscribeToSocketEventChannel() {
 }
 
 function* handleInput() {
+  const socketChan = yield actionChannel(WS_ACTIONS.WEBSOCKET_SEND);
+  const value = yield take(ACTIONS.WEBSOCKET_CONNECT);
+  console.log(value);
   while (true) {
-    const action = yield take(WS_ACTIONS.WEBSOCKET_SEND);
+    const action = yield take(socketChan);
     console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAA', action);
 
     // if (action.type === WS_ACTIONS.WEBSOCKET_SEND) {
@@ -152,7 +166,6 @@ export function* blynkSaga() {
     }
 
     yield call(connect);
-    yield take(ACTIONS.WEBSOCKET_OPEN);
     yield fork(handleSocket);
   }
 }
