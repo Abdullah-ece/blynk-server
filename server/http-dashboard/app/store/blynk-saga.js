@@ -40,6 +40,10 @@ let options;
 
 function* connect() {
   const state = yield select();
+  return socketConnect(state);
+}
+
+function socketConnect(state) {
   return new Promise((resolve, reject) => {
     try {
       socket = new WebSocket(options.endpoint);
@@ -91,7 +95,7 @@ function reconnect() {
 function retry(resolve, reject) {
   return new Promise(() => {
     setTimeout(() => {
-      connect().then((sock) => {
+      socketConnect().then((sock) => {
         socket_reconnect_retry = 0;
         resolve(sock);
       }).catch((err) => {
