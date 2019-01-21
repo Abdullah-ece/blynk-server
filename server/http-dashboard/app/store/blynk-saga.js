@@ -7,7 +7,7 @@ import {
   call,
   fork,
   select,
-  actionChannel
+  actionChannel,
 } from 'redux-saga/effects';
 import WS_ACTIONS, {
   _websocketMessage,
@@ -15,7 +15,6 @@ import WS_ACTIONS, {
 } from "./redux-websocket-middleware/actions";
 import { blynkWsLogin } from "./blynk-websocket-middleware/actions";
 import { browserHistory } from "react-router";
-import { ACTIONS } from './redux-websocket-middleware/actions';
 // import { Handlers } from "./blynk-websocket-middleware/handlers";
 // import {
 //   API_COMMANDS,
@@ -49,13 +48,11 @@ function* connect() {
         put(_websocketOpen());
         if (state && state.Account && state.Account.credentials && state.Account.credentials.username) {
           const { username, password } = state.Account.credentials;
-          console.log(1);
           put(blynkWsLogin({
             username,
             hash: password
           }));
         } else {
-          console.log(2);
           browserHistory.push('/login');
         }
         resolve(socket);
@@ -73,8 +70,6 @@ function* connect() {
 
 function socketSubscribe(emitter) {
   socket.addEventListener('message', socket_message => {
-    console.log('BBBBBBBBBBBBBBBBBB', socket_message);
-
     emitter(_websocketMessage(socket_message));
   });
 
@@ -119,15 +114,13 @@ function* subscribeToSocketEventChannel() {
   });
 }
 
-function* handleInput() {
+function* handleInput(socketPromise) {
   const socketChan = yield actionChannel(WS_ACTIONS.WEBSOCKET_SEND);
-  const value = yield take(ACTIONS.WEBSOCKET_CONNECT);
-  console.log(value);
+  yield socketPromise;
+
   while (true) {
     const action = yield take(socketChan);
-    console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAA', action);
 
-    // if (action.type === WS_ACTIONS.WEBSOCKET_SEND) {
     if (!socket)
       throw new Error(`Cannot write WS. Socket doesn't exists`);
 
@@ -136,7 +129,6 @@ function* handleInput() {
     }
 
     socket.send(action.value);
-    // }
   }
 }
 
@@ -148,9 +140,9 @@ function* handleOutput() {
   }
 }
 
-function* handleSocket() {
+function* handleSocket(socketPromise) {
   yield fork(handleOutput);
-  yield fork(handleInput);
+  yield fork(handleInput, socketPromise);
 }
 
 export function* blynkSaga() {
@@ -165,7 +157,7 @@ export function* blynkSaga() {
       };
     }
 
-    yield call(connect);
-    yield fork(handleSocket);
+    let socketPromise = yield call(connect);
+    yield fork(handleSocket, socketPromise);
   }
 }
