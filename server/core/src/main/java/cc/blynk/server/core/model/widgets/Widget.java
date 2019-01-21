@@ -5,8 +5,6 @@ import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.core.model.storage.value.PinStorageValue;
-import cc.blynk.server.core.model.storage.value.SinglePinStorageValue;
 import cc.blynk.server.core.model.widgets.controls.Button;
 import cc.blynk.server.core.model.widgets.controls.LinkButton;
 import cc.blynk.server.core.model.widgets.controls.NumberInput;
@@ -230,14 +228,6 @@ public abstract class Widget implements CopyObject<Widget> {
         } catch (IOException ioe) {
             throw new RuntimeException(ioe);
         }
-    }
-
-    public PinStorageValue getPinStorageValue() {
-        return new SinglePinStorageValue();
-    }
-
-    public boolean isMultiValueWidget() {
-        return false;
     }
 
     public boolean setProperty(WidgetProperty property, String propertyValue) {
