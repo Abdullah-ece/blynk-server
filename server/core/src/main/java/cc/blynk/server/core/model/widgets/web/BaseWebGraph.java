@@ -2,8 +2,6 @@ package cc.blynk.server.core.model.widgets.web;
 
 import cc.blynk.server.core.model.enums.PinMode;
 
-import java.util.Objects;
-
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -33,20 +31,30 @@ public abstract class BaseWebGraph extends WebWidget {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof BaseWebGraph)) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
         if (!super.equals(o)) {
             return false;
         }
+
         BaseWebGraph that = (BaseWebGraph) o;
-        return isShowTitleEnabled == that.isShowTitleEnabled
-                && isShowLegendEnabled == that.isShowLegendEnabled
-                && Objects.equals(decimalFormat, that.decimalFormat);
+
+        if (isShowTitleEnabled != that.isShowTitleEnabled) {
+            return false;
+        }
+        if (isShowLegendEnabled != that.isShowLegendEnabled) {
+            return false;
+        }
+        return decimalFormat != null ? decimalFormat.equals(that.decimalFormat) : that.decimalFormat == null;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), isShowTitleEnabled, isShowLegendEnabled, decimalFormat);
+        int result = super.hashCode();
+        result = 31 * result + (isShowTitleEnabled ? 1 : 0);
+        result = 31 * result + (isShowLegendEnabled ? 1 : 0);
+        result = 31 * result + (decimalFormat != null ? decimalFormat.hashCode() : 0);
+        return result;
     }
 }
