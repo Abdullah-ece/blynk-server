@@ -3,6 +3,7 @@ package cc.blynk.server.application.handlers.main.logic.graph;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.core.reporting.raw.BaseReportingKey;
 import cc.blynk.server.core.session.mobile.MobileStateHolder;
 import cc.blynk.utils.NumberUtil;
 import cc.blynk.utils.StringUtils;
@@ -69,6 +70,8 @@ public final class MobileDeleteDeviceDataLogic {
                     short pin = NumberUtil.parsePin(pinString.substring(1));
                     int removedCounter =
                             holder.reportingDBManager.reportingDBDao.delete(deviceId, pin, pinType);
+                    holder.reportingDBManager.rawDataCacheForGraphProcessor
+                            .rawStorage.remove(new BaseReportingKey(deviceId, pinType, pin));
                     log.info("Removed {} records for deviceId {} and pin {}.", removedCounter, deviceId, pin);
                 }
                 channel.writeAndFlush(ok(msgId), channel.voidPromise());
