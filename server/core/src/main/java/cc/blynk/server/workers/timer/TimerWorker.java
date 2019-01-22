@@ -8,8 +8,6 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.model.device.Tag;
-import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
@@ -18,7 +16,6 @@ import cc.blynk.server.core.model.widgets.others.eventor.TimerTime;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.BaseAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.NotifyAction;
-import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.Tile;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
@@ -35,7 +32,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicReferenceArray;
 
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
-import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_INTS;
+import static cc.blynk.utils.IntArray.EMPTY_INTS;
 
 /**
  * Timer worker class responsible for triggering all timers at specified time.
@@ -269,21 +266,14 @@ public class TimerWorker implements Runnable {
                     deviceIds = intArray.toArray();
                 }
             } else {
-                Target target;
                 int targetId = key.deviceId;
-                if (targetId < Tag.START_TAG_ID) {
-                    target = deviceDao.getById(targetId);
-                } else if (targetId < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
-                    target = user.profile.getTagById(targetId);
-                } else {
-                    //means widget assigned to device selector widget.
-                    target = dash.getDeviceSelector(targetId);
-                }
-                if (target == null) {
+                Device device = deviceDao.getById(targetId);
+
+                if (device == null) {
                     return;
                 }
 
-                deviceIds = target.getDeviceIds();
+                deviceIds = new int[] {device.id};
             }
 
             if (deviceIds.length == 0) {

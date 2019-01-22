@@ -2,12 +2,15 @@ package cc.blynk.server.core.model.web.product.events;
 
 import cc.blynk.server.core.model.web.product.EventReceiver;
 import cc.blynk.server.core.model.web.product.EventType;
+import cc.blynk.server.core.model.web.product.events.system.OfflineEvent;
+import cc.blynk.server.core.model.web.product.events.system.OnlineEvent;
+import cc.blynk.server.core.model.web.product.events.user.CriticalEvent;
+import cc.blynk.server.core.model.web.product.events.user.InformationEvent;
+import cc.blynk.server.core.model.web.product.events.user.WarningEvent;
 import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.CopyObject;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-
-import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_RECEIVERS;
 
 
 /**
@@ -28,6 +31,9 @@ import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_RECEIVERS;
 
 })
 public abstract class Event implements CopyObject<Event> {
+
+    public static final Event[] EMPTY_EVENTS = {};
+    private static final EventReceiver[] EMPTY_RECEIVERS = {};
 
     public final int id;
 

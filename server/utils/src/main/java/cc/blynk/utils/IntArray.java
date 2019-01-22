@@ -12,7 +12,7 @@ import java.util.Arrays;
  */
 public class IntArray {
 
-    private static final int[] EMPTY = {};
+    public static final int[] EMPTY_INTS = {};
 
     private static final int DEFAULT_CAPACITY = 10;
     private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
@@ -22,7 +22,7 @@ public class IntArray {
     private int size;
 
     public IntArray() {
-        this.elementData = EMPTY;
+        this.elementData = EMPTY_INTS;
     }
 
     public int size() {
@@ -35,7 +35,7 @@ public class IntArray {
 
     public int[] toArray() {
         if (size == 0) {
-            return EMPTY;
+            return EMPTY_INTS;
         }
         return Arrays.copyOf(elementData, size);
     }
@@ -70,7 +70,7 @@ public class IntArray {
         int oldCapacity = elementData.length;
         int newCapacity = oldCapacity + (oldCapacity >> 1);
         if (newCapacity - minCapacity <= 0) {
-            if (elementData == EMPTY) {
+            if (elementData == EMPTY_INTS) {
                 return Math.max(DEFAULT_CAPACITY, minCapacity);
             }
             if (minCapacity < 0) { // overflow

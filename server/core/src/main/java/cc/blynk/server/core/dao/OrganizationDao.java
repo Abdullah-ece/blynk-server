@@ -209,9 +209,13 @@ public class OrganizationDao {
         return false;
     }
 
+    public void checkInheritanceAccess(User user, int requestedOrgId) {
+        checkInheritanceAccess(user.email, user.orgId, requestedOrgId);
+    }
+
     /**
-     * This check i sused cot check user doesn't try to access parent org
-     * or org he has no access
+     * This check is used to verify that user doesn't try to access parent org
+     * or org he has no access (organization from another hierarchy)
      */
     public void checkInheritanceAccess(String email, int userOrgId, int requestedOrgId) {
         //own organization, so this is ok
@@ -394,7 +398,7 @@ public class OrganizationDao {
             throw new JsonException("You can't delete product that is used in sub organizations.");
         }
 
-        checkInheritanceAccess(user.email, user.orgId, org.id);
+        checkInheritanceAccess(user, org.id);
     }
 
     public List<Device> getDevices(BaseUserStateHolder state) {

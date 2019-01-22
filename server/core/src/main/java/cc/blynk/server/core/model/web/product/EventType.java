@@ -13,4 +13,10 @@ public enum EventType {
     WARNING,
     CRITICAL;
 
+    //cached value for values field to avoid allocations
+    private static final EventType[] values = values();
+
+    public static EventType[] getValues() {
+        return values;
+    }
 }

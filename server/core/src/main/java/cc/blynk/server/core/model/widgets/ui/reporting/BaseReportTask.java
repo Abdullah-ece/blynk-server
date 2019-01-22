@@ -1,11 +1,12 @@
 package cc.blynk.server.core.model.widgets.ui.reporting;
 
 import cc.blynk.server.core.dao.DeviceDao;
-import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.ui.reporting.source.ReportDataStream;
 import cc.blynk.server.core.model.widgets.ui.reporting.source.ReportSource;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
+import cc.blynk.server.db.dao.RawEntry;
+import cc.blynk.server.db.dao.ReportingDBDao;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.utils.FileUtils;
 import org.apache.logging.log4j.LogManager;
@@ -20,6 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
@@ -44,7 +46,7 @@ public abstract class BaseReportTask implements Runnable {
 
     private final MailWrapper mailWrapper;
 
-    private final ReportingDiskDao reportingDiskDao;
+    private final ReportingDBDao reportingDBDao;
 
     private final DeviceDao deviceDao;
 
@@ -54,13 +56,13 @@ public abstract class BaseReportTask implements Runnable {
     private static final int size = 64 * 1024;
 
     protected BaseReportTask(User user, int dashId, Report report,
-                             MailWrapper mailWrapper, ReportingDiskDao reportingDiskDao,
+                             MailWrapper mailWrapper, ReportingDBDao reportingDBDao,
                              DeviceDao deviceDao,
                              String httpsServerUrl) {
         this.key = new ReportTaskKey(user, dashId, report.id);
         this.report = report;
         this.mailWrapper = mailWrapper;
-        this.reportingDiskDao = reportingDiskDao;
+        this.reportingDBDao = reportingDBDao;
         this.deviceDao = deviceDao;
         this.httpsServerUrl = httpsServerUrl;
     }
@@ -119,13 +121,13 @@ public abstract class BaseReportTask implements Runnable {
     private ReportResult generateReport(Path userCsvFolder,
                                         long now) throws Exception {
         int fetchCount = (int) report.reportType.getFetchCount(report.granularityType);
-        long startFrom = now - TimeUnit.DAYS.toMillis(report.reportType.getDuration());
+        long from = now - TimeUnit.DAYS.toMillis(report.reportType.getDuration());
         //truncate second, minute, hour, depending of granularity in order to do not filter first point.
         //https://github.com/blynkkk/blynk-server/issues/1149
-        startFrom = (startFrom / report.granularityType.period) * report.granularityType.period;
+        from = (from / report.granularityType.period) * report.granularityType.period;
         Path output = Paths.get(userCsvFolder.toString() + ".zip");
 
-        boolean hasData = generateReport(output, fetchCount, startFrom);
+        boolean hasData = generateReport(output, fetchCount, from, now);
         if (hasData) {
             sendEmail(output);
             return ReportResult.OK;
@@ -135,20 +137,20 @@ public abstract class BaseReportTask implements Runnable {
         return ReportResult.NO_DATA;
     }
 
-    private boolean generateReport(Path output, int fetchCount, long startFrom) throws Exception {
+    private boolean generateReport(Path output, int fetchCount, long from, long to) throws Exception {
         switch (report.reportOutput) {
             case MERGED_CSV:
-                return merged(output, fetchCount, startFrom);
+                return merged(output, fetchCount, from, to);
             case CSV_FILE_PER_DEVICE:
-                return filePerDevice(output, fetchCount, startFrom);
+                return filePerDevice(output, fetchCount, from, to);
             case CSV_FILE_PER_DEVICE_PER_PIN:
             case EXCEL_TAB_PER_DEVICE:
             default:
-                return filePerDevicePerPin(output, fetchCount, startFrom);
+                return filePerDevicePerPin(output, fetchCount, from, to);
         }
     }
 
-    private boolean merged(Path output, int fetchCount, long startFrom) throws Exception {
+    private boolean merged(Path output, int fetchCount, long from, long to) throws Exception {
         boolean atLeastOne = false;
         try (ZipOutputStream zipStream = new ZipOutputStream(Files.newOutputStream(output));
              BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(zipStream, REPORT_ENCODING), size)) {
@@ -161,14 +163,18 @@ public abstract class BaseReportTask implements Runnable {
                         String deviceName = deviceDao.getCSVDeviceName(deviceId);
                         for (ReportDataStream reportDataStream : reportSource.reportDataStreams) {
                             if (reportDataStream.isValid()) {
-                                ByteBuffer onePinData = reportingDiskDao.getByteBufferFromDisk(
-                                        deviceId, reportDataStream.pinType,
-                                        reportDataStream.pin, fetchCount, report.granularityType, 0);
 
+                                List<RawEntry> entries = reportingDBDao.getReportingDataByTs(
+                                        report.granularityType, deviceId,
+                                        reportDataStream.pin, reportDataStream.pinType,
+                                        from, to,
+                                        0, fetchCount);
+
+                                ByteBuffer onePinData = RawEntry.convertToByteBuffer(entries);
                                 if (onePinData != null) {
                                     String pin = reportDataStream.formatAndEscapePin();
                                     atLeastOne = FileUtils.writeBufToCsvFilterAndFormat(writer,
-                                            onePinData, pin, deviceName, startFrom, report.makeFormatter());
+                                            onePinData, pin, deviceName, report.makeFormatter());
                                 }
                             }
                         }
@@ -180,7 +186,7 @@ public abstract class BaseReportTask implements Runnable {
         return atLeastOne;
     }
 
-    private boolean filePerDevice(Path output, int fetchCount, long startFrom) throws Exception {
+    private boolean filePerDevice(Path output, int fetchCount, long from, long to) throws Exception {
         boolean atLeastOne = false;
         try (ZipOutputStream zipStream = new ZipOutputStream(Files.newOutputStream(output));
              BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(zipStream, REPORT_ENCODING), size)) {
@@ -193,14 +199,18 @@ public abstract class BaseReportTask implements Runnable {
                         zipStream.putNextEntry(zipEntry);
                         for (ReportDataStream reportDataStream : reportSource.reportDataStreams) {
                             if (reportDataStream.isValid()) {
-                                ByteBuffer onePinData = reportingDiskDao.getByteBufferFromDisk(
-                                        deviceId, reportDataStream.pinType,
-                                        reportDataStream.pin, fetchCount, report.granularityType, 0);
+                                List<RawEntry> entries = reportingDBDao.getReportingDataByTs(
+                                        report.granularityType,
+                                        deviceId, reportDataStream.pin,
+                                        reportDataStream.pinType,
+                                        from, to,
+                                        0, fetchCount);
+                                ByteBuffer onePinData = RawEntry.convertToByteBuffer(entries);
 
                                 if (onePinData != null) {
                                     String pin = reportDataStream.formatAndEscapePin();
                                     atLeastOne = FileUtils.writeBufToCsvFilterAndFormat(writer,
-                                            onePinData, pin, startFrom, report.makeFormatter());
+                                            onePinData, pin, report.makeFormatter());
                                 }
                             }
                         }
@@ -212,7 +222,7 @@ public abstract class BaseReportTask implements Runnable {
         return atLeastOne;
     }
 
-    private boolean filePerDevicePerPin(Path output, int fetchCount, long startFrom) throws Exception {
+    private boolean filePerDevicePerPin(Path output, int fetchCount, long from, long to) throws Exception {
         boolean atLeastOne = false;
         try (ZipOutputStream zipStream = new ZipOutputStream(Files.newOutputStream(output))) {
             for (ReportSource reportSource : report.reportSources) {
@@ -221,13 +231,17 @@ public abstract class BaseReportTask implements Runnable {
                         String deviceName = deviceDao.getDeviceName(deviceId);
                         for (ReportDataStream reportDataStream : reportSource.reportDataStreams) {
                             if (reportDataStream.isValid()) {
-                                ByteBuffer onePinData = reportingDiskDao.getByteBufferFromDisk(
-                                        deviceId, reportDataStream.pinType,
-                                        reportDataStream.pin, fetchCount, report.granularityType, 0);
+                                List<RawEntry> entries = reportingDBDao.getReportingDataByTs(
+                                        report.granularityType,
+                                        deviceId, reportDataStream.pin,
+                                        reportDataStream.pinType,
+                                        from, to,
+                                        0, fetchCount);
+                                ByteBuffer onePinData = RawEntry.convertToByteBuffer(entries);
 
                                 if (onePinData != null) {
-                                    String onePinDataCsv = FileUtils.writeBufToCsvFilterAndFormat(onePinData,
-                                            startFrom, report.makeFormatter());
+                                    String onePinDataCsv = FileUtils.writeBufToCsvFilterAndFormat(
+                                            onePinData, report.makeFormatter());
                                     if (onePinDataCsv.length() > 0) {
                                         String onePinFileName =
                                                 deviceAndPinFileName(deviceName, deviceId, reportDataStream);

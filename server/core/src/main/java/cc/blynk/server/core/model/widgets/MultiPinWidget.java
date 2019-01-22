@@ -2,7 +2,6 @@ package cc.blynk.server.core.model.widgets;
 
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.enums.PinType;
-import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Arrays;
@@ -50,10 +49,6 @@ public abstract class MultiPinWidget extends Widget implements MobileSyncWidget 
     }
 
     public abstract boolean isSplitMode();
-
-    public boolean isAssignedToDeviceSelector() {
-        return this.deviceId >= DeviceSelector.DEVICE_SELECTOR_STARTING_ID;
-    }
 
     public String makeHardwareBody(short pinIn, PinType pinType) {
         if (dataStreams == null) {

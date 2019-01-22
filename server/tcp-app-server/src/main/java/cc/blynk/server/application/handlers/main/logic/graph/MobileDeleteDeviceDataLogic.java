@@ -1,8 +1,10 @@
 package cc.blynk.server.application.handlers.main.logic.graph;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.mobile.MobileStateHolder;
+import cc.blynk.utils.NumberUtil;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -45,7 +47,9 @@ public final class MobileDeleteDeviceDataLogic {
     private static void delete(Holder holder, Channel channel, int msgId, int... deviceIds) {
         holder.blockingIOProcessor.executeHistory(() -> {
             try {
-                holder.reportingDiskDao.delete(deviceIds);
+                for (int deviceId : deviceIds) {
+                    holder.reportingDBManager.reportingDBDao.delete(deviceId);
+                }
                 if (log.isDebugEnabled()) {
                     log.debug("Removed all files for deviceIds {}", Arrays.toString(deviceIds));
                 }
@@ -57,11 +61,16 @@ public final class MobileDeleteDeviceDataLogic {
         });
     }
 
-    private static void delete(Holder holder,  Channel channel, int msgId, int deviceId, String[] pins) {
+    private static void delete(Holder holder, Channel channel, int msgId, int deviceId, String[] pins) {
         holder.blockingIOProcessor.executeHistory(() -> {
             try {
-                int removedCounter = holder.reportingDiskDao.delete(deviceId, pins);
-                log.debug("Removed {} files for deviceId {}", removedCounter, deviceId);
+                for (String pinString : pins) {
+                    PinType pinType = PinType.getPinType(pinString.charAt(0));
+                    short pin = NumberUtil.parsePin(pinString.substring(1));
+                    int removedCounter =
+                            holder.reportingDBManager.reportingDBDao.delete(deviceId, pin, pinType);
+                    log.info("Removed {} records for deviceId {} and pin {}.", removedCounter, deviceId, pin);
+                }
                 channel.writeAndFlush(ok(msgId), channel.voidPromise());
             } catch (Exception e) {
                 log.warn("Error removing device data. Reason : {}.", e.getMessage());

@@ -5,8 +5,6 @@ import cc.blynk.server.core.model.widgets.DeviceCleaner;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_REPORT_DATA_STREAMS;
-
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -18,6 +16,8 @@ import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_REPORT_DATA_STREAMS
         @JsonSubTypes.Type(value = DeviceReportSource.class, name = "DEVICE")
 })
 public abstract class ReportSource implements DeviceCleaner {
+
+    private static final ReportDataStream[] EMPTY_REPORT_DATA_STREAMS = {};
 
     public final ReportDataStream[] reportDataStreams;
 

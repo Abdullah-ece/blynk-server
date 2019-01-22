@@ -11,8 +11,6 @@ import cc.blynk.server.core.processors.NotificationBase;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 
-import java.util.Objects;
-
 /**
  * User: ddumanskiy
  * Date: 8/11/13
@@ -184,7 +182,6 @@ public class User {
         for (DashBoard dash : profile.dashBoards) {
             dash.eraseWidgetValuesForDevice(deviceId);
         }
-        profile.deleteDeviceFromTags(deviceId);
     }
 
     @Override
@@ -195,14 +192,20 @@ public class User {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
+
         User user = (User) o;
-        return orgId == user.orgId
-                && Objects.equals(email, user.email);
+
+        if (orgId != user.orgId) {
+            return false;
+        }
+        return email != null ? email.equals(user.email) : user.email == null;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(email, orgId);
+        int result = email != null ? email.hashCode() : 0;
+        result = 31 * result + orgId;
+        return result;
     }
 
     @Override

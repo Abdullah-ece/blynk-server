@@ -2,7 +2,7 @@ package cc.blynk.integration.tcp;
 
 import cc.blynk.integration.SingleServerInstancePerTest;
 import cc.blynk.integration.model.tcp.TestHardClient;
-import cc.blynk.server.core.dao.ReportingDiskDao;
+import cc.blynk.server.core.dao.PinNameUtil;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.device.BoardType;
@@ -386,7 +386,10 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
 
     @Test
     public void createTemplateAndUpdatePinFor2Templates() throws Exception {
-        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
+        Device device1 = new Device();
+        device1.id = 1;
+        device1.name = "My Device";
+        device1.boardType = BoardType.ESP8266;
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(device1);
@@ -473,7 +476,10 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
 
     @Test
     public void syncForSpecificDeviceTile() throws Exception {
-        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
+        Device device1 = new Device();
+        device1.id = 1;
+        device1.name = "My Device";
+        device1.boardType = BoardType.ESP8266;
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(device1);
@@ -601,7 +607,10 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
 
     @Test
     public void readingWidgetWorksForDeviceTiles() throws Exception {
-        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
+        Device device1 = new Device();
+        device1.id = 1;
+        device1.name = "My Device";
+        device1.boardType = BoardType.ESP8266;
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(device1);
@@ -675,7 +684,10 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
 
     @Test
     public void readingWidgetWorksForAllTilesWithinDeviceTiles() throws Exception {
-        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
+        Device device1 = new Device();
+        device1.id = 1;
+        device1.name = "My Device";
+        device1.boardType = BoardType.ESP8266;
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(device1);
@@ -739,7 +751,10 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
 
     @Test
     public void doNotPerformReadCommandWhenNoReadingWidgetInsideTileTemplate() throws Exception {
-        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
+        Device device1 = new Device();
+        device1.id = 1;
+        device1.name = "My Device";
+        device1.boardType = BoardType.ESP8266;
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(device1);
@@ -805,7 +820,10 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
 
     @Test
     public void deviceRemovalDoesntEraseAllTiles() throws Exception {
-        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
+        Device device1 = new Device();
+        device1.id = 1;
+        device1.name = "My Device";
+        device1.boardType = BoardType.ESP8266;
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(device1);
@@ -879,7 +897,10 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
 
     @Test
     public void addingNewDeviceToTheTilesPreservesTileValue() throws Exception {
-        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
+        Device device1 = new Device();
+        device1.id = 1;
+        device1.name = "My Device";
+        device1.boardType = BoardType.ESP8266;
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(device1);
@@ -954,7 +975,10 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
 
     @Test
     public void addingNewDeviceToTheTilesPreservesTemplateValue() throws Exception {
-        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
+        Device device1 = new Device();
+        device1.id = 1;
+        device1.name = "My Device";
+        device1.boardType = BoardType.ESP8266;
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(device1);
@@ -1351,7 +1375,7 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
         Path userReportDirectory = Paths.get(holder.props.getProperty("data.folder"), "data", getUserName());
         Files.createDirectories(userReportDirectory);
         Path userReportFile = Paths.get(userReportDirectory.toString(),
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 88, GraphGranularityType.MINUTE));
+                PinNameUtil.generateFilename(PinType.VIRTUAL, (short) 88, GraphGranularityType.MINUTE));
         FileUtils.write(userReportFile, 1.1, 1L);
         FileUtils.write(userReportFile, 2.2, 2L);
 

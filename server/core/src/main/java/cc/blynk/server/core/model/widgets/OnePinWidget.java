@@ -4,7 +4,6 @@ import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import io.netty.channel.Channel;
 
 import java.util.Iterator;
@@ -60,11 +59,6 @@ public abstract class OnePinWidget extends Widget implements MobileSyncWidget {
 
     @Override
     public void sendAppSync(Channel appChannel, int targetId) {
-        //do not send SYNC message for widgets assigned to device selector
-        //as it will be duplicated later.
-        if (isAssignedToDeviceSelector()) {
-            return;
-        }
         if (targetId == ANY_TARGET || this.deviceId == targetId) {
             String hardBody = makeHardwareBody();
             if (hardBody != null) {
@@ -72,10 +66,6 @@ public abstract class OnePinWidget extends Widget implements MobileSyncWidget {
                 appChannel.write(makeUTF8StringMessage(DEVICE_SYNC, SYNC_DEFAULT_MESSAGE_ID, body));
             }
         }
-    }
-
-    public boolean isAssignedToDeviceSelector() {
-        return this.deviceId >= DeviceSelector.DEVICE_SELECTOR_STARTING_ID;
     }
 
     public boolean isValid() {

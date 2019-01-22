@@ -93,6 +93,7 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_ACCOUNT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_DEVICES_META_IN_PRODUCT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_DEVICE_METAFIELD;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_ORG;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_OWN_ORG;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_PRODUCT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_ROLE;
@@ -372,6 +373,10 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         send(WEB_EDIT_OWN_ORG, organizationDTO);
     }
 
+    public void editOrg(OrganizationDTO organizationDTO) {
+        send(WEB_EDIT_ORG, organizationDTO);
+    }
+
     public void deleteUser(int orgId, String... users) {
         send(WEB_DELETE_USER, "" + orgId + StringUtils.BODY_SEPARATOR_STRING
                 + JsonParser.valueToJsonAsString(Arrays.asList(users)));
@@ -379,9 +384,9 @@ public final class AppWebSocketClient extends BaseTestAppClient {
 
     public void getTimeline(int deviceId,
                             EventType eventType, Boolean isResolved,
-                            long form, long to,
+                            long from, long to,
                             int offset, int limit) {
-        send(WEB_GET_DEVICE_TIMELINE, new TimelineDTO(deviceId, eventType, isResolved, form, to, offset, limit));
+        send(WEB_GET_DEVICE_TIMELINE, new TimelineDTO(deviceId, eventType, isResolved, from, to, offset, limit));
     }
 
     public void updateDeviceMetafield(int deviceId, MetaField metaField) {

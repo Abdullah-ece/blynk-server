@@ -119,7 +119,6 @@ public final class ArrayUtil {
         return c;
     }
 
-    @SuppressWarnings("unchecked")
     public static <T> List<T> substruct(T[] in, T[] in2) {
         List<T> inSet = arrayToList(in);
         List<T> existingSet = arrayToList(in2);

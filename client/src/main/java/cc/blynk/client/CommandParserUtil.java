@@ -26,7 +26,6 @@ import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_APP;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_REPORT;
-import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_TAG;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_TILE_TEMPLATE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DEACTIVATE_DASHBOARD;
@@ -34,9 +33,8 @@ import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_APP;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_DEVICE_DATA;
-import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_ENHANCED_GRAPH_DATA;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_REPORT;
-import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_TAG;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_TILE_TEMPLATE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_APP;
@@ -47,7 +45,6 @@ import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_FACE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_PROFILE_SETTINGS;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_PROJECT_SETTINGS;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_REPORT;
-import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_TAG;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_TILE_TEMPLATE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EXPORT_REPORT;
@@ -56,7 +53,6 @@ import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICES;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICES_BY_REFERENCE_METAFIELD;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_ENERGY;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_PROVISION_TOKEN;
-import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_TAGS;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_LOAD_PROFILE_GZIPPED;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_REGISTER;
@@ -159,7 +155,7 @@ public final class CommandParserUtil {
             case "getenhanceddata" :
                 return GET_SUPERCHART_DATA;
             case "deleteenhanceddata" :
-                return MOBILE_DELETE_ENHANCED_GRAPH_DATA;
+                return MOBILE_DELETE_GRAPH_DATA;
             case "activate" :
                 return MOBILE_ACTIVATE_DASHBOARD;
             case "deactivate" :
@@ -223,15 +219,6 @@ public final class CommandParserUtil {
                 return MOBILE_GET_DEVICES;
             case "getdevice" :
                 return MOBILE_GET_DEVICE;
-
-            case "createtag" :
-                return MOBILE_CREATE_TAG;
-            case "updatetag" :
-                return MOBILE_EDIT_TAG;
-            case "deletetag" :
-                return MOBILE_DELETE_TAG;
-            case "gettags" :
-                return MOBILE_GET_TAGS;
 
             case "addenergy" :
                 return MOBILE_ADD_ENERGY;

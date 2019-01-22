@@ -46,7 +46,11 @@ public class PortUnificationTest extends SingleServerInstancePerTest {
         appClient.login(getUserName(), "1", "Android", "1.10.4");
         appClient.createDash("{\"id\":1, \"createdAt\":1, \"name\":\"test board\"}");
 
-        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
+        Device device1 = new Device();
+        device1.id = 1;
+        device1.name = "My Device";
+        device1.boardType = BoardType.ESP8266;
+
         appClient.createDevice(device1);
 
         appClient.verifyResult(ok(1));

@@ -2,7 +2,6 @@ package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
-import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
@@ -37,14 +36,12 @@ public class MobileGetProjectByClonedTokenLogic {
 
     private final BlockingIOProcessor blockingIOProcessor;
     private final DBManager dbManager;
-    private final FileManager fileManager;
     private final TimerWorker timerWorker;
     private final int dashMaxLimit;
 
     public MobileGetProjectByClonedTokenLogic(Holder holder) {
         this.blockingIOProcessor = holder.blockingIOProcessor;
         this.dbManager = holder.dbManager;
-        this.fileManager = holder.fileManager;
         this.dashMaxLimit = holder.limits.dashboardsLimit;
         this.timerWorker = holder.timerWorker;
     }
@@ -64,10 +61,6 @@ public class MobileGetProjectByClonedTokenLogic {
             MessageBase result;
             try {
                 String json = dbManager.selectClonedProject(token);
-                //no cloned project in DB, checking local storage on disk
-                if (json == null) {
-                    json = fileManager.readClonedProjectFromDisk(token);
-                }
                 if (json == null) {
                     log.debug("Cannot find request clone QR. {}", token);
                     result = json(message.id, "Cannot find requested clone QR.");

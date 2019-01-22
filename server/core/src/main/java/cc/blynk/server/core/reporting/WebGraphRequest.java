@@ -54,7 +54,7 @@ public class WebGraphRequest {
 
     @Override
     public String toString() {
-        return "GraphPinRequest{"
+        return "WebGraphRequest{"
                 + ", deviceId=" + deviceId
                 + ", pinType=" + pinType
                 + ", pin=" + pin

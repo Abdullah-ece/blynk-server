@@ -52,8 +52,8 @@ public final class WebEditOwnDeviceLogic implements PermissionBasedLogic<WebAppS
         Device newDevice = JsonParser.parseDevice(split[1], message.id);
 
         if (newDevice == null || newDevice.productId < 1) {
-            log.error("No data or productId is wrong. {}", newDevice);
-            ctx.writeAndFlush(json(message.id, "Empty body."), ctx.voidPromise());
+            log.error("Empty body or productId is wrong. {}", newDevice);
+            ctx.writeAndFlush(json(message.id, "Empty body or productId is wrong."), ctx.voidPromise());
             return;
         }
 

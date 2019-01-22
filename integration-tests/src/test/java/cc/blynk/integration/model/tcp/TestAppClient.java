@@ -6,7 +6,6 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DashboardSettings;
 import cc.blynk.server.core.model.auth.App;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.dto.DeviceDTO;
 import cc.blynk.server.core.model.profile.Profile;
 import cc.blynk.server.core.model.profile.ProfileSettings;
@@ -41,15 +40,14 @@ import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_APP;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_REPORT;
-import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_TAG;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_TILE_TEMPLATE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DEACTIVATE_DASHBOARD;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_DEVICE_DATA;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_REPORT;
-import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_TAG;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_DEVICE;
@@ -57,7 +55,6 @@ import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_DEVICE_MET
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_PROFILE_SETTINGS;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_PROJECT_SETTINGS;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_REPORT;
-import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_TAG;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_TILE_TEMPLATE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EXPORT_REPORT;
@@ -136,10 +133,6 @@ public class TestAppClient extends BaseTestAppClient {
         return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), DeviceDTO[].class);
     }
 
-    public Tag[] parseTags(int expectedMessageOrder) throws Exception {
-        return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), Tag[].class);
-    }
-
     public App parseApp(int expectedMessageOrder) throws Exception {
         return JsonParser.parseApp(getBody(expectedMessageOrder), 0);
     }
@@ -175,14 +168,6 @@ public class TestAppClient extends BaseTestAppClient {
                 );
             }
         };
-    }
-
-    public void createTag(int dashId, Tag tag) {
-        send(MOBILE_CREATE_TAG, "" + dashId + BODY_SEPARATOR + tag.toString());
-    }
-
-    public void updateTag(int dashId, Tag tag) {
-        send(MOBILE_EDIT_TAG, "" + dashId + BODY_SEPARATOR + tag.toString());
     }
 
     public void createDevice(Device device) {
@@ -247,10 +232,6 @@ public class TestAppClient extends BaseTestAppClient {
         send(MOBILE_DELETE_DASH, dashId);
     }
 
-    public void deleteTag(int dashId, int tagId) {
-        send(MOBILE_DELETE_TAG, "" + dashId + BODY_SEPARATOR + tagId);
-    }
-
     public void createDash(DashBoard dashBoard) {
         createDash(dashBoard.toString());
     }
@@ -301,11 +282,19 @@ public class TestAppClient extends BaseTestAppClient {
         send(MOBILE_DELETE_DEVICE_DATA, "" + dashId + DEVICE_SEPARATOR + deviceId + BODY_SEPARATOR + sj.toString());
     }
 
-    public void getEnhancedGraphData(int dashId, long widgetId, Period period) {
+    public void deleteGraphData(int dashId, long widgetId, String... pins) {
+        StringJoiner sj = new StringJoiner(BODY_SEPARATOR_STRING);
+        for (String pin : pins) {
+            sj.add(pin);
+        }
+        send(MOBILE_DELETE_GRAPH_DATA, "" + dashId + BODY_SEPARATOR + widgetId + BODY_SEPARATOR + sj.toString());
+    }
+
+    public void getSuperChartData(int dashId, long widgetId, Period period) {
         send(GET_SUPERCHART_DATA, "" + dashId + BODY_SEPARATOR + widgetId + BODY_SEPARATOR + period.name());
     }
 
-    public void getEnhancedGraphData(int dashId, long widgetId, Period period, int page) {
+    public void getSuperChartData(int dashId, long widgetId, Period period, int page) {
         send(GET_SUPERCHART_DATA, "" + dashId + BODY_SEPARATOR + widgetId + BODY_SEPARATOR + period.name() + BODY_SEPARATOR + page);
     }
 
@@ -382,8 +371,8 @@ public class TestAppClient extends BaseTestAppClient {
         send(MOBILE_GET_PROVISION_TOKEN, device);
     }
 
-    public void addPushToken(String uid, String token) {
-        send(MOBILE_ADD_PUSH_TOKEN, uid + BODY_SEPARATOR + token);
+    public void addPushToken(int projectId, String uid, String token) {
+        send(MOBILE_ADD_PUSH_TOKEN, projectId + BODY_SEPARATOR + uid + BODY_SEPARATOR + token);
     }
 
     public void editProfileSettings(ProfileSettings profileSettings) {
@@ -408,6 +397,10 @@ public class TestAppClient extends BaseTestAppClient {
 
     public void addEnergy(int energy, String transactionId) {
         send(MOBILE_ADD_ENERGY, "" + energy + BODY_SEPARATOR + transactionId);
+    }
+
+    public void addPushToken(String uid, String token) {
+        send(MOBILE_ADD_PUSH_TOKEN, uid + BODY_SEPARATOR + token);
     }
 
     public void replace(SimpleClientHandler simpleClientHandler) {

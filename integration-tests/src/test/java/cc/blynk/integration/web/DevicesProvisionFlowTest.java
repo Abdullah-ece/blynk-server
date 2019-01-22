@@ -25,8 +25,8 @@ import cc.blynk.server.core.model.web.product.EventReceiver;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.MetadataType;
 import cc.blynk.server.core.model.web.product.Product;
-import cc.blynk.server.core.model.web.product.events.CriticalEvent;
 import cc.blynk.server.core.model.web.product.events.Event;
+import cc.blynk.server.core.model.web.product.events.user.CriticalEvent;
 import cc.blynk.server.core.model.web.product.metafields.DeviceNameMetaField;
 import cc.blynk.server.core.model.web.product.metafields.DeviceOwnerMetaField;
 import cc.blynk.server.core.model.web.product.metafields.DeviceReferenceMetaField;
@@ -448,7 +448,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         product.name = "My product";
         product.metaFields = new MetaField[] {
                 createDeviceOwnerMeta(1, "Device Name", null, true),
-                new DeviceReferenceMetaField(2, "Device Ref", new int[] {1}, true, true, true, null, null, -1L),
+                new DeviceReferenceMetaField(2, "Device Ref", new int[] {1}, true, true, true, null, null, -1),
                 createDeviceNameMeta(3, "Device Name", "111", true)
         };
 
@@ -458,7 +458,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
 
         fromApiProduct = updateProductMetafields(fromApiProduct,
                 createDeviceOwnerMeta(1, "Device Name", null, true),
-                new DeviceReferenceMetaField(2, "Device Ref", new int[] {1}, true, true, true, null, new int[] {fromApiProduct.id}, -1L),
+                new DeviceReferenceMetaField(2, "Device Ref", new int[] {1}, true, true, true, null, new int[] {fromApiProduct.id}, -1),
                 createDeviceNameMeta(3, "Device Name", "111", true)
         );
 
@@ -476,7 +476,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
 
         TestAppClient appClient = new TestAppClient("localhost", properties.getHttpsPort());
         appClient.start();
-        appClient.login(getUserName(), "1");
+        appClient.login(getUserName(), "1", "Android", "2.27.1");
         appClient.verifyResult(ok(1));
         appClient.getDevice(createdDevice.id, true);
         Device device = appClient.parseDevice(2);
@@ -509,7 +509,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         assertNotNull(fromApiProduct);
 
         DeviceReferenceMetaField deviceReferenceMetaField =
-                new DeviceReferenceMetaField(3, "Device Ref", new int[] {1}, true, true, true, null, new int[] {fromApiProduct.id}, -1L);
+                new DeviceReferenceMetaField(3, "Device Ref", new int[] {1}, true, true, true, null, new int[] {fromApiProduct.id}, -1);
         Product product2 = new Product();
         product2.name = "My product 2";
         product2.metaFields = new MetaField[] {
@@ -1029,7 +1029,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
                 1,
                 "Temp is super high",
                 "This is my description",
-                false,
+                true,
                 "temp_is_high" ,
                 null,
                 new EventReceiver[] {
@@ -1111,8 +1111,8 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         ConcurrentHashMap<String, String> expectedMap = new ConcurrentHashMap<>();
         expectedMap.put("androidUid", "androidToken");
         ConcurrentHashMap<String, String> emptyMap = new ConcurrentHashMap<>();
-        verify(holder.gcmWrapper).sendAndroid(eq(expectedMap), eq(Priority.high), eq("My Default device Name: Temp is super high\nThis is my description"), eq(deviceFromApi.id));
-        verify(holder.gcmWrapper).sendIOS(eq(emptyMap), eq(Priority.high), eq("My Default device Name: Temp is super high\nThis is my description"), eq(deviceFromApi.id));
+        verify(holder.gcmWrapper).sendAndroid(eq(expectedMap), eq(Priority.high), eq("My Default device Name:\nTemp is super high\nThis is my description"), eq(deviceFromApi.id));
+        verify(holder.gcmWrapper).sendIOS(eq(emptyMap), eq(Priority.high), eq("My Default device Name:\nTemp is super high\nThis is my description"), eq(deviceFromApi.id));
     }
 
     @Test

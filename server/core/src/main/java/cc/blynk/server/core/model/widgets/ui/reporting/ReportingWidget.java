@@ -1,6 +1,5 @@
 package cc.blynk.server.core.model.widgets.ui.reporting;
 
-import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.DeviceCleaner;
 import cc.blynk.server.core.model.widgets.NoPinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
@@ -10,15 +9,15 @@ import cc.blynk.server.core.model.widgets.outputs.graph.FontSize;
 import cc.blynk.server.core.model.widgets.ui.reporting.source.ReportSource;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 
-import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_REPORTS;
-import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_REPORT_SOURCES;
-
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 22.05.18.
  */
 public class ReportingWidget extends NoPinWidget implements DeviceCleaner {
+
+    static final ReportSource[] EMPTY_REPORT_SOURCES = {};
+    private static final Report[] EMPTY_REPORTS = {};
 
     public ReportSource[] reportSources = EMPTY_REPORT_SOURCES;
 
@@ -57,15 +56,6 @@ public class ReportingWidget extends NoPinWidget implements DeviceCleaner {
             }
         }
         return -1;
-    }
-
-    public boolean hasPin(short pin, PinType pinType) {
-        for (ReportSource reportSource : reportSources) {
-            if (reportSource.isSame(pin, pinType)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     @Override

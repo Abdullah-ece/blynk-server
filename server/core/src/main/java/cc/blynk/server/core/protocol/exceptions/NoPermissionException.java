@@ -5,7 +5,7 @@ package cc.blynk.server.core.protocol.exceptions;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/3/2015.
  */
-public class NoPermissionException extends RuntimeException {
+public final class NoPermissionException extends RuntimeException {
 
     public NoPermissionException(String msg) {
         super(msg, null, true, false);

@@ -98,22 +98,6 @@ public class ServerProperties extends BaseProperties {
         return getProperty("server.host");
     }
 
-    public boolean isDBEnabled() {
-        return getBoolProperty("enable.db");
-    }
-
-    public String getHttpsPortOrBlankIfDefaultAsString() {
-        if (forceRegularPort()) {
-            //means default port 443 is used, so no need to attach it
-            return "";
-        }
-        String httpsPort = getProperty("https.port");
-        if (httpsPort == null || httpsPort.equals("443")) {
-            return "";
-        }
-        return ":" + httpsPort;
-    }
-
     private boolean forceRegularPort() {
         return getBoolProperty("force.regular.port");
     }
@@ -128,10 +112,6 @@ public class ServerProperties extends BaseProperties {
 
     public boolean getAllowStoreIp() {
         return getBoolProperty("allow.store.ip");
-    }
-
-    public boolean isRawDBEnabled() {
-        return getBoolProperty("enable.raw.db.data.store");
     }
 
     public String getDeviceUrl() {

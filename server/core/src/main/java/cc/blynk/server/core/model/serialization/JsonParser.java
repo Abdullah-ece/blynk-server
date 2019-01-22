@@ -7,7 +7,6 @@ import cc.blynk.server.core.model.auth.App;
 import cc.blynk.server.core.model.auth.FacebookTokenResponse;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.dto.OrganizationDTO;
 import cc.blynk.server.core.model.profile.Profile;
 import cc.blynk.server.core.model.profile.ProfileSettings;
@@ -72,7 +71,6 @@ public final class JsonParser {
     private static final ObjectReader tileTemplateReader = MAPPER.readerFor(TileTemplate.class);
     private static final ObjectReader appReader = MAPPER.readerFor(App.class);
     private static final ObjectReader deviceReader = MAPPER.readerFor(Device.class);
-    private static final ObjectReader tagReader = MAPPER.readerFor(Tag.class);
     private static final ObjectReader facebookTokenReader = MAPPER.readerFor(FacebookTokenResponse.class);
     private static final ObjectReader reportReader = MAPPER.readerFor(Report.class);
     private static final ObjectReader productReader = MAPPER.readerFor(Product.class);
@@ -346,10 +344,6 @@ public final class JsonParser {
 
     public static Device parseDevice(String json, int msgId) {
         return parse(deviceReader, json, "Error parsing device.", msgId);
-    }
-
-    public static Tag parseTag(String json, int msgId) {
-        return parse(tagReader, json, "Error parsing tag.", msgId);
     }
 
     public static MetaField parseMetafield(String json, int msgId) {

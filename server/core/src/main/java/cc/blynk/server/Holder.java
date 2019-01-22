@@ -6,7 +6,6 @@ import cc.blynk.server.core.dao.DeviceTokenManager;
 import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.NotificationsDao;
 import cc.blynk.server.core.dao.OrganizationDao;
-import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.SharedTokenManager;
 import cc.blynk.server.core.dao.UserDao;
@@ -59,9 +58,8 @@ public class Holder {
 
     public final OrganizationDao organizationDao;
 
-    public final ReportingDiskDao reportingDiskDao;
-
     public final DBManager dbManager;
+
     public final ReportingDBManager reportingDBManager;
 
     public final GlobalStats stats;
@@ -110,9 +108,8 @@ public class Holder {
                 serverProperties.getIntProperty("notifications.queue.limit", 2000)
         );
 
-        boolean enableDB = serverProperties.isDBEnabled();
-        this.dbManager = new DBManager(blockingIOProcessor, enableDB);
-        this.reportingDBManager = new ReportingDBManager(blockingIOProcessor, enableDB);
+        this.dbManager = new DBManager(blockingIOProcessor);
+        this.reportingDBManager = new ReportingDBManager(blockingIOProcessor, props.getReportingFolder());
 
         if (restore) {
             try {
@@ -135,8 +132,6 @@ public class Holder {
         this.sharedTokenManager = new SharedTokenManager(users);
 
         this.stats = new GlobalStats();
-        this.reportingDiskDao = new ReportingDiskDao(serverProperties.getReportingFolder(),
-                serverProperties.isRawDBEnabled() && reportingDBManager.isDBEnabled());
 
         this.transportTypeHolder = new TransportTypeHolder(serverProperties);
 
@@ -163,7 +158,8 @@ public class Holder {
         this.limits = new Limits(props);
 
         this.reportScheduler = new ReportScheduler(
-                1, serverProperties.httpsServerUrl, mailWrapper, reportingDiskDao, userDao.users, deviceDao);
+                1, serverProperties.httpsServerUrl, mailWrapper,
+                reportingDBManager.reportingDBDao, userDao.users, deviceDao);
 
         String contactEmail = serverProperties.getProperty("contact.email", mailProperties.getSMTPUsername());
         this.sslContextHolder = new SslContextHolder(props, contactEmail);
@@ -185,9 +181,8 @@ public class Holder {
         this.userDao = new UserDao(fileManager.deserializeUsers(), serverProperties.region, serverProperties.host);
         this.blockingIOProcessor = blockingIOProcessor;
 
-        boolean enableDB = serverProperties.isDBEnabled();
-        this.dbManager = new DBManager(dbFileName, blockingIOProcessor, enableDB);
-        this.reportingDBManager = new ReportingDBManager(dbFileName, blockingIOProcessor, enableDB);
+        this.dbManager = new DBManager(dbFileName, blockingIOProcessor);
+        this.reportingDBManager = new ReportingDBManager(dbFileName, blockingIOProcessor, props.getReportingFolder());
 
         this.organizationDao = new OrganizationDao(fileManager, userDao);
         Collection<Organization> orgs = organizationDao.organizations.values();
@@ -197,8 +192,6 @@ public class Holder {
         this.sharedTokenManager = new SharedTokenManager(users);
 
         this.stats = new GlobalStats();
-        this.reportingDiskDao = new ReportingDiskDao(serverProperties.getReportingFolder(),
-                serverProperties.isRawDBEnabled() && reportingDBManager.isDBEnabled());
 
         this.transportTypeHolder = new TransportTypeHolder(serverProperties);
 
@@ -225,7 +218,8 @@ public class Holder {
         this.limits = new Limits(props);
 
         this.reportScheduler = new ReportScheduler(
-                1, serverProperties.httpsServerUrl, mailWrapper, reportingDiskDao, userDao.users, deviceDao);
+                1, serverProperties.httpsServerUrl, mailWrapper,
+                reportingDBManager.reportingDBDao, userDao.users, deviceDao);
 
         this.sslContextHolder = new SslContextHolder(props, "test@blynk.cc");
         this.tokensPool = new TokensPool(serverProperties.getReportingFolder());
@@ -245,8 +239,6 @@ public class Holder {
 
         transportTypeHolder.close();
         asyncHttpClient.close();
-
-        reportingDiskDao.close();
 
         System.out.println("Stopping BlockingIOProcessor...");
         blockingIOProcessor.close();

@@ -11,8 +11,8 @@ import cc.blynk.server.core.session.web.WebAppStateHolder;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_CREATE;
+import static cc.blynk.server.core.model.web.product.Product.EMPTY_PRODUCTS;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
-import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_PRODUCTS;
 import static cc.blynk.server.internal.WebByteBufUtil.json;
 import static cc.blynk.utils.StringUtils.split2;
 

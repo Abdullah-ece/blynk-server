@@ -1,13 +1,14 @@
-package cc.blynk.server.core.model.web.product.events;
+package cc.blynk.server.core.model.web.product.events.system;
 
 import cc.blynk.server.core.model.web.product.EventReceiver;
+import cc.blynk.server.core.model.web.product.events.Event;
 
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 08.06.17.
  */
-public abstract class SystemEvent extends Event {
+abstract class SystemEvent extends Event {
 
     SystemEvent(int id, String name, String description,
                        boolean isNotificationsEnabled, String eventCode,

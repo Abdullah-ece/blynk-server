@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.TimeZone;
 
 import static cc.blynk.server.core.model.enums.PinType.VIRTUAL;
-import static cc.blynk.server.core.reporting.average.AverageAggregatorProcessor.MINUTE;
+import static cc.blynk.utils.DateTimeUtils.MINUTE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -40,7 +40,7 @@ public class ReportingDBTest {
     @BeforeClass
     public static void init() throws Exception {
         blockingIOProcessor = new BlockingIOProcessor(4, 10000);
-        reportingDBManager = new ReportingDBManager("db-test.properties", blockingIOProcessor, true);
+        reportingDBManager = new ReportingDBManager("db-test.properties", blockingIOProcessor, "");
         assertNotNull(reportingDBManager.getConnection());
     }
 
@@ -78,7 +78,7 @@ public class ReportingDBTest {
         aggregationValue.update(1.0D);
         Map<AggregationKey, AggregationValue> data = new HashMap<>();
         data.put(
-                new AggregationKey(1, 1, PinType.VIRTUAL, (byte) 1, System.currentTimeMillis() / MINUTE),
+                new AggregationKey(1, PinType.VIRTUAL, (byte) 1, System.currentTimeMillis() / MINUTE),
                 aggregationValue
         );
         reportingDBManager.reportingDBDao.insert(data, GraphGranularityType.MINUTE);

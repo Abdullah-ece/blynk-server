@@ -19,20 +19,16 @@ import static cc.blynk.server.core.protocol.enums.Command.MOBILE_ADD_ENERGY;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_ADD_PUSH_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_DEVICE;
-import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_TAG;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DEACTIVATE_DASHBOARD;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_DEVICE;
-import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_TAG;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_DEVICE;
-import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_TAG;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICES;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_ENERGY;
-import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_TAGS;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_LOAD_PROFILE_GZIPPED;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_REGISTER;
 import static cc.blynk.server.core.protocol.enums.Command.PING;
@@ -231,18 +227,6 @@ public class CommandStat {
                 break;
             case MOBILE_GET_DEVICES:
                 this.getDevices = val;
-                break;
-            case MOBILE_CREATE_TAG:
-                this.createTag = val;
-                break;
-            case MOBILE_EDIT_TAG:
-                this.updateTag = val;
-                break;
-            case MOBILE_DELETE_TAG:
-                this.deleteTag = val;
-                break;
-            case MOBILE_GET_TAGS:
-                this.getTags = val;
                 break;
             case MOBILE_ADD_ENERGY:
                 this.addEnergy = val;

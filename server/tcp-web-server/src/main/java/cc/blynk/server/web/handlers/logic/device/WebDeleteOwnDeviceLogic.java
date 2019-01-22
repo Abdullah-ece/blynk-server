@@ -4,7 +4,6 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.PermissionBasedLogic;
 import cc.blynk.server.core.dao.DeviceDao;
-import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
@@ -12,6 +11,7 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.protocol.exceptions.NoPermissionException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
+import cc.blynk.server.db.dao.ReportingDBDao;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.model.permissions.PermissionsTable.OWN_DEVICES_DELETE;
@@ -29,13 +29,13 @@ public final class WebDeleteOwnDeviceLogic implements PermissionBasedLogic<WebAp
     private final DeviceDao deviceDao;
     private final SessionDao sessionDao;
     private final BlockingIOProcessor blockingIOProcessor;
-    private final ReportingDiskDao reportingDiskDao;
+    private final ReportingDBDao reportingDBDao;
 
     WebDeleteOwnDeviceLogic(Holder holder) {
         this.deviceDao = holder.deviceDao;
         this.sessionDao = holder.sessionDao;
         this.blockingIOProcessor = holder.blockingIOProcessor;
-        this.reportingDiskDao = holder.reportingDiskDao;
+        this.reportingDBDao = holder.reportingDBManager.reportingDBDao;
     }
 
     @Override
@@ -73,7 +73,7 @@ public final class WebDeleteOwnDeviceLogic implements PermissionBasedLogic<WebAp
 
         blockingIOProcessor.executeHistory(() -> {
             try {
-                reportingDiskDao.delete(deviceId);
+                reportingDBDao.delete(deviceId);
             } catch (Exception e) {
                 log.warn("Error removing device data. Reason : {}.", e.getMessage());
             }

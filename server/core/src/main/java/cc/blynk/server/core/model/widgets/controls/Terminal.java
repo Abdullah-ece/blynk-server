@@ -3,9 +3,6 @@ package cc.blynk.server.core.model.widgets.controls;
 import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.core.model.storage.value.MultiPinStorageValue;
-import cc.blynk.server.core.model.storage.value.MultiPinStorageValueType;
-import cc.blynk.server.core.model.storage.value.PinStorageValue;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.utils.structure.LimitedArrayDeque;
 import cc.blynk.utils.structure.TerminalLimitedQueue;
@@ -69,16 +66,6 @@ public class Terminal extends OnePinWidget {
         }
         //terminal supports only virtual pins
         return makeHardwareBody(pinType, pin, lastCommands.getLast());
-    }
-
-    @Override
-    public PinStorageValue getPinStorageValue() {
-        return new MultiPinStorageValue(MultiPinStorageValueType.TERMINAL);
-    }
-
-    @Override
-    public boolean isMultiValueWidget() {
-        return true;
     }
 
     @Override

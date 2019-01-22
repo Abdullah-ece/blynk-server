@@ -22,7 +22,7 @@ import cc.blynk.server.core.model.widgets.web.label.WebLabel;
 import cc.blynk.server.core.reporting.raw.BaseReportingKey;
 import cc.blynk.server.core.reporting.raw.RawDataProcessor;
 import cc.blynk.server.db.dao.descriptor.DataQueryRequestDTO;
-import cc.blynk.server.db.dao.descriptor.TableDescriptor;
+import cc.blynk.server.db.dao.descriptor.DeviceRawDataTableDescriptor;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -65,7 +65,7 @@ public class DataAPITest extends APIBaseTest {
 
         this.clientPair = initAppAndHardPair();
         //clean everything just in case
-        holder.reportingDBManager.executeSQL("DELETE FROM " + TableDescriptor.BLYNK_DEFAULT_INSTANCE.tableName);
+        holder.reportingDBManager.executeSQL("DELETE FROM " + DeviceRawDataTableDescriptor.NAME);
     }
 
     @After

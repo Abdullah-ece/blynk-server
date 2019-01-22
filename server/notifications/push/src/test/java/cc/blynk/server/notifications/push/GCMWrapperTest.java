@@ -62,13 +62,13 @@ public class GCMWrapperTest {
 
     @Test
     public void testValidAndroidJson() throws JsonProcessingException {
-        assertEquals("{\"to\":\"to\",\"priority\":\"normal\",\"data\":{\"message\":\"yo!!!\",\"dashId\":1}}", new AndroidGCMMessage("to", Priority.normal, null, "yo!!!", 1).toJson());
+        assertEquals("{\"to\":\"to\",\"priority\":\"normal\",\"data\":{\"message\":\"yo!!!\",\"deviceId\":1,\"title\":\"title\"}}", new AndroidGCMMessage("to", Priority.normal, "title", "yo!!!", 1).toJson());
     }
 
     @Test
     public void testValidIOSJson() throws JsonProcessingException {
         IOSGCMMessage iosgcmMessage = new IOSGCMMessage("to", Priority.normal, "Blynk Notification", "yo!!!", 1);
-        assertEquals("{\"to\":\"to\",\"priority\":\"normal\",\"notification\":{\"body\":\"yo!!!\",\"dashId\":1,\"sound\":\"default\",\"title\":\"Blynk Notification\"}}", iosgcmMessage.toJson());
+        assertEquals("{\"to\":\"to\",\"priority\":\"normal\",\"notification\":{\"body\":\"yo!!!\",\"deviceId\":1,\"sound\":\"default\",\"title\":\"Blynk Notification\"}}", iosgcmMessage.toJson());
     }
 
 }

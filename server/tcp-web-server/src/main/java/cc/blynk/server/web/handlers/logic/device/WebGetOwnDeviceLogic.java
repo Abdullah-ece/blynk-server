@@ -53,7 +53,7 @@ public final class WebGetOwnDeviceLogic implements PermissionBasedLogic<WebAppSt
             return;
         }
 
-        organizationDao.checkInheritanceAccess(user.email, user.orgId, deviceValue.orgId);
+        organizationDao.checkInheritanceAccess(user, deviceValue.orgId);
 
         Device device = deviceValue.device;
         if (!state.role.canViewOrgDevices() && !device.hasOwner(state.user.email)) {

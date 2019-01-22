@@ -1,14 +1,11 @@
 package cc.blynk.integration.tcp;
 
 import cc.blynk.integration.SingleServerInstancePerTest;
-import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.profile.Profile;
-import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Button;
-import cc.blynk.server.core.model.widgets.controls.Slider;
 import cc.blynk.server.core.model.widgets.controls.Step;
 import cc.blynk.server.core.model.widgets.others.Player;
 import cc.blynk.server.core.model.widgets.others.Video;
@@ -20,7 +17,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import static cc.blynk.integration.TestUtil.createTag;
 import static cc.blynk.integration.TestUtil.illegalCommand;
 import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.integration.TestUtil.setProperty;
@@ -66,48 +62,6 @@ public class SetPropertyTest extends SingleServerInstancePerTest {
         widget = profile.dashBoards[0].findWidgetByPin(0, (short) 4, PinType.VIRTUAL);
         assertNotNull(widget);
         assertEquals("MyNewLabel", widget.label);
-    }
-
-    @Test
-    //https://github.com/blynkkk/blynk-server/issues/756
-    public void testSetWidgetPropertyIsNotRestoredForTagWidgetAfterOverriding() throws Exception {
-        Tag tag0 = new Tag(100_000, "Tag1", new int[] {0});
-
-        clientPair.appClient.createTag(1, tag0);
-        String createdTag = clientPair.appClient.getBody();
-        Tag tag = JsonParser.parseTag(createdTag, 0);
-        assertNotNull(tag);
-        assertEquals(100_000, tag.id);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createTag(1, tag)));
-
-        clientPair.appClient.loadProfileGzipped();
-        Profile profile = clientPair.appClient.parseProfile(2);
-
-        Slider slider = (Slider) profile.dashBoards[0].findWidgetByPin(0, (short) 4, PinType.VIRTUAL);
-        assertNotNull(slider);
-        slider.width = 2;
-        slider.height = 2;
-        assertEquals("Some Text", slider.label);
-        slider.deviceId = tag0.id;
-
-        clientPair.appClient.updateWidget(1, slider);
-        clientPair.appClient.verifyResult(ok(3));
-
-        clientPair.hardwareClient.setProperty(4, "label", "MyNewLabel");
-        clientPair.hardwareClient.verifyResult(ok(1));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(1, "1-0 4 label MyNewLabel")));
-
-        clientPair.appClient.deactivate(1);
-        clientPair.appClient.verifyResult(ok(4));
-
-        slider.label = "Some Text2";
-        clientPair.appClient.updateWidget(1, slider);
-        clientPair.appClient.verifyResult(ok(5));
-
-        clientPair.appClient.activate(1);
-        clientPair.appClient.verifyResult(ok(6));
-        verify(clientPair.appClient.responseMock, after(500).never()).channelRead(any(), eq(setProperty(1111, "1-0 4 label MyNewLabel")));
-
     }
 
     @Test

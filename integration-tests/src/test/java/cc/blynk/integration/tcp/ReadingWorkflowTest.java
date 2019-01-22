@@ -116,7 +116,10 @@ public class ReadingWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testSendReadForMultipleDevices() throws Exception {
-        Device device2 = new Device(2, "My Device", BoardType.ESP8266);
+        Device device2 = new Device();
+        device2.id = 2;
+        device2.name = "My Device";
+        device2.boardType = BoardType.ESP8266;
 
         clientPair.appClient.createDevice(device2);
         device2 = clientPair.appClient.parseDevice();
@@ -147,7 +150,10 @@ public class ReadingWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testSendReadForDeviceSelector() throws Exception {
-        Device device2 = new Device(2, "My Device", BoardType.ESP8266);
+        Device device2 = new Device();
+        device2.id = 2;
+        device2.name = "My Device";
+        device2.boardType = BoardType.ESP8266;
 
         clientPair.appClient.createDevice(device2);
         device2 = clientPair.appClient.parseDevice();
@@ -185,7 +191,10 @@ public class ReadingWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testSendReadForMultipleDevices2() throws Exception {
-        Device device2 = new Device(2, "My Device", BoardType.ESP8266);
+        Device device2 = new Device();
+        device2.id = 2;
+        device2.name = "My Device";
+        device2.boardType = BoardType.ESP8266;
 
         clientPair.appClient.createDevice(device2);
         device2 = clientPair.appClient.parseDevice();
@@ -241,7 +250,10 @@ public class ReadingWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testSendReadOnlyForOnlineApp() throws Exception {
-        Device device2 = new Device(2, "My Device", BoardType.ESP8266);
+        Device device2 = new Device();
+        device2.id = 2;
+        device2.name = "My Device";
+        device2.boardType = BoardType.ESP8266;
 
         clientPair.appClient.createDevice(device2);
 

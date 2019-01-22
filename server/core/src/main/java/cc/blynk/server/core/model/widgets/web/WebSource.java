@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Arrays;
-import java.util.Objects;
 
 /**
  * The Blynk Project.
@@ -80,26 +79,66 @@ public class WebSource {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
+
         WebSource webSource = (WebSource) o;
-        return connectMissingPointsEnabled == webSource.connectMissingPointsEnabled
-                && limit == webSource.limit
-                && autoscale == webSource.autoscale
-                && enableYAxis == webSource.enableYAxis
-                && Objects.equals(label, webSource.label)
-                && Objects.equals(color, webSource.color)
-                && sourceType == webSource.sourceType
-                && Objects.equals(dataStream, webSource.dataStream)
-                && Arrays.equals(selectedColumns, webSource.selectedColumns)
-                && Arrays.equals(groupByFields, webSource.groupByFields)
-                && Arrays.equals(sortByFields, webSource.sortByFields)
-                && sortOrder == webSource.sortOrder
-                && lineGraphType == webSource.lineGraphType;
+
+        if (connectMissingPointsEnabled != webSource.connectMissingPointsEnabled) {
+            return false;
+        }
+        if (limit != webSource.limit) {
+            return false;
+        }
+        if (autoscale != webSource.autoscale) {
+            return false;
+        }
+        if (enableYAxis != webSource.enableYAxis) {
+            return false;
+        }
+        if (label != null ? !label.equals(webSource.label) : webSource.label != null) {
+            return false;
+        }
+        if (color != null ? !color.equals(webSource.color) : webSource.color != null) {
+            return false;
+        }
+        if (sourceType != webSource.sourceType) {
+            return false;
+        }
+        if (dataStream != null ? !dataStream.equals(webSource.dataStream) : webSource.dataStream != null) {
+            return false;
+        }
+        // Probably incorrect - comparing Object[] arrays with Arrays.equals
+        if (!Arrays.equals(selectedColumns, webSource.selectedColumns)) {
+            return false;
+        }
+        // Probably incorrect - comparing Object[] arrays with Arrays.equals
+        if (!Arrays.equals(groupByFields, webSource.groupByFields)) {
+            return false;
+        }
+        // Probably incorrect - comparing Object[] arrays with Arrays.equals
+        if (!Arrays.equals(sortByFields, webSource.sortByFields)) {
+            return false;
+        }
+        if (sortOrder != webSource.sortOrder) {
+            return false;
+        }
+        return lineGraphType == webSource.lineGraphType;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(label, color, connectMissingPointsEnabled,
-                sourceType, dataStream, selectedColumns,
-                groupByFields, sortByFields, sortOrder, limit, autoscale, lineGraphType, enableYAxis);
+        int result = label != null ? label.hashCode() : 0;
+        result = 31 * result + (color != null ? color.hashCode() : 0);
+        result = 31 * result + (connectMissingPointsEnabled ? 1 : 0);
+        result = 31 * result + (sourceType != null ? sourceType.hashCode() : 0);
+        result = 31 * result + (dataStream != null ? dataStream.hashCode() : 0);
+        result = 31 * result + Arrays.hashCode(selectedColumns);
+        result = 31 * result + Arrays.hashCode(groupByFields);
+        result = 31 * result + Arrays.hashCode(sortByFields);
+        result = 31 * result + (sortOrder != null ? sortOrder.hashCode() : 0);
+        result = 31 * result + limit;
+        result = 31 * result + (autoscale ? 1 : 0);
+        result = 31 * result + (lineGraphType != null ? lineGraphType.hashCode() : 0);
+        result = 31 * result + (enableYAxis ? 1 : 0);
+        return result;
     }
 }

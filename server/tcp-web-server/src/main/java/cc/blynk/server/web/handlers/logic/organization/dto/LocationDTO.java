@@ -4,8 +4,6 @@ import cc.blynk.server.core.model.web.product.metafields.LocationMetaField;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.Objects;
-
 public class LocationDTO {
 
     public final int id;
@@ -35,12 +33,14 @@ public class LocationDTO {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
+
         LocationDTO that = (LocationDTO) o;
-        return Objects.equals(siteName, that.siteName);
+
+        return siteName != null ? siteName.equals(that.siteName) : that.siteName == null;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(siteName);
+        return siteName != null ? siteName.hashCode() : 0;
     }
 }

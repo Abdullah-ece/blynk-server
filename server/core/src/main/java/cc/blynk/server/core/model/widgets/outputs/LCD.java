@@ -3,9 +3,6 @@ package cc.blynk.server.core.model.widgets.outputs;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.enums.PinType;
-import cc.blynk.server.core.model.storage.value.MultiPinStorageValue;
-import cc.blynk.server.core.model.storage.value.MultiPinStorageValueType;
-import cc.blynk.server.core.model.storage.value.PinStorageValue;
 import cc.blynk.server.core.model.widgets.FrequencyWidget;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -70,12 +67,6 @@ public class LCD extends MultiPinWidget implements FrequencyWidget {
             return;
         }
 
-        //do not send SYNC message for widgets assigned to device selector
-        //as it will be duplicated later.
-        if (isAssignedToDeviceSelector()) {
-            return;
-        }
-
         if (targetId == ANY_TARGET || this.deviceId == targetId) {
             if (advancedMode) {
                 for (String command : lastCommands) {
@@ -121,16 +112,6 @@ public class LCD extends MultiPinWidget implements FrequencyWidget {
                 channel.write(msg, channel.voidPromise());
             }
         }
-    }
-
-    @Override
-    public PinStorageValue getPinStorageValue() {
-        return new MultiPinStorageValue(MultiPinStorageValueType.LCD);
-    }
-
-    @Override
-    public boolean isMultiValueWidget() {
-        return true;
     }
 
     @Override

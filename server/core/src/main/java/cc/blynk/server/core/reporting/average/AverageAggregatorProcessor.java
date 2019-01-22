@@ -1,6 +1,7 @@
 package cc.blynk.server.core.reporting.average;
 
 import cc.blynk.server.core.reporting.raw.BaseReportingKey;
+import cc.blynk.utils.DateTimeUtils;
 import cc.blynk.utils.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,12 +24,10 @@ public class AverageAggregatorProcessor implements Closeable {
 
     private static final Logger log = LogManager.getLogger(AverageAggregatorProcessor.class);
 
-    public static final long MINUTE = 1000 * 60;
-    public static final long HOUR = 60 * MINUTE;
-    public static final long DAY = 24 * HOUR;
     static final String MINUTE_TEMP_FILENAME = "minute_temp.bin";
     static final String HOURLY_TEMP_FILENAME = "hourly_temp.bin";
     static final String DAILY_TEMP_FILENAME = "daily_temp.bin";
+
     private final String dataFolder;
     private final ConcurrentHashMap<AggregationKey, AggregationValue> minute;
     private final ConcurrentHashMap<AggregationKey, AggregationValue> hourly;
@@ -66,9 +65,9 @@ public class AverageAggregatorProcessor implements Closeable {
     }
 
     public void collect(BaseReportingKey baseReportingKey, long ts, double val) {
-        aggregate(minute, new AggregationKey(baseReportingKey, ts / MINUTE), val);
-        aggregate(hourly, new AggregationKey(baseReportingKey, ts / HOUR), val);
-        aggregate(daily, new AggregationKey(baseReportingKey, ts / DAY), val);
+        aggregate(minute, new AggregationKey(baseReportingKey, ts / DateTimeUtils.MINUTE), val);
+        aggregate(hourly, new AggregationKey(baseReportingKey, ts / DateTimeUtils.HOUR), val);
+        aggregate(daily, new AggregationKey(baseReportingKey, ts / DateTimeUtils.DAY), val);
     }
 
     public ConcurrentHashMap<AggregationKey, AggregationValue> getMinute() {
@@ -85,6 +84,7 @@ public class AverageAggregatorProcessor implements Closeable {
 
     @Override
     public void close() {
+        System.out.println("Closing average aggregator...");
         if (minute.size() > 100_000) {
             log.info("Too many minute records ({}). "
                     + "This may cause performance issues on server start. Skipping.", minute.size());

@@ -2,7 +2,7 @@ package cc.blynk.integration.tcp;
 
 import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.model.tcp.ClientPair;
-import cc.blynk.server.core.dao.ReportingDiskDao;
+import cc.blynk.server.core.dao.PinNameUtil;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.Device;
@@ -108,7 +108,11 @@ public class ReportingTest extends BaseTest {
 
     @Test
     public void testDeleteAllDeviceData() throws Exception {
-        Device device1 = new Device(2, "My Device2", BoardType.ESP8266);
+        Device device1 = new Device();
+        device1.id = 2;
+        device1.name = "My Device2";
+        device1.boardType = BoardType.ESP8266;
+
         clientPair.appClient.createDevice(device1);
 
         String tempDir = holder.props.getProperty("data.folder");
@@ -119,22 +123,22 @@ public class ReportingTest extends BaseTest {
         }
 
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.DIGITAL, (short) 8, GraphGranularityType.MINUTE));
+                PinNameUtil.generateFilename(PinType.DIGITAL, (short) 8, GraphGranularityType.MINUTE));
         Path pinReportingDataPath11 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.DIGITAL, (short) 8, GraphGranularityType.HOURLY));
+                PinNameUtil.generateFilename(PinType.DIGITAL, (short) 8, GraphGranularityType.HOURLY));
         Path pinReportingDataPath12 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.DIGITAL, (short) 8, GraphGranularityType.DAILY));
+                PinNameUtil.generateFilename(PinType.DIGITAL, (short) 8, GraphGranularityType.DAILY));
 
 
         Path pinReportingDataPath20 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.DIGITAL, (short) 8, GraphGranularityType.MINUTE));
+                PinNameUtil.generateFilename(PinType.DIGITAL, (short) 8, GraphGranularityType.MINUTE));
 
         FileUtils.write(pinReportingDataPath10, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath11, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath12, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath20, 1.22D, 2222222);
 
-        clientPair.appClient.send("deleteDeviceData 1-*");
+        clientPair.appClient.send("delete 1-*");
         clientPair.appClient.verifyResult(ok(2));
 
         assertTrue(Files.notExists(pinReportingDataPath10));
@@ -145,7 +149,10 @@ public class ReportingTest extends BaseTest {
 
     @Test
     public void testDeleteDeviceDataFor1Device() throws Exception {
-        Device device1 = new Device(2, "My Device2", BoardType.ESP8266);
+        Device device1 = new Device();
+        device1.id = 2;
+        device1.name = "My Device2";
+        device1.boardType = BoardType.ESP8266;
         clientPair.appClient.createDevice(device1);
 
         String tempDir = holder.props.getProperty("data.folder");
@@ -156,15 +163,15 @@ public class ReportingTest extends BaseTest {
         }
 
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.DIGITAL, (short) 8, GraphGranularityType.MINUTE));
+                PinNameUtil.generateFilename(PinType.DIGITAL, (short) 8, GraphGranularityType.MINUTE));
         Path pinReportingDataPath11 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.DIGITAL, (short) 8, GraphGranularityType.HOURLY));
+                PinNameUtil.generateFilename(PinType.DIGITAL, (short) 8, GraphGranularityType.HOURLY));
         Path pinReportingDataPath12 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.DIGITAL, (short) 8, GraphGranularityType.DAILY));
+                PinNameUtil.generateFilename(PinType.DIGITAL, (short) 8, GraphGranularityType.DAILY));
 
 
         Path pinReportingDataPath20 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.DIGITAL, (short) 8, GraphGranularityType.MINUTE));
+                PinNameUtil.generateFilename(PinType.DIGITAL, (short) 8, GraphGranularityType.MINUTE));
 
         FileUtils.write(pinReportingDataPath10, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath11, 1.11D, 1111111);
@@ -182,7 +189,11 @@ public class ReportingTest extends BaseTest {
 
     @Test
     public void testDeleteDeviceDataForSpecificPin() throws Exception {
-        Device device1 = new Device(2, "My Device2", BoardType.ESP8266);
+        Device device1 = new Device();
+        device1.id = 2;
+        device1.name = "My Device2";
+        device1.boardType = BoardType.ESP8266;
+
         clientPair.appClient.createDevice(device1);
 
         String tempDir = holder.props.getProperty("data.folder");
@@ -193,17 +204,17 @@ public class ReportingTest extends BaseTest {
         }
 
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.DIGITAL, (short) 8, GraphGranularityType.MINUTE));
+                PinNameUtil.generateFilename(PinType.DIGITAL, (short) 8, GraphGranularityType.MINUTE));
         Path pinReportingDataPath11 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.DIGITAL, (short) 8, GraphGranularityType.HOURLY));
+                PinNameUtil.generateFilename(PinType.DIGITAL, (short) 8, GraphGranularityType.HOURLY));
         Path pinReportingDataPath12 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.DIGITAL, (short) 8, GraphGranularityType.DAILY));
+                PinNameUtil.generateFilename(PinType.DIGITAL, (short) 8, GraphGranularityType.DAILY));
         Path pinReportingDataPath13 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 9, GraphGranularityType.DAILY));
+                PinNameUtil.generateFilename(PinType.VIRTUAL, (short) 9, GraphGranularityType.DAILY));
 
 
         Path pinReportingDataPath20 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.DIGITAL, (short) 8, GraphGranularityType.MINUTE));
+                PinNameUtil.generateFilename(PinType.DIGITAL, (short) 8, GraphGranularityType.MINUTE));
 
         FileUtils.write(pinReportingDataPath10, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath11, 1.11D, 1111111);
@@ -532,7 +543,7 @@ public class ReportingTest extends BaseTest {
             Files.createDirectories(userReportFolder);
         }
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
+                PinNameUtil.generateFilename(PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         long pointNow = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, pointNow);
 
@@ -613,7 +624,7 @@ public class ReportingTest extends BaseTest {
             Files.createDirectories(userReportFolder);
         }
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 1, GraphGranularityType.HOURLY));
+                PinNameUtil.generateFilename(PinType.VIRTUAL, (short) 1, GraphGranularityType.HOURLY));
         long pointNow = System.currentTimeMillis();
         long pointNowTruncated = (pointNow / GraphGranularityType.HOURLY.period) * GraphGranularityType.HOURLY.period;
         pointNowTruncated -= TimeUnit.DAYS.toMillis(1);
@@ -675,7 +686,11 @@ public class ReportingTest extends BaseTest {
 
     @Test
     public void testFinalFileNameCSVPerDevicePerPin() throws Exception {
-        Device device1 = new Device(2, "My Device2 with big name", BoardType.ESP8266);
+        Device device1 = new Device();
+        device1.id = 2;
+        device1.name = "My Device2 with big name";
+        device1.boardType = BoardType.ESP8266;
+
         clientPair.appClient.createDevice(device1);
 
         String tempDir = holder.props.getProperty("data.folder");
@@ -684,12 +699,12 @@ public class ReportingTest extends BaseTest {
             Files.createDirectories(userReportFolder);
         }
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
+                PinNameUtil.generateFilename(PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         long pointNow = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, pointNow);
 
         Path pinReportingDataPath20 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
+                PinNameUtil.generateFilename(PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         FileUtils.write(pinReportingDataPath20, 1.11D, pointNow);
 
         ReportDataStream reportDataStream = new ReportDataStream((short) 1, PinType.VIRTUAL, "Temperature,yes", true);
@@ -756,7 +771,11 @@ public class ReportingTest extends BaseTest {
 
     @Test
     public void testFinalFileNameCSVPerDevice() throws Exception {
-        Device device1 = new Device(2, "My Device2 with big name", BoardType.ESP8266);
+        Device device1 = new Device();
+        device1.id = 2;
+        device1.name = "My Device2 with big name";
+        device1.boardType = BoardType.ESP8266;
+
         clientPair.appClient.createDevice(device1);
 
         String tempDir = holder.props.getProperty("data.folder");
@@ -765,12 +784,12 @@ public class ReportingTest extends BaseTest {
             Files.createDirectories(userReportFolder);
         }
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
+                PinNameUtil.generateFilename(PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         long pointNow = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, pointNow);
 
         Path pinReportingDataPath20 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
+                PinNameUtil.generateFilename(PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         FileUtils.write(pinReportingDataPath20, 1.11D, pointNow);
 
         ReportDataStream reportDataStream = new ReportDataStream((short) 1, PinType.VIRTUAL, null, true);
@@ -845,7 +864,11 @@ public class ReportingTest extends BaseTest {
 
     @Test
     public void testFinalFileNameCSVPerDeviceUtf8() throws Exception {
-        Device device1 = new Device(2, "My Device2 with big name", BoardType.ESP8266);
+        Device device1 = new Device();
+        device1.id = 2;
+        device1.name = "My Device2 with big name";
+        device1.boardType = BoardType.ESP8266;
+
         clientPair.appClient.createDevice(device1);
 
         String tempDir = holder.props.getProperty("data.folder");
@@ -854,12 +877,12 @@ public class ReportingTest extends BaseTest {
             Files.createDirectories(userReportFolder);
         }
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
+                PinNameUtil.generateFilename(PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         long pointNow = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, pointNow);
 
         Path pinReportingDataPath20 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
+                PinNameUtil.generateFilename(PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         FileUtils.write(pinReportingDataPath20, 1.11D, pointNow);
 
         ReportDataStream reportDataStream = new ReportDataStream((short) 1, PinType.VIRTUAL, "Мій датастрім", true);
@@ -934,7 +957,11 @@ public class ReportingTest extends BaseTest {
 
     @Test
     public void testFinalFileNameCSVPerDevice2() throws Exception {
-        Device device1 = new Device(2, "My Device2 with big name", BoardType.ESP8266);
+        Device device1 = new Device();
+        device1.id = 2;
+        device1.name = "My Device2 with big name";
+        device1.boardType = BoardType.ESP8266;
+
         clientPair.appClient.createDevice(device1);
 
         String tempDir = holder.props.getProperty("data.folder");
@@ -943,17 +970,17 @@ public class ReportingTest extends BaseTest {
             Files.createDirectories(userReportFolder);
         }
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
+                PinNameUtil.generateFilename(PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         Path pinReportingDataPath20 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 2, GraphGranularityType.MINUTE));
+                PinNameUtil.generateFilename(PinType.VIRTUAL, (short) 2, GraphGranularityType.MINUTE));
         long pointNow = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, pointNow);
         FileUtils.write(pinReportingDataPath20, 1.12D, pointNow);
 
         Path pinReportingDataPath12 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
+                PinNameUtil.generateFilename(PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         Path pinReportingDataPath22 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 2, GraphGranularityType.MINUTE));
+                PinNameUtil.generateFilename(PinType.VIRTUAL, (short) 2, GraphGranularityType.MINUTE));
         FileUtils.write(pinReportingDataPath12, 1.13D, pointNow);
         FileUtils.write(pinReportingDataPath22, 1.14D, pointNow);
 
@@ -1034,7 +1061,11 @@ public class ReportingTest extends BaseTest {
 
     @Test
     public void testFinalFileNameCSVPerDeviceUnicode() throws Exception {
-        Device device1 = new Device(2, "Мій девайс", BoardType.ESP8266);
+        Device device1 = new Device();
+        device1.id = 2;
+        device1.name = "Мій девайс";
+        device1.boardType = BoardType.ESP8266;
+
         clientPair.appClient.createDevice(device1);
 
         String tempDir = holder.props.getProperty("data.folder");
@@ -1045,9 +1076,9 @@ public class ReportingTest extends BaseTest {
         long pointNow = System.currentTimeMillis();
 
         Path pinReportingDataPath12 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
+                PinNameUtil.generateFilename(PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         Path pinReportingDataPath22 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 2, GraphGranularityType.MINUTE));
+                PinNameUtil.generateFilename(PinType.VIRTUAL, (short) 2, GraphGranularityType.MINUTE));
         FileUtils.write(pinReportingDataPath12, 1.13D, pointNow);
         FileUtils.write(pinReportingDataPath22, 1.14D, pointNow);
 
@@ -1120,7 +1151,11 @@ public class ReportingTest extends BaseTest {
 
     @Test
     public void testFinalFileNameCSVPerDevice2DataStreamWithName() throws Exception {
-        Device device1 = new Device(2, "My Device2 with big name", BoardType.ESP8266);
+        Device device1 = new Device();
+        device1.id = 2;
+        device1.name = "My Device2 with big name";
+        device1.boardType = BoardType.ESP8266;
+
         clientPair.appClient.createDevice(device1);
 
         String tempDir = holder.props.getProperty("data.folder");
@@ -1129,17 +1164,17 @@ public class ReportingTest extends BaseTest {
             Files.createDirectories(userReportFolder);
         }
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
+                PinNameUtil.generateFilename(PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         Path pinReportingDataPath20 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 2, GraphGranularityType.MINUTE));
+                PinNameUtil.generateFilename(PinType.VIRTUAL, (short) 2, GraphGranularityType.MINUTE));
         long pointNow = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, pointNow);
         FileUtils.write(pinReportingDataPath20, 1.12D, pointNow);
 
         Path pinReportingDataPath12 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
+                PinNameUtil.generateFilename(PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         Path pinReportingDataPath22 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 2, GraphGranularityType.MINUTE));
+                PinNameUtil.generateFilename(PinType.VIRTUAL, (short) 2, GraphGranularityType.MINUTE));
         FileUtils.write(pinReportingDataPath12, 1.13D, pointNow);
         FileUtils.write(pinReportingDataPath22, 1.14D, pointNow);
 
@@ -1220,7 +1255,11 @@ public class ReportingTest extends BaseTest {
 
     @Test
     public void testFinalFileNameCSVMerged2DataStreamWithName() throws Exception {
-        Device device1 = new Device(2, "My Device2 with big name", BoardType.ESP8266);
+        Device device1 = new Device();
+        device1.id = 2;
+        device1.name = "My Device2 with big name";
+        device1.boardType = BoardType.ESP8266;
+
         clientPair.appClient.createDevice(device1);
 
         String tempDir = holder.props.getProperty("data.folder");
@@ -1229,17 +1268,17 @@ public class ReportingTest extends BaseTest {
             Files.createDirectories(userReportFolder);
         }
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
+                PinNameUtil.generateFilename(PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         Path pinReportingDataPath20 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 2, GraphGranularityType.MINUTE));
+                PinNameUtil.generateFilename(PinType.VIRTUAL, (short) 2, GraphGranularityType.MINUTE));
         long pointNow = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, pointNow);
         FileUtils.write(pinReportingDataPath20, 1.12D, pointNow);
 
         Path pinReportingDataPath12 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
+                PinNameUtil.generateFilename(PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         Path pinReportingDataPath22 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 2, GraphGranularityType.MINUTE));
+                PinNameUtil.generateFilename(PinType.VIRTUAL, (short) 2, GraphGranularityType.MINUTE));
         FileUtils.write(pinReportingDataPath12, 1.13D, pointNow);
         FileUtils.write(pinReportingDataPath22, 1.14D, pointNow);
 
@@ -1313,7 +1352,11 @@ public class ReportingTest extends BaseTest {
 
     @Test
     public void testFinalFileNameCSVMerged2DataStreamWithNameCorrectEscaping() throws Exception {
-        Device device1 = new Device(2, "My Device2 with \"big\" name", BoardType.ESP8266);
+        Device device1 = new Device();
+        device1.id = 2;
+        device1.name = "My Device2 with \"big\" name";
+        device1.boardType = BoardType.ESP8266;
+
         clientPair.appClient.createDevice(device1);
 
         String tempDir = holder.props.getProperty("data.folder");
@@ -1322,17 +1365,17 @@ public class ReportingTest extends BaseTest {
             Files.createDirectories(userReportFolder);
         }
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
+                PinNameUtil.generateFilename(PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         Path pinReportingDataPath20 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 2, GraphGranularityType.MINUTE));
+                PinNameUtil.generateFilename(PinType.VIRTUAL, (short) 2, GraphGranularityType.MINUTE));
         long pointNow = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, pointNow);
         FileUtils.write(pinReportingDataPath20, 1.12D, pointNow);
 
         Path pinReportingDataPath12 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
+                PinNameUtil.generateFilename(PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         Path pinReportingDataPath22 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 2, GraphGranularityType.MINUTE));
+                PinNameUtil.generateFilename(PinType.VIRTUAL, (short) 2, GraphGranularityType.MINUTE));
         FileUtils.write(pinReportingDataPath12, 1.13D, pointNow);
         FileUtils.write(pinReportingDataPath22, 1.14D, pointNow);
 
@@ -1406,7 +1449,11 @@ public class ReportingTest extends BaseTest {
 
     @Test
     public void testFinalFileNameCSVMerged2DataStreamWithNameCorrectEscaping2() throws Exception {
-        Device device1 = new Device(2, "My Device2 with, big name", BoardType.ESP8266);
+        Device device1 = new Device();
+        device1.id = 2;
+        device1.name = "My Device2 with, big name";
+        device1.boardType = BoardType.ESP8266;
+
         clientPair.appClient.createDevice(device1);
 
         String tempDir = holder.props.getProperty("data.folder");
@@ -1415,17 +1462,17 @@ public class ReportingTest extends BaseTest {
             Files.createDirectories(userReportFolder);
         }
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
+                PinNameUtil.generateFilename(PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         Path pinReportingDataPath20 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 2, GraphGranularityType.MINUTE));
+                PinNameUtil.generateFilename(PinType.VIRTUAL, (short) 2, GraphGranularityType.MINUTE));
         long pointNow = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, pointNow);
         FileUtils.write(pinReportingDataPath20, 1.12D, pointNow);
 
         Path pinReportingDataPath12 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
+                PinNameUtil.generateFilename(PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         Path pinReportingDataPath22 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 2, GraphGranularityType.MINUTE));
+                PinNameUtil.generateFilename(PinType.VIRTUAL, (short) 2, GraphGranularityType.MINUTE));
         FileUtils.write(pinReportingDataPath12, 1.13D, pointNow);
         FileUtils.write(pinReportingDataPath22, 1.14D, pointNow);
 
@@ -1505,7 +1552,7 @@ public class ReportingTest extends BaseTest {
             Files.createDirectories(userReportFolder);
         }
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
+                PinNameUtil.generateFilename(PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         long pointNow = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, pointNow);
 
@@ -1577,7 +1624,7 @@ public class ReportingTest extends BaseTest {
             Files.createDirectories(userReportFolder);
         }
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
+                PinNameUtil.generateFilename(PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         long now = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, now);
 
@@ -1656,7 +1703,7 @@ public class ReportingTest extends BaseTest {
             Files.createDirectories(userReportFolder);
         }
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
+                PinNameUtil.generateFilename(PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         long now = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, now);
 
@@ -1740,7 +1787,7 @@ public class ReportingTest extends BaseTest {
             Files.createDirectories(userReportFolder);
         }
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
+                PinNameUtil.generateFilename(PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         long now = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, now);
 
@@ -1819,7 +1866,7 @@ public class ReportingTest extends BaseTest {
             Files.createDirectories(userReportFolder);
         }
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
+                PinNameUtil.generateFilename(PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         long now = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, now);
 
@@ -1876,7 +1923,7 @@ public class ReportingTest extends BaseTest {
             Files.createDirectories(userReportFolder);
         }
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
+                PinNameUtil.generateFilename(PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         long now = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, now);
 
@@ -2030,7 +2077,7 @@ public class ReportingTest extends BaseTest {
             Files.createDirectories(userReportFolder);
         }
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
+                PinNameUtil.generateFilename(PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         FileUtils.write(pinReportingDataPath10, 1.11D, 111111);
 
 
@@ -2181,7 +2228,7 @@ public class ReportingTest extends BaseTest {
             Files.createDirectories(userReportFolder);
         }
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
+                PinNameUtil.generateFilename(PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         long pointNow = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.12D, pointNow - TimeUnit.HOURS.toMillis(25));
         FileUtils.write(pinReportingDataPath10, 1.11D, pointNow);

@@ -5,7 +5,6 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.profile.Profile;
-import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
 import cc.blynk.server.db.dao.ReportingDBDao;
 import cc.blynk.server.db.model.Purchase;
 import cc.blynk.server.db.model.Redeem;
@@ -55,7 +54,7 @@ public class DBManagerTest {
     @BeforeClass
     public static void init() throws Exception {
         blockingIOProcessor = new BlockingIOProcessor(4, 10000);
-        dbManager = new DBManager("db-test.properties", blockingIOProcessor, true);
+        dbManager = new DBManager("db-test.properties", blockingIOProcessor);
         assertNotNull(dbManager.getConnection());
     }
 
@@ -94,12 +93,12 @@ public class DBManagerTest {
         try (Connection connection = dbManager.getConnection();
              PreparedStatement ps = connection.prepareStatement(ReportingDBDao.insertMinute)) {
 
-            long minute = (System.currentTimeMillis() / AverageAggregatorProcessor.MINUTE) * AverageAggregatorProcessor.MINUTE;
+            long minute = (System.currentTimeMillis() / DateTimeUtils.MINUTE) * DateTimeUtils.MINUTE;
 
             for (int i = 0; i < 100; i++) {
                 ReportingDBDao.prepareReportingInsert(ps, 0, (short) 0, PinType.VIRTUAL, minute, (double) i);
                 ps.addBatch();
-                minute += AverageAggregatorProcessor.MINUTE;
+                minute += DateTimeUtils.MINUTE;
                 a++;
             }
 

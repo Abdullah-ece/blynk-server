@@ -4,14 +4,12 @@ import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.db.DBManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.Closeable;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +30,6 @@ public class ProfileSaverWorker implements Runnable, Closeable {
     private final DBManager dbManager;
     private final OrganizationDao organizationDao;
     private long lastStart;
-    private long backupTs;
 
     public ProfileSaverWorker(UserDao userDao, FileManager fileManager,
                               DBManager dbManager, OrganizationDao organizationDao) {
@@ -41,7 +38,6 @@ public class ProfileSaverWorker implements Runnable, Closeable {
         this.dbManager = dbManager;
         this.organizationDao = organizationDao;
         this.lastStart = System.currentTimeMillis();
-        this.backupTs = 0;
     }
 
     @Override
@@ -76,27 +72,7 @@ public class ProfileSaverWorker implements Runnable, Closeable {
 
         dbManager.saveUsers(users);
 
-        //backup only for local mode
-        if (!dbManager.isDBEnabled() && users.size() > 0) {
-            archiveUser(now);
-        }
-
         log.debug("Saving user db finished. Modified {} users.", users.size());
-    }
-
-    private void archiveUser(long now) {
-        if (now - backupTs > 86_400_000) {
-            //it is time for backup, once per day.
-            backupTs = now;
-            for (User user : userDao.users.values()) {
-                try {
-                    Path path = fileManager.generateBackupFileName(user.email, user.orgId);
-                    JsonParser.writeUser(path.toFile(), user, false);
-                } catch (Exception e) {
-                    //ignore
-                }
-            }
-        }
     }
 
     private List<Organization> saveModifiedOrgs(boolean isFancy) {

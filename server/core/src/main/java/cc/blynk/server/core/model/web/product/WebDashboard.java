@@ -11,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Arrays;
 
-import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_WIDGETS;
+import static cc.blynk.server.core.model.widgets.Widget.EMPTY_WIDGETS;
 
 /**
  * The Blynk Project.

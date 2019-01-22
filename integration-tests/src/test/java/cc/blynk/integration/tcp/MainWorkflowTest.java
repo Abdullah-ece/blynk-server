@@ -4,7 +4,7 @@ import cc.blynk.integration.SingleServerInstancePerTest;
 import cc.blynk.integration.TestUtil;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
-import cc.blynk.server.core.dao.ReportingDiskDao;
+import cc.blynk.server.core.dao.PinNameUtil;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DashboardSettings;
 import cc.blynk.server.core.model.auth.User;
@@ -653,13 +653,13 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         }
 
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", username,
-                ReportingDiskDao.generateFilename(PinType.DIGITAL, (short) 8, GraphGranularityType.MINUTE));
+                PinNameUtil.generateFilename(PinType.DIGITAL, (short) 8, GraphGranularityType.MINUTE));
         Path pinReportingDataPath11 = Paths.get(tempDir, "data", username,
-                ReportingDiskDao.generateFilename(PinType.DIGITAL, (short) 8, GraphGranularityType.HOURLY));
+                PinNameUtil.generateFilename(PinType.DIGITAL, (short) 8, GraphGranularityType.HOURLY));
         Path pinReportingDataPath12 = Paths.get(tempDir, "data", username,
-                ReportingDiskDao.generateFilename(PinType.DIGITAL, (short) 8, GraphGranularityType.DAILY));
+                PinNameUtil.generateFilename(PinType.DIGITAL, (short) 8, GraphGranularityType.DAILY));
         Path pinReportingDataPath13 = Paths.get(tempDir, "data", username,
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 9, GraphGranularityType.DAILY));
+                PinNameUtil.generateFilename(PinType.VIRTUAL, (short) 9, GraphGranularityType.DAILY));
 
         FileUtils.write(pinReportingDataPath10, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath11, 1.11D, 1111111);
@@ -681,13 +681,18 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.createDash("{\"id\":10, \"name\":\"test board\"}");
         clientPair.appClient.verifyResult(ok(1));
 
-        clientPair.appClient.createDevice(new Device(2, "123", BoardType.ESP8266));
+        Device device2 = new Device();
+        device2.id = 2;
+        device2.name = "123";
+        device2.boardType = BoardType.ESP8266;
+
+        clientPair.appClient.createDevice(device2);
         Device device = clientPair.appClient.parseDevice(2);
         String token = device.token;
         assertNotNull(token);
 
         clientPair.appClient.getDevice(10, 2);
-        Device device2 = clientPair.appClient.parseDevice(3);
+        device2 = clientPair.appClient.parseDevice(3);
         assertNotNull(device2);
         assertEquals(token, device2.token);
 
@@ -709,7 +714,13 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(1));
 
         clientPair.appClient.reset();
-        clientPair.appClient.createDevice(new Device(2, "123", BoardType.ESP8266));
+
+        Device device2 = new Device();
+        device2.id = 2;
+        device2.name = "123";
+        device2.boardType = BoardType.ESP8266;
+
+        clientPair.appClient.createDevice(device2);
         Device device = clientPair.appClient.parseDevice();
         String token = device.token;
         assertNotNull(token);
@@ -847,7 +858,12 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
 
         clientPair.appClient.reset();
 
-        clientPair.appClient.createDevice(new Device(2, "123", BoardType.ESP8266));
+        Device device2 = new Device();
+        device2.id = 2;
+        device2.name = "123";
+        device2.boardType = BoardType.ESP8266;
+
+        clientPair.appClient.createDevice(device2);
         Device device = clientPair.appClient.parseDevice();
         String token2 = device.token;
         hardClient2.login(token2);
@@ -1264,7 +1280,12 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
         clientPair.appClient.reset();
 
-        clientPair.appClient.createDevice(new Device(2, "123", BoardType.ESP8266));
+        Device device2 = new Device();
+        device2.id = 2;
+        device2.name = "123";
+        device2.boardType = BoardType.ESP8266;
+
+        clientPair.appClient.createDevice(device2);
         Device device = clientPair.appClient.parseDevice();
 
         clientPair.appClient.reset();

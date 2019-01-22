@@ -5,7 +5,6 @@ import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.PermissionBasedLogic;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.OrganizationDao;
-import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.auth.Session;
@@ -16,6 +15,7 @@ import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
+import cc.blynk.server.db.dao.ReportingDBDao;
 import cc.blynk.utils.IntArray;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -37,7 +37,7 @@ public final class WebDeleteProductLogic implements PermissionBasedLogic<WebAppS
     private final DeviceDao deviceDao;
     private final SessionDao sessionDao;
     private final BlockingIOProcessor blockingIOProcessor;
-    private final ReportingDiskDao reportingDiskDao;
+    private final ReportingDBDao reportingDBDao;
     private final UserDao userDao;
 
     public WebDeleteProductLogic(Holder holder) {
@@ -45,7 +45,7 @@ public final class WebDeleteProductLogic implements PermissionBasedLogic<WebAppS
         this.deviceDao = holder.deviceDao;
         this.sessionDao = holder.sessionDao;
         this.blockingIOProcessor = holder.blockingIOProcessor;
-        this.reportingDiskDao = holder.reportingDiskDao;
+        this.reportingDBDao = holder.reportingDBManager.reportingDBDao;
         this.userDao = holder.userDao;
     }
 
@@ -95,7 +95,7 @@ public final class WebDeleteProductLogic implements PermissionBasedLogic<WebAppS
         session.closeHardwareChannelByDeviceId(deviceIds);
         blockingIOProcessor.executeHistory(() -> {
             try {
-                reportingDiskDao.delete(deviceIds);
+                reportingDBDao.delete(deviceIds);
             } catch (Exception e) {
                 log.warn("Error removing device data. Reason : {}.", e.getMessage());
             }

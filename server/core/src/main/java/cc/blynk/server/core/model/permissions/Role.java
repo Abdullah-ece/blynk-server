@@ -12,7 +12,7 @@ import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_SWITCH
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_VIEW;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.OWN_DEVICES_VIEW;
 
-public class Role implements CopyObject<Role> {
+public final class Role implements CopyObject<Role> {
 
     //special ID for role that indicates it is super admin role
     public static final int SUPER_ADMIN_ROLE_ID = 0;

@@ -6,12 +6,12 @@ CREATE TABLE reporting_events (
   id bigserial,
   device_id int4,
   type smallint,
-  ts timestamp without time zone default (now() at time zone 'utc'),
+  ts timestamptz default (now() at time zone 'utc'),
   event_hashcode int4 DEFAULT 0,
   description text,
   is_resolved boolean DEFAULT FALSE,
   resolved_by text,
-  resolved_at timestamp,
+  resolved_at timestamptz,
   resolved_comment text
 );
 CREATE INDEX reporting_events_main_idx ON reporting_events (device_id, type, ts);
@@ -19,35 +19,24 @@ CREATE INDEX reporting_events_main_idx ON reporting_events (device_id, type, ts)
 CREATE TABLE reporting_events_last_seen (
   device_id int4,
   email text,
-  ts timestamp without time zone default (now() at time zone 'utc'),
+  ts timestamptz default now(),
   PRIMARY KEY(device_id, email)
 );
 
-CREATE TABLE blynk_default (
+CREATE TABLE reporting_device_raw_data (
    device_id int4,
    pin int2,
    pin_type int2,
-   created timestamp,
+   ts timestamptz,
    value float8
 );
-create index on blynk_default (device_id, pin, pin_type, created);
-
-CREATE TABLE reporting_raw_data (
-  device_id int4,
-  pin int2,
-  pinType char,
-  ts timestamp,
-  stringValue text,
-  doubleValue float8,
-
-  PRIMARY KEY (device_id, pin, pinType, ts)
-);
+create index on reporting_device_raw_data (device_id, pin, pin_type, created);
 
 CREATE TABLE reporting_average_minute (
   device_id int8,
   pin int2,
   pin_type int2,
-  ts timestamp with time zone,
+  ts timestamptz,
   value float8,
   PRIMARY KEY (device_id, pin, pin_type, ts)
 );
@@ -56,7 +45,7 @@ CREATE TABLE reporting_average_hourly (
   device_id int8,
   pin int2,
   pin_type int2,
-  ts timestamp with time zone,
+  ts timestamptz,
   value float8,
   PRIMARY KEY (device_id, pin, pin_type, ts)
 );
@@ -65,14 +54,14 @@ CREATE TABLE reporting_average_daily (
   device_id int8,
   pin int2,
   pin_type int2,
-  ts timestamp with time zone,
+  ts timestamptz,
   value float8,
   PRIMARY KEY (device_id, pin, pin_type, ts)
 );
 
 CREATE TABLE reporting_app_stat_minute (
   region text,
-  ts timestamp,
+  ts timestamptz,
   active int4,
   active_week int4,
   active_month int4,
@@ -88,7 +77,7 @@ CREATE TABLE reporting_app_stat_minute (
 
 CREATE TABLE reporting_app_command_stat_minute (
   region text,
-  ts timestamp,
+  ts timestamptz,
   response int4,
   register int4,
   login int4,
@@ -145,7 +134,7 @@ CREATE TABLE reporting_app_command_stat_minute (
 
 CREATE TABLE reporting_http_command_stat_minute (
   region text,
-  ts timestamp,
+  ts timestamptz,
   is_hardware_connected int4,
   is_app_connected int4,
   get_pin_data int4,

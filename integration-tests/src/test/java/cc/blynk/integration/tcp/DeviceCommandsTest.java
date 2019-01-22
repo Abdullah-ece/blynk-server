@@ -27,9 +27,16 @@ public class DeviceCommandsTest extends SingleServerInstancePerTest {
 
     @Test
     public void testAddNewDevice() throws Exception {
-        Device device0 = new Device(0, "My Dashboard", BoardType.ESP8266);
+        Device device0 = new Device();
+        device0.id = 0;
+        device0.name = "My Dashboard";
+        device0.boardType = BoardType.ESP8266;
         device0.status = Status.ONLINE;
-        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
+
+        Device device1 = new Device();
+        device1.id = 1;
+        device1.name = "My Device";
+        device1.boardType = BoardType.ESP8266;
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(device1);
@@ -52,7 +59,10 @@ public class DeviceCommandsTest extends SingleServerInstancePerTest {
 
     @Test
     public void testUpdateExistingDevice() throws Exception {
-        Device device0 = new Device(0, "My Dashboard Updated", BoardType.ESP8266);
+        Device device0 = new Device();
+        device0.id = 0;
+        device0.name = "My Dashboard Updated";
+        device0.boardType = BoardType.ESP8266;
         device0.status = Status.ONLINE;
 
         clientPair.appClient.updateDevice(1, device0);
@@ -71,7 +81,10 @@ public class DeviceCommandsTest extends SingleServerInstancePerTest {
 
     @Test
     public void testUpdateNonExistingDevice() throws Exception {
-        Device device = new Device(100, "My Dashboard Updated", BoardType.ESP8266);
+        Device device = new Device();
+        device.id = 100;
+        device.name = "My Dashboard Updated";
+        device.boardType = BoardType.ESP8266;
 
         clientPair.appClient.updateDevice(1, device);
         clientPair.appClient.verifyResult(illegalCommandBody(1));
@@ -79,7 +92,10 @@ public class DeviceCommandsTest extends SingleServerInstancePerTest {
 
     @Test
     public void testGetDevices() throws Exception {
-        Device device0 = new Device(0, "My Dashboard", BoardType.ESP8266);
+        Device device0 = new Device();
+        device0.id = 0;
+        device0.name = "My Dashboard";
+        device0.boardType = BoardType.ESP8266;
         device0.status = Status.ONLINE;
 
         clientPair.appClient.send("getDevices 1");
@@ -93,7 +109,10 @@ public class DeviceCommandsTest extends SingleServerInstancePerTest {
 
     @Test
     public void testTokenNotUpdatedForExistingDevice() throws Exception {
-        Device device0 = new Device(0, "My Dashboard", BoardType.ESP8266);
+        Device device0 = new Device();
+        device0.id = 0;
+        device0.name = "My Dashboard";
+        device0.boardType = BoardType.ESP8266;
         device0.status = Status.ONLINE;
 
         clientPair.appClient.send("getDevices 1");
@@ -127,9 +146,16 @@ public class DeviceCommandsTest extends SingleServerInstancePerTest {
 
     @Test
     public void testDeletedNewlyAddedDevice() throws Exception {
-        Device device0 = new Device(0, "My Dashboard", BoardType.ESP8266);
+        Device device0 = new Device();
+        device0.id = 0;
+        device0.name = "My Dashboard";
+        device0.boardType = BoardType.ESP8266;
         device0.status = Status.ONLINE;
-        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
+
+        Device device1 = new Device();
+        device1.id = 1;
+        device1.name = "My Device";
+        device1.boardType = BoardType.ESP8266;
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(device1);

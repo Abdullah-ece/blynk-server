@@ -5,8 +5,6 @@ import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.core.model.storage.value.PinStorageValue;
-import cc.blynk.server.core.model.storage.value.SinglePinStorageValue;
 import cc.blynk.server.core.model.widgets.controls.Button;
 import cc.blynk.server.core.model.widgets.controls.LinkButton;
 import cc.blynk.server.core.model.widgets.controls.NumberInput;
@@ -51,7 +49,6 @@ import cc.blynk.server.core.model.widgets.sensors.Humidity;
 import cc.blynk.server.core.model.widgets.sensors.Light;
 import cc.blynk.server.core.model.widgets.sensors.Proximity;
 import cc.blynk.server.core.model.widgets.sensors.Temperature;
-import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.model.widgets.ui.Menu;
 import cc.blynk.server.core.model.widgets.ui.Tabs;
 import cc.blynk.server.core.model.widgets.ui.TimeInput;
@@ -70,7 +67,6 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.io.IOException;
-import java.util.Objects;
 
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 
@@ -152,13 +148,14 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
         @JsonSubTypes.Type(value = BluetoothSerial.class, name = "BLUETOOTH_SERIAL"),
         @JsonSubTypes.Type(value = Eventor.class, name = "EVENTOR"),
         @JsonSubTypes.Type(value = Map.class, name = "MAP"),
-        @JsonSubTypes.Type(value = DeviceSelector.class, name = "DEVICE_SELECTOR"),
         @JsonSubTypes.Type(value = DeviceTiles.class, name = "DEVICE_TILES"),
 
         @JsonSubTypes.Type(value = WebHook.class, name = "WEBHOOK")
 
 })
 public abstract class Widget implements CopyObject<Widget> {
+
+    public static final Widget[] EMPTY_WIDGETS = {};
 
     public long id;
 
@@ -233,14 +230,6 @@ public abstract class Widget implements CopyObject<Widget> {
         }
     }
 
-    public PinStorageValue getPinStorageValue() {
-        return new SinglePinStorageValue();
-    }
-
-    public boolean isMultiValueWidget() {
-        return false;
-    }
-
     public boolean setProperty(WidgetProperty property, String propertyValue) {
         switch (property) {
             case LABEL :
@@ -263,20 +252,47 @@ public abstract class Widget implements CopyObject<Widget> {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
+
         Widget widget = (Widget) o;
-        return id == widget.id
-                && x == widget.x
-                && y == widget.y
-                && color == widget.color
-                && width == widget.width
-                && height == widget.height
-                && tabId == widget.tabId
-                && isDefaultColor == widget.isDefaultColor
-                && Objects.equals(label, widget.label);
+
+        if (id != widget.id) {
+            return false;
+        }
+        if (x != widget.x) {
+            return false;
+        }
+        if (y != widget.y) {
+            return false;
+        }
+        if (color != widget.color) {
+            return false;
+        }
+        if (width != widget.width) {
+            return false;
+        }
+        if (height != widget.height) {
+            return false;
+        }
+        if (tabId != widget.tabId) {
+            return false;
+        }
+        if (isDefaultColor != widget.isDefaultColor) {
+            return false;
+        }
+        return label != null ? label.equals(widget.label) : widget.label == null;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, x, y, color, width, height, tabId, label, isDefaultColor);
+        int result = (int) (id ^ (id >>> 32));
+        result = 31 * result + x;
+        result = 31 * result + y;
+        result = 31 * result + color;
+        result = 31 * result + width;
+        result = 31 * result + height;
+        result = 31 * result + tabId;
+        result = 31 * result + (label != null ? label.hashCode() : 0);
+        result = 31 * result + (isDefaultColor ? 1 : 0);
+        return result;
     }
 }

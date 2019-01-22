@@ -5,7 +5,6 @@ import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.db.DBManager;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,6 +17,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -41,14 +41,11 @@ public class ProfileSaverWorkerTest {
     @Mock
     private OrganizationDao organizationDao;
 
-    @Mock
-    private GlobalStats stats;
-
     private BlockingIOProcessor blockingIOProcessor = new BlockingIOProcessor(4, 1);
 
     @Test
     public void testCorrectProfilesAreSaved() throws IOException {
-        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(userDao, fileManager, new DBManager(blockingIOProcessor, true), organizationDao);
+        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(userDao, fileManager, new DBManager(blockingIOProcessor), organizationDao);
 
         User user1 = new User("1", "", 1, "local", "127.0.0.1", false, 2);
         User user2 = new User("2", "", 1, "local", "127.0.0.1", false, 2);
@@ -64,11 +61,11 @@ public class ProfileSaverWorkerTest {
         when(userDao.getUsers()).thenReturn(userMap);
         profileSaverWorker.run();
 
-        verify(fileManager, times(4)).overrideUserFile(any(), any());
-        verify(fileManager).overrideUserFile(user1, false);
-        verify(fileManager).overrideUserFile(user2, false);
-        verify(fileManager).overrideUserFile(user3, false);
-        verify(fileManager).overrideUserFile(user4, false);
+        verify(fileManager, times(4)).overrideUserFile(any(User.class), eq(true));
+        verify(fileManager).overrideUserFile(user1, true);
+        verify(fileManager).overrideUserFile(user2, true);
+        verify(fileManager).overrideUserFile(user3, true);
+        verify(fileManager).overrideUserFile(user4, true);
     }
 
     @Test
@@ -86,7 +83,7 @@ public class ProfileSaverWorkerTest {
 
         Thread.sleep(1);
 
-        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(userDao, fileManager, new DBManager(blockingIOProcessor, true), organizationDao);
+        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(userDao, fileManager, new DBManager(blockingIOProcessor), organizationDao);
 
         when(userDao.getUsers()).thenReturn(userMap);
         profileSaverWorker.run();

@@ -3,7 +3,6 @@ package cc.blynk.server.hardware.handlers.hardware.logic;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.NotificationsDao;
-import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.web.product.events.Event;
@@ -31,7 +30,6 @@ public class HardwareLogEventLogic {
 
     private static final Logger log = LogManager.getLogger(HardwareLogEventLogic.class);
 
-    private final OrganizationDao organizationDao;
     private final BlockingIOProcessor blockingIOProcessor;
     private final ReportingDBManager reportingDBManager;
 
@@ -39,7 +37,6 @@ public class HardwareLogEventLogic {
     private final NotificationsDao notificationsDao;
 
     public HardwareLogEventLogic(Holder holder) {
-        this.organizationDao = holder.organizationDao;
         this.blockingIOProcessor = holder.blockingIOProcessor;
         this.reportingDBManager = holder.reportingDBManager;
 
@@ -57,13 +54,7 @@ public class HardwareLogEventLogic {
         }
 
         var device = state.device;
-
-        var product = organizationDao.getProductById(device.productId);
-        if (product == null) {
-            log.error("Product with id {} not exists.", device.productId);
-            ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
-            return;
-        }
+        var product = state.product;
 
         var eventCode = splitBody[0];
         Event event = product.findEventByCode(eventCode.hashCode());

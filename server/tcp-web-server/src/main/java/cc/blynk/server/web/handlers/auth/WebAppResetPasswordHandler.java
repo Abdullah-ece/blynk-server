@@ -119,10 +119,11 @@ public class WebAppResetPasswordHandler extends SimpleChannelInboundHandler<Rese
             }
             Organization org = organizationDao.getOrgByIdOrThrow(user.orgId);
 
-            user.resetPass(passHash);
             if (user.status == UserStatus.Pending) {
                 userDao.createProjectForExportedApp(timerWorker, user, userDao.getAppName());
             }
+
+            user.resetPass(passHash);
             tokensPool.removeToken(token);
             blockingIOProcessor.execute(() -> {
                 try {

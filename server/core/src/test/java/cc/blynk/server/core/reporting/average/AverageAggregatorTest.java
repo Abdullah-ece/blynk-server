@@ -1,6 +1,5 @@
 package cc.blynk.server.core.reporting.average;
 
-import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.reporting.raw.BaseReportingKey;
@@ -13,8 +12,8 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
-import static cc.blynk.server.core.reporting.average.AverageAggregatorProcessor.DAY;
-import static cc.blynk.server.core.reporting.average.AverageAggregatorProcessor.HOUR;
+import static cc.blynk.utils.DateTimeUtils.DAY;
+import static cc.blynk.utils.DateTimeUtils.HOUR;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -56,8 +55,8 @@ public class AverageAggregatorTest {
         assertEquals(1, averageAggregator.getHourly().size());
         assertEquals(1, averageAggregator.getDaily().size());
 
-        assertEquals(expectedAverage, averageAggregator.getHourly().get(new AggregationKey(user.orgId, 0, pinType, pin, ts / HOUR)).calcAverage(), 0);
-        assertEquals(expectedAverage, averageAggregator.getDaily().get(new AggregationKey(user.orgId, 0, pinType, pin, ts / DAY)).calcAverage(), 0);
+        assertEquals(expectedAverage, averageAggregator.getHourly().get(new AggregationKey(0, pinType, pin, ts / HOUR)).calcAverage(), 0);
+        assertEquals(expectedAverage, averageAggregator.getDaily().get(new AggregationKey(0, pinType, pin, ts / DAY)).calcAverage(), 0);
     }
 
     @Test
@@ -85,13 +84,13 @@ public class AverageAggregatorTest {
 
             assertEquals(hour + 1, averageAggregator.getHourly().size());
 
-            assertEquals(expectedAverage, averageAggregator.getHourly().get(new AggregationKey(user.orgId, 0, pinType, pin, ts / HOUR)).calcAverage(), 0);
+            assertEquals(expectedAverage, averageAggregator.getHourly().get(new AggregationKey(0, pinType, pin, ts / HOUR)).calcAverage(), 0);
         }
         expectedDailyAverage /= COUNT * 24;
 
         assertEquals(24, averageAggregator.getHourly().size());
         assertEquals(1, averageAggregator.getDaily().size());
-        assertEquals(expectedDailyAverage, averageAggregator.getDaily().get(new AggregationKey(user.orgId, 0, pinType, pin, getMillis(2015, 8, 1, 0, 0) / DAY)).calcAverage(), 0);
+        assertEquals(expectedDailyAverage, averageAggregator.getDaily().get(new AggregationKey(0, pinType, pin, getMillis(2015, 8, 1, 0, 0) / DAY)).calcAverage(), 0);
     }
 
     @Test
@@ -126,7 +125,7 @@ public class AverageAggregatorTest {
 
             assertEquals(hour + 1, averageAggregator.getHourly().size());
 
-            assertEquals(expectedAverage, averageAggregator.getHourly().get(new AggregationKey(user.orgId, 0, pinType, pin, ts / HOUR)).calcAverage(), 0);
+            assertEquals(expectedAverage, averageAggregator.getHourly().get(new AggregationKey(0, pinType, pin, ts / HOUR)).calcAverage(), 0);
         }
         expectedDailyAverage /= COUNT * 24;
 
@@ -146,12 +145,6 @@ public class AverageAggregatorTest {
         assertEquals(1, averageAggregator.getDaily().size());
         assertEquals(expectedDailyAverage, averageAggregator.getDaily().get(new AggregationKey(new BaseReportingKey(0, pinType, pin), getMillis(2015, 8, 1, 0, 0) / DAY)).calcAverage(), 0);
 
-        assertTrue(Files.notExists(Paths.get(reportingFolder, AverageAggregatorProcessor.HOURLY_TEMP_FILENAME)));
-        assertTrue(Files.notExists(Paths.get(reportingFolder, AverageAggregatorProcessor.DAILY_TEMP_FILENAME)));
-
-        ReportingDiskDao reportingDao = new ReportingDiskDao(reportingFolder, true);
-
-        reportingDao.delete(0, PinType.VIRTUAL, pin);
         assertTrue(Files.notExists(Paths.get(reportingFolder, AverageAggregatorProcessor.HOURLY_TEMP_FILENAME)));
         assertTrue(Files.notExists(Paths.get(reportingFolder, AverageAggregatorProcessor.DAILY_TEMP_FILENAME)));
     }

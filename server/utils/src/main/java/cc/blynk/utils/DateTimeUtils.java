@@ -12,6 +12,10 @@ import java.util.TimeZone;
  */
 public final class DateTimeUtils {
 
+    public static final long MINUTE = 1000 * 60;
+    public static final long HOUR = 60 * MINUTE;
+    public static final long DAY = 24 * HOUR;
+
     private DateTimeUtils() {
     }
 

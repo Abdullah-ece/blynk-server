@@ -61,7 +61,7 @@ import static cc.blynk.server.core.model.widgets.outputs.graph.AggregationFuncti
 import static cc.blynk.server.core.model.widgets.outputs.graph.Period.LIVE;
 import static cc.blynk.server.core.protocol.enums.Command.GET_SUPERCHART_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_TRACK_DEVICE;
-import static cc.blynk.server.core.reporting.average.AverageAggregatorProcessor.MINUTE;
+import static cc.blynk.utils.DateTimeUtils.MINUTE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -423,18 +423,18 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         long now = System.currentTimeMillis();
         AggregationValue aggregationValue = new AggregationValue();
         aggregationValue.update(1.11D);
-        AggregationKey aggregationKey1 = new AggregationKey(regularUser.orgId, 1, PinType.VIRTUAL, (byte) 3, (now - 180_000) / MINUTE);
+        AggregationKey aggregationKey1 = new AggregationKey(1, PinType.VIRTUAL, (byte) 3, (now - 180_000) / MINUTE);
         Map<AggregationKey, AggregationValue> data = new HashMap<>();
         data.put(aggregationKey1, aggregationValue);
 
         AggregationValue aggregationValue2 = new AggregationValue();
         aggregationValue2.update(1.22D);
-        AggregationKey aggregationKey2 = new AggregationKey(regularUser.orgId, 1, PinType.VIRTUAL, (byte) 3, (now - 120_000) / MINUTE);
+        AggregationKey aggregationKey2 = new AggregationKey(1, PinType.VIRTUAL, (byte) 3, (now - 120_000) / MINUTE);
         data.put(aggregationKey2, aggregationValue2);
 
         AggregationValue aggregationValue3 = new AggregationValue();
         aggregationValue3.update(1.33D);
-        AggregationKey aggregationKey3 = new AggregationKey(regularUser.orgId, 1, PinType.VIRTUAL, (byte) 4, (now - 60_000) / MINUTE);
+        AggregationKey aggregationKey3 = new AggregationKey(1, PinType.VIRTUAL, (byte) 4, (now - 60_000) / MINUTE);
         data.put(aggregationKey3, aggregationValue3);
         holder.reportingDBManager.reportingDBDao.insert(data, GraphGranularityType.MINUTE);
 
@@ -539,14 +539,14 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         aggregationValue.update(1.11D);
         Map<AggregationKey, AggregationValue> data = new HashMap<>();
         data.put(
-                new AggregationKey(1, 1, PinType.VIRTUAL, (byte) 3, (now - 60_000) / MINUTE),
+                new AggregationKey(1, PinType.VIRTUAL, (byte) 3, (now - 60_000) / MINUTE),
                 aggregationValue
         );
 
         aggregationValue = new AggregationValue();
         aggregationValue.update(1.22D);
         data.put(
-                new AggregationKey(1, 1, PinType.VIRTUAL, (byte) 3, now / MINUTE),
+                new AggregationKey(1, PinType.VIRTUAL, (byte) 3, now / MINUTE),
                 aggregationValue
         );
         holder.reportingDBManager.reportingDBDao.insert(data, GraphGranularityType.MINUTE);

@@ -2,7 +2,6 @@ package cc.blynk.utils;
 
 import java.io.BufferedWriter;
 import java.io.DataOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.Buffer;
@@ -12,13 +11,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.nio.file.attribute.FileTime;
 import java.security.MessageDigest;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
@@ -131,61 +127,57 @@ public final class FileUtils {
         }
     }
 
+    //todo format data in select query
     public static boolean writeBufToCsvFilterAndFormat(BufferedWriter writer, ByteBuffer onePinData,
-                                                      String pin, String deviceName,
-                                                      long startFrom, DateTimeFormatter formatter) throws IOException {
-        boolean hasData = false;
+                                                       String pin, String deviceName,
+                                                       DateTimeFormatter formatter) throws IOException {
+        if (onePinData.remaining() <= 0) {
+            return false;
+        }
         while (onePinData.remaining() > 0) {
             double value = onePinData.getDouble();
             long ts = onePinData.getLong();
 
-            if (startFrom <= ts) {
-                String formattedTs = formatTS(formatter, ts);
-                writer.write(formattedTs + ',' + pin + ',' + deviceName + ',' + value + '\n');
-                hasData = true;
-            }
+            String formattedTs = formatTS(formatter, ts);
+            writer.write(formattedTs + ',' + pin + ',' + deviceName + ',' + value + '\n');
         }
-        if (hasData) {
-            writer.flush();
-        }
-        return hasData;
+        writer.flush();
+        return true;
     }
 
+    //todo format data in select query
     public static boolean writeBufToCsvFilterAndFormat(BufferedWriter writer, ByteBuffer onePinData, String pin,
-                                                      long startFrom, DateTimeFormatter formatter) throws IOException {
-        boolean hasData = false;
+                                                       DateTimeFormatter formatter) throws IOException {
+        if (onePinData.remaining() <= 0) {
+            return false;
+        }
         while (onePinData.remaining() > 0) {
             double value = onePinData.getDouble();
             long ts = onePinData.getLong();
 
-            if (startFrom <= ts) {
-                String formattedTs = formatTS(formatter, ts);
-                writer.write(formattedTs + ',' + pin + ',' + value + '\n');
-                hasData = true;
-            }
+            String formattedTs = formatTS(formatter, ts);
+            writer.write(formattedTs + ',' + pin + ',' + value + '\n');
         }
-        if (hasData) {
-            writer.flush();
-        }
-        return hasData;
+
+        writer.flush();
+        return true;
     }
 
-    public static String writeBufToCsvFilterAndFormat(ByteBuffer onePinData,
-                                                    long startFrom, DateTimeFormatter formatter) {
+    //todo format data in select query
+    public static String writeBufToCsvFilterAndFormat(ByteBuffer onePinData, DateTimeFormatter formatter) {
         StringBuilder sb = new StringBuilder(onePinData.capacity() * 3);
         while (onePinData.remaining() > 0) {
             double value = onePinData.getDouble();
             long ts = onePinData.getLong();
 
-            if (startFrom <= ts) {
-                String formattedTs = formatTS(formatter, ts);
-                sb.append(formattedTs).append(',')
-                        .append(value).append('\n');
-            }
+            String formattedTs = formatTS(formatter, ts);
+            sb.append(formattedTs).append(',')
+                    .append(value).append('\n');
         }
         return sb.toString();
     }
 
+    //todo format data in select query
     private static String formatTS(DateTimeFormatter formatter, long ts) {
         if (formatter == null) {
             return String.valueOf(ts);
@@ -195,19 +187,6 @@ public final class FileUtils {
 
     public static Path getUserReportDir(String email, int orgId, int reportId, String date) {
         return Paths.get(FileUtils.CSV_DIR, email + "_" + orgId + "_" + reportId + "_" + date);
-    }
-
-    public static File getLatestFile(File[] files) {
-        if (files == null || files.length == 0) {
-            return null;
-        }
-        File lastModifiedFile = files[0];
-        for (int i = 1; i < files.length; i++) {
-            if (lastModifiedFile.lastModified() < files[i].lastModified()) {
-                lastModifiedFile = files[i];
-            }
-        }
-        return lastModifiedFile;
     }
 
     public static final String BUILD = "build";
@@ -266,19 +245,6 @@ public final class FileUtils {
             }
         }
         return null;
-    }
-
-    public static long getLastModified(Path filePath) throws IOException {
-        BasicFileAttributes attr = Files.readAttributes(filePath, BasicFileAttributes.class);
-        FileTime modifiedTime = attr.lastModifiedTime();
-        return modifiedTime.toMillis();
-    }
-
-    public static void deleteDirectory(Path path) throws IOException {
-        Files.walk(path)
-             .sorted(Comparator.reverseOrder())
-             .map(Path::toFile)
-             .forEach(File::delete);
     }
 
 }

@@ -15,10 +15,9 @@ import cc.blynk.utils.ArrayUtil;
 import java.util.HashSet;
 import java.util.Set;
 
-import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_DATA_STREAMS;
-import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_DEVICES;
-import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_EVENTS;
-import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_META_FIELDS;
+import static cc.blynk.server.core.model.DataStream.EMPTY_DATA_STREAMS;
+import static cc.blynk.server.core.model.web.product.MetaField.EMPTY_META_FIELDS;
+import static cc.blynk.server.core.model.web.product.events.Event.EMPTY_EVENTS;
 
 /**
  * The Blynk Project.
@@ -26,6 +25,9 @@ import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_META_FIELDS;
  * Created on 04.04.17.
  */
 public class Product {
+
+    public static final Product[] EMPTY_PRODUCTS = {};
+    private static final Device[] EMPTY_DEVICES = {};
 
     public int id;
 
@@ -104,7 +106,17 @@ public class Product {
         return set.size() == events.length;
     }
 
-    public Event findEventByType(EventType eventType) {
+    @SuppressWarnings("unchecked")
+    public <T> T getEventByType(Class<T> clazz) {
+        for (Event event : events) {
+            if (clazz.isInstance(event)) {
+                return (T) event;
+            }
+        }
+        return null;
+    }
+
+    public Event getEventByType(EventType eventType) {
         for (Event event : events) {
             if (event.getType() == eventType) {
                 return event;

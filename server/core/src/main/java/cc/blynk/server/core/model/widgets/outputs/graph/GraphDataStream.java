@@ -11,6 +11,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class GraphDataStream {
 
+    static final GraphDataStream[] EMPTY_GRAPH_DATA_STREAMS = {};
+
     private final String title;
 
     private final GraphType graphType;

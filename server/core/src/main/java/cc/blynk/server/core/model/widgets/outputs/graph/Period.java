@@ -61,4 +61,33 @@ public enum Period {
                 return 24 * 60 * 60 * 1000L;
         }
     }
+
+    private static final Period[] CUSTOM_DATE_PERIODS = new Period[] {
+            FIFTEEN_MINUTES,
+            THIRTY_MINUTES,
+            ONE_HOUR,
+            THREE_HOURS,
+            SIX_HOURS,
+            TWELVE_HOURS,
+            N_DAY,
+            TWO_DAYS,
+            N_THREE_DAYS,
+            N_WEEK,
+            N_TWO_WEEKS,
+            N_MONTH,
+            N_THREE_MONTHS,
+            SIX_MONTHS,
+            ONE_YEAR
+    };
+
+    public static Period calcGraphPeriod(long from, long to) {
+        long diff = to - from;
+        for (var graphPeriod : CUSTOM_DATE_PERIODS) {
+            if (diff < graphPeriod.millis) {
+                return graphPeriod;
+            }
+        }
+
+        return Period.ONE_YEAR;
+    }
 }

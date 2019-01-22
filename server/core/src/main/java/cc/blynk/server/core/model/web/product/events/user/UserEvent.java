@@ -1,6 +1,7 @@
-package cc.blynk.server.core.model.web.product.events;
+package cc.blynk.server.core.model.web.product.events.user;
 
 import cc.blynk.server.core.model.web.product.EventReceiver;
+import cc.blynk.server.core.model.web.product.events.Event;
 
 /**
  * The Blynk Project.

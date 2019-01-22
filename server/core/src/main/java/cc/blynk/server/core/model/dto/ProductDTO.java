@@ -11,9 +11,9 @@ import cc.blynk.server.core.model.web.product.events.Event;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_DATA_STREAMS;
-import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_EVENTS;
-import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_META_FIELDS;
+import static cc.blynk.server.core.model.DataStream.EMPTY_DATA_STREAMS;
+import static cc.blynk.server.core.model.web.product.MetaField.EMPTY_META_FIELDS;
+import static cc.blynk.server.core.model.web.product.events.Event.EMPTY_EVENTS;
 
 public final class ProductDTO {
 

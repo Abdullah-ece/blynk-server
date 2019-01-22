@@ -1,27 +1,19 @@
-CREATE TABLE users;
-CREATE TABLE users (
-  email text NOT NULL,
-  org_id int,
-  region text,
-  ip text,
-  name text,
-  pass text,
-  last_modified timestamp,
-  last_logged timestamp,
-  last_logged_ip text,
-  is_facebook_user bool,
-  role_id int,
-  energy int,
-  json text,
-  PRIMARY KEY(email)
+alter table reporting_events alter column ts TYPE timestamptz;
+alter table reporting_events alter column resolved_at TYPE timestamptz;
+alter table reporting_events_last_seen alter column ts TYPE timestamptz;
+alter table blynk_default alter column created TYPE timestamptz;
+alter table reporting_app_stat_minute alter column ts TYPE timestamptz;
+alter table reporting_app_command_stat_minute alter column ts TYPE timestamptz;
+alter table reporting_http_command_stat_minute alter column ts TYPE timestamptz;
+
+ALTER TABLE blynk_default RENAME COLUMN created to ts;
+ALTER TABLE blynk_default RENAME TO reporting_device_raw_data;
+
+DROP TABLE reporting_events_last_seen;
+CREATE TABLE reporting_events_last_seen (
+  device_id int4,
+  email text,
+  ts timestamptz default now(),
+  PRIMARY KEY(device_id, email)
 );
-
-alter table reporting_average_minute drop column project_id;
-alter table reporting_average_hourly drop column project_id;
-alter table reporting_average_daily drop column project_id;
-alter table reporting_raw_data drop column project_id;
-
-alter table reporting_average_minute drop column email;
-alter table reporting_average_hourly drop column email;
-alter table reporting_average_daily drop column email;
-alter table reporting_raw_data drop column email;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO test;

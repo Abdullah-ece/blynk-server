@@ -31,7 +31,6 @@ server.properties
 data.folder=./data
 logs.folder=./logs
 log.level=info
-enable.db=true
 force.port.80.for.csv=true
 contact.email=xxx@blynk.cc
 user.message.quota.limit=10000

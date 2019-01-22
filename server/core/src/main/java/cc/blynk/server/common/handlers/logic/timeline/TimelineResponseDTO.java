@@ -2,7 +2,7 @@ package cc.blynk.server.common.handlers.logic.timeline;
 
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.EventType;
-import cc.blynk.server.db.model.LogEvent;
+import cc.blynk.server.db.dao.descriptor.LogEventDTO;
 import cc.blynk.server.db.model.LogEventCountKey;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -18,13 +18,13 @@ public class TimelineResponseDTO {
 
     public final int totalResolved;
 
-    public final List<LogEvent> eventList;
+    public final List<LogEventDTO> eventList;
 
     @JsonCreator
     public TimelineResponseDTO(@JsonProperty("totalCritical") int totalCritical,
                                @JsonProperty("totalWarning") int totalWarning,
                                @JsonProperty("totalResolved") int totalResolved,
-                               @JsonProperty("eventList") List<LogEvent> eventList) {
+                               @JsonProperty("eventList") List<LogEventDTO> eventList) {
         this.totalCritical = totalCritical;
         this.totalWarning = totalWarning;
         this.totalResolved = totalResolved;
@@ -33,7 +33,7 @@ public class TimelineResponseDTO {
 
     public TimelineResponseDTO(int deviceId,
                                Map<LogEventCountKey, Integer> totalCounters,
-                               List<LogEvent> eventList) {
+                               List<LogEventDTO> eventList) {
         this(
                 totalCounters.getOrDefault(new LogEventCountKey(deviceId, EventType.CRITICAL, false), 0),
                 totalCounters.getOrDefault(new LogEventCountKey(deviceId, EventType.WARNING, false), 0),

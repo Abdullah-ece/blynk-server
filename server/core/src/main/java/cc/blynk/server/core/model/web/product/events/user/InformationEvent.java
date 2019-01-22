@@ -1,7 +1,8 @@
-package cc.blynk.server.core.model.web.product.events;
+package cc.blynk.server.core.model.web.product.events.user;
 
 import cc.blynk.server.core.model.web.product.EventReceiver;
 import cc.blynk.server.core.model.web.product.EventType;
+import cc.blynk.server.core.model.web.product.events.Event;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -10,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Created by Dmitriy Dumanskiy.
  * Created on 11.05.17.
  */
-public class InformationEvent extends UserEvent {
+public final class InformationEvent extends UserEvent {
 
     @Override
     public EventType getType() {

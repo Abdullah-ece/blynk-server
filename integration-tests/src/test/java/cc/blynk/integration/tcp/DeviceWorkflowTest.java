@@ -3,24 +3,20 @@ package cc.blynk.integration.tcp;
 import cc.blynk.integration.SingleServerInstancePerTest;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.core.dao.ProvisionTokenValue;
-import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
-import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.controls.Terminal;
 import cc.blynk.server.core.model.widgets.outputs.ValueDisplay;
 import cc.blynk.server.core.model.widgets.outputs.graph.FontSize;
-import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.templates.PageTileTemplate;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
 import cc.blynk.server.notifications.push.enums.Priority;
-import cc.blynk.utils.FileUtils;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -28,14 +24,9 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 import static cc.blynk.integration.TestUtil.appSync;
 import static cc.blynk.integration.TestUtil.b;
 import static cc.blynk.integration.TestUtil.createDevice;
-import static cc.blynk.integration.TestUtil.createTag;
 import static cc.blynk.integration.TestUtil.deviceConnected;
 import static cc.blynk.integration.TestUtil.hardware;
 import static cc.blynk.integration.TestUtil.ok;
@@ -72,9 +63,16 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testSendHardwareCommandToMultipleDevices() throws Exception {
-        Device device0 = new Device(0, "My Dashboard", BoardType.Arduino_UNO);
+        Device device0 = new Device();
+        device0.id = 0;
+        device0.name = "My Dashboard";
+        device0.boardType = BoardType.Arduino_UNO;
         device0.status = Status.ONLINE;
-        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
+
+        Device device1 = new Device();
+        device1.id = 1;
+        device1.name = "My Device";
+        device1.boardType = BoardType.ESP8266;
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(device1);
@@ -115,7 +113,10 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testDeviceWentOfflineMessage() throws Exception {
-        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
+        Device device1 = new Device();
+        device1.id = 1;
+        device1.name = "My Device";
+        device1.boardType = BoardType.ESP8266;
 
         clientPair.appClient.createDevice(device1);
         Device device = clientPair.appClient.parseDevice();
@@ -141,7 +142,10 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testSendHardwareCommandToAppFromMultipleDevices() throws Exception {
-        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
+        Device device1 = new Device();
+        device1.id = 1;
+        device1.name = "My Device";
+        device1.boardType = BoardType.ESP8266;
 
         clientPair.appClient.createDevice(device1);
         Device device = clientPair.appClient.parseDevice();
@@ -173,7 +177,10 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.createWidget(1, "{\"id\":188, \"width\":1, \"height\":1, \"deviceId\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":1}");
         clientPair.appClient.verifyResult(ok(1));
 
-        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
+        Device device1 = new Device();
+        device1.id = 1;
+        device1.name = "My Device";
+        device1.boardType = BoardType.ESP8266;
 
         clientPair.appClient.createDevice(device1);
         Device device = clientPair.appClient.parseDevice(2);
@@ -199,7 +206,10 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.createWidget(1, "{\"id\":188, \"width\":1, \"height\":1, \"deviceId\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":33}");
         clientPair.appClient.verifyResult(ok(1));
 
-        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
+        Device device1 = new Device();
+        device1.id = 1;
+        device1.name = "My Device";
+        device1.boardType = BoardType.ESP8266;
 
         clientPair.appClient.createDevice(device1);
         Device device = clientPair.appClient.parseDevice(2);
@@ -238,7 +248,10 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testActivateForMultiDevices() throws Exception {
-        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
+        Device device1 = new Device();
+        device1.id = 1;
+        device1.name = "My Device";
+        device1.boardType = BoardType.ESP8266;
 
         clientPair.appClient.createDevice(device1);
         Device device = clientPair.appClient.parseDevice();
@@ -256,52 +269,14 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
     }
 
     @Test
-    public void testTagWorks() throws Exception {
-        Tag tag = new Tag(100_000, "My New Tag");
-        tag.deviceIds = new int[] {1};
-
-        clientPair.appClient.createTag(1, tag);
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(createTag(1, tag)));
-
-        clientPair.appClient.createWidget(1, "{\"id\":188, \"width\":1, \"height\":1, \"deviceId\":100000, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":33, \"value\":1}");
-        clientPair.appClient.verifyResult(ok(2));
-
-        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
-
-        clientPair.appClient.createDevice(device1);
-        Device device = clientPair.appClient.parseDevice(3);
-        assertNotNull(device);
-        assertNotNull(device.token);
-        clientPair.appClient.verifyResult(createDevice(3, device));
-
-        TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
-        hardClient2.start();
-
-        hardClient2.login(device.token);
-        hardClient2.verifyResult(ok(1));
-
-        clientPair.appClient.reset();
-
-        clientPair.appClient.send("hardware 1-100000 dw 33 1");
-        verify(clientPair.hardwareClient.responseMock, timeout(500).times(0)).channelRead(any(), eq(new HardwareMessage(3, b("dw 33 10"))));
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("dw 33 1"))));
-
-        tag.deviceIds = new int[] {0, 1};
-
-        clientPair.appClient.updateTag(1, tag);
-        clientPair.appClient.verifyResult(ok(2));
-
-        clientPair.appClient.send("hardware 1-100000 dw 33 10");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(3, b("dw 33 10"))));
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(3, b("dw 33 10"))));
-    }
-
-    @Test
     public void testActivateAndGetSyncForMultiDevices() throws Exception {
         clientPair.appClient.createWidget(1, "{\"id\":188, \"width\":1, \"height\":1, \"deviceId\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":33, \"value\":1}");
         clientPair.appClient.verifyResult(ok(1));
 
-        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
+        Device device1 = new Device();
+        device1.id = 1;
+        device1.name = "My Device";
+        device1.boardType = BoardType.ESP8266;
 
         clientPair.appClient.createDevice(device1);
         Device device = clientPair.appClient.parseDevice(2);
@@ -332,8 +307,15 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testOfflineOnlineStatusForMultiDevices() throws Exception {
-        Device device0 = new Device(0, "My Dashboard", BoardType.Arduino_UNO);
-        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
+        Device device0 = new Device();
+        device0.id = 0;
+        device0.name = "My Dashboard";
+        device0.boardType = BoardType.Arduino_UNO;
+
+        Device device1 = new Device();
+        device1.id = 1;
+        device1.name = "My Device";
+        device1.boardType = BoardType.ESP8266;
 
         clientPair.appClient.createDevice(device1);
         Device device = clientPair.appClient.parseDevice();
@@ -374,7 +356,10 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testCorrectOnlineStatusForDisconnect() throws Exception {
-        Device device0 = new Device(0, "My Dashboard", BoardType.Arduino_UNO);
+        Device device0 = new Device();
+        device0.id = 0;
+        device0.name = "My Dashboard";
+        device0.boardType = BoardType.Arduino_UNO;
         device0.status = Status.ONLINE;
 
         clientPair.appClient.send("getDevices 1");
@@ -409,7 +394,10 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testCorrectOnlineStatusForReconnect() throws Exception {
-        Device device0 = new Device(0, "My Dashboard", BoardType.Arduino_UNO);
+        Device device0 = new Device();
+        device0.id = 0;
+        device0.name = "My Dashboard";
+        device0.boardType = BoardType.Arduino_UNO;
         device0.status = Status.ONLINE;
 
         clientPair.appClient.send("getDevices 1");
@@ -442,7 +430,10 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testHardwareChannelClosedOnDashRemoval() throws Exception {
-        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
+        Device device1 = new Device();
+        device1.id = 1;
+        device1.name = "My Device";
+        device1.boardType = BoardType.ESP8266;
 
         clientPair.appClient.createDevice(device1);
         Device device = clientPair.appClient.parseDevice();
@@ -472,57 +463,14 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
     }
 
     @Test
-    public void testHardwareChannelClosedOnDeviceRemoval() throws Exception {
-        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
+    public void testHardwareDataRemovedWhenDeviceRemoved() throws Exception {
+        Device device1 = new Device();
+        device1.id = 1;
+        device1.name = "My Device";
+        device1.boardType = BoardType.ESP8266;
 
         clientPair.appClient.createDevice(device1);
-        Device device = clientPair.appClient.parseDevice();
-        assertNotNull(device);
-        assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(createDevice(1, device)));
 
-        TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
-        hardClient2.start();
-
-        hardClient2.login(device.token);
-        hardClient2.verifyResult(ok(1));
-        clientPair.appClient.verifyResult(deviceConnected(1, "1-1"));
-
-        String tempDir = holder.props.getProperty("data.folder");
-        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
-        if (Files.notExists(userReportFolder)) {
-            Files.createDirectories(userReportFolder);
-        }
-
-        Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.DIGITAL, (short) 8, GraphGranularityType.MINUTE));
-        Path pinReportingDataPath11 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.DIGITAL, (short) 8, GraphGranularityType.HOURLY));
-        Path pinReportingDataPath12 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.DIGITAL, (short) 8, GraphGranularityType.DAILY));
-        Path pinReportingDataPath13 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(PinType.VIRTUAL, (short) 9, GraphGranularityType.DAILY));
-
-        FileUtils.write(pinReportingDataPath10, 1.11D, 1111111);
-        FileUtils.write(pinReportingDataPath11, 1.11D, 1111111);
-        FileUtils.write(pinReportingDataPath12, 1.11D, 1111111);
-        FileUtils.write(pinReportingDataPath13, 1.11D, 1111111);
-
-        clientPair.appClient.send("deleteDevice 1\0" + "1");
-        clientPair.appClient.verifyResult(ok(2));
-
-        assertFalse(clientPair.hardwareClient.isClosed());
-        assertTrue(hardClient2.isClosed());
-
-        assertTrue(Files.notExists(pinReportingDataPath10));
-        assertTrue(Files.notExists(pinReportingDataPath11));
-        assertTrue(Files.notExists(pinReportingDataPath12));
-        assertTrue(Files.notExists(pinReportingDataPath13));
-    }
-
-    @Test
-    public void testHardwareDataRemovedWhenDeviceRemoved() throws Exception {
-        clientPair.appClient.createDevice(new Device(1, "My Device", BoardType.ESP8266));
         Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
@@ -583,7 +531,10 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testTemporaryTokenWorksAsExpected() throws Exception {
-        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
+        Device device1 = new Device();
+        device1.id = 1;
+        device1.name = "My Device";
+        device1.boardType = BoardType.ESP8266;
 
         clientPair.appClient.getProvisionToken(device1);
         device1 = clientPair.appClient.parseDevice(1);
@@ -629,54 +580,11 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
     }
 
     @Test
-    public void testCorrectRemovalForTags() throws Exception {
-        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
-
-        clientPair.appClient.createDevice(device1);
-        Device device = clientPair.appClient.parseDevice();
-        assertNotNull(device);
-        assertNotNull(device.token);
-        clientPair.appClient.verifyResult(createDevice(1, device));
-
-        Tag tag1 = new Tag(100_001, "tag1");
-        Tag tag2 = new Tag(100_002, "tag2", new int[] {0});
-        Tag tag3 = new Tag(100_003, "tag3", new int[] {1});
-        Tag tag4 = new Tag(100_004, "tag4", new int[] {0, 1});
-
-        clientPair.appClient.createTag(1, tag1);
-        clientPair.appClient.createTag(1, tag2);
-        clientPair.appClient.createTag(1, tag3);
-        clientPair.appClient.createTag(1, tag4);
-        clientPair.appClient.verifyResult(createTag(2, tag1));
-        clientPair.appClient.verifyResult(createTag(3, tag2));
-        clientPair.appClient.verifyResult(createTag(4, tag3));
-        clientPair.appClient.verifyResult(createTag(5, tag4));
-
-        clientPair.appClient.deleteDevice(1, 1);
-        clientPair.appClient.verifyResult(ok(6));
-
-        clientPair.appClient.send("getTags 1");
-        Tag[] tags = clientPair.appClient.parseTags(7);
-        assertNotNull(tags);
-
-        assertEquals(100_001, tags[0].id);
-        assertEquals(0, tags[0].deviceIds.length);
-
-        assertEquals(100_002, tags[1].id);
-        assertEquals(1, tags[1].deviceIds.length);
-        assertEquals(0, tags[1].deviceIds[0]);
-
-        assertEquals(100_003, tags[2].id);
-        assertEquals(0, tags[2].deviceIds.length);
-
-        assertEquals(100_004, tags[3].id);
-        assertEquals(1, tags[3].deviceIds.length);
-        assertEquals(0, tags[3].deviceIds[0]);
-    }
-
-    @Test
     public void testCorrectRemovalForDeviceSelector() throws Exception {
-        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
+        Device device1 = new Device();
+        device1.id = 1;
+        device1.name = "My Device";
+        device1.boardType = BoardType.ESP8266;
 
         clientPair.appClient.createDevice(device1);
         Device device = clientPair.appClient.parseDevice();

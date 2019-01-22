@@ -45,7 +45,7 @@ public final class MobileGetCloneCodeLogic {
             MessageBase result;
             try {
                 boolean insertStatus = holder.dbManager.insertClonedProject(qrToken, json);
-                if (insertStatus || holder.fileManager.writeCloneProjectToDisk(qrToken, json)) {
+                if (insertStatus) {
                     result = makeASCIIStringMessage(GET_CLONE_CODE, message.id, qrToken);
                 } else {
                     log.error("Creating clone project failed for {}", user.email);

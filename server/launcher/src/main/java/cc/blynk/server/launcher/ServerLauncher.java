@@ -19,12 +19,12 @@ import cc.blynk.server.core.model.web.product.EventType;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.WebDashboard;
-import cc.blynk.server.core.model.web.product.events.CriticalEvent;
 import cc.blynk.server.core.model.web.product.events.Event;
-import cc.blynk.server.core.model.web.product.events.InformationEvent;
-import cc.blynk.server.core.model.web.product.events.OfflineEvent;
-import cc.blynk.server.core.model.web.product.events.OnlineEvent;
-import cc.blynk.server.core.model.web.product.events.WarningEvent;
+import cc.blynk.server.core.model.web.product.events.system.OfflineEvent;
+import cc.blynk.server.core.model.web.product.events.system.OnlineEvent;
+import cc.blynk.server.core.model.web.product.events.user.CriticalEvent;
+import cc.blynk.server.core.model.web.product.events.user.InformationEvent;
+import cc.blynk.server.core.model.web.product.events.user.WarningEvent;
 import cc.blynk.server.core.model.web.product.metafields.DeviceNameMetaField;
 import cc.blynk.server.core.model.web.product.metafields.DeviceOwnerMetaField;
 import cc.blynk.server.core.model.widgets.Widget;
@@ -258,7 +258,7 @@ public final class ServerLauncher {
             holder.deviceDao.create(superOrg.id, "admin@blynk.cc", product, newDevice);
             for (EventType eventType : EventType.values()) {
                 try {
-                    Event event = product.findEventByType(eventType);
+                    Event event = product.getEventByType(eventType);
                     holder.reportingDBManager.insertEvent(newDevice.id, eventType,
                             System.currentTimeMillis(), event.hashCode(), null);
                 } catch (Exception e) {
