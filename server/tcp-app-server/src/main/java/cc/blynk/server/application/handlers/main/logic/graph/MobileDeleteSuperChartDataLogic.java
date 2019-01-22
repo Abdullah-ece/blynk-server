@@ -10,7 +10,6 @@ import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
 import cc.blynk.server.core.model.widgets.outputs.graph.Superchart;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.core.reporting.raw.BaseReportingKey;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -81,8 +80,8 @@ public final class MobileDeleteSuperChartDataLogic {
                         int deviceId = device.id;
                         holder.reportingDBManager
                                 .reportingDBDao.delete(deviceId, dataStream.pin, dataStream.pinType);
-                        holder.reportingDBManager.rawDataCacheForGraphProcessor.rawStorage
-                                .remove(new BaseReportingKey(deviceId, dataStream.pinType, dataStream.pin));
+                        holder.reportingDBManager.rawDataCacheForGraphProcessor
+                                .removeCacheEntry(deviceId, dataStream.pinType, dataStream.pin);
                     }
                 }
                 ctx.writeAndFlush(ok(msgId), ctx.voidPromise());

@@ -20,11 +20,11 @@ import cc.blynk.server.core.model.widgets.outputs.graph.GraphType;
 import cc.blynk.server.core.model.widgets.outputs.graph.Period;
 import cc.blynk.server.core.model.widgets.outputs.graph.Superchart;
 import cc.blynk.server.core.model.widgets.web.WebLineGraph;
-import cc.blynk.server.core.model.widgets.web.WebSource;
-import cc.blynk.server.core.model.widgets.web.label.WebLabel;
 import cc.blynk.server.core.protocol.model.messages.BinaryMessage;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
+import cc.blynk.server.core.reporting.raw.BaseReportingKey;
+import cc.blynk.server.db.dao.RawEntry;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,13 +35,11 @@ import java.util.Map;
 
 import static cc.blynk.integration.APIBaseTest.createDeviceNameMeta;
 import static cc.blynk.integration.APIBaseTest.createDeviceOwnerMeta;
-import static cc.blynk.integration.TestUtil.createWebLabelWidget;
 import static cc.blynk.integration.TestUtil.createWebLineGraph;
 import static cc.blynk.integration.TestUtil.deviceConnected;
 import static cc.blynk.integration.TestUtil.hardware;
 import static cc.blynk.integration.TestUtil.loggedDefaultClient;
 import static cc.blynk.integration.TestUtil.ok;
-import static cc.blynk.integration.TestUtil.updateProductWebDash;
 import static cc.blynk.integration.TestUtil.webJson;
 import static cc.blynk.utils.DateTimeUtils.MINUTE;
 import static org.junit.Assert.assertEquals;
@@ -445,7 +443,6 @@ public class MobileGetGraphDataTest extends SingleServerInstancePerTestWithDBAnd
                 createDeviceOwnerMeta(2, "Device Owner", null, true)
         };
         product.webDashboard = new WebDashboard(new Widget[] {
-                createWebLabelWidget(1, "123"),
                 createWebLineGraph(2, "graph")
         });
 
@@ -462,50 +459,15 @@ public class MobileGetGraphDataTest extends SingleServerInstancePerTestWithDBAnd
         device = client.parseDevice(2);
         assertNotNull(device);
 
-        WebLabel webLabel = createWebLabelWidget(1, "1234");
-        webLabel.x = 111;
-        webLabel.y = 111;
-        webLabel.width = 111;
-        webLabel.height = 111;
-        WebLineGraph webLineGraph = createWebLineGraph(2, "graph4");
-
-        fromApiProduct = updateProductWebDash(fromApiProduct, webLabel, webLineGraph);
-
-        client.updateProduct(orgId, fromApiProduct);
-        fromApiProduct = client.parseProductDTO(3);
-        assertNotNull(fromApiProduct);
-        assertEquals(product.name, fromApiProduct.name);
-        assertEquals(product.description, fromApiProduct.description);
-        assertNotNull(fromApiProduct.webDashboard);
-        assertEquals(2, fromApiProduct.webDashboard.widgets.length);
-
-        webLabel = (WebLabel) fromApiProduct.webDashboard.widgets[0];
-        assertEquals("1234", webLabel.label);
-        assertEquals(111, webLabel.x);
-        assertEquals(111, webLabel.y);
-        assertEquals(111, webLabel.height);
-        assertEquals(111, webLabel.width);
 
         client.getDevice(orgId, device.id);
-        device = client.parseDevice(4);
+        device = client.parseDevice(3);
 
         assertNotNull(device);
         assertEquals("My New Device", device.name);
         assertNotNull(device.webDashboard);
-        assertEquals(2, device.webDashboard.widgets.length);
-        assertTrue(device.webDashboard.widgets[0] instanceof WebLabel);
-
-        webLabel = (WebLabel) device.webDashboard.widgets[0];
-        assertEquals("123", webLabel.label);
-        assertEquals(1, webLabel.x);
-        assertEquals(2, webLabel.y);
-        assertEquals(10, webLabel.height);
-        assertEquals(20, webLabel.width);
-
-        WebSource webSource = webLabel.sources[0];
-        assertEquals("Web Source Label", webSource.label);
-        assertEquals(1, webSource.dataStream.pin);
-        assertEquals(PinType.VIRTUAL, webSource.dataStream.pinType);
+        assertEquals(1, device.webDashboard.widgets.length);
+        assertTrue(device.webDashboard.widgets[0] instanceof WebLineGraph);
 
 
         TestAppClient appClient = new TestAppClient("localhost", properties.getHttpsPort());
@@ -552,14 +514,20 @@ public class MobileGetGraphDataTest extends SingleServerInstancePerTestWithDBAnd
         hardClient.send("hardware vw 1 111");
         appClient.verifyResult(hardware(2, device.id + " vw 1 111"));
 
-        assertEquals(1, holder.reportingDBManager.rawDataProcessor.rawStorage.size());
+        assertEquals(1, holder.reportingDBManager.rawDataCacheForGraphProcessor.rawStorage.size());
+        assertTrue(holder.reportingDBManager.rawDataCacheForGraphProcessor
+                .rawStorage.containsKey(new BaseReportingKey(device.id, PinType.VIRTUAL, (short) 1)));
+        RawEntry rawEntry = holder.reportingDBManager.rawDataCacheForGraphProcessor
+                .rawStorage.get(new BaseReportingKey(device.id, PinType.VIRTUAL, (short) 1)).getFirst();
+        assertNotNull(rawEntry);
+        assertEquals(rawEntry.value, 111D, 0.001D);
 
         appClient.deleteGraphData(dashBoard.id, superchart.id, "v1");
         appClient.verifyResult(ok(4));
 
         assertEquals(0, holder.reportingDBManager.rawDataCacheForGraphProcessor.rawStorage.size());
 
-        appClient.getSuperChartData(dashBoard.id, superchart.id, Period.DAY);
+        appClient.getSuperChartData(dashBoard.id, superchart.id, Period.LIVE);
         appClient.verifyResult(webJson(5, "No data.", 17));
     }
 

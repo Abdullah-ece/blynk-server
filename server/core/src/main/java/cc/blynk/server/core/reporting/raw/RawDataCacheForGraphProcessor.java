@@ -1,5 +1,6 @@
 package cc.blynk.server.core.reporting.raw;
 
+import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.reporting.MobileGraphRequest;
 import cc.blynk.server.core.reporting.WebGraphRequest;
 import cc.blynk.server.db.dao.RawEntry;
@@ -41,6 +42,12 @@ public class RawDataCacheForGraphProcessor {
             rawStorage.put(baseReportingKey, cache);
         }
         cache.add(graphCacheValue);
+    }
+
+    public void removeCacheEntry(int deviceId, PinType pinType, short pin) {
+        if (pinType != null) {
+            rawStorage.remove(new BaseReportingKey(deviceId, pinType, pin));
+        }
     }
 
     public Collection<RawEntry> getLiveGraphData(WebGraphRequest webGraphRequest) {
