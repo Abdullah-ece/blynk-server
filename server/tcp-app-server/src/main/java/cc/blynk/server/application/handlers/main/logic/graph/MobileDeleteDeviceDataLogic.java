@@ -69,6 +69,8 @@ public final class MobileDeleteDeviceDataLogic {
                     short pin = NumberUtil.parsePin(pinString.substring(1));
                     int removedCounter =
                             holder.reportingDBManager.reportingDBDao.delete(deviceId, pin, pinType);
+                    holder.reportingDBManager.rawDataCacheForGraphProcessor
+                            .removeCacheEntry(deviceId, pinType, pin);
                     log.info("Removed {} records for deviceId {} and pin {}.", removedCounter, deviceId, pin);
                 }
                 channel.writeAndFlush(ok(msgId), channel.voidPromise());

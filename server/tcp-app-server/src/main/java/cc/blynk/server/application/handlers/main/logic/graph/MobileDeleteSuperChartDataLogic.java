@@ -80,6 +80,8 @@ public final class MobileDeleteSuperChartDataLogic {
                         int deviceId = device.id;
                         holder.reportingDBManager
                                 .reportingDBDao.delete(deviceId, dataStream.pin, dataStream.pinType);
+                        holder.reportingDBManager.rawDataCacheForGraphProcessor
+                                .removeCacheEntry(deviceId, dataStream.pinType, dataStream.pin);
                     }
                 }
                 ctx.writeAndFlush(ok(msgId), ctx.voidPromise());
