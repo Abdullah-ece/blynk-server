@@ -69,7 +69,6 @@ function socketSubscribe(emitter) {
 }
 
 function* login(state) {
-  console.log(state)
   yield put(_websocketOpen());
 
   if (state && state.Account && state.Account.credentials && state.Account.credentials.username) {
@@ -147,12 +146,9 @@ function* handleOutput() {
   const socketEventChannel = yield call(subscribeToSocketEventChannel, socket);
   while (true) {
     const message = yield take(socketEventChannel);
-    console.log('AAAAAAAAAAAAa', message);
     if (message['PERFORM_LOGIN']) {
       const state = yield select();
-      console.log(state);
       yield call(login, state);
-      console.log(1);
     } else {
       yield put(message);
     }
