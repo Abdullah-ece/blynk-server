@@ -80,17 +80,21 @@ function socketSubscribe(emitter) {
 }
 
 function reconnect() {
-  return new Promise((resolve, reject) => {
-    retry(resolve, reject).then((sock) => {
-      resolve(sock);
+  if(!socket_reconnect_retry) {
+    socket_reconnect_retry = true;
+    return new Promise((resolve, reject) => {
+      retry(resolve, reject).then((sock) => {
+        resolve(sock);
+      });
     });
-  });
+  }
 }
 
 function retry(resolve, reject) {
   return new Promise(() => {
     setTimeout(() => {
       socketConnect().then((sock) => {
+        socket_reconnect_retry = false;
         socket_reconnect_retry = 0;
         resolve(sock);
       }).catch((err) => {
@@ -101,7 +105,7 @@ function retry(resolve, reject) {
           reject(err);
         }
       });
-    }, 5000);
+    }, 300);
   });
 }
 
@@ -127,7 +131,11 @@ function* handleInput(socketPromise) {
       options.debug('webSocketSend', action.value);
     }
 
-    socket.send(action.value);
+    if (socket.readyState === 1) {
+      socket.send(action.value);
+    } else if (socket.readyState === 2 || socket.readyState === 3) {
+      reconnect();
+    }
   }
 }
 
