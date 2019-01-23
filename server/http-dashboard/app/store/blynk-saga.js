@@ -15,6 +15,7 @@ import { browserHistory } from "react-router";
 
 export const INIT_ACTION_TYPE = 'CONNECT';
 
+const PERFORM_LOGIN = 'PERFORM_LOGIN';
 let socket_reconnect_retry = 0;
 const MAX_SOCKET_RETRY = 5000;
 
@@ -25,28 +26,15 @@ let socket;
 let options;
 
 function* connect() {
-  const state = yield select();
-  return socketConnect(state);
+  return socketConnect();
 }
 
-function socketConnect(state) {
+function socketConnect() {
   return new Promise((resolve, reject) => {
     try {
       socket = new WebSocket(options.endpoint);
       socket.binaryType = 'arraybuffer';
       socket.addEventListener('open', () => {
-        put(_websocketOpen());
-
-        if (state && state.Account && state.Account.credentials && state.Account.credentials.username) {
-          const { username, password } = state.Account.credentials;
-          put(blynkWsLogin({
-            username,
-            hash: password
-          }));
-        } else {
-          browserHistory.push('/login');
-        }
-
         resolve(socket);
 
       });
@@ -74,13 +62,29 @@ function socketSubscribe(emitter) {
 
   socket.addEventListener('close', () => {
     reconnect().then(() => {
+      emitter({ PERFORM_LOGIN: PERFORM_LOGIN });
       socketSubscribe(emitter);
     });
   });
 }
 
+function* login(state) {
+  console.log(state)
+  yield put(_websocketOpen());
+
+  if (state && state.Account && state.Account.credentials && state.Account.credentials.username) {
+    const { username, password } = state.Account.credentials;
+    yield put(blynkWsLogin({
+      username,
+      hash: password
+    }));
+  } else {
+    browserHistory.push('/login');
+  }
+}
+
 function reconnect() {
-  if(!socket_reconnect_retry) {
+  if (!socket_reconnect_retry) {
     socket_reconnect_retry = true;
     return new Promise((resolve, reject) => {
       retry(resolve, reject).then((sock) => {
@@ -143,7 +147,15 @@ function* handleOutput() {
   const socketEventChannel = yield call(subscribeToSocketEventChannel, socket);
   while (true) {
     const message = yield take(socketEventChannel);
-    yield put(message);
+    console.log('AAAAAAAAAAAAa', message);
+    if (message['PERFORM_LOGIN']) {
+      const state = yield select();
+      console.log(state);
+      yield call(login, state);
+      console.log(1);
+    } else {
+      yield put(message);
+    }
   }
 }
 
