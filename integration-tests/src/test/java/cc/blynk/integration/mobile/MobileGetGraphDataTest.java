@@ -12,14 +12,19 @@ import cc.blynk.server.core.model.dto.ProductDTO;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
+import cc.blynk.server.core.model.web.product.WebDashboard;
+import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphType;
 import cc.blynk.server.core.model.widgets.outputs.graph.Period;
 import cc.blynk.server.core.model.widgets.outputs.graph.Superchart;
+import cc.blynk.server.core.model.widgets.web.WebLineGraph;
 import cc.blynk.server.core.protocol.model.messages.BinaryMessage;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
+import cc.blynk.server.core.reporting.raw.BaseReportingKey;
+import cc.blynk.server.db.dao.RawEntry;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,6 +35,7 @@ import java.util.Map;
 
 import static cc.blynk.integration.APIBaseTest.createDeviceNameMeta;
 import static cc.blynk.integration.APIBaseTest.createDeviceOwnerMeta;
+import static cc.blynk.integration.TestUtil.createWebLineGraph;
 import static cc.blynk.integration.TestUtil.deviceConnected;
 import static cc.blynk.integration.TestUtil.hardware;
 import static cc.blynk.integration.TestUtil.loggedDefaultClient;
@@ -38,6 +44,7 @@ import static cc.blynk.integration.TestUtil.webJson;
 import static cc.blynk.utils.DateTimeUtils.MINUTE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * The Blynk Project.
@@ -421,6 +428,110 @@ public class MobileGetGraphDataTest extends SingleServerInstancePerTestWithDBAnd
         appClient.getSuperChartData(dashBoard.id, superchart.id, Period.DAY);
         appClient.verifyResult(webJson(5, "No data.", 17));
     }
+
+    @Test
+    public void testRawDataCacheCleansOnDeleteGraphData() throws Exception {
+        holder.reportingDBManager.rawDataProcessor.rawStorage.clear();
+
+        String user = getUserName();
+        AppWebSocketClient client = loggedDefaultClient(user, "1");
+
+        Product product = new Product();
+        product.name = "My product";
+        product.metaFields = new MetaField[] {
+                createDeviceNameMeta(1, "Device Name", "My Default device Name", true),
+                createDeviceOwnerMeta(2, "Device Owner", null, true)
+        };
+        product.webDashboard = new WebDashboard(new Widget[] {
+                createWebLineGraph(2, "graph")
+        });
+
+        client.createProduct(product);
+        ProductDTO fromApiProduct = client.parseProductDTO(1);
+        assertNotNull(fromApiProduct);
+
+        //device is mandatory for any test
+        Device device = new Device();
+        device.name = "My New Device";
+        device.productId = fromApiProduct.id;
+
+        client.createDevice(orgId, device);
+        device = client.parseDevice(2);
+        assertNotNull(device);
+
+
+        client.getDevice(orgId, device.id);
+        device = client.parseDevice(3);
+
+        assertNotNull(device);
+        assertEquals("My New Device", device.name);
+        assertNotNull(device.webDashboard);
+        assertEquals(1, device.webDashboard.widgets.length);
+        assertTrue(device.webDashboard.widgets[0] instanceof WebLineGraph);
+
+
+        TestAppClient appClient = new TestAppClient("localhost", properties.getHttpsPort());
+        appClient.start();
+        appClient.login(user, "1");
+        appClient.verifyResult(ok(1));
+
+        //Step 1. Create minimal project with 1 widget.
+        DashBoard dashBoard = new DashBoard();
+        dashBoard.id = 10;
+        dashBoard.name = "123";
+        appClient.createDash(dashBoard);
+        appClient.verifyResult(ok(2));
+
+        Superchart superchart = new Superchart();
+        superchart.id = 432;
+        superchart.width = 8;
+        superchart.height = 4;
+        DataStream dataStream = new DataStream((short) 1, PinType.VIRTUAL);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, device.id, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
+        superchart.dataStreams = new GraphDataStream[] {
+                graphDataStream
+        };
+
+        appClient.createWidget(dashBoard.id, superchart);
+        appClient.verifyResult(ok(3));
+
+
+        long now = System.currentTimeMillis();
+        var data = Map.of(
+                new AggregationKey(device.id, dataStream.pinType, dataStream.pin, now / MINUTE),
+                new AggregationValue(1.11D)
+        );
+
+        holder.reportingDBManager.reportingDBDao.insert(data, GraphGranularityType.MINUTE);
+
+
+        TestHardClient hardClient = new TestHardClient("localhost", properties.getHttpPort());
+        hardClient.start();
+        hardClient.login(device.token);
+        hardClient.verifyResult(ok(1));
+        appClient.verifyResult(deviceConnected(1, device.id));
+
+        hardClient.send("hardware vw 1 111");
+        appClient.verifyResult(hardware(2, device.id + " vw 1 111"));
+
+        assertEquals(1, holder.reportingDBManager.rawDataCacheForGraphProcessor.rawStorage.size());
+        assertTrue(holder.reportingDBManager.rawDataCacheForGraphProcessor
+                .rawStorage.containsKey(new BaseReportingKey(device.id, PinType.VIRTUAL, (short) 1)));
+        RawEntry rawEntry = holder.reportingDBManager.rawDataCacheForGraphProcessor
+                .rawStorage.get(new BaseReportingKey(device.id, PinType.VIRTUAL, (short) 1)).getFirst();
+        assertNotNull(rawEntry);
+        assertEquals(rawEntry.value, 111D, 0.001D);
+
+        appClient.deleteGraphData(dashBoard.id, superchart.id, "v1");
+        appClient.verifyResult(ok(4));
+
+        assertEquals(0, holder.reportingDBManager.rawDataCacheForGraphProcessor.rawStorage.size());
+
+        appClient.getSuperChartData(dashBoard.id, superchart.id, Period.LIVE);
+        appClient.verifyResult(webJson(5, "No data.", 17));
+    }
+
+    // todo: test that raw data cache cleans after appClient.deleteDeviceData() in MobileDeleteDeviceDataLogic.delete()
 
     private Device createProductAndDevice(String user) throws Exception {
         AppWebSocketClient client = loggedDefaultClient(user, "1");
