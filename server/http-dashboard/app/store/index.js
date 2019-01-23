@@ -6,7 +6,6 @@ import { responseInterceptor as axiosResponseInterceptor } from './axios';
 import { persistStore, autoRehydrate } from 'redux-persist';
 import createSagaMiddleware from 'redux-saga';
 
-// import { createWsMiddleware } from "store/redux-websocket-middleware";
 import { createBlynkWsMiddleware } from "store/blynk-websocket-middleware";
 import {
   blynkSaga,
@@ -57,17 +56,11 @@ function configureStoreProd(initialState) {
 
   const sagaMiddleware = createSagaMiddleware();
 
-  // const wsMiddleware = createWsMiddleware({
-  //   defaultEndpoint: `wss://${window.location.hostname}:${window.location.port}/dashws`,
-  //   isDebugMode: true,
-  // });
-
   const blynkWsMiddleware = createBlynkWsMiddleware({
     isDebugMode: true,
   });
 
   const middlewares = [
-    // wsMiddleware,
     blynkWsMiddleware,
     axiosMiddleware(axiosAPI, axiosMiddlewareOptions),
     sagaMiddleware
@@ -96,17 +89,11 @@ function configureStoreDev() {
 
   const sagaMiddleware = createSagaMiddleware();
 
-  // const wsMiddleware = createWsMiddleware({
-  //   defaultEndpoint: 'wss://localhost:9443/dashws',
-  //   isDebugMode: true,
-  // });
-
   const blynkWsMiddleware = createBlynkWsMiddleware({
     isDebugMode: true,
   });
 
   const middlewares = [
-    // wsMiddleware,
     blynkWsMiddleware,
     axiosMiddleware(axiosAPI, axiosMiddlewareOptions),
     sagaMiddleware

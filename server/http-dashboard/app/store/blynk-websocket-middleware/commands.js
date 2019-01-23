@@ -1,11 +1,8 @@
-import {
-  websocketConnect,
-  websocketSend,
-} from '../redux-websocket-middleware/actions';
-
 import { getCommandKeyName } from "./selectors";
 
 import {
+  websocketConnect,
+  websocketSend,
   blynkWsRequest
 } from './actions';
 

@@ -1,5 +1,3 @@
-// import { LOCATION_CHANGE } from 'react-router-redux';
-
 import { eventChannel } from 'redux-saga';
 import {
   put,
@@ -9,26 +7,14 @@ import {
   select,
   actionChannel,
 } from 'redux-saga/effects';
-import WS_ACTIONS, {
-  _websocketMessage,
+import {
+  ACTIONS, blynkWsLogin, _websocketMessage,
   _websocketOpen
-} from "./redux-websocket-middleware/actions";
-import { blynkWsLogin } from "./blynk-websocket-middleware/actions";
+} from "./blynk-websocket-middleware/actions";
 import { browserHistory } from "react-router";
-// import { Handlers } from "./blynk-websocket-middleware/handlers";
-// import {
-//   API_COMMANDS,
-//   COMMANDS,
-//   RESPONSE_CODES
-// } from "./blynk-websocket-middleware/commands";
-
-// import {
-//   getCommandKeyName,
-// } from "./selectors";
 
 export const INIT_ACTION_TYPE = 'CONNECT';
 
-// let MSG_ID = 0;
 let socket_reconnect_retry = 0;
 const MAX_SOCKET_RETRY = 5000;
 
@@ -50,6 +36,7 @@ function socketConnect(state) {
       socket.binaryType = 'arraybuffer';
       socket.addEventListener('open', () => {
         put(_websocketOpen());
+
         if (state && state.Account && state.Account.credentials && state.Account.credentials.username) {
           const { username, password } = state.Account.credentials;
           put(blynkWsLogin({
@@ -59,14 +46,22 @@ function socketConnect(state) {
         } else {
           browserHistory.push('/login');
         }
+
         resolve(socket);
+
       });
       socket.addEventListener('error', (err) => {
-        console.error(err);
+        if (options.isDebugMode) {
+          options.debug('onSocketError');
+        }
+
         reject(err);
       });
     } catch (err) {
-      console.error(err);
+      if (options.isDebugMode) {
+        options.debug('onSocketError');
+      }
+
       reject(err);
     }
   });
@@ -119,7 +114,7 @@ function* subscribeToSocketEventChannel() {
 }
 
 function* handleInput(socketPromise) {
-  const socketChan = yield actionChannel(WS_ACTIONS.WEBSOCKET_SEND);
+  const socketChan = yield actionChannel(ACTIONS.WEBSOCKET_SEND);
   yield socketPromise;
 
   while (true) {
