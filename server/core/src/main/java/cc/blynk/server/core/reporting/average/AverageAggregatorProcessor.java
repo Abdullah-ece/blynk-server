@@ -20,7 +20,7 @@ import static cc.blynk.server.internal.SerializationUtil.serialize;
  * Created by Dmitriy Dumanskiy.
  * Created on 10.08.15.
  */
-public class AverageAggregatorProcessor implements Closeable {
+public final class AverageAggregatorProcessor implements Closeable {
 
     private static final Logger log = LogManager.getLogger(AverageAggregatorProcessor.class);
 
