@@ -7,7 +7,7 @@ import java.io.Serializable;
  * Created by Dmitriy Dumanskiy.
  * Created on 10.08.15.
  */
-public class AggregationValue implements Serializable {
+public final class AggregationValue implements Serializable {
 
     private double values = 0;
     private long count = 0;

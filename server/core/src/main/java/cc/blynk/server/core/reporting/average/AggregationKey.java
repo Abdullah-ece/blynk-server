@@ -5,7 +5,6 @@ import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.reporting.raw.BaseReportingKey;
 
 import java.io.Serializable;
-import java.util.Comparator;
 
 /**
  * The Blynk Project.
@@ -14,10 +13,8 @@ import java.util.Comparator;
  */
 public final class AggregationKey implements Serializable {
 
-    public static final Comparator<AggregationKey> AGGREGATION_KEY_COMPARATOR = (o1, o2) -> (int) (o1.ts - o2.ts);
-
     private final BaseReportingKey baseReportingKey;
-    public final long ts;
+    private final long ts;
 
     public AggregationKey(int deviceId, PinType pinType, short pin, long ts) {
         this(new BaseReportingKey(deviceId, pinType, pin), ts);
@@ -29,11 +26,11 @@ public final class AggregationKey implements Serializable {
     }
 
     public long getTs(GraphGranularityType type) {
-        return ts * type.period;
+        return this.ts * type.period;
     }
 
     public boolean isOutdated(long nowTruncatedToPeriod) {
-        return ts < nowTruncatedToPeriod;
+        return this.ts < nowTruncatedToPeriod;
     }
 
     public int getDeviceId() {
