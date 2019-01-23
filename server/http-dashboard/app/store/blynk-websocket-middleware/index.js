@@ -1,4 +1,3 @@
-import wsActions from '../redux-websocket-middleware/actions';
 import blynkWsActions from './actions';
 import {
   blynkWsConnect,
@@ -68,7 +67,7 @@ export const createBlynkWsMiddleware = (options = {}) => {
       return blynkWsConnect(params);
     }
 
-    if (action && action.type === wsActions.WEBSOCKET_MESSAGE) {
+    if (action && action.type === blynkWsActions.WEBSOCKET_MESSAGE) {
       blynkWsMessage(params);
     }
 

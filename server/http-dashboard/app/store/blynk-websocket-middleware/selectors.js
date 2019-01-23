@@ -1,3 +1,5 @@
+import { API_COMMANDS, COMMANDS } from "./commands";
+
 const ReducerName = 'BlynkWS';
 
 export const getTrackDeviceId = (state) => {
@@ -16,4 +18,20 @@ export const getTrackOnlyByDeviceId = (state) => {
   } catch (e) {
     return null;
   }
+};
+
+export const getCommandKeyName = (value) => {
+  for(let key in COMMANDS){
+    if(COMMANDS[key] == value){
+      return key;
+    }
+  }
+
+  for(let key in API_COMMANDS){
+    if(API_COMMANDS[key] == value){
+      return key;
+    }
+  }
+
+  return value;
 };

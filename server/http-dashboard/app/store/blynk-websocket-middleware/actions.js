@@ -1,20 +1,24 @@
 export const ACTIONS = {
-  'BLYNK_WS_TRACK_DEVICE_ID'        : 'BLYNK_WS_TRACK_DEVICE_ID',
-  'BLYNK_WS_CHART_DATA_RESPONSE'    : 'BLYNK_WS_CHART_DATA_RESPONSE',
-  'BLYNK_WS_CHART_DATA_FETCH'       : 'BLYNK_WS_CHART_DATA_FETCH',
-  'BLYNK_WS_REQUEST'                : 'BLYNK_WS_REQUEST',
-  'BLYNK_WS_RESPONSE'               : 'BLYNK_WS_RESPONSE',
-  'BLYNK_WS_CONNECT'                : 'BLYNK_WS_CONNECT',
+  'BLYNK_WS_TRACK_DEVICE_ID': 'BLYNK_WS_TRACK_DEVICE_ID',
+  'BLYNK_WS_CHART_DATA_RESPONSE': 'BLYNK_WS_CHART_DATA_RESPONSE',
+  'BLYNK_WS_CHART_DATA_FETCH': 'BLYNK_WS_CHART_DATA_FETCH',
+  'BLYNK_WS_REQUEST': 'BLYNK_WS_REQUEST',
+  'BLYNK_WS_RESPONSE': 'BLYNK_WS_RESPONSE',
+  'BLYNK_WS_CONNECT': 'BLYNK_WS_CONNECT',
   'BLYNK_WS_DEVICE_METAFIELD_UPDATE': 'BLYNK_WS_DEVICE_METAFIELD_UPDATE',
-  'BLYNK_WS_LOGIN'                  : 'BLYNK_WS_LOGIN',
-  'BLYNK_WS_VIRTUAL_WRITE'          : 'BLYNK_WS_VIRTUAL_WRITE',
-  'BLYNK_WS_HARDWARE'               : 'BLYNK_WS_HARDWARE',
-  'BLYNK_WS_LOG_EVENT'              : 'BLYNK_WS_LOG_EVENT',
-  'BLYNK_WS_LOG_EVENT_RESOLVE'      : 'BLYNK_WS_LOG_EVENT_RESOLVE',
-  'BLYNK_WS_DEVICE_CONNECT'         : 'BLYNK_WS_DEVICE_CONNECT',
-  'BLYNK_WS_DEVICE_DISCONNECT'      : 'BLYNK_WS_DEVICE_DISCONNECT',
-  'BLYNK_WS_LOGIN_VIA_INVITE'       : 'BLYNK_WS_LOGIN_VIA_INVITE',
-  'BLYNK_WS_DEVICE_CREATED'         : 'BLYNK_WS_DEVICE_CREATED',
+  'BLYNK_WS_LOGIN': 'BLYNK_WS_LOGIN',
+  'BLYNK_WS_VIRTUAL_WRITE': 'BLYNK_WS_VIRTUAL_WRITE',
+  'BLYNK_WS_HARDWARE': 'BLYNK_WS_HARDWARE',
+  'BLYNK_WS_LOG_EVENT': 'BLYNK_WS_LOG_EVENT',
+  'BLYNK_WS_LOG_EVENT_RESOLVE': 'BLYNK_WS_LOG_EVENT_RESOLVE',
+  'BLYNK_WS_DEVICE_CONNECT': 'BLYNK_WS_DEVICE_CONNECT',
+  'BLYNK_WS_DEVICE_DISCONNECT': 'BLYNK_WS_DEVICE_DISCONNECT',
+  'BLYNK_WS_LOGIN_VIA_INVITE': 'BLYNK_WS_LOGIN_VIA_INVITE',
+  'BLYNK_WS_DEVICE_CREATED': 'BLYNK_WS_DEVICE_CREATED',
+  'WEBSOCKET_CONNECT': "WEBSOCKET_CONNECT",
+  'WEBSOCKET_SEND': "WEBSOCKET_SEND",
+  'WEBSOCKET_OPEN': 'WEBSOCKET_OPEN',
+  'WEBSOCKET_MESSAGE': 'WEBSOCKET_MESSAGE',
 };
 
 export const blynkWsDeviceCreated = (body, previousAction) => ({
@@ -37,7 +41,7 @@ export const blynkWsRequest = (message = {}) => {
     }
 
   return {
-    type : ACTIONS.BLYNK_WS_REQUEST,
+    type: ACTIONS.BLYNK_WS_REQUEST,
     value: message
   };
 };
@@ -62,7 +66,7 @@ export const blynkWsResponse = (message = {}) => {
   }
 
   return {
-    type : ACTIONS.BLYNK_WS_RESPONSE,
+    type: ACTIONS.BLYNK_WS_RESPONSE,
     value: message
   };
 };
@@ -81,7 +85,7 @@ export const blynkWsConnect = () => ({
 });
 
 export const blynkWsLogin = (params) => ({
-  type : ACTIONS.BLYNK_WS_LOGIN,
+  type: ACTIONS.BLYNK_WS_LOGIN,
   value: {
     user: params.username,
     hash: params.hash
@@ -89,7 +93,7 @@ export const blynkWsLogin = (params) => ({
 });
 
 export const blynkWsLoginViaInvite = (params) => ({
-  type : ACTIONS.BLYNK_WS_LOGIN_VIA_INVITE,
+  type: ACTIONS.BLYNK_WS_LOGIN_VIA_INVITE,
   value: {
     user: params.username,
     hash: params.hash
@@ -97,7 +101,7 @@ export const blynkWsLoginViaInvite = (params) => ({
 });
 
 export const blynkWsHardware = ({ deviceId, pin, value }) => ({
-  type : ACTIONS.BLYNK_WS_HARDWARE,
+  type: ACTIONS.BLYNK_WS_HARDWARE,
   value: {
     deviceId,
     pin,
@@ -106,7 +110,7 @@ export const blynkWsHardware = ({ deviceId, pin, value }) => ({
 });
 
 export const blynkWsLogEvent = ({ deviceId, eventCode, eventDescription }) => ({
-  type : ACTIONS.BLYNK_WS_LOG_EVENT,
+  type: ACTIONS.BLYNK_WS_LOG_EVENT,
   value: {
     deviceId,
     eventCode,
@@ -115,7 +119,7 @@ export const blynkWsLogEvent = ({ deviceId, eventCode, eventDescription }) => ({
 });
 
 export const blynkWsLogEventResolve = ({ deviceId, logEventId, resolvedBy, resolveComment }) => ({
-  type : ACTIONS.BLYNK_WS_LOG_EVENT_RESOLVE,
+  type: ACTIONS.BLYNK_WS_LOG_EVENT_RESOLVE,
   value: {
     deviceId,
     logEventId,
@@ -125,21 +129,21 @@ export const blynkWsLogEventResolve = ({ deviceId, logEventId, resolvedBy, resol
 });
 
 export const blynkWsDeviceConnect = ({ deviceId }) => ({
-  type : ACTIONS.BLYNK_WS_DEVICE_CONNECT,
+  type: ACTIONS.BLYNK_WS_DEVICE_CONNECT,
   value: {
     deviceId
   }
 });
 
 export const blynkWsDeviceDisconnect = ({ deviceId }) => ({
-  type : ACTIONS.BLYNK_WS_DEVICE_DISCONNECT,
+  type: ACTIONS.BLYNK_WS_DEVICE_DISCONNECT,
   value: {
     deviceId
   }
 });
 
 export const blynkWsChartDataFetch = ({ deviceId, widgetId, period, customRange }) => ({
-  type : ACTIONS.BLYNK_WS_CHART_DATA_FETCH,
+  type: ACTIONS.BLYNK_WS_CHART_DATA_FETCH,
   value: {
     deviceId,
     widgetId,
@@ -166,5 +170,30 @@ export const blynkChartDataResponse = ({ deviceId, widgetId, points, graphPeriod
   }
 });
 
+export const websocketConnect = () => {
+  return {
+    type: ACTIONS.WEBSOCKET_CONNECT
+  };
+};
+
+export const websocketSend = (value) => {
+  return {
+    type: ACTIONS.WEBSOCKET_SEND,
+    value: value
+  };
+};
+
+export const _websocketOpen = () => {
+  return {
+    type: ACTIONS.WEBSOCKET_OPEN
+  };
+};
+
+export const _websocketMessage = (value) => {
+  return {
+    type: ACTIONS.WEBSOCKET_MESSAGE,
+    value: value
+  };
+};
 
 export default ACTIONS;
