@@ -117,7 +117,7 @@ public class DevicesHandler extends BaseHttpHandler {
             Response response;
             try {
                 String userComment = comment == null ? null : comment.comment;
-                if (reportingDBManager.eventDBDao.resolveEvent(logEventId, user.name, userComment)) {
+                if (reportingDBManager.eventDBDao.resolveEvent(logEventId, deviceId, user.name, userComment)) {
                     response = ok();
                     Session session = sessionDao.getOrgSession(orgId);
                     String body = logEventId + StringUtils.BODY_SEPARATOR_STRING + user.email;
@@ -297,7 +297,7 @@ public class DevicesHandler extends BaseHttpHandler {
                 List<LogEventDTO> eventList = reportingDBManager.eventDBDao
                         .getEvents(deviceId, eventType, from, to, offset, limit, isResolved);
 
-                reportingDBManager.eventDBDao.upsertLastSeen(deviceId, user.email);
+                reportingDBManager.eventDBDao.insertLastSeen(deviceId, user.email);
 
                 if (product != null) {
                     joinLogEventName(product, eventList);

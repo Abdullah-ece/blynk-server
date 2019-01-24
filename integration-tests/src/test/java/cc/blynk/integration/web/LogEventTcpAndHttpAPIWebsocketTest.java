@@ -30,6 +30,7 @@ import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.List;
+import java.util.StringJoiner;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static cc.blynk.integration.APIBaseTest.createContactMeta;
@@ -69,7 +70,15 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
     @Before
     public void clearDB() throws Exception {
         //clean everything just in case
-        holder.reportingDBManager.executeSQL("DELETE FROM reporting_events");
+        StringJoiner stringJoiner = new StringJoiner(",", "(", ")");
+
+        for (int i = 0; i < 50; i++) {
+            stringJoiner.add("" + i);
+        }
+
+        String ids = stringJoiner.toString();
+        holder.reportingDBManager.executeSQL("ALTER TABLE reporting_events delete where device_id in " + ids);
+        holder.reportingDBManager.executeSQL("ALTER TABLE reporting_events_last_seen delete where device_id in " + ids);
     }
 
     @Test
@@ -707,7 +716,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         List<LogEventDTO> logEvents = timeLineResponse.eventList;
         assertNotNull(logEvents);
         assertEquals(1, logEvents.size());
-        assertTrue(logEvents.get(0).id > 1);
+        assertTrue(logEvents.get(0).id > 0);
         logEventId = logEvents.get(0).id;
 
         client.trackDevice(device.id);
@@ -970,6 +979,8 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         client.verifyResult(deviceConnected(1, device.id));
         newHardClient.stop();
         client.reset();
+        //we have to wait for DB.
+        sleep(500);
 
         newHardClient = new TestHardClient("localhost", properties.getHttpPort());
         newHardClient.start();
@@ -978,7 +989,6 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         client.verifyResult(deviceConnected(1, device.id));
         newHardClient.stop();
         client.reset();
-
         //we have to wait for DB.
         sleep(500);
 

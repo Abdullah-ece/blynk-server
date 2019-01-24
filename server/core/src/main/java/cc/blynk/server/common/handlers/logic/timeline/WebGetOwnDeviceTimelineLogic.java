@@ -86,7 +86,7 @@ public final class WebGetOwnDeviceTimelineLogic implements PermissionBasedLogic<
 
                 eventList = reportingDBManager.eventDBDao.getEvents(timelineDTO);
 
-                reportingDBManager.eventDBDao.upsertLastSeen(timelineDTO.deviceId, user.email);
+                reportingDBManager.eventDBDao.insertLastSeen(timelineDTO.deviceId, user.email);
 
                 if (product != null) {
                     joinLogEventName(product, eventList);
