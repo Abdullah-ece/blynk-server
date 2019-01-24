@@ -6,7 +6,7 @@ import {
   blynkWsRequest
 } from './actions';
 
-import {Handlers} from './handlers';
+import { Handlers } from './handlers';
 
 let MSG_ID = 0;
 
@@ -19,72 +19,76 @@ let messages = [
 ];
 
 export const RESPONSE_CODES = {
-  OK             : 200,
-  NO_DATA        : 17,
+  OK: 200,
+  NO_DATA: 17,
   ILLEGAL_COMMAND: 2,
 };
 
 export const COMMANDS = {
-  RESPONSE               : 0,
-  LOGIN                  : 2,
-  LOGIN_VIA_INVITE       : 125,
-  DEVICE_CONNECTED       : 4,
-  HARDWARE               : 20,
-  APP_SYNC               : 25,
-  CHART_DATA_FETCH       : 60,
-  LOG_EVENT              : 64,
-  DEVICE_DISCONNECTED    : 71,
-  TRACK_DEVICE           : 73,
-  LOG_EVENT_RESOLVE      : 75,
+  RESPONSE: 0,
+  LOGIN: 2,
+  LOGIN_VIA_INVITE: 125,
+  DEVICE_CONNECTED: 4,
+  HARDWARE: 20,
+  APP_SYNC: 25,
+  CHART_DATA_FETCH: 60,
+  LOG_EVENT: 64,
+  DEVICE_DISCONNECTED: 71,
+  TRACK_DEVICE: 73,
+  LOG_EVENT_RESOLVE: 75,
   UPDATE_DEVICE_METAFIELD: 126,
-  WEB_JSON               : 99,
+  WEB_JSON: 99,
 };
 
 export const API_COMMANDS = {
-  RESET_PASSWORD                         : 81,
-  GET_ACCOUNT                            : 100,
-  UPDATE_ACCOUNT                         : 101,
-  CREATE_DEVICE                          : 102,
-  UPDATE_DEVICE                          : 103,
-  GET_DEVICES                            : 104,
-  GET_DEVICE                             : 105,
-  GET_ORG                                : 106,
-  GET_ORG_HIERARCHY                      : 132,
-  GET_ORGS                               : 107,
-  GET_ORG_USERS                          : 108,
-  GET_ORG_LOCATIONS                      : 109,
-  CAN_INVITE_USER                        : 110,
-  UPDATE_ORG                             : 111,
-  CREATE_PRODUCT                         : 112,
-  UPDATE_PRODUCT                         : 113,
-  DELETE_PRODUCT                         : 114,
-  GET_PRODUCT                            : 115,
-  GET_PRODUCTS                           : 116,
-  UPDATE_DEVICES_META_IN_PRODUCT         : 117,
-  UPDATE_USER_INFO                       : 118,
-  DELETE_USER                            : 119,
-  CREATE_ORG                             : 120,
-  DELETE_ORG                             : 122,
-  CAN_DELETE_PRODUCT                     : 123,
-  INVITE_USER                            : 124,
-  UPDATE_DEVICE_METAFIELD                : 126,
-  GET_DEVICE_TIMELINE                    : 127,
-  LOG_EVENT_RESOLVE                      : 75,
-  DELETE_DEVICE                          : 128,
-  LOGOUT                                 : 66,
-  WEB_GET_TEMP_SECURE_TOKEN              : 131,
-  WEB_SET_AUTH_TOKEN                     : 138,
-  WEB_EDIT_OWN_ORG                       : 139,
-  WEB_TRACK_ORG                          : 145,
-  WEB_CREATE_ROLE                        : 133, // accepts role json
-  WEB_UPDATE_ROLE                        : 134, // accepts role json
-  WEB_GET_ROLE                           : 135, // accepts roleId
-  WEB_GET_ROLES                          : 136, // no params required
-  WEB_DELETE_ROLE                        : 137, // accepts roleId
-  WEB_GET_USER_COUNTERS_BY_ROLE          : 146,
-  WEB_GET_DEVICES_BY_REFERENCE_METAFIELD : 147,
-  WEB_GET_RULE_GROUP                     : 150,
-  WEB_EDIT_RULE_GROUP                    : 151,
+  RESET_PASSWORD: 81,
+  GET_ACCOUNT: 100,
+  UPDATE_ACCOUNT: 101,
+  CREATE_DEVICE: 102,
+  UPDATE_DEVICE: 103,
+  GET_DEVICES: 104,
+  GET_DEVICE: 105,
+  GET_ORG: 106,
+  GET_ORG_HIERARCHY: 132,
+  GET_ORGS: 107,
+  GET_ORG_USERS: 108,
+  GET_ORG_LOCATIONS: 109,
+  CAN_INVITE_USER: 110,
+  UPDATE_ORG: 111,
+  CREATE_PRODUCT: 112,
+  UPDATE_PRODUCT: 113,
+  DELETE_PRODUCT: 114,
+  GET_PRODUCT: 115,
+  GET_PRODUCTS: 116,
+  UPDATE_DEVICES_META_IN_PRODUCT: 117,
+  UPDATE_USER_INFO: 118,
+  DELETE_USER: 119,
+  CREATE_ORG: 120,
+  DELETE_ORG: 122,
+  CAN_DELETE_PRODUCT: 123,
+  INVITE_USER: 124,
+  UPDATE_DEVICE_METAFIELD: 126,
+  GET_DEVICE_TIMELINE: 127,
+  LOG_EVENT_RESOLVE: 75,
+  DELETE_DEVICE: 128,
+  LOGOUT: 66,
+  WEB_GET_TEMP_SECURE_TOKEN: 131,
+  WEB_SET_AUTH_TOKEN: 138,
+  WEB_EDIT_OWN_ORG: 139,
+  WEB_TRACK_ORG: 145,
+  WEB_CREATE_ROLE: 133, // accepts role json
+  WEB_UPDATE_ROLE: 134, // accepts role json
+  WEB_GET_ROLE: 135, // accepts roleId
+  WEB_GET_ROLES: 136, // no params required
+  WEB_DELETE_ROLE: 137, // accepts roleId
+  WEB_GET_USER_COUNTERS_BY_ROLE: 146,
+  WEB_GET_DEVICES_BY_REFERENCE_METAFIELD: 147,
+  WEB_GET_RULE_GROUP: 150,
+  WEB_EDIT_RULE_GROUP: 151,
+  WEB_OTA_START: 141, // accepts json string otaDTO
+  WEB_OTA_STOP: 142, // accepts json_string otaDTO
+  WEB_OTA_GET_FIRMWARE_INFO: 143,//  "path_to_firmware"
+  WEB_OTA_CLEAN: 144, // "productId"
 };
 
 const blynkHeader = (msg_type, msg_id) => {
@@ -113,7 +117,7 @@ const makeMessage = (msg_type, msg_id, payload) => {
 };
 
 export const blynkWsConnect = (params) => {
-  const {store, options} = params;
+  const { store, options } = params;
 
   if (options.isDebugMode)
     options.debug("BlynkWsConnect");
@@ -125,20 +129,20 @@ export const blynkWsApiCall = (params) => {
 
   MSG_ID = ++MSG_ID;
 
-  const {store, action, options} = params;
+  const { store, action, options } = params;
 
   if (options.isDebugMode)
     options.debug("blynkWsApiCall", action, MSG_ID);
 
   const value = makeMessage(
-      action.ws.request.command, MSG_ID, (action.ws.request.query || []).join('\0')
+    action.ws.request.command, MSG_ID, (action.ws.request.query || []).join('\0')
   );
 
   store.dispatch(blynkWsRequest({
-    id     : MSG_ID,
+    id: MSG_ID,
     request: {
       command: action.ws.request.command,
-      value  : (action.ws.request.query || []).join('\0')
+      value: (action.ws.request.query || []).join('\0')
     }
   }));
 
@@ -150,14 +154,14 @@ export const blynkWsApiCall = (params) => {
     promiseReject = reject;
 
     messages.push({
-      msgId         : MSG_ID,
-      value         : {
+      msgId: MSG_ID,
+      value: {
         query: action.ws.request.query,
-        body : action.ws.request.body,
+        body: action.ws.request.body,
       },
-      promise       : promise,
+      promise: promise,
       promiseResolve: promiseResolve,
-      promiseReject : promiseReject,
+      promiseReject: promiseReject,
       previousAction: action,
     });
 
@@ -169,24 +173,24 @@ export const blynkWsApiCall = (params) => {
 
 };
 
-export const blynkWsLogin = (params, command = COMMANDS.LOGIN, ) => {
+export const blynkWsLogin = (params, command = COMMANDS.LOGIN,) => {
 
-  const {store, action, options} = params;
+  const { store, action, options } = params;
 
   if (options.isDebugMode)
     options.debug("blynkWsLogin", action);
 
-  const {user, hash} = action.value;
+  const { user, hash } = action.value;
 
   const value = makeMessage(
     command, ++MSG_ID, `${user}\0${hash}`
   );
 
   store.dispatch(blynkWsRequest({
-    id     : MSG_ID,
+    id: MSG_ID,
     request: {
       command: command,
-      value  : `${user}\0${hash}`
+      value: `${user}\0${hash}`
     }
   }));
 
@@ -196,7 +200,7 @@ export const blynkWsLogin = (params, command = COMMANDS.LOGIN, ) => {
   let promise = new Promise((resolve, reject) => {
     promiseResolve = resolve;
     promiseReject = reject;
-});
+  });
 
   messages.push({
     msgId: MSG_ID,
@@ -212,23 +216,23 @@ export const blynkWsLogin = (params, command = COMMANDS.LOGIN, ) => {
 
 export const blynkWsChartDataFetch = (params) => {
 
-  const {store, action, options} = params;
+  const { store, action, options } = params;
 
   if (options.isDebugMode)
     options.debug("blynkWsChartDataFetch", action);
 
-  const {deviceId, widgetId, graphPeriod, customRange} = action.value;
+  const { deviceId, widgetId, graphPeriod, customRange } = action.value;
 
   const request = makeMessage(
-      COMMANDS.CHART_DATA_FETCH, ++MSG_ID,
-      `${deviceId}\0${widgetId}\0${graphPeriod}\0${customRange[0]}\0${customRange[1]}`
+    COMMANDS.CHART_DATA_FETCH, ++MSG_ID,
+    `${deviceId}\0${widgetId}\0${graphPeriod}\0${customRange[0]}\0${customRange[1]}`
   );
 
   store.dispatch(blynkWsRequest({
-    id     : MSG_ID,
+    id: MSG_ID,
     request: {
       command: COMMANDS.CHART_DATA_FETCH,
-      value  : `${deviceId}\0${widgetId}\0${graphPeriod}\0${customRange[0]}\0${customRange[1]}`
+      value: `${deviceId}\0${widgetId}\0${graphPeriod}\0${customRange[0]}\0${customRange[1]}`
     }
   }));
 
@@ -248,22 +252,22 @@ export const blynkWsChartDataFetch = (params) => {
 
 export const blynkWsHardware = (params) => {
 
-  const {store, action, options} = params;
+  const { store, action, options } = params;
 
   if (options.isDebugMode)
     options.debug("blynkWsHardware", action);
 
-  const {deviceId, pin, value} = action.value;
+  const { deviceId, pin, value } = action.value;
 
   const request = makeMessage(
-      COMMANDS.HARDWARE, ++MSG_ID, `${deviceId}\0vw\0${pin}\0${value}`
+    COMMANDS.HARDWARE, ++MSG_ID, `${deviceId}\0vw\0${pin}\0${value}`
   );
 
   store.dispatch(blynkWsRequest({
-    id     : MSG_ID,
+    id: MSG_ID,
     request: {
       command: COMMANDS.HARDWARE,
-      value  : `${deviceId}\0vw\0${pin}\0${value}`
+      value: `${deviceId}\0vw\0${pin}\0${value}`
     }
   }));
 
@@ -273,22 +277,22 @@ export const blynkWsHardware = (params) => {
 
 export const blynkWsTrackDevice = (params) => {
 
-  const {store, action, options} = params;
+  const { store, action, options } = params;
 
   if (options.isDebugMode)
     options.debug("blynkWsTrackDevice", action);
 
-  const {deviceId} = action.value;
+  const { deviceId } = action.value;
 
   const request = makeMessage(
-      COMMANDS.TRACK_DEVICE, ++MSG_ID, `${deviceId}`
+    COMMANDS.TRACK_DEVICE, ++MSG_ID, `${deviceId}`
   );
 
   store.dispatch(blynkWsRequest({
-    id     : MSG_ID,
+    id: MSG_ID,
     request: {
       command: COMMANDS.TRACK_DEVICE,
-      value  : `${deviceId}`
+      value: `${deviceId}`
     }
   }));
 
@@ -297,8 +301,8 @@ export const blynkWsTrackDevice = (params) => {
 };
 
 export const blynkWsMessage = (params) => {
-  
-  const {action, options, store} = params;
+
+  const { action, options, store } = params;
 
   const dataView = new DataView(action.value.data);
 
@@ -308,43 +312,43 @@ export const blynkWsMessage = (params) => {
 
   let responseCode = -1;
 
-  if(command === COMMANDS.RESPONSE) {
+  if (command === COMMANDS.RESPONSE) {
     responseCode = dataView.getUint32(3);
   }
 
   if (options.isDebugMode)
     options.debug("blynkWsMessage", action, {
       command: getCommandKeyName(command),
-      msgId  : msgId,
+      msgId: msgId,
       body: dataView.body
     });
 
   let handlers = Handlers({
-    action  : action,
-    options : options,
-    store   : store,
+    action: action,
+    options: options,
+    store: store,
     dataView: dataView,
-    command : command,
-    msgId   : msgId
+    command: command,
+    msgId: msgId
   });
 
   let message = null;
 
   messages.forEach((msg) => {
-    if(Number(msg.msgId) === Number(msgId) && message === null) {
-    message = msg;
-  }
-});
-  
+    if (Number(msg.msgId) === Number(msgId) && message === null) {
+      message = msg;
+    }
+  });
+
   const API_COMMANDS_CODES_ARRAY = Object.keys(API_COMMANDS).map((key) => API_COMMANDS[key]);
 
   if (command === COMMANDS.RESPONSE && responseCode === RESPONSE_CODES.OK) {
 
-    if(message && typeof message.promiseResolve === 'function')
+    if (message && typeof message.promiseResolve === 'function')
       message.promiseResolve();
 
     handlers.ResponseOKHandler({
-      responseCode  : responseCode,
+      responseCode: responseCode,
       message: message // there should be var "message", not var "message.previousAction". Just wrong naming, please keep it as it is
     });
 
@@ -393,16 +397,16 @@ export const blynkWsMessage = (params) => {
   } else if (command === COMMANDS.CHART_DATA_FETCH) {
 
     handlers.ChartDataHandler({
-      msgId         : ++MSG_ID,
+      msgId: ++MSG_ID,
       previousAction: message,
     });
 
-  } else if(command === COMMANDS.WEB_JSON) {
+  } else if (command === COMMANDS.WEB_JSON) {
 
     handlers.JsonHandler({
-      msgId         : ++MSG_ID,
+      msgId: ++MSG_ID,
       previousAction: message && message.previousAction,
-      promiseReject : message && message.promiseReject,
+      promiseReject: message && message.promiseReject,
     });
 
   } else if (command === COMMANDS.RESPONSE && responseCode === RESPONSE_CODES.NO_DATA) {

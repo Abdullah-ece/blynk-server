@@ -1,3 +1,5 @@
+import { API_COMMANDS } from "store/blynk-websocket-middleware/commands";
+
 export function ProductMetadataFieldAdd(data = {}) {
   return {
     type: 'PRODUCT_METADATA_FIELD_ADD',
@@ -138,3 +140,66 @@ export function ProductInfoOTAFirmwareUploadUpdate(data = {}) {
   };
 }
 
+export function OTAStart(params) {
+  const { otaDTO } = params;
+
+  return {
+    type: 'WEB_OTA_START',
+    ws: {
+      request: {
+        command: API_COMMANDS.WEB_OTA_START,
+        query: [
+          JSON.stringify(otaDTO)
+        ],
+      }
+    }
+  };
+}
+
+export function OTAStop(params) {
+  const { otaDTO } = params;
+
+  return {
+    type: 'WEB_OTA_STOP',
+    ws: {
+      request: {
+        command: API_COMMANDS.WEB_OTA_STOP,
+        query: [
+          JSON.stringify(otaDTO)
+        ],
+      }
+    }
+  };
+}
+
+export function OTAGetFirmwareInfo(params) {
+  const { path_to_firmware } = params;
+
+  return {
+    type: 'WEB_OTA_GET_FIRMWARE_INFO',
+    ws: {
+      request: {
+        command: API_COMMANDS.WEB_OTA_GET_FIRMWARE_INFO,
+        query: [
+          path_to_firmware
+        ],
+      }
+    }
+  };
+}
+
+export function OTAClean(params) {
+  const { productId } = params;
+
+  return {
+    type: 'WEB_OTA_CLEAN',
+    ws: {
+      request: {
+        command: API_COMMANDS.WEB_OTA_CLEAN,
+        query: [
+          productId
+        ],
+      }
+    }
+  };
+}
