@@ -99,6 +99,9 @@ class LabelWidget extends React.Component {
       finalFormat += parts[0] + '0.';
       finalFormat += parts[1];
       decimalLength = parts[1].length;
+    } else if (this.props.data.decimalFormat.indexOf('.') < 0) {
+      let result = Canvasjs.formatNumber(value, finalFormat);
+      return result.split('.')[0];
     }
 
     let result = Canvasjs.formatNumber(value, finalFormat);
