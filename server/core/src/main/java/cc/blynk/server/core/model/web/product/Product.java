@@ -242,6 +242,10 @@ public class Product {
         this.devices = ArrayUtil.remove(this.devices, index, Device.class);
     }
 
+    public int getDeviceCount() {
+        return devices.length;
+    }
+
     private int getDeviceIndex(int id) {
         Device[] devices = this.devices;
         for (int i = 0; i < devices.length; i++) {

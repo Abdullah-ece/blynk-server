@@ -186,6 +186,7 @@ public final class Command {
     public static final short MOBILE_RESOLVE_DEVICE_TIMELINE = 149;
     public static final short WEB_GET_RULE_GROUP = 150;
     public static final short WEB_EDIT_RULE_GROUP = 151;
+    public static final short WEB_GET_DEVICE_COUNT_FOR_PRODUCT_AND_SUBPRODUCTS = 152;
 
     public static final int LAST_COMMAND_INDEX = 160;
 
