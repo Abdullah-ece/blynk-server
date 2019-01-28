@@ -102,8 +102,37 @@ You should see next output:
 #### Quit
 
         \q
-          
+
+## Installing Clickhouse
+
+#### Install
+
+        sudo apt-add-repository "deb http://repo.yandex.ru/clickhouse/deb/stable/ main/"
+        sudo apt-key adv --keyserver keyserver.ubuntu.com --recv E0C56BD4 # optional
+        sudo apt-get update
+        sudo apt-get install clickhouse-client clickhouse-server
+        
+#### Allow listening on all IPs:
+
+        sudo nano /etc/clickhouse-server/config.xml 
+        
+and uncomment line:
+
+        <listen_host>::</listen_host> 
+        
+#### Restrict access by IP (only for production setup)
+
+        sudo nano /etc/clickhouse-server/users.xml
+        
+        <networks>
+           <ip>IP/32</ip>
+        </networks>
+
 #### Run
+
+        sudo service clickhouse-server start
+
+## Run server
 
 Now start your server, go to server/launcher/target and run:
 
