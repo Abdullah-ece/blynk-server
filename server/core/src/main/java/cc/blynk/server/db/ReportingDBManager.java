@@ -16,6 +16,7 @@ import cc.blynk.server.core.stats.model.Stat;
 import cc.blynk.server.db.dao.EventDBDao;
 import cc.blynk.server.db.dao.RawEntry;
 import cc.blynk.server.db.dao.ReportingDBDao;
+import cc.blynk.server.db.dao.ReportingStatsDao;
 import cc.blynk.server.db.dao.descriptor.DataQueryRequestDTO;
 import cc.blynk.utils.NumberUtil;
 import cc.blynk.utils.properties.BaseProperties;
@@ -54,6 +55,7 @@ public final class ReportingDBManager implements Closeable {
     private final boolean cleanOldReporting;
 
     public final ReportingDBDao reportingDBDao;
+    public final ReportingStatsDao reportingStatsDao;
 
     public ReportingDBManager(BlockingIOProcessor blockingIOProcessor, String reportingFolder) {
         this(DB_PROPERTIES_FILENAME, blockingIOProcessor, reportingFolder);
@@ -73,6 +75,7 @@ public final class ReportingDBManager implements Closeable {
 
         this.ds = hikariDataSource;
         this.reportingDBDao = new ReportingDBDao(hikariDataSource);
+        this.reportingStatsDao = new ReportingStatsDao(hikariDataSource);
         this.eventDBDao = new EventDBDao(hikariDataSource);
         this.cleanOldReporting = dbProperties.cleanReporting();
         this.averageAggregator = new AverageAggregatorProcessor(reportingFolder);
@@ -110,7 +113,7 @@ public final class ReportingDBManager implements Closeable {
 
     public void insertStat(String region, Stat stat) {
         if (isDBEnabled()) {
-            reportingDBDao.insertStat(region, stat);
+            reportingStatsDao.insertStat(region, stat);
         }
     }
 
