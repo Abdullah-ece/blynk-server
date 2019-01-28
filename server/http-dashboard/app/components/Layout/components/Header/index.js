@@ -7,7 +7,7 @@ import { StartLoading, FinishLoading } from 'data/PageLoading/actions';
 
 import { OrganizationFetch } from 'data/Organization/actions';
 import { OrganizationsFetch } from 'data/Organizations/actions';
-import { VerifyPermission, PERMISSIONS2_INDEX } from "services/Roles";
+import { VerifyPermission, PERMISSIONS2_INDEX, PERMISSIONS_INDEX } from "services/Roles";
 
 import './styles.less';
 
@@ -128,6 +128,9 @@ class Header extends React.Component {
       if (process.env.BLYNK_ANALYTICS && JSON.parse(process.env.BLYNK_ANALYTICS) && 'analytics' === splitedPath[i]) {
         return ['/analytics'];
       }
+      if (VerifyPermission(this.props.currentRole.permissionGroup1, PERMISSIONS_INDEX.OTA_VIEW) && 'ota' === splitedPath[i]) {
+        return ['/ota'];
+      }
       if ('rules' === splitedPath[i]) {
         return ['/rules'];
       }
@@ -159,6 +162,8 @@ class Header extends React.Component {
               {this.props.Organization && this.props.Organization.canCreateOrgs && (
                 <Menu.Item key="/organizations">Organizations</Menu.Item>
               ) || (null)}
+              {VerifyPermission(this.props.currentRole.permissionGroup1, PERMISSIONS_INDEX.OTA_VIEW) &&
+              <Menu.Item key="/ota">OTA</Menu.Item>}
               {VerifyPermission(this.props.currentRole.permissionGroup2, PERMISSIONS2_INDEX.RULE_GROUP_VIEW) &&
               <Menu.Item key="/rules">Rules Engine</Menu.Item>}
             </Menu>

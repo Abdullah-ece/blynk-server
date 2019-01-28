@@ -167,6 +167,10 @@ class UserLayout extends React.Component {
     if (process.env.BLYNK_ANALYTICS && JSON.parse(process.env.BLYNK_ANALYTICS) && 'analytics' === splitedPath[1])
       return ['/analytics'];
 
+    if (VerifyPermission(this.props.currentRole.permissionGroup1, PERMISSIONS_INDEX.OTA_VIEW) && 'ota' === splitedPath[1]) {
+      return ['/ota'];
+    }
+
     if ('rules' === splitedPath[1]) {
       return ['/rules'];
     }
@@ -340,6 +344,12 @@ class UserLayout extends React.Component {
                 <Menu.Item key="/organizations">
                   <Icon type="usergroup-add"/>
                   <span>Organizations</span>
+                </Menu.Item>
+              )}
+              {VerifyPermission(this.props.currentRole.permissionGroup1, PERMISSIONS_INDEX.OTA_VIEW) && (
+                <Menu.Item key="/ota">
+                  <Icon type="setting"/>
+                  <span>OTA</span>
                 </Menu.Item>
               )}
               {VerifyPermission(this.props.currentRole.permissionGroup2, PERMISSIONS2_INDEX.RULE_GROUP_VIEW) && (

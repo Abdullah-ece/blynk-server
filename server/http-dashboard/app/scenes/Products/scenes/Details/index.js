@@ -7,7 +7,7 @@ import Metadata from './scenes/Metadata';
 import DataStreams from './scenes/DataStreams';
 import Events from './scenes/Events';
 import Dashboard from './scenes/Dashboard';
-import OTA from './scenes/OTA';
+// import OTA from './scenes/OTA';
 import * as API from 'data/Product/api';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -172,10 +172,10 @@ class ProductDetails extends React.Component {
             <Tabs.TabPane tab="Dashboard" key={TABS.DASHBOARD}>
               <Dashboard webDashboard={this.state.product.webDashboard}/>
             </Tabs.TabPane>
-            {VerifyPermission(this.props.permissions, PERMISSIONS_INDEX.OTA_VIEW) && (
-              <Tabs.TabPane tab="OTA" key={TABS.OTA}>
-                <OTA params={this.props.params}/>
-              </Tabs.TabPane>)}
+            {/*{VerifyPermission(this.props.permissions, PERMISSIONS_INDEX.OTA_VIEW) && (*/}
+              {/*<Tabs.TabPane tab="OTA" key={TABS.OTA}>*/}
+                {/*<OTA params={this.props.params}/>*/}
+              {/*</Tabs.TabPane>)}*/}
           </Tabs>
         </MainLayout.Content>
       </MainLayout>
