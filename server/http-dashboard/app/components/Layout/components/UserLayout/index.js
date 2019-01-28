@@ -348,7 +348,7 @@ class UserLayout extends React.Component {
               )}
               {VerifyPermission(this.props.currentRole.permissionGroup1, PERMISSIONS_INDEX.OTA_VIEW) && (
                 <Menu.Item key="/ota">
-                  <Icon type="setting"/>
+                  <Icon type="cloud-download"/>
                   <span>OTA</span>
                 </Menu.Item>
               )}
