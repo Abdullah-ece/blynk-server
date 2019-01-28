@@ -5,9 +5,12 @@ class NoCampaigns extends React.Component {
 
   render() {
     return (
-      <MainLayout.Content className="organizations-empty">
+      <MainLayout.Content className="products-empty">
         <MainList>
-          <MainList.Empty title="Ship new firmware updates Over-The-Air"/>
+          <MainList.Empty title="Ship new firmware updates Over-The-Air"
+                          description="Here you can remotely update millions of your devices with new firmware and track shipment progress"
+                          link="/ota/create"
+                          btnText="New Shipping"/>
         </MainList>
       </MainLayout.Content>
     );
