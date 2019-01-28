@@ -193,9 +193,9 @@ public class OrganizationDao {
         }
         for (Organization org : organizations.values()) {
             Product subProduct = org.getSubProductOf(productId);
-            if (subProduct != null) {
+            if (subProduct != null && productId != subProduct.id) {
                 productIds.add(subProduct.id);
-                getProductChilds(productIds, subProduct.id, invocationCounter++);
+                getProductChilds(productIds, subProduct.id, ++invocationCounter);
             }
         }
     }
