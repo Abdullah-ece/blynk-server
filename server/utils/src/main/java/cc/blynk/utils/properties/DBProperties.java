@@ -19,7 +19,4 @@ public class DBProperties extends BaseProperties {
         super(Collections.emptyMap(), DB_PROPERTIES_FILENAME);
     }
 
-    public boolean cleanReporting() {
-        return getBoolProperty("clean.reporting");
-    }
 }

@@ -109,7 +109,7 @@ public class Holder {
         );
 
         this.dbManager = new DBManager(blockingIOProcessor);
-        this.reportingDBManager = new ReportingDBManager(blockingIOProcessor, props.getReportingFolder());
+        this.reportingDBManager = new ReportingDBManager(blockingIOProcessor);
 
         if (restore) {
             try {
@@ -182,7 +182,7 @@ public class Holder {
         this.blockingIOProcessor = blockingIOProcessor;
 
         this.dbManager = new DBManager(dbFileName, blockingIOProcessor);
-        this.reportingDBManager = new ReportingDBManager(dbFileName, blockingIOProcessor, props.getReportingFolder());
+        this.reportingDBManager = new ReportingDBManager(dbFileName, blockingIOProcessor);
 
         this.organizationDao = new OrganizationDao(fileManager, userDao);
         Collection<Organization> orgs = organizationDao.organizations.values();

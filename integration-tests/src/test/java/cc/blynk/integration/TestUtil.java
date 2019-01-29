@@ -73,6 +73,7 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 
 import static cc.blynk.integration.APIBaseTest.createDeviceNameMeta;
 import static cc.blynk.integration.APIBaseTest.createDeviceOwnerMeta;
@@ -110,6 +111,7 @@ import static org.mockito.Mockito.verify;
 public final class TestUtil {
 
     private static final ObjectReader profileReader = JsonParser.init().readerFor(Profile.class);
+    public static final long TEN_YEARS_MILLIS = TimeUnit.DAYS.toMillis(365 * 10);
 
     private TestUtil() {
     }

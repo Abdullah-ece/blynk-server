@@ -85,8 +85,7 @@ public final class WebResolveOwnLogEventLogic implements PermissionBasedLogic<Ba
         blockingIOProcessor.executeEvent(() -> {
             MessageBase response;
             try {
-                if (reportingDBManager.eventDBDao.resolveEvent(
-                        resolveEventDTO.logEventId, user.name, resolveEventDTO.resolveComment)) {
+                if (reportingDBManager.eventDBDao.resolveEvent(resolveEventDTO, user.name)) {
                     String body = buildEventBody(
                             resolveEventDTO.logEventId, user.email, resolveEventDTO.resolveComment);
                     Session session = sessionDao.getOrgSession(orgId);

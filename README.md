@@ -103,7 +103,7 @@ You should see next output:
 
         \q
 
-## Installing Clickhouse
+## Installing ClickHouse
 
 #### Install
 
@@ -131,6 +131,15 @@ and uncomment line:
 #### Run
 
         sudo service clickhouse-server start
+       
+#### Verify ClickHouse is available
+
+        curl 'http://localhost:8123/?query=SELECT%201'
+        
+#### Create data schema
+
+- Copy all from [reporting_schema_clickhouse.sql](server/core/src/main/resources/sql/reporting_schema_clickhouse.sql)
+- Run ```clickhouse-client``` in the console and paste above scripts
 
 ## Run server
 

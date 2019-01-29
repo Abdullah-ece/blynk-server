@@ -22,7 +22,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 /**
  * The Blynk Project.
@@ -37,7 +36,7 @@ public class EventLogDBTest {
     @BeforeClass
     public static void init() throws Exception {
         blockingIOProcessor = new BlockingIOProcessor(4, 10000);
-        reportingDBManager = new ReportingDBManager("db-test.properties", blockingIOProcessor, "");
+        reportingDBManager = new ReportingDBManager("db-test.properties", blockingIOProcessor);
         assertNotNull(reportingDBManager.getConnection());
     }
 
@@ -55,7 +54,7 @@ public class EventLogDBTest {
 
     @Test
     public void upsertLastSeen() throws Exception {
-        reportingDBManager.eventDBDao.upsertLastSeen(1, "test@blynk.cc");
+        reportingDBManager.eventDBDao.insertLastSeen(1, "test@blynk.cc");
 
         long ts = 0;
         try (Connection connection = reportingDBManager.getConnection();
@@ -72,7 +71,7 @@ public class EventLogDBTest {
             connection.commit();
         }
 
-        reportingDBManager.eventDBDao.upsertLastSeen(1, "test@blynk.cc");
+        reportingDBManager.eventDBDao.insertLastSeen(1, "test@blynk.cc");
         try (Connection connection = reportingDBManager.getConnection();
              Statement statement = connection.createStatement();
              ResultSet rs = statement.executeQuery("select * from reporting_events_last_seen")) {
@@ -83,33 +82,6 @@ public class EventLogDBTest {
                 long newTs = rs.getTimestamp("ts").getTime();
                 assertEquals(System.currentTimeMillis(), newTs, 10000);
                 assertNotEquals(ts, newTs);
-            }
-
-            connection.commit();
-        }
-    }
-
-    @Test
-    public void insertSingleRowEvent() throws Exception {
-        long now = System.currentTimeMillis();
-        String eventCode = "something";
-        LogEvent logEvent = new LogEvent(1, EventType.INFORMATION, now, eventCode.hashCode(), null);
-
-        reportingDBManager.eventDBDao.insert(logEvent);
-
-        try (Connection connection = reportingDBManager.getConnection();
-             Statement statement = connection.createStatement();
-             ResultSet rs = statement.executeQuery("select * from reporting_events")) {
-
-
-            while (rs.next()) {
-                logEvent = reportingDBManager.eventDBDao.readEvent(rs);
-                assertEquals(1, logEvent.deviceId);
-                assertEquals(EventType.INFORMATION, logEvent.eventType);
-                assertEquals(now, logEvent.ts);
-                assertEquals(eventCode.hashCode(), logEvent.eventHashcode);
-                assertNull(logEvent.description);
-                assertFalse(logEvent.isResolved);
             }
 
             connection.commit();
@@ -137,69 +109,6 @@ public class EventLogDBTest {
     }
 
     @Test
-    public void selectBasicQueryForSingleEntry() throws Exception {
-        long now = System.currentTimeMillis();
-        String eventCode = "something";
-
-        LogEvent logEvent = new LogEvent(1, EventType.INFORMATION, now, eventCode.hashCode(), null);
-        reportingDBManager.eventDBDao.insert(logEvent);
-
-        List<LogEvent> logEvents = reportingDBManager.eventDBDao.getEvents(1, EventType.INFORMATION, now, now, 0, 1);
-        assertNotNull(logEvents);
-        assertEquals(1, logEvents.size());
-    }
-
-    @Test
-    public void insertSingleSystemEvent() throws Exception {
-        reportingDBManager.eventDBDao.insertSystemEvent(1, EventType.ONLINE);
-
-        List<LogEvent> logEvents = reportingDBManager.eventDBDao.getEvents(1, EventType.ONLINE, 0, System.currentTimeMillis(), 0, 1);
-        assertNotNull(logEvents);
-        assertEquals(1, logEvents.size());
-        assertEquals(EventType.ONLINE, logEvents.get(0).eventType);
-    }
-
-    @Test
-    public void testResolveEvent() throws Exception {
-        long now = System.currentTimeMillis();
-        String eventCode = "something";
-
-        LogEvent logEvent = new LogEvent(1, EventType.INFORMATION, now, eventCode.hashCode(), null);
-        reportingDBManager.eventDBDao.insert(logEvent);
-
-        List<LogEvent> logEvents = reportingDBManager.eventDBDao.getEvents(1, EventType.INFORMATION, now, now, 0, 1);
-        assertNotNull(logEvents);
-        assertEquals(1, logEvents.size());
-        assertFalse(logEvents.get(0).isResolved);
-
-        reportingDBManager.eventDBDao.resolveEvent(logEvents.get(0).id, "Pupkin Vasya", "My Comment");
-
-        logEvents = reportingDBManager.eventDBDao.getEvents(1, EventType.INFORMATION, now, now, 0, 1);
-        assertNotNull(logEvents);
-        assertEquals(1, logEvents.size());
-        assertTrue(logEvents.get(0).isResolved);
-        assertEquals("My Comment", logEvents.get(0).resolvedComment);
-    }
-
-
-    @Test
-    public void selectBasicQueryForSingleEntryThatIsResolved() throws Exception {
-        long now = System.currentTimeMillis();
-        String eventCode = "something";
-
-        LogEvent logEvent = new LogEvent(1, 1, EventType.INFORMATION, now, eventCode.hashCode(), null, true, "Pupkin Vasya", 0, null);
-        reportingDBManager.eventDBDao.insert(logEvent);
-
-        List<LogEvent> logEvents = reportingDBManager.eventDBDao.getEvents(1, now, now, 0, 1, true);
-        assertNotNull(logEvents);
-        assertEquals(1, logEvents.size());
-
-        logEvents = reportingDBManager.eventDBDao.getEvents(1, now, now, 0, 1, false);
-        assertNotNull(logEvents);
-        assertEquals(0, logEvents.size());
-    }
-
-    @Test
     public void selectBasicQueryForSingleEntryThatIsResolvedWithAnotherMethod() throws Exception {
         long now = System.currentTimeMillis();
         String eventCode = "something";
@@ -217,33 +126,6 @@ public class EventLogDBTest {
         logEvents = reportingDBManager.eventDBDao.getEvents(timelineDTO);
         assertNotNull(logEvents);
         assertEquals(0, logEvents.size());
-    }
-
-    @Test
-    public void selectBasicQueryFor100Entries() throws Exception {
-        long now = System.currentTimeMillis();
-        String eventCode = "something";
-
-
-        for (int i = 0; i < 100; i++) {
-            LogEvent logEvent = new LogEvent(1, EventType.INFORMATION, now++, eventCode.hashCode(), null);
-            reportingDBManager.eventDBDao.insert(logEvent);
-        }
-
-        for (int i = 0; i < 10; i += 10) {
-            List<LogEvent> logEvents = reportingDBManager.eventDBDao.getEvents(1, EventType.INFORMATION, now - 100, now, i * 10, 10);
-            assertNotNull(logEvents);
-            assertEquals(10, logEvents.size());
-            for (LogEvent logEvent : logEvents) {
-                assertEquals(--now, logEvent.ts);
-
-                assertEquals(1, logEvent.deviceId);
-                assertEquals(EventType.INFORMATION, logEvent.eventType);
-                assertEquals(eventCode.hashCode(), logEvent.eventHashcode);
-                assertNull(logEvent.description);
-                assertFalse(logEvent.isResolved);
-            }
-        }
     }
 
     @Test
@@ -391,12 +273,12 @@ public class EventLogDBTest {
         Integer lastView = lastViewEvents.get(new LogEventCountKey(1, EventType.INFORMATION, false));
         assertEquals(1, lastView.intValue());
 
-        reportingDBManager.eventDBDao.upsertLastSeen(1, "test@blynk.cc");
+        reportingDBManager.eventDBDao.insertLastSeen(1, "test@blynk.cc");
 
         lastViewEvents = reportingDBManager.eventDBDao.getEventsSinceLastView("pupkin@blynk.cc");
         assertEquals(1, lastViewEvents.size());
 
-        reportingDBManager.eventDBDao.upsertLastSeen(1, "pupkin@blynk.cc");
+        reportingDBManager.eventDBDao.insertLastSeen(1, "pupkin@blynk.cc");
 
         //0 because last view is later than event itself
         lastViewEvents = reportingDBManager.eventDBDao.getEventsSinceLastView("pupkin@blynk.cc");

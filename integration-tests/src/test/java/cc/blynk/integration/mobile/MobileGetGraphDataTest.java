@@ -15,14 +15,11 @@ import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.WebDashboard;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
-import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphType;
 import cc.blynk.server.core.model.widgets.outputs.graph.Period;
 import cc.blynk.server.core.model.widgets.outputs.graph.Superchart;
 import cc.blynk.server.core.model.widgets.web.WebLineGraph;
 import cc.blynk.server.core.protocol.model.messages.BinaryMessage;
-import cc.blynk.server.core.reporting.average.AggregationKey;
-import cc.blynk.server.core.reporting.average.AggregationValue;
 import cc.blynk.server.core.reporting.raw.BaseReportingKey;
 import cc.blynk.server.db.dao.RawEntry;
 import org.junit.Before;
@@ -31,7 +28,7 @@ import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.nio.ByteBuffer;
-import java.util.Map;
+import java.util.StringJoiner;
 
 import static cc.blynk.integration.APIBaseTest.createDeviceNameMeta;
 import static cc.blynk.integration.APIBaseTest.createDeviceOwnerMeta;
@@ -56,9 +53,18 @@ public class MobileGetGraphDataTest extends SingleServerInstancePerTestWithDBAnd
 
     @Before
     public void cleanReportingDB() throws Exception {
-        holder.reportingDBManager.executeSQL("DELETE FROM reporting_average_minute");
-        holder.reportingDBManager.executeSQL("DELETE FROM reporting_average_hourly");
-        holder.reportingDBManager.executeSQL("DELETE FROM reporting_average_daily");
+        //clickhouse doesn't have normal way of data removal, so using "hack"
+        StringJoiner stringJoiner = new StringJoiner(",", "(", ")");
+
+        for (int i = 0; i < 50; i++) {
+            stringJoiner.add("" + i);
+        }
+
+        String ids = stringJoiner.toString();
+        holder.reportingDBManager.executeSQL("ALTER TABLE reporting_average_minute delete where device_id in " + ids);
+        holder.reportingDBManager.executeSQL("ALTER TABLE reporting_average_hourly delete where device_id in " + ids);
+        holder.reportingDBManager.executeSQL("ALTER TABLE reporting_average_daily delete where device_id in " + ids);
+        holder.reportingDBManager.executeSQL("ALTER TABLE reporting_device_raw_data delete where device_id in " + ids);
     }
 
     @Test
@@ -128,10 +134,8 @@ public class MobileGetGraphDataTest extends SingleServerInstancePerTestWithDBAnd
         appClient.verifyResult(ok(3));
 
         long now = System.currentTimeMillis();
-        var data = Map.of(
-            new AggregationKey(device.id, dataStream.pinType, dataStream.pin, now / MINUTE), new AggregationValue(1)
-        );
-        holder.reportingDBManager.reportingDBDao.insert(data, GraphGranularityType.MINUTE);
+        double val = 1;
+        holder.reportingDBManager.reportingDBDao.insertDataPoint(device.id, dataStream.pin, dataStream.pinType, (now / MINUTE) * MINUTE, val);
 
         appClient.getSuperChartData(dashBoard.id, superchart.id, Period.DAY);
         appClient.verifyResult(webJson(4, "No data.", 17));
@@ -174,11 +178,8 @@ public class MobileGetGraphDataTest extends SingleServerInstancePerTestWithDBAnd
 
         long now = System.currentTimeMillis();
         for (int point = 0; point < Period.ONE_HOUR.numberOfPoints; point++) {
-            var data = Map.of(
-                    new AggregationKey(device.id, dataStream.pinType, dataStream.pin, now / MINUTE),
-                    new AggregationValue((double) point)
-            );
-            holder.reportingDBManager.reportingDBDao.insert(data, GraphGranularityType.MINUTE);
+            double val = (double) point;
+            holder.reportingDBManager.reportingDBDao.insertDataPoint(device.id, dataStream.pin, dataStream.pinType, (now / MINUTE) * MINUTE, val);
         }
 
         appClient.getSuperChartData(dashBoard.id, superchart.id, Period.ONE_HOUR);
@@ -189,11 +190,9 @@ public class MobileGetGraphDataTest extends SingleServerInstancePerTestWithDBAnd
         ByteBuffer bb = ByteBuffer.wrap(decompressedGraphData);
 
         assertEquals(dashBoard.id, bb.getInt());
-        assertEquals(60, bb.getInt());
-        for (int point = 0; point < 60; point++) {
-            assertEquals(point, bb.getDouble(), 0.1);
-            assertEquals((now / MINUTE) * MINUTE, bb.getLong(), 1000);
-        }
+        assertEquals(1, bb.getInt());
+        assertEquals(29.5, bb.getDouble(), 0.1);
+        assertEquals((now / MINUTE) * MINUTE, bb.getLong(), 1000);
     }
 
     @Test
@@ -237,17 +236,10 @@ public class MobileGetGraphDataTest extends SingleServerInstancePerTestWithDBAnd
         appClient.reset();
 
         long now = System.currentTimeMillis();
-        var data = Map.of(
-                new AggregationKey(device.id, dataStream.pinType, dataStream.pin, now / MINUTE),
-                new AggregationValue(1.11D)
-        );
-        var data2 = Map.of(
-                new AggregationKey(device.id, dataStream.pinType, dataStream.pin, now / MINUTE),
-                new AggregationValue(1.22D)
-        );
-
-        holder.reportingDBManager.reportingDBDao.insert(data, GraphGranularityType.MINUTE);
-        holder.reportingDBManager.reportingDBDao.insert(data2, GraphGranularityType.MINUTE);
+        double val1 = 1D;
+        double val2 = 2D;
+        holder.reportingDBManager.reportingDBDao.insertDataPoint(device.id, dataStream.pin, dataStream.pinType, (now / MINUTE) * MINUTE, val1);
+        holder.reportingDBManager.reportingDBDao.insertDataPoint(device.id, dataStream.pin, dataStream.pinType, (now / MINUTE) * MINUTE, val2);
 
         appClient.getSuperChartData(dashBoard.id, superchart.id, Period.ONE_HOUR);
         BinaryMessage graphDataResponse = appClient.getBinaryBody();
@@ -257,10 +249,8 @@ public class MobileGetGraphDataTest extends SingleServerInstancePerTestWithDBAnd
         ByteBuffer bb = ByteBuffer.wrap(decompressedGraphData);
 
         assertEquals(dashBoard.id, bb.getInt());
-        assertEquals(2, bb.getInt());
-        assertEquals(1.11D, bb.getDouble(), 0.1);
-        assertEquals((now / MINUTE) * MINUTE, bb.getLong());
-        assertEquals(1.22D, bb.getDouble(), 0.1);
+        assertEquals(1, bb.getInt());
+        assertEquals(1.5D, bb.getDouble(), 0.1);
         assertEquals((now / MINUTE) * MINUTE, bb.getLong());
         assertEquals(0, bb.getInt());
     }
@@ -303,18 +293,12 @@ public class MobileGetGraphDataTest extends SingleServerInstancePerTestWithDBAnd
         hardClient.verifyResult(ok(1));
         appClient.verifyResult(deviceConnected(1, device.id));
 
-        assertEquals(0, holder.reportingDBManager.averageAggregator.getMinute().size());
-        assertEquals(0, holder.reportingDBManager.averageAggregator.getHourly().size());
-        assertEquals(0, holder.reportingDBManager.averageAggregator.getDaily().size());
         assertEquals(0, holder.reportingDBManager.rawDataCacheForGraphProcessor.rawStorage.size());
         assertEquals(0, holder.reportingDBManager.rawDataProcessor.rawStorage.size());
 
         hardClient.send("hardware vw 88 111");
         appClient.verifyResult(hardware(2, device.id + " vw 88 111"));
 
-        assertEquals(1, holder.reportingDBManager.averageAggregator.getMinute().size());
-        assertEquals(1, holder.reportingDBManager.averageAggregator.getHourly().size());
-        assertEquals(1, holder.reportingDBManager.averageAggregator.getDaily().size());
         assertEquals(1, holder.reportingDBManager.rawDataProcessor.rawStorage.size());
     }
 
@@ -350,19 +334,11 @@ public class MobileGetGraphDataTest extends SingleServerInstancePerTestWithDBAnd
         appClient.createWidget(dashBoard.id, superchart);
         appClient.verifyResult(ok(3));
 
-
         long now = System.currentTimeMillis();
-        var data = Map.of(
-                new AggregationKey(device.id, dataStream.pinType, dataStream.pin, now / MINUTE),
-                new AggregationValue(1.11D)
-        );
-        var data2 = Map.of(
-                new AggregationKey(device.id, dataStream.pinType, dataStream.pin, now / MINUTE),
-                new AggregationValue(1.22D)
-        );
-
-        holder.reportingDBManager.reportingDBDao.insert(data, GraphGranularityType.MINUTE);
-        holder.reportingDBManager.reportingDBDao.insert(data2, GraphGranularityType.MINUTE);
+        double val1 = 1.11D;
+        double val2 = 1.22D;
+        holder.reportingDBManager.reportingDBDao.insertDataPoint(device.id, dataStream.pin, dataStream.pinType, (now / MINUTE) * MINUTE, val1);
+        holder.reportingDBManager.reportingDBDao.insertDataPoint(device.id, dataStream.pin, dataStream.pinType, (now / MINUTE) * MINUTE, val2);
 
         appClient.deleteGraphData(dashBoard.id, superchart.id, "v8");
         appClient.verifyResult(ok(4));
@@ -408,19 +384,11 @@ public class MobileGetGraphDataTest extends SingleServerInstancePerTestWithDBAnd
         appClient.createWidget(dashBoard.id, superchart);
         appClient.verifyResult(ok(3));
 
-
         long now = System.currentTimeMillis();
-        var data = Map.of(
-                new AggregationKey(device.id, dataStream.pinType, dataStream.pin, now / MINUTE),
-                new AggregationValue(1.11D)
-        );
-        var data2 = Map.of(
-                new AggregationKey(device.id, dataStream2.pinType, dataStream2.pin, now / MINUTE),
-                new AggregationValue(1.22D)
-        );
-
-        holder.reportingDBManager.reportingDBDao.insert(data, GraphGranularityType.MINUTE);
-        holder.reportingDBManager.reportingDBDao.insert(data2, GraphGranularityType.MINUTE);
+        double val1 = 1.11D;
+        double val2 = 1.22D;
+        holder.reportingDBManager.reportingDBDao.insertDataPoint(device.id, dataStream.pin, dataStream.pinType, (now / MINUTE) * MINUTE, val1);
+        holder.reportingDBManager.reportingDBDao.insertDataPoint(device.id, dataStream2.pin, dataStream2.pinType, (now / MINUTE) * MINUTE, val2);
 
         appClient.deleteGraphData(dashBoard.id, superchart.id, "v8", "v9");
         appClient.verifyResult(ok(4));
@@ -497,13 +465,8 @@ public class MobileGetGraphDataTest extends SingleServerInstancePerTestWithDBAnd
 
 
         long now = System.currentTimeMillis();
-        var data = Map.of(
-                new AggregationKey(device.id, dataStream.pinType, dataStream.pin, now / MINUTE),
-                new AggregationValue(1.11D)
-        );
-
-        holder.reportingDBManager.reportingDBDao.insert(data, GraphGranularityType.MINUTE);
-
+        double val = 1;
+        holder.reportingDBManager.reportingDBDao.insertDataPoint(device.id, dataStream.pin, dataStream.pinType, (now / MINUTE) * MINUTE, val);
 
         TestHardClient hardClient = new TestHardClient("localhost", properties.getHttpPort());
         hardClient.start();

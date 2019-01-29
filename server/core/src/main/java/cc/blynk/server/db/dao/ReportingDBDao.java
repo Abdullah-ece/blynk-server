@@ -2,11 +2,8 @@ package cc.blynk.server.db.dao;
 
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
-import cc.blynk.server.core.model.widgets.outputs.graph.Period;
 import cc.blynk.server.core.reporting.MobileGraphRequest;
 import cc.blynk.server.core.reporting.WebGraphRequest;
-import cc.blynk.server.core.reporting.average.AggregationKey;
-import cc.blynk.server.core.reporting.average.AggregationValue;
 import cc.blynk.server.core.reporting.raw.BaseReportingKey;
 import cc.blynk.server.core.reporting.raw.BaseReportingValue;
 import cc.blynk.server.core.stats.model.CommandStat;
@@ -18,16 +15,14 @@ import cc.blynk.utils.DateTimeUtils;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jooq.BatchBindStep;
 import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -36,8 +31,6 @@ import java.util.Map;
 import java.util.Queue;
 
 import static org.jooq.SQLDialect.POSTGRES_9_4;
-import static org.jooq.impl.DSL.field;
-import static org.jooq.impl.DSL.table;
 
 /**
  * The Blynk Project.
@@ -49,35 +42,13 @@ public class ReportingDBDao {
     public static final String insertRaw =
             "INSERT INTO reporting_device_raw_data (device_id, pin, pin_type, ts, value) "
                     + "VALUES (?, ?, ?, ?, ?)";
-    public static final String insertMinute =
-            "INSERT INTO reporting_average_minute (device_id, pin, pin_type, ts, value) "
-                    + "VALUES (?, ?, ?, ?, ?)";
-    private static final String insertHourly =
-            "INSERT INTO reporting_average_hourly (device_id, pin, pin_type, ts, value) "
-                    + "VALUES (?, ?, ?, ?, ?)";
-    private static final String insertDaily =
-            "INSERT INTO reporting_average_daily (device_id, pin, pin_type, ts, value) "
-                    + "VALUES (?, ?, ?, ?, ?)";
 
-    public static final String selectMinute =
-            "SELECT ts, value FROM reporting_average_minute WHERE ts > ? ORDER BY ts DESC limit ?";
-    public static final String selectHourly =
-            "SELECT ts, value FROM reporting_average_hourly WHERE ts > ? ORDER BY ts DESC limit ?";
-    public static final String selectDaily =
-            "SELECT ts, value FROM reporting_average_daily WHERE ts > ? ORDER BY ts DESC limit ?";
-
-    private static final String deleteMinute = "DELETE FROM reporting_average_minute WHERE ts < ?";
-    private static final String deleteHour = "DELETE FROM reporting_average_hourly WHERE ts < ?";
-    public static final String deleteDaily = "DELETE FROM reporting_average_daily WHERE ts < ?";
-
+    public static final String selectFromAverage =
+            "SELECT ts, avgMerge(value) as value FROM {TABLE} GROUP BY device_id, pin, pin_type, ts HAVING device_id = ? and pin = ? and pin_type = ? and ts between ? and ? ORDER BY ts DESC limit ?,?";
     private static final String deleteDeviceMinute =
-            "DELETE FROM reporting_average_minute WHERE device_id = ? and pin = ? and pin_type = ?";
+            "ALTER TABLE reporting_average_minute delete WHERE device_id = ? and pin = ? and pin_type = ?";
     private static final String deleteDeviceHourly =
-            "DELETE FROM reporting_average_hourly WHERE device_id = ? and pin = ? and pin_type = ?";
-    private static final String deleteDeviceDaily =
-            "DELETE FROM reporting_average_daily WHERE device_id = ? and pin = ? and pin_type = ?";
-    private static final String deleteDeviceRaw =
-            "DELETE FROM reporting_device_raw_data WHERE device_id = ? and pin = ? and pin_type = ?";
+            "ALTER TABLE reporting_average_hourly delete WHERE device_id = ? and pin = ? and pin_type = ?";
 
     private static final String deleteAllDeviceMinute = "DELETE FROM reporting_average_minute WHERE device_id = ?";
     private static final String deleteAllDeviceHourly = "DELETE FROM reporting_average_hourly WHERE device_id = ?";
@@ -111,6 +82,8 @@ public class ReportingDBDao {
                     + "is_app_connected, get_pin_data, update_pin, email, push, get_project, qr,"
                     + " get_history_pin_data, total) "
                     + "VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
+    private static final String deleteDeviceDaily =
+            "ALTER TABLE reporting_average_daily delete WHERE device_id = ? and pin = ? and pin_type = ?";
 
     private static final Logger log = LogManager.getLogger(ReportingDBDao.class);
 
@@ -134,28 +107,36 @@ public class ReportingDBDao {
     }
 
     public List<RawEntry> getReportingDataByTs(GraphGranularityType granularityType, int deviceId,
-                                               short pin, PinType pinType,
-                                               long from, long to, int offset, int limit) throws Exception {
-        List<RawEntry> result;
+                                                  short pin, PinType pinType,
+                                                  long from, long to, int offset, int limit) throws Exception {
+        List<RawEntry> result = new ArrayList<>();
+        String query = selectFromAverage.replace("{TABLE}", getTableByGranularity(granularityType));
+
         try (Connection connection = ds.getConnection()) {
-            DSLContext create = DSL.using(connection, POSTGRES_9_4);
+            PreparedStatement ps = connection.prepareStatement(query);
 
-            result = create.select(field("ts"), field("value"))
-                    .from(getTableByGranularity(granularityType))
-                    .where(DeviceRawDataTableDescriptor.DEVICE_ID.eq(deviceId)
-                            .and(DeviceRawDataTableDescriptor.PIN.eq(pin))
-                            .and(DeviceRawDataTableDescriptor.PIN_TYPE.eq(pinType.ordinal()))
-                            .and(DeviceRawDataTableDescriptor.TS
-                                    .betweenSymmetric(new Timestamp(from))
-                                    .and(new Timestamp(to))))
-                    .orderBy(DeviceRawDataTableDescriptor.TS.asc())
-                    .offset(offset)
-                    .limit(limit)
-                    .fetchInto(RawEntry.class);
+            ps.setInt(1, deviceId);
+            ps.setShort(2, pin);
+            ps.setInt(3, pinType.ordinal());
+            ps.setTimestamp(4, new Timestamp(from));
+            ps.setTimestamp(5, new Timestamp(to));
+            ps.setInt(6, offset);
+            ps.setInt(7, limit);
 
-            connection.commit();
-            return result;
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    RawEntry rawEntry = new RawEntry(
+                            rs.getTimestamp("ts").getTime(),
+                            rs.getDouble("value")
+                    );
+                    result.add(rawEntry);
+                }
+
+                connection.commit();
+            }
         }
+
+        return result;
     }
 
     public List<RawEntry> getReportingDataByTs(WebGraphRequest webGraphRequest) throws Exception {
@@ -184,31 +165,6 @@ public class ReportingDBDao {
                 return "reporting_average_hourly";
             default:
                 return "reporting_average_minute";
-        }
-    }
-
-    public static void prepareReportingSelect(PreparedStatement ps, long ts, int limit) throws SQLException {
-        ps.setTimestamp(1, new Timestamp(ts));
-        ps.setInt(2, limit);
-    }
-
-    private static void prepareReportingInsert(PreparedStatement ps,
-                                               Map.Entry<AggregationKey, AggregationValue> entry,
-                                               GraphGranularityType type) throws SQLException {
-        AggregationKey key = entry.getKey();
-        AggregationValue value = entry.getValue();
-        prepareReportingInsert(ps, key.getDeviceId(),
-                key.getPin(), key.getPinType(), key.getTs(type), value.calcAverage());
-    }
-
-    private static String getTableByGraphType(GraphGranularityType graphGranularityType) {
-        switch (graphGranularityType) {
-            case MINUTE :
-                return insertMinute;
-            case HOURLY :
-                return insertHourly;
-            default :
-                return insertDaily;
         }
     }
 
@@ -313,31 +269,6 @@ public class ReportingDBDao {
         return false;
     }
 
-    public void insert(Map<AggregationKey, AggregationValue> map, GraphGranularityType graphGranularityType) {
-        long start = System.currentTimeMillis();
-
-        log.info("Storing {} reporting...", graphGranularityType.name());
-
-        String insertSQL = getTableByGraphType(graphGranularityType);
-
-        try (Connection connection = ds.getConnection();
-             PreparedStatement ps = connection.prepareStatement(insertSQL)) {
-
-            for (Map.Entry<AggregationKey, AggregationValue> entry : map.entrySet()) {
-                prepareReportingInsert(ps, entry, graphGranularityType);
-                ps.addBatch();
-            }
-
-            ps.executeBatch();
-            connection.commit();
-        } catch (Exception e) {
-            log.error("Error inserting reporting data in DB.", e);
-        }
-
-        log.info("Storing {} reporting finished. Time {}. Records saved {}",
-                graphGranularityType.name(), System.currentTimeMillis() - start, map.size());
-    }
-
     public void delete(int... deviceIds) {
         for (int deviceId : deviceIds) {
             delete(deviceId);
@@ -376,7 +307,6 @@ public class ReportingDBDao {
         count += delete(deleteDeviceMinute, deviceId, pin, pinType);
         count += delete(deleteDeviceHourly, deviceId, pin, pinType);
         count += delete(deleteDeviceDaily, deviceId, pin, pinType);
-        count += delete(deleteDeviceRaw, deviceId, pin, pinType);
         log.debug("Removed reporting records for device {} - {}{}. Deleted records: {}",
                 deviceId, pinType.pintTypeChar, pin, count);
         return count;
@@ -399,35 +329,6 @@ public class ReportingDBDao {
         return 0;
     }
 
-    public void cleanOldReportingRecords(Instant now) {
-        log.info("Removing old reporting records...");
-
-        int minuteRecordsRemoved = 0;
-        int hourRecordsRemoved = 0;
-
-        try (Connection connection = ds.getConnection();
-             PreparedStatement psMinute = connection.prepareStatement(deleteMinute);
-             PreparedStatement psHour = connection.prepareStatement(deleteHour)) {
-
-            //for minute table we store only data for last 24 hours
-            psMinute.setTimestamp(1, new Timestamp(now.minus(Period.DAY.numberOfPoints + 1,
-                    ChronoUnit.MINUTES).toEpochMilli()), DateTimeUtils.UTC_CALENDAR);
-
-            //for hour table we store only data for last 3 months
-            psHour.setTimestamp(1, new Timestamp(now.minus(Period.THREE_MONTHS.numberOfPoints + 1,
-                    ChronoUnit.HOURS).toEpochMilli()), DateTimeUtils.UTC_CALENDAR);
-
-            minuteRecordsRemoved = psMinute.executeUpdate();
-            hourRecordsRemoved = psHour.executeUpdate();
-
-            connection.commit();
-        } catch (Exception e) {
-            log.error("Error inserting reporting data in DB.", e);
-        }
-        log.info("Removing finished. Minute records {}, hour records {}. Time {}",
-                minuteRecordsRemoved, hourRecordsRemoved, System.currentTimeMillis() - now.toEpochMilli());
-    }
-
     public void insertDataPoint(int deviceId, short pin, PinType pinType, long ts, double value) {
         try (Connection connection = ds.getConnection();
              PreparedStatement ps = connection.prepareStatement(insertRaw)) {
@@ -440,14 +341,9 @@ public class ReportingDBDao {
         }
     }
 
-    public void insertDataPoint(Map<BaseReportingKey, Queue<BaseReportingValue>> tableDataMappers)  {
-
-        try (Connection connection = ds.getConnection()) {
-            DSLContext create = DSL.using(connection, POSTGRES_9_4);
-
-            BatchBindStep batchBindStep = create.batch(
-                    create.insertInto(table(DeviceRawDataTableDescriptor.NAME), DeviceRawDataTableDescriptor.fields())
-                            .values(DeviceRawDataTableDescriptor.values()));
+    public void insertDataPoint(Map<BaseReportingKey, Queue<BaseReportingValue>> tableDataMappers) {
+        try (Connection connection = ds.getConnection();
+             PreparedStatement ps = connection.prepareStatement(insertRaw)) {
 
             for (var entry : tableDataMappers.entrySet()) {
                 BaseReportingKey key = entry.getKey();
@@ -456,16 +352,17 @@ public class ReportingDBDao {
                     Iterator<BaseReportingValue> iterator = values.iterator();
                     while (iterator.hasNext()) {
                         BaseReportingValue dataPoint = iterator.next();
-                        batchBindStep.bind(key.deviceId, key.pin, key.pinType.ordinal(), dataPoint.ts, dataPoint.value);
+                        prepareReportingInsert(ps, key.deviceId, key.pin, key.pinType, dataPoint.ts, dataPoint.value);
+                        ps.addBatch();
                         iterator.remove();
                     }
                 }
             }
 
-            batchBindStep.execute();
+            ps.executeBatch();
             connection.commit();
         } catch (Exception e) {
-            log.error("Error inserting data.", e);
+            log.error("Error inserting batch points reporting data in DB.", e);
         }
     }
 
