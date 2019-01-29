@@ -47,6 +47,8 @@ public final class PermissionsTable {
     //permission2 group
     public static final int RULE_GROUP_VIEW =        0b1;
     public static final int RULE_GROUP_EDIT =        0b10;
+    public static final int ORG_DEVICE_DATA_DELETE = 0b100;
+    public static final int OWN_DEVICE_DATA_DELETE = 0b1000;
 
     public static final Map<Integer, String> PERMISSION1_NAMES = Map.ofEntries(
             entry(ORG_SWITCH, "switch organization"),
@@ -85,7 +87,9 @@ public final class PermissionsTable {
 
     public static final Map<Integer, String> PERMISSION2_NAMES = Map.ofEntries(
         entry(RULE_GROUP_VIEW, "view rule group"),
-        entry(RULE_GROUP_EDIT, "edit rule group")
+        entry(RULE_GROUP_EDIT, "edit rule group"),
+        entry(ORG_DEVICE_DATA_DELETE, "delete org device data"),
+        entry(OWN_DEVICE_DATA_DELETE, "delete own device data")
     );
 
     private PermissionsTable() {

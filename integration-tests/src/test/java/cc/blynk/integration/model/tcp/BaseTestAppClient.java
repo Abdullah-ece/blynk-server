@@ -63,6 +63,10 @@ public abstract class BaseTestAppClient extends AppClient {
         msgId = 0;
     }
 
+    public int getMsgId() {
+        return msgId;
+    }
+
     public void send(short command) {
         send(produceMessage(command, ++msgId, ""));
     }

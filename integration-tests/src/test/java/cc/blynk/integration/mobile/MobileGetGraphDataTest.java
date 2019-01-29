@@ -531,7 +531,7 @@ public class MobileGetGraphDataTest extends SingleServerInstancePerTestWithDBAnd
         appClient.verifyResult(webJson(5, "No data.", 17));
     }
 
-    // todo: test that raw data cache cleans after appClient.deleteDeviceData() in MobileDeleteDeviceDataLogic.delete()
+    // todo: test that raw data cache cleans after appClient.deleteDeviceData() in MobileDeleteOwnDeviceDataLogic.delete()
 
     private Device createProductAndDevice(String user) throws Exception {
         AppWebSocketClient client = loggedDefaultClient(user, "1");

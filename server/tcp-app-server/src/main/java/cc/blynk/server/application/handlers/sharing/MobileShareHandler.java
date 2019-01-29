@@ -7,7 +7,7 @@ import cc.blynk.server.application.handlers.main.logic.LoadSharedProfileGzippedL
 import cc.blynk.server.application.handlers.main.logic.MobileAddPushLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileLogoutLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.MobileGetOrgDevicesLogic;
-import cc.blynk.server.application.handlers.main.logic.graph.MobileDeleteDeviceDataLogic;
+import cc.blynk.server.application.handlers.main.logic.graph.MobileDeleteOrgDeviceDataLogic;
 import cc.blynk.server.application.handlers.main.logic.graph.MobileGetSuperChartDataLogic;
 import cc.blynk.server.application.handlers.sharing.auth.MobileShareStateHolder;
 import cc.blynk.server.application.handlers.sharing.logic.MobileShareHardwareLogic;
@@ -40,6 +40,7 @@ public class MobileShareHandler extends JsonBasedSimpleChannelInboundHandler<Str
     private final MobileShareHardwareLogic hardwareApp;
     private final MobileGetOrgDevicesLogic mobileGetOrgDevicesLogic;
     private final MobileGetSuperChartDataLogic mobileGetSuperChartDataLogic;
+    private final MobileDeleteOrgDeviceDataLogic mobileDeleteOrgDeviceDataLogic;
 
     public MobileShareHandler(Holder holder, MobileShareStateHolder state) {
         super(StringMessage.class);
@@ -48,6 +49,7 @@ public class MobileShareHandler extends JsonBasedSimpleChannelInboundHandler<Str
         this.hardwareApp = new MobileShareHardwareLogic(holder);
         this.mobileGetOrgDevicesLogic = new MobileGetOrgDevicesLogic(holder);
         this.mobileGetSuperChartDataLogic = new MobileGetSuperChartDataLogic(holder);
+        this.mobileDeleteOrgDeviceDataLogic = new MobileDeleteOrgDeviceDataLogic(holder);
     }
 
     @Override
@@ -82,7 +84,7 @@ public class MobileShareHandler extends JsonBasedSimpleChannelInboundHandler<Str
                 MobileLogoutLogic.messageReceived(ctx, state.user, msg);
                 break;
             case MOBILE_DELETE_DEVICE_DATA:
-                MobileDeleteDeviceDataLogic.messageReceived(holder, ctx, state, msg);
+                mobileDeleteOrgDeviceDataLogic.messageReceived(ctx, state, msg);
                 break;
         }
     }
