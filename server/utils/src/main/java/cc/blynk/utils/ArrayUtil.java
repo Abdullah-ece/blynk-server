@@ -169,4 +169,14 @@ public final class ArrayUtil {
         return result;
     }
 
+    // sum can overflow
+    public static int getSumOfPositiveCells(int[] counts) {
+        int sum = 0;
+        for (int count: counts) {
+            if (count > 0) {
+                sum += count;
+            }
+        }
+        return sum;
+    }
 }

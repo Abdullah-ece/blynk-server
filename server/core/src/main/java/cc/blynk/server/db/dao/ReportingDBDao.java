@@ -1,5 +1,6 @@
 package cc.blynk.server.db.dao;
 
+import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.model.widgets.outputs.graph.Period;
@@ -9,11 +10,9 @@ import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
 import cc.blynk.server.core.reporting.raw.BaseReportingKey;
 import cc.blynk.server.core.reporting.raw.BaseReportingValue;
-import cc.blynk.server.core.stats.model.CommandStat;
-import cc.blynk.server.core.stats.model.HttpStat;
-import cc.blynk.server.core.stats.model.Stat;
 import cc.blynk.server.db.dao.descriptor.DataQueryRequestDTO;
 import cc.blynk.server.db.dao.descriptor.DeviceRawDataTableDescriptor;
+import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.DateTimeUtils;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.logging.log4j.LogManager;
@@ -28,12 +27,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
+import java.util.*;
 
 import static org.jooq.SQLDialect.POSTGRES_9_4;
 import static org.jooq.impl.DSL.field;
@@ -243,6 +237,48 @@ public class ReportingDBDao {
             log.error("Error deleting all reporting data for device.", e);
         }
         return 0;
+    }
+
+    public int delete(int deviceId, DataStream... dataStreams) {
+        return delete(Collections.singletonMap(deviceId, new ArrayList<>(Arrays.asList(dataStreams))));
+    }
+
+    public int delete(Map<Integer, List<DataStream>> map) {
+        int count = 0;
+        try (Connection connection = ds.getConnection();
+             PreparedStatement deleteMinute = connection.prepareStatement(deleteDeviceMinute);
+             PreparedStatement deleteHourly = connection.prepareStatement(deleteDeviceHourly);
+             PreparedStatement deleteDaily  = connection.prepareStatement(deleteDeviceDaily);
+             PreparedStatement deleteRaw    = connection.prepareStatement(deleteDeviceRaw)) {
+
+            for (Map.Entry<Integer, List<DataStream>> mapEntry: map.entrySet()) {
+                for (DataStream dataStream: mapEntry.getValue()) {
+                    delete(deleteMinute, mapEntry.getKey(), dataStream.pin, dataStream.pinType);
+                    delete(deleteHourly, mapEntry.getKey(), dataStream.pin, dataStream.pinType);
+                    delete(deleteDaily,  mapEntry.getKey(), dataStream.pin, dataStream.pinType);
+                    delete(deleteRaw,    mapEntry.getKey(), dataStream.pin, dataStream.pinType);
+                }
+            }
+
+            count  = ArrayUtil.getSumOfPositiveCells(deleteMinute.executeBatch());
+            count += ArrayUtil.getSumOfPositiveCells(deleteHourly.executeBatch());
+            count += ArrayUtil.getSumOfPositiveCells(deleteDaily .executeBatch());
+            count += ArrayUtil.getSumOfPositiveCells(deleteRaw   .executeBatch());
+
+            connection.commit();
+        } catch (Exception e) {
+            log.error("Error removing reporting records for devices", e);
+        }
+        log.debug("Removed reporting records for devices. Deleted records: {}", count);
+        return count;
+    }
+
+    private void delete(PreparedStatement deleteStatement,
+                       int deviceId, short pin, PinType pinType) throws Exception {
+        deleteStatement.setInt(1, deviceId);
+        deleteStatement.setShort(2, pin);
+        deleteStatement.setInt(3, pinType.ordinal());
+        deleteStatement.addBatch();
     }
 
     public int delete(int deviceId, short pin, PinType pinType) {
