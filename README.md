@@ -50,20 +50,14 @@ Go to [create_schema.sql](server/core/src/main/resources/sql/create_schema.sql) 
 Copy URL with a token from the browser, then download a file with:
         
         wget -O create_schema.sql <paste copied url here>
-        
-Repeat the same for the file [reporting_schema.sql](server/core/src/main/resources/sql/reporting_schema.sql)
 
-        wget -O reporting_schema.sql <paste copied url here>
-
-#### 3. Move create_schema.sql and reporting_schema.sql to temp folder (to avoid permission problems)
+#### 3. Move create_schema.sql to temp folder (to avoid permission problems)
 
         mv create_schema.sql /tmp
-        mv reporting_schema.sql /tmp
         
 Result:  
 
         /tmp/create_schema.sql
-        /tmp/reporting_schema.sql
         
 Copy this paths to clipboard from your console.
 
@@ -75,7 +69,6 @@ Copy this paths to clipboard from your console.
 #### 6. Create Blynk DB and Reporting DB, test user and tables
 
         \i /tmp/create_schema.sql
-        \i /tmp/reporting_schema.sql
         
 ```/tmp/create_schema.sql``` - is path from step 3.
         
