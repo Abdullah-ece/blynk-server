@@ -246,7 +246,7 @@ public class ReportingDBDao {
     }
 
     public int delete(int deviceId, DataStream... dataStreams) {
-        return delete(Collections.singletonMap(deviceId, new ArrayList<>(Arrays.asList(dataStreams))));
+        return delete(Collections.singletonMap(deviceId, Arrays.asList(dataStreams)));
     }
 
     public int delete(Map<Integer, List<DataStream>> map) {
