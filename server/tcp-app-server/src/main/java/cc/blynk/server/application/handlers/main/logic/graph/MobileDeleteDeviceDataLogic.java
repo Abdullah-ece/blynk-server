@@ -1,7 +1,6 @@
 package cc.blynk.server.application.handlers.main.logic.graph;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.mobile.MobileStateHolder;
@@ -65,17 +64,15 @@ public final class MobileDeleteDeviceDataLogic {
     private static void delete(Holder holder, Channel channel, int msgId, int deviceId, String[] pins) {
         holder.blockingIOProcessor.executeHistory(() -> {
             try {
-                DataStream[] dataStreams = new DataStream[pins.length];
-                for (int i = 0; i < pins.length; ++i) {
-                    PinType pinType = PinType.getPinType(pins[i].charAt(0));
-                    short pin = NumberUtil.parsePin(pins[i].substring(1));
-                    dataStreams[i] = new DataStream(pin, pinType);
+                for (String pinString : pins) {
+                    PinType pinType = PinType.getPinType(pinString.charAt(0));
+                    short pin = NumberUtil.parsePin(pinString.substring(1));
+                    int removedCounter =
+                            holder.reportingDBManager.reportingDBDao.delete(deviceId, pin, pinType);
                     holder.reportingDBManager.rawDataCacheForGraphProcessor
                             .removeCacheEntry(deviceId, pinType, pin);
+                    log.info("Removed {} records for deviceId {} and pin {}.", removedCounter, deviceId, pin);
                 }
-                int removedCounter = holder.reportingDBManager.reportingDBDao
-                        .delete(deviceId, dataStreams);
-                log.info("Removed {} records for deviceId {}.", removedCounter, deviceId);
                 channel.writeAndFlush(ok(msgId), channel.voidPromise());
             } catch (Exception e) {
                 log.warn("Error removing device data. Reason : {}.", e.getMessage());

@@ -7,20 +7,20 @@ package cc.blynk.server.core.model.widgets.outputs.graph;
  */
 public enum GraphGranularityType {
 
-    MINUTE("minute", 'm', 60 * 1000),
-    HOURLY("hourly", 'h', 60 * 60 * 1000),
-    DAILY("daily", 'd', 24 * 60 * 60 * 1000);
+    MINUTE("reporting_average_minute", 60 * 1000),
+    FIVE_MINUTE("reporting_average_5_minute", 5 * 60 * 1000),
+    FIFTEEN_MINUTE("reporting_average_15_minute", 15 * 60 * 1000),
+    HOURLY("reporting_average_hourly", 60 * 60 * 1000),
+    DAILY("daily", 24 * 60 * 60 * 1000);
 
-    public final String label;
-    public final char type;
+    public final String tableName;
     public final long period;
 
     //cached value for values field to avoid allocations
     private static final GraphGranularityType[] values = values();
 
-    GraphGranularityType(String label, char type, long period) {
-        this.label = label;
-        this.type = type;
+    GraphGranularityType(String tableName, long period) {
+        this.tableName = tableName;
         this.period = period;
     }
 

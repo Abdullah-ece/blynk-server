@@ -15,7 +15,6 @@ import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.WebDashboard;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
-import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphType;
 import cc.blynk.server.core.model.widgets.outputs.graph.Period;
 import cc.blynk.server.core.model.widgets.outputs.graph.Superchart;
@@ -29,7 +28,6 @@ import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.nio.ByteBuffer;
-import java.util.Map;
 import java.util.StringJoiner;
 
 import static cc.blynk.integration.APIBaseTest.createDeviceNameMeta;
@@ -311,7 +309,6 @@ public class MobileGetGraphDataTest extends SingleServerInstancePerTestWithDBAnd
         assertEquals(1, bb.getInt());
         assertEquals(1.5D, bb.getDouble(), 0.1);
         assertEquals((now / MINUTE) * MINUTE, bb.getLong());
-        assertEquals(0, bb.getInt());
 
         appClient.deleteGraphData(dashBoard.id, superchart.id, "v4");
 
@@ -322,7 +319,6 @@ public class MobileGetGraphDataTest extends SingleServerInstancePerTestWithDBAnd
     }
 
     @Test
-    // with delete(int deviceId, DataStream... dataStreams) method
     public void testDeleteDeviceData() throws Exception {
         String user = getUserName();
 
@@ -374,7 +370,6 @@ public class MobileGetGraphDataTest extends SingleServerInstancePerTestWithDBAnd
         assertEquals(1, bb.getInt());
         assertEquals(1.5D, bb.getDouble(), 0.1);
         assertEquals((now / MINUTE) * MINUTE, bb.getLong());
-        assertEquals(0, bb.getInt());
 
 
         appClient.send(MOBILE_DELETE_DEVICE_DATA, "" + device.id);

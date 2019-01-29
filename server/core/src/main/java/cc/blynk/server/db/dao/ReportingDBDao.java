@@ -1,6 +1,5 @@
 package cc.blynk.server.db.dao;
 
-import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.reporting.MobileGraphRequest;
@@ -9,7 +8,6 @@ import cc.blynk.server.core.reporting.raw.BaseReportingKey;
 import cc.blynk.server.core.reporting.raw.BaseReportingValue;
 import cc.blynk.server.db.dao.descriptor.DataQueryRequestDTO;
 import cc.blynk.server.db.dao.descriptor.DeviceRawDataTableDescriptor;
-import cc.blynk.utils.ArrayUtil;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,7 +20,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -38,29 +35,20 @@ import static org.jooq.SQLDialect.POSTGRES_9_4;
  */
 public class ReportingDBDao {
 
-    public static final String insertRaw =
+    private static final String insertRaw =
             "INSERT INTO reporting_device_raw_data (device_id, pin, pin_type, ts, value) "
                     + "VALUES (?, ?, ?, ?, ?)";
 
-    public static final String selectFromAverage =
+    private static final String selectFromAverage =
             "SELECT ts, avgMerge(value) as value FROM {TABLE} GROUP BY device_id, pin, pin_type, ts "
                     + "HAVING device_id = ? and pin = ? and pin_type = ? and ts between ? and ? "
                     + "ORDER BY ts DESC limit ?,?";
-    private static final String deleteDeviceMinute =
-            "ALTER TABLE reporting_average_minute delete WHERE device_id = ? and pin = ? and pin_type = ?";
-    private static final String deleteDeviceHourly =
-            "ALTER TABLE reporting_average_hourly delete WHERE device_id = ? and pin = ? and pin_type = ?";
 
-    private static final String deleteAllDeviceMinute = "DELETE FROM reporting_average_minute WHERE device_id = ?";
-    private static final String deleteAllDeviceHourly = "DELETE FROM reporting_average_hourly WHERE device_id = ?";
-    private static final String deleteAllDeviceDaily = "DELETE FROM reporting_average_daily WHERE device_id = ?";
-    private static final String deleteAllDeviceRaw = "DELETE FROM reporting_device_raw_data WHERE device_id = ?";
-    private static final String deleteAllDeviceEvents = "DELETE FROM reporting_events WHERE device_id = ?";
-    private static final String deleteAllDeviceEventsLastSeen =
-            "DELETE FROM reporting_events_last_seen WHERE device_id = ?";
+    private static final String deleteDeviceData =
+            "ALTER TABLE {TABLE} delete WHERE device_id = ?";
 
-    private static final String deleteDeviceDaily =
-            "ALTER TABLE reporting_average_daily delete WHERE device_id = ? and pin = ? and pin_type = ?";
+    private static final String deleteDevicePinData =
+            "ALTER TABLE {TABLE} delete WHERE device_id = ? and pin = ? and pin_type = ?";
 
     private static final Logger log = LogManager.getLogger(ReportingDBDao.class);
 
@@ -70,12 +58,12 @@ public class ReportingDBDao {
         this.ds = ds;
     }
 
-    public static void prepareReportingInsert(PreparedStatement ps,
-                                              int deviceId,
-                                              short pin,
-                                              PinType pinType,
-                                              long ts,
-                                              double value) throws SQLException {
+    private static void prepareReportingInsert(PreparedStatement ps,
+                                               int deviceId,
+                                               short pin,
+                                               PinType pinType,
+                                               long ts,
+                                               double value) throws SQLException {
         ps.setInt(1, deviceId);
         ps.setShort(2, pin);
         ps.setInt(3, pinType.ordinal());
@@ -87,7 +75,7 @@ public class ReportingDBDao {
                                                   short pin, PinType pinType,
                                                   long from, long to, int offset, int limit) throws Exception {
         List<RawEntry> result = new ArrayList<>();
-        String query = selectFromAverage.replace("{TABLE}", getTableByGranularity(granularityType));
+        String query = selectFromAverage.replace("{TABLE}", granularityType.tableName);
 
         try (Connection connection = ds.getConnection()) {
             PreparedStatement ps = connection.prepareStatement(query);
@@ -134,17 +122,6 @@ public class ReportingDBDao {
         );
     }
 
-    private static String getTableByGranularity(GraphGranularityType graphGranularityType) {
-        switch (graphGranularityType) {
-            case DAILY:
-                return "reporting_average_daily";
-            case HOURLY:
-                return "reporting_average_hourly";
-            default:
-                return "reporting_average_minute";
-        }
-    }
-
     public void delete(int... deviceIds) {
         for (int deviceId : deviceIds) {
             delete(deviceId);
@@ -153,14 +130,10 @@ public class ReportingDBDao {
 
     public void delete(int deviceId) {
         int count = 0;
-        count += delete(deleteAllDeviceMinute, deviceId);
-        count += delete(deleteAllDeviceHourly, deviceId);
-        count += delete(deleteAllDeviceDaily, deviceId);
-        count += delete(deleteAllDeviceRaw, deviceId);
-        count += delete(deleteAllDeviceEvents, deviceId);
-        count += delete(deleteAllDeviceEventsLastSeen, deviceId);
-        log.debug("Removed all reporting records for device {} - {}{}. Deleted records: {}",
-                deviceId, count);
+        for (GraphGranularityType graphGranularityType : GraphGranularityType.getValues()) {
+            count += delete(deleteDeviceData.replace("{TABLE}", graphGranularityType.tableName), deviceId);
+        }
+        log.debug("Removed all reporting records for device {}. Deleted records: {}", deviceId, count);
     }
 
     private int delete(String query, int deviceId) {
@@ -178,50 +151,12 @@ public class ReportingDBDao {
         return 0;
     }
 
-    public int delete(int deviceId, DataStream... dataStreams) {
-        return delete(Collections.singletonMap(deviceId, Arrays.asList(dataStreams)));
-    }
-
-    public int delete(Map<Integer, List<DataStream>> map) {
-        int count = 0;
-        try (Connection connection = ds.getConnection();
-             PreparedStatement deleteMinute = connection.prepareStatement(deleteDeviceMinute);
-             PreparedStatement deleteHourly = connection.prepareStatement(deleteDeviceHourly);
-             PreparedStatement deleteDaily  = connection.prepareStatement(deleteDeviceDaily)) {
-
-            for (Map.Entry<Integer, List<DataStream>> mapEntry: map.entrySet()) {
-                for (DataStream dataStream: mapEntry.getValue()) {
-                    delete(deleteMinute, mapEntry.getKey(), dataStream.pin, dataStream.pinType);
-                    delete(deleteHourly, mapEntry.getKey(), dataStream.pin, dataStream.pinType);
-                    delete(deleteDaily,  mapEntry.getKey(), dataStream.pin, dataStream.pinType);
-                }
-            }
-
-            count  = ArrayUtil.getSumOfPositiveCells(deleteMinute.executeBatch());
-            count += ArrayUtil.getSumOfPositiveCells(deleteHourly.executeBatch());
-            count += ArrayUtil.getSumOfPositiveCells(deleteDaily .executeBatch());
-
-            connection.commit();
-        } catch (Exception e) {
-            log.error("Error removing reporting records for devices", e);
-        }
-        log.debug("Removed reporting records for devices. Deleted records: {}", count);
-        return count;
-    }
-
-    private void delete(PreparedStatement deleteStatement,
-                       int deviceId, short pin, PinType pinType) throws Exception {
-        deleteStatement.setInt(1, deviceId);
-        deleteStatement.setShort(2, pin);
-        deleteStatement.setInt(3, pinType.ordinal());
-        deleteStatement.addBatch();
-    }
-
     public int delete(int deviceId, short pin, PinType pinType) {
         int count = 0;
-        count += delete(deleteDeviceMinute, deviceId, pin, pinType);
-        count += delete(deleteDeviceHourly, deviceId, pin, pinType);
-        count += delete(deleteDeviceDaily, deviceId, pin, pinType);
+        for (GraphGranularityType graphGranularityType : GraphGranularityType.getValues()) {
+            String query = deleteDevicePinData.replace("{TABLE}", graphGranularityType.tableName);
+            count += delete(query, deviceId, pin, pinType);
+        }
         log.debug("Removed reporting records for device {} - {}{}. Deleted records: {}",
                 deviceId, pinType.pintTypeChar, pin, count);
         return count;
@@ -239,7 +174,7 @@ public class ReportingDBDao {
             connection.commit();
             return counter;
         } catch (Exception e) {
-            log.error("Error deleting reporting data for device.", e);
+            log.error("Error deleting pin data reporting for device.", e);
         }
         return 0;
     }
