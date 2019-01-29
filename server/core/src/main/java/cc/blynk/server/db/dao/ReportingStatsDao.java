@@ -18,11 +18,13 @@ import java.sql.Timestamp;
  * Created on 28.01.19.
  */
 public final class ReportingStatsDao {
+
     private static final String insertStatMinute =
             "INSERT INTO reporting_app_stat_minute (region, ts, active, active_week, active_month, "
                     + "minute_rate, connected, online_apps, online_hards, "
                     + "total_online_apps, total_online_hards, registrations) "
                     + "VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
+
     private static final String insertStatCommandsMinute =
             "INSERT INTO reporting_app_command_stat_minute (region, ts, response, register, "
                     + "login, load_profile, app_sync, sharing, get_token, ping, activate, "
@@ -43,9 +45,9 @@ public final class ReportingStatsDao {
                     + " get_history_pin_data, total) "
                     + "VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
 
-    private final HikariDataSource ds;
-
     private static final Logger log = LogManager.getLogger(ReportingStatsDao.class);
+
+    private final HikariDataSource ds;
 
     public ReportingStatsDao(HikariDataSource hikariDataSource) {
         this.ds = hikariDataSource;

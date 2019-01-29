@@ -92,6 +92,7 @@ public final class DBManager implements Closeable {
 
     private HikariConfig initConfig(BaseProperties serverProperties) {
         HikariConfig config = new HikariConfig();
+        config.setDriverClassName(org.postgresql.Driver.class.getName());
         config.setJdbcUrl(serverProperties.getProperty("jdbc.url"));
         config.setUsername(serverProperties.getProperty("user"));
         config.setPassword(serverProperties.getProperty("password"));

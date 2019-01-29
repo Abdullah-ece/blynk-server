@@ -3,6 +3,7 @@ package cc.blynk.integration.web;
 import cc.blynk.integration.SingleServerInstancePerTestWithDBAndNewOrg;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.dto.OrganizationDTO;
 import cc.blynk.server.core.model.dto.ProductDTO;
@@ -411,6 +412,22 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
         assertNotNull(countDTO);
         assertEquals(1, countDTO.orgCount);
         assertEquals(0, countDTO.subOrgCount);
+    }
+
+    @Test
+    // github.com/blynkkk/dash/issues/2062
+    public void checkDeviceCountHavingProductWithParentIdOnItself() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient("super@blynk.cc", "1");
+        client.getProducts(orgId);
+        ProductDTO[] productDTOS = client.parseProductDTOs(1);
+        assertNotNull(productDTOS);
+        assertTrue(productDTOS.length > 0);
+        assertNotNull(productDTOS[0]);
+
+
+        // default product's parentId is itself id
+        // without id check OrganizationDao.getProductChilds() goes into infinite recursion
+        holder.organizationDao.getProductChilds(productDTOS[0].id);
     }
 
     @Test

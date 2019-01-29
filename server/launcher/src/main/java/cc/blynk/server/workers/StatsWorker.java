@@ -47,7 +47,9 @@ public class StatsWorker implements Runnable {
         try {
             var stat = new Stat(sessionDao, userDao, blockingIOProcessor, stats, reportScheduler, true);
             log.info(stat);
-            reportingDBManager.insertStat(this.region, stat);
+
+            //todo fix
+            //reportingDBManager.insertStat(this.region, stat);
         } catch (Exception e) {
             log.error("Error making stats.", e);
         }

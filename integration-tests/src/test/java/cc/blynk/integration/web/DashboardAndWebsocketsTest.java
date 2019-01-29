@@ -18,7 +18,6 @@ import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.WebDashboard;
 import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
 import cc.blynk.server.core.model.widgets.Widget;
-import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.model.widgets.outputs.graph.Period;
 import cc.blynk.server.core.model.widgets.web.WebLineGraph;
 import cc.blynk.server.core.model.widgets.web.WebSource;
@@ -27,8 +26,6 @@ import cc.blynk.server.core.model.widgets.web.label.WebLabel;
 import cc.blynk.server.core.protocol.enums.Response;
 import cc.blynk.server.core.protocol.model.messages.BinaryMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
-import cc.blynk.server.core.reporting.average.AggregationKey;
-import cc.blynk.server.core.reporting.average.AggregationValue;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -48,8 +45,7 @@ import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.StringJoiner;
 
 import static cc.blynk.integration.TestUtil.appSync;
 import static cc.blynk.integration.TestUtil.b;
@@ -91,9 +87,18 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         org.apache.commons.io.FileUtils.deleteDirectory(userReportFolder.toFile());
         Files.createDirectories(userReportFolder);
         //clean everything just in case
-        holder.reportingDBManager.executeSQL("DELETE FROM reporting_average_minute");
-        holder.reportingDBManager.executeSQL("DELETE FROM reporting_average_hourly");
-        holder.reportingDBManager.executeSQL("DELETE FROM reporting_average_daily");
+        //clickhouse doesn't have normal way of data removal, so using "hack"
+        StringJoiner stringJoiner = new StringJoiner(",", "(", ")");
+
+        for (int i = 0; i < 50; i++) {
+            stringJoiner.add("" + i);
+        }
+
+        String ids = stringJoiner.toString();
+        holder.reportingDBManager.executeSQL("ALTER TABLE reporting_average_minute delete where device_id in " + ids);
+        holder.reportingDBManager.executeSQL("ALTER TABLE reporting_average_hourly delete where device_id in " + ids);
+        holder.reportingDBManager.executeSQL("ALTER TABLE reporting_average_daily delete where device_id in " + ids);
+        holder.reportingDBManager.executeSQL("ALTER TABLE reporting_device_raw_data delete where device_id in " + ids);
     }
 
     @After
@@ -421,24 +426,12 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         appWebSocketClient.reset();
 
         long now = System.currentTimeMillis();
-        AggregationValue aggregationValue = new AggregationValue();
-        aggregationValue.update(1.11D);
-        AggregationKey aggregationKey1 = new AggregationKey(1, PinType.VIRTUAL, (byte) 3, (now - 180_000) / MINUTE);
-        Map<AggregationKey, AggregationValue> data = new HashMap<>();
-        data.put(aggregationKey1, aggregationValue);
 
-        AggregationValue aggregationValue2 = new AggregationValue();
-        aggregationValue2.update(1.22D);
-        AggregationKey aggregationKey2 = new AggregationKey(1, PinType.VIRTUAL, (byte) 3, (now - 120_000) / MINUTE);
-        data.put(aggregationKey2, aggregationValue2);
+        holder.reportingDBManager.reportingDBDao.insertDataPoint(1, (short) 3, PinType.VIRTUAL, ((now - 180_000) / MINUTE) * MINUTE, 1);
+        holder.reportingDBManager.reportingDBDao.insertDataPoint(1, (short) 3, PinType.VIRTUAL, ((now - 120_000) / MINUTE) * MINUTE, 2);
+        holder.reportingDBManager.reportingDBDao.insertDataPoint(1, (short) 4, PinType.VIRTUAL, ((now - 60_000) / MINUTE) * MINUTE, 3);
 
-        AggregationValue aggregationValue3 = new AggregationValue();
-        aggregationValue3.update(1.33D);
-        AggregationKey aggregationKey3 = new AggregationKey(1, PinType.VIRTUAL, (byte) 4, (now - 60_000) / MINUTE);
-        data.put(aggregationKey3, aggregationValue3);
-        holder.reportingDBManager.reportingDBDao.insert(data, GraphGranularityType.MINUTE);
-
-        appWebSocketClient.getGraphData(1, 432, Period.DAY);
+        appWebSocketClient.getGraphData(1, 432, Period.ONE_HOUR);
 
         BinaryMessage graphDataResponse = appWebSocketClient.getBinaryBody();
         assertNotNull(graphDataResponse);
@@ -447,14 +440,13 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
 
         assertEquals(1, bb.getInt());
         assertEquals(2, bb.getInt());
-        assertEquals(1.11D, bb.getDouble(), 0.1);
-        assertEquals(aggregationKey1.getTs(GraphGranularityType.MINUTE), bb.getLong());
-        assertEquals(1.22D, bb.getDouble(), 0.1);
-        assertEquals(aggregationKey2.getTs(GraphGranularityType.MINUTE), bb.getLong());
+        assertEquals(2, bb.getDouble(), 0.1);
+        assertEquals(((now - 120_000) / MINUTE) * MINUTE, bb.getLong());
+        assertEquals(1, bb.getDouble(), 0.1);
+        assertEquals(((now - 180_000) / MINUTE) * MINUTE, bb.getLong());
         assertEquals(1, bb.getInt());
-        assertEquals(1.33D, bb.getDouble(), 0.1);
-        assertEquals(aggregationKey3.getTs(GraphGranularityType.MINUTE), bb.getLong());
-
+        assertEquals(3, bb.getDouble(), 0.1);
+        assertEquals(((now - 60_000) / MINUTE) * MINUTE, bb.getLong());
     }
 
     @Test
@@ -535,21 +527,8 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         }
 
         var now = System.currentTimeMillis();
-        var aggregationValue = new AggregationValue();
-        aggregationValue.update(1.11D);
-        Map<AggregationKey, AggregationValue> data = new HashMap<>();
-        data.put(
-                new AggregationKey(1, PinType.VIRTUAL, (byte) 3, (now - 60_000) / MINUTE),
-                aggregationValue
-        );
-
-        aggregationValue = new AggregationValue();
-        aggregationValue.update(1.22D);
-        data.put(
-                new AggregationKey(1, PinType.VIRTUAL, (byte) 3, now / MINUTE),
-                aggregationValue
-        );
-        holder.reportingDBManager.reportingDBDao.insert(data, GraphGranularityType.MINUTE);
+        holder.reportingDBManager.reportingDBDao.insertDataPoint(1, (short) 3, PinType.VIRTUAL, ((now - 60_000) / MINUTE) * MINUTE, 1.11D);
+        holder.reportingDBManager.reportingDBDao.insertDataPoint(1, (short) 3, PinType.VIRTUAL, (now / MINUTE) * MINUTE, 1.22D);
 
         appWebSocketClient.send(GET_SUPERCHART_DATA, "1" + b(" 432 CUSTOM " + (now - 120_000) + " " + now));
 
@@ -560,10 +539,10 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
 
         assertEquals(1, bb.getInt());
         assertEquals(2, bb.getInt());
-        assertEquals(1.11D, bb.getDouble(), 0.1);
-        assertEquals(((now - 60_000) / MINUTE) * MINUTE, bb.getLong());
-        assertEquals(1.22D, bb.getDouble(), 0.1);
+        assertEquals(1.22D, bb.getDouble(), 0.01);
         assertEquals((now / MINUTE) * MINUTE, bb.getLong());
+        assertEquals(1.11D, bb.getDouble(), 0.01);
+        assertEquals(((now - 60_000) / MINUTE) * MINUTE, bb.getLong());
     }
 
     @Test

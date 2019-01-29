@@ -50,20 +50,14 @@ Go to [create_schema.sql](server/core/src/main/resources/sql/create_schema.sql) 
 Copy URL with a token from the browser, then download a file with:
         
         wget -O create_schema.sql <paste copied url here>
-        
-Repeat the same for the file [reporting_schema.sql](server/core/src/main/resources/sql/reporting_schema.sql)
 
-        wget -O reporting_schema.sql <paste copied url here>
-
-#### 3. Move create_schema.sql and reporting_schema.sql to temp folder (to avoid permission problems)
+#### 3. Move create_schema.sql to temp folder (to avoid permission problems)
 
         mv create_schema.sql /tmp
-        mv reporting_schema.sql /tmp
         
 Result:  
 
         /tmp/create_schema.sql
-        /tmp/reporting_schema.sql
         
 Copy this paths to clipboard from your console.
 
@@ -75,7 +69,6 @@ Copy this paths to clipboard from your console.
 #### 6. Create Blynk DB and Reporting DB, test user and tables
 
         \i /tmp/create_schema.sql
-        \i /tmp/reporting_schema.sql
         
 ```/tmp/create_schema.sql``` - is path from step 3.
         
@@ -102,8 +95,46 @@ You should see next output:
 #### Quit
 
         \q
-          
+
+## Installing ClickHouse
+
+#### Install
+
+        sudo apt-add-repository "deb http://repo.yandex.ru/clickhouse/deb/stable/ main/"
+        sudo apt-key adv --keyserver keyserver.ubuntu.com --recv E0C56BD4 # optional
+        sudo apt-get update
+        sudo apt-get install clickhouse-client clickhouse-server
+        
+#### Allow listening on all IPs:
+
+        sudo nano /etc/clickhouse-server/config.xml 
+        
+and uncomment line:
+
+        <listen_host>::</listen_host> 
+        
+#### Restrict access by IP (only for production setup)
+
+        sudo nano /etc/clickhouse-server/users.xml
+        
+        <networks>
+           <ip>IP/32</ip>
+        </networks>
+
 #### Run
+
+        sudo service clickhouse-server start
+       
+#### Verify ClickHouse is available
+
+        curl 'http://localhost:8123/?query=SELECT%201'
+        
+#### Create data schema
+
+- Copy all from [reporting_schema_clickhouse.sql](server/core/src/main/resources/sql/reporting_schema_clickhouse.sql)
+- Run ```clickhouse-client``` in the console and paste above scripts
+
+## Run server
 
 Now start your server, go to server/launcher/target and run:
 

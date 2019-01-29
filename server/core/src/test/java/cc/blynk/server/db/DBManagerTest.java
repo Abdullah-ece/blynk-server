@@ -3,27 +3,16 @@ package cc.blynk.server.db;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.profile.Profile;
-import cc.blynk.server.db.dao.ReportingDBDao;
 import cc.blynk.server.db.model.Purchase;
 import cc.blynk.server.db.model.Redeem;
 import cc.blynk.utils.DateTimeUtils;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.postgresql.copy.CopyManager;
-import org.postgresql.core.BaseConnection;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -32,7 +21,6 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentMap;
-import java.util.zip.GZIPOutputStream;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -80,47 +68,6 @@ public class DBManagerTest {
     public void testDbVersion() throws Exception {
         int dbVersion = dbManager.userDBDao.getDBVersion();
         assertTrue(dbVersion >= 90500);
-    }
-
-    @Test
-    @Ignore("not used right now in read code")
-    public void testCopy100RecordsIntoFile() throws Exception {
-        System.out.println("Starting");
-
-        int a = 0;
-
-        long start = System.currentTimeMillis();
-        try (Connection connection = dbManager.getConnection();
-             PreparedStatement ps = connection.prepareStatement(ReportingDBDao.insertMinute)) {
-
-            long minute = (System.currentTimeMillis() / DateTimeUtils.MINUTE) * DateTimeUtils.MINUTE;
-
-            for (int i = 0; i < 100; i++) {
-                ReportingDBDao.prepareReportingInsert(ps, 0, (short) 0, PinType.VIRTUAL, minute, (double) i);
-                ps.addBatch();
-                minute += DateTimeUtils.MINUTE;
-                a++;
-            }
-
-            ps.executeBatch();
-            connection.commit();
-        }
-
-        System.out.println("Finished : " + (System.currentTimeMillis() - start)  + " millis. Executed : " + a);
-
-
-        try (Connection connection = dbManager.getConnection();
-             Writer gzipWriter = new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(new File("/home/doom369/output.csv.gz"))), StandardCharsets.UTF_8)) {
-
-            CopyManager copyManager = new CopyManager(connection.unwrap(BaseConnection.class));
-
-
-            String selectQuery = "select pintype || pin, ts, value from reporting_average_minute where project_id = 1 and email = 'test@gmail.com'";
-            long res = copyManager.copyOut("COPY (" + selectQuery + " ) TO STDOUT WITH (FORMAT CSV)", gzipWriter);
-            System.out.println(res);
-        }
-
-
     }
 
     @Test

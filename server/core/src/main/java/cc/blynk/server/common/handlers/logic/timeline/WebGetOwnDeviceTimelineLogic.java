@@ -79,14 +79,15 @@ public final class WebGetOwnDeviceTimelineLogic implements PermissionBasedLogic<
 
         Product product = deviceValue.product;
 
-        blockingIOProcessor.executeDB(() -> {
+        blockingIOProcessor.executeEvent(() -> {
             MessageBase response;
             try {
                 List<LogEventDTO> eventList;
 
                 eventList = reportingDBManager.eventDBDao.getEvents(timelineDTO);
+                log.trace("Fetched events {} for {}.", eventList.size(), timelineDTO);
 
-                reportingDBManager.eventDBDao.upsertLastSeen(timelineDTO.deviceId, user.email);
+                reportingDBManager.eventDBDao.insertLastSeen(timelineDTO.deviceId, user.email);
 
                 if (product != null) {
                     joinLogEventName(product, eventList);

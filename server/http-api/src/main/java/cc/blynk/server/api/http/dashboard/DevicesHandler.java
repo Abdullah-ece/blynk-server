@@ -297,7 +297,7 @@ public class DevicesHandler extends BaseHttpHandler {
                 List<LogEventDTO> eventList = reportingDBManager.eventDBDao
                         .getEvents(deviceId, eventType, from, to, offset, limit, isResolved);
 
-                reportingDBManager.eventDBDao.upsertLastSeen(deviceId, user.email);
+                reportingDBManager.eventDBDao.insertLastSeen(deviceId, user.email);
 
                 if (product != null) {
                     joinLogEventName(product, eventList);

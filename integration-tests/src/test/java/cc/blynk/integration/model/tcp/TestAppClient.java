@@ -65,6 +65,7 @@ import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_PROVISION_T
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_LOAD_PROFILE_GZIPPED;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_REGISTER;
+import static cc.blynk.server.core.protocol.enums.Command.RESET_PASSWORD;
 import static cc.blynk.utils.AppNameUtil.BLYNK;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
@@ -365,6 +366,14 @@ public class TestAppClient extends BaseTestAppClient {
 
     public void send(String line, int id) {
         send(produceMessageBaseOnUserInput(line, id));
+    }
+
+    public void resetPass(String email, String appName) {
+        send(RESET_PASSWORD, "start" + BODY_SEPARATOR + email + BODY_SEPARATOR + appName);
+    }
+
+    public void resetPassReset(String token, String hash) {
+        send(RESET_PASSWORD, "reset" + BODY_SEPARATOR_STRING + token + BODY_SEPARATOR_STRING + hash);
     }
 
     public void getProvisionToken(Device device) {
