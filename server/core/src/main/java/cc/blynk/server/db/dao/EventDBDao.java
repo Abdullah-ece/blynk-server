@@ -51,7 +51,8 @@ public final class EventDBDao {
             + "USING id "
             + "group by type, is_resolved";
 
-    private static final String insertLastSeen = "INSERT INTO reporting_events_last_seen (device_id, email) VALUES (?, ?)";
+    private static final String insertLastSeen =
+            "INSERT INTO reporting_events_last_seen (device_id, email) VALUES (?, ?)";
 
     private final HikariDataSource ds;
     private final AtomicLong idCounter;
@@ -149,12 +150,12 @@ public final class EventDBDao {
         String eventTypeSql = eventType == null ? "" : "and type = ?";
         String isResolvedSql = isResolved == null ? "" : "where is_resolved = ? ";
 
-        String query = "select * " +
-                "from (select * from reporting_events where device_id = ? and ts BETWEEN ? and ? "
+        String query = "select * "
+                + "from (select * from reporting_events where device_id = ? and ts BETWEEN ? and ? "
                 + eventTypeSql
                 + ") "
-                + "ANY LEFT JOIN " +
-                " (select * from reporting_events_resolved) "
+                + "ANY LEFT JOIN "
+                + " (select * from reporting_events_resolved) "
                 + "USING id "
                 +  isResolvedSql
                 + "order by COALESCE(resolved_at, ts) desc, id desc limit ?, ?";
