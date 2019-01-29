@@ -136,7 +136,7 @@ public class RealtimeStatsDBTest {
         cs.webhooks = i++;
         cs.appTotal = i++;
 
-        boolean insertResult = reportingDBManager.reportingDBDao.insertStat(region, stat);
+        boolean insertResult = reportingDBManager.reportingStatsDao.insertStat(region, stat);
         assertTrue(insertResult);
 
         try (Connection connection = reportingDBManager.getConnection();
