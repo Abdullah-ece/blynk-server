@@ -40,9 +40,9 @@ public class ReportingDBDao {
                     + "VALUES (?, ?, ?, ?, ?)";
 
     public static final String selectFromAverage =
-            "SELECT ts, avgMerge(value) as value FROM {TABLE} GROUP BY device_id, pin, pin_type, ts " +
-                    "HAVING device_id = ? and pin = ? and pin_type = ? and ts between ? and ? " +
-                    "ORDER BY ts DESC limit ?,?";
+            "SELECT ts, avgMerge(value) as value FROM {TABLE} GROUP BY device_id, pin, pin_type, ts "
+                    + "HAVING device_id = ? and pin = ? and pin_type = ? and ts between ? and ? "
+                    + "ORDER BY ts DESC limit ?,?";
     private static final String deleteDeviceMinute =
             "ALTER TABLE reporting_average_minute delete WHERE device_id = ? and pin = ? and pin_type = ?";
     private static final String deleteDeviceHourly =
