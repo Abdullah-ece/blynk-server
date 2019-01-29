@@ -21,6 +21,7 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import ru.yandex.clickhouse.ClickHouseDriver;
 
 import java.io.Closeable;
 import java.sql.Connection;
@@ -78,6 +79,7 @@ public final class ReportingDBManager implements Closeable {
 
     private HikariConfig initConfig(BaseProperties serverProperties) {
         HikariConfig config = new HikariConfig();
+        config.setDriverClassName(ClickHouseDriver.class.getName());
         config.setJdbcUrl(serverProperties.getProperty("reporting.jdbc.url"));
         config.setUsername(serverProperties.getProperty("reporting.user"));
         config.setPassword(serverProperties.getProperty("reporting.password"));
