@@ -45,7 +45,7 @@ import Logout from './scenes/Logout';
 import StyleGuide from './scenes/StyleGuide';
 import * as Organizations from './scenes/Organizations';
 import * as Analytics from './scenes/Analytics';
-import * as OTA from './scenes/OTA';
+import OTA from './scenes/OTA';
 import * as RulesEngine from './scenes/RuleEngine';
 import Invite from './scenes/Invite';
 import {ProductsIndex, ProductCreate, ProductDetails, ProductEdit, ProductClone} from './scenes/Products';
@@ -110,7 +110,7 @@ Store().then((store) => {
                 <Route path="/devices/:id/:tab" components={Devices}/>
                 <Route path="/devices/:id/create" components={Devices}/>
                 {process.env.BLYNK_ANALYTICS && JSON.parse(process.env.BLYNK_ANALYTICS) && <Route path="/analytics" component={Analytics.Index}/>}
-                <Route path="/ota" component={OTA.Index}/>
+                <Route path="/ota" component={OTA}/>
                 <Route path="/rules" component={RulesEngine.Index}/>
                 <Route path="/organizations" component={Organizations.Index}/>
                 <Route path="/organizations/create" component={Organizations.Create}/>
