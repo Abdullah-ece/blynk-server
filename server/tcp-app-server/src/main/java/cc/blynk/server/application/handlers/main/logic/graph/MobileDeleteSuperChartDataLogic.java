@@ -15,6 +15,10 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 import static cc.blynk.server.internal.WebByteBufUtil.json;
 import static cc.blynk.utils.StringUtils.split2Device;
@@ -71,6 +75,7 @@ public final class MobileDeleteSuperChartDataLogic {
                                int targetId, GraphDataStream... dataStreams) {
         holder.blockingIOProcessor.executeHistory(() -> {
             try {
+                HashMap<Integer, List<DataStream>> map = new HashMap<>();
                 for (GraphDataStream graphDataStream : dataStreams) {
                     int targetIdUpdated = graphDataStream.getTargetId(targetId);
                     Device device = holder.deviceDao.getById(targetIdUpdated);
@@ -78,12 +83,21 @@ public final class MobileDeleteSuperChartDataLogic {
                     DataStream dataStream = graphDataStream.dataStream;
                     if (device != null && dataStream != null && dataStream.pinType != null) {
                         int deviceId = device.id;
-                        holder.reportingDBManager
-                                .reportingDBDao.delete(deviceId, dataStream.pin, dataStream.pinType);
+                        List<DataStream> list = map.get(deviceId);
+                        if (list == null) {
+                            list = new ArrayList<>();
+                            map.put(deviceId, list);
+                        }
+                        list.add(dataStream);
                         holder.reportingDBManager.rawDataCacheForGraphProcessor
                                 .removeCacheEntry(deviceId, dataStream.pinType, dataStream.pin);
                     }
                 }
+
+                if (map.size() > 0) {
+                    holder.reportingDBManager.reportingDBDao.delete(map);
+                }
+
                 ctx.writeAndFlush(ok(msgId), ctx.voidPromise());
             } catch (Exception e) {
                 log.debug("Error removing superchart data. Reason : {}.", e.getMessage());

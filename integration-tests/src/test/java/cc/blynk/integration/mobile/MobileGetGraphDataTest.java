@@ -15,6 +15,7 @@ import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.WebDashboard;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
+import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphType;
 import cc.blynk.server.core.model.widgets.outputs.graph.Period;
 import cc.blynk.server.core.model.widgets.outputs.graph.Superchart;
@@ -28,6 +29,7 @@ import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.nio.ByteBuffer;
+import java.util.Map;
 import java.util.StringJoiner;
 
 import static cc.blynk.integration.APIBaseTest.createDeviceNameMeta;
@@ -38,6 +40,7 @@ import static cc.blynk.integration.TestUtil.hardware;
 import static cc.blynk.integration.TestUtil.loggedDefaultClient;
 import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.integration.TestUtil.webJson;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_DEVICE_DATA;
 import static cc.blynk.utils.DateTimeUtils.MINUTE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -253,6 +256,134 @@ public class MobileGetGraphDataTest extends SingleServerInstancePerTestWithDBAnd
         assertEquals(1.5D, bb.getDouble(), 0.1);
         assertEquals((now / MINUTE) * MINUTE, bb.getLong());
         assertEquals(0, bb.getInt());
+    }
+
+    @Test
+    // with delete(int deviceId, DataStream... dataStreams) method
+    public void testDeleteDataForStream() throws Exception {
+        String user = getUserName();
+
+        //device is mandatory for any test
+        Device device = createProductAndDevice(user);
+
+        TestAppClient appClient = new TestAppClient("localhost", properties.getHttpsPort());
+        appClient.start();
+        appClient.login(user, "1");
+        appClient.verifyResult(ok(1));
+
+        //Step 1. Create minimal project with 1 widget.
+        DashBoard dashBoard = new DashBoard();
+        dashBoard.id = 10;
+        dashBoard.name = "123";
+        appClient.createDash(dashBoard);
+        appClient.verifyResult(ok(2));
+
+        Superchart superchart = new Superchart();
+        superchart.id = 432;
+        superchart.width = 8;
+        superchart.height = 4;
+        DataStream dataStream = new DataStream((short) 4, PinType.VIRTUAL);
+        GraphDataStream graphDataStream = new GraphDataStream(null,
+                GraphType.LINE, 0, device.id, dataStream, null, 0, null, null, null, 0, 0,
+                false, null, false, false, false, null, 0, false, 0);
+        superchart.dataStreams = new GraphDataStream[] {
+                graphDataStream
+        };
+
+        appClient.createWidget(dashBoard.id, superchart);
+        appClient.verifyResult(ok(3));
+        appClient.reset();
+
+        long now = System.currentTimeMillis();
+        double val1 = 1D;
+        double val2 = 2D;
+        holder.reportingDBManager.reportingDBDao.insertDataPoint(device.id, dataStream.pin, dataStream.pinType, (now / MINUTE) * MINUTE, val1);
+        holder.reportingDBManager.reportingDBDao.insertDataPoint(device.id, dataStream.pin, dataStream.pinType, (now / MINUTE) * MINUTE, val2);
+
+        appClient.getSuperChartData(dashBoard.id, superchart.id, Period.ONE_HOUR);
+        BinaryMessage graphDataResponse = appClient.getBinaryBody();
+
+        assertNotNull(graphDataResponse);
+        byte[] decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
+        ByteBuffer bb = ByteBuffer.wrap(decompressedGraphData);
+
+        assertEquals(dashBoard.id, bb.getInt());
+        assertEquals(1, bb.getInt());
+        assertEquals(1.5D, bb.getDouble(), 0.1);
+        assertEquals((now / MINUTE) * MINUTE, bb.getLong());
+        assertEquals(0, bb.getInt());
+
+        appClient.deleteGraphData(dashBoard.id, superchart.id, "v4");
+
+        appClient.reset();
+
+        appClient.getSuperChartData(dashBoard.id, superchart.id, Period.ONE_HOUR);
+        appClient.verifyResult(webJson(1, "No data.", 17));
+    }
+
+    @Test
+    // with delete(int deviceId, DataStream... dataStreams) method
+    public void testDeleteDeviceData() throws Exception {
+        String user = getUserName();
+
+        //device is mandatory for any test
+        Device device = createProductAndDevice(user);
+
+        TestAppClient appClient = new TestAppClient("localhost", properties.getHttpsPort());
+        appClient.start();
+        appClient.login(user, "1");
+        appClient.verifyResult(ok(1));
+
+        //Step 1. Create minimal project with 1 widget.
+        DashBoard dashBoard = new DashBoard();
+        dashBoard.id = 10;
+        dashBoard.name = "123";
+        appClient.createDash(dashBoard);
+        appClient.verifyResult(ok(2));
+
+        Superchart superchart = new Superchart();
+        superchart.id = 432;
+        superchart.width = 8;
+        superchart.height = 4;
+        DataStream dataStream = new DataStream((short) 4, PinType.VIRTUAL);
+        GraphDataStream graphDataStream = new GraphDataStream(null,
+                GraphType.LINE, 0, device.id, dataStream, null, 0, null, null, null, 0, 0,
+                false, null, false, false, false, null, 0, false, 0);
+        superchart.dataStreams = new GraphDataStream[] {
+                graphDataStream
+        };
+
+        appClient.createWidget(dashBoard.id, superchart);
+        appClient.verifyResult(ok(3));
+        appClient.reset();
+
+        long now = System.currentTimeMillis();
+        double val1 = 1D;
+        double val2 = 2D;
+        holder.reportingDBManager.reportingDBDao.insertDataPoint(device.id, dataStream.pin, dataStream.pinType, (now / MINUTE) * MINUTE, val1);
+        holder.reportingDBManager.reportingDBDao.insertDataPoint(device.id, dataStream.pin, dataStream.pinType, (now / MINUTE) * MINUTE, val2);
+
+        appClient.getSuperChartData(dashBoard.id, superchart.id, Period.ONE_HOUR);
+        BinaryMessage graphDataResponse = appClient.getBinaryBody();
+
+        assertNotNull(graphDataResponse);
+        byte[] decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
+        ByteBuffer bb = ByteBuffer.wrap(decompressedGraphData);
+
+        assertEquals(dashBoard.id, bb.getInt());
+        assertEquals(1, bb.getInt());
+        assertEquals(1.5D, bb.getDouble(), 0.1);
+        assertEquals((now / MINUTE) * MINUTE, bb.getLong());
+        assertEquals(0, bb.getInt());
+
+
+        appClient.send(MOBILE_DELETE_DEVICE_DATA, "" + device.id);
+        appClient.verifyResult(ok(2));
+
+        appClient.reset();
+
+        appClient.getSuperChartData(dashBoard.id, superchart.id, Period.ONE_HOUR);
+        appClient.verifyResult(webJson(1, "No data.", 17));
     }
 
     @Test
