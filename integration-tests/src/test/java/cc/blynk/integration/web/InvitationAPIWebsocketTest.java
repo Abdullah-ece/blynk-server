@@ -12,6 +12,8 @@ import cc.blynk.server.core.model.enums.ProvisionType;
 import cc.blynk.server.core.model.enums.Theme;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.protocol.enums.Response;
+import cc.blynk.server.notifications.mail.QrHolder;
+import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.SHA256Util;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -28,6 +30,7 @@ import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.integration.TestUtil.webJson;
 import static junit.framework.TestCase.assertNotNull;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.timeout;
@@ -238,6 +241,91 @@ public class InvitationAPIWebsocketTest extends SingleServerInstancePerTestWithD
         assertNotNull(user);
         assertEquals(email, user.email);
         assertEquals(UserStatus.Active, user.status);
+
+        User daoUser =  holder.userDao.getByName(email);
+        assertNotNull(daoUser.profile.dashBoards);
+        assertEquals(1, daoUser.profile.dashBoards.length);
+        assertEquals("Test", daoUser.profile.dashBoards[0].name);
+    }
+    @Test
+    public void invitationFlowViaResetPassFromMobileBackdoor() throws Exception {
+        //Step 1. Create minimal project with 1 widget.
+        TestAppClient appClient = new TestAppClient(properties);
+        appClient.start();
+        appClient.login("super@blynk.cc", "1");
+        appClient.verifyResult(ok(1));
+        DashBoard dashBoard = new DashBoard();
+        dashBoard.id = 0;
+        dashBoard.name = "123";
+        appClient.createDash(dashBoard);
+        appClient.verifyResult(ok(2));
+
+        DashBoard childDash = new DashBoard();
+        childDash.id = 123;
+        childDash.name = "Test";
+        childDash.isPreview = true;
+        appClient.createDash(childDash);
+        appClient.verifyResult(ok(3));
+
+        App app = new App(null, Theme.BlynkLight,
+                ProvisionType.DYNAMIC,
+                0, false, "My app", null, new int[] {childDash.id});
+        appClient.createApp(app);
+        appClient.stop();
+
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+        String email = "test@gmail.com";
+        client.inviteUser(orgId, email, "Dmitriy", 3);
+        client.verifyResult(ok(1));
+
+        ArgumentCaptor<String> bodyArgumentCapture = ArgumentCaptor.forClass(String.class);
+        verify(holder.mailWrapper, timeout(1000).times(1)).sendHtml(eq(email),
+                eq("Invitation to Blynk Inc. dashboard."), bodyArgumentCapture.capture());
+        String body = bodyArgumentCapture.getValue();
+
+        String token = body.substring(body.indexOf("token=") + 6, body.indexOf("&"));
+        assertEquals(32, token.length());
+
+        verify(holder.mailWrapper).sendHtml(eq(email),
+                eq("Invitation to Blynk Inc. dashboard."), contains("/dashboard/invite?token="));
+
+        HttpGet inviteGet = new HttpGet("https://localhost:" + properties.getHttpsPort() + "/dashboard" + "/invite?token=" + token);
+
+        //we don't need cookie from initial login here
+        CloseableHttpClient newHttpClient = getDefaultHttpsClient();
+
+        try (CloseableHttpResponse response = newHttpClient.execute(inviteGet)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        TestAppClient mobileClient = new TestAppClient("localhost", properties.getHttpsPort());
+        mobileClient.start();
+        mobileClient.resetPass(email, AppNameUtil.BLYNK);
+        mobileClient.verifyResult(ok(1));
+
+        bodyArgumentCapture = ArgumentCaptor.forClass(String.class);
+        verify(holder.mailWrapper, timeout(1000).times(1)).sendWithAttachment(eq(email), eq("Password restoration for your Blynk account."), bodyArgumentCapture.capture(), any(QrHolder.class));
+        body = bodyArgumentCapture.getValue();
+
+        token = body.substring(body.indexOf("token=") + 6, body.indexOf("&"));
+        assertEquals(32, token.length());
+
+        verify(holder.mailWrapper).sendWithAttachment(eq(email), eq("Password restoration for your Blynk account."), contains("/dashboard" + "/resetPass?token="), any(QrHolder.class));
+
+        inviteGet = new HttpGet("https://localhost:" + properties.getHttpsPort() + "/dashboard" + "/resetPass?token=" + token);
+
+        //we don't need cookie from initial login here
+        newHttpClient = getDefaultHttpsClient();
+        try (CloseableHttpResponse response = newHttpClient.execute(inviteGet)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        String hash = SHA256Util.makeHash("123", email);
+        mobileClient.resetPassReset(token, hash);
+        mobileClient.verifyResult(ok(2));
+
+        mobileClient.login(email, "123");
+        mobileClient.verifyResult(ok(3));
 
         User daoUser =  holder.userDao.getByName(email);
         assertNotNull(daoUser.profile.dashBoards);

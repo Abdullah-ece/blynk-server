@@ -5,6 +5,7 @@ import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.auth.UserStatus;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.protocol.model.messages.appllication.ResetPasswordMessage;
 import cc.blynk.server.internal.token.BaseToken;
@@ -13,6 +14,7 @@ import cc.blynk.server.internal.token.TokensPool;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.mail.QrHolder;
 import cc.blynk.server.notifications.mail.ResetQrHolder;
+import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.TokenGeneratorUtil;
 import cc.blynk.utils.properties.Placeholders;
@@ -43,6 +45,7 @@ public class MobileResetPasswordHandler extends SimpleChannelInboundHandler<Rese
     private final String resetConfirmationBody;
     private final MailWrapper mailWrapper;
     private final UserDao userDao;
+    private final TimerWorker timerWorker;
     private final BlockingIOProcessor blockingIOProcessor;
     private final String resetPasswordUrl;
     private final String httpsServerUrl;
@@ -59,6 +62,7 @@ public class MobileResetPasswordHandler extends SimpleChannelInboundHandler<Rese
                 .replace(Placeholders.PRODUCT_NAME, productName);
         this.mailWrapper = holder.mailWrapper;
         this.userDao = holder.userDao;
+        this.timerWorker = holder.timerWorker;
         this.blockingIOProcessor = holder.blockingIOProcessor;
         this.resetPasswordUrl = holder.props.getResetPasswordUrl();
         this.httpsServerUrl = holder.props.httpsServerUrl;
@@ -115,6 +119,9 @@ public class MobileResetPasswordHandler extends SimpleChannelInboundHandler<Rese
                 log.info("Organization with orgId {} not found.", user.orgId);
                 ctx.writeAndFlush(json(msgId, "Organization not found."), ctx.voidPromise());
                 return;
+            }
+            if (user.status == UserStatus.Pending) {
+                userDao.createProjectForExportedApp(timerWorker, user, userDao.getAppName());
             }
             user.resetPass(passHash);
             tokensPool.removeToken(token);
