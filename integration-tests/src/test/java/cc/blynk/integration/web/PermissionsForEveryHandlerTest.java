@@ -1,6 +1,7 @@
 package cc.blynk.integration.web;
 
 import cc.blynk.integration.SingleServerInstancePerTestWithDBAndNewOrg;
+import cc.blynk.integration.model.tcp.BaseTestAppClient;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
 import cc.blynk.server.api.http.dashboard.dto.RoleDTO;
@@ -36,6 +37,7 @@ import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_DEVICE
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_DEVICES_DELETE;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_DEVICES_EDIT;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_DEVICES_VIEW;
+import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_DEVICE_DATA_DELETE;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_EDIT;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_EDIT_USERS;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_INVITE_USERS;
@@ -49,6 +51,7 @@ import static cc.blynk.server.core.model.permissions.PermissionsTable.OWN_DEVICE
 import static cc.blynk.server.core.model.permissions.PermissionsTable.OWN_DEVICES_DELETE;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.OWN_DEVICES_EDIT;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.OWN_DEVICES_VIEW;
+import static cc.blynk.server.core.model.permissions.PermissionsTable.OWN_DEVICE_DATA_DELETE;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.OWN_ORG_EDIT;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.PERMISSION1_NAMES;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.PERMISSION2_NAMES;
@@ -95,11 +98,11 @@ public class PermissionsForEveryHandlerTest extends SingleServerInstancePerTestW
         return all;
     }
 
-    private static void verifyPermissionAbsence(AppWebSocketClient client, int permission,
+    private static void verifyPermissionAbsence(BaseTestAppClient client, int permission,
                                                 boolean isFromPermission1Group) throws Exception {
         String permissionName = isFromPermission1Group ? PERMISSION1_NAMES.get(permission) :
                 PERMISSION2_NAMES.get(permission);
-        client.verifyResult(webJson(1, "User " +
+        client.verifyResult(webJson(client.getMsgId(), "User " +
                 EXAMPLE_USER_EMAIL + " has no permission for '" +
                 permissionName + "' operation."));
     }
@@ -108,6 +111,7 @@ public class PermissionsForEveryHandlerTest extends SingleServerInstancePerTestW
     private static final int NON_EXISTING_PRODUCT_ID = -99;
     private static final int NON_EXISTING_ROLE_ID    = -99;
     private static final int NON_EXISTING_DEVICE_ID  = -99;
+    private static final int NON_EXISTING_DASH_ID    = -99;
 
     private static final String EXAMPLE_USER_EMAIL = "testpermissions@gmail.com";
 
@@ -497,7 +501,7 @@ public class PermissionsForEveryHandlerTest extends SingleServerInstancePerTestW
     }
 
     @Test
-    public void orgDeleteUsers() throws Exception { // does not work?
+    public void orgDeleteUsers() throws Exception {
         AppWebSocketClient client = createUserForSubOrgSpecificRole(setPermission(ORG_DELETE_USERS));
         client.deleteUser(NON_EXISTING_ORG_ID, "");
         client.verifyResult(ok(1));
@@ -684,7 +688,7 @@ public class PermissionsForEveryHandlerTest extends SingleServerInstancePerTestW
         client.verifyResult(webJson(2, "Command has wrong product id."));
     }
     @Test
-    public void noCreateOrgDevices() throws Exception { // does not work?
+    public void noCreateOrgDevices() throws Exception {
         AppWebSocketClient client = createUserForSubOrgSpecificRole(removePermission(ORG_DEVICES_CREATE, OWN_DEVICES_CREATE));
         Device device = new Device();
         device.productId = 1;
@@ -707,7 +711,7 @@ public class PermissionsForEveryHandlerTest extends SingleServerInstancePerTestW
         assertEquals(0, devices.length);
     }
     @Test
-    public void noGetOrgDevices() throws Exception { // does not work?
+    public void noGetOrgDevices() throws Exception {
         AppWebSocketClient client = createUserForSubOrgSpecificRole(removePermission(ORG_DEVICES_VIEW, OWN_DEVICES_VIEW));
         client.getDevice(NON_EXISTING_ORG_ID, NON_EXISTING_DEVICE_ID);
         verifyPermissionAbsence(client, OWN_DEVICES_VIEW, true);
@@ -729,7 +733,7 @@ public class PermissionsForEveryHandlerTest extends SingleServerInstancePerTestW
         client.verifyResult(webJson(1, "Error parsing metafields batch."));
     }
     @Test
-    public void noUpdateOrgDevices() throws Exception { // does not work?
+    public void noUpdateOrgDevices() throws Exception {
         AppWebSocketClient client = createUserForSubOrgSpecificRole(removePermission(ORG_DEVICES_EDIT, OWN_DEVICES_EDIT));
         client.updateDevice(NON_EXISTING_ORG_ID, new Device());
         verifyPermissionAbsence(client, OWN_DEVICES_EDIT, true);
@@ -768,7 +772,7 @@ public class PermissionsForEveryHandlerTest extends SingleServerInstancePerTestW
         client.verifyResult(webJson(2, "Command has wrong product id."));
     }
     @Test
-    public void noCreateOwnDevices() throws Exception { // does not work?
+    public void noCreateOwnDevices() throws Exception {
         AppWebSocketClient client = createUserForSubOrgSpecificRole(removePermission(ORG_DEVICES_CREATE, OWN_DEVICES_CREATE));
         client.createDevice(orgId, new Device());
         verifyPermissionAbsence(client, OWN_DEVICES_CREATE, true);
@@ -787,7 +791,7 @@ public class PermissionsForEveryHandlerTest extends SingleServerInstancePerTestW
         assertEquals(0, devices.length);
     }
     @Test
-    public void noGetOwnDevices() throws Exception { // does not work?
+    public void noGetOwnDevices() throws Exception {
         AppWebSocketClient client = createUserForSubOrgSpecificRole(removePermission(ORG_DEVICES_VIEW, OWN_DEVICES_VIEW));
         client.getDevices(NON_EXISTING_ORG_ID);
         verifyPermissionAbsence(client, OWN_DEVICES_VIEW, true);
@@ -804,7 +808,7 @@ public class PermissionsForEveryHandlerTest extends SingleServerInstancePerTestW
         client.verifyResult(webJson(1, "Error parsing metafields batch."));
     }
     @Test
-    public void noUpdateOwnDevices() throws Exception { // does not work?
+    public void noUpdateOwnDevices() throws Exception {
         AppWebSocketClient client = createUserForSubOrgSpecificRole(removePermission(ORG_DEVICES_EDIT, OWN_DEVICES_EDIT));
         client.updateDevice(NON_EXISTING_ORG_ID, new Device());
         verifyPermissionAbsence(client, OWN_DEVICES_EDIT, true);
@@ -821,7 +825,7 @@ public class PermissionsForEveryHandlerTest extends SingleServerInstancePerTestW
         client.verifyResult(webJson(1, "Device not found."));
     }
     @Test
-    public void noDeleteOwnDevices() throws Exception { // does not work?
+    public void noDeleteOwnDevices() throws Exception {
         AppWebSocketClient client = createUserForSubOrgSpecificRole(removePermission(ORG_DEVICES_DELETE, OWN_DEVICES_DELETE));
         client.deleteDevice(NON_EXISTING_ORG_ID, NON_EXISTING_DEVICE_ID);
         verifyPermissionAbsence(client, OWN_DEVICES_DELETE, true);
@@ -843,7 +847,7 @@ public class PermissionsForEveryHandlerTest extends SingleServerInstancePerTestW
     }
 
     @Test
-    public void getRuleGroup() throws Exception { // does not work?
+    public void getRuleGroup() throws Exception {
         AppWebSocketClient client = createUserForSubOrgSpecificRole(-1, setPermission(RULE_GROUP_VIEW));
         client.getRuleGroup();
         RuleGroup ruleGroup = client.parseRuleGroup(1);
@@ -867,5 +871,58 @@ public class PermissionsForEveryHandlerTest extends SingleServerInstancePerTestW
         AppWebSocketClient client = createUserForSubOrgSpecificRole(-1, removePermission(RULE_GROUP_EDIT));
         client.editRuleGroup("");
         verifyPermissionAbsence(client, RULE_GROUP_EDIT, false);
+    }
+
+    @Test
+    public void deleteOwnDeviceData() throws Exception {
+        AppWebSocketClient client = createUserForSubOrgSpecificRole(-1, setPermission(OWN_DEVICE_DATA_DELETE));
+
+        TestAppClient appClient = new TestAppClient(properties);
+        appClient.start();
+        appClient.login(EXAMPLE_USER_EMAIL, "1");
+        appClient.verifyResult(ok(appClient.getMsgId()));
+
+        appClient.deleteDeviceData(4, 1);
+        appClient.verifyResult(webJson(appClient.getMsgId(), "Device not found."));
+    }
+    @Test
+    // delete device data having user that does not own that device
+    public void deleteNotOwnDeviceData() throws Exception {
+        AppWebSocketClient client = createUserForSubOrgSpecificRole(-1, setPermission(OWN_DEVICE_DATA_DELETE));
+
+        TestAppClient appClient = new TestAppClient(properties);
+        appClient.start();
+        appClient.login(EXAMPLE_USER_EMAIL, "1");
+        appClient.verifyResult(ok(appClient.getMsgId()));
+
+
+        appClient.deleteDeviceData(1, 1);
+        appClient.verifyResult(webJson(appClient.getMsgId(), "User is not owner of requested device."));
+    }
+
+    @Test
+    public void deleteDeviceDataWith2Permissions() throws Exception {
+        AppWebSocketClient client = createUserForSubOrgSpecificRole(-1, setPermission(ORG_DEVICE_DATA_DELETE, OWN_DEVICE_DATA_DELETE));
+
+        TestAppClient appClient = new TestAppClient(properties);
+        appClient.start();
+        appClient.login(EXAMPLE_USER_EMAIL, "1");
+        appClient.verifyResult(ok(appClient.getMsgId()));
+
+
+        appClient.deleteDeviceData(NON_EXISTING_DASH_ID, NON_EXISTING_DEVICE_ID);
+        appClient.verifyResult(webJson(appClient.getMsgId(), "Device not found."));
+    }
+    @Test
+    public void noDeleteDeviceDataWithout2Permissions() throws Exception {
+        AppWebSocketClient client = createUserForSubOrgSpecificRole(-1, removePermission(ORG_DEVICE_DATA_DELETE, OWN_DEVICE_DATA_DELETE));
+
+        TestAppClient appClient = new TestAppClient(properties);
+        appClient.start();
+        appClient.login(EXAMPLE_USER_EMAIL, "1");
+        appClient.verifyResult(ok(appClient.getMsgId()));
+
+        appClient.deleteDeviceData(NON_EXISTING_DASH_ID, 1);
+        verifyPermissionAbsence(appClient, OWN_DEVICE_DATA_DELETE, false);
     }
 }

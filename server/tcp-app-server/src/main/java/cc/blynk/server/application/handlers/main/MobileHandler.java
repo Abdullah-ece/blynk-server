@@ -44,7 +44,7 @@ import cc.blynk.server.application.handlers.main.logic.face.MobileDeleteAppLogic
 import cc.blynk.server.application.handlers.main.logic.face.MobileMailQRsLogic;
 import cc.blynk.server.application.handlers.main.logic.face.MobileUpdateAppLogic;
 import cc.blynk.server.application.handlers.main.logic.face.MobileUpdateFaceLogic;
-import cc.blynk.server.application.handlers.main.logic.graph.MobileDeleteDeviceDataLogic;
+import cc.blynk.server.application.handlers.main.logic.graph.MobileDeleteOrgDeviceDataLogic;
 import cc.blynk.server.application.handlers.main.logic.graph.MobileDeleteSuperChartDataLogic;
 import cc.blynk.server.application.handlers.main.logic.graph.MobileGetSuperChartDataLogic;
 import cc.blynk.server.application.handlers.main.logic.reporting.MobileCreateReportLogic;
@@ -141,6 +141,7 @@ public class MobileHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
     private MobileMailQRsLogic mailQRsLogic;
     private MobileGetProjectByClonedTokenLogic getProjectByCloneCodeLogic;
     private final MobileGetOrgDevicesLogic mobileGetOrgDevicesLogic;
+    private final MobileDeleteOrgDeviceDataLogic mobileDeleteOrgDeviceDataLogic;
     private final MobileLoadProfileGzippedLogic mobileLoadProfileGzippedLogic;
     private final MobileGetWidgetLogic mobileGetWidgetLogic;
     private final WebGetDeviceTimelineLogic webGetDeviceTimelineLogic;
@@ -159,6 +160,7 @@ public class MobileHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
         this.webGetDeviceTimelineLogic = new WebGetDeviceTimelineLogic(holder);
         this.webResolveLogEventLogic = new WebResolveLogEventLogic(holder);
         this.mobileGetSuperChartDataLogic = new MobileGetSuperChartDataLogic(holder);
+        this.mobileDeleteOrgDeviceDataLogic = new MobileDeleteOrgDeviceDataLogic(holder);
     }
 
     @Override
@@ -345,7 +347,7 @@ public class MobileHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
                 MobileGetProvisionTokenLogic.messageReceived(holder, ctx, state.user, msg);
                 break;
             case MOBILE_DELETE_DEVICE_DATA :
-                MobileDeleteDeviceDataLogic.messageReceived(holder, ctx, state, msg);
+                mobileDeleteOrgDeviceDataLogic.messageReceived(ctx, state, msg);
                 break;
             case MOBILE_CREATE_REPORT :
                 MobileCreateReportLogic.messageReceived(holder, ctx, state.user, msg);
