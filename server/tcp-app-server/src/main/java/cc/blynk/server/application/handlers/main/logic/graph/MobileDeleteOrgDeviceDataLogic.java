@@ -22,7 +22,9 @@ public class MobileDeleteOrgDeviceDataLogic implements Permission2BasedLogic<Mob
     }
 
     @Override
-    public int getPermission() { return ORG_DEVICE_DATA_DELETE; }
+    public int getPermission() {
+        return ORG_DEVICE_DATA_DELETE;
+    }
 
     @Override
     public void noPermissionAction(ChannelHandlerContext ctx, MobileStateHolder state, StringMessage msg) {

@@ -44,7 +44,9 @@ public final class MobileDeleteOwnDeviceDataLogic implements Permission2BasedLog
     }
 
     @Override
-    public int getPermission() { return OWN_DEVICE_DATA_DELETE; }
+    public int getPermission() {
+        return OWN_DEVICE_DATA_DELETE;
+    }
 
     @Override
     public void messageReceived0(ChannelHandlerContext ctx, MobileStateHolder state, StringMessage message) {
