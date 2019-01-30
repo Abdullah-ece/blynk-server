@@ -41,6 +41,7 @@ import cc.blynk.server.core.processors.rules.RuleGroup;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.web.handlers.logic.organization.dto.CountDTO;
+import cc.blynk.server.web.handlers.logic.organization.dto.DeviceCountDTO;
 import cc.blynk.server.web.handlers.logic.organization.dto.LocationDTO;
 import cc.blynk.server.web.handlers.logic.organization.dto.OrganizationsHierarchyDTO;
 import cc.blynk.server.web.handlers.logic.organization.dto.SetAuthTokenDTO;
@@ -104,6 +105,7 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICES;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICES_BY_REFERENCE_METAFIELD;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICE_COUNT_FOR_ORG;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICE_COUNT_FOR_PRODUCT_AND_SUBPRODUCTS;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICE_TIMELINE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_METAFIELD;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORG;
@@ -433,6 +435,10 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         send(WEB_GET_DEVICE_COUNT_FOR_ORG, "" + orgId);
     }
 
+    public void getDeviceCountForProductAndSubproducts(int productId) {
+        send(WEB_GET_DEVICE_COUNT_FOR_PRODUCT_AND_SUBPRODUCTS, "" + productId);
+    }
+
     public void trackOrg(int orgId) {
         send(WEB_TRACK_ORG, "" + orgId);
     }
@@ -487,6 +493,10 @@ public final class AppWebSocketClient extends BaseTestAppClient {
 
     public CountDTO parseCountDTO(int expectedMessageOrder) throws Exception {
         return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), CountDTO.class);
+    }
+
+    public DeviceCountDTO parseDeviceCountDTO(int expectedMessageOrder) throws Exception {
+        return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), DeviceCountDTO.class);
     }
 
     public RuleGroup parseRuleGroup(int expectedMessageOrder) throws Exception {

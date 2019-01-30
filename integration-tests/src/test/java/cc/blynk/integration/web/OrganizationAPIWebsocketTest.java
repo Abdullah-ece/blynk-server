@@ -7,11 +7,13 @@ import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.dto.OrganizationDTO;
 import cc.blynk.server.core.model.dto.ProductDTO;
+import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.metafields.LocationMetaField;
 import cc.blynk.server.web.handlers.logic.organization.dto.CountDTO;
+import cc.blynk.server.web.handlers.logic.organization.dto.DeviceCountDTO;
 import cc.blynk.server.web.handlers.logic.organization.dto.LocationDTO;
 import cc.blynk.server.web.handlers.logic.organization.dto.OrganizationsHierarchyDTO;
 import cc.blynk.utils.SHA256Util;
@@ -19,6 +21,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static cc.blynk.integration.APIBaseTest.createDeviceNameMeta;
 import static cc.blynk.integration.APIBaseTest.createDeviceOwnerMeta;
@@ -28,6 +33,7 @@ import static cc.blynk.integration.TestUtil.defaultClient;
 import static cc.blynk.integration.TestUtil.loggedDefaultClient;
 import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.integration.TestUtil.webJson;
+import static cc.blynk.server.core.model.web.Organization.NO_PARENT_ID;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -475,6 +481,139 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
         assertNotNull(subCountDTO);
         assertEquals(1, subCountDTO.orgCount);
         assertEquals(0, subCountDTO.subOrgCount);
+    }
+
+    @Test
+    public void checkDeviceCountAfterDeviceDelete() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient("super@blynk.cc", "1");
+        client.getOrganization(orgId);
+        OrganizationDTO organizationDTO = client.parseOrganizationDTO(1);
+        assertNotNull(organizationDTO);
+        assertEquals(orgId, organizationDTO.id);
+
+        Organization subOrg = new Organization("SubOrg000111", "Europe/Kiev", "/static/logo.png", true, -1);
+        subOrg.selectedProducts = new int[] {organizationDTO.products[0].id};
+        client.createOrganization(subOrg);
+        OrganizationDTO subOrgDTO = client.parseOrganizationDTO(2);
+        assertNotNull(subOrgDTO);
+        assertEquals(organizationDTO.id, subOrgDTO.parentId);
+        assertNotNull(subOrgDTO.roles);
+        assertEquals(3, subOrgDTO.roles.length);
+        assertEquals(1, subOrgDTO.roles[0].id);
+        assertNotNull(subOrgDTO.products);
+        assertEquals(1, subOrgDTO.products.length);
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.productId = subOrgDTO.products[0].id;
+
+        client.trackOrg(subOrgDTO.id);
+        client.verifyResult(ok(3));
+        client.createDevice(subOrgDTO.id, newDevice);
+        newDevice = client.parseDevice(4);
+        assertNotNull(newDevice);
+
+        client.trackOrg(orgId);
+        client.verifyResult(ok(5));
+
+        client.reset();
+
+        client.getDeviceCountForProductAndSubproducts(subOrgDTO.products[0].id);
+        DeviceCountDTO deviceCountDTO = client.parseDeviceCountDTO(1);
+        assertNotNull(deviceCountDTO);
+        assertEquals(1, deviceCountDTO.deviceCount);
+        assertEquals(0, deviceCountDTO.subDeviceCount);
+
+        client.deleteDevice(subOrg.id, newDevice.id);
+        client.verifyResult(ok(2));
+
+        client.getDeviceCountForProductAndSubproducts(subOrgDTO.products[0].id);
+        deviceCountDTO = client.parseDeviceCountDTO(3);
+        assertNotNull(deviceCountDTO);
+        assertEquals(0, deviceCountDTO.deviceCount);
+        assertEquals(0, deviceCountDTO.subDeviceCount);
+    }
+
+    @Test
+    public void checkDeviceCountHavingSeveralSubproducts() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient("super@blynk.cc", "1");
+        client.getOrganization(orgId);
+        OrganizationDTO organizationDTO = client.parseOrganizationDTO(1);
+        assertNotNull(organizationDTO);
+        assertEquals(orgId, organizationDTO.id);
+
+        Organization subOrg = new Organization("SubOrg000111", "Europe/Kiev", "/static/logo.png", true, -1);
+        subOrg.selectedProducts = new int[] {organizationDTO.products[0].id};
+        client.createOrganization(subOrg);
+        OrganizationDTO subOrgDTO = client.parseOrganizationDTO(2);
+        assertNotNull(subOrgDTO);
+        assertEquals(organizationDTO.id, subOrgDTO.parentId);
+        assertNotNull(subOrgDTO.roles);
+        assertEquals(3, subOrgDTO.roles.length);
+        assertEquals(1, subOrgDTO.roles[0].id);
+        assertNotNull(subOrgDTO.products);
+        assertEquals(1, subOrgDTO.products.length);
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.productId = subOrgDTO.products[0].id;
+
+        client.trackOrg(subOrgDTO.id);
+        client.verifyResult(ok(3));
+        client.createDevice(subOrgDTO.id, newDevice);
+        newDevice = client.parseDevice(4);
+        assertNotNull(newDevice);
+
+        client.trackOrg(orgId);
+        client.verifyResult(ok(5));
+
+        client.reset();
+
+        client.getDeviceCountForProductAndSubproducts(subOrgDTO.products[0].id);
+        DeviceCountDTO deviceCountDTO = client.parseDeviceCountDTO(1);
+        assertNotNull(deviceCountDTO);
+        assertEquals(1, deviceCountDTO.deviceCount);
+        assertEquals(0, deviceCountDTO.subDeviceCount);
+
+        Organization subOrg1 = new Organization("SubOrg000112", "Europe/Kiev", "/static/logo.png", true, -1);
+
+
+        subOrg1.selectedProducts = new int[] {organizationDTO.products[0].id};
+        client.createOrganization(subOrg1);
+        subOrgDTO = client.parseOrganizationDTO(2);
+        assertNotNull(subOrgDTO);
+        assertEquals(organizationDTO.id, subOrgDTO.parentId);
+        assertNotNull(subOrgDTO.roles);
+        assertEquals(3, subOrgDTO.roles.length);
+        assertEquals(1, subOrgDTO.roles[0].id);
+        assertNotNull(subOrgDTO.products);
+        assertEquals(1, subOrgDTO.products.length);
+
+        newDevice = new Device();
+        newDevice.name = "My New Device1";
+        newDevice.productId = subOrgDTO.products[0].id;
+
+        client.trackOrg(subOrgDTO.id);
+        client.verifyResult(ok(3));
+        client.createDevice(subOrgDTO.id, newDevice);
+        newDevice = client.parseDevice(4);
+        assertNotNull(newDevice);
+
+        client.trackOrg(orgId);
+        client.verifyResult(ok(5));
+
+        client.getProducts(orgId);
+        ProductDTO[] parentProducts = client.parseProductDTOs(6);
+        assertNotNull(parentProducts);
+        assertTrue(parentProducts.length > 0);
+        assertNotNull(parentProducts[0]);
+
+        // count from default org should return 1 and 2 (for 2 subOrgs)
+        client.getDeviceCountForProductAndSubproducts(parentProducts[0].id);
+        deviceCountDTO = client.parseDeviceCountDTO(7);
+        assertNotNull(deviceCountDTO);
+        assertEquals(1, deviceCountDTO.deviceCount);
+        assertEquals(2, deviceCountDTO.subDeviceCount);
     }
 
     @Test
