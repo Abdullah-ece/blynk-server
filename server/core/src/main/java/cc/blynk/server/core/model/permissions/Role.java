@@ -67,7 +67,9 @@ public final class Role implements CopyObject<Role> {
         return hasPermission1(ORG_DEVICES_DELETE);
     }
 
-    public boolean canDeleteOrgDeviceData() { return hasPermission2(ORG_DEVICE_DATA_DELETE); }
+    public boolean canDeleteOrgDeviceData() {
+        return hasPermission2(ORG_DEVICE_DATA_DELETE);
+    }
 
     //own devices group
     public boolean canViewOwnDevices() {
