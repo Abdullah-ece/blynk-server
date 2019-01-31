@@ -46,6 +46,7 @@ public final class Command {
     public static final short DEVICE_SYNC = 25;
     public static final short SHARING = 26;
     public static final short MOBILE_ADD_PUSH_TOKEN = 27;
+    public static final short MOBILE_HARDWARE_GROUP = 28;
 
     public static final short HARDWARE_LOGIN = 29;
     //app sharing commands

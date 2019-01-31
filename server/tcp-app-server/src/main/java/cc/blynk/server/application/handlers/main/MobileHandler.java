@@ -12,6 +12,7 @@ import cc.blynk.server.application.handlers.main.logic.MobileGetEnergyLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileGetProjectByClonedTokenLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileGetProjectByTokenLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileGetProvisionTokenLogic;
+import cc.blynk.server.application.handlers.main.logic.MobileHardwareGroupLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileHardwareLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileHardwareResendFromBTLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileLoadProfileGzippedLogic;
@@ -113,6 +114,7 @@ import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICE_TIME
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_ENERGY;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_PROVISION_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_WIDGET;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_HARDWARE_GROUP;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_LOAD_PROFILE_GZIPPED;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_RESOLVE_DEVICE_TIMELINE;
 import static cc.blynk.server.core.protocol.enums.Command.PING;
@@ -133,6 +135,7 @@ public class MobileHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
     public final MobileStateHolder state;
     private final Holder holder;
     private final MobileHardwareLogic hardwareLogic;
+    private final MobileHardwareGroupLogic mobileHardwareGroupLogic;
 
     private MobileHardwareResendFromBTLogic hardwareResendFromBTLogic;
     private MobileMailLogic mailLogic;
@@ -154,6 +157,7 @@ public class MobileHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
         this.holder = holder;
 
         this.hardwareLogic = new MobileHardwareLogic(holder);
+        this.mobileHardwareGroupLogic = new MobileHardwareGroupLogic(holder);
         this.mobileGetOrgDevicesLogic = new MobileGetOrgDevicesLogic(holder);
         this.mobileLoadProfileGzippedLogic = new MobileLoadProfileGzippedLogic(holder);
         this.mobileGetWidgetLogic = new MobileGetWidgetLogic(holder);
@@ -169,6 +173,9 @@ public class MobileHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
         switch (msg.command) {
             case HARDWARE :
                 hardwareLogic.messageReceived(ctx, state, msg);
+                break;
+            case MOBILE_HARDWARE_GROUP :
+                mobileHardwareGroupLogic.messageReceived(ctx, state, msg);
                 break;
             case HARDWARE_RESEND_FROM_BLUETOOTH :
                 if (hardwareResendFromBTLogic == null) {

@@ -9,6 +9,8 @@ import cc.blynk.server.core.model.widgets.DeviceCleaner;
 import cc.blynk.server.core.model.widgets.MobileSyncWidget;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.TextAlignment;
+import cc.blynk.server.core.model.widgets.ui.tiles.group.BaseGroupTemplate;
+import cc.blynk.server.core.model.widgets.ui.tiles.group.Group;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.utils.ArrayUtil;
 import io.netty.channel.Channel;
@@ -27,10 +29,16 @@ import static cc.blynk.utils.StringUtils.prependDeviceId;
  * Created by Dmitriy Dumanskiy.
  * Created on 02.10.17.
  */
-public class DeviceTiles extends Widget implements MobileSyncWidget, DeviceCleaner {
+public final class DeviceTiles extends Widget implements MobileSyncWidget, DeviceCleaner {
 
     private static final Tile[] EMPTY_DEVICE_TILES = {};
     private static final TileTemplate[] EMPTY_TEMPLATES = {};
+    private static final BaseGroupTemplate[] EMPTY_GROUP_TEMPLATES = {};
+    private static final Group[] EMPTY_GROUPS = {};
+
+    public volatile BaseGroupTemplate[] groupTemplates = EMPTY_GROUP_TEMPLATES;
+
+    public Group[] groups = EMPTY_GROUPS;
 
     public volatile TileTemplate[] templates = EMPTY_TEMPLATES;
 
@@ -287,6 +295,15 @@ public class DeviceTiles extends Widget implements MobileSyncWidget, DeviceClean
         this.templates = updatedTemplates;
     }
 
+    public Group getGroupByIdOrThrow(int id) {
+        for (Group group : groups) {
+            if (group.id == id) {
+                return group;
+            }
+        }
+        throw new IllegalCommandException("Group with passed id not found.");
+    }
+
     @Override
     public void deleteDevice(int deviceId) {
         Tile[] localTiles = this.tiles;
@@ -302,12 +319,10 @@ public class DeviceTiles extends Widget implements MobileSyncWidget, DeviceClean
 
     @Override
     public boolean setProperty(WidgetProperty property, String propertyValue) {
-        switch (property) {
-            case SORT_TPYE:
-                this.sortType = SortType.valueOf(propertyValue);
-                return true;
-            default:
-                return super.setProperty(property, propertyValue);
+        if (property == WidgetProperty.SORT_TPYE) {
+            this.sortType = SortType.valueOf(propertyValue);
+            return true;
         }
+        return super.setProperty(property, propertyValue);
     }
 }
