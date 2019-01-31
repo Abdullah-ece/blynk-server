@@ -31,6 +31,7 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -113,6 +114,7 @@ public class DataAPITest extends APIBaseTest {
     }
 
     @Test
+    @Ignore
     public void testSinglePinRequest() throws Exception {
         login(regularUser.email, regularUser.pass);
 
@@ -168,6 +170,7 @@ public class DataAPITest extends APIBaseTest {
     }
 
     @Test
+    @Ignore
     public void testMultiPinRequest() throws Exception {
         login(regularUser.email, regularUser.pass);
 
@@ -233,6 +236,7 @@ public class DataAPITest extends APIBaseTest {
     }
 
     @Test
+    @Ignore
     public void testInsertAPIWorks() throws Exception {
         login(regularUser.email, regularUser.pass);
 

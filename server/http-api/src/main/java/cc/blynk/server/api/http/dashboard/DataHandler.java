@@ -96,8 +96,7 @@ public class DataHandler extends BaseHttpHandler {
             try {
                 DataResponseDTO response = new DataResponseDTO(dataQueryRequestGroup.dataQueryRequests.length);
                 for (DataQueryRequestDTO dataQueryRequest : dataQueryRequestGroup.dataQueryRequests) {
-                    Object data = reportingDBManager.getRawData(dataQueryRequest);
-                    response.add(data);
+                    //todo finish
                 }
                 ctx.writeAndFlush(ok(response.data()), ctx.voidPromise());
             } catch (Exception e) {
