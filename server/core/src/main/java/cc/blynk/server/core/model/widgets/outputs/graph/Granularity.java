@@ -5,7 +5,7 @@ package cc.blynk.server.core.model.widgets.outputs.graph;
  * Created by Dmitriy Dumanskiy.
  * Created on 12.08.15.
  */
-public enum GraphGranularityType {
+public enum Granularity {
 
     MINUTE("reporting_average_minute", 60 * 1000),
     FIVE_MINUTE("reporting_average_5_minute", 5 * 60 * 1000),
@@ -17,14 +17,14 @@ public enum GraphGranularityType {
     public final long period;
 
     //cached value for values field to avoid allocations
-    private static final GraphGranularityType[] values = values();
+    private static final Granularity[] values = values();
 
-    GraphGranularityType(String tableName, long period) {
+    Granularity(String tableName, long period) {
         this.tableName = tableName;
         this.period = period;
     }
 
-    public static GraphGranularityType[] getValues() {
+    public static Granularity[] getValues() {
         return values;
     }
 }

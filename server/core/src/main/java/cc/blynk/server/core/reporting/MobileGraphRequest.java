@@ -2,7 +2,7 @@ package cc.blynk.server.core.reporting;
 
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.enums.PinType;
-import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
+import cc.blynk.server.core.model.widgets.outputs.graph.Granularity;
 import cc.blynk.server.core.model.widgets.outputs.graph.Period;
 
 import static cc.blynk.server.core.model.widgets.outputs.graph.Period.LIVE;
@@ -28,7 +28,7 @@ public class MobileGraphRequest {
 
     public final int limit;
 
-    public final GraphGranularityType type;
+    public final Granularity type;
 
     public final int offset;
 
