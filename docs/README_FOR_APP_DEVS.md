@@ -110,7 +110,6 @@ Response message structure:
 
     //outputs
     LED,
-    LOGGER, //history_graph
     DIGIT4_DISPLAY, //same as NUMERICAL_DISPLAY
     GAUGE,
     LCD_DISPLAY,

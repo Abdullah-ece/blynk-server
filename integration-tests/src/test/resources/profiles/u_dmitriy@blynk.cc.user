@@ -257,23 +257,6 @@
                   "value":"87"
                },
                {
-                  "type":"LOGGER",
-                  "id":1036300905,
-                  "x":0,
-                  "y":2,
-                  "color":-308477697,
-                  "width":8,
-                  "height":2,
-                  "pinType":"VIRTUAL",
-                  "pin":5,
-                  "pwmMode":false,
-                  "rangeMappingOn":false,
-                  "min":0,
-                  "max":1023,
-                  "frequency":0,
-                  "isBar":true
-               },
-               {
                   "type":"LED",
                   "id":1036300902,
                   "x":3,
@@ -406,50 +389,6 @@
             "ts":1449678105,
             "devices" : [{"id":0, "token":"cd2f5a62151e4fa2a6ae8ea506b6e15c", "boardType":"ESP8266"}],
             "widgets":[
-               {
-                  "type":"LOGGER",
-                  "id":509087093,
-                  "x":0,
-                  "y":5,
-                  "color":-308477697,
-                  "width":8,
-                  "height":3,
-                  "pwmMode":false,
-                  "rangeMappingOn":false,
-                  "min":0,
-                  "max":0,
-                  "pins":[
-                     {
-                        "pin":-1,
-                        "pwmMode":false,
-                        "rangeMappingOn":false,
-                        "min":0,
-                        "max":0
-                     },
-                     {
-                        "pin":-1,
-                        "pwmMode":false,
-                        "rangeMappingOn":false,
-                        "min":0,
-                        "max":0
-                     },
-                     {
-                        "pin":-1,
-                        "pwmMode":false,
-                        "rangeMappingOn":false,
-                        "min":0,
-                        "max":0
-                     },
-                     {
-                        "pin":-1,
-                        "pwmMode":false,
-                        "rangeMappingOn":false,
-                        "min":0,
-                        "max":0
-                     }
-                  ],
-                  "showLegends":false
-               },
                {
                   "type":"TIMER",
                   "id":206797172,
