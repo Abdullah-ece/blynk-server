@@ -7,7 +7,6 @@ import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.core.session.mobile.MobileStateHolder;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
 import cc.blynk.server.internal.StateHolderUtil;
-import cc.blynk.utils.ArrayUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -93,8 +92,7 @@ public class Session {
         Set<Channel> targetChannels = new HashSet<>();
         for (Channel channel : hardwareChannels) {
             HardwareStateHolder hardwareState = getHardState(channel);
-            if (hardwareState != null
-                    && (deviceIds.length == 0 || ArrayUtil.contains(deviceIds, hardwareState.device.id))) {
+            if (hardwareState != null && (deviceIds.length == 0 || hardwareState.contains(deviceIds))) {
                 if (hardwareState.device.fitsBufferSize(bodySize)) {
                     targetChannels.add(channel);
                 } else {
