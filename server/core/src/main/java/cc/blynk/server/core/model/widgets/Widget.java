@@ -77,8 +77,7 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
  */
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
-        property = "type",
-        defaultImpl = Button.class)
+        property = "type")
 @JsonSubTypes({
 
         //web widgets
