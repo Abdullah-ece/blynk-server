@@ -13,7 +13,6 @@ import cc.blynk.server.db.dao.EventDBDao;
 import cc.blynk.server.db.dao.RawEntry;
 import cc.blynk.server.db.dao.ReportingDBDao;
 import cc.blynk.server.db.dao.ReportingStatsDao;
-import cc.blynk.server.db.dao.descriptor.DataQueryRequestDTO;
 import cc.blynk.utils.NumberUtil;
 import cc.blynk.utils.properties.BaseProperties;
 import cc.blynk.utils.properties.DBProperties;
@@ -26,7 +25,6 @@ import ru.yandex.clickhouse.ClickHouseDriver;
 import java.io.Closeable;
 import java.sql.Connection;
 import java.sql.Statement;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Queue;
 
@@ -113,13 +111,6 @@ public final class ReportingDBManager implements Closeable {
         if (isDBEnabled() && rawDataBatch.size() > 0) {
             blockingIOProcessor.executeDB(() -> reportingDBDao.insertDataPoint(rawDataBatch));
         }
-    }
-
-    public Object getRawData(DataQueryRequestDTO dataQueryRequest) {
-        if (isDBEnabled()) {
-            return reportingDBDao.getRawData(dataQueryRequest);
-        }
-        return Collections.emptyList();
     }
 
     public void insertSystemEvent(int deviceId, EventType eventType) {

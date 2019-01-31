@@ -4,16 +4,9 @@ import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.db.dao.descriptor.MetaDataFormatters;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.jooq.CaseConditionStep;
-import org.jooq.Field;
-import org.jooq.Record;
-import org.jooq.SelectSelectStep;
-import org.jooq.impl.DSL;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-
-import static org.jooq.impl.DSL.field;
 
 /**
  * The Blynk Project.
@@ -42,24 +35,6 @@ public class ShiftMetaField extends MetaField {
 
     public static LocalTime parse(String time) {
         return LocalTime.parse(time, timeFormatter);
-    }
-
-    @Override
-    public Field<Integer> prepareField(SelectSelectStep<Record> query, Field<Object> field) {
-        //for now assume all shifts are equal
-        int divider = 86400 / (shifts.length == 0 ? 1 : shifts.length);
-        return field("floor(EXTRACT(EPOCH FROM {0}) / " + divider + ")", Integer.class, field);
-    }
-
-    @Override
-    public Field<?> applyMapping(SelectSelectStep<Record> query, Field<Object> field) {
-        CaseConditionStep<String> caseConditionStep = null;
-        for (int i = 0; i < shifts.length; i++) {
-            caseConditionStep = caseConditionStep == null
-                    ? DSL.when(field.eq(i), shifts[i].name)
-                    : caseConditionStep.when(field.eq(i), shifts[i].name);
-        }
-        return caseConditionStep;
     }
 
     @Override

@@ -5,13 +5,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import org.jooq.Field;
-import org.jooq.Record;
-import org.jooq.SelectSelectStep;
 
 import java.time.LocalTime;
-
-import static org.jooq.impl.DSL.count;
 
 /**
  * The Blynk Project.
@@ -41,11 +36,6 @@ public class RangeTimeMetaField extends MetaField {
         super(id, name, roleIds, includeInProvision, isMandatory, isDefault, icon);
         this.from = from;
         this.to = to;
-    }
-
-    @Override
-    public Field<Integer> prepareField(SelectSelectStep<Record> query, Field<Object> field) {
-        return count().filterWhere(field.between(from, to)).as(name);
     }
 
     @Override

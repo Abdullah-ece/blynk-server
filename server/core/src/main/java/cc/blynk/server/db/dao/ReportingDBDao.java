@@ -1,18 +1,14 @@
 package cc.blynk.server.db.dao;
 
 import cc.blynk.server.core.model.enums.PinType;
-import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
+import cc.blynk.server.core.model.widgets.outputs.graph.Granularity;
 import cc.blynk.server.core.reporting.MobileGraphRequest;
 import cc.blynk.server.core.reporting.WebGraphRequest;
 import cc.blynk.server.core.reporting.raw.BaseReportingKey;
 import cc.blynk.server.core.reporting.raw.BaseReportingValue;
-import cc.blynk.server.db.dao.descriptor.DataQueryRequestDTO;
-import cc.blynk.server.db.dao.descriptor.DeviceRawDataTableDescriptor;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jooq.DSLContext;
-import org.jooq.impl.DSL;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -20,13 +16,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
-
-import static org.jooq.SQLDialect.POSTGRES_9_4;
 
 /**
  * The Blynk Project.
@@ -71,9 +64,9 @@ public class ReportingDBDao {
         ps.setDouble(5, value);
     }
 
-    public List<RawEntry> getReportingDataByTs(GraphGranularityType granularityType, int deviceId,
-                                                  short pin, PinType pinType,
-                                                  long from, long to, int offset, int limit) throws Exception {
+    public List<RawEntry> getReportingDataByTs(Granularity granularityType, int deviceId,
+                                               short pin, PinType pinType,
+                                               long from, long to, int offset, int limit) throws Exception {
         List<RawEntry> result = new ArrayList<>();
         String query = selectFromAverage.replace("{TABLE}", granularityType.tableName);
 
@@ -130,8 +123,8 @@ public class ReportingDBDao {
 
     public void delete(int deviceId) {
         int count = 0;
-        for (GraphGranularityType graphGranularityType : GraphGranularityType.getValues()) {
-            count += delete(deleteDeviceData.replace("{TABLE}", graphGranularityType.tableName), deviceId);
+        for (Granularity granularity : Granularity.getValues()) {
+            count += delete(deleteDeviceData.replace("{TABLE}", granularity.tableName), deviceId);
         }
         log.debug("Removed all reporting records for device {}. Deleted records: {}", deviceId, count);
     }
@@ -153,8 +146,8 @@ public class ReportingDBDao {
 
     public int delete(int deviceId, short pin, PinType pinType) {
         int count = 0;
-        for (GraphGranularityType graphGranularityType : GraphGranularityType.getValues()) {
-            String query = deleteDevicePinData.replace("{TABLE}", graphGranularityType.tableName);
+        for (Granularity granularity : Granularity.getValues()) {
+            String query = deleteDevicePinData.replace("{TABLE}", granularity.tableName);
             count += delete(query, deviceId, pin, pinType);
         }
         log.debug("Removed reporting records for device {} - {}{}. Deleted records: {}",
@@ -213,45 +206,6 @@ public class ReportingDBDao {
             connection.commit();
         } catch (Exception e) {
             log.error("Error inserting batch points reporting data in DB.", e);
-        }
-    }
-
-    public Object getRawData(DataQueryRequestDTO dataQueryRequest) {
-        switch (dataQueryRequest.sourceType) {
-            case RAW_DATA:
-                List<RawEntry> result = new ArrayList<>();
-                try (Connection connection = ds.getConnection()) {
-                    DSLContext create = DSL.using(connection, POSTGRES_9_4);
-
-                    result = create.select(DeviceRawDataTableDescriptor.TS, DeviceRawDataTableDescriptor.VALUE)
-                          .from(DeviceRawDataTableDescriptor.NAME)
-                          .where(DeviceRawDataTableDescriptor.DEVICE_ID.eq(dataQueryRequest.deviceId)
-                                  .and(DeviceRawDataTableDescriptor.PIN.eq(dataQueryRequest.pin))
-                                  .and(DeviceRawDataTableDescriptor.PIN_TYPE.eq(dataQueryRequest.pinType.ordinal()))
-                                  .and(DeviceRawDataTableDescriptor.TS
-                                          .between(new Timestamp(dataQueryRequest.from))
-                                          .and(new Timestamp(dataQueryRequest.to))))
-                          .orderBy(DeviceRawDataTableDescriptor.TS.desc())
-                          .offset(dataQueryRequest.offset)
-                          .limit(dataQueryRequest.limit)
-                          .fetchInto(RawEntry.class);
-
-                    connection.commit();
-                } catch (Exception e) {
-                    log.error("Error getting raw data from DB.", e);
-                }
-
-                Collections.reverse(result);
-                return result;
-            case SUM:
-            case AVG:
-            case MAX:
-            case MIN:
-            case MED:
-            case COUNT:
-            default:
-                throw new RuntimeException("Other types of aggregation is not supported yet.");
-
         }
     }
 
