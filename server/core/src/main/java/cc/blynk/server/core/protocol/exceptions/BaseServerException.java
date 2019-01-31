@@ -14,13 +14,13 @@ public class BaseServerException extends RuntimeException {
      * Should be used for handlers that are not processed within BaseSimpleChannelInboundHandler
      */
     BaseServerException(String message, int msgId, int errorCode) {
-        super(message);
+        super(message, null, true, false);
         this.msgId = msgId;
         this.errorCode = errorCode;
     }
 
     BaseServerException(String message, int errorCode) {
-        super(message);
+        super(message, null, true, false);
         this.msgId = -1;
         this.errorCode = errorCode;
     }
