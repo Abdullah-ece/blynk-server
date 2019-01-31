@@ -64,11 +64,11 @@ public class MobileHardwareLogic extends BaseProcessorHandler {
             return;
         }
 
-        char operation = split[1].charAt(1);
-        String[] splitBody;
+        String body = split[1];
+        char operation = body.charAt(1);
 
         if (operation == 'w') {
-            splitBody = split3(split[1]);
+            String[] splitBody = split3(body);
 
             if (splitBody.length < 3) {
                 log.debug("Not valid write command.");
@@ -87,9 +87,9 @@ public class MobileHardwareLogic extends BaseProcessorHandler {
             //sending to shared dashes and master-master apps
             //session.sendToSharedApps(ctx.channel(), dash.sharedToken, DEVICE_SYNC, message.id, message.body);
             session.sendToApps(ctx.channel(), DEVICE_SYNC, message.id, message.body);
-            session.sendToSelectedDeviceOnWeb(DEVICE_SYNC, message.id, split[1], device.id);
+            session.sendToSelectedDeviceOnWeb(DEVICE_SYNC, message.id, body, device.id);
 
-            if (session.sendMessageToHardware(HARDWARE, message.id, split[1], device.id)) {
+            if (session.sendMessageToHardware(HARDWARE, message.id, body, device.id)) {
                 log.debug("Device not in the network.");
                 ctx.writeAndFlush(deviceNotInNetwork(message.id), ctx.voidPromise());
             }
