@@ -9,10 +9,6 @@ import cc.blynk.server.core.protocol.exceptions.JsonException;
  */
 public class DeviceNotFoundException extends JsonException {
 
-    public DeviceNotFoundException(String message) {
-        super(message);
-    }
-
     public DeviceNotFoundException() {
         super("Requested device not exists.");
     }
