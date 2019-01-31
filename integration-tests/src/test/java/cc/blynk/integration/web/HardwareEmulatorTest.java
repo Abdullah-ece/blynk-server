@@ -22,8 +22,8 @@ public class HardwareEmulatorTest {
     @Ignore
     public void connectHardwareWithProvisionTokenOnTheLocalhost() throws Exception {
         String host = "localhost";
-        String user = "admin@blynk.cc";
-        String pass = "admin";
+        String user = "iot@blynk.cc";
+        String pass = "qa-superpower";
 
         TestAppClient appClient = new TestAppClient(host, 9443);
         appClient.start();
@@ -39,14 +39,18 @@ public class HardwareEmulatorTest {
         assertNotNull(deviceFromApi);
         assertNotNull(deviceFromApi.token);
 
-        TestHardClient newHardClient = new TestHardClient(host, 8080);
-        newHardClient.start();
-        newHardClient.send("login " + deviceFromApi.token);
-        verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        newHardClient.send("internal " + b("ver 0.3.1 tmpl TMPL0001 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
-        newHardClient.verifyResult(ok(2));
-        newHardClient.send("ping");
-        newHardClient.verifyResult(ok(3));
+        for(int i=0; i< 3000;i++) {
+            TestHardClient newHardClient = new TestHardClient(host, 8080);
+            newHardClient.start();
+            newHardClient.send("login " + deviceFromApi.token);
+
+            verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+            newHardClient.send("internal " + b("ver 0.3.1 tmpl TMPL0001 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
+            newHardClient.verifyResult(ok(2));
+            newHardClient.send("ping");
+            newHardClient.verifyResult(ok(3));
+            Thread.sleep(100);
+        }
 
         appClient.verifyResult(deviceConnected(2, deviceFromApi.id));
     }
