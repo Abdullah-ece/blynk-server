@@ -5,5 +5,5 @@ workflow "Build on push" {
 
 action "Build with maven" {
   uses = "LucaFeger/action-maven-cli@aed8a1fd96b459b9a0be4b42a5863843cc70724e"
-  runs = "clean install -Dmaven.test.skip=true -P qa"
+  runs = "mvn clean install -Dmaven.test.skip=true -P qa"
 }
