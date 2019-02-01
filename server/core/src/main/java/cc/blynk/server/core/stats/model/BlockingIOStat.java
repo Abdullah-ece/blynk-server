@@ -8,29 +8,29 @@ import cc.blynk.server.core.model.widgets.ui.reporting.ReportScheduler;
  * Created by Dmitriy Dumanskiy.
  * Created on 03.05.17.
  */
-class BlockingIOStat {
+final class BlockingIOStat {
 
-    private final int messagingActiveTasks;
+    public final int messagingActiveTasks;
 
-    private final long messagingExecutedTasks;
+    public final long messagingExecutedTasks;
 
-    private final int historyActiveTasks;
+    public final int historyActiveTasks;
 
-    private final long historyExecutedTasks;
+    public final long historyExecutedTasks;
 
-    private final int dbActiveTasks;
+    public final int dbActiveTasks;
 
-    private final long dbExecutedTasks;
+    public final long dbExecutedTasks;
 
-    private final int getServerActiveTasks;
+    public final int getServerActiveTasks;
 
-    private final long getServerExecutedTasks;
+    public final long getServerExecutedTasks;
 
-    private final int reportsActive;
+    public final int reportsActive;
 
-    private final long reportsExecuted;
+    public final long reportsExecuted;
 
-    private final int reportsFutureMapSize;
+    public final int reportsFutureMapSize;
 
     BlockingIOStat(BlockingIOProcessor blockingIOProcessor, ReportScheduler reportScheduler) {
         this(blockingIOProcessor.messagingExecutor.getQueue().size(),

@@ -18,9 +18,4 @@ public final class AllCommandsStat {
     public void setCommandCounter(Short command, Integer counter) {
         stats.put(command, counter);
     }
-
-    public int getCommandCounter(Short command) {
-        Integer counter = stats.get(command);
-        return counter == null ? 0 : counter;
-    }
 }

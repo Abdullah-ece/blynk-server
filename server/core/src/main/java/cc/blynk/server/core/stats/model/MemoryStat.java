@@ -9,7 +9,7 @@ import io.netty.buffer.ByteBufAllocatorMetricProvider;
  * Created by Dmitriy Dumanskiy.
  * Created on 5/18/17.
  */
-public class MemoryStat {
+final class MemoryStat {
 
     public final long heapBytes;
 
