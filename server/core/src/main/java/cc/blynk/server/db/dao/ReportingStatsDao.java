@@ -48,6 +48,9 @@ public final class ReportingStatsDao {
             insertAppStat(appStatPS, stat, region, timestamp);
             insertAllCommandsStat(allCommandsStatPS, stat, region, timestamp);
 
+            appStatPS.executeBatch();
+            allCommandsStatPS.executeBatch();
+
             connection.commit();
             return true;
         } catch (Exception e) {
@@ -71,7 +74,7 @@ public final class ReportingStatsDao {
         appStatPS.setInt(11, stat.totalOnlineHards);
         appStatPS.setInt(12, stat.registrations);
 
-        appStatPS.executeUpdate();
+        appStatPS.addBatch();
     }
 
     private void insertAllCommandsStat(PreparedStatement allCommandsStatPS,
@@ -84,10 +87,10 @@ public final class ReportingStatsDao {
     private void setAndExecuteCommand(PreparedStatement preparedStatement,
                                       String region, Timestamp ts,
                                       short command, int dataToInsert) throws SQLException {
-        preparedStatement   .setString(1, region);
+        preparedStatement.setString(1, region);
         preparedStatement.setTimestamp(2, ts);
-        preparedStatement      .setInt(3, command);
-        preparedStatement      .setInt(4, dataToInsert);
-        preparedStatement.executeUpdate();
+        preparedStatement.setInt(3, command);
+        preparedStatement.setInt(4, dataToInsert);
+        preparedStatement.addBatch();
     }
 }
