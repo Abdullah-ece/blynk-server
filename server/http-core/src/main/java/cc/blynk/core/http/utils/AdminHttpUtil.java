@@ -3,7 +3,7 @@ package cc.blynk.core.http.utils;
 import cc.blynk.core.http.model.NameCountResponse;
 import cc.blynk.server.core.model.enums.SortOrder;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.core.stats.model.CommandStat;
+import cc.blynk.server.core.stats.model.AllCommandsStat;
 
 import java.lang.reflect.Field;
 import java.util.Collections;
@@ -81,8 +81,8 @@ public final class AdminHttpUtil {
     }
 
     @SuppressWarnings("unchecked")
-    public static List<NameCountResponse> convertObjectToMap(CommandStat commandStat) {
-        return convertMapToPair(JsonParser.MAPPER.convertValue(commandStat, Map.class));
+    public static List<NameCountResponse> convertObjectToMap(AllCommandsStat allCommandsStat) {
+        return convertMapToPair(JsonParser.MAPPER.convertValue(allCommandsStat.stats, Map.class));
     }
 
     /**

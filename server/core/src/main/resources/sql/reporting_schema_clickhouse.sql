@@ -43,6 +43,34 @@ ENGINE = MergeTree()
 PARTITION BY toYYYYMM(ts)
 ORDER BY (device_id, pin, pin_type, ts);
 
+CREATE TABLE reporting_app_stat_minute (
+  region String,
+  ts DateTime,
+  active UInt32,
+  active_week UInt32,
+  active_month UInt32,
+  minute_rate UInt32,
+  connected UInt32,
+  online_apps UInt32,
+  online_hards UInt32,
+  total_online_apps UInt32,
+  total_online_hards UInt32,
+  registrations UInt32
+)
+ENGINE = MergeTree()
+PARTITION BY toYYYYMM(ts)
+ORDER BY (region, ts);
+
+CREATE TABLE reporting_command_stat_minute (
+  region String,
+  ts DateTime,
+  command_code UInt16,
+  counter UInt32
+)
+ENGINE = MergeTree()
+PARTITION BY toYYYYMM(ts)
+ORDER BY (region, ts, command_code);
+
 CREATE MATERIALIZED VIEW reporting_average_minute
 ENGINE = AggregatingMergeTree()
 PARTITION BY toYYYYMM(ts)
