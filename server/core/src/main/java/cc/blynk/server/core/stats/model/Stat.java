@@ -10,6 +10,8 @@ import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.stats.GlobalStats;
 import io.netty.buffer.ByteBufAllocator;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.LongAdder;
 
 /**
@@ -19,7 +21,8 @@ import java.util.concurrent.atomic.LongAdder;
  */
 public final class Stat {
 
-    public final AllCommandsStat allCommands = new AllCommandsStat();
+    public final transient Map<Short, Integer> statsForDB;
+    public final Map<String, Integer> statsForPrint;
     public final BlockingIOStat ioStat;
     public final MemoryStat memoryStat;
 
@@ -37,15 +40,21 @@ public final class Stat {
     public final int webTotal;
     public final transient long ts;
 
-    public Stat(SessionDao sessionDao, UserDao userDao, BlockingIOProcessor blockingIOProcessor,
-                GlobalStats globalStats, ReportScheduler reportScheduler) {
-        //yeap, some stats updates may be lost (because of sumThenReset()),
-        //but we don't care, cause this is just for general monitoring
-        for (Short command : Command.VALUES_NAME.keySet()) {
-            LongAdder longAdder = globalStats.specificCounters[command];
+    public Stat(SessionDao sessionDao,
+                UserDao userDao,
+                BlockingIOProcessor blockingIOProcessor,
+                GlobalStats globalStats,
+                ReportScheduler reportScheduler) {
+
+        this.statsForDB = new HashMap<>();
+        this.statsForPrint = new HashMap<>();
+
+        for (var entry : Command.VALUES_NAME.entrySet()) {
+            LongAdder longAdder = globalStats.specificCounters[entry.getKey()];
             int val = (int) (longAdder.sumThenReset());
 
-            this.allCommands.setCommandCounter(command, val);
+            this.statsForDB.put(entry.getKey(), val);
+            this.statsForPrint.put(entry.getValue(), val);
         }
 
         this.appTotal = (int) globalStats.getTotalAppCounter();

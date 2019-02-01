@@ -1,16 +1,11 @@
 package cc.blynk.core.http.utils;
 
-import cc.blynk.core.http.model.NameCountResponse;
 import cc.blynk.server.core.model.enums.SortOrder;
-import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.core.stats.model.AllCommandsStat;
 
 import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * The Blynk Project.
@@ -20,26 +15,6 @@ import java.util.stream.Collectors;
 public final class AdminHttpUtil {
 
     private AdminHttpUtil() {
-    }
-
-    @SuppressWarnings("unchecked")
-    public static List<?> sortStringAsInt(List<?> list, String orderField, SortOrder order) {
-        if (list.size() == 0) {
-            return list;
-        }
-
-        if (orderField == null) {
-            orderField = "name";
-        }
-        if (order == null) {
-            order = SortOrder.ASC;
-        }
-
-
-        Comparator c = new GenericStringAsIntComparator(list.get(0).getClass(), orderField);
-        list.sort(order == SortOrder.ASC ? c : Collections.reverseOrder(c));
-
-        return list;
     }
 
     @SuppressWarnings("unchecked")
@@ -74,15 +49,6 @@ public final class AdminHttpUtil {
         list.sort(order == SortOrder.ASC ? c : Collections.reverseOrder(c));
 
         return list;
-    }
-
-    public static List<NameCountResponse> convertMapToPair(Map<String, ?> map) {
-        return map.entrySet().stream().map(NameCountResponse::new).collect(Collectors.toList());
-    }
-
-    @SuppressWarnings("unchecked")
-    public static List<NameCountResponse> convertObjectToMap(AllCommandsStat allCommandsStat) {
-        return convertMapToPair(JsonParser.MAPPER.convertValue(allCommandsStat.stats, Map.class));
     }
 
     /**
@@ -158,26 +124,4 @@ public final class AdminHttpUtil {
         }
     }
 
-    public static class GenericStringAsIntComparator extends GenericComparator {
-
-        GenericStringAsIntComparator(Class<?> type, String sortField) {
-            super(type, sortField);
-        }
-
-        @Override
-        public int compareActual(Object v1, Object v2, Class<?> returnType) {
-            if (returnType == int.class || returnType == Integer.class) {
-                return Integer.compare((int) v1, (int) v2);
-            }
-            if (returnType == long.class || returnType == Long.class) {
-                return Long.compare((long) v1, (long) v2);
-            }
-            if (returnType == String.class) {
-                return Integer.valueOf((String) v1).compareTo(Integer.valueOf((String) v2));
-            }
-
-            throw new RuntimeException("Unexpected field type. Type : " + returnType.getName());
-        }
-
-    }
 }
