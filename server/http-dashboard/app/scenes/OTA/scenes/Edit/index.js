@@ -10,6 +10,7 @@ import {
   message,
   Badge,
   Modal,
+  Icon,
   // Progress
 } from 'antd';
 import FormItem from 'components/FormItem';
@@ -61,6 +62,7 @@ class Edit extends React.Component {
     this.getSelectedDevicesTitle = this.getSelectedDevicesTitle.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
     this.handleOK = this.handleOK.bind(this);
+    this.buildReviewItems = this.buildReviewItems.bind(this);
 
     this.fetchToken();
 
@@ -176,6 +178,43 @@ class Edit extends React.Component {
     );
   }
 
+  buildReviewItems() {
+    const devicesSelected = Boolean(this.state.OTA.deviceIds.length);
+    const firmwareSelected = Boolean(this.state.OTA.firmwareOriginalFileName);
+
+    if (devicesSelected && firmwareSelected) {
+      return (
+        <div>
+      <span>
+        <Icon className='ota-review-icon-success'
+              type='check'/> You will be shipping <b>{this.state.OTA.firmwareOriginalFileName}</b> to <b>{Pluralize('device', this.state.OTA.deviceIds.length, true)}</b>
+      </span>
+        </div>);
+    } else {
+      return (
+        <div>
+          <div>
+      <span>
+        <Icon
+          className={devicesSelected ? 'ota-review-icon-success' : 'ota-review-icon-warning'}
+          type={devicesSelected ? 'check' : 'warning'}/> {devicesSelected ? (
+          <span>Target ready: you will be shipping to <b>{Pluralize('device', this.state.OTA.deviceIds.length, true)}</b></span>) :
+        <span>Select devices</span>}
+      </span>
+          </div>
+          <div>
+      <span>
+        <Icon
+          className={firmwareSelected ? 'ota-review-icon-success' : 'ota-review-icon-warning'}
+          type={firmwareSelected ? 'check' : 'warning'}/> {firmwareSelected ? (
+          <span>Target ready: You will be shipping <b>{this.state.OTA.firmwareOriginalFileName}</b></span>) :
+        <span>Upload Firmware file</span>}
+      </span>
+          </div>
+        </div>);
+    }
+  }
+
   getSelectedDevicesTitle() {
     const { deviceIds } = this.state.OTA;
     let firstpart = '';
@@ -276,9 +315,9 @@ class Edit extends React.Component {
               </Col>
             </Row>
             {/*<Row>*/}
-              {/*<Col span={24} style={{ paddingRight: 16 }}>*/}
-                {/*<Progress percent={60} successPercent={30}/>*/}
-              {/*</Col>*/}
+            {/*<Col span={24} style={{ paddingRight: 16 }}>*/}
+            {/*<Progress percent={60} successPercent={30}/>*/}
+            {/*</Col>*/}
             {/*</Row>*/}
             <Row>
               <Col span={24} style={{ paddingRight: 16 }}>
@@ -362,8 +401,7 @@ class Edit extends React.Component {
               </Row>
             </EditSection>
             <EditSection title={'Review and start'}>
-              <div>Select devices</div>
-              <div>Upload Firmware file</div>
+              {this.buildReviewItems()}
               <div className="ota-btn-group">
                 <Button type="danger"
                         onClick={this.onFirmwareUpdateCancel}>Cancel</Button>
