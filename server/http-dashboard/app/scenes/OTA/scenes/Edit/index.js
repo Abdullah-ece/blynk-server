@@ -22,7 +22,8 @@ import Pluralize from 'pluralize';
 import {
   DevicesFetch
 } from 'data/Devices/api';
-import { OTAGetFirmwareInfo } from "data/Product/actions";
+import { ProductsFetch } from 'data/Product/api';
+import { OTAGetFirmwareInfo, OTAStart, OTAStop } from "data/Product/actions";
 
 import { FILE_UPLOAD_URL } from 'services/API';
 
@@ -34,7 +35,10 @@ import { FILE_UPLOAD_URL } from 'services/API';
 }), (dispatch) => ({
   secureTokenForUploadFetch: bindActionCreators(SecureTokenForUploadFetch, dispatch),
   fetchDevices: bindActionCreators(DevicesFetch, dispatch),
+  fetchProducts: bindActionCreators(ProductsFetch, dispatch),
   getFirmwareInfo: bindActionCreators(OTAGetFirmwareInfo, dispatch),
+  otaStart: bindActionCreators(OTAStart, dispatch),
+  otaStop: bindActionCreators(OTAStop, dispatch),
 }))
 class Edit extends React.Component {
 
@@ -80,6 +84,7 @@ class Edit extends React.Component {
   }
 
   firmwareUpdateStart() {
+    this.props.otaStart({ otaDTO: this.state.OTA });
     this.context.router.push('/ota');
   }
 
@@ -89,6 +94,10 @@ class Edit extends React.Component {
 
   componentWillMount() {
     this.fetchToken();
+
+    this.props.fetchProducts({
+      orgId: this.props.orgId
+    });
 
     this.props.fetchDevices({
       orgId: this.props.orgId
@@ -126,6 +135,7 @@ class Edit extends React.Component {
       const status = info.file.status;
       if (status === 'done') {
         this.fetchToken();
+        onChange({ value: info.file.name, name: 'firmwareOriginalFileName' });
         onChange({ value: info.file.response, name: 'pathToFirmware' });
         this.props.getFirmwareInfo({ path_to_firmware: info.file.response }).then(
           result => {
@@ -163,8 +173,10 @@ class Edit extends React.Component {
   }
 
   createTable() {
-    const { productId } = this.state.OTA;
-    const devices = productId ? this.props.devices.filter((device) => device.productId === productId) : this.props.devices;
+    // const { productId } = this.state.OTA;
+    // const devices = this.props.devicesproductId ? this.props.devices.filter((device) => device.productId === productId) : this.props.devices;
+
+    const devices = this.props.devices;
     const columns = [{
       title: 'Device Name',
       dataIndex: 'name',
@@ -202,7 +214,7 @@ class Edit extends React.Component {
 
   render() {
     const { OTA } = this.state;
-    const products = this.props.products || [{ id: 1, name: 'blaj' }];
+    const products = this.props.products || [];
 
     let productsList = products.map((product) => ({
       key: product.id,
@@ -231,7 +243,6 @@ class Edit extends React.Component {
                     <FormItem.Content>
                       <Select className="edit-section-content-input"
                               value={OTA.productId}
-                              disabled={true}
                               onChange={value => this.onChange({
                                 value,
                                 name: 'productId'
@@ -272,7 +283,7 @@ class Edit extends React.Component {
             <Row>
               <Col span={7}>
                 <div className='upload-firmware'>
-                  {this.fileUploader(this.onChange, OTA.pathToFirmware)}
+                  {this.fileUploader(this.onChange, OTA.firmwareOriginalFileName)}
                 </div>
               </Col>
               <Col span={17}>
