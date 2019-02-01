@@ -51,14 +51,14 @@ public class GlobalStats {
         specificCounters[APP_STAT_COUNTER_INDEX].increment();
     }
 
-    public long getTotalWebCounter(boolean reset) {
+    public long getTotalWebCounter() {
         LongAdder longAdder = specificCounters[APP_STAT_COUNTER_INDEX];
-        return reset ? longAdder.sumThenReset() : longAdder.sum();
+        return longAdder.sumThenReset();
     }
 
-    public long getTotalAppCounter(boolean reset) {
+    public long getTotalAppCounter() {
         LongAdder longAdder = specificCounters[APP_STAT_COUNTER_INDEX];
-        return reset ? longAdder.sumThenReset() : longAdder.sum();
+        return longAdder.sumThenReset();
     }
 
 }

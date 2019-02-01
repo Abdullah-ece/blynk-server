@@ -17,11 +17,7 @@ import java.util.concurrent.atomic.LongAdder;
  * Created by Dmitriy Dumanskiy.
  * Created on 19.07.15.
  */
-public class Stat {
-
-    private final static long ONE_DAY = 24 * 60 * 60 * 1000;
-    private final static long ONE_WEEK = 7 * ONE_DAY;
-    private final static long ONE_MONTH = 30 * ONE_DAY;
+public final class Stat {
 
     public final AllCommandsStat allCommands = new AllCommandsStat();
     public final BlockingIOStat ioStat;
@@ -42,18 +38,18 @@ public class Stat {
     public final transient long ts;
 
     public Stat(SessionDao sessionDao, UserDao userDao, BlockingIOProcessor blockingIOProcessor,
-                GlobalStats globalStats, ReportScheduler reportScheduler, boolean reset) {
+                GlobalStats globalStats, ReportScheduler reportScheduler) {
         //yeap, some stats updates may be lost (because of sumThenReset()),
         //but we don't care, cause this is just for general monitoring
         for (Short command : Command.VALUES_NAME.keySet()) {
             LongAdder longAdder = globalStats.specificCounters[command];
-            int val = (int) (reset ? longAdder.sumThenReset() : longAdder.sum());
+            int val = (int) (longAdder.sumThenReset());
 
             this.allCommands.setCommandCounter(command, val);
         }
 
-        this.appTotal = (int) globalStats.getTotalAppCounter(reset);
-        this.webTotal = (int) globalStats.getTotalWebCounter(reset);
+        this.appTotal = (int) globalStats.getTotalAppCounter();
+        this.webTotal = (int) globalStats.getTotalWebCounter();
 
         this.oneMinRate = (int) globalStats.totalMessages.getOneMinuteRate();
         int connectedSessions = 0;

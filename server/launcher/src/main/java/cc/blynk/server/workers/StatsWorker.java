@@ -45,7 +45,7 @@ public class StatsWorker implements Runnable {
     @Override
     public void run() {
         try {
-            var stat = new Stat(sessionDao, userDao, blockingIOProcessor, stats, reportScheduler, true);
+            var stat = new Stat(sessionDao, userDao, blockingIOProcessor, stats, reportScheduler);
             log.info(stat);
 
             reportingDBManager.insertStat(this.region, stat);

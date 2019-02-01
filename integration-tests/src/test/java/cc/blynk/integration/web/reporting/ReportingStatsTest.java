@@ -42,7 +42,7 @@ public class ReportingStatsTest extends SingleServerInstancePerTestWithDB {
     @Test
     public void testInsertStatWorks() throws Exception {
         var stat = new Stat(holder.sessionDao, holder.userDao, holder.blockingIOProcessor,
-                holder.stats, holder.reportScheduler, true);
+                holder.stats, holder.reportScheduler);
 
         int i = 0;
 
