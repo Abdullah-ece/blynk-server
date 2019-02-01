@@ -17,13 +17,28 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
 import { SecureTokenForUploadFetch } from "data/Product/api";
+import Pluralize from 'pluralize';
+
+import {
+  DevicesFetch
+} from 'data/Devices/api';
+import { FILE_UPLOAD_URL } from 'services/API';
 
 @connect((state) => ({
+  orgId: state.Account.selectedOrgId,
+  products: state.Product.products,
+  devices: state.Devices.devices,
   secureUploadToken: state.Product.secureUploadToken
 }), (dispatch) => ({
   secureTokenForUploadFetch: bindActionCreators(SecureTokenForUploadFetch, dispatch),
+  fetchDevices: bindActionCreators(DevicesFetch, dispatch),
 }))
 class Edit extends React.Component {
+
+  static contextTypes = {
+    router: React.PropTypes.object
+  };
+
   constructor(props) {
     super(props);
 
@@ -33,12 +48,14 @@ class Edit extends React.Component {
     this.fetchToken = this.fetchToken.bind(this);
     this.firmwareUpdateStart = this.firmwareUpdateStart.bind(this);
     this.onFirmwareUpdateCancel = this.onFirmwareUpdateCancel.bind(this);
+    this.getSelectedDevicesTitle = this.getSelectedDevicesTitle.bind(this);
 
     this.fetchToken();
 
     const ota = this.props.OTA || {};
 
     this.state = {
+      selectedRowKeys: [],
       OTA: {
         orgId: this.props.orgId,
         productId: undefined,
@@ -60,15 +77,19 @@ class Edit extends React.Component {
   }
 
   firmwareUpdateStart() {
-
+    this.context.router.push('/ota');
   }
 
   onFirmwareUpdateCancel() {
-
+    this.context.router.push('/ota');
   }
 
   componentWillMount() {
     this.fetchToken();
+
+    this.props.fetchDevices({
+      orgId: this.props.orgId
+    });
   }
 
   fetchToken() {
@@ -112,8 +133,64 @@ class Edit extends React.Component {
                      error={error}
                      fileProps={fileProps}
                      iconClass={'ota-upload-drag-icon'}
-                     onChange={handleComponentChange}/>
+                     onChange={handleComponentChange}
+                     fileProps={{
+                       name: 'file',
+                       action: FILE_UPLOAD_URL,
+                       showUploadList: false,
+                       accept: '.bin'
+                     }}/>
     );
+  }
+
+  getSelectedDevicesTitle() {
+    const { deviceIds } = this.state.OTA;
+    let firstpart = '';
+    if (!deviceIds.length) {
+      firstpart = 'No devices';
+    } else {
+      firstpart = Pluralize('device', deviceIds.length, true);
+    }
+
+    return firstpart + ' selected';
+  }
+
+  createTable() {
+    const { productId } = this.state.OTA;
+    const devices = productId ? this.props.devices.filter((device) => device.productId === productId) : this.props.devices;
+    const columns = [{
+      title: 'Device Name',
+      dataIndex: 'name',
+    }, {
+      title: 'Product Name',
+      dataIndex: 'productName',
+    },];
+    const selectedRowKeys = [];
+
+    if (this.state.OTA.deviceIds.length) {
+      for (let i = 0; i < devices.length; i++) {
+        if (this.state.OTA.deviceIds.indexOf(devices[i].id) >= 0) {
+          selectedRowKeys.push(i);
+        }
+      }
+    }
+
+    const rowSelection = {
+      selectedRowKeys,
+      onChange: (selectedRowKeys, selectedRows) => {
+        const { OTA } = this.state;
+        OTA.deviceIds = selectedRows.map(device => device.id);
+        this.setState({ OTA });
+      },
+      getCheckboxProps: record => ({
+        name: record.name,
+      }),
+    };
+
+
+    return (
+      <Table rowSelection={rowSelection} columns={columns}
+             dataSource={devices} pagination={false}/>);
   }
 
   render() {
@@ -147,6 +224,7 @@ class Edit extends React.Component {
                     <FormItem.Content>
                       <Select className="edit-section-content-input"
                               value={OTA.productId}
+                              disabled={true}
                               onChange={value => this.onChange({
                                 value,
                                 name: 'productId'
@@ -175,9 +253,11 @@ class Edit extends React.Component {
               </Col>
               <Col span={17}>
                 <div className="edit-section-sub-title ">
-                  No devices selected
+                  {this.getSelectedDevicesTitle()}
                 </div>
-                <Table/>
+                <div className="product-details-row">
+                  {this.createTable()}
+                </div>
               </Col>
             </Row>
           </EditSection>
@@ -193,17 +273,16 @@ class Edit extends React.Component {
               <Button type="danger"
                       onClick={this.onFirmwareUpdateCancel}>Cancel</Button>
               <Button
-                disabled={!OTA.deviceIds.length}
+                disabled={!OTA.deviceIds.length || !OTA.pathToFirmware}
                 onClick={this.firmwareUpdateStart}
                 type="primary">
-                Update firmware
+                Start Shipping
               </Button>
             </div>
           </EditSection>
         </MainLayout.Content>
       </MainLayout>
-    )
-      ;
+    );
   }
 
 }
