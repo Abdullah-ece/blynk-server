@@ -76,7 +76,7 @@ public final class WebResolveOwnLogEventLogic implements PermissionBasedLogic<Ba
             throw new JsonException("Requested device not found.");
         }
 
-        int orgId = deviceValue.orgId;
+        int orgId = deviceValue.org.id;
         if (!user.hasAccess(orgId)) {
             log.error("User {} tries to access device {} he has no access.", user.email, deviceId);
             throw new JsonException("User tries to access device he has no access.");

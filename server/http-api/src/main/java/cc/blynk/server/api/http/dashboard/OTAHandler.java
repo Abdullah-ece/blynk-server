@@ -18,10 +18,10 @@ import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.ota.DeviceOtaInfo;
-import cc.blynk.server.core.model.device.ota.OTAStatus;
+import cc.blynk.server.core.model.device.ota.OTADeviceStatus;
 import cc.blynk.server.core.model.dto.OtaDTO;
+import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.FirmwareInfo;
-import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.Shipment;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
@@ -104,14 +104,15 @@ public class OTAHandler extends BaseHttpHandler {
         log.info("Initiating OTA for {}. {}", user.email, otaDTO);
 
         long now = System.currentTimeMillis();
-        Product product = organizationDao.getProductByIdOrThrow(otaDTO.productId);
-        product.setShipment(new Shipment(otaDTO, now));
+        Organization org = organizationDao.getOrgByIdOrThrow(otaDTO.orgId);
+        Shipment shipment = new Shipment(otaDTO, now);
+        org.addShipment(shipment);
 
         for (Device device : filteredDevices) {
-            DeviceOtaInfo deviceOtaInfo = new DeviceOtaInfo(user.email, now,
+            DeviceOtaInfo deviceOtaInfo = new DeviceOtaInfo(shipment.id, user.email, now,
                     -1L, -1L, -1L, -1L,
                     otaDTO.pathToFirmware, otaDTO.firmwareInfo.buildDate,
-                    OTAStatus.STARTED, 0, otaDTO.attemptsLimit, otaDTO.isSecure);
+                    OTADeviceStatus.STARTED, 0, otaDTO.attemptsLimit);
             device.setDeviceOtaInfo(deviceOtaInfo);
         }
 
@@ -134,7 +135,7 @@ public class OTAHandler extends BaseHttpHandler {
             }
         }
 
-        return ok(product.shipment);
+        return ok(shipment);
     }
 
     @POST
@@ -156,31 +157,32 @@ public class OTAHandler extends BaseHttpHandler {
         log.info("Stopping OTA for {}. {}", user.email, otaDTO);
 
         for (Device device : filteredDevices) {
-            if (device.deviceOtaInfo != null && device.deviceOtaInfo.otaStatus != OTAStatus.SUCCESS
-                    && device.deviceOtaInfo.otaStatus != OTAStatus.FAILURE) {
+            if (device.deviceOtaInfo != null && device.deviceOtaInfo.status != OTADeviceStatus.SUCCESS
+                    && device.deviceOtaInfo.status != OTADeviceStatus.FAILURE) {
                 device.setDeviceOtaInfo(null);
             }
         }
 
-        Product product = organizationDao.getProductByIdOrThrow(otaDTO.productId);
-        product.setShipment(null);
+        Organization org = organizationDao.getOrgByIdOrThrow(otaDTO.orgId);
+        org.stopShipment(otaDTO.id);
 
         return ok();
     }
 
     @DELETE
-    @Path("/deleteProgress/{productId}")
+    @Path("/deleteProgress/{shipmentId}")
     @Consumes(value = MediaType.APPLICATION_JSON)
-    public Response deleteProgress(@ContextUser User user, @PathParam("productId") int productId) {
-        if (productId == -1) {
+    public Response deleteProgress(@ContextUser User user, @PathParam("shipmentId") int shipmentId) {
+        if (shipmentId == -1) {
             log.error("No productId to delete OTA progress.");
             return badRequest("No productId to delete OTA progress");
         }
 
         log.info("Deleting OTA progress for {}.", user.email);
 
-        Product product = organizationDao.getProductByIdOrThrow(productId);
-        product.setShipment(null);
+        //todo user.orgId is wrong, but leave for now, this api should be removed
+        Organization org = organizationDao.getOrgByIdOrThrow(user.orgId);
+        org.deleteShipment(shipmentId);
 
         return ok();
     }

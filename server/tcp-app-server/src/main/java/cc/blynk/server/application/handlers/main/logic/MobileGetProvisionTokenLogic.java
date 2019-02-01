@@ -4,6 +4,7 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import io.netty.channel.ChannelHandlerContext;
@@ -37,7 +38,8 @@ public final class MobileGetProvisionTokenLogic {
         temporaryDevice.id = holder.deviceDao.getId();
 
         log.debug("Getting provision token for deviceId {}.", temporaryDevice.id);
-        holder.deviceDao.assignTempToken(user.orgId, user, temporaryDevice);
+        Organization org = holder.organizationDao.getOrgByIdOrThrow(user.orgId);
+        holder.deviceDao.assignTempToken(org, user, temporaryDevice);
 
         if (ctx.channel().isWritable()) {
             ctx.writeAndFlush(makeASCIIStringMessage(MOBILE_GET_PROVISION_TOKEN,

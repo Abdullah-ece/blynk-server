@@ -46,7 +46,7 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
         Channel hardwareChannel = ctx.channel();
         HardwareStateHolder state = getHardState(hardwareChannel);
         if (state != null) {
-            Session session = sessionDao.getOrgSession(state.orgId);
+            Session session = sessionDao.getOrgSession(state.org.id);
             if (session != null) {
                 Device device = state.device;
                 log.trace("Hardware channel disconnect for deviceId {}, token {}.", device.id, device.token);

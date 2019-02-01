@@ -44,7 +44,7 @@ public final class DeviceDao {
                 for (Device device : product.devices) {
                     maxDeviceId = Math.max(maxDeviceId, device.id);
                     hotfixForAiriusMissingHardwareInfo(product, device);
-                    devices.put(device.id, new DeviceValue(org.id, product, device));
+                    devices.put(device.id, new DeviceValue(org, product, device));
                 }
             }
         }
@@ -74,20 +74,20 @@ public final class DeviceDao {
         return deviceSequence.incrementAndGet();
     }
 
-    public void createWithPredefinedIdAndToken(int orgId, String email, Product product, Device device) {
-        devices.put(device.id, new DeviceValue(orgId, product, device));
-        deviceTokenManager.assignNewToken(orgId, email, product, device, device.token);
+    public void createWithPredefinedIdAndToken(Organization org, String email, Product product, Device device) {
+        devices.put(device.id, new DeviceValue(org, product, device));
+        deviceTokenManager.assignNewToken(org, email, product, device, device.token);
     }
 
-    public Device createWithPredefinedId(int orgId, String email, Product product, Device device) {
-        devices.put(device.id, new DeviceValue(orgId, product, device));
-        deviceTokenManager.assignNewToken(orgId, email, product, device);
+    public Device createWithPredefinedId(Organization org, String email, Product product, Device device) {
+        devices.put(device.id, new DeviceValue(org, product, device));
+        deviceTokenManager.assignNewToken(org, email, product, device);
         return device;
     }
 
-    public Device create(int orgId, String email, Product product, Device device) {
+    public Device create(Organization org, String email, Product product, Device device) {
         device.id = deviceSequence.incrementAndGet();
-        return createWithPredefinedId(orgId, email, product, device);
+        return createWithPredefinedId(org, email, product, device);
     }
 
     public DeviceValue delete(int deviceId) {
@@ -149,7 +149,7 @@ public final class DeviceDao {
         List<Device> result = new ArrayList<>();
         for (int deviceId : deviceIds) {
             DeviceValue deviceValue = devices.get(deviceId);
-            if (deviceValue != null && deviceValue.orgId == orgId && deviceValue.product.id == productId) {
+            if (deviceValue != null && deviceValue.org.id == orgId && deviceValue.product.id == productId) {
                 Device device = deviceValue.device;
                 result.add(device);
             }
@@ -203,15 +203,15 @@ public final class DeviceDao {
         return deviceTokenManager.cache.entrySet().removeIf(entry -> entry.getValue().isExpired(now));
     }
 
-    public String assignNewToken(int orgId, String email, Product product, Device device) {
-        return deviceTokenManager.assignNewToken(orgId, email, product, device);
+    public String assignNewToken(Organization org, String email, Product product, Device device) {
+        return deviceTokenManager.assignNewToken(org, email, product, device);
     }
 
-    public void assignNewToken(int orgId, String email, Product product, Device device, String newToken) {
-        deviceTokenManager.assignNewToken(orgId, email, product, device, newToken);
+    public void assignNewToken(Organization org, String email, Product product, Device device, String newToken) {
+        deviceTokenManager.assignNewToken(org, email, product, device, newToken);
     }
 
-    public void assignTempToken(int orgId, User user, Device tempDevice) {
-        deviceTokenManager.assignTempToken(new ProvisionTokenValue(orgId, user, tempDevice));
+    public void assignTempToken(Organization org, User user, Device tempDevice) {
+        deviceTokenManager.assignTempToken(new ProvisionTokenValue(org, user, tempDevice));
     }
 }

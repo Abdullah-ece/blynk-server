@@ -282,7 +282,7 @@ public class MobileHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
                 break;
 
             case MOBILE_CREATE_DEVICE :
-                MobileCreateDeviceLogic.messageReceived(holder, ctx, state.user, msg);
+                MobileCreateDeviceLogic.messageReceived(holder, ctx, state, msg);
                 break;
             case MOBILE_EDIT_DEVICE :
                 MobileUpdateDeviceLogic.messageReceived(holder, ctx, state.user, msg);

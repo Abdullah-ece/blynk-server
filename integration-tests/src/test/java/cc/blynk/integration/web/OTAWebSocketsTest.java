@@ -7,7 +7,7 @@ import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
 import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.model.device.ota.OTAStatus;
+import cc.blynk.server.core.model.device.ota.OTADeviceStatus;
 import cc.blynk.server.core.model.dto.OtaDTO;
 import cc.blynk.server.core.model.dto.ProductDTO;
 import cc.blynk.server.core.model.web.product.FirmwareInfo;
@@ -115,7 +115,7 @@ public class OTAWebSocketsTest extends SingleServerInstancePerTestWithDBAndNewOr
 
         assertNotNull(createdDevice);
         assertNotNull(createdDevice.deviceOtaInfo);
-        assertEquals(OTAStatus.STARTED, createdDevice.deviceOtaInfo.otaStatus);
+        assertEquals(OTADeviceStatus.STARTED, createdDevice.deviceOtaInfo.status);
         assertEquals(getUserName(), createdDevice.deviceOtaInfo.otaStartedBy);
         assertEquals(System.currentTimeMillis(), createdDevice.deviceOtaInfo.otaStartedAt, 5000);
         assertEquals(pathToFirmware, createdDevice.deviceOtaInfo.pathToFirmware);
@@ -140,7 +140,7 @@ public class OTAWebSocketsTest extends SingleServerInstancePerTestWithDBAndNewOr
         createdDevice = client.parseDevice(1);
         assertNotNull(createdDevice);
         assertNotNull(createdDevice.deviceOtaInfo);
-        assertEquals(OTAStatus.REQUEST_SENT, createdDevice.deviceOtaInfo.otaStatus);
+        assertEquals(OTADeviceStatus.REQUEST_SENT, createdDevice.deviceOtaInfo.status);
         assertEquals(System.currentTimeMillis(), createdDevice.deviceOtaInfo.requestSentAt, 5000);
         assertEquals(pathToFirmware, createdDevice.deviceOtaInfo.pathToFirmware);
         assertEquals("May  9 2018 12:36:07", createdDevice.deviceOtaInfo.buildDate);
@@ -179,7 +179,7 @@ public class OTAWebSocketsTest extends SingleServerInstancePerTestWithDBAndNewOr
         assertNotNull(createdDevice);
         assertNotNull(createdDevice.deviceOtaInfo);
         assertNotNull(createdDevice.hardwareInfo);
-        assertEquals(OTAStatus.SUCCESS, createdDevice.deviceOtaInfo.otaStatus);
+        assertEquals(OTADeviceStatus.SUCCESS, createdDevice.deviceOtaInfo.status);
         assertEquals(System.currentTimeMillis(), createdDevice.deviceOtaInfo.requestSentAt, 5000);
         assertEquals(System.currentTimeMillis(), createdDevice.deviceOtaInfo.firmwareRequestedAt, 5000);
         assertEquals(System.currentTimeMillis(), createdDevice.deviceOtaInfo.firmwareUploadedAt, 5000);

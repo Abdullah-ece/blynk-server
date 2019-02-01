@@ -1,6 +1,7 @@
 package cc.blynk.server.core.dao;
 
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
 
 /**
@@ -10,14 +11,14 @@ import cc.blynk.server.core.model.web.product.Product;
  */
 public class DeviceValue {
 
-    public final int orgId;
+    public final Organization org;
 
     public final Product product;
 
     public final Device device;
 
-    public DeviceValue(int orgId, Product product, Device device) {
-        this.orgId = orgId;
+    public DeviceValue(Organization org, Product product, Device device) {
+        this.org = org;
         this.product = product;
         this.device = device;
     }
@@ -31,7 +32,7 @@ public class DeviceValue {
     }
 
     public boolean belongsToOrg(int orgId) {
-        return this.orgId == orgId;
+        return this.org.id == orgId;
     }
 
 }

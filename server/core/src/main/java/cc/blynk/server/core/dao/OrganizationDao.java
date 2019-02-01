@@ -236,11 +236,6 @@ public class OrganizationDao {
         return organizations.values();
     }
 
-    public Product assignToOrgAndAddDevice(int orgId, Device newDevice) {
-        Organization org = getOrgByIdOrThrow(orgId);
-        return assignToOrgAndAddDevice(org, newDevice);
-    }
-
     public Product assignToOrgAndAddDevice(Organization org, Device newDevice) {
         //todo temp solution
         Product product;
@@ -429,6 +424,5 @@ public class OrganizationDao {
             }
         }
     }
-
 
 }

@@ -1,6 +1,7 @@
 package cc.blynk.server.core.session;
 
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.utils.ArrayUtil;
 
@@ -11,12 +12,12 @@ import cc.blynk.utils.ArrayUtil;
  */
 public final class HardwareStateHolder  {
 
-    public final int orgId;
+    public final Organization org;
     public final Product product;
     public final Device device;
 
-    public HardwareStateHolder(int orgId, Product product, Device device) {
-        this.orgId = orgId;
+    public HardwareStateHolder(Organization org, Product product, Device device) {
+        this.org = org;
         this.product = product;
         this.device = device;
     }
@@ -24,7 +25,7 @@ public final class HardwareStateHolder  {
     @Override
     public String toString() {
         return "HardwareStateHolder{"
-                + "orgId=" + orgId
+                + "orgId=" + org.id
                 + ", productId=" + product.id
                 + ", device=" + device
                 + '}';

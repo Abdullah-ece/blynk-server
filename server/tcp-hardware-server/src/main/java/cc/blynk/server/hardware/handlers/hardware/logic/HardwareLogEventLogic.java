@@ -65,7 +65,7 @@ public class HardwareLogEventLogic {
             return;
         }
 
-        Session session = sessionDao.getOrgSession(state.orgId);
+        Session session = sessionDao.getOrgSession(state.org.id);
         String bodyForWeb = event.getType() + StringUtils.BODY_SEPARATOR_STRING + message.body;
         session.sendToSelectedDeviceOnWeb(HARDWARE_LOG_EVENT, message.id, bodyForWeb, device.id);
 

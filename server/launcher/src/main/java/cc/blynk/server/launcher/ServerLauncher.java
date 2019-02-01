@@ -255,7 +255,7 @@ public final class ServerLauncher {
             newDevice.setHardwareInfo(new HardwareInfo("1.0.0", "0.5.0", "Particle Photon", "atm33",
                     "WI-FI", "0.0.0", null, 1, -1));
             holder.organizationDao.assignToOrgAndAddDevice(superOrg, newDevice);
-            holder.deviceDao.create(superOrg.id, "admin@blynk.cc", product, newDevice);
+            holder.deviceDao.create(superOrg, "admin@blynk.cc", product, newDevice);
             for (EventType eventType : EventType.values()) {
                 try {
                     Event event = product.getEventByType(eventType);

@@ -38,27 +38,24 @@ public class ProvisionedHardwareFirstHandler extends SimpleChannelInboundHandler
     private static final Logger log = LogManager.getLogger(ProvisionedHardwareFirstHandler.class);
 
     private final Holder holder;
-    private final int orgId;
     private final User user;
     private final Device device;
     private final int msgId;
-    private Organization org;
+    private final Organization org;
     private Product product;
 
-    ProvisionedHardwareFirstHandler(Holder holder, int orgId, User user, Device device, int msgId) {
+    ProvisionedHardwareFirstHandler(Holder holder, Organization org, User user, Device device, int msgId) {
         super(StringMessage.class);
         this.holder = holder;
-        this.orgId = orgId;
         this.user = user;
         this.device = device;
         this.msgId = msgId;
+        this.org = org;
     }
 
-    private void getProductAndOrgByTemplateId(int orgId, String templateId) {
-        Organization tempOrg = holder.organizationDao.getOrgByIdOrThrow(orgId);
-        Product productWithTemplate = tempOrg.getProductByTemplateId(templateId);
+    private void getProductAndOrgByTemplateId(String templateId) {
+        Product productWithTemplate = org.getProductByTemplateId(templateId);
         if (productWithTemplate != null) {
-            this.org = tempOrg;
             this.product = productWithTemplate;
         }
     }
@@ -92,14 +89,12 @@ public class ProvisionedHardwareFirstHandler extends SimpleChannelInboundHandler
                     String templateId = hardwareInfo.templateId;
 
                     if (templateId == null) {
-                        org = holder.organizationDao.getOrgByIdOrThrow(orgId);
-
                         //special temporary hotfix https://github.com/blynkkk/dash/issues/1765
                         if ("0.7.0".equals(hardwareInfo.blynkVersion)) {
                             String productName = "Airius Fan";
                             product = org.getProductByName(productName);
                             if (product == null) {
-                                log.error("Didn't find product by name {} for orgId={}.", productName, orgId);
+                                log.error("Didn't find product by name {} for orgId={}.", productName, org.id);
                             }
                         }
                         if (product == null) {
@@ -109,9 +104,8 @@ public class ProvisionedHardwareFirstHandler extends SimpleChannelInboundHandler
                         log.warn("No templateId from hardware. Getting first product (id={}) "
                                 + "for provisioned device {}.", product.id, device.id);
                     } else {
-                        getProductAndOrgByTemplateId(orgId, templateId);
+                        getProductAndOrgByTemplateId(templateId);
                         if (product == null) {
-                            org = holder.organizationDao.getOrgByIdOrThrow(orgId);
                             product = org.getFirstProduct();
                             log.warn("No templateId {} in products for deviceId {}. "
                                             + "Getting first product (id={}) for provisioned device.",
@@ -138,13 +132,13 @@ public class ProvisionedHardwareFirstHandler extends SimpleChannelInboundHandler
 
                     device.metaFields = metaFields;
                     device.updateNameFromMetafields();
-                    holder.deviceDao.createWithPredefinedIdAndToken(orgId, user.email, product, device);
+                    holder.deviceDao.createWithPredefinedIdAndToken(org, user.email, product, device);
 
                     ChannelPipeline pipeline = ctx.pipeline();
                     pipeline.remove(this)
                             .fireUserEventTriggered(
-                                    new ProvisionedDeviceAddedMessage(orgId, user,
-                                            device, message.id, product, org.name));
+                                    new ProvisionedDeviceAddedMessage(org, user,
+                                            device, message.id, product));
                     break;
             }
         } else {

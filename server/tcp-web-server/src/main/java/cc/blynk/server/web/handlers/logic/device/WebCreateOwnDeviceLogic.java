@@ -72,7 +72,7 @@ public final class WebCreateOwnDeviceLogic implements PermissionBasedLogic<WebAp
 
         Organization org = organizationDao.getOrgByIdOrThrow(requestedOrgId);
         Product product = organizationDao.assignToOrgAndAddDevice(org, newDevice);
-        deviceDao.create(requestedOrgId, user.email, product, newDevice);
+        deviceDao.create(org, user.email, product, newDevice);
         newDevice.updateDeviceNameMetaFieldFromName();
         String tmplId = product.getFirstTemplateId();
         //for now setting fake device info.

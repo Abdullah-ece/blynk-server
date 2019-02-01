@@ -50,7 +50,7 @@ public class BridgeLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
-        int orgId = state.orgId;
+        int orgId = state.org.id;
         var session = sessionDao.getOrgSession(orgId);
         var split = split3(message.body);
 

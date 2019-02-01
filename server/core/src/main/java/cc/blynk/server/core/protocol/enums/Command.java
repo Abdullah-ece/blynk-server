@@ -179,7 +179,7 @@ public final class Command {
     public static final short WEB_OTA_START = 141;
     public static final short WEB_OTA_STOP = 142;
     public static final short WEB_OTA_GET_FIRMWARE_INFO = 143;
-    public static final short WEB_OTA_CLEAN = 144;
+    public static final short WEB_SHIPMENT_DELETE = 144;
     public static final short WEB_TRACK_ORG = 145;
     public static final short WEB_GET_USER_COUNTERS_BY_ROLE = 146;
     public static final short WEB_GET_DEVICES_BY_REFERENCE_METAFIELD = 147;
@@ -188,6 +188,7 @@ public final class Command {
     public static final short WEB_GET_RULE_GROUP = 150;
     public static final short WEB_EDIT_RULE_GROUP = 151;
     public static final short WEB_GET_DEVICE_COUNT_FOR_PRODUCT_AND_SUBPRODUCTS = 152;
+    public static final short WEB_GET_ORG_SHIPMENTS = 153;
 
     public static final int LAST_COMMAND_INDEX = 160;
 

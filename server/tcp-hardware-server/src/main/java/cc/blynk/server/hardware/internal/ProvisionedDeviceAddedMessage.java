@@ -2,6 +2,7 @@ package cc.blynk.server.hardware.internal;
 
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
 
 /**
@@ -9,9 +10,9 @@ import cc.blynk.server.core.model.web.product.Product;
  * Created by Dmitriy Dumanskiy.
  * Created on 01.02.18.
  */
-public class ProvisionedDeviceAddedMessage {
+public final class ProvisionedDeviceAddedMessage {
 
-    public final int orgId;
+    public final Organization org;
 
     public final User user;
 
@@ -21,17 +22,14 @@ public class ProvisionedDeviceAddedMessage {
 
     public final Product product;
 
-    public final String orgName;
-
-    public ProvisionedDeviceAddedMessage(int orgId, User user,
+    public ProvisionedDeviceAddedMessage(Organization org, User user,
                                          Device device, int msgId,
-                                         Product product, String orgName) {
-        this.orgId = orgId;
+                                         Product product) {
+        this.org = org;
         this.user = user;
         this.device = device;
         this.msgId = msgId;
         this.product = product;
-        this.orgName = orgName;
     }
 }
 

@@ -2,6 +2,7 @@ package cc.blynk.server.core.dao;
 
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.web.Organization;
 
 import java.util.concurrent.TimeUnit;
 
@@ -16,9 +17,9 @@ public final class ProvisionTokenValue extends DeviceValue {
     private final long created;
     public final User user;
 
-    public ProvisionTokenValue(int orgId, User user, Device device) {
+    public ProvisionTokenValue(Organization org, User user, Device device) {
         //for provisioned device product defined during first connect of the device
-        super(orgId, null, device);
+        super(org, null, device);
         this.user = user;
         this.created = System.currentTimeMillis();
     }

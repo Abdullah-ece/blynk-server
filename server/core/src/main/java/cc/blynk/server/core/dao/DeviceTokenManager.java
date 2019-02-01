@@ -32,7 +32,7 @@ public class DeviceTokenManager {
             for (Product product : org.products) {
                 for (Device device : product.devices) {
                     if (device.token != null) {
-                        cache.put(device.token, new DeviceValue(org.id, product, device));
+                        cache.put(device.token, new DeviceValue(org, product, device));
                     }
                 }
             }
@@ -63,17 +63,17 @@ public class DeviceTokenManager {
         provisionTokenValue.device.token = newToken;
         cache.put(newToken, provisionTokenValue);
         log.debug("Generated provision token for orgId {} user {}, deviceId {} is {}.",
-                provisionTokenValue.orgId, provisionTokenValue.user.email, provisionTokenValue.device.id, newToken);
+                provisionTokenValue.org, provisionTokenValue.user.email, provisionTokenValue.device.id, newToken);
     }
 
-    String assignNewToken(int orgId, String email, Product product, Device device) {
+    String assignNewToken(Organization org, String email, Product product, Device device) {
         String newToken = TokenGeneratorUtil.generateNewToken();
-        assignNewToken(orgId, email, product, device, newToken);
+        assignNewToken(org, email, product, device, newToken);
         return newToken;
     }
 
-    void assignNewToken(int orgId, String email, Product product, Device device, String newToken) {
-        String oldToken = assignToken(orgId, product, device, newToken);
+    void assignNewToken(Organization org, String email, Product product, Device device, String newToken) {
+        String oldToken = assignToken(org, product, device, newToken);
 
         device.setDeviceOwnerInMeta(email);
         //device activated when new token is assigned
@@ -88,7 +88,7 @@ public class DeviceTokenManager {
         }
     }
 
-    private String assignToken(int orgId, Product product, Device device, String newToken) {
+    private String assignToken(Organization org, Product product, Device device, String newToken) {
         // Clean old token from cache if exists.
         String oldToken = device.token;
         if (oldToken != null) {
@@ -97,10 +97,10 @@ public class DeviceTokenManager {
 
         //assign new token
         device.token = newToken;
-        DeviceValue tokenValue = new DeviceValue(orgId, product, device);
+        DeviceValue tokenValue = new DeviceValue(org, product, device);
         cache.put(newToken, tokenValue);
 
-        log.debug("Generated token for orgId {} deviceId {} is {}.", orgId, device.id, newToken);
+        log.debug("Generated token for orgId {} deviceId {} is {}.", org.id, device.id, newToken);
 
         return oldToken;
     }

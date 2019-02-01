@@ -37,6 +37,11 @@ import cc.blynk.server.web.handlers.logic.organization.WebGetProductLocationsLog
 import cc.blynk.server.web.handlers.logic.organization.WebGetRuleGroupLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebGetTempSecureTokenLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebTrackOrganizationLogic;
+import cc.blynk.server.web.handlers.logic.organization.ota.WebDeleteShipmentLogic;
+import cc.blynk.server.web.handlers.logic.organization.ota.WebGetFirmwareInfoLogic;
+import cc.blynk.server.web.handlers.logic.organization.ota.WebGetOrgShipmentsLogic;
+import cc.blynk.server.web.handlers.logic.organization.ota.WebStartOtaLogic;
+import cc.blynk.server.web.handlers.logic.organization.ota.WebStopOtaLogic;
 import cc.blynk.server.web.handlers.logic.organization.roles.WebCreateRoleLogic;
 import cc.blynk.server.web.handlers.logic.organization.roles.WebDeleteRoleLogic;
 import cc.blynk.server.web.handlers.logic.organization.roles.WebEditRoleLogic;
@@ -55,10 +60,6 @@ import cc.blynk.server.web.handlers.logic.product.WebEditProductLogic;
 import cc.blynk.server.web.handlers.logic.product.WebGetProductLogic;
 import cc.blynk.server.web.handlers.logic.product.WebGetProductsLogic;
 import cc.blynk.server.web.handlers.logic.product.WebUpdateDevicesMetaInProductLogic;
-import cc.blynk.server.web.handlers.logic.product.ota.WebCleanOtaLogic;
-import cc.blynk.server.web.handlers.logic.product.ota.WebGetFirmwareInfoLogic;
-import cc.blynk.server.web.handlers.logic.product.ota.WebStartOtaLogic;
-import cc.blynk.server.web.handlers.logic.product.ota.WebStopOtaLogic;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_SUPERCHART_DATA;
@@ -97,6 +98,7 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_METAFIELD;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORG;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORGS;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORG_HIERARCHY;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORG_SHIPMENTS;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORG_USERS;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_PRODUCT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_PRODUCTS;
@@ -107,12 +109,12 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_RULE_GROUP;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_TEMP_SECURE_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_USER_COUNTERS_BY_ROLE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_INVITE_USER;
-import static cc.blynk.server.core.protocol.enums.Command.WEB_OTA_CLEAN;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_OTA_GET_FIRMWARE_INFO;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_OTA_START;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_OTA_STOP;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_RESOLVE_EVENT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_SET_AUTH_TOKEN;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_SHIPMENT_DELETE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_TRACK_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_TRACK_ORG;
 
@@ -163,7 +165,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
     private final WebGetFirmwareInfoLogic webGetFirmwareInfoLogic;
     private final WebStartOtaLogic webStartOtaLogic;
     private final WebStopOtaLogic webStopOtaLogic;
-    private final WebCleanOtaLogic webCleanOtaLogic;
+    private final WebDeleteShipmentLogic webCleanOtaLogic;
     private final WebTrackOrganizationLogic webTrackOrganizationLogic;
     private final WebUpdateDeviceMetafieldLogic webUpdateDeviceMetafieldLogic;
     private final WebTrackDeviceLogic webTrackDeviceLogic;
@@ -172,6 +174,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
     private final WebGetUserCountersByRoleLogic webGetUserCountersByRoleLogic;
     private final WebGetRuleGroupLogic webGetRuleGroupLogic;
     private final WebEditRuleGroupLogic webEditRuleGroupLogic;
+    private final WebGetOrgShipmentsLogic webGetOrgShipmentsLogic;
 
     private final Holder holder;
 
@@ -215,7 +218,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
         this.webGetFirmwareInfoLogic = new WebGetFirmwareInfoLogic(holder);
         this.webStartOtaLogic = new WebStartOtaLogic(holder);
         this.webStopOtaLogic = new WebStopOtaLogic(holder);
-        this.webCleanOtaLogic = new WebCleanOtaLogic(holder);
+        this.webCleanOtaLogic = new WebDeleteShipmentLogic(holder);
         this.webTrackOrganizationLogic = new WebTrackOrganizationLogic(holder);
         this.webUpdateDeviceMetafieldLogic = new WebUpdateDeviceMetafieldLogic(holder);
         this.webTrackDeviceLogic = new WebTrackDeviceLogic(holder);
@@ -224,6 +227,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
         this.webGetUserCountersByRoleLogic = new WebGetUserCountersByRoleLogic(holder);
         this.webGetRuleGroupLogic = new WebGetRuleGroupLogic(holder);
         this.webEditRuleGroupLogic = new WebEditRuleGroupLogic(holder);
+        this.webGetOrgShipmentsLogic = new WebGetOrgShipmentsLogic(holder);
 
         this.state = state;
         this.holder = holder;
@@ -377,7 +381,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
             case WEB_OTA_STOP :
                 webStopOtaLogic.messageReceived(ctx, state, msg);
                 break;
-            case WEB_OTA_CLEAN :
+            case WEB_SHIPMENT_DELETE:
                 webCleanOtaLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_TRACK_ORG :
@@ -394,6 +398,9 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
                 break;
             case WEB_EDIT_RULE_GROUP :
                 webEditRuleGroupLogic.messageReceived(ctx, state, msg);
+                break;
+            case WEB_GET_ORG_SHIPMENTS :
+                webGetOrgShipmentsLogic.messageReceived(ctx, state, msg);
                 break;
         }
     }

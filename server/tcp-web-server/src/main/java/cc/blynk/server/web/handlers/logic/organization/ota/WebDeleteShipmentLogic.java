@@ -1,9 +1,9 @@
-package cc.blynk.server.web.handlers.logic.product.ota;
+package cc.blynk.server.web.handlers.logic.organization.ota;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.PermissionBasedLogic;
 import cc.blynk.server.core.dao.OrganizationDao;
-import cc.blynk.server.core.model.web.product.Product;
+import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
@@ -17,11 +17,11 @@ import static cc.blynk.server.internal.CommonByteBufUtil.ok;
  * Created by Dmitriy Dumanskiy.
  * Created on 12.12.18.
  */
-public final class WebCleanOtaLogic implements PermissionBasedLogic<WebAppStateHolder> {
+public final class WebDeleteShipmentLogic implements PermissionBasedLogic<WebAppStateHolder> {
 
     private final OrganizationDao organizationDao;
 
-    public WebCleanOtaLogic(Holder holder) {
+    public WebDeleteShipmentLogic(Holder holder) {
         this.organizationDao = holder.organizationDao;
     }
 
@@ -32,17 +32,17 @@ public final class WebCleanOtaLogic implements PermissionBasedLogic<WebAppStateH
 
     @Override
     public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
-        int productId = Integer.parseInt(message.body);
+        int shipmentId = Integer.parseInt(message.body);
 
-        if (productId == -1) {
+        if (shipmentId == -1) {
             log.error("No productId to delete OTA progress.");
             throw new JsonException("No productId to delete OTA progress");
         }
 
         log.info("Deleting OTA progress for {}.", state.user.email);
 
-        Product product = organizationDao.getProductByIdOrThrow(productId);
-        product.clearOtaProgress();
+        Organization org = organizationDao.getOrgByIdOrThrow(state.selectedOrgId);
+        org.deleteShipment(shipmentId);
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }

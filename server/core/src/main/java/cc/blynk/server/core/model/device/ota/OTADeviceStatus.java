@@ -1,6 +1,6 @@
 package cc.blynk.server.core.model.device.ota;
 
-public enum OTAStatus {
+public enum OTADeviceStatus {
 
     STARTED,
     REQUEST_SENT,

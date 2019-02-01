@@ -1,4 +1,4 @@
-package cc.blynk.server.web.handlers.logic.product.ota;
+package cc.blynk.server.web.handlers.logic.organization.ota;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.PermissionBasedLogic;
@@ -10,10 +10,10 @@ import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.ota.DeviceOtaInfo;
-import cc.blynk.server.core.model.device.ota.OTAStatus;
+import cc.blynk.server.core.model.device.ota.OTADeviceStatus;
 import cc.blynk.server.core.model.dto.OtaDTO;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.core.model.web.product.Product;
+import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Shipment;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -83,14 +83,15 @@ public final class WebStartOtaLogic implements PermissionBasedLogic<WebAppStateH
         log.info("Initiating OTA for {}. {}", user.email, otaDTO);
 
         long now = System.currentTimeMillis();
-        Product product = organizationDao.getProductByIdOrThrow(otaDTO.productId);
-        product.setShipment(new Shipment(otaDTO, now));
+        Organization org = organizationDao.getOrgByIdOrThrow(otaDTO.orgId);
+        Shipment shipment = new Shipment(otaDTO, now);
+        org.addShipment(shipment);
 
         for (Device device : filteredDevices) {
-            DeviceOtaInfo deviceOtaInfo = new DeviceOtaInfo(user.email, now,
+            DeviceOtaInfo deviceOtaInfo = new DeviceOtaInfo(shipment.id, user.email, now,
                     -1L, -1L, -1L, -1L,
                     otaDTO.pathToFirmware, otaDTO.firmwareInfo.buildDate,
-                    OTAStatus.STARTED, 0, otaDTO.attemptsLimit, otaDTO.isSecure);
+                    OTADeviceStatus.STARTED, 0, otaDTO.attemptsLimit);
             device.setDeviceOtaInfo(deviceOtaInfo);
         }
 
@@ -113,7 +114,7 @@ public final class WebStartOtaLogic implements PermissionBasedLogic<WebAppStateH
             }
         }
 
-        String firmwareParamsString = product.shipment.toString();
+        String firmwareParamsString = shipment.toString();
         StringMessage response = makeUTF8StringMessage(message.command, message.id, firmwareParamsString);
         ctx.writeAndFlush(response, ctx.voidPromise());
     }

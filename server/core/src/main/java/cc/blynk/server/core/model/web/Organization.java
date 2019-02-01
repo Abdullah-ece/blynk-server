@@ -9,6 +9,7 @@ import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.Shipment;
+import cc.blynk.server.core.model.web.product.ShipmentStatus;
 import cc.blynk.server.core.processors.rules.RuleGroup;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.utils.ArrayUtil;
@@ -406,6 +407,49 @@ public class Organization {
             }
         }
         return null;
+    }
+
+    //todo fix in future, for now check if exist with id
+    public void addShipment(Shipment shipment) {
+        int index = getShipmentIndexById(shipment.id);
+        if (index == -1) {
+            this.shipments = ArrayUtil.add(this.shipments, shipment, Shipment.class);
+            this.lastModifiedTs = System.currentTimeMillis();
+        } else {
+            this.shipments = ArrayUtil.copyAndReplace(this.shipments, shipment, index);
+        }
+    }
+
+    public void stopShipment(int id) {
+        int index = getShipmentIndexById(id);
+        if (index != -1) {
+            Shipment old = this.shipments[index];
+            Shipment newShipment =  new Shipment(old, ShipmentStatus.PAUSE);
+            this.shipments = ArrayUtil.copyAndReplace(this.shipments, newShipment, index);
+        }
+    }
+
+    public Shipment getShipmentById(int id) {
+        for (Shipment shipment : this.shipments) {
+            if (shipment.id == id) {
+                return shipment;
+            }
+        }
+        return null;
+    }
+
+    private int getShipmentIndexById(int id) {
+        for (int i = 0; i < shipments.length; i++) {
+            if (shipments[i].id == id) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public void deleteShipment(int id) {
+        int index = getShipmentIndexById(id);
+        this.shipments = ArrayUtil.remove(this.shipments, index, Shipment.class);
     }
 
     @Override

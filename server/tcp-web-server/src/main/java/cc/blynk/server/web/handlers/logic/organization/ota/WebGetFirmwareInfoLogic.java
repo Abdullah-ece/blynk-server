@@ -1,4 +1,4 @@
-package cc.blynk.server.web.handlers.logic.product.ota;
+package cc.blynk.server.web.handlers.logic.organization.ota;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.PermissionBasedLogic;

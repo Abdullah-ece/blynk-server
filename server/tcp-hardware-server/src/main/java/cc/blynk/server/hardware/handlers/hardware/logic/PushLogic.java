@@ -62,7 +62,7 @@ public class PushLogic extends NotificationBase {
             return;
         }
 
-        List<User> usersByOrgId = userDao.getAllUsersByOrgId(state.orgId);
+        List<User> usersByOrgId = userDao.getAllUsersByOrgId(state.org.id);
 
         for (User user : usersByOrgId) {
             //todo check permissions

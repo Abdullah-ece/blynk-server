@@ -53,7 +53,7 @@ public final class WebGetOwnDeviceLogic implements PermissionBasedLogic<WebAppSt
             return;
         }
 
-        organizationDao.checkInheritanceAccess(user, deviceValue.orgId);
+        organizationDao.checkInheritanceAccess(user, deviceValue.org.id);
 
         Device device = deviceValue.device;
         if (!state.role.canViewOrgDevices() && !device.hasOwner(state.user.email)) {
@@ -61,7 +61,7 @@ public final class WebGetOwnDeviceLogic implements PermissionBasedLogic<WebAppSt
             throw new NoPermissionException("User is not owner of requested device.");
         }
 
-        Organization org = organizationDao.getOrgByIdOrThrow(deviceValue.orgId);
+        Organization org = organizationDao.getOrgByIdOrThrow(deviceValue.org.id);
 
         device.fillWebDashboardValues();
         if (ctx.channel().isWritable()) {

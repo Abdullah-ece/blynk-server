@@ -55,7 +55,7 @@ public final class WebTrackDeviceLogic {
 
         Device device = deviceValue.device;
         Role role = state.role;
-        int requestedDeviceOrd = deviceValue.orgId;
+        int requestedDeviceOrd = deviceValue.org.id;
 
         if (!role.canViewOrgDevices()) {
             if (role.canViewOwnDevices()) {

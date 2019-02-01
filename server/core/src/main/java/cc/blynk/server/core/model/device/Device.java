@@ -3,7 +3,7 @@ package cc.blynk.server.core.model.device;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.ota.DeviceOtaInfo;
-import cc.blynk.server.core.model.device.ota.OTAStatus;
+import cc.blynk.server.core.model.device.ota.OTADeviceStatus;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.model.serialization.JsonParser;
@@ -297,42 +297,43 @@ public class Device {
     public void requestSent() {
         DeviceOtaInfo prev = this.deviceOtaInfo;
         long now = System.currentTimeMillis();
-        this.deviceOtaInfo = new DeviceOtaInfo(prev.otaStartedBy, prev.otaStartedAt,
+        this.deviceOtaInfo = new DeviceOtaInfo(prev.shipmentId, prev.otaStartedBy, prev.otaStartedAt,
                 now, -1L, -1L, -1L,
                 prev.pathToFirmware, prev.buildDate,
-                OTAStatus.REQUEST_SENT, prev.attempts, prev.attemptsLimit, prev.isSecure);
+                OTADeviceStatus.REQUEST_SENT, prev.attempts, prev.attemptsLimit);
         this.updatedAt = now;
     }
 
     public void success() {
         long now = System.currentTimeMillis();
-        this.deviceOtaInfo = new DeviceOtaInfo(this.deviceOtaInfo, now, OTAStatus.SUCCESS);
+        this.deviceOtaInfo = new DeviceOtaInfo(this.deviceOtaInfo, now, OTADeviceStatus.SUCCESS);
         this.updatedAt = now;
     }
 
     public void firmwareRequested() {
         DeviceOtaInfo prev = this.deviceOtaInfo;
         long now = System.currentTimeMillis();
-        this.deviceOtaInfo =  new DeviceOtaInfo(prev, now, -1L, -1L, OTAStatus.FIRMWARE_REQUESTED, prev.attempts + 1);
+        this.deviceOtaInfo =  new DeviceOtaInfo(prev, now, -1L, -1L,
+                OTADeviceStatus.FIRMWARE_REQUESTED, prev.attempts + 1);
         this.updatedAt = now;
     }
 
     public void firmwareUploaded() {
         DeviceOtaInfo prev = this.deviceOtaInfo;
         long now = System.currentTimeMillis();
-        this.deviceOtaInfo =  new DeviceOtaInfo(prev, now, -1L, OTAStatus.FIRMWARE_UPLOADED);
+        this.deviceOtaInfo =  new DeviceOtaInfo(prev, now, -1L, OTADeviceStatus.FIRMWARE_UPLOADED);
         this.updatedAt = now;
     }
 
     public void firmwareUploadFailure() {
         long now = System.currentTimeMillis();
-        this.deviceOtaInfo = new DeviceOtaInfo(this.deviceOtaInfo, now, OTAStatus.FAILURE);
+        this.deviceOtaInfo = new DeviceOtaInfo(this.deviceOtaInfo, now, OTADeviceStatus.FAILURE);
         this.updatedAt = now;
     }
 
     public void firmwareDownloadLimitReached() {
         long now = System.currentTimeMillis();
-        this.deviceOtaInfo = new DeviceOtaInfo(this.deviceOtaInfo, now, OTAStatus.DOWNLOAD_LIMIT_REACHED);
+        this.deviceOtaInfo = new DeviceOtaInfo(this.deviceOtaInfo, now, OTADeviceStatus.DOWNLOAD_LIMIT_REACHED);
         this.updatedAt = now;
     }
 

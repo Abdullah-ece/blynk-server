@@ -2,9 +2,10 @@ package cc.blynk.core.http.handlers;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.DeviceDao;
+import cc.blynk.server.core.dao.DeviceValue;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.model.web.product.Product;
+import cc.blynk.server.core.model.web.product.Shipment;
 import cc.blynk.server.internal.token.OTADownloadToken;
 import cc.blynk.server.internal.token.TokensPool;
 import cc.blynk.utils.FileUtils;
@@ -271,12 +272,14 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
         }
 
         String downloadToken = parseUploadToken(uriParts);
-        Device device = getDownloadingDevice(downloadToken);
-        if (device != null) {
+        DeviceValue deviceValue = getDownloadingDevice(downloadToken);
+        Device device = null;
+        if (deviceValue != null) {
+            device = deviceValue.device;
             device.firmwareRequested();
-            Product product = organizationDao.getProductByIdOrThrow(device.productId);
-            if (product.shipment != null && product.shipment.firmwareInfo != null) {
-                response.headers().set(MD5_HEADER, product.shipment.firmwareInfo.md5Hash);
+            Shipment shipment = deviceValue.org.getShipmentById(device.deviceOtaInfo.shipmentId);
+            if (shipment != null && shipment.firmwareInfo != null) {
+                response.headers().set(MD5_HEADER, shipment.firmwareInfo.md5Hash);
             }
         }
 
@@ -321,7 +324,7 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
         }
     }
 
-    private Device getDownloadingDevice(String downloadToken) {
+    private DeviceValue getDownloadingDevice(String downloadToken) {
         if (downloadToken == null) {
             return null;
         }
@@ -330,7 +333,7 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
             log.warn("Unexpected token for static file {}.", downloadToken);
             return null;
         }
-        return deviceDao.getByIdOrThrow(otaDownloadToken.deviceId);
+        return deviceDao.getDeviceValueById(otaDownloadToken.deviceId);
     }
 
     //todo check somehow it is OTA file?

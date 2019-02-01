@@ -55,8 +55,6 @@ public class Product {
 
     public WebDashboard webDashboard = new WebDashboard();
 
-    public volatile Shipment shipment;
-
     public volatile Device[] devices = EMPTY_DEVICES;
 
     public int version;
@@ -209,15 +207,6 @@ public class Product {
         if (pinSet.size() != dataStreams.length) {
             throw new IllegalCommandBodyException("Product has more than 1 Datastream on the same pin.");
         }
-    }
-
-    public void clearOtaProgress() {
-        setShipment(null);
-    }
-
-    public void setShipment(Shipment shipment) {
-        this.shipment = shipment;
-        this.lastModifiedTs = System.currentTimeMillis();
     }
 
     public MetaField[] copyMetaFields() {

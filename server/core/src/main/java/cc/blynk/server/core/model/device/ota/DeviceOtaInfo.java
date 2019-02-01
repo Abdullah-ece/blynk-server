@@ -8,7 +8,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Created by Dmitriy Dumanskiy.
  * Created on 17.08.17.
  */
-public class DeviceOtaInfo {
+public final class DeviceOtaInfo {
+
+    public final int shipmentId;
 
     public final String otaStartedBy;
 
@@ -26,16 +28,15 @@ public class DeviceOtaInfo {
 
     public final String buildDate;
 
-    public final OTAStatus otaStatus;
+    public final OTADeviceStatus status;
 
     public final int attempts;
 
     public final int attemptsLimit;
 
-    public final boolean isSecure;
-
     @JsonCreator
-    public DeviceOtaInfo(@JsonProperty("otaStartedBy") String otaStartedBy,
+    public DeviceOtaInfo(@JsonProperty("shipmentId") int shipmentId,
+                         @JsonProperty("otaStartedBy") String otaStartedBy,
                          @JsonProperty("otaStartedAt") long otaStartedAt,
                          @JsonProperty("requestSentAt") long requestSentAt,
                          @JsonProperty("firmwareRequestedAt") long firmwareRequestedAt,
@@ -43,10 +44,10 @@ public class DeviceOtaInfo {
                          @JsonProperty("finishedAt") long finishedAt,
                          @JsonProperty("pathToFirmware") String pathToFirmware,
                          @JsonProperty("buildDate") String buildDate,
-                         @JsonProperty("otaStatus") OTAStatus otaStatus,
+                         @JsonProperty("status") OTADeviceStatus status,
                          @JsonProperty("attempts") int attempts,
-                         @JsonProperty("attemptsLimit") int attemptsLimit,
-                         @JsonProperty("isSecure") boolean isSecure) {
+                         @JsonProperty("attemptsLimit") int attemptsLimit) {
+        this.shipmentId = shipmentId;
         this.otaStartedBy = otaStartedBy;
         this.otaStartedAt = otaStartedAt;
         this.requestSentAt = requestSentAt;
@@ -55,21 +56,19 @@ public class DeviceOtaInfo {
         this.finishedAt = finishedAt;
         this.pathToFirmware = pathToFirmware;
         this.buildDate = buildDate;
-        this.otaStatus = otaStatus;
+        this.status = status;
         this.attempts = attempts;
         this.attemptsLimit = attemptsLimit;
-        this.isSecure = isSecure;
     }
 
     public DeviceOtaInfo(DeviceOtaInfo prev,
                          long finishedAt,
-                         OTAStatus otaStatus) {
-        this(prev.otaStartedBy, prev.otaStartedAt,
+                         OTADeviceStatus status) {
+        this(prev.shipmentId, prev.otaStartedBy, prev.otaStartedAt,
                 prev.requestSentAt, prev.firmwareRequestedAt, prev.firmwareUploadedAt, finishedAt,
                 prev.pathToFirmware, prev.buildDate,
-                otaStatus,
-                prev.attempts, prev.attemptsLimit,
-                prev.isSecure);
+                status,
+                prev.attempts, prev.attemptsLimit);
 
     }
 
@@ -77,23 +76,23 @@ public class DeviceOtaInfo {
                          long firmwareRequestedAt,
                          long firmwareUploadedAt,
                          long finishedAt,
-                         OTAStatus otaStatus,
+                         OTADeviceStatus status,
                          int attempts) {
-        this(prev.otaStartedBy, prev.otaStartedAt,
+        this(prev.shipmentId, prev.otaStartedBy, prev.otaStartedAt,
                 prev.requestSentAt, firmwareRequestedAt, firmwareUploadedAt, finishedAt,
                 prev.pathToFirmware, prev.buildDate,
-                otaStatus, attempts, prev.attemptsLimit, prev.isSecure);
+                status, attempts, prev.attemptsLimit);
 
     }
 
     public DeviceOtaInfo(DeviceOtaInfo prev,
                          long firmwareUploadedAt,
                          long finishedAt,
-                         OTAStatus otaStatus) {
-        this(prev.otaStartedBy, prev.otaStartedAt,
+                         OTADeviceStatus status) {
+        this(prev.shipmentId, prev.otaStartedBy, prev.otaStartedAt,
                 prev.requestSentAt, prev.firmwareRequestedAt, firmwareUploadedAt, finishedAt,
                 prev.pathToFirmware, prev.buildDate,
-                otaStatus, prev.attempts, prev.attemptsLimit, prev.isSecure);
+                status, prev.attempts, prev.attemptsLimit);
     }
 
     public boolean isLimitReached() {

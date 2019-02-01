@@ -4,11 +4,13 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.PermissionBasedLogic;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.DeviceValue;
+import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.exceptions.NoPermissionException;
@@ -30,10 +32,12 @@ public final class WebSetAuthTokenForDeviceLogic implements PermissionBasedLogic
 
     private final DeviceDao deviceDao;
     private final SessionDao sessionDao;
+    private final OrganizationDao organizationDao;
 
     public WebSetAuthTokenForDeviceLogic(Holder holder) {
         this.deviceDao = holder.deviceDao;
         this.sessionDao = holder.sessionDao;
+        this.organizationDao = holder.organizationDao;
     }
 
     @Override
@@ -75,7 +79,8 @@ public final class WebSetAuthTokenForDeviceLogic implements PermissionBasedLogic
             throw new NoPermissionException("This token is already used by another device.");
         }
 
-        deviceDao.assignNewToken(orgId, user.email, product, device, newToken);
+        Organization org = organizationDao.getOrgByIdOrThrow(orgId);
+        deviceDao.assignNewToken(org, user.email, product, device, newToken);
         log.warn("Manual setting auth token {} for device {}, orgId = {}.", newToken, deviceDao, orgId);
 
         Session session = sessionDao.getOrgSession(orgId);

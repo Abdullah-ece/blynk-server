@@ -56,7 +56,7 @@ public final class HardwareLogic extends BaseProcessorHandler {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
-        messageReceived(ctx, message, state.orgId, state.device);
+        messageReceived(ctx, message, state.org.id, state.device);
     }
 
     public void messageReceived(ChannelHandlerContext ctx, StringMessage message,

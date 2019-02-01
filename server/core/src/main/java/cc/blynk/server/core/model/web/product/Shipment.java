@@ -29,6 +29,8 @@ public final class Shipment {
 
     public final boolean isSecure;
 
+    public final ShipmentStatus status;
+
     @JsonCreator
     public Shipment(@JsonProperty("id") int id,
                     @JsonProperty("title") String title,
@@ -39,7 +41,8 @@ public final class Shipment {
                     @JsonProperty("deviceIds") int[] deviceIds,
                     @JsonProperty("firmwareInfo") FirmwareInfo firmwareInfo,
                     @JsonProperty("attempts") int attempts,
-                    @JsonProperty("isSecure") boolean isSecure) {
+                    @JsonProperty("isSecure") boolean isSecure,
+                    @JsonProperty("status") ShipmentStatus status) {
         this.id = id;
         this.title = title;
         this.pathToFirmware = pathToFirmware;
@@ -50,6 +53,7 @@ public final class Shipment {
         this.firmwareInfo = firmwareInfo;
         this.attempts = attempts;
         this.isSecure = isSecure;
+        this.status = status == null ? ShipmentStatus.RUN : status;
     }
 
     public Shipment(OtaDTO otaDTO, long now) {
@@ -62,7 +66,23 @@ public final class Shipment {
                 otaDTO.deviceIds,
                 otaDTO.firmwareInfo,
                 otaDTO.attemptsLimit,
-                otaDTO.isSecure
+                otaDTO.isSecure,
+                ShipmentStatus.RUN
+        );
+    }
+
+    public Shipment(Shipment shipment, ShipmentStatus status) {
+        this(shipment.id,
+                shipment.title,
+                shipment.pathToFirmware,
+                shipment.firmwareOriginalFileName,
+                shipment.startedAt,
+                shipment.finishedAt,
+                shipment.deviceIds,
+                shipment.firmwareInfo,
+                shipment.attempts,
+                shipment.isSecure,
+                status
         );
     }
 

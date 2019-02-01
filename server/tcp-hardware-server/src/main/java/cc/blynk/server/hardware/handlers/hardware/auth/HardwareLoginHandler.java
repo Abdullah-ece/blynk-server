@@ -7,6 +7,7 @@ import cc.blynk.server.core.dao.ProvisionTokenValue;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.dto.DeviceDTO;
+import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.EventType;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
@@ -125,7 +126,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
             return;
         }
 
-        int orgId = tokenValue.orgId;
+        Organization org = tokenValue.org;
         Device device = tokenValue.device;
 
         if (tokenValue.isTemporary()) {
@@ -134,11 +135,11 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
             ProvisionTokenValue provisionTokenValue = (ProvisionTokenValue) tokenValue;
             ctx.pipeline().addBefore("H_Login", "HHProvisionedHardwareFirstHandler",
                     new ProvisionedHardwareFirstHandler(holder,
-                            orgId, provisionTokenValue.user, device, message.id));
+                            org, provisionTokenValue.user, device, message.id));
             return;
         }
 
-        createSessionAndReregister(ctx, orgId, tokenValue.product, device, message.id);
+        createSessionAndReregister(ctx, org, tokenValue.product, device, message.id);
     }
 
     @Override
@@ -147,26 +148,26 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
             ProvisionedDeviceAddedMessage msg = (ProvisionedDeviceAddedMessage) evt;
             log.debug("Triggered user event for provisioned device (id={}).", msg.device.id);
             Session session = createSessionAndReregister(ctx,
-                    msg.orgId,
+                    msg.org,
                     msg.product,
                     msg.device,
                     msg.msgId);
-            String body = new DeviceDTO(msg.device, msg.product, msg.orgName).toString();
+            String body = new DeviceDTO(msg.device, msg.product, msg.org.name).toString();
             session.sendToWeb(WEB_CREATE_DEVICE, msg.msgId, body);
         } else {
             ctx.fireUserEventTriggered(evt);
         }
     }
 
-    private Session createSessionAndReregister(ChannelHandlerContext ctx, int orgId,
+    private Session createSessionAndReregister(ChannelHandlerContext ctx, Organization org,
                                                Product product, Device device, int msgId) {
-        HardwareStateHolder hardwareStateHolder = new HardwareStateHolder(orgId, product, device);
+        HardwareStateHolder hardwareStateHolder = new HardwareStateHolder(org, product, device);
 
         ChannelPipeline pipeline = ctx.pipeline();
         pipeline.replace(this, "HHArdwareHandler", new HardwareHandler(holder, hardwareStateHolder));
 
         Session session = holder.sessionDao.getOrCreateSessionForOrg(
-                hardwareStateHolder.orgId, ctx.channel().eventLoop());
+                hardwareStateHolder.org.id, ctx.channel().eventLoop());
 
         if (session.isSameEventLoop(ctx)) {
             completeLogin(ctx.channel(), session, device, msgId);

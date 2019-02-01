@@ -122,7 +122,7 @@ public abstract class APIBaseTest extends CounterBase {
         Device device = new Device();
         device.name = "Default Device";
         Product product = org.products[0];
-        this.token = holder.deviceDao.createWithPredefinedId(org.id, regularUser.email, product, device).token;
+        this.token = holder.deviceDao.createWithPredefinedId(org, regularUser.email, product, device).token;
     }
 
     @After

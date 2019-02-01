@@ -5,9 +5,9 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.HardwareInfo;
 import cc.blynk.server.core.model.device.ota.DeviceOtaInfo;
-import cc.blynk.server.core.model.device.ota.OTAStatus;
-import cc.blynk.server.core.model.web.Organization;
+import cc.blynk.server.core.model.device.ota.OTADeviceStatus;
 import cc.blynk.server.core.model.web.product.Product;
+import cc.blynk.server.core.model.web.product.Shipment;
 import cc.blynk.server.core.model.widgets.others.rtc.RTC;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
@@ -107,12 +107,13 @@ public final class BlynkInternalLogic {
             DeviceOtaInfo deviceOtaInfo = device.deviceOtaInfo;
             if (deviceOtaInfo != null) {
                 if (hardwareInfo.isFirmwareVersionChanged(deviceOtaInfo.buildDate)) {
-                    if (deviceOtaInfo.otaStatus.isNotFailure()) {
+                    if (deviceOtaInfo.status.isNotFailure()) {
                         if (device.isAttemptsLimitReached()) {
                             log.warn("OTA limit reached for deviceId {}.", device.id);
                             device.firmwareDownloadLimitReached();
                         } else {
-                            String serverUrl = holder.props.getServerUrl(deviceOtaInfo.isSecure);
+                            Shipment shipment = state.org.getShipmentById(deviceOtaInfo.shipmentId);
+                            String serverUrl = holder.props.getServerUrl(shipment.isSecure);
                             String downloadToken = TokenGeneratorUtil.generateNewToken();
                             holder.tokensPool.addToken(downloadToken, new OTADownloadToken(device.id));
                             String body = StringUtils.makeHardwareBody(serverUrl,
@@ -123,7 +124,7 @@ public final class BlynkInternalLogic {
                         }
                     }
                 } else {
-                    if (deviceOtaInfo.otaStatus == OTAStatus.FIRMWARE_UPLOADED) {
+                    if (deviceOtaInfo.status == OTADeviceStatus.FIRMWARE_UPLOADED) {
                         device.success();
                     }
                 }
@@ -132,18 +133,16 @@ public final class BlynkInternalLogic {
             //special temporary hotfix https://github.com/blynkkk/dash/issues/1765
             String templateId = hardwareInfo.templateId;
             if (templateId == null) {
-                Organization org = holder.organizationDao.getOrgByIdOrThrow(state.orgId);
-
                 Product product = null;
                 if ("0.7.0".equals(hardwareInfo.blynkVersion)) {
                     String productName = "Airius Fan";
-                    product = org.getProductByName(productName);
+                    product = state.org.getProductByName(productName);
                     if (product == null) {
-                        log.error("Didn't find product by name {} for orgId={}.", productName, state.orgId);
+                        log.error("Didn't find product by name {} for orgId={}.", productName, state.org.id);
                     }
                 }
                 if (product == null) {
-                    product = org.getFirstProduct();
+                    product = state.org.getFirstProduct();
                 }
                 templateId = product.getFirstTemplateId();
                 hardwareInfo.templateId = templateId;

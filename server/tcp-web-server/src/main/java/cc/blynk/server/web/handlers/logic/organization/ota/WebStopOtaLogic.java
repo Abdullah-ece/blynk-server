@@ -1,14 +1,14 @@
-package cc.blynk.server.web.handlers.logic.product.ota;
+package cc.blynk.server.web.handlers.logic.organization.ota;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.PermissionBasedLogic;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.model.device.ota.OTAStatus;
+import cc.blynk.server.core.model.device.ota.OTADeviceStatus;
 import cc.blynk.server.core.model.dto.OtaDTO;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.core.model.web.product.Product;
+import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
@@ -58,14 +58,14 @@ public final class WebStopOtaLogic implements PermissionBasedLogic<WebAppStateHo
         log.info("Stopping OTA for {}. {}", state.user.email, otaDTO);
 
         for (Device device : filteredDevices) {
-            if (device.deviceOtaInfo != null && device.deviceOtaInfo.otaStatus != OTAStatus.SUCCESS
-                    && device.deviceOtaInfo.otaStatus.isNotFailure()) {
+            if (device.deviceOtaInfo != null && device.deviceOtaInfo.status != OTADeviceStatus.SUCCESS
+                    && device.deviceOtaInfo.status.isNotFailure()) {
                 device.clearDeviceOtaInfo();
             }
         }
 
-        Product product = organizationDao.getProductByIdOrThrow(otaDTO.productId);
-        product.clearOtaProgress();
+        Organization org = organizationDao.getOrgByIdOrThrow(otaDTO.orgId);
+        org.stopShipment(otaDTO.id);
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }

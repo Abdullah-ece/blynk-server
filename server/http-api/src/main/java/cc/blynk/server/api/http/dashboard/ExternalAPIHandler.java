@@ -107,7 +107,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
             return badRequest("Event with code not found in product.");
         }
 
-        var session = sessionDao.getOrgSession(tokenValue.orgId);
+        var session = sessionDao.getOrgSession(tokenValue.org.id);
         var bodyForWeb = event.getType() + StringUtils.BODY_SEPARATOR_STRING + eventCode;
         session.sendToSelectedDeviceOnWeb(HARDWARE_LOG_EVENT, 111, bodyForWeb, device.id);
 
@@ -145,7 +145,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
 
         int deviceId = tokenValue.device.id;
 
-        Session session = sessionDao.getOrgSession(tokenValue.orgId);
+        Session session = sessionDao.getOrgSession(tokenValue.org.id);
 
         return ok(session.isHardwareConnected(deviceId));
     }
@@ -166,7 +166,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
         }
 
         Device device = tokenValue.device;
-        DeviceWithOrgIdDTO deviceWithOrgIdDTO = new DeviceWithOrgIdDTO(device, tokenValue.orgId);
+        DeviceWithOrgIdDTO deviceWithOrgIdDTO = new DeviceWithOrgIdDTO(device, tokenValue.org.id);
         String response = deviceFancyWriter.writeValueAsString(deviceWithOrgIdDTO);
         return ok(response);
     }
@@ -315,7 +315,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
         //todo for now supporting only single property
         tokenValue.device.updateValue(pin, widgetProperty, values[0]);
 
-        Session session = sessionDao.getOrgSession(tokenValue.orgId);
+        Session session = sessionDao.getOrgSession(tokenValue.org.id);
         session.sendToApps(SET_WIDGET_PROPERTY, 111,
                 "" + pin + BODY_SEPARATOR + property + BODY_SEPARATOR + values[0], deviceId);
         return ok();
@@ -367,10 +367,10 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
         String prev = device.updateValue(pin, pinType, pinValue, now);
         String body = DataStream.makeHardwareBody(pinType, pin, pinValue);
 
-        Organization org = organizationDao.getOrgByIdOrThrow(tokenValue.orgId);
+        Organization org = organizationDao.getOrgByIdOrThrow(tokenValue.org.id);
         ruleEngineProcessor.process(org, device, pin, pinType, prev, parsedValue, pinValue);
 
-        Session session = sessionDao.getOrgSession(tokenValue.orgId);
+        Session session = sessionDao.getOrgSession(tokenValue.org.id);
         if (session == null) {
             log.debug("No session for hardware {}.", device.id);
             return Response.ok();

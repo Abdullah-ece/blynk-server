@@ -94,7 +94,7 @@ public class DevicesHandler extends BaseHttpHandler {
         newDevice.metaFields = product.copyMetaFields();
         newDevice.webDashboard = product.webDashboard.copy();
 
-        deviceDao.create(orgId, user.email, product, newDevice);
+        deviceDao.create(org, user.email, product, newDevice);
 
         user.lastModifiedTs = System.currentTimeMillis();
 

@@ -8,7 +8,7 @@ import cc.blynk.server.api.http.dashboard.dto.ProductAndOrgIdDTO;
 import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.model.device.ota.OTAStatus;
+import cc.blynk.server.core.model.device.ota.OTADeviceStatus;
 import cc.blynk.server.core.model.dto.OtaDTO;
 import cc.blynk.server.core.model.dto.ProductDTO;
 import cc.blynk.server.core.model.serialization.JsonParser;
@@ -125,7 +125,7 @@ public class OTATest extends APIBaseTest {
             newDevice = JsonParser.readAny(responseString, Device.class);
             assertNotNull(newDevice);
             assertNotNull(newDevice.deviceOtaInfo);
-            assertEquals(OTAStatus.STARTED, newDevice.deviceOtaInfo.otaStatus);
+            assertEquals(OTADeviceStatus.STARTED, newDevice.deviceOtaInfo.status);
             assertEquals(admin.email, newDevice.deviceOtaInfo.otaStartedBy);
             assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.otaStartedAt, 5000);
             assertEquals(pathToFirmware, newDevice.deviceOtaInfo.pathToFirmware);
@@ -153,7 +153,7 @@ public class OTATest extends APIBaseTest {
             newDevice = JsonParser.readAny(responseString, Device.class);
             assertNotNull(newDevice);
             assertNotNull(newDevice.deviceOtaInfo);
-            assertEquals(OTAStatus.REQUEST_SENT, newDevice.deviceOtaInfo.otaStatus);
+            assertEquals(OTADeviceStatus.REQUEST_SENT, newDevice.deviceOtaInfo.status);
             assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.requestSentAt, 5000);
             assertEquals(pathToFirmware, newDevice.deviceOtaInfo.pathToFirmware);
             assertEquals("May  9 2018 12:36:07", newDevice.deviceOtaInfo.buildDate);
@@ -193,7 +193,7 @@ public class OTATest extends APIBaseTest {
             assertNotNull(newDevice);
             assertNotNull(newDevice.deviceOtaInfo);
             assertNotNull(newDevice.hardwareInfo);
-            assertEquals(OTAStatus.SUCCESS, newDevice.deviceOtaInfo.otaStatus);
+            assertEquals(OTADeviceStatus.SUCCESS, newDevice.deviceOtaInfo.status);
             assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.requestSentAt, 5000);
             assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.firmwareRequestedAt, 5000);
             assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.firmwareUploadedAt, 5000);
@@ -254,7 +254,7 @@ public class OTATest extends APIBaseTest {
             newDevice = JsonParser.readAny(responseString, Device.class);
             assertNotNull(newDevice);
             assertNotNull(newDevice.deviceOtaInfo);
-            assertEquals(OTAStatus.STARTED, newDevice.deviceOtaInfo.otaStatus);
+            assertEquals(OTADeviceStatus.STARTED, newDevice.deviceOtaInfo.status);
             assertEquals(admin.email, newDevice.deviceOtaInfo.otaStartedBy);
             assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.otaStartedAt, 5000);
             assertEquals(pathToFirmware, newDevice.deviceOtaInfo.pathToFirmware);
@@ -282,7 +282,7 @@ public class OTATest extends APIBaseTest {
             newDevice = JsonParser.readAny(responseString, Device.class);
             assertNotNull(newDevice);
             assertNotNull(newDevice.deviceOtaInfo);
-            assertEquals(OTAStatus.REQUEST_SENT, newDevice.deviceOtaInfo.otaStatus);
+            assertEquals(OTADeviceStatus.REQUEST_SENT, newDevice.deviceOtaInfo.status);
             assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.requestSentAt, 5000);
             assertEquals(pathToFirmware, newDevice.deviceOtaInfo.pathToFirmware);
             assertEquals("May  9 2018 12:36:07", newDevice.deviceOtaInfo.buildDate);
@@ -313,7 +313,7 @@ public class OTATest extends APIBaseTest {
             newDevice = JsonParser.readAny(responseString, Device.class);
             assertNotNull(newDevice);
             assertNotNull(newDevice.deviceOtaInfo);
-            assertEquals(OTAStatus.FIRMWARE_UPLOADED, newDevice.deviceOtaInfo.otaStatus);
+            assertEquals(OTADeviceStatus.FIRMWARE_UPLOADED, newDevice.deviceOtaInfo.status);
             assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.requestSentAt, 5000);
             assertEquals(pathToFirmware, newDevice.deviceOtaInfo.pathToFirmware);
             assertEquals("May  9 2018 12:36:07", newDevice.deviceOtaInfo.buildDate);
@@ -389,7 +389,7 @@ public class OTATest extends APIBaseTest {
             assertNotNull(newDevice.deviceOtaInfo);
             assertEquals(admin.email, newDevice.deviceOtaInfo.otaStartedBy);
             assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.otaStartedAt, 5000);
-            assertEquals(OTAStatus.REQUEST_SENT, newDevice.deviceOtaInfo.otaStatus);
+            assertEquals(OTADeviceStatus.REQUEST_SENT, newDevice.deviceOtaInfo.status);
             assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.requestSentAt, 5000);
             assertEquals(pathToFirmware, newDevice.deviceOtaInfo.pathToFirmware);
             assertEquals("May  9 2018 12:36:07", newDevice.deviceOtaInfo.buildDate);
@@ -445,7 +445,7 @@ public class OTATest extends APIBaseTest {
             newDevice = JsonParser.readAny(responseString, Device.class);
             assertNotNull(newDevice);
             assertNotNull(newDevice.deviceOtaInfo);
-            assertEquals(OTAStatus.STARTED, newDevice.deviceOtaInfo.otaStatus);
+            assertEquals(OTADeviceStatus.STARTED, newDevice.deviceOtaInfo.status);
             assertEquals(admin.email, newDevice.deviceOtaInfo.otaStartedBy);
             assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.otaStartedAt, 5000);
             assertEquals(pathToFirmware, newDevice.deviceOtaInfo.pathToFirmware);

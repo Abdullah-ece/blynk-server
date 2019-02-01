@@ -1,12 +1,13 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard.device;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.core.session.mobile.MobileStateHolder;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,7 +28,7 @@ public final class MobileCreateDeviceLogic {
     }
 
     public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
-                                       User user, StringMessage message) {
+                                       MobileStateHolder state, StringMessage message) {
         String deviceString = message.body;
 
         if (deviceString.isEmpty()) {
@@ -42,9 +43,10 @@ public final class MobileCreateDeviceLogic {
             throw new JsonException("Income device message is not valid.");
         }
 
-        int orgId = user.orgId;
-        Product product = holder.organizationDao.assignToOrgAndAddDevice(orgId, newDevice);
-        holder.deviceDao.create(orgId, user.email, product, newDevice);
+        int orgId = state.user.orgId;
+        Organization org = holder.organizationDao.getOrgByIdOrThrow(orgId);
+        Product product = holder.organizationDao.assignToOrgAndAddDevice(org, newDevice);
+        holder.deviceDao.create(org, state.user.email, product, newDevice);
 
         log.debug("Device for orgId {} created {}.", orgId, newDevice);
 
