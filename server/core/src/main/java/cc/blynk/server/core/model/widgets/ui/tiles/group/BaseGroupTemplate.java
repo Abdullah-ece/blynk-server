@@ -27,7 +27,9 @@ public abstract class BaseGroupTemplate {
 
     public final int tileColor;
 
-    public BaseGroupTemplate(int id, Widget[] widgets, String name, String icon, String description, FontSize fontSize, int tileColor) {
+    public BaseGroupTemplate(int id, Widget[] widgets,
+                             String name, String icon, String description,
+                             FontSize fontSize, int tileColor) {
         this.id = id;
         this.widgets = widgets == null ? Widget.EMPTY_WIDGETS : widgets;
         this.name = name;
