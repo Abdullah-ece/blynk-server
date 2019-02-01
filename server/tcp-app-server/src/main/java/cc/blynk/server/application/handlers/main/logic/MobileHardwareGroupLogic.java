@@ -58,7 +58,7 @@ public class MobileHardwareGroupLogic extends BaseProcessorHandler {
         //here expecting command in format "dashId widgetId groupId vw 88 1"
         String[] split = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
 
-        int dashId = Integer.parseInt(split[0]) ;
+        int dashId = Integer.parseInt(split[0]);
         DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
 
         long widgetId = Long.parseLong(split[1]);

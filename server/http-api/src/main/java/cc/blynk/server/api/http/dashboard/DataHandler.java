@@ -19,7 +19,6 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.db.ReportingDBManager;
-import cc.blynk.server.db.dao.descriptor.DataQueryRequestDTO;
 import cc.blynk.utils.NumberUtil;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -95,9 +94,6 @@ public class DataHandler extends BaseHttpHandler {
         blockingIOProcessor.executeDB(() -> {
             try {
                 DataResponseDTO response = new DataResponseDTO(dataQueryRequestGroup.dataQueryRequests.length);
-                for (DataQueryRequestDTO dataQueryRequest : dataQueryRequestGroup.dataQueryRequests) {
-                    //todo finish
-                }
                 ctx.writeAndFlush(ok(response.data()), ctx.voidPromise());
             } catch (Exception e) {
                 log.error("Error fetching history data.", e);
