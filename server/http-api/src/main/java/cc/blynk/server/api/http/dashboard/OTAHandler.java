@@ -21,8 +21,8 @@ import cc.blynk.server.core.model.device.ota.DeviceOtaInfo;
 import cc.blynk.server.core.model.device.ota.OTAStatus;
 import cc.blynk.server.core.model.dto.OtaDTO;
 import cc.blynk.server.core.model.web.product.FirmwareInfo;
-import cc.blynk.server.core.model.web.product.OtaProgress;
 import cc.blynk.server.core.model.web.product.Product;
+import cc.blynk.server.core.model.web.product.Shipment;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.internal.token.OTADownloadToken;
@@ -105,7 +105,7 @@ public class OTAHandler extends BaseHttpHandler {
 
         long now = System.currentTimeMillis();
         Product product = organizationDao.getProductByIdOrThrow(otaDTO.productId);
-        product.setOtaProgress(new OtaProgress(otaDTO, now));
+        product.setShipment(new Shipment(otaDTO, now));
 
         for (Device device : filteredDevices) {
             DeviceOtaInfo deviceOtaInfo = new DeviceOtaInfo(user.email, now,
@@ -134,7 +134,7 @@ public class OTAHandler extends BaseHttpHandler {
             }
         }
 
-        return ok(product.otaProgress);
+        return ok(product.shipment);
     }
 
     @POST
@@ -163,7 +163,7 @@ public class OTAHandler extends BaseHttpHandler {
         }
 
         Product product = organizationDao.getProductByIdOrThrow(otaDTO.productId);
-        product.setOtaProgress(null);
+        product.setShipment(null);
 
         return ok();
     }
@@ -180,7 +180,7 @@ public class OTAHandler extends BaseHttpHandler {
         log.info("Deleting OTA progress for {}.", user.email);
 
         Product product = organizationDao.getProductByIdOrThrow(productId);
-        product.setOtaProgress(null);
+        product.setShipment(null);
 
         return ok();
     }

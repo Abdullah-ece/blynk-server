@@ -4,8 +4,8 @@ import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.MetaField;
-import cc.blynk.server.core.model.web.product.OtaProgress;
 import cc.blynk.server.core.model.web.product.Product;
+import cc.blynk.server.core.model.web.product.Shipment;
 import cc.blynk.server.core.model.web.product.WebDashboard;
 import cc.blynk.server.core.model.web.product.events.Event;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -43,7 +43,7 @@ public final class ProductDTO {
 
     public final WebDashboard webDashboard;
 
-    public final OtaProgress otaProgress;
+    public final Shipment shipment;
 
     public final int deviceCount;
 
@@ -63,7 +63,7 @@ public final class ProductDTO {
                       @JsonProperty("dataStreams") DataStream[] dataStreams,
                       @JsonProperty("events") Event[] events,
                       @JsonProperty("webDashboard") WebDashboard webDashboard,
-                      @JsonProperty("otaProgress") OtaProgress otaProgress,
+                      @JsonProperty("shipment") Shipment shipment,
                       @JsonProperty("deviceCount") int deviceCount,
                       @JsonProperty("version")int version) {
         this.id = id;
@@ -79,7 +79,7 @@ public final class ProductDTO {
         this.dataStreams = dataStreams == null ? EMPTY_DATA_STREAMS : dataStreams;
         this.events = events == null ? EMPTY_EVENTS : events;
         this.webDashboard = webDashboard == null ? new WebDashboard() : webDashboard;
-        this.otaProgress = otaProgress;
+        this.shipment = shipment;
         this.deviceCount = deviceCount;
         this.version = version;
     }
@@ -89,7 +89,7 @@ public final class ProductDTO {
                 product.connectionType, product.description, product.logoUrl,
                 product.lastModifiedTs, product.createdAt, product.metaFields,
                 product.dataStreams, product.events, product.webDashboard,
-                product.otaProgress, product.devices.length, product.version);
+                product.shipment, product.devices.length, product.version);
     }
 
     public static ProductDTO[] toDTO(Product[] products) {
@@ -122,7 +122,7 @@ public final class ProductDTO {
         product.dataStreams = dataStreams;
         product.events = events;
         product.webDashboard = webDashboard;
-        product.otaProgress = otaProgress;
+        product.shipment = shipment;
         product.version = version;
         return product;
     }

@@ -34,8 +34,8 @@ import cc.blynk.server.core.model.web.UserInviteDTO;
 import cc.blynk.server.core.model.web.product.EventType;
 import cc.blynk.server.core.model.web.product.FirmwareInfo;
 import cc.blynk.server.core.model.web.product.MetaField;
-import cc.blynk.server.core.model.web.product.OtaProgress;
 import cc.blynk.server.core.model.web.product.Product;
+import cc.blynk.server.core.model.web.product.Shipment;
 import cc.blynk.server.core.model.widgets.outputs.graph.Period;
 import cc.blynk.server.core.processors.rules.RuleGroup;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
@@ -507,8 +507,8 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), FirmwareInfo.class);
     }
 
-    public OtaProgress parseOtaProgress(int expectedMessageOrder) throws Exception {
-        return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), OtaProgress.class);
+    public Shipment parseOtaProgress(int expectedMessageOrder) throws Exception {
+        return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), Shipment.class);
     }
 
     @Override

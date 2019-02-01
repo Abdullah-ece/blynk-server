@@ -5,7 +5,11 @@ import cc.blynk.server.core.model.serialization.JsonParser;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public final class OtaProgress {
+public final class Shipment {
+
+    public static final Shipment[] EMPTY_SHIPMENTS = {};
+
+    public final int id;
 
     public final String title;
 
@@ -26,15 +30,17 @@ public final class OtaProgress {
     public final boolean isSecure;
 
     @JsonCreator
-    public OtaProgress(@JsonProperty("title") String title,
-                       @JsonProperty("pathToFirmware") String pathToFirmware,
-                       @JsonProperty("firmwareOriginalFileName") String firmwareOriginalFileName,
-                       @JsonProperty("startedAt") long startedAt,
-                       @JsonProperty("finishedAt") long finishedAt,
-                       @JsonProperty("deviceIds") int[] deviceIds,
-                       @JsonProperty("firmwareInfo") FirmwareInfo firmwareInfo,
-                       @JsonProperty("attempts") int attempts,
-                       @JsonProperty("isSecure") boolean isSecure) {
+    public Shipment(@JsonProperty("id") int id,
+                    @JsonProperty("title") String title,
+                    @JsonProperty("pathToFirmware") String pathToFirmware,
+                    @JsonProperty("firmwareOriginalFileName") String firmwareOriginalFileName,
+                    @JsonProperty("startedAt") long startedAt,
+                    @JsonProperty("finishedAt") long finishedAt,
+                    @JsonProperty("deviceIds") int[] deviceIds,
+                    @JsonProperty("firmwareInfo") FirmwareInfo firmwareInfo,
+                    @JsonProperty("attempts") int attempts,
+                    @JsonProperty("isSecure") boolean isSecure) {
+        this.id = id;
         this.title = title;
         this.pathToFirmware = pathToFirmware;
         this.firmwareOriginalFileName = firmwareOriginalFileName;
@@ -46,8 +52,9 @@ public final class OtaProgress {
         this.isSecure = isSecure;
     }
 
-    public OtaProgress(OtaDTO otaDTO, long now) {
-        this(otaDTO.title,
+    public Shipment(OtaDTO otaDTO, long now) {
+        this(otaDTO.id,
+                otaDTO.title,
                 otaDTO.pathToFirmware,
                 otaDTO.firmwareOriginalFileName,
                 now,

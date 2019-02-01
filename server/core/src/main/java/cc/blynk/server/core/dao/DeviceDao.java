@@ -27,7 +27,7 @@ import static cc.blynk.utils.StringUtils.truncateFileName;
  * Created by Dmitriy Dumanskiy.
  * Created on 04.04.17.
  */
-public class DeviceDao {
+public final class DeviceDao {
 
     private static final Logger log = LogManager.getLogger(DeviceDao.class);
 

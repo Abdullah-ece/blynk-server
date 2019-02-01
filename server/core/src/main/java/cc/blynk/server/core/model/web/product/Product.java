@@ -55,7 +55,7 @@ public class Product {
 
     public WebDashboard webDashboard = new WebDashboard();
 
-    public volatile OtaProgress otaProgress;
+    public volatile Shipment shipment;
 
     public volatile Device[] devices = EMPTY_DEVICES;
 
@@ -212,11 +212,11 @@ public class Product {
     }
 
     public void clearOtaProgress() {
-        setOtaProgress(null);
+        setShipment(null);
     }
 
-    public void setOtaProgress(OtaProgress otaProgress) {
-        this.otaProgress = otaProgress;
+    public void setShipment(Shipment shipment) {
+        this.shipment = shipment;
         this.lastModifiedTs = System.currentTimeMillis();
     }
 

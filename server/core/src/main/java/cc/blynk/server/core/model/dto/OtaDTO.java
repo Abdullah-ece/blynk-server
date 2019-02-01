@@ -11,7 +11,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Created by Dmitriy Dumanskiy.
  * Created on 07.05.18.
  */
-public class OtaDTO {
+public final class OtaDTO {
+
+    public final int id;
 
     public final int orgId;
 
@@ -32,7 +34,8 @@ public class OtaDTO {
     public final boolean isSecure;
 
     @JsonCreator
-    public OtaDTO(@JsonProperty("orgId") int orgId,
+    public OtaDTO(@JsonProperty("id") int id,
+                  @JsonProperty("orgId") int orgId,
                   @JsonProperty("productId") int productId,
                   @JsonProperty("pathToFirmware") String pathToFirmware,
                   @JsonProperty("firmwareOriginalFileName") String firmwareOriginalFileName,
@@ -41,6 +44,7 @@ public class OtaDTO {
                   @JsonProperty("firmwareInfo") FirmwareInfo firmwareInfo,
                   @JsonProperty("attemptsLimit") int attemptsLimit,
                   @JsonProperty("isSecure") boolean isSecure) {
+        this.id = id;
         this.orgId = orgId;
         this.productId = productId;
         this.pathToFirmware = pathToFirmware;

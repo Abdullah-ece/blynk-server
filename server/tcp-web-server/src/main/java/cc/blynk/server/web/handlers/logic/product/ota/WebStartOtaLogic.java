@@ -3,6 +3,7 @@ package cc.blynk.server.web.handlers.logic.product.ota;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.PermissionBasedLogic;
 import cc.blynk.server.core.dao.DeviceDao;
+import cc.blynk.server.core.dao.OTADao;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.auth.Session;
@@ -12,8 +13,8 @@ import cc.blynk.server.core.model.device.ota.DeviceOtaInfo;
 import cc.blynk.server.core.model.device.ota.OTAStatus;
 import cc.blynk.server.core.model.dto.OtaDTO;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.core.model.web.product.OtaProgress;
 import cc.blynk.server.core.model.web.product.Product;
+import cc.blynk.server.core.model.web.product.Shipment;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
@@ -43,6 +44,7 @@ public final class WebStartOtaLogic implements PermissionBasedLogic<WebAppStateH
 
     private final OrganizationDao organizationDao;
     private final DeviceDao deviceDao;
+    private final OTADao otaDao;
     private final SessionDao sessionDao;
     private final TokensPool tokensPool;
     private final ServerProperties props;
@@ -50,6 +52,7 @@ public final class WebStartOtaLogic implements PermissionBasedLogic<WebAppStateH
     public WebStartOtaLogic(Holder holder) {
         this.organizationDao = holder.organizationDao;
         this.deviceDao = holder.deviceDao;
+        this.otaDao = holder.otaDao;
         this.sessionDao = holder.sessionDao;
         this.tokensPool = holder.tokensPool;
         this.props = holder.props;
@@ -81,7 +84,7 @@ public final class WebStartOtaLogic implements PermissionBasedLogic<WebAppStateH
 
         long now = System.currentTimeMillis();
         Product product = organizationDao.getProductByIdOrThrow(otaDTO.productId);
-        product.setOtaProgress(new OtaProgress(otaDTO, now));
+        product.setShipment(new Shipment(otaDTO, now));
 
         for (Device device : filteredDevices) {
             DeviceOtaInfo deviceOtaInfo = new DeviceOtaInfo(user.email, now,
@@ -110,7 +113,7 @@ public final class WebStartOtaLogic implements PermissionBasedLogic<WebAppStateH
             }
         }
 
-        String firmwareParamsString = product.otaProgress.toString();
+        String firmwareParamsString = product.shipment.toString();
         StringMessage response = makeUTF8StringMessage(message.command, message.id, firmwareParamsString);
         ctx.writeAndFlush(response, ctx.voidPromise());
     }

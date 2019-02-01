@@ -8,6 +8,7 @@ import cc.blynk.server.core.model.exceptions.ProductNotFoundException;
 import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.Product;
+import cc.blynk.server.core.model.web.product.Shipment;
 import cc.blynk.server.core.processors.rules.RuleGroup;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.utils.ArrayUtil;
@@ -64,6 +65,8 @@ public class Organization {
     public Role[] roles;
 
     public volatile RuleGroup ruleGroup;
+
+    public volatile Shipment[] shipments = Shipment.EMPTY_SHIPMENTS;
 
     public Organization() {
         this.lastModifiedTs = System.currentTimeMillis();

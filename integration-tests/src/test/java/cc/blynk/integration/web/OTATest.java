@@ -111,7 +111,7 @@ public class OTATest extends APIBaseTest {
         }
 
         HttpPost post = new HttpPost(httpsAdminServerUrl + "/ota/start");
-        post.setEntity(new StringEntity(new OtaDTO(1, newDevice.productId, pathToFirmware, "original name", new int[] {1}, "title", true, firmwareInfo, 5, false).toString(),
+        post.setEntity(new StringEntity(new OtaDTO(0, 1, newDevice.productId, pathToFirmware, "original name", new int[] {1}, "title", firmwareInfo, 5, false).toString(),
                 ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(post)) {
@@ -240,8 +240,8 @@ public class OTATest extends APIBaseTest {
         }
 
         HttpPost post = new HttpPost(httpsAdminServerUrl + "/ota/start");
-        post.setEntity(new StringEntity(new OtaDTO(1, newDevice.productId,
-                pathToFirmware, "original name", new int[] {1}, "title", true, firmwareInfo, 5, false).toString(),
+        post.setEntity(new StringEntity(new OtaDTO(0, 1, newDevice.productId,
+                pathToFirmware, "original name", new int[] {1}, "title", firmwareInfo, 5, false).toString(),
                 ContentType.APPLICATION_JSON));
         try (CloseableHttpResponse response = httpclient.execute(post)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -370,7 +370,7 @@ public class OTATest extends APIBaseTest {
         newHardClient.verifyResult(ok(2));
 
         HttpPost post = new HttpPost(httpsAdminServerUrl + "/ota/start");
-        post.setEntity(new StringEntity(new OtaDTO(1, newDevice.productId, pathToFirmware, "original name", new int[] {1}, "title", true, firmwareInfo, 5, false).toString(),
+        post.setEntity(new StringEntity(new OtaDTO(1, 1, newDevice.productId, pathToFirmware, "original name", new int[] {1}, "title", firmwareInfo, 5, false).toString(),
                 ContentType.APPLICATION_JSON));
         try (CloseableHttpResponse response = httpclient.execute(post)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -393,53 +393,6 @@ public class OTATest extends APIBaseTest {
             assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.requestSentAt, 5000);
             assertEquals(pathToFirmware, newDevice.deviceOtaInfo.pathToFirmware);
             assertEquals("May  9 2018 12:36:07", newDevice.deviceOtaInfo.buildDate);
-        }
-    }
-
-    @Test
-    public void otaFailsAsFirmwareDoesntCorrespondToDeviceBoardType() throws Exception {
-        login(admin.email, admin.pass);
-
-        String pathToFirmware = upload("static/ota/blnkinf2.0.0.bin");
-
-        HttpGet index = new HttpGet("https://localhost:" + properties.getHttpsPort() + pathToFirmware);
-        try (CloseableHttpResponse response = httpclient.execute(index)) {
-            assertEquals(200, response.getStatusLine().getStatusCode());
-        }
-
-        HttpGet req = new HttpGet(httpsAdminServerUrl + "/ota/firmwareInfo?file=" + pathToFirmware);
-
-        FirmwareInfo firmwareInfo;
-        try (CloseableHttpResponse response = httpclient.execute(req)) {
-            assertEquals(200, response.getStatusLine().getStatusCode());
-            String firmwareInfoString = consumeText(response);
-            assertNotNull(firmwareInfoString);
-            assertEquals("{\"version\":\"2.0.0\",\"boardType\":\"NodeMCU\",\"buildDate\":\"May  9 2018 12:36:07\",\"md5Hash\":\"DA2A7DDC95F46ED14126F5BCEF304833\"}", firmwareInfoString);
-            firmwareInfo = JsonParser.MAPPER.readValue(firmwareInfoString, FirmwareInfo.class);
-        }
-
-        Device newDevice = new Device();
-        newDevice.name = "My New Device";
-        newDevice.boardType = BoardType.ESP32_Dev_Board;//wrong board
-        newDevice.productId = createProduct();
-
-        HttpPut httpPut = new HttpPut(httpsAdminServerUrl + "/devices/1");
-        httpPut.setEntity(new StringEntity(newDevice.toString(), ContentType.APPLICATION_JSON));
-
-        try (CloseableHttpResponse response = httpclient.execute(httpPut)) {
-            assertEquals(200, response.getStatusLine().getStatusCode());
-            String responseString = consumeText(response);
-            newDevice = JsonParser.readAny(responseString, Device.class);
-            assertNotNull(newDevice);
-        }
-
-
-        HttpPost post = new HttpPost(httpsAdminServerUrl + "/ota/start");
-        post.setEntity(new StringEntity(new OtaDTO(1, newDevice.productId, pathToFirmware, "original name", new int[] {1}, "title", true, firmwareInfo, 5, false).toString(),
-                ContentType.APPLICATION_JSON));
-        try (CloseableHttpResponse response = httpclient.execute(post)) {
-            assertEquals(400, response.getStatusLine().getStatusCode());
-            assertEquals("{\"error\":{\"message\":\"My New Device board type doesn't correspond to firmware board type.\"}}", consumeText(response));
         }
     }
 
@@ -478,7 +431,7 @@ public class OTATest extends APIBaseTest {
         }
 
         HttpPost post = new HttpPost(httpsAdminServerUrl + "/ota/start");
-        post.setEntity(new StringEntity(new OtaDTO(1, newDevice.productId, pathToFirmware, "original name", new int[] {1}, "title", true, firmwareInfo, 5, false).toString(),
+        post.setEntity(new StringEntity(new OtaDTO(0, 1, newDevice.productId, pathToFirmware, "original name", new int[] {1}, "title", firmwareInfo, 5, false).toString(),
                 ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(post)) {
@@ -500,7 +453,7 @@ public class OTATest extends APIBaseTest {
         }
 
         post = new HttpPost(httpsAdminServerUrl + "/ota/stop");
-        post.setEntity(new StringEntity(new OtaDTO(1, newDevice.productId, pathToFirmware, "original name", new int[] {1}, "title", true, firmwareInfo, 5, false).toString(),
+        post.setEntity(new StringEntity(new OtaDTO(0, 1, newDevice.productId, pathToFirmware, "original name", new int[] {1}, "title", firmwareInfo, 5, false).toString(),
                 ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(post)) {

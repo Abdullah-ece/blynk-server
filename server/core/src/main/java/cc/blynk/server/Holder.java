@@ -5,6 +5,7 @@ import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.DeviceTokenManager;
 import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.NotificationsDao;
+import cc.blynk.server.core.dao.OTADao;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.SharedTokenManager;
@@ -55,6 +56,8 @@ public class Holder {
     public final UserDao userDao;
 
     public final DeviceDao deviceDao;
+
+    public final OTADao otaDao;
 
     public final OrganizationDao organizationDao;
 
@@ -129,6 +132,7 @@ public class Holder {
         Collection<User> users = userDao.users.values();
         DeviceTokenManager tokenManager = new DeviceTokenManager(orgs, dbManager, serverProperties.host);
         this.deviceDao = new DeviceDao(orgs, tokenManager);
+        this.otaDao = new OTADao(orgs);
         this.sharedTokenManager = new SharedTokenManager(users);
 
         this.stats = new GlobalStats();
@@ -189,6 +193,7 @@ public class Holder {
         Collection<User> users = userDao.users.values();
         DeviceTokenManager tokenManager = new DeviceTokenManager(orgs, dbManager, serverProperties.host);
         this.deviceDao = new DeviceDao(orgs, tokenManager);
+        this.otaDao = new OTADao(orgs);
         this.sharedTokenManager = new SharedTokenManager(users);
 
         this.stats = new GlobalStats();
