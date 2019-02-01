@@ -286,6 +286,10 @@ public final class JsonParser {
         return organizationReader.readValue(orgFile);
     }
 
+    public static Organization parseOrganization(String orgString) throws IOException {
+        return organizationReader.readValue(orgString);
+    }
+
     public static User parseUserFromFile(File userFile) throws IOException {
         return userReader.readValue(userFile);
     }

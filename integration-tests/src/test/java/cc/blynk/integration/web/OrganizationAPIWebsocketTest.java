@@ -3,11 +3,9 @@ package cc.blynk.integration.web;
 import cc.blynk.integration.SingleServerInstancePerTestWithDBAndNewOrg;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.dto.OrganizationDTO;
 import cc.blynk.server.core.model.dto.ProductDTO;
-import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
@@ -16,14 +14,14 @@ import cc.blynk.server.web.handlers.logic.organization.dto.CountDTO;
 import cc.blynk.server.web.handlers.logic.organization.dto.DeviceCountDTO;
 import cc.blynk.server.web.handlers.logic.organization.dto.LocationDTO;
 import cc.blynk.server.web.handlers.logic.organization.dto.OrganizationsHierarchyDTO;
+import cc.blynk.server.workers.ProfileSaverWorker;
 import cc.blynk.utils.SHA256Util;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 
 import static cc.blynk.integration.APIBaseTest.createDeviceNameMeta;
 import static cc.blynk.integration.APIBaseTest.createDeviceOwnerMeta;
@@ -32,8 +30,8 @@ import static cc.blynk.integration.APIBaseTest.createTextMeta;
 import static cc.blynk.integration.TestUtil.defaultClient;
 import static cc.blynk.integration.TestUtil.loggedDefaultClient;
 import static cc.blynk.integration.TestUtil.ok;
+import static cc.blynk.integration.TestUtil.sleep;
 import static cc.blynk.integration.TestUtil.webJson;
-import static cc.blynk.server.core.model.web.Organization.NO_PARENT_ID;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -992,6 +990,33 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
 
         client.trackOrg(100);
         client.verifyResult(webJson(3, "User " + getUserName() + " has no access to this organization (id=" + 100 + ")."));
+    }
+
+    @Test
+    public void testProfileSaverWorkerSavesOrgToDB() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+
+        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(
+                holder.userDao, holder.fileManager, holder.dbManager, holder.organizationDao);
+
+        Organization subOrg = new Organization("userAreRemovedWithOrganization", "Europe/Kiev", "/static/logo.png", true, -1);
+        client.createOrganization(subOrg);
+        OrganizationDTO subOrgDTO = client.parseOrganizationDTO(1);
+        assertNotNull(subOrgDTO);
+
+        profileSaverWorker.run();
+
+        sleep(500);
+
+        Map<Integer, Organization> organizations =  holder.dbManager.organizationDBDao.getAllOrganizations();
+        assertNotNull(organizations);
+        assertFalse(organizations.isEmpty());
+
+        Organization orgFromDB = organizations.get(subOrgDTO.id);
+        assertNotNull(orgFromDB);
+        assertEquals(subOrg.name, orgFromDB.name);
+        assertEquals(subOrg.tzName, orgFromDB.tzName);
+        assertEquals(subOrg.logoUrl, orgFromDB.logoUrl);
     }
 }
 

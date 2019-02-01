@@ -19,6 +19,12 @@ CREATE TABLE users (
   PRIMARY KEY(email)
 );
 
+CREATE TABLE organizations (
+  org_id int,
+  json text,
+  PRIMARY KEY(org_id)
+);
+
 CREATE TABLE redeem (
   token character(32) PRIMARY KEY,
   company text,
