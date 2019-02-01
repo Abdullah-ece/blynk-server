@@ -60,9 +60,12 @@ public class ProfileSaverWorker implements Runnable, Closeable {
 
     private void saveOrgs(boolean isFancy) {
         log.debug("Starting saving organization db.");
-        List<Organization> orgs = saveModifiedOrgs(isFancy);
-        log.debug("Saving organization db finished. Modified {} organizations.", orgs.size());
 
+        List<Organization> orgs = saveModifiedOrgs(isFancy);
+
+        dbManager.saveOrganizations(orgs);
+
+        log.debug("Saving organization db finished. Modified {} organizations.", orgs.size());
     }
 
     private void saveUsers(long now, boolean isFancy) {

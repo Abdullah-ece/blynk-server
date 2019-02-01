@@ -2,10 +2,12 @@ package cc.blynk.server.db;
 
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.db.dao.CloneProjectDBDao;
 import cc.blynk.server.db.dao.FlashedTokensDBDao;
 import cc.blynk.server.db.dao.ForwardingTokenDBDao;
 import cc.blynk.server.db.dao.InvitationTokensDBDao;
+import cc.blynk.server.db.dao.OrganizationDBDao;
 import cc.blynk.server.db.dao.PurchaseDBDao;
 import cc.blynk.server.db.dao.RedeemDBDao;
 import cc.blynk.server.db.dao.UserDBDao;
@@ -41,6 +43,7 @@ public final class DBManager implements Closeable {
     private final BlockingIOProcessor blockingIOProcessor;
 
     public final UserDBDao userDBDao;
+    public final OrganizationDBDao organizationDBDao;
     public final ForwardingTokenDBDao forwardingTokenDBDao;
     final CloneProjectDBDao cloneProjectDBDao;
     private final InvitationTokensDBDao invitationTokensDBDao;
@@ -66,6 +69,7 @@ public final class DBManager implements Closeable {
 
         this.ds = hikariDataSource;
         this.userDBDao = new UserDBDao(hikariDataSource);
+        this.organizationDBDao = new OrganizationDBDao(hikariDataSource);
         this.redeemDBDao = new RedeemDBDao(hikariDataSource);
         this.purchaseDBDao = new PurchaseDBDao(hikariDataSource);
         this.flashedTokensDBDao = new FlashedTokensDBDao(hikariDataSource);
@@ -114,6 +118,18 @@ public final class DBManager implements Closeable {
     public void saveUsers(ArrayList<User> users) {
         if (isDBEnabled() && users.size() > 0) {
             blockingIOProcessor.executeDB(() -> userDBDao.save(users));
+        }
+    }
+
+    public void deleteOrganization(int orgId) {
+        if (isDBEnabled()) {
+            blockingIOProcessor.executeDB(() -> organizationDBDao.deleteOrganization(orgId));
+        }
+    }
+
+    public void saveOrganizations(List<Organization> organizations) {
+        if (isDBEnabled() && organizations.size() > 0) {
+            blockingIOProcessor.executeDB(() -> organizationDBDao.save(organizations));
         }
     }
 
