@@ -79,7 +79,7 @@ public final class ReportingStatsDao {
 
     private void insertAllCommandsStat(PreparedStatement allCommandsStatPS,
                                         Stat stat, String region, Timestamp ts) throws SQLException {
-        for (Map.Entry<Short, Integer> entry: stat.allCommands.stats.entrySet()) {
+        for (Map.Entry<Short, Integer> entry: stat.statsForDB.entrySet()) {
             setAndExecuteCommand(allCommandsStatPS, region, ts, entry.getKey(), entry.getValue());
         }
     }
