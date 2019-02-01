@@ -8,7 +8,9 @@ import {
   Input,
   Select,
   message,
-  Badge
+  Badge,
+  Modal,
+  // Progress
 } from 'antd';
 import FormItem from 'components/FormItem';
 import ImageUploader from 'components/ImageUploader';
@@ -57,12 +59,15 @@ class Edit extends React.Component {
     this.firmwareUpdateStart = this.firmwareUpdateStart.bind(this);
     this.onFirmwareUpdateCancel = this.onFirmwareUpdateCancel.bind(this);
     this.getSelectedDevicesTitle = this.getSelectedDevicesTitle.bind(this);
+    this.handleCancel = this.handleCancel.bind(this);
+    this.handleOK = this.handleOK.bind(this);
 
     this.fetchToken();
 
     const ota = this.props.OTA || {};
 
     this.state = {
+      modalVisible: false,
       selectedRowKeys: [],
       OTA: {
         orgId: this.props.orgId,
@@ -86,7 +91,17 @@ class Edit extends React.Component {
 
   firmwareUpdateStart() {
     this.props.otaStart({ otaDTO: this.state.OTA });
+    this.setState({ modalVisible: true });
+  }
+
+  handleOK() {
+    this.setState({ modalVisible: false });
     this.context.router.push('/ota');
+  }
+
+  handleCancel() {
+    this.setState({ modalVisible: false });
+    this.props.otaStop({ otaDTO: this.state.OTA });
   }
 
   onFirmwareUpdateCancel() {
@@ -239,96 +254,130 @@ class Edit extends React.Component {
     }));
 
     return (
-      <MainLayout>
-        <MainLayout.Header
-          title={<ContentEditableInput maxLength={40}
-                                       value={OTA.title}
-                                       onChange={this.onTitleChange}/>
-          }>
-        </MainLayout.Header>
-
-        <MainLayout.Content className="organizations-create-content">
-          <EditSection>
-            <Row gutter={24}>
-              <Col span={7}>
-                <div className="edit-section-sub-title ">
-                  Target selection
-                </div>
-                <div className="product-details-row">
-                  <FormItem>
-                    <FormItem.Title>Product</FormItem.Title>
-                    <FormItem.Content>
-                      <Select className="edit-section-content-input"
-                              value={OTA.productId}
-                              onChange={value => this.onChange({
-                                value,
-                                name: 'productId'
-                              })}
-                              placeholder={`Select product to filter devices`}>
-                        {productsList.map((product) => (
-                          <Select.Option key={`${product.key}`}
-                                         value={`${product.key}`}>{product.value}</Select.Option>
-                        ))}
-                      </Select>
-                    </FormItem.Content>
-                  </FormItem>
-                </div>
-                <div className="product-details-row">
-                  <FormItem className='edit-section-content'>
-                    <FormItem.Title>Product</FormItem.Title>
-                    <FormItem.Content>
-                      <Input value={''}
-                             onChange={this.onChange}
-                             name={''}
-                             placeholder={'Search devices'}
-                             disabled={true}/>
-                    </FormItem.Content>
-                  </FormItem>
-                </div>
-              </Col>
-              <Col span={17}>
-                <div className="edit-section-sub-title ">
-                  {this.getSelectedDevicesTitle()}
-                </div>
-                <div className="product-details-row">
-                  {this.createTable()}
-                </div>
-              </Col>
-            </Row>
-          </EditSection>
-          <EditSection title={'Firmware'}>
+      <div>
+        <Modal title="Shipping in progress"
+               visible={this.state.modalVisible}
+               closable={false}
+               wrapClassName={'ota-vertical-center-modal'}
+               footer={[
+                 <Button key="cancel" type="default" size="default"
+                         onClick={this.handleCancel}>Stop
+                   Shipping</Button>,
+                 <Button key="save" type="primary" size="default"
+                         onClick={this.handleOK}>
+                   Ok
+                 </Button>,
+               ]}>
+          <div className="device-create-modal">
             <Row>
-              <Col span={7}>
-                <div className='upload-firmware'>
-                  {this.fileUploader(this.onChange, OTA.firmwareOriginalFileName)}
-                </div>
-              </Col>
-              <Col span={17}>
-                {OTA.firmwareInfo.buildDate && (<div>
-                  <div>Build: {OTA.firmwareInfo.buildDate}</div>
-                  <div>Version: {OTA.firmwareInfo.version}</div>
-                  <div>Hardware: {OTA.firmwareInfo.boardType}</div>
-                  <div>MD5 Checksum: {OTA.firmwareInfo.md5Hash}</div>
-                </div>)}
+              <Col span={24} style={{ paddingRight: 16 }}>
+                You can close this window at any moment. Shipping will
+                continue
               </Col>
             </Row>
-          </EditSection>
-          <EditSection title={'Review and start'}>
-            <div>Select devices</div>
-            <div>Upload Firmware file</div>
-            <div className="ota-btn-group">
-              <Button type="danger"
-                      onClick={this.onFirmwareUpdateCancel}>Cancel</Button>
-              <Button
-                disabled={!OTA.deviceIds.length || !OTA.pathToFirmware}
-                onClick={this.firmwareUpdateStart}
-                type="primary">
-                Start Shipping
-              </Button>
-            </div>
-          </EditSection>
-        </MainLayout.Content>
-      </MainLayout>
+            {/*<Row>*/}
+              {/*<Col span={24} style={{ paddingRight: 16 }}>*/}
+                {/*<Progress percent={60} successPercent={30}/>*/}
+              {/*</Col>*/}
+            {/*</Row>*/}
+            <Row>
+              <Col span={24} style={{ paddingRight: 16 }}>
+                Target: {Pluralize('device', OTA.deviceIds.length, true)}
+              </Col>
+            </Row>
+          </div>
+        </Modal>
+        <MainLayout>
+          <MainLayout.Header
+            title={<ContentEditableInput maxLength={40}
+                                         value={OTA.title}
+                                         onChange={this.onTitleChange}/>
+            }>
+          </MainLayout.Header>
+
+          <MainLayout.Content className="organizations-create-content">
+            <EditSection>
+              <Row gutter={24}>
+                <Col span={7}>
+                  <div className="edit-section-sub-title ">
+                    Target selection
+                  </div>
+                  <div className="product-details-row">
+                    <FormItem>
+                      <FormItem.Title>Product</FormItem.Title>
+                      <FormItem.Content>
+                        <Select className="edit-section-content-input"
+                                value={OTA.productId}
+                                onChange={value => this.onChange({
+                                  value,
+                                  name: 'productId'
+                                })}
+                                placeholder={`Select product to filter devices`}>
+                          {productsList.map((product) => (
+                            <Select.Option key={`${product.key}`}
+                                           value={`${product.key}`}>{product.value}</Select.Option>
+                          ))}
+                        </Select>
+                      </FormItem.Content>
+                    </FormItem>
+                  </div>
+                  <div className="product-details-row">
+                    <FormItem className='edit-section-content'>
+                      <FormItem.Title>Product</FormItem.Title>
+                      <FormItem.Content>
+                        <Input value={''}
+                               onChange={this.onChange}
+                               name={''}
+                               placeholder={'Search devices'}
+                               disabled={true}/>
+                      </FormItem.Content>
+                    </FormItem>
+                  </div>
+                </Col>
+                <Col span={17}>
+                  <div className="edit-section-sub-title ">
+                    {this.getSelectedDevicesTitle()}
+                  </div>
+                  <div className="product-details-row">
+                    {this.createTable()}
+                  </div>
+                </Col>
+              </Row>
+            </EditSection>
+            <EditSection title={'Firmware'}>
+              <Row>
+                <Col span={7}>
+                  <div className='upload-firmware'>
+                    {this.fileUploader(this.onChange, OTA.firmwareOriginalFileName)}
+                  </div>
+                </Col>
+                <Col span={17}>
+                  {OTA.firmwareInfo.buildDate && (<div>
+                    <div>Build: {OTA.firmwareInfo.buildDate}</div>
+                    <div>Version: {OTA.firmwareInfo.version}</div>
+                    <div>Hardware: {OTA.firmwareInfo.boardType}</div>
+                    <div>MD5 Checksum: {OTA.firmwareInfo.md5Hash}</div>
+                  </div>)}
+                </Col>
+              </Row>
+            </EditSection>
+            <EditSection title={'Review and start'}>
+              <div>Select devices</div>
+              <div>Upload Firmware file</div>
+              <div className="ota-btn-group">
+                <Button type="danger"
+                        onClick={this.onFirmwareUpdateCancel}>Cancel</Button>
+                <Button
+                  disabled={!OTA.deviceIds.length || !OTA.pathToFirmware}
+                  onClick={this.firmwareUpdateStart}
+                  type="primary">
+                  Start Shipping
+                </Button>
+              </div>
+            </EditSection>
+          </MainLayout.Content>
+        </MainLayout>
+      </div>
     );
   }
 
