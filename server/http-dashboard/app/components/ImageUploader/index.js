@@ -28,7 +28,7 @@ class ImageUploader extends React.Component {
 
     if (info.file.status === 'uploading') {
       if (!this.message) {
-        this.message = message.loading('Uploading image...');
+        this.message = message.loading('Uploading file...');
       }
     } else if (info.file.status === 'done') {
       this.message();

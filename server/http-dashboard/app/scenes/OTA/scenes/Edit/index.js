@@ -22,6 +22,8 @@ import Pluralize from 'pluralize';
 import {
   DevicesFetch
 } from 'data/Devices/api';
+import { OTAGetFirmwareInfo } from "data/Product/actions";
+
 import { FILE_UPLOAD_URL } from 'services/API';
 
 @connect((state) => ({
@@ -32,6 +34,7 @@ import { FILE_UPLOAD_URL } from 'services/API';
 }), (dispatch) => ({
   secureTokenForUploadFetch: bindActionCreators(SecureTokenForUploadFetch, dispatch),
   fetchDevices: bindActionCreators(DevicesFetch, dispatch),
+  getFirmwareInfo: bindActionCreators(OTAGetFirmwareInfo, dispatch),
 }))
 class Edit extends React.Component {
 
@@ -110,6 +113,10 @@ class Edit extends React.Component {
 
   fileUploader(onChange, value, error) {
     const fileProps = {
+      name: 'file',
+      action: FILE_UPLOAD_URL,
+      showUploadList: false,
+      accept: '.bin',
       data: {
         token: this.props.secureUploadToken
       }
@@ -120,6 +127,12 @@ class Edit extends React.Component {
       if (status === 'done') {
         this.fetchToken();
         onChange({ value: info.file.response, name: 'pathToFirmware' });
+        this.props.getFirmwareInfo({ path_to_firmware: info.file.response }).then(
+          result => {
+            const { OTA } = this.state;
+            OTA.firmwareInfo = result.payload.data;
+            this.setState({ OTA });
+          });
       } else if (status === 'error') {
         this.fetchToken();
         message.error(`${info.file.name} file upload failed.`);
@@ -131,15 +144,9 @@ class Edit extends React.Component {
         <span>Upload firmware file (.bin)<br/><br/></span>)}
                      logo={value}
                      error={error}
-                     fileProps={fileProps}
                      iconClass={'ota-upload-drag-icon'}
                      onChange={handleComponentChange}
-                     fileProps={{
-                       name: 'file',
-                       action: FILE_UPLOAD_URL,
-                       showUploadList: false,
-                       accept: '.bin'
-                     }}/>
+                     fileProps={fileProps}/>
     );
   }
 
@@ -262,9 +269,21 @@ class Edit extends React.Component {
             </Row>
           </EditSection>
           <EditSection title={'Firmware'}>
-            <div className='upload-firmware'>
-              {this.fileUploader(this.onChange, OTA.pathToFirmware)}
-            </div>
+            <Row>
+              <Col span={7}>
+                <div className='upload-firmware'>
+                  {this.fileUploader(this.onChange, OTA.pathToFirmware)}
+                </div>
+              </Col>
+              <Col span={17}>
+                {OTA.firmwareInfo.buildDate && (<div>
+                  <div>Build: {OTA.firmwareInfo.buildDate}</div>
+                  <div>Version: {OTA.firmwareInfo.version}</div>
+                  <div>Hardware: {OTA.firmwareInfo.boardType}</div>
+                  <div>MD5 Checksum: {OTA.firmwareInfo.md5Hash}</div>
+                </div>)}
+              </Col>
+            </Row>
           </EditSection>
           <EditSection title={'Review and start'}>
             <div>Select devices</div>
