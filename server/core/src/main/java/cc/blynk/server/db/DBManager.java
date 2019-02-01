@@ -121,8 +121,8 @@ public final class DBManager implements Closeable {
         }
     }
 
-    public void deleteOrganization(Integer orgId) {
-        if (isDBEnabled() && orgId != null) {
+    public void deleteOrganization(int orgId) {
+        if (isDBEnabled()) {
             blockingIOProcessor.executeDB(() -> organizationDBDao.deleteOrganization(orgId));
         }
     }

@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentMap;
  * Created by Nikita Piashyntsev.
  * Created on 01.02.19.
  */
-public class OrganizationDBDao {
+public final class OrganizationDBDao {
 
     private static final String insertOrganization = "INSERT INTO organizations (org_id, json) VALUES (?, ?)"
             + "ON CONFLICT (org_id) DO UPDATE SET json = EXCLUDED.json";
