@@ -1,7 +1,6 @@
 package cc.blynk.server.hardware.handlers.hardware.logic;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.dao.ota.Shipment;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.HardwareInfo;
@@ -116,7 +115,7 @@ public final class BlynkInternalLogic {
                             String serverUrl = holder.props.getServerUrl(deviceOtaInfo.isSecure);
                             String downloadToken = TokenGeneratorUtil.generateNewToken();
                             holder.tokensPool.addToken(downloadToken, new OTADownloadToken(device.id));
-                            String body = Shipment.makeHardwareBody(serverUrl,
+                            String body = StringUtils.makeHardwareBody(serverUrl,
                                     deviceOtaInfo.pathToFirmware, downloadToken);
                             StringMessage msg = makeASCIIStringMessage(BLYNK_INTERNAL, 7777, body);
                             ctx.write(msg, ctx.voidPromise());

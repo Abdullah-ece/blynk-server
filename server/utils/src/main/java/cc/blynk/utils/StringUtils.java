@@ -183,4 +183,8 @@ public final class StringUtils {
         String encodedEmail = URLEncoder.encode(email, UTF_8);
         return resetURL + "?token=" + token + "&email=" + encodedEmail;
     }
+
+    public static String makeHardwareBody(String serverHostUrl, String pathToFirmware, String token) {
+        return "ota" + BODY_SEPARATOR + serverHostUrl + pathToFirmware + "?token=" + token;
+    }
 }

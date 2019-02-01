@@ -14,7 +14,6 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.SessionDao;
-import cc.blynk.server.core.dao.ota.Shipment;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
@@ -29,6 +28,7 @@ import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.internal.token.OTADownloadToken;
 import cc.blynk.server.internal.token.TokensPool;
 import cc.blynk.utils.FileUtils;
+import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.TokenGeneratorUtil;
 import cc.blynk.utils.http.MediaType;
 import cc.blynk.utils.properties.ServerProperties;
@@ -136,7 +136,7 @@ public class OTAHandler extends BaseHttpHandler {
 
                     String downloadToken = TokenGeneratorUtil.generateNewToken();
                     tokensPool.addToken(downloadToken, new OTADownloadToken(hardwareState.device.id));
-                    String body = Shipment.makeHardwareBody(serverUrl, otaDTO.pathToFirmware, downloadToken);
+                    String body = StringUtils.makeHardwareBody(serverUrl, otaDTO.pathToFirmware, downloadToken);
                     StringMessage msg = makeASCIIStringMessage(BLYNK_INTERNAL, 7777, body);
                     channel.writeAndFlush(msg, channel.voidPromise());
                     hardwareState.device.requestSent();
