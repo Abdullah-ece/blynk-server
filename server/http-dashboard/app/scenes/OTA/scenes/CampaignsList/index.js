@@ -9,8 +9,6 @@ class CampaignsList extends Component {
 
   constructor(props) {
     super(props);
-
-
   }
 
   render() {

@@ -666,6 +666,7 @@ export default function Devices(state = initialState, action) {
       return {
         ...state,
         devices: action.payload.data.map((device) => getFieldsForDevicesList(device)),
+        otaDevices: action.payload.data,
         devicesForSearch: action.payload.data,
         devicesPreloadLoading: false
       };
@@ -705,6 +706,7 @@ export default function Devices(state = initialState, action) {
       return {
         ...state,
         devices: action.payload.data.map((device) => getFieldsForDevicesList(device)),
+        otaDevices: action.payload.data,
         // save full devices for smart search
         devicesForSearch: action.payload.data,
         devicesLoading: false

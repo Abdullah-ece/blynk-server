@@ -7,7 +7,8 @@ import {
   Table,
   Input,
   Select,
-  message
+  message,
+  Badge
 } from 'antd';
 import FormItem from 'components/FormItem';
 import ImageUploader from 'components/ImageUploader';
@@ -29,8 +30,8 @@ import { FILE_UPLOAD_URL } from 'services/API';
 
 @connect((state) => ({
   orgId: state.Account.selectedOrgId,
-  products: state.Product.products,
-  devices: state.Devices.devices,
+  products: state.Product.products || [],
+  devices: state.Devices.otaDevices || [],
   secureUploadToken: state.Product.secureUploadToken
 }), (dispatch) => ({
   secureTokenForUploadFetch: bindActionCreators(SecureTokenForUploadFetch, dispatch),
@@ -173,16 +174,32 @@ class Edit extends React.Component {
   }
 
   createTable() {
-    // const { productId } = this.state.OTA;
-    // const devices = this.props.devicesproductId ? this.props.devices.filter((device) => device.productId === productId) : this.props.devices;
+    const { productId } = this.state.OTA;
+    let devices = this.props.devicesproductId ? this.props.devices.filter((device) => device.productId === productId) : this.props.devices;
 
-    const devices = this.props.devices;
+    devices = devices.map(device => {
+      return {
+        ...device,
+        nameAndOnline: {
+          name: device.name,
+          status: device.status
+        }
+      };
+    });
+
     const columns = [{
       title: 'Device Name',
-      dataIndex: 'name',
+      dataIndex: 'nameAndOnline',
+      render: (value) => {
+        return (<Badge status={value.status === 'ONLINE' ? 'success' : 'error'}
+                       text={value.name}/>);
+      }
     }, {
-      title: 'Product Name',
-      dataIndex: 'productName',
+      title: 'Firmware Version',
+      dataIndex: 'hardwareInfo.version',
+    }, {
+      title: 'Updated On',
+      dataIndex: 'deviceOtaInfo.buildDate',
     },];
     const selectedRowKeys = [];
 
