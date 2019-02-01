@@ -12,6 +12,7 @@ import cc.blynk.server.application.handlers.main.logic.MobileGetEnergyLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileGetProjectByClonedTokenLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileGetProjectByTokenLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileGetProvisionTokenLogic;
+import cc.blynk.server.application.handlers.main.logic.MobileHardwareGroupLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileHardwareLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileHardwareResendFromBTLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileLoadProfileGzippedLogic;
@@ -44,7 +45,7 @@ import cc.blynk.server.application.handlers.main.logic.face.MobileDeleteAppLogic
 import cc.blynk.server.application.handlers.main.logic.face.MobileMailQRsLogic;
 import cc.blynk.server.application.handlers.main.logic.face.MobileUpdateAppLogic;
 import cc.blynk.server.application.handlers.main.logic.face.MobileUpdateFaceLogic;
-import cc.blynk.server.application.handlers.main.logic.graph.MobileDeleteDeviceDataLogic;
+import cc.blynk.server.application.handlers.main.logic.graph.MobileDeleteOrgDeviceDataLogic;
 import cc.blynk.server.application.handlers.main.logic.graph.MobileDeleteSuperChartDataLogic;
 import cc.blynk.server.application.handlers.main.logic.graph.MobileGetSuperChartDataLogic;
 import cc.blynk.server.application.handlers.main.logic.reporting.MobileCreateReportLogic;
@@ -113,6 +114,7 @@ import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICE_TIME
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_ENERGY;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_PROVISION_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_WIDGET;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_HARDWARE_GROUP;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_LOAD_PROFILE_GZIPPED;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_RESOLVE_DEVICE_TIMELINE;
 import static cc.blynk.server.core.protocol.enums.Command.PING;
@@ -133,6 +135,7 @@ public class MobileHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
     public final MobileStateHolder state;
     private final Holder holder;
     private final MobileHardwareLogic hardwareLogic;
+    private final MobileHardwareGroupLogic mobileHardwareGroupLogic;
 
     private MobileHardwareResendFromBTLogic hardwareResendFromBTLogic;
     private MobileMailLogic mailLogic;
@@ -141,6 +144,7 @@ public class MobileHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
     private MobileMailQRsLogic mailQRsLogic;
     private MobileGetProjectByClonedTokenLogic getProjectByCloneCodeLogic;
     private final MobileGetOrgDevicesLogic mobileGetOrgDevicesLogic;
+    private final MobileDeleteOrgDeviceDataLogic mobileDeleteOrgDeviceDataLogic;
     private final MobileLoadProfileGzippedLogic mobileLoadProfileGzippedLogic;
     private final MobileGetWidgetLogic mobileGetWidgetLogic;
     private final WebGetDeviceTimelineLogic webGetDeviceTimelineLogic;
@@ -153,12 +157,14 @@ public class MobileHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
         this.holder = holder;
 
         this.hardwareLogic = new MobileHardwareLogic(holder);
+        this.mobileHardwareGroupLogic = new MobileHardwareGroupLogic(holder);
         this.mobileGetOrgDevicesLogic = new MobileGetOrgDevicesLogic(holder);
         this.mobileLoadProfileGzippedLogic = new MobileLoadProfileGzippedLogic(holder);
         this.mobileGetWidgetLogic = new MobileGetWidgetLogic(holder);
         this.webGetDeviceTimelineLogic = new WebGetDeviceTimelineLogic(holder);
         this.webResolveLogEventLogic = new WebResolveLogEventLogic(holder);
         this.mobileGetSuperChartDataLogic = new MobileGetSuperChartDataLogic(holder);
+        this.mobileDeleteOrgDeviceDataLogic = new MobileDeleteOrgDeviceDataLogic(holder);
     }
 
     @Override
@@ -167,6 +173,9 @@ public class MobileHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
         switch (msg.command) {
             case HARDWARE :
                 hardwareLogic.messageReceived(ctx, state, msg);
+                break;
+            case MOBILE_HARDWARE_GROUP :
+                mobileHardwareGroupLogic.messageReceived(ctx, state, msg);
                 break;
             case HARDWARE_RESEND_FROM_BLUETOOTH :
                 if (hardwareResendFromBTLogic == null) {
@@ -345,7 +354,7 @@ public class MobileHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
                 MobileGetProvisionTokenLogic.messageReceived(holder, ctx, state.user, msg);
                 break;
             case MOBILE_DELETE_DEVICE_DATA :
-                MobileDeleteDeviceDataLogic.messageReceived(holder, ctx, state, msg);
+                mobileDeleteOrgDeviceDataLogic.messageReceived(ctx, state, msg);
                 break;
             case MOBILE_CREATE_REPORT :
                 MobileCreateReportLogic.messageReceived(holder, ctx, state.user, msg);

@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_DEVICES_DELETE;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_DEVICES_EDIT;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_DEVICES_VIEW;
+import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_DEVICE_DATA_DELETE;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_SWITCH;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_VIEW;
 import static cc.blynk.server.core.model.permissions.PermissionsTable.OWN_DEVICES_VIEW;
@@ -64,6 +65,10 @@ public final class Role implements CopyObject<Role> {
 
     public boolean canDeleteOrgDevice() {
         return hasPermission1(ORG_DEVICES_DELETE);
+    }
+
+    public boolean canDeleteOrgDeviceData() {
+        return hasPermission2(ORG_DEVICE_DATA_DELETE);
     }
 
     //own devices group

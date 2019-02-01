@@ -3,17 +3,11 @@ package cc.blynk.server.db;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
-import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.enums.PinType;
-import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.model.widgets.ui.reporting.ReportScheduler;
-import cc.blynk.server.core.reporting.average.AggregationKey;
-import cc.blynk.server.core.reporting.average.AggregationValue;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.core.stats.model.CommandStat;
 import cc.blynk.server.core.stats.model.HttpStat;
 import cc.blynk.server.core.stats.model.Stat;
-import cc.blynk.server.db.dao.ReportingDBDao;
 import cc.blynk.utils.DateTimeUtils;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -21,13 +15,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.time.Instant;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Map;
 import java.util.TimeZone;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -49,7 +40,7 @@ public class RealtimeStatsDBTest {
     @BeforeClass
     public static void init() throws Exception {
         blockingIOProcessor = new BlockingIOProcessor(4, 10000);
-        reportingDBManager = new ReportingDBManager("db-test.properties", blockingIOProcessor, "");
+        reportingDBManager = new ReportingDBManager("db-test.properties", blockingIOProcessor);
         assertNotNull(reportingDBManager.getConnection());
     }
 
@@ -145,7 +136,7 @@ public class RealtimeStatsDBTest {
         cs.webhooks = i++;
         cs.appTotal = i++;
 
-        boolean insertResult = reportingDBManager.reportingDBDao.insertStat(region, stat);
+        boolean insertResult = reportingDBManager.reportingStatsDao.insertStat(region, stat);
         assertTrue(insertResult);
 
         try (Connection connection = reportingDBManager.getConnection();
@@ -257,113 +248,5 @@ public class RealtimeStatsDBTest {
         }
 
 
-    }
-
-    @Test
-    public void testManyConnections() throws Exception {
-        User user = new User();
-        user.email = "test@test.com";
-        Map<AggregationKey, AggregationValue> map = new ConcurrentHashMap<>();
-        AggregationValue value = new AggregationValue();
-        value.update(1);
-        long ts = System.currentTimeMillis();
-        for (int i = 0; i < 60; i++) {
-            map.put(new AggregationKey(0, PinType.ANALOG, (short) i, ts), value);
-            reportingDBManager.insertReporting(map, GraphGranularityType.MINUTE);
-            reportingDBManager.insertReporting(map, GraphGranularityType.HOURLY);
-            reportingDBManager.insertReporting(map, GraphGranularityType.DAILY);
-
-            map.clear();
-        }
-
-        while (blockingIOProcessor.messagingExecutor.getActiveCount() > 0) {
-            Thread.sleep(100);
-        }
-
-    }
-
-    @Test
-    public void cleanOutdatedRecords() {
-        reportingDBManager.reportingDBDao.cleanOldReportingRecords(Instant.now());
-    }
-
-    @Test
-    public void testDeleteWorksAsExpected() throws Exception {
-        long minute;
-        try (Connection connection = reportingDBManager.getConnection();
-             PreparedStatement ps = connection.prepareStatement(ReportingDBDao.insertMinute)) {
-
-            minute = (System.currentTimeMillis() / DateTimeUtils.MINUTE) * DateTimeUtils.MINUTE;
-
-            for (int i = 0; i < 370; i++) {
-                ReportingDBDao.prepareReportingInsert(ps, 0, (short) 0, PinType.VIRTUAL, minute, (double) i);
-                ps.addBatch();
-                minute += DateTimeUtils.MINUTE;
-            }
-
-            ps.executeBatch();
-            connection.commit();
-        }
-    }
-
-    @Test
-    public void testInsert1000RecordsAndSelect() throws Exception {
-        int a = 0;
-
-        long start = System.currentTimeMillis();
-        long minute = (start / DateTimeUtils.MINUTE) * DateTimeUtils.MINUTE;
-        long startMinute = minute;
-
-        try (Connection connection = reportingDBManager.getConnection();
-             PreparedStatement ps = connection.prepareStatement(ReportingDBDao.insertMinute)) {
-
-            for (int i = 0; i < 1000; i++) {
-                ReportingDBDao.prepareReportingInsert(ps, 2, (short) 0, PinType.VIRTUAL, minute, (double) i);
-                ps.addBatch();
-                minute += DateTimeUtils.MINUTE;
-                a++;
-            }
-
-            ps.executeBatch();
-            connection.commit();
-        }
-
-        System.out.println("Finished : " + (System.currentTimeMillis() - start)  + " millis. Executed : " + a);
-
-
-        try (Connection connection = reportingDBManager.getConnection();
-             Statement statement = connection.createStatement();
-             ResultSet rs = statement.executeQuery("select * from reporting_average_minute order by ts ASC")) {
-
-            int i = 0;
-            while (rs.next()) {
-                assertEquals(2, rs.getInt("device_id"));
-                assertEquals(0, rs.getByte("pin"));
-                assertEquals(PinType.VIRTUAL, PinType.values()[rs.getInt("pin_type")]);
-                assertEquals(startMinute, rs.getTimestamp("ts", UTC).getTime());
-                assertEquals((double) i, rs.getDouble("value"), 0.0001);
-                startMinute += DateTimeUtils.MINUTE;
-                i++;
-            }
-            connection.commit();
-        }
-    }
-
-    @Test
-    public void testSelect() throws Exception {
-        long ts = 1455924480000L;
-        try (Connection connection = reportingDBManager.getConnection();
-             PreparedStatement ps = connection.prepareStatement(ReportingDBDao.selectMinute)) {
-
-            ReportingDBDao.prepareReportingSelect(ps, ts, 2);
-            ResultSet rs = ps.executeQuery();
-
-
-            while(rs.next()) {
-                System.out.println(rs.getLong("ts") + " " + rs.getDouble("value"));
-            }
-
-            rs.close();
-        }
     }
 }

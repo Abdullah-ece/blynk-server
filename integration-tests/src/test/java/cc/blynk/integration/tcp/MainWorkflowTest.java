@@ -4,7 +4,6 @@ import cc.blynk.integration.SingleServerInstancePerTest;
 import cc.blynk.integration.TestUtil;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
-import cc.blynk.server.core.dao.PinNameUtil;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DashboardSettings;
 import cc.blynk.server.core.model.auth.User;
@@ -21,13 +20,11 @@ import cc.blynk.server.core.model.widgets.controls.Button;
 import cc.blynk.server.core.model.widgets.controls.Step;
 import cc.blynk.server.core.model.widgets.notifications.Twitter;
 import cc.blynk.server.core.model.widgets.others.Player;
-import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.model.widgets.ui.TimeInput;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.notifications.mail.QrHolder;
 import cc.blynk.utils.AppNameUtil;
-import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.SHA256Util;
 import io.netty.channel.ChannelFuture;
 import org.junit.Ignore;
@@ -36,9 +33,6 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.ZoneId;
 import java.util.List;
 
@@ -641,39 +635,6 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         responseProfile.dashBoards[0].updatedAt = 0;
         responseProfile.dashBoards[0].createdAt = 0;
         assertEquals(expectedProfile, responseProfile.toString());
-    }
-
-    @Test
-    public void testHardwareChannelClosedOnDashRemoval() throws Exception {
-        String username = getUserName();
-        String tempDir = holder.props.getProperty("data.folder");
-        Path userReportFolder = Paths.get(tempDir, "data", username);
-        if (Files.notExists(userReportFolder)) {
-            Files.createDirectories(userReportFolder);
-        }
-
-        Path pinReportingDataPath10 = Paths.get(tempDir, "data", username,
-                PinNameUtil.generateFilename(PinType.DIGITAL, (short) 8, GraphGranularityType.MINUTE));
-        Path pinReportingDataPath11 = Paths.get(tempDir, "data", username,
-                PinNameUtil.generateFilename(PinType.DIGITAL, (short) 8, GraphGranularityType.HOURLY));
-        Path pinReportingDataPath12 = Paths.get(tempDir, "data", username,
-                PinNameUtil.generateFilename(PinType.DIGITAL, (short) 8, GraphGranularityType.DAILY));
-        Path pinReportingDataPath13 = Paths.get(tempDir, "data", username,
-                PinNameUtil.generateFilename(PinType.VIRTUAL, (short) 9, GraphGranularityType.DAILY));
-
-        FileUtils.write(pinReportingDataPath10, 1.11D, 1111111);
-        FileUtils.write(pinReportingDataPath11, 1.11D, 1111111);
-        FileUtils.write(pinReportingDataPath12, 1.11D, 1111111);
-        FileUtils.write(pinReportingDataPath13, 1.11D, 1111111);
-
-        clientPair.appClient.deleteDash(1);
-        clientPair.appClient.verifyResult(ok(1));
-
-        assertTrue(clientPair.hardwareClient.isClosed());
-        assertTrue(Files.notExists(pinReportingDataPath10));
-        assertTrue(Files.notExists(pinReportingDataPath11));
-        assertTrue(Files.notExists(pinReportingDataPath12));
-        assertTrue(Files.notExists(pinReportingDataPath13));
     }
 
     @Test

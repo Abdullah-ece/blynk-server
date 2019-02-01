@@ -1,6 +1,6 @@
 package cc.blynk.server.core.model.widgets.ui.reporting.type;
 
-import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
+import cc.blynk.server.core.model.widgets.outputs.graph.Granularity;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
@@ -32,7 +32,7 @@ public abstract class BaseReportType {
 
     public abstract void buildDynamicSection(StringBuilder sb, ZoneId zoneId);
 
-    public long getFetchCount(GraphGranularityType granularity) {
+    public long getFetchCount(Granularity granularity) {
         switch (granularity) {
             case DAILY:
                 return TimeUnit.DAYS.toDays(getDuration());

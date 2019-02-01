@@ -1,8 +1,8 @@
 package cc.blynk.server.core.model.widgets.outputs.graph;
 
-import static cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType.DAILY;
-import static cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType.HOURLY;
-import static cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType.MINUTE;
+import static cc.blynk.server.core.model.widgets.outputs.graph.Granularity.DAILY;
+import static cc.blynk.server.core.model.widgets.outputs.graph.Granularity.HOURLY;
+import static cc.blynk.server.core.model.widgets.outputs.graph.Granularity.MINUTE;
 
 /**
  * The Blynk Project.
@@ -42,16 +42,16 @@ public enum Period {
     CUSTOM(-1, DAILY);
 
     public final int numberOfPoints;
-    public final GraphGranularityType granularityType;
+    public final Granularity granularityType;
     public final long millis;
 
-    Period(int numberOfPoints, GraphGranularityType granularityType) {
+    Period(int numberOfPoints, Granularity granularityType) {
         this.numberOfPoints = numberOfPoints;
         this.granularityType = granularityType;
         this.millis = numberOfPoints * getMillisForGranularity(granularityType);
     }
 
-    private static long getMillisForGranularity(GraphGranularityType granularityType) {
+    private static long getMillisForGranularity(Granularity granularityType) {
         switch (granularityType) {
             case MINUTE:
                 return 60 * 1000L;

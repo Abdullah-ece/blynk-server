@@ -3,7 +3,7 @@ package cc.blynk.server.core.reporting;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType;
-import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
+import cc.blynk.server.core.model.widgets.outputs.graph.Granularity;
 import cc.blynk.server.core.model.widgets.outputs.graph.Period;
 
 /**
@@ -20,7 +20,7 @@ public class WebGraphRequest {
     public final short pin;
     public final AggregationFunctionType functionType;
     public final int count;
-    public final GraphGranularityType type;
+    public final Granularity type;
     public final int skipCount;
     private final Period graphPeriod;
     public long from;

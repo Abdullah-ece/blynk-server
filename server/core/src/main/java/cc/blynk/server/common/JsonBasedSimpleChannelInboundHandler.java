@@ -2,6 +2,7 @@ package cc.blynk.server.common;
 
 import cc.blynk.server.core.protocol.exceptions.BaseServerException;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
+import cc.blynk.server.core.protocol.exceptions.NoPermissionException;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.ReferenceCountUtil;
 
@@ -28,7 +29,7 @@ public abstract class JsonBasedSimpleChannelInboundHandler<I, T> extends BaseSim
                 log.debug("Error parsing number. {}", nfe.getMessage());
                 ctx.writeAndFlush(json(getMsgId(msg), "Error parsing number. "
                         + nfe.getMessage()), ctx.voidPromise());
-            } catch (BaseServerException | JsonException bse) {
+            } catch (BaseServerException | JsonException | NoPermissionException bse) {
                 log.debug("Error processing request. Reason : {}", bse.getMessage());
                 ctx.writeAndFlush(json(getMsgId(msg), bse.getMessage()), ctx.voidPromise());
             } catch (Exception e) {

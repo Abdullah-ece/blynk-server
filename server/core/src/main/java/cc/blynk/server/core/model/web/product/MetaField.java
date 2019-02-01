@@ -27,9 +27,6 @@ import cc.blynk.utils.CopyObject;
 import cc.blynk.utils.IntArray;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import org.jooq.Field;
-import org.jooq.Record;
-import org.jooq.SelectSelectStep;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -109,14 +106,6 @@ public abstract class MetaField implements CopyObject<MetaField> {
     }
 
     public abstract MetaField copySpecificFieldsOnly(MetaField metaField);
-
-    public Field<?> prepareField(SelectSelectStep<Record> query, Field<Object> field) {
-        return field;
-    }
-
-    public Field<?> applyMapping(SelectSelectStep<Record> query, Field<Object> field) {
-        return field;
-    }
 
     public String getNotificationEmail() {
         return null;

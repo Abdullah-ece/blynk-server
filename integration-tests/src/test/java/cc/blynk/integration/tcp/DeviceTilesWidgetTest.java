@@ -2,7 +2,6 @@ package cc.blynk.integration.tcp;
 
 import cc.blynk.integration.SingleServerInstancePerTest;
 import cc.blynk.integration.model.tcp.TestHardClient;
-import cc.blynk.server.core.dao.PinNameUtil;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.device.BoardType;
@@ -18,7 +17,6 @@ import cc.blynk.server.core.model.widgets.outputs.ValueDisplay;
 import cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType;
 import cc.blynk.server.core.model.widgets.outputs.graph.FontSize;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
-import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphType;
 import cc.blynk.server.core.model.widgets.outputs.graph.Superchart;
 import cc.blynk.server.core.model.widgets.ui.Menu;
@@ -30,7 +28,6 @@ import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.model.widgets.ui.tiles.templates.ButtonTileTemplate;
 import cc.blynk.server.core.model.widgets.ui.tiles.templates.PageTileTemplate;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
-import cc.blynk.utils.FileUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -39,9 +36,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -66,7 +60,6 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.timeout;
@@ -1332,62 +1325,6 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
 
         clientPair.appClient.send("getenhanceddata 1-0" + b(" 432 DAY"));
         clientPair.appClient.verifyResult(new ResponseMessage(3, NO_DATA));
-    }
-
-    @Test
-    public void exportSuperchartGraphWorksForTiles() throws Exception {
-        long widgetId = 21321;
-
-        DeviceTiles deviceTiles = new DeviceTiles();
-        deviceTiles.id = widgetId;
-        deviceTiles.x = 8;
-        deviceTiles.y = 8;
-        deviceTiles.width = 50;
-        deviceTiles.height = 100;
-
-        clientPair.appClient.createWidget(1, deviceTiles);
-        clientPair.appClient.verifyResult(ok(1));
-
-        int[] deviceIds = new int[] {0};
-
-        Superchart SuperchartGraph = new Superchart();
-        SuperchartGraph.id = 432;
-        SuperchartGraph.width = 8;
-        SuperchartGraph.height = 4;
-        GraphDataStream graphDataStream = new GraphDataStream(
-                null, GraphType.LINE, 0, 0,
-                new DataStream((short) 88, PinType.VIRTUAL),
-                AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
-        SuperchartGraph.dataStreams = new GraphDataStream[] {
-                graphDataStream
-        };
-
-        TileTemplate tileTemplate = new PageTileTemplate(1,
-                new Widget[]{SuperchartGraph}, deviceIds, "name", "name", "iconName", BoardType.ESP8266, new DataStream((short) 1, PinType.VIRTUAL),
-                false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
-
-        clientPair.appClient.createTemplate(1, widgetId, tileTemplate);
-        clientPair.appClient.verifyResult(ok(2));
-
-        clientPair.appClient.send("export 1 432");
-        clientPair.appClient.verifyResult(new ResponseMessage(3, NO_DATA));
-
-        Path userReportDirectory = Paths.get(holder.props.getProperty("data.folder"), "data", getUserName());
-        Files.createDirectories(userReportDirectory);
-        Path userReportFile = Paths.get(userReportDirectory.toString(),
-                PinNameUtil.generateFilename(PinType.VIRTUAL, (short) 88, GraphGranularityType.MINUTE));
-        FileUtils.write(userReportFile, 1.1, 1L);
-        FileUtils.write(userReportFile, 2.2, 2L);
-
-        clientPair.appClient.send("export 1 432");
-        clientPair.appClient.verifyResult(ok(4));
-        verify(holder.mailWrapper, timeout(1000)).sendHtml(eq(getUserName()), eq("History graph data for project My Dashboard"), contains("/" + getUserName() + "_1_0_v88_"));
-
-        clientPair.appClient.send("deleteEnhancedData 1\0" + "432");
-        clientPair.appClient.verifyResult(ok(5));
-
-        clientPair.appClient.send("export 1 432");
-        clientPair.appClient.verifyResult(new ResponseMessage(6, NO_DATA));
     }
 
     @Test

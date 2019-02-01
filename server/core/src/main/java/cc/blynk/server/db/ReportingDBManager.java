@@ -4,10 +4,6 @@ import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.web.product.EventType;
-import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
-import cc.blynk.server.core.reporting.average.AggregationKey;
-import cc.blynk.server.core.reporting.average.AggregationValue;
-import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
 import cc.blynk.server.core.reporting.raw.BaseReportingKey;
 import cc.blynk.server.core.reporting.raw.BaseReportingValue;
 import cc.blynk.server.core.reporting.raw.RawDataCacheForGraphProcessor;
@@ -16,7 +12,7 @@ import cc.blynk.server.core.stats.model.Stat;
 import cc.blynk.server.db.dao.EventDBDao;
 import cc.blynk.server.db.dao.RawEntry;
 import cc.blynk.server.db.dao.ReportingDBDao;
-import cc.blynk.server.db.dao.descriptor.DataQueryRequestDTO;
+import cc.blynk.server.db.dao.ReportingStatsDao;
 import cc.blynk.utils.NumberUtil;
 import cc.blynk.utils.properties.BaseProperties;
 import cc.blynk.utils.properties.DBProperties;
@@ -24,12 +20,11 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import ru.yandex.clickhouse.ClickHouseDriver;
 
 import java.io.Closeable;
 import java.sql.Connection;
 import java.sql.Statement;
-import java.time.Instant;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Queue;
 
@@ -46,20 +41,19 @@ public final class ReportingDBManager implements Closeable {
     private final HikariDataSource ds;
 
     private final BlockingIOProcessor blockingIOProcessor;
-    public final AverageAggregatorProcessor averageAggregator;
     public final RawDataCacheForGraphProcessor rawDataCacheForGraphProcessor;
     public final RawDataProcessor rawDataProcessor;
 
     public final EventDBDao eventDBDao;
-    private final boolean cleanOldReporting;
 
     public final ReportingDBDao reportingDBDao;
+    public final ReportingStatsDao reportingStatsDao;
 
-    public ReportingDBManager(BlockingIOProcessor blockingIOProcessor, String reportingFolder) {
-        this(DB_PROPERTIES_FILENAME, blockingIOProcessor, reportingFolder);
+    public ReportingDBManager(BlockingIOProcessor blockingIOProcessor) {
+        this(DB_PROPERTIES_FILENAME, blockingIOProcessor);
     }
 
-    public ReportingDBManager(String propsFilename, BlockingIOProcessor blockingIOProcessor, String reportingFolder) {
+    public ReportingDBManager(String propsFilename, BlockingIOProcessor blockingIOProcessor) {
         this.blockingIOProcessor = blockingIOProcessor;
 
         DBProperties dbProperties = new DBProperties(propsFilename);
@@ -73,9 +67,8 @@ public final class ReportingDBManager implements Closeable {
 
         this.ds = hikariDataSource;
         this.reportingDBDao = new ReportingDBDao(hikariDataSource);
+        this.reportingStatsDao = new ReportingStatsDao(hikariDataSource);
         this.eventDBDao = new EventDBDao(hikariDataSource);
-        this.cleanOldReporting = dbProperties.cleanReporting();
-        this.averageAggregator = new AverageAggregatorProcessor(reportingFolder);
         this.rawDataCacheForGraphProcessor = new RawDataCacheForGraphProcessor();
         this.rawDataProcessor = new RawDataProcessor();
 
@@ -84,6 +77,7 @@ public final class ReportingDBManager implements Closeable {
 
     private HikariConfig initConfig(BaseProperties serverProperties) {
         HikariConfig config = new HikariConfig();
+        config.setDriverClassName(ClickHouseDriver.class.getName());
         config.setJdbcUrl(serverProperties.getProperty("reporting.jdbc.url"));
         config.setUsername(serverProperties.getProperty("reporting.user"));
         config.setPassword(serverProperties.getProperty("reporting.password"));
@@ -101,7 +95,6 @@ public final class ReportingDBManager implements Closeable {
             BaseReportingKey key = new BaseReportingKey(device.id, pinType, pin);
 
             rawDataProcessor.collect(key, ts, doubleVal);
-            averageAggregator.collect(key, ts, doubleVal);
             if (device.webDashboard.needRawDataForGraph(pin, pinType) /* || dash.needRawDataForGraph(pin, pinType)*/) {
                 rawDataCacheForGraphProcessor.collect(key, new RawEntry(ts, doubleVal));
             }
@@ -110,19 +103,7 @@ public final class ReportingDBManager implements Closeable {
 
     public void insertStat(String region, Stat stat) {
         if (isDBEnabled()) {
-            reportingDBDao.insertStat(region, stat);
-        }
-    }
-
-    public void insertReporting(Map<AggregationKey, AggregationValue> map, GraphGranularityType graphGranularityType) {
-        if (isDBEnabled() && map.size() > 0) {
-            blockingIOProcessor.executeDB(() -> reportingDBDao.insert(map, graphGranularityType));
-        }
-    }
-
-    public void cleanOldReportingRecords(Instant now) {
-        if (isDBEnabled() && cleanOldReporting) {
-            blockingIOProcessor.executeDB(() -> reportingDBDao.cleanOldReportingRecords(now));
+            reportingStatsDao.insertStat(region, stat);
         }
     }
 
@@ -132,23 +113,19 @@ public final class ReportingDBManager implements Closeable {
         }
     }
 
-    public Object getRawData(DataQueryRequestDTO dataQueryRequest) {
-        if (isDBEnabled()) {
-            return reportingDBDao.getRawData(dataQueryRequest);
-        }
-        return Collections.emptyList();
-    }
-
     public void insertSystemEvent(int deviceId, EventType eventType) {
         if (isDBEnabled()) {
-            blockingIOProcessor.executeEvent(() -> eventDBDao.insertSystemEvent(deviceId, eventType));
+            blockingIOProcessor.executeEvent(() -> {
+                log.trace("Executing system event {} for deviceId {}.", eventType, deviceId);
+                eventDBDao.insertSystemEvent(deviceId, eventType);
+            });
         }
     }
 
     public void insertEvent(int deviceId, EventType eventType, long ts,
                             int eventHashcode, String description) throws Exception {
         if (isDBEnabled()) {
-            eventDBDao.insert(deviceId, eventType, ts, eventHashcode, description, false);
+            eventDBDao.insert(deviceId, eventType, ts, eventHashcode, description);
         }
     }
 
@@ -170,7 +147,6 @@ public final class ReportingDBManager implements Closeable {
 
     @Override
     public void close() {
-        averageAggregator.close();
         if (isDBEnabled()) {
             System.out.println("Closing Reporting DB...");
             ds.close();

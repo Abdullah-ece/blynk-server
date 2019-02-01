@@ -53,7 +53,6 @@ jdbc.url=jdbc:postgresql://xxx:5432/blynk?tcpKeepAlive=true&socketTimeout=150
 user=test
 password=test
 connection.timeout.millis=30000
-clean.reporting=false
 
 gcm.properties
 

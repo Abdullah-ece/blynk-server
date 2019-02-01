@@ -121,7 +121,6 @@
                 <configuration>
                     <source>11</source>
                     <target>11</target>
-                    <release>11</release>
                 </configuration>
             </plugin>
 
@@ -193,7 +192,6 @@
         <acme4j-client.version>2.4</acme4j-client.version>
         <javax.mail.version>1.6.2</javax.mail.version>
         <javax.activation.version>1.2.0</javax.activation.version>
-        <jooq.version>3.11.9</jooq.version>
 
         <!-- test dependencies -->
         <httpclient.version>4.5.2</httpclient.version>

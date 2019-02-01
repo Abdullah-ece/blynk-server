@@ -3,7 +3,7 @@ package cc.blynk.server.core.model.widgets.ui.reporting;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.others.rtc.StringToZoneId;
 import cc.blynk.server.core.model.widgets.others.rtc.ZoneIdToString;
-import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
+import cc.blynk.server.core.model.widgets.outputs.graph.Granularity;
 import cc.blynk.server.core.model.widgets.ui.reporting.source.ReportSource;
 import cc.blynk.server.core.model.widgets.ui.reporting.type.BaseReportType;
 import cc.blynk.server.core.model.widgets.ui.reporting.type.DailyReport;
@@ -39,7 +39,7 @@ public class Report {
 
     public final String recipients;
 
-    public final GraphGranularityType granularityType;
+    public final Granularity granularityType;
 
     public final boolean isActive;
 
@@ -63,7 +63,7 @@ public class Report {
                   @JsonProperty("reportSources") ReportSource[] reportSources,
                   @JsonProperty("reportType") BaseReportType reportType,
                   @JsonProperty("recipients") String recipients,
-                  @JsonProperty("granularityType") GraphGranularityType granularityType,
+                  @JsonProperty("granularityType") Granularity granularityType,
                   @JsonProperty("isActive") boolean isActive,
                   @JsonProperty("reportOutput") ReportOutput reportOutput,
                   @JsonProperty("format") Format format,
@@ -76,7 +76,7 @@ public class Report {
         this.reportSources = reportSources == null ? ReportingWidget.EMPTY_REPORT_SOURCES : reportSources;
         this.reportType = reportType;
         this.recipients = recipients;
-        this.granularityType = granularityType == null ? GraphGranularityType.MINUTE : granularityType;
+        this.granularityType = granularityType == null ? Granularity.MINUTE : granularityType;
         this.isActive = isActive;
         this.reportOutput = reportOutput == null ? CSV_FILE_PER_DEVICE_PER_PIN : reportOutput;
         this.format = format;

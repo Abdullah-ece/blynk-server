@@ -3,11 +3,6 @@ package cc.blynk.server.core.model.web.product.metafields;
 import cc.blynk.server.core.model.web.product.MetaField;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.jooq.CaseConditionStep;
-import org.jooq.Field;
-import org.jooq.Record;
-import org.jooq.SelectSelectStep;
-import org.jooq.impl.DSL;
 
 /**
  * The Blynk Project.
@@ -29,17 +24,6 @@ public class MultiTextMetaField extends MetaField {
                               @JsonProperty("values") String[] values) {
         super(id, name, roleIds, includeInProvision, isMandatory, isDefault, icon);
         this.values = values;
-    }
-
-    @Override
-    public Field<?> applyMapping(SelectSelectStep<Record> query, Field<Object> field) {
-        CaseConditionStep<String> caseConditionStep = null;
-        for (int i = 0; i < values.length; i++) {
-            caseConditionStep = caseConditionStep == null
-                    ? DSL.when(field.eq(i), values[i])
-                    : caseConditionStep.when(field.eq(i), values[i]);
-        }
-        return caseConditionStep;
     }
 
     @Override

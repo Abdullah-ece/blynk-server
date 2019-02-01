@@ -46,6 +46,7 @@ public final class Command {
     public static final short DEVICE_SYNC = 25;
     public static final short SHARING = 26;
     public static final short MOBILE_ADD_PUSH_TOKEN = 27;
+    public static final short MOBILE_HARDWARE_GROUP = 28;
 
     public static final short HARDWARE_LOGIN = 29;
     //app sharing commands
@@ -186,6 +187,7 @@ public final class Command {
     public static final short MOBILE_RESOLVE_DEVICE_TIMELINE = 149;
     public static final short WEB_GET_RULE_GROUP = 150;
     public static final short WEB_EDIT_RULE_GROUP = 151;
+    public static final short WEB_GET_DEVICE_COUNT_FOR_PRODUCT_AND_SUBPRODUCTS = 152;
 
     public static final int LAST_COMMAND_INDEX = 160;
 

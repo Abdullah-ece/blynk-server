@@ -84,6 +84,7 @@ public final class MobileDeleteSuperChartDataLogic {
                                 .removeCacheEntry(deviceId, dataStream.pinType, dataStream.pin);
                     }
                 }
+
                 ctx.writeAndFlush(ok(msgId), ctx.voidPromise());
             } catch (Exception e) {
                 log.debug("Error removing superchart data. Reason : {}.", e.getMessage());

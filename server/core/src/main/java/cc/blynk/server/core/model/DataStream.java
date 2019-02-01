@@ -29,7 +29,7 @@ public class DataStream implements CopyObject<DataStream> {
 
     public final PinType pinType;
 
-    public String value;
+    public volatile String value;
 
     public final float min;
 
