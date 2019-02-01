@@ -15,7 +15,7 @@ final class MemoryStat {
 
     public final long directBytes;
 
-    public MemoryStat(ByteBufAllocator byteBufAllocator) {
+    MemoryStat(ByteBufAllocator byteBufAllocator) {
         long directMemory = 0;
         long heapMemory = 0;
 
