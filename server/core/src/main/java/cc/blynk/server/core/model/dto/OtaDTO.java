@@ -25,8 +25,6 @@ public class OtaDTO {
 
     public final String title;
 
-    public final boolean checkBoardType;
-
     public final FirmwareInfo firmwareInfo;
 
     public final int attemptsLimit;
@@ -40,7 +38,6 @@ public class OtaDTO {
                   @JsonProperty("firmwareOriginalFileName") String firmwareOriginalFileName,
                   @JsonProperty("deviceIds") int[] deviceIds,
                   @JsonProperty("title") String title,
-                  @JsonProperty("checkBoardType") boolean checkBoardType,
                   @JsonProperty("firmwareInfo") FirmwareInfo firmwareInfo,
                   @JsonProperty("attemptsLimit") int attemptsLimit,
                   @JsonProperty("isSecure") boolean isSecure) {
@@ -50,7 +47,6 @@ public class OtaDTO {
         this.firmwareOriginalFileName = firmwareOriginalFileName;
         this.deviceIds = deviceIds == null ? IntArray.EMPTY_INTS : deviceIds;
         this.title = title;
-        this.checkBoardType = checkBoardType;
         this.firmwareInfo = firmwareInfo;
         this.attemptsLimit = attemptsLimit == 0 ? 3 : attemptsLimit;
         this.isSecure = isSecure;
