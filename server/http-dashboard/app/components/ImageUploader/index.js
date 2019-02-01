@@ -14,7 +14,8 @@ class ImageUploader extends React.Component {
     touched: React.PropTypes.any,
     hint: React.PropTypes.any,
     logo: React.PropTypes.string,
-    defaultImage: React.PropTypes.string
+    defaultImage: React.PropTypes.string,
+    iconClass: React.PropTypes.string,
   };
 
   constructor(props) {
@@ -83,7 +84,7 @@ class ImageUploader extends React.Component {
             </div>)
           }
           { !this.props.logo && <div>
-            <p className="ant-upload-drag-icon">
+            <p className={this.props.iconClass || 'ant-upload-drag-icon'}>
               <Icon type="cloud-upload-o"/>
             </p>
             {this.props.text && <p

@@ -9,8 +9,20 @@
 }
 
 .edit-section-title {
-  padding: 32px 32px 0px 32px;
-  margin-bottom: 32px;
+  padding: 32px;
+  height: 25px;
+  font-family: Roboto;
+  font-size: 22px;
+  font-weight: 500;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  color: @color-dark-grey-75;
+}
+
+.edit-section-sub-title {
+  padding: 32px 0px;
   height: 25px;
   font-family: Roboto;
   font-size: 22px;
@@ -25,4 +37,39 @@
 .edit-section-content {
   margin-top: 32px;
   padding: 0 32px 32px 32px;
+}
+
+.edit-section-content {
+  margin-top: 32px;
+}
+
+.edit-section-content-input {
+  width: 100%;
+}
+
+.upload-firmware {
+  width: 304px;
+  height: 99px;
+  border-radius: 4px;
+  background-color: @font-color-white;
+}
+
+.ota-upload-drag-icon {
+  height: initial;
+  margin-bottom: initial;
+  font-size: 48px;
+  color: @color-primary;
+
+  &:hover {
+    color: @color-primary;
+  }
+}
+
+.ota-btn-group {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.ota-btn-group > button {
+  margin-right: 8px;
 }

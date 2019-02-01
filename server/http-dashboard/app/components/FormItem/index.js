@@ -9,7 +9,7 @@ class FormItem extends React.Component {
   static propTypes = {
     children: React.PropTypes.any,
     offset: React.PropTypes.bool,
-    visible: React.PropTypes.bool
+    visible: React.PropTypes.bool,
   };
 
   render() {
@@ -18,7 +18,7 @@ class FormItem extends React.Component {
       'form-item': true,
       'none-offset': this.props.offset === false,
       'visible': this.props.visible === true,
-      'non-visible': this.props.visible === false
+      'non-visible': this.props.visible === false,
     });
 
     return (
