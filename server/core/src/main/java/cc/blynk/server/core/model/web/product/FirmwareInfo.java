@@ -35,7 +35,7 @@ public final class FirmwareInfo {
 
     public FirmwareInfo(Map<String, String> entires) {
         this(entires.get(VERSION),
-                BoardType.valueOf(entires.get(BOARD_TYPE)),
+                BoardType.fromLabel(entires.get(BOARD_TYPE)),
                 entires.get(BUILD),
                 entires.get(MD5));
     }
