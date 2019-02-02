@@ -188,16 +188,32 @@ export function OTAGetFirmwareInfo(params) {
   };
 }
 
-export function OTAClean(params) {
+export function ShipmentDelete(params) {
   const { productId } = params;
 
   return {
-    type: 'WEB_OTA_CLEAN',
+    type: 'WEB_SHIPMENT_DELETE',
     ws: {
       request: {
-        command: API_COMMANDS.WEB_OTA_CLEAN,
+        command: API_COMMANDS.WEB_SHIPMENT_DELETE,
         query: [
           productId
+        ],
+      }
+    }
+  };
+}
+
+export function GetOrgShipments(params) {
+  const { orgId } = params;
+
+  return {
+    type: 'WEB_GET_ORG_SHIPMENTS',
+    ws: {
+      request: {
+        command: API_COMMANDS.WEB_GET_ORG_SHIPMENTS,
+        query: [
+          orgId
         ],
       }
     }
