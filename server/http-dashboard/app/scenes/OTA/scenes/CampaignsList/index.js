@@ -1,10 +1,15 @@
 import React, { Component } from 'react';
-import { Button } from "antd";
-import { Table } from "antd";
+import PropTypes from 'prop-types';
+import { Button, Table } from "antd";
+import { MainLayout } from "components";
 
 class CampaignsList extends Component {
   static contextTypes = {
     router: React.PropTypes.object
+  };
+
+  propTypes = {
+    shippings: PropTypes.array,
   };
 
   constructor(props) {

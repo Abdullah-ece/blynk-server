@@ -1,14 +1,17 @@
 import React from 'react';
 
-import {Select} from 'antd';
+import { Select } from 'antd';
 
-import {SUPER_ADMIN_ROLE_ID, SUPER_ADMIN_ROLE_TITLE} from 'services/Roles';
+import {
+  SUPER_ADMIN_ROLE_ID,
+  SUPER_ADMIN_ROLE_TITLE,
+  VerifyPermission,
+  PERMISSIONS_INDEX
+} from 'services/Roles';
 
 import './styles.less';
 
-import {connect} from 'react-redux';
-
-import { VerifyPermission, PERMISSIONS_INDEX } from "services/Roles";
+import { connect } from 'react-redux';
 
 @connect((state) => ({
   roles: state.Organization.roles,
@@ -30,7 +33,8 @@ export default class Role extends React.Component {
     const options = [];
     this.props.roles.filter((role) => role && role.id && role.id !== SUPER_ADMIN_ROLE_ID).forEach((role) => {
       let key = `${role.id}`;
-      options.push(<Select.Option key={key} value={key}>{role.name}</Select.Option>);
+      options.push(<Select.Option key={key}
+                                  value={key}>{role.name}</Select.Option>);
     });
     return options;
   }
@@ -45,11 +49,12 @@ export default class Role extends React.Component {
     const role = this.props && this.props.role;
 
     return (
-      (role === SUPER_ADMIN_ROLE_ID && <div>{SUPER_ADMIN_ROLE_TITLE}</div> ) || (
+      (role === SUPER_ADMIN_ROLE_ID && <div>{SUPER_ADMIN_ROLE_TITLE}</div>) || (
         <Select className="user--role-select"
                 value={`${role}`}
-                onChange={this.onChange.bind(this)} disabled={role === SUPER_ADMIN_ROLE_ID || !VerifyPermission(this.props.permissions, PERMISSIONS_INDEX.ROLE_EDIT)}>
-        { options }
+                onChange={this.onChange.bind(this)}
+                disabled={role === SUPER_ADMIN_ROLE_ID || !VerifyPermission(this.props.permissions, PERMISSIONS_INDEX.ROLE_EDIT)}>
+          {options}
         </Select>)
     );
   }

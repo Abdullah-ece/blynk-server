@@ -1,6 +1,12 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 class EditSection extends React.Component {
+  propTypes = {
+    title: PropTypes.string,
+    children: PropTypes.array,
+  };
+
   render() {
     return (
       <div className="edit-section">

@@ -1,5 +1,6 @@
-import React from 'react';
-import { MainLayout, ContentEditableInput } from 'components';
+import React from "react";
+import PropTypes from "prop-types";
+import { MainLayout, ContentEditableInput } from "components";
 import {
   Col,
   Row,
@@ -12,24 +13,23 @@ import {
   Modal,
   Icon,
   // Progress
-} from 'antd';
-import FormItem from 'components/FormItem';
-import ImageUploader from 'components/ImageUploader';
+} from "antd";
+import FormItem from "components/FormItem";
+import ImageUploader from "components/ImageUploader";
 
 import EditSection from "../../components/EditSection";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
-import { SecureTokenForUploadFetch } from "data/Product/api";
-import Pluralize from 'pluralize';
+import { SecureTokenForUploadFetch, ProductsFetch } from "data/Product/api";
+import Pluralize from "pluralize";
 
 import {
   DevicesFetch
-} from 'data/Devices/api';
-import { ProductsFetch } from 'data/Product/api';
+} from "data/Devices/api";
 import { OTAGetFirmwareInfo, OTAStart, OTAStop } from "data/Product/actions";
 
-import { FILE_UPLOAD_URL } from 'services/API';
+import { FILE_UPLOAD_URL } from "services/API";
 
 @connect((state) => ({
   orgId: state.Account.selectedOrgId,
@@ -45,9 +45,24 @@ import { FILE_UPLOAD_URL } from 'services/API';
   otaStop: bindActionCreators(OTAStop, dispatch),
 }))
 class Edit extends React.Component {
-
   static contextTypes = {
     router: React.PropTypes.object
+  };
+
+  propTypes = {
+    OTA: PropTypes.object,
+    orgId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    devicesproductId: PropTypes.string,
+    firmwareUpdateStart: PropTypes.func,
+    otaStart: PropTypes.func,
+    otaStop: PropTypes.func,
+    fetchProducts: PropTypes.func,
+    fetchDevices: PropTypes.func,
+    secureTokenForUploadFetch: PropTypes.func,
+    getFirmwareInfo: PropTypes.func,
+    secureUploadToken: PropTypes.string,
+    devices: PropTypes.array,
+    products: PropTypes.array,
   };
 
   constructor(props) {
@@ -74,40 +89,21 @@ class Edit extends React.Component {
       OTA: {
         orgId: this.props.orgId,
         productId: undefined,
-        pathToFirmware: '',
-        firmwareOriginalFileName: '',
+        pathToFirmware: "",
+        firmwareOriginalFileName: "",
         deviceIds: [],
-        title: ota.title || 'New Shipping',
+        title: ota.title || "New Shipping",
         checkBoardType: false,
         firmwareInfo: {
-          version: '',
-          boardType: '',
-          buildDate: '',
-          md5Hash: '',
+          version: "",
+          boardType: "",
+          buildDate: "",
+          md5Hash: "",
         },
         attemptsLimit: 0,
         isSecure: false
       }
     };
-  }
-
-  firmwareUpdateStart() {
-    this.props.otaStart({ otaDTO: this.state.OTA });
-    this.setState({ modalVisible: true });
-  }
-
-  handleOK() {
-    this.setState({ modalVisible: false });
-    this.context.router.push('/ota');
-  }
-
-  handleCancel() {
-    this.setState({ modalVisible: false });
-    this.props.otaStop({ otaDTO: this.state.OTA });
-  }
-
-  onFirmwareUpdateCancel() {
-    this.context.router.push('/ota');
   }
 
   componentWillMount() {
@@ -120,6 +116,25 @@ class Edit extends React.Component {
     this.props.fetchDevices({
       orgId: this.props.orgId
     });
+  }
+
+  firmwareUpdateStart() {
+    this.props.otaStart({ otaDTO: this.state.OTA });
+    this.setState({ modalVisible: true });
+  }
+
+  handleOK() {
+    this.setState({ modalVisible: false });
+    this.context.router.push("/ota");
+  }
+
+  handleCancel() {
+    this.setState({ modalVisible: false });
+    this.props.otaStop({ otaDTO: this.state.OTA });
+  }
+
+  onFirmwareUpdateCancel() {
+    this.context.router.push("/ota");
   }
 
   fetchToken() {
@@ -140,10 +155,10 @@ class Edit extends React.Component {
 
   fileUploader(onChange, value, error) {
     const fileProps = {
-      name: 'file',
+      name: "file",
       action: FILE_UPLOAD_URL,
       showUploadList: false,
-      accept: '.bin',
+      accept: ".bin",
       data: {
         token: this.props.secureUploadToken
       }
@@ -151,17 +166,17 @@ class Edit extends React.Component {
 
     const handleComponentChange = (info) => {
       const status = info.file.status;
-      if (status === 'done') {
+      if (status === "done") {
         this.fetchToken();
-        onChange({ value: info.file.name, name: 'firmwareOriginalFileName' });
-        onChange({ value: info.file.response, name: 'pathToFirmware' });
+        onChange({ value: info.file.name, name: "firmwareOriginalFileName" });
+        onChange({ value: info.file.response, name: "pathToFirmware" });
         this.props.getFirmwareInfo({ path_to_firmware: info.file.response }).then(
           result => {
             const { OTA } = this.state;
             OTA.firmwareInfo = result.payload.data;
             this.setState({ OTA });
           });
-      } else if (status === 'error') {
+      } else if (status === "error") {
         this.fetchToken();
         message.error(`${info.file.name} file upload failed.`);
       }
@@ -172,7 +187,7 @@ class Edit extends React.Component {
         <span>Upload firmware file (.bin)<br/><br/></span>)}
                      logo={value}
                      error={error}
-                     iconClass={'ota-upload-drag-icon'}
+                     iconClass="ota-upload-drag-icon"
                      onChange={handleComponentChange}
                      fileProps={fileProps}/>
     );
@@ -186,8 +201,8 @@ class Edit extends React.Component {
       return (
         <div>
       <span>
-        <Icon className='ota-review-icon-success'
-              type='check'/> You will be shipping <b>{this.state.OTA.firmwareOriginalFileName}</b> to <b>{Pluralize('device', this.state.OTA.deviceIds.length, true)}</b>
+        <Icon className="ota-review-icon-success"
+              type="check"/> You will be shipping <b>{this.state.OTA.firmwareOriginalFileName}</b> to <b>{Pluralize("device", this.state.OTA.deviceIds.length, true)}</b>
       </span>
         </div>);
     } else {
@@ -196,17 +211,17 @@ class Edit extends React.Component {
           <div>
       <span>
         <Icon
-          className={devicesSelected ? 'ota-review-icon-success' : 'ota-review-icon-warning'}
-          type={devicesSelected ? 'check' : 'warning'}/> {devicesSelected ? (
-          <span>Target ready: you will be shipping to <b>{Pluralize('device', this.state.OTA.deviceIds.length, true)}</b></span>) :
+          className={devicesSelected ? "ota-review-icon-success" : "ota-review-icon-warning"}
+          type={devicesSelected ? "check" : "warning"}/> {devicesSelected ? (
+          <span>Target ready: you will be shipping to <b>{Pluralize("device", this.state.OTA.deviceIds.length, true)}</b></span>) :
         <span>Select devices</span>}
       </span>
           </div>
           <div>
       <span>
         <Icon
-          className={firmwareSelected ? 'ota-review-icon-success' : 'ota-review-icon-warning'}
-          type={firmwareSelected ? 'check' : 'warning'}/> {firmwareSelected ? (
+          className={firmwareSelected ? "ota-review-icon-success" : "ota-review-icon-warning"}
+          type={firmwareSelected ? "check" : "warning"}/> {firmwareSelected ? (
           <span>Target ready: You will be shipping <b>{this.state.OTA.firmwareOriginalFileName}</b></span>) :
         <span>Upload Firmware file</span>}
       </span>
@@ -217,14 +232,14 @@ class Edit extends React.Component {
 
   getSelectedDevicesTitle() {
     const { deviceIds } = this.state.OTA;
-    let firstpart = '';
+    let firstpart = "";
     if (!deviceIds.length) {
-      firstpart = 'No devices';
+      firstpart = "No devices";
     } else {
-      firstpart = Pluralize('device', deviceIds.length, true);
+      firstpart = Pluralize("device", deviceIds.length, true);
     }
 
-    return firstpart + ' selected';
+    return firstpart + " selected";
   }
 
   createTable() {
@@ -242,18 +257,18 @@ class Edit extends React.Component {
     });
 
     const columns = [{
-      title: 'Device Name',
-      dataIndex: 'nameAndOnline',
+      title: "Device Name",
+      dataIndex: "nameAndOnline",
       render: (value) => {
-        return (<Badge status={value.status === 'ONLINE' ? 'success' : 'error'}
+        return (<Badge status={value.status === "ONLINE" ? "success" : "error"}
                        text={value.name}/>);
       }
     }, {
-      title: 'Firmware Version',
-      dataIndex: 'hardwareInfo.version',
+      title: "Firmware Version",
+      dataIndex: "hardwareInfo.version",
     }, {
-      title: 'Updated On',
-      dataIndex: 'deviceOtaInfo.buildDate',
+      title: "Updated On",
+      dataIndex: "deviceOtaInfo.buildDate",
     },];
     const selectedRowKeys = [];
 
@@ -297,7 +312,7 @@ class Edit extends React.Component {
         <Modal title="Shipping in progress"
                visible={this.state.modalVisible}
                closable={false}
-               wrapClassName={'ota-vertical-center-modal'}
+               wrapClassName="ota-vertical-center-modal"
                footer={[
                  <Button key="cancel" type="default" size="default"
                          onClick={this.handleCancel}>Stop
@@ -321,7 +336,7 @@ class Edit extends React.Component {
             {/*</Row>*/}
             <Row>
               <Col span={24} style={{ paddingRight: 16 }}>
-                Target: {Pluralize('device', OTA.deviceIds.length, true)}
+                Target: {Pluralize("device", OTA.deviceIds.length, true)}
               </Col>
             </Row>
           </div>
@@ -331,9 +346,7 @@ class Edit extends React.Component {
             title={<ContentEditableInput maxLength={40}
                                          value={OTA.title}
                                          onChange={this.onTitleChange}/>
-            }>
-          </MainLayout.Header>
-
+            }/>
           <MainLayout.Content className="organizations-create-content">
             <EditSection>
               <Row gutter={24}>
@@ -349,7 +362,7 @@ class Edit extends React.Component {
                                 value={OTA.productId}
                                 onChange={value => this.onChange({
                                   value,
-                                  name: 'productId'
+                                  name: "productId"
                                 })}
                                 placeholder={`Select product to filter devices`}>
                           {productsList.map((product) => (
@@ -361,13 +374,13 @@ class Edit extends React.Component {
                     </FormItem>
                   </div>
                   <div className="product-details-row">
-                    <FormItem className='edit-section-content'>
+                    <FormItem className="edit-section-content">
                       <FormItem.Title>Product</FormItem.Title>
                       <FormItem.Content>
-                        <Input value={''}
+                        <Input value=""
                                onChange={this.onChange}
-                               name={''}
-                               placeholder={'Search devices'}
+                               name=""
+                               placeholder="Search devices"
                                disabled={true}/>
                       </FormItem.Content>
                     </FormItem>
@@ -383,10 +396,10 @@ class Edit extends React.Component {
                 </Col>
               </Row>
             </EditSection>
-            <EditSection title={'Firmware'}>
+            <EditSection title="Firmware">
               <Row>
                 <Col span={7}>
-                  <div className='upload-firmware'>
+                  <div className="upload-firmware">
                     {this.fileUploader(this.onChange, OTA.firmwareOriginalFileName)}
                   </div>
                 </Col>
@@ -400,7 +413,7 @@ class Edit extends React.Component {
                 </Col>
               </Row>
             </EditSection>
-            <EditSection title={'Review and start'}>
+            <EditSection title="Review and start">
               {this.buildReviewItems()}
               <div className="ota-btn-group">
                 <Button type="danger"

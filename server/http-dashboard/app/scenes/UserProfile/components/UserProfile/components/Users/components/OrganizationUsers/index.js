@@ -7,9 +7,8 @@ import {Status, Role} from 'components/User';
 
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
-import {filterSuperAdmin} from 'services/Roles';
 
-import { VerifyPermission, PERMISSIONS_INDEX } from "services/Roles";
+import { VerifyPermission, PERMISSIONS_INDEX, filterSuperAdmin} from "services/Roles";
 
 import {
   OrganizationUsersFetch,

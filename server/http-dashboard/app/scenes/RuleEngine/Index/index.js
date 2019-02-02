@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { MainLayout } from 'components';
 import { Button } from 'antd';
 import '../styless.less';
@@ -13,6 +14,12 @@ import { GetRuleGroup, UpdateRuleGroup } from 'data/RulesEngine/actions';
   updateRuleGroup: bindActionCreators(UpdateRuleGroup, dispatch),
 }))
 class Index extends React.Component {
+
+  propTypes = {
+    ruleEngine: PropTypes.string,
+    getRuleGroup: PropTypes.func,
+    updateRuleGroup: PropTypes.func,
+  };
 
   constructor(props) {
     super(props);
@@ -43,7 +50,9 @@ class Index extends React.Component {
         <MainLayout.Header title="Rules Engine"
                            options={(
                              <div>
-                               <Button type="primary" onClick={this.updateRules}>Update Rules</Button>
+                               <Button type="primary"
+                                       onClick={this.updateRules}>Update
+                                 Rules</Button>
                              </div>
 
                            )}
@@ -52,7 +61,7 @@ class Index extends React.Component {
           className="layout-content-rules-engine-text-area product-edit-content">
           <textarea className="rules-engine-text-area"
                     value={JSON.stringify(this.state.rules, undefined, 2)}
-                    onChange={this.updateRulesText}></textarea>
+                    onChange={this.updateRulesText}/>
         </MainLayout.Content>
       </MainLayout>
     );
