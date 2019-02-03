@@ -10,62 +10,56 @@ import cc.blynk.server.core.model.widgets.ui.reporting.ReportScheduler;
  */
 final class BlockingIOStat {
 
-    public final int messagingActiveTasks;
+    public int messagingActiveTasks;
 
-    public final long messagingExecutedTasks;
+    public long messagingExecutedTasks;
 
-    public final int historyActiveTasks;
+    public int historyActiveTasks;
 
-    public final long historyExecutedTasks;
+    public long historyExecutedTasks;
 
-    public final int dbActiveTasks;
+    public int dbActiveTasks;
 
-    public final long dbExecutedTasks;
+    public long dbExecutedTasks;
 
-    public final int getServerActiveTasks;
+    public int getServerActiveTasks;
 
-    public final long getServerExecutedTasks;
+    public long getServerExecutedTasks;
 
-    public final int reportsActive;
+    public int reportsActive;
 
-    public final long reportsExecuted;
+    public long reportsExecuted;
 
-    public final int reportsFutureMapSize;
+    public int reportsFutureMapSize;
 
-    BlockingIOStat(BlockingIOProcessor blockingIOProcessor, ReportScheduler reportScheduler) {
-        this(blockingIOProcessor.messagingExecutor.getQueue().size(),
-             blockingIOProcessor.messagingExecutor.getCompletedTaskCount(),
-
-             blockingIOProcessor.historyExecutor.getQueue().size(),
-             blockingIOProcessor.historyExecutor.getCompletedTaskCount(),
-
-             blockingIOProcessor.dbExecutor.getQueue().size(),
-             blockingIOProcessor.dbExecutor.getCompletedTaskCount(),
-
-             blockingIOProcessor.dbGetServerExecutor.getQueue().size(),
-             blockingIOProcessor.dbGetServerExecutor.getCompletedTaskCount(),
-
-             reportScheduler.getQueue().size(),
-             reportScheduler.getCompletedTaskCount(),
-             reportScheduler.map.size()
-        );
+    BlockingIOStat() {
     }
 
-    private BlockingIOStat(int messagingActiveTasks, long messagingExecutedTasks,
-                          int historyActiveTasks, long historyExecutedTasks,
-                          int dbActiveTasks, long dbExecutedTasks,
-                          int getServerActiveTasks, long getServerExecutedTasks,
-                          int reportsActive, long reportsExecuted, int reportsFutureMapSize) {
-        this.messagingActiveTasks = messagingActiveTasks;
-        this.messagingExecutedTasks = messagingExecutedTasks;
-        this.historyActiveTasks = historyActiveTasks;
-        this.historyExecutedTasks = historyExecutedTasks;
-        this.dbActiveTasks = dbActiveTasks;
-        this.dbExecutedTasks = dbExecutedTasks;
-        this.getServerActiveTasks = getServerActiveTasks;
-        this.getServerExecutedTasks = getServerExecutedTasks;
-        this.reportsActive = reportsActive;
-        this.reportsExecuted = reportsExecuted;
-        this.reportsFutureMapSize = reportsFutureMapSize;
+    public void update(BlockingIOProcessor blockingIOProcessor, ReportScheduler reportScheduler) {
+        this.messagingActiveTasks   = blockingIOProcessor.messagingExecutor.getQueue().size();
+        this.messagingExecutedTasks = blockingIOProcessor.messagingExecutor.getCompletedTaskCount();
+        this.historyActiveTasks     = blockingIOProcessor.historyExecutor.getQueue().size();
+        this.historyExecutedTasks   = blockingIOProcessor.historyExecutor.getCompletedTaskCount();
+        this.dbActiveTasks          = blockingIOProcessor.dbExecutor.getQueue().size();
+        this.dbExecutedTasks        = blockingIOProcessor.dbExecutor.getCompletedTaskCount();
+        this.getServerActiveTasks   = blockingIOProcessor.dbGetServerExecutor.getQueue().size();
+        this.getServerExecutedTasks = blockingIOProcessor.dbGetServerExecutor.getCompletedTaskCount();
+        this.reportsActive          = reportScheduler.getQueue().size();
+        this.reportsExecuted        = reportScheduler.getCompletedTaskCount();
+        this.reportsFutureMapSize   = reportScheduler.map.size();
+    }
+
+    public void reset() {
+        this.messagingActiveTasks   = 0;
+        this.messagingExecutedTasks = 0;
+        this.historyActiveTasks     = 0;
+        this.historyExecutedTasks   = 0;
+        this.dbActiveTasks          = 0;
+        this.dbExecutedTasks        = 0;
+        this.getServerActiveTasks   = 0;
+        this.getServerExecutedTasks = 0;
+        this.reportsActive          = 0;
+        this.reportsExecuted        = 0;
+        this.reportsFutureMapSize   = 0;
     }
 }

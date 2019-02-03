@@ -11,11 +11,14 @@ import io.netty.buffer.ByteBufAllocatorMetricProvider;
  */
 final class MemoryStat {
 
-    public final long heapBytes;
+    public long heapBytes;
 
-    public final long directBytes;
+    public long directBytes;
 
-    MemoryStat(ByteBufAllocator byteBufAllocator) {
+    MemoryStat() {
+    }
+
+    public void update(ByteBufAllocator byteBufAllocator) {
         long directMemory = 0;
         long heapMemory = 0;
 
@@ -27,5 +30,10 @@ final class MemoryStat {
 
         this.directBytes = directMemory;
         this.heapBytes = heapMemory;
+    }
+
+    public void reset() {
+        this.heapBytes   = 0;
+        this.directBytes = 0;
     }
 }
