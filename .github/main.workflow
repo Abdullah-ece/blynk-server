@@ -4,6 +4,6 @@ workflow "Build on push" {
 }
 
 action "Build with maven" {
-  uses = "docker://adoptopenjdk/maven-openjdk11:latest"
+  uses = "doom369/openjdk11-maven-git-docker@master"
   runs = "mvn clean install -Dmaven.test.skip=true -P qa"
 }
