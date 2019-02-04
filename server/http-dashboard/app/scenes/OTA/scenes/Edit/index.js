@@ -158,7 +158,7 @@ class Edit extends React.Component {
       name: "file",
       action: FILE_UPLOAD_URL,
       showUploadList: false,
-      accept: ".bin",
+      accept: ".bin, .tar",
       data: {
         token: this.props.secureUploadToken
       }
@@ -184,7 +184,7 @@ class Edit extends React.Component {
 
     return (
       <ImageUploader text={() => (
-        <span>Upload firmware file (.bin)<br/><br/></span>)}
+        <span>Upload firmware file (.bin, .tar)<br/><br/></span>)}
                      logo={value}
                      error={error}
                      iconClass="ota-upload-drag-icon"
