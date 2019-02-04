@@ -113,14 +113,18 @@ public final class BlynkInternalLogic {
                             device.firmwareDownloadLimitReached();
                         } else {
                             Shipment shipment = state.org.getShipmentById(deviceOtaInfo.shipmentId);
-                            String serverUrl = holder.props.getServerUrl(shipment.isSecure);
-                            String downloadToken = TokenGeneratorUtil.generateNewToken();
-                            holder.tokensPool.addToken(downloadToken, new OTADownloadToken(device.id));
-                            String body = StringUtils.makeHardwareBody(serverUrl,
-                                    deviceOtaInfo.pathToFirmware, downloadToken);
-                            StringMessage msg = makeASCIIStringMessage(BLYNK_INTERNAL, 7777, body);
-                            ctx.write(msg, ctx.voidPromise());
-                            device.requestSent();
+                            if (shipment != null) {
+                                String serverUrl = holder.props.getServerUrl(shipment.isSecure);
+                                String downloadToken = TokenGeneratorUtil.generateNewToken();
+                                holder.tokensPool.addToken(downloadToken, new OTADownloadToken(device.id));
+                                String body = StringUtils.makeHardwareBody(serverUrl,
+                                        deviceOtaInfo.pathToFirmware, downloadToken);
+                                StringMessage msg = makeASCIIStringMessage(BLYNK_INTERNAL, 7777, body);
+                                ctx.write(msg, ctx.voidPromise());
+                                device.requestSent();
+                            } else {
+                                log.trace("Error getting shipment by id {}.", deviceOtaInfo.shipmentId);
+                            }
                         }
                     }
                 } else {
