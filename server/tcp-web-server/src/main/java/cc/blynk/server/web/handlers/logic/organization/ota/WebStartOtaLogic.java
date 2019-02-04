@@ -14,7 +14,6 @@ import cc.blynk.server.core.model.device.ota.OTADeviceStatus;
 import cc.blynk.server.core.model.dto.ShipmentDTO;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
-import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.Shipment;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -87,8 +86,7 @@ public final class WebStartOtaLogic implements PermissionBasedLogic<WebAppStateH
 
         long now = System.currentTimeMillis();
         Organization org = organizationDao.getOrgByIdOrThrow(orgId);
-        Product product = org.getProductOrThrow(shipmentDTO.productId);
-        boolean isSecure = product.isSecureOTA();
+        boolean isSecure = shipmentDTO.isSecure();
         Shipment shipment = new Shipment(shipmentDTO, isSecure, now);
         org.addShipment(shipment);
 

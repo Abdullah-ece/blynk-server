@@ -31,6 +31,8 @@ public final class ShipmentDTO {
 
     public final int attemptsLimit;
 
+    public final Boolean isSecure;
+
     @JsonCreator
     public ShipmentDTO(@JsonProperty("id") int id,
                        @JsonProperty("orgId") int orgId,
@@ -40,7 +42,8 @@ public final class ShipmentDTO {
                        @JsonProperty("deviceIds") int[] deviceIds,
                        @JsonProperty("title") String title,
                        @JsonProperty("firmwareInfo") FirmwareInfo firmwareInfo,
-                       @JsonProperty("attemptsLimit") int attemptsLimit) {
+                       @JsonProperty("attemptsLimit") int attemptsLimit,
+                       @JsonProperty("isSecure") Boolean isSecure) {
         this.id = id;
         this.orgId = orgId;
         this.productId = productId;
@@ -50,6 +53,25 @@ public final class ShipmentDTO {
         this.title = title;
         this.firmwareInfo = firmwareInfo;
         this.attemptsLimit = attemptsLimit == 0 ? 3 : attemptsLimit;
+        this.isSecure = isSecure;
+    }
+
+    public boolean isSecure() {
+        if (isSecure != null) {
+            return isSecure;
+        }
+        if (firmwareInfo != null && firmwareInfo.boardType != null) {
+            switch (firmwareInfo.boardType) {
+                case TI_CC3220 :
+                case TI_CC3200_LaunchXL :
+                case ESP32_Dev_Board :
+                case ESP32 :
+                    return true;
+                default:
+                    return false;
+            }
+        }
+        return false;
     }
 
     public boolean isNotValid() {

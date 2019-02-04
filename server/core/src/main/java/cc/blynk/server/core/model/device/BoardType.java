@@ -20,6 +20,7 @@ public enum BoardType {
     Arduino_Nano("Arduino Nano"),
     Arduino_Mega("Arduino Mega"),
     ESP32_Dev_Board("ESP32 Dev Board"),
+    ESP32("ESP32"),
     WeMos_D1("WeMos D1"),
     Generic_Board("Generic Board"),
     Raspberry_Pi_2_A_B("Raspberry Pi 2/A+/B+"),
