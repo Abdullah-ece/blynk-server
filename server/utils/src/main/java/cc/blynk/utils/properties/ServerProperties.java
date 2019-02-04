@@ -95,7 +95,7 @@ public class ServerProperties extends BaseProperties {
     }
 
     private String getHostProperty() {
-        return getProperty("server.host");
+        return getProperty("server.host", "localhost");
     }
 
     private boolean forceRegularPort() {
