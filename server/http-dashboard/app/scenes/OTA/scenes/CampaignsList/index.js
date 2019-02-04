@@ -70,7 +70,13 @@ class CampaignsList extends Component {
   }
 
   deleteOTA(id) {
-    console.log(id);
+    this.props.otaDelete({ shipmentId: id }).then(
+      () => {
+        this.props.getOrgShipments({ orgId: this.props.orgId }).then(
+          shipments => {
+            this.setState({ shipments: shipments.payload.data });
+          });
+      }).catch(err => console.error(err));
   }
 
   buildDataSource() {
