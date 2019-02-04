@@ -95,7 +95,6 @@ class CampaignsList extends Component {
 
     if (value === 'PAUSE') {
       status = 'warning';
-      text = 'Paused';
     } else if (value === 'FAILED', value === 'CANCELLED') {
       status = 'error';
     } else if (value === 'DRAFT') {
@@ -105,15 +104,15 @@ class CampaignsList extends Component {
     if (value === 'PAUSE') {
       text = 'Paused';
     } else if (value === 'RUN') {
-      status = 'Live';
+      text = 'Live';
     } else if (value === 'FAILED') {
-      status = 'Failed';
+      text = 'Failed';
     } else if (value === 'DRAFT') {
-      status = 'Draft';
+      text = 'Draft';
     } else if (value === 'CANCEL') {
-      status = 'Cancelled';
+      text = 'Cancelled';
     } else if (value === 'FINISH') {
-      status = 'Finished';
+      text = 'Finished';
     }
 
     return (<Badge status={status} text={text}/>);
