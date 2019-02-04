@@ -100,7 +100,7 @@ class Edit extends React.Component {
           buildDate: "",
           md5Hash: "",
         },
-        attemptsLimit: 0,
+        attemptsLimit: 3,
         isSecure: false
       }
     };
