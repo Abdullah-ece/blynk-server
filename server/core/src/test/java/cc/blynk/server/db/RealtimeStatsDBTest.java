@@ -63,7 +63,7 @@ public class RealtimeStatsDBTest {
         Stat stat = new Stat(sessionDao, userDao, blockingIOProcessor, new GlobalStats(), new ReportScheduler(1, "http://localhost/", null, null, Collections.emptyMap(), null));
         int i = 0;
 
-        for (Map.Entry<Short, Integer> entry: stat.allCommands.stats.entrySet()) {
+        for (Map.Entry<Short, Integer> entry: stat.statsForDB.entrySet()) {
             entry.setValue(i++);
         }
 
@@ -101,7 +101,7 @@ public class RealtimeStatsDBTest {
                 rs.getTimestamp("ts");
 
                 short commandCode = rs.getShort("command_code");
-                assertEquals(stat.allCommands.stats.get(commandCode), (Integer) rs.getInt("counter"));
+                assertEquals(stat.statsForDB.get(commandCode), (Integer) rs.getInt("counter"));
             }
 
             connection.commit();
