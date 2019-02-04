@@ -191,7 +191,7 @@ public class MobileResetPasswordHandler extends SimpleChannelInboundHandler<Rese
                 log.debug("{} mail sent.", trimmedEmail);
                 ctx.writeAndFlush(ok(msgId), ctx.voidPromise());
             } catch (Exception e) {
-                log.error("Error sending mail for {}. Reason : {}", trimmedEmail, e.getMessage());
+                log.error("Error sending mail for {}.", trimmedEmail, e);
                 ctx.writeAndFlush(serverError(msgId, "Error sending mail."), ctx.voidPromise());
             }
         });
