@@ -162,8 +162,8 @@ public class WebAppResetPasswordHandler extends SimpleChannelInboundHandler<Rese
         User user = userDao.getByName(trimmedEmail);
 
         if (user == null) {
-            log.debug("User does not exists.");
-            ctx.writeAndFlush(json(msgId, "User does not exists."), ctx.voidPromise());
+            log.debug("User does not exist.");
+            ctx.writeAndFlush(json(msgId, "User does not exist."), ctx.voidPromise());
             return;
         }
 
