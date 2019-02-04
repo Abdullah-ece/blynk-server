@@ -31,22 +31,20 @@ public class BodyParam extends Param {
             throw new RuntimeException("Unexpected content type. Expecting " + expectedContentType + ".");
         }
 
-        switch (expectedContentType) {
-            case MediaType.APPLICATION_JSON :
-                String data = "";
-                try {
-                    data = uriDecoder.getContentAsString();
-                    return JsonParser.MAPPER.readValue(data, type);
-                } catch (JsonParseException | JsonMappingException jsonParseError) {
-                    log.debug("Error parsing body param : '{}'.", data);
-                    throw new RuntimeException("Error parsing body param. " + data);
-                } catch (Exception e) {
-                    log.error("Unexpected error during parsing body param.", e);
-                    throw new RuntimeException("Unexpected error during parsing body param.", e);
-                }
-            default :
-                return uriDecoder.getContentAsString();
+        if (MediaType.APPLICATION_JSON.equals(expectedContentType)) {
+            String data = "";
+            try {
+                data = uriDecoder.getContentAsString();
+                return JsonParser.MAPPER.readValue(data, type);
+            } catch (JsonParseException | JsonMappingException jsonParseError) {
+                log.debug("Error parsing body param : '{}'.", data);
+                throw new RuntimeException("Error parsing body param. " + data);
+            } catch (Exception e) {
+                log.error("Unexpected error during parsing body param.", e);
+                throw new RuntimeException("Unexpected error during parsing body param.", e);
+            }
         }
+        return uriDecoder.getContentAsString();
     }
 
 }
