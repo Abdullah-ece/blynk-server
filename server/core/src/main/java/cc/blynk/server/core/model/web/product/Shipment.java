@@ -1,6 +1,6 @@
 package cc.blynk.server.core.model.web.product;
 
-import cc.blynk.server.core.model.dto.OtaDTO;
+import cc.blynk.server.core.model.dto.ShipmentDTO;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -10,6 +10,8 @@ public final class Shipment {
     public static final Shipment[] EMPTY_SHIPMENTS = {};
 
     public final int id;
+
+    public final int productId;
 
     public final String title;
 
@@ -33,6 +35,7 @@ public final class Shipment {
 
     @JsonCreator
     public Shipment(@JsonProperty("id") int id,
+                    @JsonProperty("productId") int productId,
                     @JsonProperty("title") String title,
                     @JsonProperty("pathToFirmware") String pathToFirmware,
                     @JsonProperty("firmwareOriginalFileName") String firmwareOriginalFileName,
@@ -44,6 +47,7 @@ public final class Shipment {
                     @JsonProperty("isSecure") boolean isSecure,
                     @JsonProperty("status") ShipmentStatus status) {
         this.id = id;
+        this.productId = productId;
         this.title = title;
         this.pathToFirmware = pathToFirmware;
         this.firmwareOriginalFileName = firmwareOriginalFileName;
@@ -56,23 +60,25 @@ public final class Shipment {
         this.status = status == null ? ShipmentStatus.RUN : status;
     }
 
-    public Shipment(OtaDTO otaDTO, long now) {
-        this(otaDTO.id,
-                otaDTO.title,
-                otaDTO.pathToFirmware,
-                otaDTO.firmwareOriginalFileName,
+    public Shipment(ShipmentDTO shipmentDTO, long now) {
+        this(shipmentDTO.id,
+                shipmentDTO.productId,
+                shipmentDTO.title,
+                shipmentDTO.pathToFirmware,
+                shipmentDTO.firmwareOriginalFileName,
                 now,
                 -1,
-                otaDTO.deviceIds,
-                otaDTO.firmwareInfo,
-                otaDTO.attemptsLimit,
-                otaDTO.isSecure,
+                shipmentDTO.deviceIds,
+                shipmentDTO.firmwareInfo,
+                shipmentDTO.attemptsLimit,
+                shipmentDTO.isSecure,
                 ShipmentStatus.RUN
         );
     }
 
     public Shipment(Shipment shipment, ShipmentStatus status) {
         this(shipment.id,
+                shipment.productId,
                 shipment.title,
                 shipment.pathToFirmware,
                 shipment.firmwareOriginalFileName,

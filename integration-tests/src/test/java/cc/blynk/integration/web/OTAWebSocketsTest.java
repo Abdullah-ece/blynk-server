@@ -8,8 +8,8 @@ import cc.blynk.integration.model.websocket.AppWebSocketClient;
 import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.ota.OTADeviceStatus;
-import cc.blynk.server.core.model.dto.OtaDTO;
 import cc.blynk.server.core.model.dto.ProductDTO;
+import cc.blynk.server.core.model.dto.ShipmentDTO;
 import cc.blynk.server.core.model.web.product.FirmwareInfo;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
@@ -103,9 +103,9 @@ public class OTAWebSocketsTest extends SingleServerInstancePerTestWithDBAndNewOr
         Device createdDevice = client.parseDevice(4);
         assertNotNull(createdDevice);
 
-        OtaDTO otaDTO = new OtaDTO(1, 1, newDevice.productId, pathToFirmware, "original name",
+        ShipmentDTO shipmentDTO = new ShipmentDTO(1, 1, newDevice.productId, pathToFirmware, "original name",
                 new int[] {createdDevice.id}, "title", parsedFirmwareInfo, 5, false);
-        client.otaStart(otaDTO);
+        client.otaStart(shipmentDTO);
         Shipment shipment = client.parseOtaProgress(5);
         assertNotNull(shipment);
 

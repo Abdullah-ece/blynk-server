@@ -35,8 +35,10 @@ public class ReportingStatsTest extends SingleServerInstancePerTestWithDB {
     @Before
     public void clearDB() throws Exception {
         // clickhouse doesn't have normal way of data removal, so using "hack"
-        holder.reportingDBManager.executeSQL("ALTER TABLE reporting_app_stat_minute DELETE where region <> \'" + "" + "\'");
-        holder.reportingDBManager.executeSQL("ALTER TABLE reporting_command_stat_minute DELETE where region <> \'" + "" + "\'");
+        holder.reportingDBManager.executeSQL("ALTER TABLE reporting_app_stat_minute DELETE where region = 'ua'");
+        holder.reportingDBManager.executeSQL("ALTER TABLE reporting_command_stat_minute DELETE where region = 'ua'");
+        holder.reportingDBManager.executeSQL("ALTER TABLE reporting_app_stat_minute DELETE where region = 'test-region'");
+        holder.reportingDBManager.executeSQL("ALTER TABLE reporting_command_stat_minute DELETE where region = 'test-region'");
     }
 
     @Test
@@ -46,7 +48,7 @@ public class ReportingStatsTest extends SingleServerInstancePerTestWithDB {
 
         int i = 0;
 
-        for (Map.Entry<Short, Integer> entry: stat.allCommands.stats.entrySet()) {
+        for (Map.Entry<Short, Integer> entry: stat.statsForDB.entrySet()) {
             entry.setValue(++i);
         }
 
@@ -82,7 +84,7 @@ public class ReportingStatsTest extends SingleServerInstancePerTestWithDB {
                 assertEquals(UA, rs.getString("region"));
 
                 short commandCode = rs.getShort("command_code");
-                assertEquals(stat.allCommands.stats.get(commandCode), (Integer) rs.getInt("counter"));
+                assertEquals(stat.statsForDB.get(commandCode), (Integer) rs.getInt("counter"));
             }
 
             connection.commit();

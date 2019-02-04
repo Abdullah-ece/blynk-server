@@ -6,7 +6,7 @@ import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.ota.OTADeviceStatus;
-import cc.blynk.server.core.model.dto.OtaDTO;
+import cc.blynk.server.core.model.dto.ShipmentDTO;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
@@ -41,21 +41,21 @@ public final class WebStopOtaLogic implements PermissionBasedLogic<WebAppStateHo
 
     @Override
     public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
-        OtaDTO otaDTO = JsonParser.readAny(message.body, OtaDTO.class);
+        ShipmentDTO shipmentDTO = JsonParser.readAny(message.body, ShipmentDTO.class);
 
-        if (otaDTO == null || otaDTO.isDevicesEmpty()) {
-            log.error("No devices to stop OTA. {}.", otaDTO);
+        if (shipmentDTO == null || shipmentDTO.isDevicesEmpty()) {
+            log.error("No devices to stop OTA. {}.", shipmentDTO);
             throw new JsonException("No devices to stop OTA.");
         }
 
         List<Device> filteredDevices = deviceDao.getByProductIdAndFilter(
-                otaDTO.orgId, otaDTO.productId, otaDTO.deviceIds);
+                shipmentDTO.orgId, shipmentDTO.productId, shipmentDTO.deviceIds);
         if (filteredDevices.size() == 0) {
-            log.error("No devices for provided productId {}", otaDTO.productId);
-            throw new JsonException("No devices for provided productId " + otaDTO.productId);
+            log.error("No devices for provided productId {}", shipmentDTO.productId);
+            throw new JsonException("No devices for provided productId " + shipmentDTO.productId);
         }
 
-        log.info("Stopping OTA for {}. {}", state.user.email, otaDTO);
+        log.info("Stopping OTA for {}. {}", state.user.email, shipmentDTO);
 
         for (Device device : filteredDevices) {
             if (device.deviceOtaInfo != null && device.deviceOtaInfo.status != OTADeviceStatus.SUCCESS
@@ -64,8 +64,8 @@ public final class WebStopOtaLogic implements PermissionBasedLogic<WebAppStateHo
             }
         }
 
-        Organization org = organizationDao.getOrgByIdOrThrow(otaDTO.orgId);
-        org.stopShipment(otaDTO.id);
+        Organization org = organizationDao.getOrgByIdOrThrow(shipmentDTO.orgId);
+        org.stopShipment(shipmentDTO.id);
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }

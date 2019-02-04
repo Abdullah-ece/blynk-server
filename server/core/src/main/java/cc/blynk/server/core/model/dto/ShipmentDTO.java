@@ -11,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Created by Dmitriy Dumanskiy.
  * Created on 07.05.18.
  */
-public final class OtaDTO {
+public final class ShipmentDTO {
 
     public final int id;
 
@@ -34,16 +34,16 @@ public final class OtaDTO {
     public final boolean isSecure;
 
     @JsonCreator
-    public OtaDTO(@JsonProperty("id") int id,
-                  @JsonProperty("orgId") int orgId,
-                  @JsonProperty("productId") int productId,
-                  @JsonProperty("pathToFirmware") String pathToFirmware,
-                  @JsonProperty("firmwareOriginalFileName") String firmwareOriginalFileName,
-                  @JsonProperty("deviceIds") int[] deviceIds,
-                  @JsonProperty("title") String title,
-                  @JsonProperty("firmwareInfo") FirmwareInfo firmwareInfo,
-                  @JsonProperty("attemptsLimit") int attemptsLimit,
-                  @JsonProperty("isSecure") boolean isSecure) {
+    public ShipmentDTO(@JsonProperty("id") int id,
+                       @JsonProperty("orgId") int orgId,
+                       @JsonProperty("productId") int productId,
+                       @JsonProperty("pathToFirmware") String pathToFirmware,
+                       @JsonProperty("firmwareOriginalFileName") String firmwareOriginalFileName,
+                       @JsonProperty("deviceIds") int[] deviceIds,
+                       @JsonProperty("title") String title,
+                       @JsonProperty("firmwareInfo") FirmwareInfo firmwareInfo,
+                       @JsonProperty("attemptsLimit") int attemptsLimit,
+                       @JsonProperty("isSecure") boolean isSecure) {
         this.id = id;
         this.orgId = orgId;
         this.productId = productId;

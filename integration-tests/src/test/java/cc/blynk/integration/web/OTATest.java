@@ -9,8 +9,8 @@ import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.ota.OTADeviceStatus;
-import cc.blynk.server.core.model.dto.OtaDTO;
 import cc.blynk.server.core.model.dto.ProductDTO;
+import cc.blynk.server.core.model.dto.ShipmentDTO;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.FirmwareInfo;
 import cc.blynk.server.core.model.web.product.MetaField;
@@ -111,7 +111,7 @@ public class OTATest extends APIBaseTest {
         }
 
         HttpPost post = new HttpPost(httpsAdminServerUrl + "/ota/start");
-        post.setEntity(new StringEntity(new OtaDTO(0, 1, newDevice.productId, pathToFirmware, "original name", new int[] {1}, "title", firmwareInfo, 5, false).toString(),
+        post.setEntity(new StringEntity(new ShipmentDTO(0, 1, newDevice.productId, pathToFirmware, "original name", new int[] {1}, "title", firmwareInfo, 5, false).toString(),
                 ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(post)) {
@@ -240,7 +240,7 @@ public class OTATest extends APIBaseTest {
         }
 
         HttpPost post = new HttpPost(httpsAdminServerUrl + "/ota/start");
-        post.setEntity(new StringEntity(new OtaDTO(0, 1, newDevice.productId,
+        post.setEntity(new StringEntity(new ShipmentDTO(0, 1, newDevice.productId,
                 pathToFirmware, "original name", new int[] {1}, "title", firmwareInfo, 5, false).toString(),
                 ContentType.APPLICATION_JSON));
         try (CloseableHttpResponse response = httpclient.execute(post)) {
@@ -370,7 +370,7 @@ public class OTATest extends APIBaseTest {
         newHardClient.verifyResult(ok(2));
 
         HttpPost post = new HttpPost(httpsAdminServerUrl + "/ota/start");
-        post.setEntity(new StringEntity(new OtaDTO(1, 1, newDevice.productId, pathToFirmware, "original name", new int[] {1}, "title", firmwareInfo, 5, false).toString(),
+        post.setEntity(new StringEntity(new ShipmentDTO(1, 1, newDevice.productId, pathToFirmware, "original name", new int[] {1}, "title", firmwareInfo, 5, false).toString(),
                 ContentType.APPLICATION_JSON));
         try (CloseableHttpResponse response = httpclient.execute(post)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -431,7 +431,7 @@ public class OTATest extends APIBaseTest {
         }
 
         HttpPost post = new HttpPost(httpsAdminServerUrl + "/ota/start");
-        post.setEntity(new StringEntity(new OtaDTO(0, 1, newDevice.productId, pathToFirmware, "original name", new int[] {1}, "title", firmwareInfo, 5, false).toString(),
+        post.setEntity(new StringEntity(new ShipmentDTO(0, 1, newDevice.productId, pathToFirmware, "original name", new int[] {1}, "title", firmwareInfo, 5, false).toString(),
                 ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(post)) {
@@ -453,7 +453,7 @@ public class OTATest extends APIBaseTest {
         }
 
         post = new HttpPost(httpsAdminServerUrl + "/ota/stop");
-        post.setEntity(new StringEntity(new OtaDTO(0, 1, newDevice.productId, pathToFirmware, "original name", new int[] {1}, "title", firmwareInfo, 5, false).toString(),
+        post.setEntity(new StringEntity(new ShipmentDTO(0, 1, newDevice.productId, pathToFirmware, "original name", new int[] {1}, "title", firmwareInfo, 5, false).toString(),
                 ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(post)) {
