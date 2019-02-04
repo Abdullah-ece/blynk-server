@@ -189,7 +189,7 @@ export function OTAGetFirmwareInfo(params) {
 }
 
 export function ShipmentDelete(params) {
-  const { productId } = params;
+  const { shipmentId } = params;
 
   return {
     type: 'WEB_SHIPMENT_DELETE',
@@ -197,7 +197,7 @@ export function ShipmentDelete(params) {
       request: {
         command: API_COMMANDS.WEB_SHIPMENT_DELETE,
         query: [
-          productId
+          shipmentId
         ],
       }
     }

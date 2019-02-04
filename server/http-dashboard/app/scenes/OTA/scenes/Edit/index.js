@@ -49,7 +49,7 @@ class Edit extends React.Component {
     router: React.PropTypes.object
   };
 
-  propTypes = {
+  static propTypes = {
     OTA: PropTypes.object,
     orgId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     devicesproductId: PropTypes.string,
