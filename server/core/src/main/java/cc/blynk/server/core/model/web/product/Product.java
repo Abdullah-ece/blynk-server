@@ -259,10 +259,10 @@ public class Product {
     }
 
     public boolean isSecureOTA() {
-        if (this.boardType.equals(BoardType.ESP32_Dev_Board.label)) {
+        if (BoardType.ESP32_Dev_Board.label.equals(this.boardType)) {
             return true;
         }
-        if (this.boardType.equals(BoardType.TI_CC3220)) {
+        if (BoardType.TI_CC3220.label.equals(this.boardType)) {
             return true;
         }
         return false;
