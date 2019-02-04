@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static cc.blynk.server.core.protocol.enums.Command.VALUES_NAME;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -48,8 +49,8 @@ public class RealtimeStatsDBTest {
     @Before
     public void cleanAll() throws Exception {
         //clickhouse doesn't have normal way of data removal, so using "hack"
-        reportingDBManager.executeSQL("ALTER TABLE reporting_app_stat_minute DELETE where region = \'" + UA + "\'");
-        reportingDBManager.executeSQL("ALTER TABLE reporting_command_stat_minute DELETE where region = \'" + UA + "\'");
+        reportingDBManager.executeSQL("ALTER TABLE reporting_app_stat_minute DELETE where region <> \'" + "" + "\'");
+        reportingDBManager.executeSQL("ALTER TABLE reporting_command_stat_minute DELETE where region <> \'" + "" + "\'");
     }
 
     @Test
@@ -60,7 +61,8 @@ public class RealtimeStatsDBTest {
         UserDao userDao = new UserDao(new ConcurrentHashMap<>(), "test", "127.0.0.1");
         BlockingIOProcessor blockingIOProcessor = new BlockingIOProcessor(6, 1000);
 
-        Stat stat = new Stat(sessionDao, userDao, blockingIOProcessor, new GlobalStats(), new ReportScheduler(1, "http://localhost/", null, null, Collections.emptyMap(), null));
+        Stat stat = new Stat();
+        stat.update(sessionDao, userDao, blockingIOProcessor, new GlobalStats(), new ReportScheduler(1, "http://localhost/", null, null, Collections.emptyMap(), null));
         int i = 0;
 
         for (Map.Entry<Short, Integer> entry: stat.statsForDB.entrySet()) {

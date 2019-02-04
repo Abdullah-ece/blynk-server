@@ -18,6 +18,7 @@ import java.util.Map;
 import static cc.blynk.integration.TestUtil.hardware;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICE;
+import static cc.blynk.server.core.protocol.enums.Command.VALUES_NAME;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -43,7 +44,8 @@ public class ReportingStatsTest extends SingleServerInstancePerTestWithDB {
 
     @Test
     public void testInsertStatWorks() throws Exception {
-        var stat = new Stat(holder.sessionDao, holder.userDao, holder.blockingIOProcessor,
+        var stat = new Stat();
+        stat.update(holder.sessionDao, holder.userDao, holder.blockingIOProcessor,
                 holder.stats, holder.reportScheduler);
 
         int i = 0;
