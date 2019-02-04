@@ -31,8 +31,6 @@ public final class ShipmentDTO {
 
     public final int attemptsLimit;
 
-    public final boolean isSecure;
-
     @JsonCreator
     public ShipmentDTO(@JsonProperty("id") int id,
                        @JsonProperty("orgId") int orgId,
@@ -42,8 +40,7 @@ public final class ShipmentDTO {
                        @JsonProperty("deviceIds") int[] deviceIds,
                        @JsonProperty("title") String title,
                        @JsonProperty("firmwareInfo") FirmwareInfo firmwareInfo,
-                       @JsonProperty("attemptsLimit") int attemptsLimit,
-                       @JsonProperty("isSecure") boolean isSecure) {
+                       @JsonProperty("attemptsLimit") int attemptsLimit) {
         this.id = id;
         this.orgId = orgId;
         this.productId = productId;
@@ -53,7 +50,6 @@ public final class ShipmentDTO {
         this.title = title;
         this.firmwareInfo = firmwareInfo;
         this.attemptsLimit = attemptsLimit == 0 ? 3 : attemptsLimit;
-        this.isSecure = isSecure;
     }
 
     public boolean isNotValid() {

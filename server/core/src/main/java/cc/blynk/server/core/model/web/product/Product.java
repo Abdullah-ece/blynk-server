@@ -1,6 +1,7 @@
 package cc.blynk.server.core.model.web.product;
 
 import cc.blynk.server.core.model.DataStream;
+import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
@@ -253,6 +254,16 @@ public class Product {
             if (device.isUpdatedSince(lastStart)) {
                 return true;
             }
+        }
+        return false;
+    }
+
+    public boolean isSecureOTA() {
+        if (this.boardType.equals(BoardType.ESP32_Dev_Board.label)) {
+            return true;
+        }
+        if (this.boardType.equals(BoardType.TI_CC3220)) {
+            return true;
         }
         return false;
     }

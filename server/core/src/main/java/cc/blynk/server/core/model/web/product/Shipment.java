@@ -60,7 +60,7 @@ public final class Shipment {
         this.status = status == null ? ShipmentStatus.RUN : status;
     }
 
-    public Shipment(ShipmentDTO shipmentDTO, long now) {
+    public Shipment(ShipmentDTO shipmentDTO, boolean isSecure, long now) {
         this(shipmentDTO.id,
                 shipmentDTO.productId,
                 shipmentDTO.title,
@@ -71,7 +71,7 @@ public final class Shipment {
                 shipmentDTO.deviceIds,
                 shipmentDTO.firmwareInfo,
                 shipmentDTO.attemptsLimit,
-                shipmentDTO.isSecure,
+                isSecure,
                 ShipmentStatus.RUN
         );
     }

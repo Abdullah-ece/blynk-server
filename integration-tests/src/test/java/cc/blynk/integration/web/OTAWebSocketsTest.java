@@ -104,7 +104,7 @@ public class OTAWebSocketsTest extends SingleServerInstancePerTestWithDBAndNewOr
         assertNotNull(createdDevice);
 
         ShipmentDTO shipmentDTO = new ShipmentDTO(1, 1, newDevice.productId, pathToFirmware, "original name",
-                new int[] {createdDevice.id}, "title", parsedFirmwareInfo, 5, false);
+                new int[] {createdDevice.id}, "title", parsedFirmwareInfo, 5);
         client.otaStart(shipmentDTO);
         Shipment shipment = client.parseOtaProgress(5);
         assertNotNull(shipment);

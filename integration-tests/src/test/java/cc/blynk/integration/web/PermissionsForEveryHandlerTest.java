@@ -361,26 +361,26 @@ public class PermissionsForEveryHandlerTest extends SingleServerInstancePerTestW
     @Test
     public void OTAStart() throws Exception {
         AppWebSocketClient client = createUserForSubOrgSpecificRole(setPermission(OTA_START));
-        client.otaStart(new ShipmentDTO(1, 1, 1, null, null, null, null, null, 0, false));
+        client.otaStart(new ShipmentDTO(1, 1, 1, null, null, null, null, null, 0));
         client.verifyResult(webJson(1, "Wrong data for OTA start."));
     }
     @Test
     public void noOTAStart() throws Exception {
         AppWebSocketClient client = createUserForSubOrgSpecificRole(removePermission(OTA_START));
-        client.otaStart(new ShipmentDTO(1, 1, 1, null, null, null, null, null, 0, false));
+        client.otaStart(new ShipmentDTO(1, 1, 1, null, null, null, null, null, 0));
         verifyPermissionAbsence(client, OTA_START, true);
     }
 
     @Test
     public void OTAStop() throws Exception {
         AppWebSocketClient client = createUserForSubOrgSpecificRole(setPermission(OTA_STOP));
-        client.otaStop(new ShipmentDTO(1, 1, 1, null, null, null, null, null, 0, false));
+        client.otaStop(new ShipmentDTO(1, 1, 1, null, null, null, null, null, 0));
         client.verifyResult(webJson(1, "No devices to stop OTA."));
     }
     @Test
     public void noOTAStop() throws Exception {
         AppWebSocketClient client = createUserForSubOrgSpecificRole(removePermission(OTA_STOP));
-        client.otaStop(new ShipmentDTO(1, 1, 1, null, null, null, null, null, 0, false));
+        client.otaStop(new ShipmentDTO(1, 1, 1, null, null, null, null, null, 0));
         verifyPermissionAbsence(client, OTA_STOP, true);
     }
 
