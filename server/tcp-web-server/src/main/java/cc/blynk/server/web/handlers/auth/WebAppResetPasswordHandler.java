@@ -194,7 +194,8 @@ public class WebAppResetPasswordHandler extends SimpleChannelInboundHandler<Rese
                 log.info("Reset email sent to {}.", trimmedEmail);
                 ctx.writeAndFlush(ok(msgId), ctx.voidPromise());
             } catch (Exception e) {
-                log.error("Error sending mail for {}.", trimmedEmail, e);
+                log.error("Error sending mail for {}. Reason {}.", trimmedEmail, e.getMessage());
+                log.trace(e);
                 ctx.writeAndFlush(json(msgId, "Error sending mail for reset password."), ctx.voidPromise());
             }
         });
