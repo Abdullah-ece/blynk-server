@@ -9,8 +9,8 @@ import java.util.Map;
 
 import static cc.blynk.utils.FileUtils.BOARD_TYPE;
 import static cc.blynk.utils.FileUtils.BUILD;
+import static cc.blynk.utils.FileUtils.FIRMWARE_VERSION;
 import static cc.blynk.utils.FileUtils.MD5;
-import static cc.blynk.utils.FileUtils.VERSION;
 
 public final class FirmwareInfo {
 
@@ -34,7 +34,7 @@ public final class FirmwareInfo {
     }
 
     public FirmwareInfo(Map<String, String> entires) {
-        this(entires.get(VERSION),
+        this(entires.get(FIRMWARE_VERSION),
                 BoardType.fromLabel(entires.get(BOARD_TYPE)),
                 entires.get(BUILD),
                 entires.get(MD5));

@@ -190,12 +190,12 @@ public final class FileUtils {
     }
 
     public static final String BUILD = "build";
-    public static final String VERSION = "ver";
+    public static final String FIRMWARE_VERSION = "fw";
     public static final String BOARD_TYPE = "dev";
     public static final String MD5 = "md5";
 
     private static final String[] OTA_FIELDS = new String[] {
-            BUILD, VERSION, BOARD_TYPE
+            BUILD, FIRMWARE_VERSION, BOARD_TYPE
     };
 
     public static Map<String, String> getPatternFromString(Path path) {
