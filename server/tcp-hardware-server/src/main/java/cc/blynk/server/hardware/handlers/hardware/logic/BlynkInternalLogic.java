@@ -144,7 +144,7 @@ public final class BlynkInternalLogic {
         }
 
         if (hardwareInfo.isFirmwareVersionChanged(shipment.firmwareInfo.buildDate)) {
-            if (deviceOtaInfo.status.isNotFailure()) {
+            if (deviceOtaInfo.status != null && deviceOtaInfo.status.isNotFailure()) {
                 if (deviceOtaInfo.isLimitReached(shipment.attemptsLimit)) {
                     log.warn("OTA limit reached for deviceId {}.", device.id);
                     device.firmwareDownloadLimitReached();
