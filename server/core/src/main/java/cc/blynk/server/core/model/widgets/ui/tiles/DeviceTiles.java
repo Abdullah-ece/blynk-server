@@ -278,13 +278,11 @@ public final class DeviceTiles extends Widget implements MobileSyncWidget, Devic
     }
 
     public void replaceTileTemplate(TileTemplate newTileTemplate, int existingTileTemplateIndex) {
-        TileTemplate[] updatedTemplates = Arrays.copyOf(templates, templates.length);
         TileTemplate existingTileTemplate = templates[existingTileTemplateIndex];
-        updatedTemplates[existingTileTemplateIndex] = newTileTemplate;
         //do not override widgets field, as we have separate commands for it.
-
         newTileTemplate.widgets = existingTileTemplate.widgets;
-        this.templates = updatedTemplates;
+
+        this.templates = ArrayUtil.copyAndReplace(this.templates, newTileTemplate, existingTileTemplateIndex);
     }
 
     public int getGroupTemplateIndexByIdOrThrow(long id) {
@@ -315,13 +313,12 @@ public final class DeviceTiles extends Widget implements MobileSyncWidget, Devic
     }
 
     public void replaceGroupTemplate(BaseGroupTemplate newGroupTemplate, int existingGroupTemplateIndex) {
-        BaseGroupTemplate[] updatedGroupTemplates = Arrays.copyOf(groupTemplates, groupTemplates.length);
-        BaseGroupTemplate existingGroupTemplate = groupTemplates[existingGroupTemplateIndex];
-        updatedGroupTemplates[existingGroupTemplateIndex] = newGroupTemplate;
         //do not override widgets field, as we have separate commands for it.
-
+        BaseGroupTemplate existingGroupTemplate = groupTemplates[existingGroupTemplateIndex];
         newGroupTemplate.widgets = existingGroupTemplate.widgets;
-        this.groupTemplates = updatedGroupTemplates;
+
+        this.groupTemplates = ArrayUtil.copyAndReplace(
+                this.groupTemplates, newGroupTemplate, existingGroupTemplateIndex);
     }
 
     public void deleteGroupByTemplateId(long groupTemplateId) {

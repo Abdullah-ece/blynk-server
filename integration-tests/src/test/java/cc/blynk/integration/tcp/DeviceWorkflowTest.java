@@ -522,7 +522,7 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.send("deleteDevice 1\0" + "1");
         verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(4)));
 
-        clientPair.appClient.sync(1, 1);
+        clientPair.appClient.sync(1);
         clientPair.appClient.neverAfter(500, appSync(1111, "1-1 vw 1 123"));
         clientPair.appClient.never(appSync(1111, "1-1 vw 2 124"));
         clientPair.appClient.never(appSync(1111, "1-1 vw 3 125"));

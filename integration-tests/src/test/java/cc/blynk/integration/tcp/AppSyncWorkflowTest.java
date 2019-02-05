@@ -351,7 +351,7 @@ public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
         appClient.verifyResult(hardware(4, "1-0 vw 56 4"));
         appClient.verifyResult(hardware(5, "1-0 vw 56 dddyyyiii"));
 
-        appClient.sync(1, 0);
+        appClient.sync(0);
         appClient.verifyResult(ok(7));
 
         appClient.verifyResult(appSync("1-0 vm 56 1 2 3 4 dddyyyiii"));
@@ -425,7 +425,7 @@ public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
         appClient.verifyResult(hardware(2, "1-0 vw 56 1"));
         appClient.verifyResult(hardware(3, "1-0 vw 57 2"));
 
-        appClient.sync(1, 0);
+        appClient.sync(0);
         appClient.verifyResult(ok(8));
 
         appClient.verifyResult(appSync("1-0 vm 56 1"));
@@ -436,7 +436,7 @@ public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
         appClient.verifyResult(ok(9));
 
         appClient.reset();
-        appClient.sync(1, 0);
+        appClient.sync(0);
         appClient.verifyResult(ok(1));
 
         appClient.neverAfter(100, appSync("1-0 vm 56 1"));
@@ -609,7 +609,7 @@ public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testActivateAndGetSyncForSpecificDeviceId() throws Exception {
-        clientPair.appClient.sync(1, 0);
+        clientPair.appClient.sync(0);
 
         verify(clientPair.appClient.responseMock, timeout(500).times(11)).channelRead(any(), any());
 
@@ -742,7 +742,7 @@ public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
 
         clientPair.appClient.reset();
 
-        clientPair.appClient.sync(1, 0);
+        clientPair.appClient.sync(0);
 
         verify(clientPair.appClient.responseMock, timeout(500).times(12)).channelRead(any(), any());
 
@@ -763,7 +763,7 @@ public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testActivateAndGetSyncForNonExistingDeviceId() throws Exception {
-        clientPair.appClient.sync(1, 1);
+        clientPair.appClient.sync(1);
 
         verify(clientPair.appClient.responseMock, timeout(500).times(1)).channelRead(any(), any());
 
@@ -793,7 +793,7 @@ public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(2));
 
         clientPair.appClient.reset();
-        clientPair.appClient.sync(1, 1);
+        clientPair.appClient.sync(1);
 
         verify(clientPair.appClient.responseMock, timeout(500).times(3)).channelRead(any(), any());
 
