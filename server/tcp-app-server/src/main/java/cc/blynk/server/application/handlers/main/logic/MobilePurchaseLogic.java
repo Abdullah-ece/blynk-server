@@ -91,7 +91,6 @@ public class MobilePurchaseLogic {
         if (splitBody.length == 2 && isValidTransactionId(splitBody[1])) {
             double price = calcPrice(energyAmountToAdd);
             insertPurchase(user.email, energyAmountToAdd, price, splitBody[1]);
-            user.addEnergy(energyAmountToAdd);
             response = ok(message.id);
         } else {
             if (!wasErrorPrinted) {

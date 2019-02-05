@@ -189,6 +189,12 @@ public final class Command {
     public static final short WEB_EDIT_RULE_GROUP = 151;
     public static final short WEB_GET_DEVICE_COUNT_FOR_PRODUCT_AND_SUBPRODUCTS = 152;
     public static final short WEB_GET_ORG_SHIPMENTS = 153;
+    public static final short MOBILE_CREATE_GROUP_TEMPLATE = 154;
+    public static final short MOBILE_EDIT_GROUP_TEMPLATE = 155;
+    public static final short MOBILE_DELETE_GROUP_TEMPLATE = 156;
+    public static final short MOBILE_CREATE_GROUP = 157;
+    public static final short MOBILE_EDIT_GROUP = 158;
+    public static final short MOBILE_DELETE_GROUP = 159;
 
     public static final int LAST_COMMAND_INDEX = 160;
 

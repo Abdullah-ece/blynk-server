@@ -22,8 +22,4 @@ public class TextInput extends OnePinWidget {
         return PinMode.out;
     }
 
-    @Override
-    public int getPrice() {
-        return 400;
-    }
 }

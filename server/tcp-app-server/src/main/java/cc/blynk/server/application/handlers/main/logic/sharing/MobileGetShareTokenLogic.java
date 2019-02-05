@@ -18,8 +18,6 @@ import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
  */
 public final class MobileGetShareTokenLogic {
 
-    private static final int PRIVATE_TOKEN_PRICE = 1000;
-
     private MobileGetShareTokenLogic() {
     }
 
@@ -39,11 +37,7 @@ public final class MobileGetShareTokenLogic {
 
         //if token not exists. generate new one
         if (token == null) {
-            if (user.notEnoughEnergy(PRIVATE_TOKEN_PRICE)) {
-                throw new JsonException("Not enough energy.");
-            }
             token = holder.sharedTokenManager.refreshSharedToken(user, dash);
-            user.subtractEnergy(PRIVATE_TOKEN_PRICE);
             user.lastModifiedTs = System.currentTimeMillis();
         }
 

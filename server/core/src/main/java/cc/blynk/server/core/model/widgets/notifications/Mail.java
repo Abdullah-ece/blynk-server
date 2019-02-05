@@ -14,11 +14,6 @@ public class Mail extends NoPinWidget {
 
     public ContentType contentType = ContentType.TEXT_HTML;
 
-    @Override
-    public int getPrice() {
-        return 100;
-    }
-
     public boolean isText() {
         return contentType == ContentType.TEXT_PLAIN;
     }

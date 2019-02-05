@@ -9,9 +9,4 @@ import cc.blynk.server.core.model.widgets.NoPinWidget;
  */
 public class Bridge extends NoPinWidget {
 
-    @Override
-    public int getPrice() {
-        return 100;
-    }
-
 }

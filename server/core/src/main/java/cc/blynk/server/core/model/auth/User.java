@@ -18,8 +18,6 @@ import com.fasterxml.jackson.annotation.JsonView;
  */
 public class User {
 
-    private static final int INITIAL_ENERGY_AMOUNT = Integer.parseInt(System.getProperty("initial.energy", "2000"));
-
     @JsonView(View.WebUser.class)
     public volatile String name;
 
@@ -52,8 +50,6 @@ public class User {
 
     public boolean isFacebookUser;
 
-    public volatile int energy;
-
     public transient int emailMessages;
     private transient long emailSentTs;
 
@@ -62,7 +58,6 @@ public class User {
         this.lastModifiedTs = System.currentTimeMillis();
         this.profile = new Profile();
         //todo this should be changed
-        this.energy = INITIAL_ENERGY_AMOUNT;
         this.isFacebookUser = false;
         this.orgId = OrganizationDao.DEFAULT_ORGANIZATION_ID;
     }
@@ -84,7 +79,7 @@ public class User {
     public User(String email, String passHash, int orgId, String region, String ip,
                 boolean isFacebookUser, int roleId, String name,
                 long lastModifiedTs, long lastLoggedAt, String lastLoggedIP,
-                Profile profile, int energy) {
+                Profile profile) {
         this.email = email;
         this.name = email;
         this.pass = passHash;
@@ -98,7 +93,6 @@ public class User {
         this.lastLoggedAt = lastLoggedAt;
         this.lastLoggedIP = lastLoggedIP;
         this.profile = profile;
-        this.energy = energy;
     }
 
     @JsonProperty("id")
@@ -106,25 +100,8 @@ public class User {
         return email + "-" + orgId;
     }
 
-    public boolean notEnoughEnergy(int price) {
-        return price > energy && orgId == OrganizationDao.DEFAULT_ORGANIZATION_ID;
-    }
-
     public boolean hasAccess(int orgId) {
         return isSuperAdmin() || this.orgId == orgId;
-    }
-
-    @SuppressWarnings("NonAtomicOperationOnVolatileField")
-    public void subtractEnergy(int price) {
-        //non-atomic. we are fine with that, always updated from 1 thread
-        this.energy -= price;
-    }
-
-    @SuppressWarnings("NonAtomicOperationOnVolatileField")
-    public void addEnergy(int price) {
-        //non-atomic. we are fine with that, always updated from 1 thread
-        this.energy += price;
-        this.lastModifiedTs = System.currentTimeMillis();
     }
 
     private static final int EMAIL_DAY_LIMIT = 100;

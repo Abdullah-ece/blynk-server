@@ -13,8 +13,4 @@ public class Bluetooth extends NoPinWidget {
 
     public int deviceId;
 
-    @Override
-    public int getPrice() {
-        return 0;
-    }
 }

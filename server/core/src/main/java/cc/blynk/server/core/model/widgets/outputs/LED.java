@@ -15,8 +15,4 @@ public class LED extends OnePinWidget {
         return PinMode.in;
     }
 
-    @Override
-    public int getPrice() {
-        return 100;
-    }
 }

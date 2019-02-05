@@ -125,11 +125,6 @@ public class Table extends OnePinWidget {
     }
 
     @Override
-    public int getPrice() {
-        return 800;
-    }
-
-    @Override
     public void erase() {
         super.erase();
         rows.clear();

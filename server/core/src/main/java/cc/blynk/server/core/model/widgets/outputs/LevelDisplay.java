@@ -19,8 +19,4 @@ public class LevelDisplay extends OnePinReadingWidget {
         return PinMode.in;
     }
 
-    @Override
-    public int getPrice() {
-        return 200;
-    }
 }

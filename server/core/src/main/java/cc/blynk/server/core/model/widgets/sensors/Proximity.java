@@ -17,8 +17,4 @@ public class Proximity extends OnePinWidget {
         return PinMode.out;
     }
 
-    @Override
-    public int getPrice() {
-        return 300;
-    }
 }

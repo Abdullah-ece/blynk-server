@@ -1,15 +1,15 @@
-package cc.blynk.server.application.handlers.main.logic.dashboard.widget.tile;
+package cc.blynk.server.application.handlers.main.logic.dashboard.widget.group;
 
+import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
-import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
+import cc.blynk.server.core.model.widgets.ui.tiles.group.BaseGroupTemplate;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.mobile.MobileStateHolder;
-import cc.blynk.utils.ArrayUtil;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,14 +22,14 @@ import static cc.blynk.utils.StringUtils.split3;
  * Created by Dmitriy Dumanskiy.
  * Created on 01.02.16.
  */
-public final class MobileCreateTileTemplateLogic {
+public final class MobileEditGroupTemplateLogic {
 
-    private static final Logger log = LogManager.getLogger(MobileCreateTileTemplateLogic.class);
+    private static final Logger log = LogManager.getLogger(MobileEditGroupTemplateLogic.class);
 
-    private MobileCreateTileTemplateLogic() {
+    public MobileEditGroupTemplateLogic(Holder holder) {
     }
 
-    public static void messageReceived(ChannelHandlerContext ctx, MobileStateHolder state, StringMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx, MobileStateHolder state, StringMessage message) {
         String[] split = split3(message.body);
 
         if (split.length < 3) {
@@ -38,10 +38,10 @@ public final class MobileCreateTileTemplateLogic {
 
         int dashId = Integer.parseInt(split[0]);
         long widgetId = Long.parseLong(split[1]);
-        String tileTemplateString = split[2];
+        String groupTemplateString = split[2];
 
-        if (tileTemplateString == null || tileTemplateString.isEmpty()) {
-            throw new JsonException("Income tile template message is empty.");
+        if (groupTemplateString == null || groupTemplateString.isEmpty()) {
+            throw new JsonException("Income group template message is empty.");
         }
 
         User user = state.user;
@@ -53,23 +53,12 @@ public final class MobileCreateTileTemplateLogic {
         }
 
         DeviceTiles deviceTiles = (DeviceTiles) widget;
+        BaseGroupTemplate newGroupTemplate = JsonParser.parseGroupTemplate(groupTemplateString, message.id);
 
-        TileTemplate newTileTemplate = JsonParser.parseTileTemplate(tileTemplateString, message.id);
+        log.debug("Updating group template {}.", groupTemplateString);
 
-        if (newTileTemplate.isEmptyTemplateId()) {
-            newTileTemplate.templateId = "TMPL" + newTileTemplate.id;
-        }
-
-        for (TileTemplate tileTemplate : deviceTiles.templates) {
-            if (tileTemplate.id == newTileTemplate.id) {
-                throw new JsonException("Tile template with same id already exists.");
-            }
-        }
-
-        log.debug("Creating tile template {}.", tileTemplateString);
-
-        deviceTiles.templates = ArrayUtil.add(deviceTiles.templates, newTileTemplate, TileTemplate.class);
-        deviceTiles.recreateTilesIfNecessary(newTileTemplate, null);
+        int existingGroupTemplateIndex = deviceTiles.getGroupTemplateIndexByIdOrThrow(newGroupTemplate.id);
+        deviceTiles.replaceGroupTemplate(newGroupTemplate, existingGroupTemplateIndex);
 
         dash.updatedAt = System.currentTimeMillis();
 

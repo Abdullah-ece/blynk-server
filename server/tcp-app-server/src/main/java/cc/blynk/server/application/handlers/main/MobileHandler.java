@@ -37,6 +37,9 @@ import cc.blynk.server.application.handlers.main.logic.dashboard.widget.MobileCr
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.MobileDeleteWidgetLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.MobileGetWidgetLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.MobileUpdateWidgetLogic;
+import cc.blynk.server.application.handlers.main.logic.dashboard.widget.group.MobileCreateGroupTemplateLogic;
+import cc.blynk.server.application.handlers.main.logic.dashboard.widget.group.MobileDeleteGroupTemplateLogic;
+import cc.blynk.server.application.handlers.main.logic.dashboard.widget.group.MobileEditGroupTemplateLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.tile.MobileCreateTileTemplateLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.tile.MobileDeleteTileTemplateLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.tile.MobileUpdateTileTemplateLogic;
@@ -84,6 +87,7 @@ import static cc.blynk.server.core.protocol.enums.Command.MOBILE_ADD_PUSH_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_APP;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_DEVICE;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_GROUP_TEMPLATE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_REPORT;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_TILE_TEMPLATE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_WIDGET;
@@ -93,6 +97,7 @@ import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_DEVICE_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_GRAPH_DATA;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_GROUP_TEMPLATE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_REPORT;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_TILE_TEMPLATE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_WIDGET;
@@ -101,6 +106,7 @@ import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_DEVICE_METAFIELD;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_FACE;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_GROUP_TEMPLATE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_PROFILE_SETTINGS;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_PROJECT_SETTINGS;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_REPORT;
@@ -150,6 +156,9 @@ public class MobileHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
     private final WebGetDeviceTimelineLogic webGetDeviceTimelineLogic;
     private final WebResolveLogEventLogic webResolveLogEventLogic;
     private final MobileGetSuperChartDataLogic mobileGetSuperChartDataLogic;
+    private final MobileCreateGroupTemplateLogic mobileCreateGroupTemplateLogic;
+    private final MobileEditGroupTemplateLogic mobileEditGroupTemplateLogic;
+    private final MobileDeleteGroupTemplateLogic mobileDeleteGroupTemplateLogic;
 
     public MobileHandler(Holder holder, MobileStateHolder state) {
         super(StringMessage.class);
@@ -165,6 +174,9 @@ public class MobileHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
         this.webResolveLogEventLogic = new WebResolveLogEventLogic(holder);
         this.mobileGetSuperChartDataLogic = new MobileGetSuperChartDataLogic(holder);
         this.mobileDeleteOrgDeviceDataLogic = new MobileDeleteOrgDeviceDataLogic(holder);
+        this.mobileCreateGroupTemplateLogic = new MobileCreateGroupTemplateLogic(holder);
+        this.mobileEditGroupTemplateLogic = new MobileEditGroupTemplateLogic(holder);
+        this.mobileDeleteGroupTemplateLogic = new MobileDeleteGroupTemplateLogic(holder);
     }
 
     @Override
@@ -376,6 +388,15 @@ public class MobileHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
                 break;
             case MOBILE_RESOLVE_DEVICE_TIMELINE :
                 webResolveLogEventLogic.messageReceived(ctx, state, msg);
+                break;
+            case MOBILE_CREATE_GROUP_TEMPLATE :
+                mobileCreateGroupTemplateLogic.messageReceived(ctx, state, msg);
+                break;
+            case MOBILE_EDIT_GROUP_TEMPLATE :
+                mobileEditGroupTemplateLogic.messageReceived(ctx, state, msg);
+                break;
+            case MOBILE_DELETE_GROUP_TEMPLATE :
+                mobileDeleteGroupTemplateLogic.messageReceived(ctx, state, msg);
                 break;
         }
     }

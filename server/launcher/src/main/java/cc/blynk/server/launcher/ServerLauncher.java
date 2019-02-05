@@ -109,7 +109,6 @@ public final class ServerLauncher {
     private static void setGlobalProperties(ServerProperties serverProperties) {
         Map<String, String> globalProps = new HashMap<>(4);
         globalProps.put("terminal.strings.pool.size", "25");
-        globalProps.put("initial.energy", "2000");
         globalProps.put("table.rows.pool.size", "100");
         globalProps.put("csv.export.data.points.max", "43200");
 

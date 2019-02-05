@@ -85,8 +85,4 @@ public class TimeInput extends OnePinWidget {
         return PinMode.out;
     }
 
-    @Override
-    public int getPrice() {
-        return 200;
-    }
 }

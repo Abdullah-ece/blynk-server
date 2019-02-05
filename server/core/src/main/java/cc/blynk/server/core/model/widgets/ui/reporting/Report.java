@@ -96,10 +96,6 @@ public class Report {
         return !(reportType instanceof OneTimeReport);
     }
 
-    public static int getPrice() {
-        return 2900;
-    }
-
     public long calculateDelayInSeconds() throws IllegalCommandBodyException {
         DailyReport basePeriodicReportType = (DailyReport) reportType;
 

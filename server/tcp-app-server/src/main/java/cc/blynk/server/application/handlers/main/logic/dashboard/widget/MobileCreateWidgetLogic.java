@@ -88,13 +88,6 @@ public final class MobileCreateWidgetLogic {
             }
         }
 
-        int price = newWidget.getPrice();
-        if (user.notEnoughEnergy(price)) {
-            log.debug("Not enough energy.");
-            throw new JsonException("Not enough energy.");
-        }
-        user.subtractEnergy(price);
-
         //widget could be added to project or to other widget like DeviceTiles
         if (widgetAddToId == -1) {
             dash.widgets = ArrayUtil.add(dash.widgets, newWidget, Widget.class);

@@ -43,8 +43,6 @@ public final class MobileDeleteDashLogic {
 
         DashBoard dash = user.profile.dashBoards[index];
 
-        user.addEnergy(dash.energySum());
-
         holder.timerWorker.deleteTimers(state.user.orgId, state.user.email, dash);
         holder.reportScheduler.cancelStoredFuture(user, dashId);
         holder.sharedTokenManager.deleteSharedToken(dash.sharedToken);

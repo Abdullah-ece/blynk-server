@@ -80,11 +80,6 @@ public class Terminal extends OnePinWidget {
     }
 
     @Override
-    public int getPrice() {
-        return 200;
-    }
-
-    @Override
     public void erase() {
         this.lastCommands.clear();
     }

@@ -37,9 +37,4 @@ public class Video extends OnePinWidget {
         return null;
     }
 
-    @Override
-    public int getPrice() {
-        return 500;
-    }
-
 }

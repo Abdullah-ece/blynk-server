@@ -23,9 +23,4 @@ public class Tabs extends NoPinWidget {
         this.tabId = -1;
     }
 
-    @Override
-    public int getPrice() {
-        return 0;
-    }
-
 }

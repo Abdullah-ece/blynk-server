@@ -50,8 +50,4 @@ public class Eventor extends NoPinWidget {
         }
     }
 
-    @Override
-    public int getPrice() {
-        return 500;
-    }
 }

@@ -218,19 +218,6 @@ public class DashBoard {
         return sb.toString();
     }
 
-
-    public int energySum() {
-        //means this is app preview project so do no manipulation with energy
-        if (parentId != IS_PARENT_DASH) {
-            return 0;
-        }
-        int sum = 0;
-        for (Widget widget : widgets) {
-            sum += widget.getPrice();
-        }
-        return sum;
-    }
-
     public void eraseWidgetValues() {
         for (Widget widget : widgets) {
             widget.erase();

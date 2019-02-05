@@ -32,8 +32,4 @@ public class Gauge extends OnePinReadingWidget {
         }
     }
 
-    @Override
-    public int getPrice() {
-        return 300;
-    }
 }

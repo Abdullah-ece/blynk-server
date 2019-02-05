@@ -15,8 +15,4 @@ public class QR extends OnePinWidget {
         return PinMode.out;
     }
 
-    @Override
-    public int getPrice() {
-        return 200;
-    }
 }

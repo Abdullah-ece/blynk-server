@@ -132,7 +132,6 @@ public class DBManagerTest {
                 assertEquals("127.0.0.1", rs.getString("last_logged_ip"));
                 assertFalse(rs.getBoolean("is_facebook_user"));
                 assertEquals(1, rs.getInt("role_id"));
-                assertEquals(2000, rs.getInt("energy"));
 
                 assertEquals("{\"settings\":{\"notificationSettings\":{\"notifyWhenOffline\":false,\"notifyWhenOfflineIgnorePeriod\":0,\"priority\":\"high\"}}}", rs.getString("json"));
             }
@@ -157,7 +156,6 @@ public class DBManagerTest {
         user.lastModifiedTs = 1;
         user.lastLoggedAt = 2;
         user.lastLoggedIP = "127.0.0.2";
-        user.energy = 1000;
         user.profile = new Profile();
         DashBoard dash = new DashBoard();
         dash.id = 1;
@@ -183,7 +181,6 @@ public class DBManagerTest {
         assertEquals("127.0.0.2", user.lastLoggedIP);
         assertTrue(user.isFacebookUser);
         assertEquals(0, user.roleId);
-        assertEquals(1000, user.energy);
 
         assertEquals("{\"dashBoards\":[{\"id\":1,\"parentId\":-1,\"isPreview\":false,\"name\":\"123\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isNotificationsOff\":false,\"isShared\":false,\"isActive\":false,\"widgetBackgroundOn\":false,\"color\":-1,\"isDefaultColor\":true}],\"settings\":{\"notificationSettings\":{\"notifyWhenOffline\":false,\"notifyWhenOfflineIgnorePeriod\":0,\"priority\":\"high\"}}}", user.profile.toString());
     }
@@ -220,7 +217,6 @@ public class DBManagerTest {
         assertEquals("{\"dashBoards\":[{\"id\":1,\"parentId\":-1,\"isPreview\":false,\"name\":\"123\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isNotificationsOff\":false,\"isShared\":false,\"isActive\":false,\"widgetBackgroundOn\":false,\"color\":-1,\"isDefaultColor\":true}],\"settings\":{\"notificationSettings\":{\"notifyWhenOffline\":false,\"notifyWhenOfflineIgnorePeriod\":0,\"priority\":\"high\"}}}", dbUser.profile.toString());
         assertTrue(dbUser.isFacebookUser);
         assertEquals(0, dbUser.roleId);
-        assertEquals(2000, dbUser.energy);
 
         assertEquals("{\"dashBoards\":[{\"id\":1,\"parentId\":-1,\"isPreview\":false,\"name\":\"123\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isNotificationsOff\":false,\"isShared\":false,\"isActive\":false,\"widgetBackgroundOn\":false,\"color\":-1,\"isDefaultColor\":true}],\"settings\":{\"notificationSettings\":{\"notifyWhenOffline\":false,\"notifyWhenOfflineIgnorePeriod\":0,\"priority\":\"high\"}}}", dbUser.profile.toString());
     }
@@ -257,7 +253,6 @@ public class DBManagerTest {
         assertEquals("{\"dashBoards\":[{\"id\":1,\"parentId\":-1,\"isPreview\":false,\"name\":\"123\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isNotificationsOff\":false,\"isShared\":false,\"isActive\":false,\"widgetBackgroundOn\":false,\"color\":-1,\"isDefaultColor\":true}],\"settings\":{\"notificationSettings\":{\"notifyWhenOffline\":false,\"notifyWhenOfflineIgnorePeriod\":0,\"priority\":\"high\"}}}", dbUser.profile.toString());
         assertTrue(dbUser.isFacebookUser);
         assertEquals(0, dbUser.roleId);
-        assertEquals(2000, dbUser.energy);
 
         assertEquals("{\"dashBoards\":[{\"id\":1,\"parentId\":-1,\"isPreview\":false,\"name\":\"123\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isNotificationsOff\":false,\"isShared\":false,\"isActive\":false,\"widgetBackgroundOn\":false,\"color\":-1,\"isDefaultColor\":true}],\"settings\":{\"notificationSettings\":{\"notifyWhenOffline\":false,\"notifyWhenOfflineIgnorePeriod\":0,\"priority\":\"high\"}}}", dbUser.profile.toString());
 

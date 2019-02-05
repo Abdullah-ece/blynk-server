@@ -44,7 +44,6 @@ public final class MobileRedeemLogic {
                 if (redeem.isRedeemed && redeem.email.equals(user.email)) {
                     return ok(message.id);
                 } else if (!redeem.isRedeemed && dbManager.updateRedeem(user.email, redeemToken)) {
-                    unlockContent(user, redeem.reward);
                     return ok(message.id);
                 }
             }
@@ -53,11 +52,6 @@ public final class MobileRedeemLogic {
         }
 
         return json(message.id, "Error redeeming token.");
-    }
-
-    private static void unlockContent(User user, int reward) {
-        user.addEnergy(reward);
-        log.info("Unlocking content for {}. Reward {}.", user.email, reward);
     }
 
 }

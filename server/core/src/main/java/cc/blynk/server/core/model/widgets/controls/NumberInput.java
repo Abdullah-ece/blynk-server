@@ -36,8 +36,4 @@ public class NumberInput extends OnePinWidget {
         return PinMode.out;
     }
 
-    @Override
-    public int getPrice() {
-        return 400;
-    }
 }

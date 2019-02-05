@@ -36,7 +36,6 @@ hard.socket.idle.timeout=${HARD_SOCKET_IDLE_TIMEOUT}
 async.logger.ring.buffer.size=${ASYNC_LOGGER_RING_BUFFER_SIZE}
 allow.reading.widget.without.active.app=${ALLOW_READING_WIDGET_WITHOUT_ACTIVE_APP}
 allow.store.ip=${ALLOW_STORE_IP}
-initial.energy=${INITIAL_ENERGY}
 admin.rootPath=${ADMIN_ROOT_PATH}
 restore.host=${RESTORE_HOST}
 product.name=${PRODUCT_NAME}

@@ -27,11 +27,6 @@ public class RTC extends NoPinWidget {
         return null;
     }
 
-    @Override
-    public int getPrice() {
-        return 100;
-    }
-
     public long getTime() {
         ZoneId zone;
         if (tzName != null) {

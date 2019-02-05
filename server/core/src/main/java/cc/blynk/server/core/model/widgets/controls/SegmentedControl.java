@@ -23,11 +23,6 @@ public class SegmentedControl extends OnePinWidget {
     }
 
     @Override
-    public int getPrice() {
-        return 400;
-    }
-
-    @Override
     public boolean setProperty(WidgetProperty property, String propertyValue) {
         switch (property) {
             case LABELS :

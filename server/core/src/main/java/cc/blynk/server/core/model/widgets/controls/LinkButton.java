@@ -28,11 +28,5 @@ public class LinkButton extends NoPinWidget {
 
     public boolean showNavigationBar;
 
-    public boolean allowInBrowser;
-
-    @Override
-    public int getPrice() {
-        return 500;
-    }
 
 }

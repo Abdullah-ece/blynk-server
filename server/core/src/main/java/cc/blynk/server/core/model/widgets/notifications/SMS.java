@@ -11,8 +11,4 @@ public class SMS extends NoPinWidget {
 
     public String to;
 
-    @Override
-    public int getPrice() {
-        return 100;
-    }
 }

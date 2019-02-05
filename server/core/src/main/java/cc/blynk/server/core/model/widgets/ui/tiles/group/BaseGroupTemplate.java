@@ -13,9 +13,9 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 })
 public abstract class BaseGroupTemplate {
 
-    public final int id;
+    public final long id;
 
-    public final Widget[] widgets;
+    public volatile Widget[] widgets;
 
     public final String name;
 
@@ -27,7 +27,7 @@ public abstract class BaseGroupTemplate {
 
     public final int tileColor;
 
-    public BaseGroupTemplate(int id, Widget[] widgets,
+    public BaseGroupTemplate(long id, Widget[] widgets,
                              String name, String icon, String description,
                              FontSize fontSize, int tileColor) {
         this.id = id;

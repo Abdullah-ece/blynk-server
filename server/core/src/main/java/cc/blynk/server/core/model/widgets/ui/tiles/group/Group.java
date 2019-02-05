@@ -11,7 +11,7 @@ public final class Group {
 
     public final int id;
 
-    public final int templateId;
+    public final long templateId;
 
     public final int[] deviceIds;
 
@@ -21,7 +21,7 @@ public final class Group {
 
     @JsonCreator
     public Group(@JsonProperty("id") int id,
-                 @JsonProperty("templateId") int templateId,
+                 @JsonProperty("templateId") long templateId,
                  @JsonProperty("deviceIds") int[] deviceIds,
                  @JsonProperty("controlDataStreams") DataStream[] controlDataStreams,
                  @JsonProperty("viewDataStreams") DataStream[] viewDataStreams) {

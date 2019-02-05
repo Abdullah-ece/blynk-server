@@ -27,14 +27,14 @@ public class UserDBDao {
 
     private static final String upsertUser =
             "INSERT INTO users (email, org_id, region, ip, name, pass, last_modified, last_logged,"
-                    + " last_logged_ip, is_facebook_user, role_id, energy, json) "
-                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (email) DO UPDATE "
+                    + " last_logged_ip, is_facebook_user, role_id, json) "
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (email) DO UPDATE "
                     + "SET ip = EXCLUDED.ip, pass = EXCLUDED.pass, name = EXCLUDED.name, "
                     + "last_modified = EXCLUDED.last_modified, "
                     + "last_logged = EXCLUDED.last_logged, last_logged_ip = EXCLUDED.last_logged_ip, "
                     + "org_id = EXCLUDED.org_id,"
                     + "is_facebook_user = EXCLUDED.is_facebook_user, role_id = EXCLUDED.role_id, "
-                    + "energy = EXCLUDED.energy, json = EXCLUDED.json, region = EXCLUDED.region";
+                    + "json = EXCLUDED.json, region = EXCLUDED.region";
     private static final String selectAllUsers = "SELECT * from users where region = ?";
     private static final String selectIpForUser = "SELECT ip FROM users WHERE email = ?";
     private static final String deleteUser = "DELETE FROM users WHERE email = ?";
@@ -102,8 +102,7 @@ public class UserDBDao {
                             getTs(rs, "last_modified"),
                             getTs(rs, "last_logged"),
                             rs.getString("last_logged_ip"),
-                            JsonParser.parseProfileFromString(rs.getString("json")),
-                            rs.getInt("energy")
+                            JsonParser.parseProfileFromString(rs.getString("json"))
                             );
 
                     users.put(user.email, user);
@@ -141,8 +140,7 @@ public class UserDBDao {
                 ps.setString(9, user.lastLoggedIP);
                 ps.setBoolean(10, user.isFacebookUser);
                 ps.setInt(11, user.roleId);
-                ps.setInt(12, user.energy);
-                ps.setString(13, user.profile.toString());
+                ps.setString(12, user.profile.toString());
                 ps.addBatch();
             }
 

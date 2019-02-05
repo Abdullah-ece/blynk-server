@@ -25,8 +25,4 @@ public class GPSTrigger extends OnePinWidget {
         return PinMode.out;
     }
 
-    @Override
-    public int getPrice() {
-        return 500;
-    }
 }

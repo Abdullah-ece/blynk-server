@@ -53,7 +53,6 @@ public final class MobileDeleteReportLogic {
         }
 
         Report reportToDel = reportingWidget.reports[existingReportIndex];
-        user.addEnergy(Report.getPrice());
         reportingWidget.reports = ArrayUtil.remove(reportingWidget.reports, existingReportIndex, Report.class);
         dash.updatedAt = System.currentTimeMillis();
 

@@ -21,8 +21,4 @@ public class GPSStreaming extends OnePinWidget {
         return PinMode.out;
     }
 
-    @Override
-    public int getPrice() {
-        return 500;
-    }
 }

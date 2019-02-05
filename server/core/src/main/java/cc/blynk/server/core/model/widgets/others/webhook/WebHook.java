@@ -56,8 +56,4 @@ public class WebHook extends OnePinWidget {
         return null;
     }
 
-    @Override
-    public int getPrice() {
-        return 500;
-    }
 }
