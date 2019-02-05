@@ -78,6 +78,7 @@ class Edit extends React.Component {
     this.handleCancel = this.handleCancel.bind(this);
     this.handleOK = this.handleOK.bind(this);
     this.buildReviewItems = this.buildReviewItems.bind(this);
+    this.determineSecureFlag = this.determineSecureFlag.bind(this);
 
     this.fetchToken();
 
@@ -116,6 +117,14 @@ class Edit extends React.Component {
     this.props.fetchDevices({
       orgId: this.props.orgId
     });
+  }
+
+  determineSecureFlag(hardware) {
+    if (hardware === 'TI CC3220') {
+      return true;
+    }
+
+    return false;
   }
 
   firmwareUpdateStart() {
@@ -174,6 +183,7 @@ class Edit extends React.Component {
           result => {
             const { OTA } = this.state;
             OTA.firmwareInfo = result.payload.data;
+            OTA.isSecure = this.determineSecureFlag(result.payload.data.boardType);
             this.setState({ OTA });
           });
       } else if (status === "error") {
