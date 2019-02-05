@@ -71,17 +71,17 @@ ENGINE = MergeTree()
 PARTITION BY toYYYYMM(ts)
 ORDER BY (region, ts, command_code);
 
-CREATE MATERIALIZED VIEW reporting_command_stat_month
+CREATE MATERIALIZED VIEW reporting_command_stat_monthly
+(region String,  ts Date,  command_code UInt16,  counter UInt64)
 ENGINE = SummingMergeTree()
 PARTITION BY toYYYYMM(ts)
-ORDER BY (region, command_code)
+ORDER BY (region, command_code, ts)
 AS SELECT
     region,
     toStartOfMonth(ts) AS ts,
     command_code,
-    sum(counter) AS counter
+    toUInt64(counter) AS counter
 FROM reporting_command_stat_minute
-GROUP BY region, command_code, ts
 
 CREATE MATERIALIZED VIEW reporting_average_minute
 ENGINE = AggregatingMergeTree()

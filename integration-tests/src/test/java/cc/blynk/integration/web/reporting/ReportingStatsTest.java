@@ -41,7 +41,7 @@ public class ReportingStatsTest extends SingleServerInstancePerTestWithDB {
         // clickhouse doesn't have normal way of data removal, so using "hack"
         holder.reportingDBManager.executeSQL("ALTER TABLE reporting_app_stat_minute DELETE where region IN ('" + UA + "', 'test-region')");
         holder.reportingDBManager.executeSQL("ALTER TABLE reporting_command_stat_minute DELETE where region IN ('" + UA + "', 'test-region')");
-        holder.reportingDBManager.executeSQL("ALTER TABLE reporting_command_stat_month DELETE where region IN ('" + UA + "', 'test-region')");
+        holder.reportingDBManager.executeSQL("ALTER TABLE reporting_command_stat_monthly DELETE where region IN ('" + UA + "', 'test-region')");
     }
 
     @Test
@@ -152,9 +152,12 @@ public class ReportingStatsTest extends SingleServerInstancePerTestWithDB {
         statsWorker.run();
         sleep(500);
 
+        short createDeviceCommand = MOBILE_CREATE_DEVICE;
+
         commands = holder.reportingDBManager.reportingStatsDao.selectMonthlyCommandsStat(now);
         assertNotNull(commands);
         assertFalse(commands.isEmpty());
+        assertEquals((long) commands.get(createDeviceCommand), 6);
 
         Map<Short, Long> prev = new HashMap<>(commands);
 
@@ -172,13 +175,6 @@ public class ReportingStatsTest extends SingleServerInstancePerTestWithDB {
         assertNotNull(commands);
         assertFalse(commands.isEmpty());
 
-        for (Map.Entry<Short, Long> entry: commands.entrySet()) {
-            short command = entry.getKey();
-            if (command == MOBILE_CREATE_DEVICE) {
-                assertTrue(prev.get(command) <  (long) entry.getValue());
-            } else {
-                assertTrue(prev.get(command) <= (long) entry.getValue());
-            }
-        }
+        assertEquals((long) commands.get(createDeviceCommand), 8);
     }
 }

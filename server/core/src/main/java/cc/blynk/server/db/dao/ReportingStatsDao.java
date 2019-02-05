@@ -7,14 +7,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,9 +31,9 @@ public final class ReportingStatsDao {
             "INSERT INTO reporting_command_stat_minute (region, ts, command_code, counter) "
                     + "VALUES(?,?,?,?)";
 
-    // Summing may not be finished without "FINAL" in clickhouse
     private static final String selectMonthlyCommandStat =
-            "SELECT command_code, counter FROM reporting_command_stat_month FINAL WHERE ts = ?";
+            "SELECT command_code, sum(counter) AS counter FROM reporting_command_stat_monthly "
+                    + "WHERE ts = toStartOfMonth(toDateTime(?)) GROUP BY command_code";
 
     private static final Logger log = LogManager.getLogger(ReportingStatsDao.class);
 
@@ -69,18 +65,12 @@ public final class ReportingStatsDao {
         return false;
     }
 
-    public Map<Short, Long> selectMonthlyCommandsStat(long date) {
+    public Map<Short, Long> selectMonthlyCommandsStat(long ts) {
         Map<Short, Long> commands = new HashMap<>();
 
         try (Connection connection = ds.getConnection();
              PreparedStatement commandStatPS = connection.prepareStatement(selectMonthlyCommandStat)) {
-            // to set day of month to 1
-            LocalDate localDate = Instant.ofEpochMilli(date)
-                    .atZone(ZoneId.systemDefault())
-                    .toLocalDate();
-
-            // clickhouse SummingMergeTree materialized view does not work with TimeStamp here
-            commandStatPS.setDate(1, Date.valueOf(localDate.withDayOfMonth(1)));
+            commandStatPS.setTimestamp(1, new Timestamp(ts));
 
             try (ResultSet rs = commandStatPS.executeQuery()) {
                 while (rs.next()) {
