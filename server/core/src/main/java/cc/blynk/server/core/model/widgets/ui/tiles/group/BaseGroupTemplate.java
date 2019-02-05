@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
-        property = "type")
+        property = "mode")
 @JsonSubTypes({
         @JsonSubTypes.Type(value = SwitchWith3LabelsGroupTemplate.class, name = "SWITCH_3LABELS")
 })
