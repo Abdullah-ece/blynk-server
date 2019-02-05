@@ -429,7 +429,7 @@ class Edit extends React.Component {
                 <Button type="danger"
                         onClick={this.onFirmwareUpdateCancel}>Cancel</Button>
                 <Button
-                  disabled={!OTA.deviceIds.length || !OTA.pathToFirmware || !OTA.productId}
+                  disabled={!OTA.deviceIds.length || !OTA.pathToFirmware}
                   onClick={this.firmwareUpdateStart}
                   type="primary">
                   Start Shipping
