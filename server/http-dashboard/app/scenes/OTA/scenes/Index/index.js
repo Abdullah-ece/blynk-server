@@ -18,7 +18,7 @@ import PropTypes from "prop-types";
 class Index extends Component {
   static propTypes = {
     getOrgShipments: PropTypes.func,
-    orgId: this.props.orgId,
+    orgId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   };
 
   constructor(props) {

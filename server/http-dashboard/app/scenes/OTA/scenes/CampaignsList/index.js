@@ -32,7 +32,7 @@ class CampaignsList extends Component {
     otaStart: PropTypes.func,
     otaStop: PropTypes.func,
     getOrgShipments: PropTypes.func,
-    orgId: this.props.orgId,
+    orgId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   };
 
   constructor(props) {
@@ -60,6 +60,7 @@ class CampaignsList extends Component {
       () => {
         this.props.getOrgShipments({ orgId: this.props.orgId }).then(
           shipments => {
+            console.log(shipments)
             this.setState({ shipments: shipments.payload.data });
           });
       }).catch(err => console.error(err));
