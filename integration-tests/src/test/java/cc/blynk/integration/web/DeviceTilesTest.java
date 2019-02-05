@@ -290,7 +290,7 @@ public class DeviceTilesTest extends SingleServerInstancePerTestWithDBAndNewOrg 
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
 
-        appClient.verifyResult(hardware(111, "1 vw 5 111"));
+        appClient.verifyResult(hardware(111, clientPair.latestDeviceId + " vw 5 111"));
         httpsClient.close();
     }
 
@@ -339,15 +339,15 @@ public class DeviceTilesTest extends SingleServerInstancePerTestWithDBAndNewOrg 
         //send value after we have tile for that pin
         clientPair.hardwareClient.send("hardware vw 6 111");
         clientPair.hardwareClient.send("hardware vw 6 112");
-        appClient.verifyResult(hardware(1, "1 vw 6 111"));
-        appClient.verifyResult(hardware(2, "1 vw 6 112"));
+        appClient.verifyResult(hardware(1, clientPair.latestDeviceId + " vw 6 111"));
+        appClient.verifyResult(hardware(2, clientPair.latestDeviceId + " vw 6 112"));
 
         appClient.reset();
-        appClient.sync(1);
+        appClient.sync(clientPair.latestDeviceId);
         appClient.verifyResult(ok(1));
         //todo fix this. it should work too
         //appClient.verifyResult(appSync(b("1 vw 6 111")));
-        appClient.verifyResult(appSync(b("1 vw 6 112")));
+        appClient.verifyResult(appSync(b(clientPair.latestDeviceId + " vw 6 112")));
     }
 
 }
