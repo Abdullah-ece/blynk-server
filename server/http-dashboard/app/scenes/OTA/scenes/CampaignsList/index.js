@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Table, Menu, Dropdown, Badge } from "antd";
@@ -27,6 +28,11 @@ class CampaignsList extends Component {
 
   static propTypes = {
     shipments: PropTypes.array,
+    otaDelete: PropTypes.func,
+    otaStart: PropTypes.func,
+    otaStop: PropTypes.func,
+    getOrgShipments: PropTypes.func,
+    orgId: this.props.orgId,
   };
 
   constructor(props) {
@@ -160,9 +166,9 @@ class CampaignsList extends Component {
         const menu = (
           <Menu>
             {/*<Menu.Item disabled>*/}
-               {/*<span onClick={() => this.cancelOTA(value.shipment.id)}>*/}
-                  {/*<LinearIcon type="cancel" className="ota-shipment-table-icon"/> Cancel*/}
-               {/*</span>*/}
+            {/*<span onClick={() => this.cancelOTA(value.shipment.id)}>*/}
+            {/*<LinearIcon type="cancel" className="ota-shipment-table-icon"/> Cancel*/}
+            {/*</span>*/}
             {/*</Menu.Item>*/}
             {value.status === 'RUN' && (<Menu.Item>
               <span onClick={() => this.pauseOTA(value.shipment)}>

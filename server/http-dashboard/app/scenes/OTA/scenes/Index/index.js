@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import React, { Component } from 'react';
 import NoCampaigns from '../NoCampaigns';
 import { connect } from "react-redux";
@@ -7,6 +8,7 @@ import {
   GetOrgShipments
 } from "data/Product/actions";
 import CampaignsList from "../CampaignsList";
+import PropTypes from "prop-types";
 
 @connect((state) => ({
   orgId: state.Account.selectedOrgId
@@ -14,6 +16,10 @@ import CampaignsList from "../CampaignsList";
   getOrgShipments: bindActionCreators(GetOrgShipments, dispatch),
 }))
 class Index extends Component {
+  static propTypes = {
+    getOrgShipments: PropTypes.func,
+    orgId: this.props.orgId,
+  };
 
   constructor(props) {
     super(props);
