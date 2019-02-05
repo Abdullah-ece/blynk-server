@@ -20,11 +20,11 @@ import static cc.blynk.server.internal.CommonByteBufUtil.ok;
  * Created on 2/1/2015.
  *
  */
-public final class MobileUpdateDashLogic {
+public final class MobileEditDashLogic {
 
-    private static final Logger log = LogManager.getLogger(MobileUpdateDashLogic.class);
+    private static final Logger log = LogManager.getLogger(MobileEditDashLogic.class);
 
-    private MobileUpdateDashLogic() {
+    private MobileEditDashLogic() {
     }
 
     //todo should accept only dash info and ignore widgets. should be fixed after migration

@@ -7,6 +7,7 @@ import cc.blynk.server.application.handlers.main.logic.MobileActivateDashboardLo
 import cc.blynk.server.application.handlers.main.logic.MobileAddPushLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileAssignTokenLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileDeActivateDashboardLogic;
+import cc.blynk.server.application.handlers.main.logic.MobileEditProfileSettingLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileGetCloneCodeLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileGetEnergyLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileGetProjectByClonedTokenLogic;
@@ -22,21 +23,20 @@ import cc.blynk.server.application.handlers.main.logic.MobilePurchaseLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileRedeemLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileRefreshTokenLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileSetWidgetPropertyLogic;
-import cc.blynk.server.application.handlers.main.logic.MobileUpdateProfileSettingLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.MobileCreateDashLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.MobileDeleteDashLogic;
-import cc.blynk.server.application.handlers.main.logic.dashboard.MobileUpdateDashLogic;
-import cc.blynk.server.application.handlers.main.logic.dashboard.MobileUpdateDashSettingLogic;
+import cc.blynk.server.application.handlers.main.logic.dashboard.MobileEditDashLogic;
+import cc.blynk.server.application.handlers.main.logic.dashboard.MobileEditDashSettingLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.MobileCreateDeviceLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.MobileDeleteDeviceLogic;
+import cc.blynk.server.application.handlers.main.logic.dashboard.device.MobileEditDeviceLogic;
+import cc.blynk.server.application.handlers.main.logic.dashboard.device.MobileEditDeviceMetafieldLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.MobileGetDeviceLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.MobileGetOrgDevicesLogic;
-import cc.blynk.server.application.handlers.main.logic.dashboard.device.MobileUpdateDeviceLogic;
-import cc.blynk.server.application.handlers.main.logic.dashboard.device.MobileUpdateDeviceMetafieldLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.MobileCreateWidgetLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.MobileDeleteWidgetLogic;
+import cc.blynk.server.application.handlers.main.logic.dashboard.widget.MobileEditWidgetLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.MobileGetWidgetLogic;
-import cc.blynk.server.application.handlers.main.logic.dashboard.widget.MobileUpdateWidgetLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.group.MobileCreateGroupLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.group.MobileDeleteGroupLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.group.MobileEditGroupLogic;
@@ -45,19 +45,19 @@ import cc.blynk.server.application.handlers.main.logic.dashboard.widget.group.te
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.group.template.MobileEditGroupTemplateLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.tile.MobileCreateTileTemplateLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.tile.MobileDeleteTileTemplateLogic;
-import cc.blynk.server.application.handlers.main.logic.dashboard.widget.tile.MobileUpdateTileTemplateLogic;
+import cc.blynk.server.application.handlers.main.logic.dashboard.widget.tile.MobileEditTileTemplateLogic;
 import cc.blynk.server.application.handlers.main.logic.face.MobileCreateAppLogic;
 import cc.blynk.server.application.handlers.main.logic.face.MobileDeleteAppLogic;
+import cc.blynk.server.application.handlers.main.logic.face.MobileEditAppLogic;
+import cc.blynk.server.application.handlers.main.logic.face.MobileEditFaceLogic;
 import cc.blynk.server.application.handlers.main.logic.face.MobileMailQRsLogic;
-import cc.blynk.server.application.handlers.main.logic.face.MobileUpdateAppLogic;
-import cc.blynk.server.application.handlers.main.logic.face.MobileUpdateFaceLogic;
 import cc.blynk.server.application.handlers.main.logic.graph.MobileDeleteOrgDeviceDataLogic;
 import cc.blynk.server.application.handlers.main.logic.graph.MobileDeleteSuperChartDataLogic;
 import cc.blynk.server.application.handlers.main.logic.graph.MobileGetSuperChartDataLogic;
 import cc.blynk.server.application.handlers.main.logic.reporting.MobileCreateReportLogic;
 import cc.blynk.server.application.handlers.main.logic.reporting.MobileDeleteReportLogic;
+import cc.blynk.server.application.handlers.main.logic.reporting.MobileEditReportLogic;
 import cc.blynk.server.application.handlers.main.logic.reporting.MobileExportReportLogic;
-import cc.blynk.server.application.handlers.main.logic.reporting.MobileUpdateReportLogic;
 import cc.blynk.server.application.handlers.main.logic.sharing.MobileGetShareTokenLogic;
 import cc.blynk.server.application.handlers.main.logic.sharing.MobileRefreshShareTokenLogic;
 import cc.blynk.server.application.handlers.main.logic.sharing.MobileShareLogic;
@@ -258,7 +258,7 @@ public final class MobileHandler extends JsonBasedSimpleChannelInboundHandler<St
                 MobileCreateDashLogic.messageReceived(holder, ctx, state, msg);
                 break;
             case MOBILE_EDIT_DASH :
-                MobileUpdateDashLogic.messageReceived(holder, ctx, state, msg);
+                MobileEditDashLogic.messageReceived(holder, ctx, state, msg);
                 break;
             case MOBILE_DELETE_DASH :
                 MobileDeleteDashLogic.messageReceived(holder, ctx, state, msg);
@@ -268,7 +268,7 @@ public final class MobileHandler extends JsonBasedSimpleChannelInboundHandler<St
                 MobileCreateWidgetLogic.messageReceived(holder, ctx, state, msg);
                 break;
             case MOBILE_EDIT_WIDGET :
-                MobileUpdateWidgetLogic.messageReceived(holder, ctx, state, msg);
+                MobileEditWidgetLogic.messageReceived(holder, ctx, state, msg);
                 break;
             case MOBILE_DELETE_WIDGET :
                 MobileDeleteWidgetLogic.messageReceived(holder, ctx, state, msg);
@@ -281,7 +281,7 @@ public final class MobileHandler extends JsonBasedSimpleChannelInboundHandler<St
                 MobileCreateTileTemplateLogic.messageReceived(ctx, state, msg);
                 break;
             case MOBILE_EDIT_TILE_TEMPLATE :
-                MobileUpdateTileTemplateLogic.messageReceived(ctx, state, msg);
+                MobileEditTileTemplateLogic.messageReceived(ctx, state, msg);
                 break;
             case MOBILE_DELETE_TILE_TEMPLATE :
                 MobileDeleteTileTemplateLogic.messageReceived(holder, ctx, state, msg);
@@ -302,14 +302,14 @@ public final class MobileHandler extends JsonBasedSimpleChannelInboundHandler<St
                 break;
 
             case MOBILE_EDIT_PROJECT_SETTINGS :
-                MobileUpdateDashSettingLogic.messageReceived(ctx, state, msg, holder.limits.widgetSizeLimitBytes);
+                MobileEditDashSettingLogic.messageReceived(ctx, state, msg, holder.limits.widgetSizeLimitBytes);
                 break;
 
             case MOBILE_CREATE_DEVICE :
                 MobileCreateDeviceLogic.messageReceived(holder, ctx, state, msg);
                 break;
             case MOBILE_EDIT_DEVICE :
-                MobileUpdateDeviceLogic.messageReceived(holder, ctx, state.user, msg);
+                MobileEditDeviceLogic.messageReceived(holder, ctx, state.user, msg);
                 break;
             case MOBILE_DELETE_DEVICE :
                 MobileDeleteDeviceLogic.messageReceived(holder, ctx, state, msg);
@@ -318,7 +318,7 @@ public final class MobileHandler extends JsonBasedSimpleChannelInboundHandler<St
                 mobileGetOrgDevicesLogic.messageReceived(ctx, state, msg);
                 break;
             case MOBILE_EDIT_DEVICE_METAFIELD :
-                MobileUpdateDeviceMetafieldLogic.messageReceived(holder, ctx, state, msg);
+                MobileEditDeviceMetafieldLogic.messageReceived(holder, ctx, state, msg);
                 break;
             case MOBILE_GET_DEVICES_BY_REFERENCE_METAFIELD :
                 CommonGetDevicesByReferenceMetafieldLogic.messageReceived(holder, ctx, state, msg);
@@ -338,7 +338,7 @@ public final class MobileHandler extends JsonBasedSimpleChannelInboundHandler<St
                 MobileCreateAppLogic.messageReceived(ctx, state, msg, holder.limits.widgetSizeLimitBytes);
                 break;
             case MOBILE_EDIT_APP :
-                MobileUpdateAppLogic.messageReceived(ctx, state, msg, holder.limits.widgetSizeLimitBytes);
+                MobileEditAppLogic.messageReceived(ctx, state, msg, holder.limits.widgetSizeLimitBytes);
                 break;
             case MOBILE_DELETE_APP :
                 if (deleteAppLogic == null) {
@@ -357,7 +357,7 @@ public final class MobileHandler extends JsonBasedSimpleChannelInboundHandler<St
                 mailQRsLogic.messageReceived(ctx, state.user, msg);
                 break;
             case MOBILE_EDIT_FACE :
-                MobileUpdateFaceLogic.messageReceived(holder, ctx, state.user, msg);
+                MobileEditFaceLogic.messageReceived(holder, ctx, state.user, msg);
                 break;
             case GET_CLONE_CODE :
                 MobileGetCloneCodeLogic.messageReceived(holder, ctx, state.user, msg);
@@ -384,7 +384,7 @@ public final class MobileHandler extends JsonBasedSimpleChannelInboundHandler<St
                 MobileCreateReportLogic.messageReceived(holder, ctx, state.user, msg);
                 break;
             case MOBILE_EDIT_REPORT :
-                MobileUpdateReportLogic.messageReceived(holder, ctx, state.user, msg);
+                MobileEditReportLogic.messageReceived(holder, ctx, state.user, msg);
                 break;
             case MOBILE_DELETE_REPORT :
                 MobileDeleteReportLogic.messageReceived(holder, ctx, state.user, msg);
@@ -393,7 +393,7 @@ public final class MobileHandler extends JsonBasedSimpleChannelInboundHandler<St
                 MobileExportReportLogic.messageReceived(holder, ctx, state.user, msg);
                 break;
             case MOBILE_EDIT_PROFILE_SETTINGS :
-                MobileUpdateProfileSettingLogic.messageReceived(ctx, state, msg);
+                MobileEditProfileSettingLogic.messageReceived(ctx, state, msg);
                 break;
             case MOBILE_GET_DEVICE_TIMELINE :
                 webGetDeviceTimelineLogic.messageReceived(ctx, state, msg);

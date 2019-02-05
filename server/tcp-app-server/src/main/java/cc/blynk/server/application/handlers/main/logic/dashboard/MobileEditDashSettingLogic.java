@@ -20,11 +20,11 @@ import static cc.blynk.server.internal.CommonByteBufUtil.ok;
  * Created on 2/1/2015.
  *
  */
-public final class MobileUpdateDashSettingLogic {
+public final class MobileEditDashSettingLogic {
 
-    private static final Logger log = LogManager.getLogger(MobileUpdateDashSettingLogic.class);
+    private static final Logger log = LogManager.getLogger(MobileEditDashSettingLogic.class);
 
-    private MobileUpdateDashSettingLogic() {
+    private MobileEditDashSettingLogic() {
     }
 
     public static void messageReceived(ChannelHandlerContext ctx, MobileStateHolder state,

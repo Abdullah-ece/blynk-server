@@ -13,12 +13,12 @@ import static cc.blynk.server.core.model.permissions.PermissionsTable.ORG_DEVICE
  * Created by Dmitriy Dumanskiy.
  * Created on 11.09.18.
  */
-public final class WebUpdateDeviceMetafieldLogic implements PermissionBasedLogic<WebAppStateHolder> {
+public final class WebEditDeviceMetafieldLogic implements PermissionBasedLogic<WebAppStateHolder> {
 
-    private final WebUpdateOwnDeviceMetafieldLogic webUpdateOwnDeviceMetafieldLogic;
+    private final WebEditOwnDeviceMetafieldLogic webEditOwnDeviceMetafieldLogic;
 
-    public WebUpdateDeviceMetafieldLogic(Holder holder) {
-        this.webUpdateOwnDeviceMetafieldLogic = new WebUpdateOwnDeviceMetafieldLogic(holder);
+    public WebEditDeviceMetafieldLogic(Holder holder) {
+        this.webEditOwnDeviceMetafieldLogic = new WebEditOwnDeviceMetafieldLogic(holder);
     }
 
     @Override
@@ -28,13 +28,13 @@ public final class WebUpdateDeviceMetafieldLogic implements PermissionBasedLogic
 
     @Override
     public void noPermissionAction(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage msg) {
-        webUpdateOwnDeviceMetafieldLogic.messageReceived(ctx, state, msg);
+        webEditOwnDeviceMetafieldLogic.messageReceived(ctx, state, msg);
     }
 
     @Override
     public void messageReceived0(ChannelHandlerContext ctx,
                                  WebAppStateHolder state, StringMessage message) {
-        webUpdateOwnDeviceMetafieldLogic.messageReceived0(ctx, state, message);
+        webEditOwnDeviceMetafieldLogic.messageReceived0(ctx, state, message);
     }
 
 }

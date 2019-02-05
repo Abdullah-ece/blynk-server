@@ -25,11 +25,11 @@ import static cc.blynk.server.internal.WebByteBufUtil.json;
  * Created on 2/1/2015.
  *
  */
-public final class MobileUpdateFaceLogic {
+public final class MobileEditFaceLogic {
 
-    private static final Logger log = LogManager.getLogger(MobileUpdateFaceLogic.class);
+    private static final Logger log = LogManager.getLogger(MobileEditFaceLogic.class);
 
-    private MobileUpdateFaceLogic() {
+    private MobileEditFaceLogic() {
     }
 
     public static void messageReceived(Holder holder, ChannelHandlerContext ctx,

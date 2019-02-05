@@ -18,11 +18,11 @@ import static cc.blynk.server.internal.CommonByteBufUtil.ok;
  * Created on 11/12/2018.
  *
  */
-public final class MobileUpdateProfileSettingLogic {
+public final class MobileEditProfileSettingLogic {
 
-    private static final Logger log = LogManager.getLogger(MobileUpdateProfileSettingLogic.class);
+    private static final Logger log = LogManager.getLogger(MobileEditProfileSettingLogic.class);
 
-    private MobileUpdateProfileSettingLogic() {
+    private MobileEditProfileSettingLogic() {
     }
 
     public static void messageReceived(ChannelHandlerContext ctx, MobileStateHolder state,

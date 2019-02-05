@@ -2,6 +2,7 @@ package cc.blynk.server.core.model.widgets.ui.tiles.group;
 
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.serialization.JsonParser;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -42,6 +43,11 @@ public final class Group {
                 dataStream.value = value;
             }
         }
+    }
+
+    @Override
+    public String toString() {
+        return JsonParser.toJson(this);
     }
 
 }

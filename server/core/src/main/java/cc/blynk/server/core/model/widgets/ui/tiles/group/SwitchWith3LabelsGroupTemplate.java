@@ -1,6 +1,7 @@
 package cc.blynk.server.core.model.widgets.ui.tiles.group;
 
 import cc.blynk.server.core.model.DataStream;
+import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.graph.FontSize;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -31,5 +32,10 @@ public final class SwitchWith3LabelsGroupTemplate extends BaseGroupTemplate {
         this.switchDataStream = switchDataStream;
         this.switchColor = switchColor;
         this.groupLabels = groupLabels == null ? EMPTY_GROUP_LABELS : groupLabels;
+    }
+
+    @Override
+    public String toString() {
+        return JsonParser.toJson(this);
     }
 }

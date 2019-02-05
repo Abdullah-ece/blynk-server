@@ -20,11 +20,11 @@ import static cc.blynk.utils.StringUtils.split3;
  * Created by Dmitriy Dumanskiy.
  * Created on 01.02.16.
  */
-public final class MobileUpdateTileTemplateLogic {
+public final class MobileEditTileTemplateLogic {
 
-    private static final Logger log = LogManager.getLogger(MobileUpdateTileTemplateLogic.class);
+    private static final Logger log = LogManager.getLogger(MobileEditTileTemplateLogic.class);
 
-    private MobileUpdateTileTemplateLogic() {
+    private MobileEditTileTemplateLogic() {
     }
 
     public static void messageReceived(ChannelHandlerContext ctx, MobileStateHolder state, StringMessage message) {

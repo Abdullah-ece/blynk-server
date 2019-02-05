@@ -17,11 +17,11 @@ import static cc.blynk.server.internal.CommonByteBufUtil.ok;
  * Created by Dmitriy Dumanskiy.
  * Created on 01.02.16.
  */
-public final class MobileUpdateDeviceLogic {
+public final class MobileEditDeviceLogic {
 
-    private static final Logger log = LogManager.getLogger(MobileUpdateDeviceLogic.class);
+    private static final Logger log = LogManager.getLogger(MobileEditDeviceLogic.class);
 
-    private MobileUpdateDeviceLogic() {
+    private MobileEditDeviceLogic() {
     }
 
     public static void messageReceived(Holder holder, ChannelHandlerContext ctx, User user, StringMessage message) {

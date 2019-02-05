@@ -28,11 +28,11 @@ import static cc.blynk.utils.StringUtils.split2;
  * Created by Dmitriy Dumanskiy.
  * Created on 01.02.16.
  */
-public final class MobileUpdateWidgetLogic {
+public final class MobileEditWidgetLogic {
 
-    private static final Logger log = LogManager.getLogger(MobileUpdateWidgetLogic.class);
+    private static final Logger log = LogManager.getLogger(MobileEditWidgetLogic.class);
 
-    private MobileUpdateWidgetLogic() {
+    private MobileEditWidgetLogic() {
     }
 
     public static void messageReceived(Holder holder, ChannelHandlerContext ctx,

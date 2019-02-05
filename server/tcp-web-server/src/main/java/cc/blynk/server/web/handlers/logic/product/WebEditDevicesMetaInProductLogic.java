@@ -29,14 +29,14 @@ import static cc.blynk.server.internal.WebByteBufUtil.json;
  * Created by Dmitriy Dumanskiy.
  * Created on 13.04.18.
  */
-public final class WebUpdateDevicesMetaInProductLogic implements PermissionBasedLogic<WebAppStateHolder> {
+public final class WebEditDevicesMetaInProductLogic implements PermissionBasedLogic<WebAppStateHolder> {
 
-    private static final Logger log = LogManager.getLogger(WebUpdateDevicesMetaInProductLogic.class);
+    private static final Logger log = LogManager.getLogger(WebEditDevicesMetaInProductLogic.class);
 
     private final OrganizationDao organizationDao;
     private final DeviceDao deviceDao;
 
-    public WebUpdateDevicesMetaInProductLogic(Holder holder) {
+    public WebEditDevicesMetaInProductLogic(Holder holder) {
         this.organizationDao = holder.organizationDao;
         this.deviceDao = holder.deviceDao;
     }

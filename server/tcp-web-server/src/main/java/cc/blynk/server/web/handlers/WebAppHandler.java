@@ -14,6 +14,7 @@ import cc.blynk.server.web.handlers.logic.account.WebEditAccountLogic;
 import cc.blynk.server.web.handlers.logic.account.WebGetAccountLogic;
 import cc.blynk.server.web.handlers.logic.device.WebCreateOrgDeviceLogic;
 import cc.blynk.server.web.handlers.logic.device.WebDeleteOrgDeviceLogic;
+import cc.blynk.server.web.handlers.logic.device.WebEditDeviceMetafieldLogic;
 import cc.blynk.server.web.handlers.logic.device.WebEditOrgDeviceLogic;
 import cc.blynk.server.web.handlers.logic.device.WebGetGraphDataLogic;
 import cc.blynk.server.web.handlers.logic.device.WebGetMetaFieldLogic;
@@ -21,7 +22,6 @@ import cc.blynk.server.web.handlers.logic.device.WebGetOrgDeviceLogic;
 import cc.blynk.server.web.handlers.logic.device.WebGetOrgDevicesLogic;
 import cc.blynk.server.web.handlers.logic.device.WebSetAuthTokenForDeviceLogic;
 import cc.blynk.server.web.handlers.logic.device.WebTrackDeviceLogic;
-import cc.blynk.server.web.handlers.logic.device.WebUpdateDeviceMetafieldLogic;
 import cc.blynk.server.web.handlers.logic.device.control.WebAppControlHardwareLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebCreateOrganizationLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebDeleteOrganizationLogic;
@@ -56,10 +56,10 @@ import cc.blynk.server.web.handlers.logic.organization.users.WebInviteUserLogic;
 import cc.blynk.server.web.handlers.logic.product.WebCanDeleteProductLogic;
 import cc.blynk.server.web.handlers.logic.product.WebCreateProductLogic;
 import cc.blynk.server.web.handlers.logic.product.WebDeleteProductLogic;
+import cc.blynk.server.web.handlers.logic.product.WebEditDevicesMetaInProductLogic;
 import cc.blynk.server.web.handlers.logic.product.WebEditProductLogic;
 import cc.blynk.server.web.handlers.logic.product.WebGetProductLogic;
 import cc.blynk.server.web.handlers.logic.product.WebGetProductsLogic;
-import cc.blynk.server.web.handlers.logic.product.WebUpdateDevicesMetaInProductLogic;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_SUPERCHART_DATA;
@@ -141,7 +141,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
     private final WebGetProductsLogic webGetProductsLogic;
     private final WebDeleteProductLogic webDeleteProductLogic;
     private final WebEditOrgDeviceLogic webEditOrgDeviceLogic;
-    private final WebUpdateDevicesMetaInProductLogic webUpdateDevicesMetaInProductLogic;
+    private final WebEditDevicesMetaInProductLogic webEditDevicesMetaInProductLogic;
     private final WebEditUserInfoLogic webEditUserInfoLogic;
     private final WebDeleteUserLogic webDeleteUserLogic;
     private final WebCreateOrganizationLogic webCreateOrganizationLogic;
@@ -167,7 +167,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
     private final WebStopOtaLogic webStopOtaLogic;
     private final WebDeleteShipmentLogic webCleanOtaLogic;
     private final WebTrackOrganizationLogic webTrackOrganizationLogic;
-    private final WebUpdateDeviceMetafieldLogic webUpdateDeviceMetafieldLogic;
+    private final WebEditDeviceMetafieldLogic webEditDeviceMetafieldLogic;
     private final WebTrackDeviceLogic webTrackDeviceLogic;
     private final WebGetDeviceCountLogic webGetDeviceCountLogic;
     private final WebGetDeviceCountFromProductIDLogic webGetDeviceCountFromProductIDLogic;
@@ -194,7 +194,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
         this.webGetProductsLogic = new WebGetProductsLogic(holder);
         this.webDeleteProductLogic = new WebDeleteProductLogic(holder);
         this.webEditOrgDeviceLogic = new WebEditOrgDeviceLogic(holder);
-        this.webUpdateDevicesMetaInProductLogic = new WebUpdateDevicesMetaInProductLogic(holder);
+        this.webEditDevicesMetaInProductLogic = new WebEditDevicesMetaInProductLogic(holder);
         this.webEditUserInfoLogic = new WebEditUserInfoLogic(holder);
         this.webDeleteUserLogic = new WebDeleteUserLogic(holder);
         this.webCreateOrganizationLogic = new WebCreateOrganizationLogic(holder);
@@ -220,7 +220,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
         this.webStopOtaLogic = new WebStopOtaLogic(holder);
         this.webCleanOtaLogic = new WebDeleteShipmentLogic(holder);
         this.webTrackOrganizationLogic = new WebTrackOrganizationLogic(holder);
-        this.webUpdateDeviceMetafieldLogic = new WebUpdateDeviceMetafieldLogic(holder);
+        this.webEditDeviceMetafieldLogic = new WebEditDeviceMetafieldLogic(holder);
         this.webTrackDeviceLogic = new WebTrackDeviceLogic(holder);
         this.webGetDeviceCountLogic = new WebGetDeviceCountLogic(holder);
         this.webGetDeviceCountFromProductIDLogic = new WebGetDeviceCountFromProductIDLogic(holder);
@@ -301,7 +301,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
                 webDeleteProductLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_EDIT_DEVICES_META_IN_PRODUCT:
-                webUpdateDevicesMetaInProductLogic.messageReceived(ctx, state, msg);
+                webEditDevicesMetaInProductLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_EDIT_USER_INFO:
                 webEditUserInfoLogic.messageReceived(ctx, state, msg);
@@ -325,7 +325,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
                 webInviteUserLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_EDIT_DEVICE_METAFIELD:
-                webUpdateDeviceMetafieldLogic.messageReceived(ctx, state, msg);
+                webEditDeviceMetafieldLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_GET_DEVICE_TIMELINE :
                 webGetDeviceTimelineLogic.messageReceived(ctx, state, msg);

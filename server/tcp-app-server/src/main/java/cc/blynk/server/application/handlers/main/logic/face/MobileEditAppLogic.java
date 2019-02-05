@@ -15,11 +15,11 @@ import static cc.blynk.server.internal.CommonByteBufUtil.ok;
  * Created by Dmitriy Dumanskiy.
  * Created on 01.02.16.
  */
-public final class MobileUpdateAppLogic {
+public final class MobileEditAppLogic {
 
-    private static final Logger log = LogManager.getLogger(MobileUpdateAppLogic.class);
+    private static final Logger log = LogManager.getLogger(MobileEditAppLogic.class);
 
-    private MobileUpdateAppLogic() {
+    private MobileEditAppLogic() {
     }
 
     public static void messageReceived(ChannelHandlerContext ctx, MobileStateHolder state,

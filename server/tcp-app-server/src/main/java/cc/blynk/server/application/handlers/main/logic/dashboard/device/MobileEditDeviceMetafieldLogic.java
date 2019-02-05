@@ -1,22 +1,18 @@
-package cc.blynk.server.web.handlers.logic.device;
+package cc.blynk.server.application.handlers.main.logic.dashboard.device;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.PermissionBasedLogic;
-import cc.blynk.server.core.dao.DeviceDao;
-import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.MetaField;
-import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
-import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
-import cc.blynk.server.core.protocol.exceptions.NoPermissionException;
+import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.core.session.web.WebAppStateHolder;
+import cc.blynk.server.core.session.mobile.MobileStateHolder;
 import io.netty.channel.ChannelHandlerContext;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.core.model.permissions.PermissionsTable.OWN_DEVICES_EDIT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_EDIT_DEVICE_METAFIELD;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 import static cc.blynk.utils.StringUtils.split2;
@@ -26,30 +22,27 @@ import static cc.blynk.utils.StringUtils.split2;
  * Created by Dmitriy Dumanskiy.
  * Created on 11.09.18.
  */
-public final class WebUpdateOwnDeviceMetafieldLogic implements PermissionBasedLogic<WebAppStateHolder> {
+public final class MobileEditDeviceMetafieldLogic {
 
-    private final SessionDao sessionDao;
-    private final DeviceDao deviceDao;
+    private static final Logger log = LogManager.getLogger(MobileEditDeviceMetafieldLogic.class);
 
-    WebUpdateOwnDeviceMetafieldLogic(Holder holder) {
-        this.sessionDao = holder.sessionDao;
-        this.deviceDao = holder.deviceDao;
+    private MobileEditDeviceMetafieldLogic() {
     }
 
-    @Override
-    public int getPermission() {
-        return OWN_DEVICES_EDIT;
+    public static void messageReceived(Holder holder,
+                                       ChannelHandlerContext ctx,
+                                       MobileStateHolder state, StringMessage message) {
+        messageReceived(holder, ctx, state.user, message);
     }
 
-    @Override
-    public void messageReceived0(ChannelHandlerContext ctx,
-                                 WebAppStateHolder state, StringMessage message) {
+    public static void messageReceived(Holder holder,
+                                       ChannelHandlerContext ctx,
+                                       User user, StringMessage message) {
         String[] split = split2(message.body);
 
-        User user = state.user;
         if (split.length < 2) {
             log.error("Body '{}' is wrong for update metafield for {}", message.body, user.email);
-            throw new IllegalCommandException("Wrong income message format for update metafield.");
+            throw new JsonException("Wrong income message format for update metafield.");
         }
 
         int deviceId = Integer.parseInt(split[0]);
@@ -64,7 +57,7 @@ public final class WebUpdateOwnDeviceMetafieldLogic implements PermissionBasedLo
         } else {
             metaFields = JsonParser.readAny(metafieldString, MetaField[].class);
             if (metaFields == null) {
-                throw new IllegalCommandBodyException("Error parsing metafields batch.");
+                throw new JsonException("Error parsing metafields batch.");
             }
         }
 
@@ -72,12 +65,7 @@ public final class WebUpdateOwnDeviceMetafieldLogic implements PermissionBasedLo
             metaField.validateAll();
         }
 
-        Device device = deviceDao.getByIdOrThrow(deviceId);
-
-        if (!state.role.canEditOrgDevice()) {
-            log.error("User {} is not owner of requested deviceId {}.", user.email, device.id);
-            throw new NoPermissionException("User is not owner of requested device.");
-        }
+        Device device = holder.deviceDao.getByIdOrThrow(deviceId);
 
         log.debug("Updating metafield {} for device {} and user {}.", metafieldString, deviceId, user.email);
         device.updateMetafields(metaFields);
@@ -85,7 +73,7 @@ public final class WebUpdateOwnDeviceMetafieldLogic implements PermissionBasedLo
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
 
         //if update comes from the app - send update to the web
-        Session session = sessionDao.getOrgSession(state.selectedOrgId);
+        Session session = holder.sessionDao.getOrgSession(user.orgId);
         session.sendToSelectedDeviceOnWeb(ctx.channel(), WEB_EDIT_DEVICE_METAFIELD, message.id, split[1], device.id);
     }
 
