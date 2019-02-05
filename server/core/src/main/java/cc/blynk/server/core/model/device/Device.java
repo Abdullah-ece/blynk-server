@@ -300,7 +300,7 @@ public class Device {
         this.deviceOtaInfo = new DeviceOtaInfo(prev.shipmentId, prev.otaStartedBy, prev.otaStartedAt,
                 now, -1L, -1L, -1L,
                 prev.pathToFirmware, prev.buildDate,
-                OTADeviceStatus.REQUEST_SENT, prev.attempts, prev.attemptsLimit);
+                OTADeviceStatus.REQUEST_SENT, prev.attempts);
         this.updatedAt = now;
     }
 
@@ -335,10 +335,6 @@ public class Device {
         long now = System.currentTimeMillis();
         this.deviceOtaInfo = new DeviceOtaInfo(this.deviceOtaInfo, now, OTADeviceStatus.DOWNLOAD_LIMIT_REACHED);
         this.updatedAt = now;
-    }
-
-    public boolean isAttemptsLimitReached() {
-        return deviceOtaInfo != null && deviceOtaInfo.isLimitReached();
     }
 
     public boolean fitsBufferSize(int bodySize) {

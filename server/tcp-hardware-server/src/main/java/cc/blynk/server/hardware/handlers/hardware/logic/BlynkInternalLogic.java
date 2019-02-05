@@ -108,12 +108,12 @@ public final class BlynkInternalLogic {
             if (deviceOtaInfo != null) {
                 if (hardwareInfo.isFirmwareVersionChanged(deviceOtaInfo.buildDate)) {
                     if (deviceOtaInfo.status.isNotFailure()) {
-                        if (device.isAttemptsLimitReached()) {
-                            log.warn("OTA limit reached for deviceId {}.", device.id);
-                            device.firmwareDownloadLimitReached();
-                        } else {
-                            Shipment shipment = state.org.getShipmentById(deviceOtaInfo.shipmentId);
-                            if (shipment != null) {
+                        Shipment shipment = state.org.getShipmentById(deviceOtaInfo.shipmentId);
+                        if (shipment != null) {
+                            if (deviceOtaInfo.isLimitReached(shipment.attemptsLimit)) {
+                                log.warn("OTA limit reached for deviceId {}.", device.id);
+                                device.firmwareDownloadLimitReached();
+                            } else {
                                 String serverUrl = holder.props.getServerUrl(shipment.isSecure);
                                 String downloadToken = TokenGeneratorUtil.generateNewToken();
                                 holder.tokensPool.addToken(downloadToken, new OTADownloadToken(device.id));
@@ -122,9 +122,9 @@ public final class BlynkInternalLogic {
                                 StringMessage msg = makeASCIIStringMessage(BLYNK_INTERNAL, 7777, body);
                                 ctx.write(msg, ctx.voidPromise());
                                 device.requestSent();
-                            } else {
-                                log.trace("Error getting shipment by id {}.", deviceOtaInfo.shipmentId);
                             }
+                        } else {
+                            log.trace("Error getting shipment by id {}.", deviceOtaInfo.shipmentId);
                         }
                     }
                 } else {
