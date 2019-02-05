@@ -17,9 +17,10 @@ public final class MobileGetEnergyLogic {
     private MobileGetEnergyLogic() {
     }
 
+    //todo remove
     public static void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
         if (ctx.channel().isWritable()) {
-            ctx.writeAndFlush(makeASCIIStringMessage(MOBILE_GET_ENERGY, message.id, "" + user.energy),
+            ctx.writeAndFlush(makeASCIIStringMessage(MOBILE_GET_ENERGY, message.id, "100000"),
                     ctx.voidPromise());
         }
     }

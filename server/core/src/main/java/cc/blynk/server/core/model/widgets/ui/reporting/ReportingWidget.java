@@ -70,11 +70,6 @@ public class ReportingWidget extends NoPinWidget implements DeviceCleaner {
     }
 
     @Override
-    public int getPrice() {
-        return Report.getPrice() * reports.length;
-    }
-
-    @Override
     public void erase() {
         this.reports = EMPTY_REPORTS;
     }

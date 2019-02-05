@@ -19,6 +19,8 @@ import cc.blynk.server.core.model.web.response.OkMessage;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.ui.reporting.Report;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
+import cc.blynk.server.core.model.widgets.ui.tiles.group.BaseGroupTemplate;
+import cc.blynk.server.core.model.widgets.ui.tiles.group.Group;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.stats.model.Stat;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
@@ -69,6 +71,8 @@ public final class JsonParser {
     private static final ObjectReader profileSettingsReader = MAPPER.readerFor(ProfileSettings.class);
     private static final ObjectReader widgetReader = MAPPER.readerFor(Widget.class);
     private static final ObjectReader tileTemplateReader = MAPPER.readerFor(TileTemplate.class);
+    private static final ObjectReader groupTemplateReader = MAPPER.readerFor(BaseGroupTemplate.class);
+    private static final ObjectReader groupReader = MAPPER.readerFor(Group.class);
     private static final ObjectReader appReader = MAPPER.readerFor(App.class);
     private static final ObjectReader deviceReader = MAPPER.readerFor(Device.class);
     private static final ObjectReader facebookTokenReader = MAPPER.readerFor(FacebookTokenResponse.class);
@@ -328,6 +332,14 @@ public final class JsonParser {
 
     public static TileTemplate parseTileTemplate(String json, int msgId) {
         return parse(tileTemplateReader, json, "Error parsing tile template.", msgId);
+    }
+
+    public static BaseGroupTemplate parseGroupTemplate(String json, int msgId) {
+        return parse(groupTemplateReader, json, "Error parsing group template.", msgId);
+    }
+
+    public static Group parseGroup(String json, int msgId) {
+        return parse(groupReader, json, "Error parsing group.", msgId);
     }
 
     public static Widget parseWidget(String reader) throws IOException {

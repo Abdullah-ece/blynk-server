@@ -26,8 +26,4 @@ public class Twitter extends NoPinWidget {
        return body == null || body.isEmpty() || body.length() > MAX_TWITTER_BODY_SIZE;
     }
 
-    @Override
-    public int getPrice() {
-        return 0;
-    }
 }

@@ -3,18 +3,17 @@ package cc.blynk.server.web.handlers.logic.organization.ota;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.PermissionBasedLogic;
 import cc.blynk.server.core.dao.DeviceDao;
+import cc.blynk.server.core.dao.DeviceValue;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.ota.OTADeviceStatus;
-import cc.blynk.server.core.model.dto.OtaDTO;
+import cc.blynk.server.core.model.dto.ShipmentDTO;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
 import io.netty.channel.ChannelHandlerContext;
-
-import java.util.List;
 
 import static cc.blynk.server.core.model.permissions.PermissionsTable.OTA_STOP;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
@@ -41,31 +40,39 @@ public final class WebStopOtaLogic implements PermissionBasedLogic<WebAppStateHo
 
     @Override
     public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
-        OtaDTO otaDTO = JsonParser.readAny(message.body, OtaDTO.class);
+        ShipmentDTO shipmentDTO = JsonParser.readAny(message.body, ShipmentDTO.class);
 
-        if (otaDTO == null || otaDTO.isDevicesEmpty()) {
-            log.error("No devices to stop OTA. {}.", otaDTO);
+        if (shipmentDTO == null || shipmentDTO.isDevicesEmpty()) {
+            log.error("No devices to stop OTA. {}.", shipmentDTO);
             throw new JsonException("No devices to stop OTA.");
         }
 
+        int orgId = state.selectedOrgId;
+
+        /*
         List<Device> filteredDevices = deviceDao.getByProductIdAndFilter(
-                otaDTO.orgId, otaDTO.productId, otaDTO.deviceIds);
+                orgId, shipmentDTO.productId, shipmentDTO.deviceIds);
         if (filteredDevices.size() == 0) {
-            log.error("No devices for provided productId {}", otaDTO.productId);
-            throw new JsonException("No devices for provided productId " + otaDTO.productId);
+            log.error("No devices for provided productId {}", shipmentDTO.productId);
+            throw new JsonException("No devices for provided productId " + shipmentDTO.productId);
         }
+        */
 
-        log.info("Stopping OTA for {}. {}", state.user.email, otaDTO);
+        log.info("Stopping OTA for {}. {}", state.user.email, shipmentDTO);
 
-        for (Device device : filteredDevices) {
-            if (device.deviceOtaInfo != null && device.deviceOtaInfo.status != OTADeviceStatus.SUCCESS
-                    && device.deviceOtaInfo.status.isNotFailure()) {
-                device.clearDeviceOtaInfo();
+        for (int deviceId : shipmentDTO.deviceIds) {
+            DeviceValue deviceValue = deviceDao.getDeviceValueById(deviceId);
+            if (deviceValue != null) {
+                Device device = deviceValue.device;
+                if (device.deviceOtaInfo != null && device.deviceOtaInfo.status != OTADeviceStatus.SUCCESS
+                        && device.deviceOtaInfo.status.isNotFailure()) {
+                    device.clearDeviceOtaInfo();
+                }
             }
         }
 
-        Organization org = organizationDao.getOrgByIdOrThrow(otaDTO.orgId);
-        org.stopShipment(otaDTO.id);
+        Organization org = organizationDao.getOrgByIdOrThrow(orgId);
+        org.stopShipment(shipmentDTO.id);
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }

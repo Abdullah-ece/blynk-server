@@ -12,6 +12,7 @@ import cc.blynk.server.core.model.widgets.outputs.TextAlignment;
 import cc.blynk.server.core.model.widgets.ui.tiles.group.BaseGroupTemplate;
 import cc.blynk.server.core.model.widgets.ui.tiles.group.Group;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
+import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.utils.ArrayUtil;
 import io.netty.channel.Channel;
 
@@ -193,15 +194,6 @@ public final class DeviceTiles extends Widget implements MobileSyncWidget, Devic
     }
 
     @Override
-    public int getPrice() {
-        int sum = 1700; //price for DeviceTiles widget itself
-        for (TileTemplate template : templates) {
-            sum += template.getPrice();
-        }
-        return sum;
-    }
-
-    @Override
     public void updateValue(Widget oldWidget) {
         if (oldWidget instanceof DeviceTiles) {
             DeviceTiles oldDeviceTiles = (DeviceTiles) oldWidget;
@@ -295,13 +287,101 @@ public final class DeviceTiles extends Widget implements MobileSyncWidget, Devic
         this.templates = updatedTemplates;
     }
 
-    public Group getGroupByIdOrThrow(int id) {
+    public int getGroupTemplateIndexByIdOrThrow(long id) {
+        for (int i = 0; i < this.groupTemplates.length; i++) {
+            if (this.groupTemplates[i].id == id) {
+                return i;
+            }
+        }
+        throw new IllegalCommandException("Group template with passed id not found.");
+    }
+
+    public int getGroupIndexByIdOrThrow(long id) {
+        for (int i = 0; i < this.groups.length; i++) {
+            if (this.groups[i].id == id) {
+                return i;
+            }
+        }
+        throw new IllegalCommandException("Group with passed id not found.");
+    }
+
+    public BaseGroupTemplate getGroupTemplateById(long id) {
+        for (BaseGroupTemplate groupTemplate : this.groupTemplates) {
+            if (groupTemplate.id == id) {
+                return groupTemplate;
+            }
+        }
+        return null;
+    }
+
+    public void replaceGroupTemplate(BaseGroupTemplate newGroupTemplate, int existingGroupTemplateIndex) {
+        BaseGroupTemplate[] updatedGroupTemplates = Arrays.copyOf(groupTemplates, groupTemplates.length);
+        BaseGroupTemplate existingGroupTemplate = groupTemplates[existingGroupTemplateIndex];
+        updatedGroupTemplates[existingGroupTemplateIndex] = newGroupTemplate;
+        //do not override widgets field, as we have separate commands for it.
+
+        newGroupTemplate.widgets = existingGroupTemplate.widgets;
+        this.groupTemplates = updatedGroupTemplates;
+    }
+
+    public void deleteGroupByTemplateId(long groupTemplateId) {
+        ArrayList<Group> list = new ArrayList<>();
+        for (Group group : groups) {
+            if (group.templateId != groupTemplateId) {
+                list.add(group);
+            }
+        }
+        this.groups = list.toArray(new Group[0]);
+    }
+
+    public void deleteGroupTemplateById(long groupTemplateId) {
+        int existingGroupTemplateIndex = getGroupTemplateIndexByIdOrThrow(groupTemplateId);
+        this.groupTemplates = ArrayUtil.remove(
+                this.groupTemplates, existingGroupTemplateIndex, BaseGroupTemplate.class);
+    }
+
+    public void addGroupTemplate(BaseGroupTemplate groupTemplate) {
+        this.groupTemplates = ArrayUtil.add(this.groupTemplates, groupTemplate, BaseGroupTemplate.class);
+    }
+
+    public void addGroup(Group group) {
+        this.groups = ArrayUtil.add(this.groups, group, Group.class);
+    }
+
+    public void checkTemplateExists(long id) {
+        BaseGroupTemplate baseGroupTemplate = getGroupTemplateById(id);
+        if (baseGroupTemplate != null) {
+            throw new JsonException("Group template with passed id already exists.");
+        }
+    }
+
+    public void checkGroupExists(long id) {
+        Group group = getGroupById(id);
+        if (group != null) {
+            throw new JsonException("Group with passed id already exists.");
+        }
+    }
+
+    public void deleteGroupById(long id) {
+        int index = getGroupIndexByIdOrThrow(id);
+        this.groups = ArrayUtil.remove(this.groups, index, Group.class);
+    }
+
+    public Group getGroupById(long id) {
         for (Group group : groups) {
             if (group.id == id) {
                 return group;
             }
         }
-        throw new IllegalCommandException("Group with passed id not found.");
+        return null;
+    }
+
+    public Group getGroupByIdOrThrow(long groupId) {
+        Group group = getGroupById(groupId);
+        if (group == null) {
+            throw new IllegalCommandException("Group with passed id not found.");
+        }
+        return group;
     }
 
     @Override
@@ -319,7 +399,7 @@ public final class DeviceTiles extends Widget implements MobileSyncWidget, Devic
 
     @Override
     public boolean setProperty(WidgetProperty property, String propertyValue) {
-        if (property == WidgetProperty.SORT_TPYE) {
+        if (property == WidgetProperty.SORT_TYPE) {
             this.sortType = SortType.valueOf(propertyValue);
             return true;
         }

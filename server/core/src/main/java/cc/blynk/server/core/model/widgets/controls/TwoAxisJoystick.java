@@ -57,9 +57,4 @@ public class TwoAxisJoystick extends MultiPinWidget {
         return PinMode.out;
     }
 
-
-    @Override
-    public int getPrice() {
-        return 400;
-    }
 }

@@ -1,14 +1,14 @@
 export * from './scenes';
 
 import React, { Component } from 'react';
-import NoCampaigns from './scenes/NoCampaigns';
+import Index from './scenes/Index';
 
 import './styles.less';
 
 
 class OTA extends Component {
   render() {
-    return (<NoCampaigns/>);
+    return (<Index/>);
   }
 }
 

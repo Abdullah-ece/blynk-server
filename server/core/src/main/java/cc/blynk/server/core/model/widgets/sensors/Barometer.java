@@ -17,8 +17,4 @@ public class Barometer extends OnePinWidget {
         return PinMode.out;
     }
 
-    @Override
-    public int getPrice() {
-        return 300;
-    }
 }

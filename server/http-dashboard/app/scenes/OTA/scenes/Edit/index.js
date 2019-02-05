@@ -49,7 +49,7 @@ class Edit extends React.Component {
     router: React.PropTypes.object
   };
 
-  propTypes = {
+  static propTypes = {
     OTA: PropTypes.object,
     orgId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     devicesproductId: PropTypes.string,
@@ -78,6 +78,7 @@ class Edit extends React.Component {
     this.handleCancel = this.handleCancel.bind(this);
     this.handleOK = this.handleOK.bind(this);
     this.buildReviewItems = this.buildReviewItems.bind(this);
+    this.determineSecureFlag = this.determineSecureFlag.bind(this);
 
     this.fetchToken();
 
@@ -100,7 +101,7 @@ class Edit extends React.Component {
           buildDate: "",
           md5Hash: "",
         },
-        attemptsLimit: 0,
+        attemptsLimit: 3,
         isSecure: false
       }
     };
@@ -116,6 +117,14 @@ class Edit extends React.Component {
     this.props.fetchDevices({
       orgId: this.props.orgId
     });
+  }
+
+  determineSecureFlag(hardware) {
+    if (hardware === 'TI CC3220') {
+      return true;
+    }
+
+    return false;
   }
 
   firmwareUpdateStart() {
@@ -158,7 +167,7 @@ class Edit extends React.Component {
       name: "file",
       action: FILE_UPLOAD_URL,
       showUploadList: false,
-      accept: ".bin",
+      accept: ".bin, .tar",
       data: {
         token: this.props.secureUploadToken
       }
@@ -174,6 +183,7 @@ class Edit extends React.Component {
           result => {
             const { OTA } = this.state;
             OTA.firmwareInfo = result.payload.data;
+            OTA.isSecure = this.determineSecureFlag(result.payload.data.boardType);
             this.setState({ OTA });
           });
       } else if (status === "error") {
@@ -184,7 +194,7 @@ class Edit extends React.Component {
 
     return (
       <ImageUploader text={() => (
-        <span>Upload firmware file (.bin)<br/><br/></span>)}
+        <span>Upload firmware file (.bin, .tar)<br/><br/></span>)}
                      logo={value}
                      error={error}
                      iconClass="ota-upload-drag-icon"

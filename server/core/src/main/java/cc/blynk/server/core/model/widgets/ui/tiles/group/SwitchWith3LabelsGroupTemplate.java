@@ -17,7 +17,7 @@ public final class SwitchWith3LabelsGroupTemplate extends BaseGroupTemplate {
     public final GroupLabel[] groupLabels;
 
     @JsonCreator
-    public SwitchWith3LabelsGroupTemplate(@JsonProperty("id") int id,
+    public SwitchWith3LabelsGroupTemplate(@JsonProperty("id") long id,
                                           @JsonProperty("widgets") Widget[] widgets,
                                           @JsonProperty("name") String name,
                                           @JsonProperty("icon") String icon,

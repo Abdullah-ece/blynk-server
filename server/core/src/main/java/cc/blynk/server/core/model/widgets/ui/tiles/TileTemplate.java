@@ -70,14 +70,6 @@ public abstract class TileTemplate {
         this.showDeviceName = showDeviceName;
     }
 
-    public int getPrice() {
-        int sum = 0;
-        for (Widget widget : widgets) {
-            sum += widget.getPrice();
-        }
-        return sum;
-    }
-
     public void erase() {
         if (dataStream != null) {
             dataStream.value = null;

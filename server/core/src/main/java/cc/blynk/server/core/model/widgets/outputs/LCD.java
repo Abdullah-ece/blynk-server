@@ -124,8 +124,4 @@ public class LCD extends MultiPinWidget implements FrequencyWidget {
         return PinMode.in;
     }
 
-    @Override
-    public int getPrice() {
-        return 400;
-    }
 }

@@ -10,8 +10,8 @@ import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.dto.DeviceDTO;
 import cc.blynk.server.core.model.dto.OrganizationDTO;
-import cc.blynk.server.core.model.dto.OtaDTO;
 import cc.blynk.server.core.model.dto.ProductDTO;
+import cc.blynk.server.core.model.dto.ShipmentDTO;
 import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
@@ -361,26 +361,26 @@ public class PermissionsForEveryHandlerTest extends SingleServerInstancePerTestW
     @Test
     public void OTAStart() throws Exception {
         AppWebSocketClient client = createUserForSubOrgSpecificRole(setPermission(OTA_START));
-        client.otaStart(new OtaDTO(1, 1, 1, null, null, null, null, null, 0, false));
+        client.otaStart(new ShipmentDTO(1, 1, 1, null, null, null, null, null, 0, null));
         client.verifyResult(webJson(1, "Wrong data for OTA start."));
     }
     @Test
     public void noOTAStart() throws Exception {
         AppWebSocketClient client = createUserForSubOrgSpecificRole(removePermission(OTA_START));
-        client.otaStart(new OtaDTO(1, 1, 1, null, null, null, null, null, 0, false));
+        client.otaStart(new ShipmentDTO(1, 1, 1, null, null, null, null, null, 0, null));
         verifyPermissionAbsence(client, OTA_START, true);
     }
 
     @Test
     public void OTAStop() throws Exception {
         AppWebSocketClient client = createUserForSubOrgSpecificRole(setPermission(OTA_STOP));
-        client.otaStop(new OtaDTO(1, 1, 1, null, null, null, null, null, 0, false));
+        client.otaStop(new ShipmentDTO(1, 1, 1, null, null, null, null, null, 0, null));
         client.verifyResult(webJson(1, "No devices to stop OTA."));
     }
     @Test
     public void noOTAStop() throws Exception {
         AppWebSocketClient client = createUserForSubOrgSpecificRole(removePermission(OTA_STOP));
-        client.otaStop(new OtaDTO(1, 1, 1, null, null, null, null, null, 0, false));
+        client.otaStop(new ShipmentDTO(1, 1, 1, null, null, null, null, null, 0, null));
         verifyPermissionAbsence(client, OTA_STOP, true);
     }
 

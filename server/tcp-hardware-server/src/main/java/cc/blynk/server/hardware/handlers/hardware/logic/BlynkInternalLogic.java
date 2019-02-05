@@ -6,6 +6,7 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.HardwareInfo;
 import cc.blynk.server.core.model.device.ota.DeviceOtaInfo;
 import cc.blynk.server.core.model.device.ota.OTADeviceStatus;
+import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.Shipment;
 import cc.blynk.server.core.model.widgets.others.rtc.RTC;
@@ -104,31 +105,7 @@ public final class BlynkInternalLogic {
         Device device = state.device;
 
         if (device != null) {
-            DeviceOtaInfo deviceOtaInfo = device.deviceOtaInfo;
-            if (deviceOtaInfo != null) {
-                if (hardwareInfo.isFirmwareVersionChanged(deviceOtaInfo.buildDate)) {
-                    if (deviceOtaInfo.status.isNotFailure()) {
-                        if (device.isAttemptsLimitReached()) {
-                            log.warn("OTA limit reached for deviceId {}.", device.id);
-                            device.firmwareDownloadLimitReached();
-                        } else {
-                            Shipment shipment = state.org.getShipmentById(deviceOtaInfo.shipmentId);
-                            String serverUrl = holder.props.getServerUrl(shipment.isSecure);
-                            String downloadToken = TokenGeneratorUtil.generateNewToken();
-                            holder.tokensPool.addToken(downloadToken, new OTADownloadToken(device.id));
-                            String body = StringUtils.makeHardwareBody(serverUrl,
-                                    deviceOtaInfo.pathToFirmware, downloadToken);
-                            StringMessage msg = makeASCIIStringMessage(BLYNK_INTERNAL, 7777, body);
-                            ctx.write(msg, ctx.voidPromise());
-                            device.requestSent();
-                        }
-                    }
-                } else {
-                    if (deviceOtaInfo.status == OTADeviceStatus.FIRMWARE_UPLOADED) {
-                        device.success();
-                    }
-                }
-            }
+            processOTA(holder, ctx, state.org, device, hardwareInfo);
 
             //special temporary hotfix https://github.com/blynkkk/dash/issues/1765
             String templateId = hardwareInfo.templateId;
@@ -151,6 +128,42 @@ public final class BlynkInternalLogic {
         }
 
         ctx.writeAndFlush(ok(msgId), ctx.voidPromise());
+    }
+
+    private static void processOTA(Holder holder, ChannelHandlerContext ctx,
+                                   Organization org, Device device, HardwareInfo hardwareInfo) {
+        DeviceOtaInfo deviceOtaInfo = device.deviceOtaInfo;
+        if (deviceOtaInfo == null) {
+            return;
+        }
+
+        Shipment shipment = org.getShipmentById(deviceOtaInfo.shipmentId);
+        if (shipment == null || shipment.firmwareInfo == null) {
+            log.trace("Shipment by id {} not found or empty firmware info.", deviceOtaInfo.shipmentId);
+            return;
+        }
+
+        if (hardwareInfo.isFirmwareVersionChanged(shipment.firmwareInfo.buildDate)) {
+            if (deviceOtaInfo.status.isNotFailure()) {
+                if (deviceOtaInfo.isLimitReached(shipment.attemptsLimit)) {
+                    log.warn("OTA limit reached for deviceId {}.", device.id);
+                    device.firmwareDownloadLimitReached();
+                } else {
+                    String serverUrl = holder.props.getServerUrl(shipment.isSecure);
+                    String downloadToken = TokenGeneratorUtil.generateNewToken();
+                    holder.tokensPool.addToken(downloadToken, new OTADownloadToken(device.id));
+                    String body = StringUtils.makeHardwareBody(serverUrl,
+                            shipment.pathToFirmware, downloadToken);
+                    StringMessage msg = makeASCIIStringMessage(BLYNK_INTERNAL, 7777, body);
+                    ctx.write(msg, ctx.voidPromise());
+                    device.requestSent();
+                }
+            }
+        } else {
+            if (deviceOtaInfo.status == OTADeviceStatus.FIRMWARE_UPLOADED) {
+                device.success();
+            }
+        }
     }
 
 }

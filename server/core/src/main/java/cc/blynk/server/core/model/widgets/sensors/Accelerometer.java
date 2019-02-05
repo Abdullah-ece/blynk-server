@@ -17,9 +17,4 @@ public class Accelerometer extends OnePinWidget {
         return PinMode.out;
     }
 
-    @Override
-    public int getPrice() {
-        return 400;
-    }
-
 }

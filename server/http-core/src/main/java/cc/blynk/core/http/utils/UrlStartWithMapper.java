@@ -17,12 +17,4 @@ public class UrlStartWithMapper extends UrlMapper {
         return uri.startsWith(from);
     }
 
-    public String mapTo(String uri) {
-        if (uri.contains("?")) {
-            String[] split = uri.split("\\?");
-            return to + "?" + split[1];
-        } else {
-            return to;
-        }
-    }
 }

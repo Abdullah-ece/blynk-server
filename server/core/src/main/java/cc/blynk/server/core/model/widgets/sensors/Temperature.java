@@ -19,8 +19,4 @@ public class Temperature extends OnePinWidget {
         return PinMode.out;
     }
 
-    @Override
-    public int getPrice() {
-        return 300;
-    }
 }

@@ -21,39 +21,39 @@ import java.util.concurrent.atomic.LongAdder;
  */
 public final class Stat {
 
-    public final transient Map<Short, Integer> statsForDB;
-    public final Map<String, Integer> statsForPrint;
-    public final BlockingIOStat ioStat;
-    public final MemoryStat memoryStat;
+    public final transient Map<Short, Integer> statsForDB = new HashMap<>();
+    public final Map<String, Integer> statsForPrint       = new HashMap<>();
+    public final BlockingIOStat ioStat = new BlockingIOStat();
+    public final MemoryStat memoryStat = new MemoryStat();
 
-    public final int oneMinRate;
-    public final int registrations;
-    public final int active;
-    public final int activeWeek;
-    public final int activeMonth;
-    public final int connected;
-    public final int onlineApps;
-    public final int totalOnlineApps;
-    public final int onlineHards;
-    public final int totalOnlineHards;
-    public final int appTotal;
-    public final int webTotal;
-    public final transient long ts;
+    public int oneMinRate;
+    public int registrations;
+    public int active;
+    public int activeWeek;
+    public int activeMonth;
+    public int connected;
+    public int onlineApps;
+    public int totalOnlineApps;
+    public int onlineHards;
+    public int totalOnlineHards;
+    public int appTotal;
+    public int webTotal;
+    public transient long ts;
 
-    public Stat(SessionDao sessionDao,
-                UserDao userDao,
-                BlockingIOProcessor blockingIOProcessor,
-                GlobalStats globalStats,
-                ReportScheduler reportScheduler) {
+    public Stat() {
+    }
 
-        this.statsForDB = new HashMap<>();
-        this.statsForPrint = new HashMap<>();
-
+    // assume clear() or Stat() is called before update()
+    public void update(SessionDao sessionDao,
+                       UserDao userDao,
+                       BlockingIOProcessor blockingIOProcessor,
+                       GlobalStats globalStats,
+                       ReportScheduler reportScheduler) {
         for (var entry : Command.VALUES_NAME.entrySet()) {
             LongAdder longAdder = globalStats.specificCounters[entry.getKey()];
             int val = (int) (longAdder.sumThenReset());
 
-            this.statsForDB.put(entry.getKey(), val);
+            this.statsForDB   .put(entry.getKey(), val);
             this.statsForPrint.put(entry.getValue(), val);
         }
 
@@ -99,8 +99,35 @@ public final class Stat {
         this.activeMonth = activeMonth;
         this.registrations = userDao.users.size();
 
-        this.ioStat = new BlockingIOStat(blockingIOProcessor, reportScheduler);
-        this.memoryStat = new MemoryStat(ByteBufAllocator.DEFAULT);
+        this.ioStat    .update(blockingIOProcessor, reportScheduler);
+        this.memoryStat.update(ByteBufAllocator.DEFAULT);
+    }
+
+    public void reset() {
+
+        this.statsForDB   .clear();
+        this.statsForPrint.clear();
+
+        this.appTotal = 0;
+        this.webTotal = 0;
+
+        this.oneMinRate = 0;
+
+        this.ts = 0;
+
+        this.connected = 0;
+        this.onlineApps = 0;
+        this.totalOnlineApps = 0;
+        this.onlineHards = 0;
+        this.totalOnlineHards = 0;
+
+        this.active = 0;
+        this.activeWeek = 0;
+        this.activeMonth = 0;
+        this.registrations = 0;
+
+        this.ioStat    .reset();
+        this.memoryStat.reset();
     }
 
     @Override

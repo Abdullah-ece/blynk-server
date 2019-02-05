@@ -25,6 +25,7 @@ public class StatsWorker implements Runnable {
     private static final Logger log = LogManager.getLogger(StatsWorker.class);
 
     private final GlobalStats stats;
+    private final Stat stat;
     private final SessionDao sessionDao;
     private final UserDao userDao;
     private final ReportingDBManager reportingDBManager;
@@ -34,6 +35,7 @@ public class StatsWorker implements Runnable {
 
     public StatsWorker(Holder holder) {
         this.stats = holder.stats;
+        this.stat = new Stat();
         this.sessionDao = holder.sessionDao;
         this.userDao = holder.userDao;
         this.reportingDBManager = holder.reportingDBManager;
@@ -45,12 +47,14 @@ public class StatsWorker implements Runnable {
     @Override
     public void run() {
         try {
-            var stat = new Stat(sessionDao, userDao, blockingIOProcessor, stats, reportScheduler);
+            stat.update(sessionDao, userDao, blockingIOProcessor, stats, reportScheduler);
             log.info(stat);
 
             reportingDBManager.insertStat(this.region, stat);
         } catch (Exception e) {
             log.error("Error making stats.", e);
+        } finally {
+            stat.reset();
         }
     }
 

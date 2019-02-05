@@ -11,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Created by Dmitriy Dumanskiy.
  * Created on 07.05.18.
  */
-public final class OtaDTO {
+public final class ShipmentDTO {
 
     public final int id;
 
@@ -31,19 +31,19 @@ public final class OtaDTO {
 
     public final int attemptsLimit;
 
-    public final boolean isSecure;
+    public final Boolean isSecure;
 
     @JsonCreator
-    public OtaDTO(@JsonProperty("id") int id,
-                  @JsonProperty("orgId") int orgId,
-                  @JsonProperty("productId") int productId,
-                  @JsonProperty("pathToFirmware") String pathToFirmware,
-                  @JsonProperty("firmwareOriginalFileName") String firmwareOriginalFileName,
-                  @JsonProperty("deviceIds") int[] deviceIds,
-                  @JsonProperty("title") String title,
-                  @JsonProperty("firmwareInfo") FirmwareInfo firmwareInfo,
-                  @JsonProperty("attemptsLimit") int attemptsLimit,
-                  @JsonProperty("isSecure") boolean isSecure) {
+    public ShipmentDTO(@JsonProperty("id") int id,
+                       @JsonProperty("orgId") int orgId,
+                       @JsonProperty("productId") int productId,
+                       @JsonProperty("pathToFirmware") String pathToFirmware,
+                       @JsonProperty("firmwareOriginalFileName") String firmwareOriginalFileName,
+                       @JsonProperty("deviceIds") int[] deviceIds,
+                       @JsonProperty("title") String title,
+                       @JsonProperty("firmwareInfo") FirmwareInfo firmwareInfo,
+                       @JsonProperty("attemptsLimit") int attemptsLimit,
+                       @JsonProperty("isSecure") Boolean isSecure) {
         this.id = id;
         this.orgId = orgId;
         this.productId = productId;
@@ -54,6 +54,24 @@ public final class OtaDTO {
         this.firmwareInfo = firmwareInfo;
         this.attemptsLimit = attemptsLimit == 0 ? 3 : attemptsLimit;
         this.isSecure = isSecure;
+    }
+
+    public boolean isSecure() {
+        if (isSecure != null) {
+            return isSecure;
+        }
+        if (firmwareInfo != null && firmwareInfo.boardType != null) {
+            switch (firmwareInfo.boardType) {
+                case TI_CC3220 :
+                case TI_CC3200_LaunchXL :
+                case ESP32_Dev_Board :
+                case ESP32 :
+                    return true;
+                default:
+                    return false;
+            }
+        }
+        return false;
     }
 
     public boolean isNotValid() {

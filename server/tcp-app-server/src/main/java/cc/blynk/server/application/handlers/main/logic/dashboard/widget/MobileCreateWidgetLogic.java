@@ -88,19 +88,12 @@ public final class MobileCreateWidgetLogic {
             }
         }
 
-        int price = newWidget.getPrice();
-        if (user.notEnoughEnergy(price)) {
-            log.debug("Not enough energy.");
-            throw new JsonException("Not enough energy.");
-        }
-        user.subtractEnergy(price);
-
         //widget could be added to project or to other widget like DeviceTiles
         if (widgetAddToId == -1) {
             dash.widgets = ArrayUtil.add(dash.widgets, newWidget, Widget.class);
         } else {
             //right now we can only add to DeviceTiles widget
-            DeviceTiles deviceTiles = (DeviceTiles) dash.getWidgetByIdOrThrow(widgetAddToId);
+            DeviceTiles deviceTiles = dash.getDeviceTilesByIdOrThrow(widgetAddToId);
             TileTemplate tileTemplate = deviceTiles.getTileTemplateByIdOrThrow(templateIdAddToId);
             tileTemplate.widgets = ArrayUtil.add(tileTemplate.widgets, newWidget, Widget.class);
         }

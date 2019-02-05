@@ -80,11 +80,6 @@ public class Superchart extends Widget {
     }
 
     @Override
-    public int getPrice() {
-        return 900;
-    }
-
-    @Override
     public void updateValue(Widget oldWidget) {
     }
 

@@ -414,10 +414,10 @@ public class Organization {
         int index = getShipmentIndexById(shipment.id);
         if (index == -1) {
             this.shipments = ArrayUtil.add(this.shipments, shipment, Shipment.class);
-            this.lastModifiedTs = System.currentTimeMillis();
         } else {
             this.shipments = ArrayUtil.copyAndReplace(this.shipments, shipment, index);
         }
+        this.lastModifiedTs = System.currentTimeMillis();
     }
 
     public void stopShipment(int id) {

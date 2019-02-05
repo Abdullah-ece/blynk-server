@@ -29,11 +29,6 @@ public class Step extends OnePinWidget {
     }
 
     @Override
-    public int getPrice() {
-        return 500;
-    }
-
-    @Override
     public boolean setProperty(WidgetProperty property, String propertyValue) {
         switch (property) {
             case STEP :

@@ -77,9 +77,4 @@ public class Map extends OnePinWidget {
         return PinMode.in;
     }
 
-    @Override
-    public int getPrice() {
-        return 600;
-    }
-
 }

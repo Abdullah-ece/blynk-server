@@ -46,7 +46,7 @@ public class ResetPassAPIWebsocketTest extends SingleServerInstancePerTestWithDB
         AppWebSocketClient client = defaultClient();
         client.start();
         client.resetPass("start", "xxx@gmail.com", "Blynk");
-        client.verifyResult(webJson(1, "User does not exists."));
+        client.verifyResult(webJson(1, "User does not exist."));
     }
 
     @Test

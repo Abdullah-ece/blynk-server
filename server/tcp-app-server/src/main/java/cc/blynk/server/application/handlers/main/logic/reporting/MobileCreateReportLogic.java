@@ -64,11 +64,6 @@ public final class MobileCreateReportLogic {
         Report report = JsonParser.parseReport(reportJson, message.id);
         reportingWidget.validateId(report.id);
 
-        int price = Report.getPrice();
-        if (user.notEnoughEnergy(price)) {
-            throw new JsonException("Not enough energy.");
-        }
-
         if (!report.isValid()) {
             log.debug("Report is not valid {} for {}.", report, user.email);
             throw new JsonException("Report is not valid.");
@@ -95,7 +90,6 @@ public final class MobileCreateReportLogic {
             }
         }
 
-        user.subtractEnergy(price);
         reportingWidget.reports = ArrayUtil.add(reportingWidget.reports, report, Report.class);
         dash.updatedAt = System.currentTimeMillis();
 

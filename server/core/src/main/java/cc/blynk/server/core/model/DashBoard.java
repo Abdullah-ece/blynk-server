@@ -23,6 +23,7 @@ import cc.blynk.server.core.model.widgets.ui.reporting.ReportingWidget;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
+import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.workers.timer.TimerWorker;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.apache.logging.log4j.LogManager;
@@ -155,6 +156,14 @@ public class DashBoard {
         return widgets[getWidgetIndexByIdOrThrow(id)];
     }
 
+    public DeviceTiles getDeviceTilesByIdOrThrow(long id) {
+        Widget widget = widgets[getWidgetIndexByIdOrThrow(id)];
+        if (!(widget instanceof DeviceTiles)) {
+            throw new JsonException("Income widget id is not DeviceTiles.");
+        }
+        return (DeviceTiles) widget;
+    }
+
     public Widget getWidgetById(long id) {
         return getWidgetById(widgets, id);
     }
@@ -216,19 +225,6 @@ public class DashBoard {
             return null;
         }
         return sb.toString();
-    }
-
-
-    public int energySum() {
-        //means this is app preview project so do no manipulation with energy
-        if (parentId != IS_PARENT_DASH) {
-            return 0;
-        }
-        int sum = 0;
-        for (Widget widget : widgets) {
-            sum += widget.getPrice();
-        }
-        return sum;
     }
 
     public void eraseWidgetValues() {

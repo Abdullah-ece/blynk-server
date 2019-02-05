@@ -8,8 +8,8 @@ import cc.blynk.integration.model.websocket.AppWebSocketClient;
 import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.ota.OTADeviceStatus;
-import cc.blynk.server.core.model.dto.OtaDTO;
 import cc.blynk.server.core.model.dto.ProductDTO;
+import cc.blynk.server.core.model.dto.ShipmentDTO;
 import cc.blynk.server.core.model.web.product.FirmwareInfo;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
@@ -103,9 +103,9 @@ public class OTAWebSocketsTest extends SingleServerInstancePerTestWithDBAndNewOr
         Device createdDevice = client.parseDevice(4);
         assertNotNull(createdDevice);
 
-        OtaDTO otaDTO = new OtaDTO(1, 1, newDevice.productId, pathToFirmware, "original name",
-                new int[] {createdDevice.id}, "title", parsedFirmwareInfo, 5, false);
-        client.otaStart(otaDTO);
+        ShipmentDTO shipmentDTO = new ShipmentDTO(1, 1, newDevice.productId, pathToFirmware, "original name",
+                new int[] {createdDevice.id}, "title", parsedFirmwareInfo, 5, null);
+        client.otaStart(shipmentDTO);
         Shipment shipment = client.parseOtaProgress(5);
         assertNotNull(shipment);
 
@@ -116,10 +116,9 @@ public class OTAWebSocketsTest extends SingleServerInstancePerTestWithDBAndNewOr
         assertNotNull(createdDevice);
         assertNotNull(createdDevice.deviceOtaInfo);
         assertEquals(OTADeviceStatus.STARTED, createdDevice.deviceOtaInfo.status);
-        assertEquals(getUserName(), createdDevice.deviceOtaInfo.otaStartedBy);
-        assertEquals(System.currentTimeMillis(), createdDevice.deviceOtaInfo.otaStartedAt, 5000);
-        assertEquals(pathToFirmware, createdDevice.deviceOtaInfo.pathToFirmware);
-        assertEquals("May  9 2018 12:36:07", createdDevice.deviceOtaInfo.buildDate);
+        //todo check within shipment
+        //assertEquals(getUserName(), createdDevice.deviceOtaInfo.otaStartedBy);
+        //assertEquals(System.currentTimeMillis(), createdDevice.deviceOtaInfo.otaStartedAt, 5000);
 
         TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
         newHardClient.start();
@@ -142,8 +141,6 @@ public class OTAWebSocketsTest extends SingleServerInstancePerTestWithDBAndNewOr
         assertNotNull(createdDevice.deviceOtaInfo);
         assertEquals(OTADeviceStatus.REQUEST_SENT, createdDevice.deviceOtaInfo.status);
         assertEquals(System.currentTimeMillis(), createdDevice.deviceOtaInfo.requestSentAt, 5000);
-        assertEquals(pathToFirmware, createdDevice.deviceOtaInfo.pathToFirmware);
-        assertEquals("May  9 2018 12:36:07", createdDevice.deviceOtaInfo.buildDate);
 
         //we do request the file, so device status is changed.
         Path tmpFile = Files.createTempFile("123", "test");
@@ -184,8 +181,6 @@ public class OTAWebSocketsTest extends SingleServerInstancePerTestWithDBAndNewOr
         assertEquals(System.currentTimeMillis(), createdDevice.deviceOtaInfo.firmwareRequestedAt, 5000);
         assertEquals(System.currentTimeMillis(), createdDevice.deviceOtaInfo.firmwareUploadedAt, 5000);
         assertEquals(System.currentTimeMillis(), createdDevice.deviceOtaInfo.finishedAt, 5000);
-        assertEquals(pathToFirmware, createdDevice.deviceOtaInfo.pathToFirmware);
-        assertEquals("May  9 2018 12:36:07", createdDevice.deviceOtaInfo.buildDate);
         assertEquals("May  9 2018 12:36:07", createdDevice.hardwareInfo.build);
     }
 

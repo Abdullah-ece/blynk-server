@@ -26,8 +26,8 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.dto.DeviceDTO;
 import cc.blynk.server.core.model.dto.OrganizationDTO;
-import cc.blynk.server.core.model.dto.OtaDTO;
 import cc.blynk.server.core.model.dto.ProductDTO;
+import cc.blynk.server.core.model.dto.ShipmentDTO;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.UserInviteDTO;
@@ -555,12 +555,12 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         }
     }
 
-    public void otaStart(OtaDTO otaDTO) {
-        send(WEB_OTA_START, otaDTO);
+    public void otaStart(ShipmentDTO shipmentDTO) {
+        send(WEB_OTA_START, shipmentDTO);
     }
 
-    public void otaStop(OtaDTO otaDTO) {
-        send(WEB_OTA_STOP, otaDTO);
+    public void otaStop(ShipmentDTO shipmentDTO) {
+        send(WEB_OTA_STOP, shipmentDTO);
     }
 
     public void getDevicesByReferenceMetafield(int deviceId, int metafieldId) {

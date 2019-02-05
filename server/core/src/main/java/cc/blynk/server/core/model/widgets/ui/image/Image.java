@@ -60,8 +60,4 @@ public class Image extends OnePinWidget {
         return PinMode.in;
     }
 
-    @Override
-    public int getPrice() {
-        return 600;
-    }
 }

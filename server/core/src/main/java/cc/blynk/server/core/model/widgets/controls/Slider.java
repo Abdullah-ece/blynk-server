@@ -25,11 +25,6 @@ public class Slider extends OnePinWidget {
     }
 
     @Override
-    public int getPrice() {
-        return 200;
-    }
-
-    @Override
     public boolean setProperty(WidgetProperty property, String propertyValue) {
         switch (property) {
             case FRACTION :

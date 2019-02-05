@@ -18,7 +18,7 @@ public final class GroupLabel {
 
     public final String icon;
 
-    public final String format;
+    public final int maximumFractionDigits;
 
     public final String suffix;
 
@@ -34,7 +34,7 @@ public final class GroupLabel {
                       @JsonProperty("granularity") Granularity granularity,
                       @JsonProperty("name") String name,
                       @JsonProperty("icon") String icon,
-                      @JsonProperty("format") String format,
+                      @JsonProperty("maximumFractionDigits") int maximumFractionDigits,
                       @JsonProperty("suffix") String suffix,
                       @JsonProperty("nameColor") int nameColor,
                       @JsonProperty("valueColor") int valueColor,
@@ -44,7 +44,7 @@ public final class GroupLabel {
         this.granularity = granularity;
         this.name = name;
         this.icon = icon;
-        this.format = format;
+        this.maximumFractionDigits = maximumFractionDigits;
         this.suffix = suffix;
         this.nameColor = nameColor;
         this.valueColor = valueColor;

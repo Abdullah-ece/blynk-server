@@ -1,6 +1,6 @@
 package cc.blynk.server.core.model.web.product;
 
-import cc.blynk.server.core.model.dto.OtaDTO;
+import cc.blynk.server.core.model.dto.ShipmentDTO;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -11,11 +11,15 @@ public final class Shipment {
 
     public final int id;
 
+    public final int productId;
+
     public final String title;
 
     public final String pathToFirmware;
 
     public final String firmwareOriginalFileName;
+
+    public final String startedBy;
 
     public final long startedAt;
 
@@ -25,7 +29,7 @@ public final class Shipment {
 
     public final FirmwareInfo firmwareInfo;
 
-    public final int attempts;
+    public final int attemptsLimit;
 
     public final boolean isSecure;
 
@@ -33,54 +37,62 @@ public final class Shipment {
 
     @JsonCreator
     public Shipment(@JsonProperty("id") int id,
+                    @JsonProperty("productId") int productId,
                     @JsonProperty("title") String title,
                     @JsonProperty("pathToFirmware") String pathToFirmware,
                     @JsonProperty("firmwareOriginalFileName") String firmwareOriginalFileName,
+                    @JsonProperty("startedBy") String startedBy,
                     @JsonProperty("startedAt") long startedAt,
                     @JsonProperty("finishedAt") long finishedAt,
                     @JsonProperty("deviceIds") int[] deviceIds,
                     @JsonProperty("firmwareInfo") FirmwareInfo firmwareInfo,
-                    @JsonProperty("attempts") int attempts,
+                    @JsonProperty("attemptsLimit") int attemptsLimit,
                     @JsonProperty("isSecure") boolean isSecure,
                     @JsonProperty("status") ShipmentStatus status) {
         this.id = id;
+        this.productId = productId;
         this.title = title;
         this.pathToFirmware = pathToFirmware;
         this.firmwareOriginalFileName = firmwareOriginalFileName;
+        this.startedBy = startedBy;
         this.startedAt = startedAt;
         this.finishedAt = finishedAt;
         this.deviceIds = deviceIds;
         this.firmwareInfo = firmwareInfo;
-        this.attempts = attempts;
+        this.attemptsLimit = attemptsLimit;
         this.isSecure = isSecure;
         this.status = status == null ? ShipmentStatus.RUN : status;
     }
 
-    public Shipment(OtaDTO otaDTO, long now) {
-        this(otaDTO.id,
-                otaDTO.title,
-                otaDTO.pathToFirmware,
-                otaDTO.firmwareOriginalFileName,
+    public Shipment(ShipmentDTO shipmentDTO, String startedBy, long now) {
+        this(shipmentDTO.id,
+                shipmentDTO.productId,
+                shipmentDTO.title,
+                shipmentDTO.pathToFirmware,
+                shipmentDTO.firmwareOriginalFileName,
+                startedBy,
                 now,
                 -1,
-                otaDTO.deviceIds,
-                otaDTO.firmwareInfo,
-                otaDTO.attemptsLimit,
-                otaDTO.isSecure,
+                shipmentDTO.deviceIds,
+                shipmentDTO.firmwareInfo,
+                shipmentDTO.attemptsLimit,
+                shipmentDTO.isSecure(),
                 ShipmentStatus.RUN
         );
     }
 
     public Shipment(Shipment shipment, ShipmentStatus status) {
         this(shipment.id,
+                shipment.productId,
                 shipment.title,
                 shipment.pathToFirmware,
                 shipment.firmwareOriginalFileName,
+                shipment.startedBy,
                 shipment.startedAt,
                 shipment.finishedAt,
                 shipment.deviceIds,
                 shipment.firmwareInfo,
-                shipment.attempts,
+                shipment.attemptsLimit,
                 shipment.isSecure,
                 status
         );

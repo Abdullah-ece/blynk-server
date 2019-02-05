@@ -105,12 +105,6 @@ public class MobileGetProjectByClonedTokenLogic {
             newDash.createdAt = System.currentTimeMillis();
         }
 
-        int price = newDash.energySum();
-        if (user.notEnoughEnergy(price)) {
-            log.debug("Not enough energy.");
-            throw new JsonException("Not enough energy.");
-        }
-        user.subtractEnergy(price);
         user.profile.dashBoards = ArrayUtil.add(user.profile.dashBoards, newDash, DashBoard.class);
 
         /*

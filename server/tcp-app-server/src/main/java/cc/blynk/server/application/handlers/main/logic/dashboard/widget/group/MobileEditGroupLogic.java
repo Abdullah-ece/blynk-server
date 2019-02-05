@@ -1,10 +1,10 @@
-package cc.blynk.server.application.handlers.main.logic.dashboard.widget.tile;
+package cc.blynk.server.application.handlers.main.logic.dashboard.widget.group;
 
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
-import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
+import cc.blynk.server.core.model.widgets.ui.tiles.group.BaseGroupTemplate;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.mobile.MobileStateHolder;
@@ -18,16 +18,18 @@ import static cc.blynk.utils.StringUtils.split3;
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
- * Created on 01.02.16.
+ * Created on 2/1/2015.
+ *
  */
-public final class MobileUpdateTileTemplateLogic {
+public final class MobileEditGroupLogic {
 
-    private static final Logger log = LogManager.getLogger(MobileUpdateTileTemplateLogic.class);
+    private static final Logger log = LogManager.getLogger(MobileEditGroupLogic.class);
 
-    private MobileUpdateTileTemplateLogic() {
+    public MobileEditGroupLogic() {
     }
 
-    public static void messageReceived(ChannelHandlerContext ctx, MobileStateHolder state, StringMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx,
+                                MobileStateHolder state, StringMessage message) {
         String[] split = split3(message.body);
 
         if (split.length < 3) {
@@ -36,24 +38,23 @@ public final class MobileUpdateTileTemplateLogic {
 
         int dashId = Integer.parseInt(split[0]);
         long widgetId = Long.parseLong(split[1]);
-        String tileTemplateString = split[2];
+        String groupTemplateString = split[2];
 
-        if (tileTemplateString == null || tileTemplateString.isEmpty()) {
-            throw new JsonException("Income tile template message is empty.");
+        if (groupTemplateString == null || groupTemplateString.isEmpty()) {
+            throw new JsonException("Income group template message is empty.");
         }
 
         User user = state.user;
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
         DeviceTiles deviceTiles = dash.getDeviceTilesByIdOrThrow(widgetId);
 
-        TileTemplate newTileTemplate = JsonParser.parseTileTemplate(tileTemplateString, message.id);
-        int existingTileTemplateIndex = deviceTiles.getTileTemplateIndexByIdOrThrow(newTileTemplate.id);
+        BaseGroupTemplate newGroupTemplate = JsonParser.parseGroupTemplate(groupTemplateString, message.id);
 
-        TileTemplate existingTileTemplate = deviceTiles.templates[existingTileTemplateIndex];
-        deviceTiles.recreateTilesIfNecessary(newTileTemplate, existingTileTemplate);
+        log.debug("Updating group template {}.", groupTemplateString);
 
-        log.debug("Updating tile template {}.", tileTemplateString);
-        deviceTiles.replaceTileTemplate(newTileTemplate, existingTileTemplateIndex);
+        int existingGroupTemplateIndex = deviceTiles.getGroupTemplateIndexByIdOrThrow(newGroupTemplate.id);
+        deviceTiles.replaceGroupTemplate(newGroupTemplate, existingGroupTemplateIndex);
+
         dash.updatedAt = System.currentTimeMillis();
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());

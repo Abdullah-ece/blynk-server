@@ -41,11 +41,6 @@ public class StyledButton extends OnePinWidget {
     }
 
     @Override
-    public int getPrice() {
-        return 300;
-    }
-
-    @Override
     public boolean setProperty(WidgetProperty property, String propertyValue) {
         switch (property) {
             case ON_BACK_COLOR :

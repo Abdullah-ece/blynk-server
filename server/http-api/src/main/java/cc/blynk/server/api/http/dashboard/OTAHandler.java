@@ -19,7 +19,7 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.ota.DeviceOtaInfo;
 import cc.blynk.server.core.model.device.ota.OTADeviceStatus;
-import cc.blynk.server.core.model.dto.OtaDTO;
+import cc.blynk.server.core.model.dto.ShipmentDTO;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.FirmwareInfo;
 import cc.blynk.server.core.model.web.product.Shipment;
@@ -87,47 +87,46 @@ public class OTAHandler extends BaseHttpHandler {
     @POST
     @Path("/start")
     @Consumes(value = MediaType.APPLICATION_JSON)
-    public Response startOTA(@ContextUser User user, OtaDTO otaDTO) {
-        if (otaDTO == null || otaDTO.isNotValid()) {
-            log.error("Wrong data for OTA start {}.", otaDTO);
+    public Response startOTA(@ContextUser User user, ShipmentDTO shipmentDTO) {
+        if (shipmentDTO == null || shipmentDTO.isNotValid()) {
+            log.error("Wrong data for OTA start {}.", shipmentDTO);
             return badRequest("Wrong data for OTA start.");
         }
 
         //todo add tes for filter
         List<Device> filteredDevices = deviceDao.getByProductIdAndFilter(
-                otaDTO.orgId, otaDTO.productId, otaDTO.deviceIds);
+                shipmentDTO.orgId, shipmentDTO.productId, shipmentDTO.deviceIds);
         if (filteredDevices.size() == 0) {
-            log.error("No devices for provided productId {}", otaDTO.productId);
-            return badRequest("No devices for provided productId " + otaDTO.productId);
+            log.error("No devices for provided productId {}", shipmentDTO.productId);
+            return badRequest("No devices for provided productId " + shipmentDTO.productId);
         }
 
-        log.info("Initiating OTA for {}. {}", user.email, otaDTO);
+        log.info("Initiating OTA for {}. {}", user.email, shipmentDTO);
 
         long now = System.currentTimeMillis();
-        Organization org = organizationDao.getOrgByIdOrThrow(otaDTO.orgId);
-        Shipment shipment = new Shipment(otaDTO, now);
+        Organization org = organizationDao.getOrgByIdOrThrow(shipmentDTO.orgId);
+        Shipment shipment = new Shipment(shipmentDTO, user.email, now);
         org.addShipment(shipment);
 
         for (Device device : filteredDevices) {
-            DeviceOtaInfo deviceOtaInfo = new DeviceOtaInfo(shipment.id, user.email, now,
+            DeviceOtaInfo deviceOtaInfo = new DeviceOtaInfo(shipment.id,
                     -1L, -1L, -1L, -1L,
-                    otaDTO.pathToFirmware, otaDTO.firmwareInfo.buildDate,
-                    OTADeviceStatus.STARTED, 0, otaDTO.attemptsLimit);
+                    OTADeviceStatus.STARTED, 0);
             device.setDeviceOtaInfo(deviceOtaInfo);
         }
 
-        Session session = sessionDao.getOrgSession(otaDTO.orgId);
-        String serverUrl = props.getServerUrl(otaDTO.isSecure);
+        Session session = sessionDao.getOrgSession(shipmentDTO.orgId);
+        String serverUrl = props.getServerUrl(shipment.isSecure);
         if (session != null) {
             for (Channel channel : session.hardwareChannels) {
                 HardwareStateHolder hardwareState = getHardState(channel);
                 if (hardwareState != null
-                        && hardwareState.contains(otaDTO.deviceIds)
+                        && hardwareState.contains(shipmentDTO.deviceIds)
                         && channel.isWritable()) {
 
                     String downloadToken = TokenGeneratorUtil.generateNewToken();
                     tokensPool.addToken(downloadToken, new OTADownloadToken(hardwareState.device.id));
-                    String body = StringUtils.makeHardwareBody(serverUrl, otaDTO.pathToFirmware, downloadToken);
+                    String body = StringUtils.makeHardwareBody(serverUrl, shipmentDTO.pathToFirmware, downloadToken);
                     StringMessage msg = makeASCIIStringMessage(BLYNK_INTERNAL, 7777, body);
                     channel.writeAndFlush(msg, channel.voidPromise());
                     hardwareState.device.requestSent();
@@ -141,20 +140,20 @@ public class OTAHandler extends BaseHttpHandler {
     @POST
     @Path("/stop")
     @Consumes(value = MediaType.APPLICATION_JSON)
-    public Response stopOTA(@ContextUser User user, OtaDTO otaDTO) {
-        if (otaDTO == null || otaDTO.isDevicesEmpty()) {
-            log.error("No devices to stop OTA. {}.", otaDTO);
+    public Response stopOTA(@ContextUser User user, ShipmentDTO shipmentDTO) {
+        if (shipmentDTO == null || shipmentDTO.isDevicesEmpty()) {
+            log.error("No devices to stop OTA. {}.", shipmentDTO);
             return badRequest("No devices to stop OTA..");
         }
 
         List<Device> filteredDevices = deviceDao.getByProductIdAndFilter(
-                otaDTO.orgId, otaDTO.productId, otaDTO.deviceIds);
+                shipmentDTO.orgId, shipmentDTO.productId, shipmentDTO.deviceIds);
         if (filteredDevices.size() == 0) {
-            log.error("No devices for provided productId {}", otaDTO.productId);
-            return badRequest("No devices for provided productId " + otaDTO.productId);
+            log.error("No devices for provided productId {}", shipmentDTO.productId);
+            return badRequest("No devices for provided productId " + shipmentDTO.productId);
         }
 
-        log.info("Stopping OTA for {}. {}", user.email, otaDTO);
+        log.info("Stopping OTA for {}. {}", user.email, shipmentDTO);
 
         for (Device device : filteredDevices) {
             if (device.deviceOtaInfo != null && device.deviceOtaInfo.status != OTADeviceStatus.SUCCESS
@@ -163,8 +162,8 @@ public class OTAHandler extends BaseHttpHandler {
             }
         }
 
-        Organization org = organizationDao.getOrgByIdOrThrow(otaDTO.orgId);
-        org.stopShipment(otaDTO.id);
+        Organization org = organizationDao.getOrgByIdOrThrow(shipmentDTO.orgId);
+        org.stopShipment(shipmentDTO.id);
 
         return ok();
     }

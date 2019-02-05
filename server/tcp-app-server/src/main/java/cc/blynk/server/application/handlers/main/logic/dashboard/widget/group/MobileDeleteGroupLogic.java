@@ -1,14 +1,11 @@
-package cc.blynk.server.application.handlers.main.logic.dashboard.widget.tile;
+package cc.blynk.server.application.handlers.main.logic.dashboard.widget.group;
 
-import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
-import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.mobile.MobileStateHolder;
-import cc.blynk.utils.ArrayUtil;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,17 +16,18 @@ import static cc.blynk.utils.StringUtils.split3;
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
- * Created on 01.02.16.
+ * Created on 2/1/2015.
+ *
  */
-public final class MobileDeleteTileTemplateLogic {
+public final class MobileDeleteGroupLogic {
 
-    private static final Logger log = LogManager.getLogger(MobileDeleteTileTemplateLogic.class);
+    private static final Logger log = LogManager.getLogger(MobileDeleteGroupLogic.class);
 
-    private MobileDeleteTileTemplateLogic() {
+    public MobileDeleteGroupLogic() {
     }
 
-    public static void messageReceived(Holder holder,
-                                       ChannelHandlerContext ctx, MobileStateHolder state, StringMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx,
+                                MobileStateHolder state, StringMessage message) {
         String[] split = split3(message.body);
 
         if (split.length < 2) {
@@ -38,22 +36,16 @@ public final class MobileDeleteTileTemplateLogic {
 
         int dashId = Integer.parseInt(split[0]);
         long widgetId = Long.parseLong(split[1]);
-        long tileId = Long.parseLong(split[2]);
+        long groupId = Long.parseLong(split[2]);
 
         User user = state.user;
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
         DeviceTiles deviceTiles = dash.getDeviceTilesByIdOrThrow(widgetId);
 
-        int existingTileIndex = deviceTiles.getTileTemplateIndexByIdOrThrow(tileId);
+        log.debug("Deleting group dashId : {}, widgetId : {}, groupTemplateId : {}.",
+                dash, widgetId, groupId);
 
-        log.debug("Deleting tile template dashId : {}, widgetId : {}, tileId : {}.", dash, widgetId, tileId);
-
-        TileTemplate tileTemplate = deviceTiles.templates[existingTileIndex];
-
-        deviceTiles.templates = ArrayUtil.remove(deviceTiles.templates, existingTileIndex, TileTemplate.class);
-        deviceTiles.deleteDeviceTilesByTemplateId(tileId);
-        user.profile.cleanPinStorageForTileTemplate(holder.deviceDao, tileTemplate, true);
-
+        deviceTiles.deleteGroupById(groupId);
         dash.updatedAt = System.currentTimeMillis();
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());

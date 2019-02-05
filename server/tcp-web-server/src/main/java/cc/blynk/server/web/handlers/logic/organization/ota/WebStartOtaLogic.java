@@ -3,15 +3,15 @@ package cc.blynk.server.web.handlers.logic.organization.ota;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.PermissionBasedLogic;
 import cc.blynk.server.core.dao.DeviceDao;
+import cc.blynk.server.core.dao.DeviceValue;
 import cc.blynk.server.core.dao.OTADao;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.ota.DeviceOtaInfo;
 import cc.blynk.server.core.model.device.ota.OTADeviceStatus;
-import cc.blynk.server.core.model.dto.OtaDTO;
+import cc.blynk.server.core.model.dto.ShipmentDTO;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Shipment;
@@ -26,8 +26,6 @@ import cc.blynk.utils.TokenGeneratorUtil;
 import cc.blynk.utils.properties.ServerProperties;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
-
-import java.util.List;
 
 import static cc.blynk.server.core.model.permissions.PermissionsTable.OTA_START;
 import static cc.blynk.server.core.protocol.enums.Command.BLYNK_INTERNAL;
@@ -65,48 +63,54 @@ public final class WebStartOtaLogic implements PermissionBasedLogic<WebAppStateH
 
     @Override
     public void messageReceived0(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
-        OtaDTO otaDTO = JsonParser.readAny(message.body, OtaDTO.class);
+        ShipmentDTO shipmentDTO = JsonParser.readAny(message.body, ShipmentDTO.class);
 
-        if (otaDTO == null || otaDTO.isNotValid()) {
-            log.error("Wrong data for OTA start {}.", otaDTO);
+        if (shipmentDTO == null || shipmentDTO.isNotValid()) {
+            log.error("Wrong data for OTA start {}.", shipmentDTO);
             throw new JsonException("Wrong data for OTA start.");
         }
 
         int orgId = state.selectedOrgId;
         User user = state.user;
-        List<Device> filteredDevices = deviceDao.getByProductIdAndFilter(orgId, otaDTO.productId, otaDTO.deviceIds);
-        if (filteredDevices.size() == 0) {
-            log.error("No devices for provided productId {}", otaDTO.productId);
-            throw new JsonException("No devices for provided productId " + otaDTO.productId);
-        }
 
-        log.info("Initiating OTA for {}. {}", user.email, otaDTO);
+        /*
+        List<Device> filteredDevices = deviceDao.getByProductIdAndFilter(
+                orgId, shipmentDTO.productId, shipmentDTO.deviceIds);
+        if (filteredDevices.size() == 0) {
+            log.error("No devices for provided productId {}", shipmentDTO.productId);
+            throw new JsonException("No devices for provided productId " + shipmentDTO.productId);
+        }
+        */
+
+        log.info("Initiating OTA for {}. {}", user.email, shipmentDTO);
 
         long now = System.currentTimeMillis();
-        Organization org = organizationDao.getOrgByIdOrThrow(otaDTO.orgId);
-        Shipment shipment = new Shipment(otaDTO, now);
+        Organization org = organizationDao.getOrgByIdOrThrow(orgId);
+        Shipment shipment = new Shipment(shipmentDTO, user.email, now);
         org.addShipment(shipment);
 
-        for (Device device : filteredDevices) {
-            DeviceOtaInfo deviceOtaInfo = new DeviceOtaInfo(shipment.id, user.email, now,
-                    -1L, -1L, -1L, -1L,
-                    otaDTO.pathToFirmware, otaDTO.firmwareInfo.buildDate,
-                    OTADeviceStatus.STARTED, 0, otaDTO.attemptsLimit);
-            device.setDeviceOtaInfo(deviceOtaInfo);
+        for (int deviceId : shipmentDTO.deviceIds) {
+            DeviceValue deviceValue = deviceDao.getDeviceValueById(deviceId);
+            if (deviceValue != null) {
+                DeviceOtaInfo deviceOtaInfo = new DeviceOtaInfo(shipment.id,
+                        -1L, -1L, -1L, -1L,
+                        OTADeviceStatus.STARTED, 0);
+                deviceValue.device.setDeviceOtaInfo(deviceOtaInfo);
+            }
         }
 
         Session session = sessionDao.getOrgSession(orgId);
-        String serverUrl = props.getServerUrl(otaDTO.isSecure);
+        String serverUrl = props.getServerUrl(shipment.isSecure);
         if (session != null) {
             for (Channel channel : session.hardwareChannels) {
                 HardwareStateHolder hardwareState = getHardState(channel);
                 if (hardwareState != null
-                        && hardwareState.contains(otaDTO.deviceIds)
+                        && hardwareState.contains(shipmentDTO.deviceIds)
                         && channel.isWritable()) {
 
                     String downloadToken = TokenGeneratorUtil.generateNewToken();
                     tokensPool.addToken(downloadToken, new OTADownloadToken(hardwareState.device.id));
-                    String body = StringUtils.makeHardwareBody(serverUrl, otaDTO.pathToFirmware, downloadToken);
+                    String body = StringUtils.makeHardwareBody(serverUrl, shipmentDTO.pathToFirmware, downloadToken);
                     StringMessage msg = makeASCIIStringMessage(BLYNK_INTERNAL, 7777, body);
                     channel.writeAndFlush(msg, channel.voidPromise());
                     hardwareState.device.requestSent();

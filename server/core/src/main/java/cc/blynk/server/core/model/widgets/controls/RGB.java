@@ -55,9 +55,4 @@ public class RGB extends MultiPinWidget {
         return PinMode.out;
     }
 
-    @Override
-    public int getPrice() {
-        return 400;
-    }
-
 }

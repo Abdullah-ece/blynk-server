@@ -162,8 +162,8 @@ public class WebAppResetPasswordHandler extends SimpleChannelInboundHandler<Rese
         User user = userDao.getByName(trimmedEmail);
 
         if (user == null) {
-            log.debug("User does not exists.");
-            ctx.writeAndFlush(json(msgId, "User does not exists."), ctx.voidPromise());
+            log.debug("User does not exist.");
+            ctx.writeAndFlush(json(msgId, "User does not exist."), ctx.voidPromise());
             return;
         }
 
@@ -194,7 +194,8 @@ public class WebAppResetPasswordHandler extends SimpleChannelInboundHandler<Rese
                 log.info("Reset email sent to {}.", trimmedEmail);
                 ctx.writeAndFlush(ok(msgId), ctx.voidPromise());
             } catch (Exception e) {
-                log.info("Error sending mail for {}. Reason : {}", trimmedEmail, e.getMessage());
+                log.error("Error sending mail for {}. Reason {}.", trimmedEmail, e.getMessage());
+                log.trace(e);
                 ctx.writeAndFlush(json(msgId, "Error sending mail for reset password."), ctx.voidPromise());
             }
         });

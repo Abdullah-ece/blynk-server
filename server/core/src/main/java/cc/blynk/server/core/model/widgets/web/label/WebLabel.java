@@ -40,11 +40,6 @@ public class WebLabel extends WebWidget {
     }
 
     @Override
-    public int getPrice() {
-        return 0;
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;

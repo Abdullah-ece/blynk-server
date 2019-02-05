@@ -81,7 +81,6 @@ public final class MobileDeleteWidgetLogic {
             throw new JsonException("Widget with passed id not found.");
         }
 
-        user.addEnergy(widgetToDelete.getPrice());
         TimerWorker timerWorker = holder.timerWorker;
         if (deviceTilesId != -1) {
             TileTemplate tileTemplate = deviceTiles.getTileTemplateByIdOrThrow(templateId);
@@ -120,10 +119,8 @@ public final class MobileDeleteWidgetLogic {
                                int dashId, long deviceTilesId, long templateId,
                                Widget[] widgets, int lastTabIndex) {
         ArrayList<Widget> zeroTabWidgets = new ArrayList<>();
-        int removedWidgetPrice = 0;
         for (Widget widgetToDelete : widgets) {
             if (widgetToDelete.tabId > lastTabIndex) {
-                removedWidgetPrice += widgetToDelete.getPrice();
                 if (widgetToDelete instanceof Timer) {
                     timerWorker.delete(user.orgId, userKey, (Timer) widgetToDelete, dashId, deviceTilesId, templateId);
                 } else if (widgetToDelete instanceof Eventor) {
@@ -134,7 +131,6 @@ public final class MobileDeleteWidgetLogic {
             }
         }
 
-        user.addEnergy(removedWidgetPrice);
         return zeroTabWidgets.toArray(new Widget[0]);
     }
 

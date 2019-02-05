@@ -3,7 +3,6 @@ package cc.blynk.server.application.handlers.main.logic.dashboard.widget.tile;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
@@ -46,13 +45,7 @@ public final class MobileCreateTileTemplateLogic {
 
         User user = state.user;
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
-        Widget widget = dash.getWidgetByIdOrThrow(widgetId);
-
-        if (!(widget instanceof DeviceTiles)) {
-            throw new JsonException("Income widget id is not DeviceTiles.");
-        }
-
-        DeviceTiles deviceTiles = (DeviceTiles) widget;
+        DeviceTiles deviceTiles = dash.getDeviceTilesByIdOrThrow(widgetId);
 
         TileTemplate newTileTemplate = JsonParser.parseTileTemplate(tileTemplateString, message.id);
 
@@ -62,7 +55,7 @@ public final class MobileCreateTileTemplateLogic {
 
         for (TileTemplate tileTemplate : deviceTiles.templates) {
             if (tileTemplate.id == newTileTemplate.id) {
-                throw new JsonException("tile template with same id already exists.");
+                throw new JsonException("Tile template with same id already exists.");
             }
         }
 
