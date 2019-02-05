@@ -7,9 +7,15 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -28,6 +34,10 @@ public final class ReportingStatsDao {
     private static final String insertStatAllCommandsMinute =
             "INSERT INTO reporting_command_stat_minute (region, ts, command_code, counter) "
                     + "VALUES(?,?,?,?)";
+
+    // Summing may not be finished without "FINAL" in clickhouse
+    private static final String selectMonthlyCommandStat =
+            "SELECT command_code, counter FROM reporting_command_stat_month FINAL WHERE ts = ?";
 
     private static final Logger log = LogManager.getLogger(ReportingStatsDao.class);
 
@@ -57,6 +67,34 @@ public final class ReportingStatsDao {
             log.error("Error inserting real time stat in DB.", e);
         }
         return false;
+    }
+
+    public Map<Short, Long> selectMonthlyCommandsStat(long date) {
+        Map<Short, Long> commands = new HashMap<>();
+
+        try (Connection connection = ds.getConnection();
+             PreparedStatement commandStatPS = connection.prepareStatement(selectMonthlyCommandStat)) {
+            // to set day of month to 1
+            LocalDate localDate = Instant.ofEpochMilli(date)
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate();
+
+            // clickhouse SummingMergeTree materialized view does not work with TimeStamp here
+            commandStatPS.setDate(1, Date.valueOf(localDate.withDayOfMonth(1)));
+
+            try (ResultSet rs = commandStatPS.executeQuery()) {
+                while (rs.next()) {
+                    short commandCode = rs.getShort("command_code");
+                    long  counter     = rs.getLong("counter");
+                    commands.put(commandCode, counter);
+                }
+
+                connection.commit();
+            }
+        } catch (Exception e) {
+            log.error("Error receiving month command stat from DB.", e);
+        }
+        return commands;
     }
 
     private void insertAppStat(PreparedStatement appStatPS,
