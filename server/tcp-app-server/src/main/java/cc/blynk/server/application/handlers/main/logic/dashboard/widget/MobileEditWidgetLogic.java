@@ -106,6 +106,8 @@ public final class MobileEditWidgetLogic {
             DeviceTiles newDeviceTiles = (DeviceTiles) newWidget;
             newDeviceTiles.tiles = prevDeviceTiles.tiles;
             newDeviceTiles.templates = prevDeviceTiles.templates;
+            newDeviceTiles.groups = prevDeviceTiles.groups;
+            newDeviceTiles.groupTemplates = prevDeviceTiles.groupTemplates;
         }
 
         if (newWidget instanceof ReportingWidget) {
