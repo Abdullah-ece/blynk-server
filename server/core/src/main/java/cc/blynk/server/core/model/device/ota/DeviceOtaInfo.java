@@ -20,8 +20,6 @@ public final class DeviceOtaInfo {
 
     public final long finishedAt;
 
-    public final String pathToFirmware;
-
     public final OTADeviceStatus status;
 
     public final int attempts;
@@ -32,7 +30,6 @@ public final class DeviceOtaInfo {
                          @JsonProperty("firmwareRequestedAt") long firmwareRequestedAt,
                          @JsonProperty("firmwareUploadedAt") long firmwareUploadedAt,
                          @JsonProperty("finishedAt") long finishedAt,
-                         @JsonProperty("pathToFirmware") String pathToFirmware,
                          @JsonProperty("status") OTADeviceStatus status,
                          @JsonProperty("attempts") int attempts) {
         this.shipmentId = shipmentId;
@@ -40,7 +37,6 @@ public final class DeviceOtaInfo {
         this.firmwareRequestedAt = firmwareRequestedAt;
         this.firmwareUploadedAt = firmwareUploadedAt;
         this.finishedAt = finishedAt;
-        this.pathToFirmware = pathToFirmware;
         this.status = status;
         this.attempts = attempts;
     }
@@ -50,7 +46,6 @@ public final class DeviceOtaInfo {
                          OTADeviceStatus status) {
         this(prev.shipmentId,
                 prev.requestSentAt, prev.firmwareRequestedAt, prev.firmwareUploadedAt, finishedAt,
-                prev.pathToFirmware,
                 status,
                 prev.attempts);
 
@@ -64,7 +59,6 @@ public final class DeviceOtaInfo {
                          int attempts) {
         this(prev.shipmentId,
                 prev.requestSentAt, firmwareRequestedAt, firmwareUploadedAt, finishedAt,
-                prev.pathToFirmware,
                 status, attempts);
 
     }
@@ -75,7 +69,6 @@ public final class DeviceOtaInfo {
                          OTADeviceStatus status) {
         this(prev.shipmentId,
                 prev.requestSentAt, prev.firmwareRequestedAt, firmwareUploadedAt, finishedAt,
-                prev.pathToFirmware,
                 status, prev.attempts);
     }
 

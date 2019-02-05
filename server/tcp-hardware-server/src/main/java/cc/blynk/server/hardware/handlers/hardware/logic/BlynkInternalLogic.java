@@ -153,7 +153,7 @@ public final class BlynkInternalLogic {
                     String downloadToken = TokenGeneratorUtil.generateNewToken();
                     holder.tokensPool.addToken(downloadToken, new OTADownloadToken(device.id));
                     String body = StringUtils.makeHardwareBody(serverUrl,
-                            deviceOtaInfo.pathToFirmware, downloadToken);
+                            shipment.pathToFirmware, downloadToken);
                     StringMessage msg = makeASCIIStringMessage(BLYNK_INTERNAL, 7777, body);
                     ctx.write(msg, ctx.voidPromise());
                     device.requestSent();

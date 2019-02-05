@@ -119,7 +119,6 @@ public class OTAWebSocketsTest extends SingleServerInstancePerTestWithDBAndNewOr
         //todo check within shipment
         //assertEquals(getUserName(), createdDevice.deviceOtaInfo.otaStartedBy);
         //assertEquals(System.currentTimeMillis(), createdDevice.deviceOtaInfo.otaStartedAt, 5000);
-        assertEquals(pathToFirmware, createdDevice.deviceOtaInfo.pathToFirmware);
 
         TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
         newHardClient.start();
@@ -142,7 +141,6 @@ public class OTAWebSocketsTest extends SingleServerInstancePerTestWithDBAndNewOr
         assertNotNull(createdDevice.deviceOtaInfo);
         assertEquals(OTADeviceStatus.REQUEST_SENT, createdDevice.deviceOtaInfo.status);
         assertEquals(System.currentTimeMillis(), createdDevice.deviceOtaInfo.requestSentAt, 5000);
-        assertEquals(pathToFirmware, createdDevice.deviceOtaInfo.pathToFirmware);
 
         //we do request the file, so device status is changed.
         Path tmpFile = Files.createTempFile("123", "test");
@@ -183,7 +181,6 @@ public class OTAWebSocketsTest extends SingleServerInstancePerTestWithDBAndNewOr
         assertEquals(System.currentTimeMillis(), createdDevice.deviceOtaInfo.firmwareRequestedAt, 5000);
         assertEquals(System.currentTimeMillis(), createdDevice.deviceOtaInfo.firmwareUploadedAt, 5000);
         assertEquals(System.currentTimeMillis(), createdDevice.deviceOtaInfo.finishedAt, 5000);
-        assertEquals(pathToFirmware, createdDevice.deviceOtaInfo.pathToFirmware);
         assertEquals("May  9 2018 12:36:07", createdDevice.hardwareInfo.build);
     }
 

@@ -129,7 +129,6 @@ public class OTATest extends APIBaseTest {
             //todo check within shipment
             //assertEquals(admin.email, newDevice.deviceOtaInfo.otaStartedBy);
             //assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.otaStartedAt, 5000);
-            assertEquals(pathToFirmware, newDevice.deviceOtaInfo.pathToFirmware);
         }
 
         TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
@@ -155,7 +154,6 @@ public class OTATest extends APIBaseTest {
             assertNotNull(newDevice.deviceOtaInfo);
             assertEquals(OTADeviceStatus.REQUEST_SENT, newDevice.deviceOtaInfo.status);
             assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.requestSentAt, 5000);
-            assertEquals(pathToFirmware, newDevice.deviceOtaInfo.pathToFirmware);
         }
 
         Path tmpFile = Files.createTempFile("123", "test");
@@ -197,7 +195,6 @@ public class OTATest extends APIBaseTest {
             assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.firmwareRequestedAt, 5000);
             assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.firmwareUploadedAt, 5000);
             assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.finishedAt, 5000);
-            assertEquals(pathToFirmware, newDevice.deviceOtaInfo.pathToFirmware);
             assertEquals("May  9 2018 12:36:07", newDevice.hardwareInfo.build);
         }
     }
@@ -256,7 +253,6 @@ public class OTATest extends APIBaseTest {
             //todo check within shipment
             //assertEquals(admin.email, newDevice.deviceOtaInfo.otaStartedBy);
             //assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.otaStartedAt, 5000);
-            assertEquals(pathToFirmware, newDevice.deviceOtaInfo.pathToFirmware);
         }
 
         TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
@@ -282,7 +278,6 @@ public class OTATest extends APIBaseTest {
             assertNotNull(newDevice.deviceOtaInfo);
             assertEquals(OTADeviceStatus.REQUEST_SENT, newDevice.deviceOtaInfo.status);
             assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.requestSentAt, 5000);
-            assertEquals(pathToFirmware, newDevice.deviceOtaInfo.pathToFirmware);
             assertEquals(-1L, newDevice.deviceOtaInfo.firmwareRequestedAt);
             assertEquals(-1L, newDevice.deviceOtaInfo.firmwareUploadedAt);
             assertEquals(-1L, newDevice.deviceOtaInfo.finishedAt);
@@ -312,7 +307,6 @@ public class OTATest extends APIBaseTest {
             assertNotNull(newDevice.deviceOtaInfo);
             assertEquals(OTADeviceStatus.FIRMWARE_UPLOADED, newDevice.deviceOtaInfo.status);
             assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.requestSentAt, 5000);
-            assertEquals(pathToFirmware, newDevice.deviceOtaInfo.pathToFirmware);
             assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.firmwareRequestedAt, 5000);
             assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.firmwareUploadedAt, 5000);
             assertEquals(-1L, newDevice.deviceOtaInfo.finishedAt);
@@ -388,7 +382,6 @@ public class OTATest extends APIBaseTest {
             //assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.otaStartedAt, 5000);
             assertEquals(OTADeviceStatus.REQUEST_SENT, newDevice.deviceOtaInfo.status);
             assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.requestSentAt, 5000);
-            assertEquals(pathToFirmware, newDevice.deviceOtaInfo.pathToFirmware);
         }
     }
 
@@ -445,7 +438,6 @@ public class OTATest extends APIBaseTest {
             //todo check within shipment
             //assertEquals(admin.email, newDevice.deviceOtaInfo.otaStartedBy);
             //assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.otaStartedAt, 5000);
-            assertEquals(pathToFirmware, newDevice.deviceOtaInfo.pathToFirmware);
         }
 
         post = new HttpPost(httpsAdminServerUrl + "/ota/stop");

@@ -299,7 +299,6 @@ public class Device {
         long now = System.currentTimeMillis();
         this.deviceOtaInfo = new DeviceOtaInfo(prev.shipmentId,
                 now, -1L, -1L, -1L,
-                prev.pathToFirmware,
                 OTADeviceStatus.REQUEST_SENT, prev.attempts);
         this.updatedAt = now;
     }

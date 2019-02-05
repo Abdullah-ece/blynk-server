@@ -111,7 +111,6 @@ public class OTAHandler extends BaseHttpHandler {
         for (Device device : filteredDevices) {
             DeviceOtaInfo deviceOtaInfo = new DeviceOtaInfo(shipment.id,
                     -1L, -1L, -1L, -1L,
-                    shipmentDTO.pathToFirmware,
                     OTADeviceStatus.STARTED, 0);
             device.setDeviceOtaInfo(deviceOtaInfo);
         }
