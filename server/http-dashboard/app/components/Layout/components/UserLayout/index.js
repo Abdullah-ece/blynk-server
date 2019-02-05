@@ -327,34 +327,34 @@ class UserLayout extends React.Component {
             >
               {process.env.BLYNK_ANALYTICS && JSON.parse(process.env.BLYNK_ANALYTICS) &&
               <Menu.Item key="/analytics">
-                <Icon type="bar-chart"/>
+                <LinearIcon type="chart4"/>
                 <span>Analytics</span>
               </Menu.Item>}
               <Menu.Item key="/devices">
-                <Icon type="hdd"/>
+                <LinearIcon type="cube"/>
                 <span>Devices</span>
               </Menu.Item>
               {this.props.Organization && this.props.Organization.parentId === -1 ? (
                 <Menu.Item key="/products">
-                  <Icon type="appstore-o"/>
+                  <LinearIcon type="gift"/>
                   <span>Products</span>
                 </Menu.Item>
               ) : (null)}
               {this.props.Organization && this.props.Organization.canCreateOrgs && (
                 <Menu.Item key="/organizations">
-                  <Icon type="usergroup-add"/>
+                  <LinearIcon type="building8"/>
                   <span>Organizations</span>
                 </Menu.Item>
               )}
               {VerifyPermission(this.props.currentRole.permissionGroup1, PERMISSIONS_INDEX.OTA_VIEW) && (
                 <Menu.Item key="/ota">
-                  <Icon type="cloud-download"/>
+                  <LinearIcon type="cloud-upload"/>
                   <span>OTA</span>
                 </Menu.Item>
               )}
               {VerifyPermission(this.props.currentRole.permissionGroup2, PERMISSIONS2_INDEX.RULE_GROUP_VIEW) && (
                 <Menu.Item key="/rules">
-                  <Icon type="setting"/>
+                  <LinearIcon type="cog"/>
                   <span>Rules Engine</span>
                 </Menu.Item>
               )}

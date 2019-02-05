@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { MainLayout, ContentEditableInput } from "components";
+import { MainLayout, ContentEditableInput, LinearIcon } from "components";
 import {
   Col,
   Row,
@@ -11,7 +11,6 @@ import {
   message,
   Badge,
   Modal,
-  Icon,
   // Progress
 } from "antd";
 import FormItem from "components/FormItem";
@@ -211,7 +210,7 @@ class Edit extends React.Component {
       return (
         <div>
       <span>
-        <Icon className="ota-review-icon-success"
+        <LinearIcon className="ota-review-icon-success"
               type="check"/> You will be shipping <b>{this.state.OTA.firmwareOriginalFileName}</b> to <b>{Pluralize("device", this.state.OTA.deviceIds.length, true)}</b>
       </span>
         </div>);
@@ -220,7 +219,7 @@ class Edit extends React.Component {
         <div>
           <div>
       <span>
-        <Icon
+        <LinearIcon
           className={devicesSelected ? "ota-review-icon-success" : "ota-review-icon-warning"}
           type={devicesSelected ? "check" : "warning"}/> {devicesSelected ? (
           <span>Target ready: you will be shipping to <b>{Pluralize("device", this.state.OTA.deviceIds.length, true)}</b></span>) :
@@ -229,7 +228,7 @@ class Edit extends React.Component {
           </div>
           <div>
       <span>
-        <Icon
+        <LinearIcon
           className={firmwareSelected ? "ota-review-icon-success" : "ota-review-icon-warning"}
           type={firmwareSelected ? "check" : "warning"}/> {firmwareSelected ? (
           <span>Target ready: You will be shipping <b>{this.state.OTA.firmwareOriginalFileName}</b></span>) :

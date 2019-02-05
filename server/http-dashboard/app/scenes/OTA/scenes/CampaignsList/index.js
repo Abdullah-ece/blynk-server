@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Table, Menu, Dropdown, Icon, Badge } from "antd";
-import { MainLayout } from "components";
+import { Button, Table, Menu, Dropdown, Badge } from "antd";
+import { MainLayout, LinearIcon } from "components";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
@@ -161,22 +161,22 @@ class CampaignsList extends Component {
           <Menu>
             {/*<Menu.Item disabled>*/}
                {/*<span onClick={() => this.cancelOTA(value.shipment.id)}>*/}
-                  {/*<Icon type="close" className="ota-shipment-table-icon"/> Cancel*/}
+                  {/*<LinearIcon type="cancel" className="ota-shipment-table-icon"/> Cancel*/}
                {/*</span>*/}
             {/*</Menu.Item>*/}
             {value.status === 'RUN' && (<Menu.Item>
               <span onClick={() => this.pauseOTA(value.shipment)}>
-                <Icon type="pause-circle" className="ota-shipment-table-icon"/> Pause
+                <LinearIcon type="pause" className="ota-shipment-table-icon"/> Pause
               </span>
             </Menu.Item>)}
             {value.status === 'PAUSE' && (<Menu.Item>
               <span onClick={() => this.resumeOTA(value.shipment)}>
-                <Icon type="right-square" className="ota-shipment-table-icon"/> Resume
+                <LinearIcon type="play" className="ota-shipment-table-icon"/> Resume
               </span>
             </Menu.Item>)}
             <Menu.Item>
                <span onClick={() => this.deleteOTA(value.shipment.id)}>
-                <Icon type="delete" className="ota-shipment-table-icon"/> Delete
+                <LinearIcon type="trash" className="ota-shipment-table-icon"/> Delete
                </span>
             </Menu.Item>
           </Menu>
