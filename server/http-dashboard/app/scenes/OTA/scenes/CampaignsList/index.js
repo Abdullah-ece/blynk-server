@@ -87,7 +87,7 @@ class CampaignsList extends Component {
   }
 
   buildDataSource() {
-    return this.props.shipments.map(shipment => {
+    return this.state.shipments.map(shipment => {
       return {
         ...shipment,
         shipmentAndFirmware: {
@@ -215,7 +215,7 @@ class CampaignsList extends Component {
           )}/>
         <MainLayout.Content className="organizations-create-content">
           <div>
-            <a href="#">All Shippings ({this.props.shipments.length})</a>
+            <a href="#">All Shippings ({this.state.shipments.length})</a>
           </div>
           <div className="ota-shipments-table">
             <Table columns={this.buildColumns()}
