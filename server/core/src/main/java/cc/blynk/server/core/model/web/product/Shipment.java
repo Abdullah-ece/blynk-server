@@ -19,6 +19,8 @@ public final class Shipment {
 
     public final String firmwareOriginalFileName;
 
+    public final String startedBy;
+
     public final long startedAt;
 
     public final long finishedAt;
@@ -39,6 +41,7 @@ public final class Shipment {
                     @JsonProperty("title") String title,
                     @JsonProperty("pathToFirmware") String pathToFirmware,
                     @JsonProperty("firmwareOriginalFileName") String firmwareOriginalFileName,
+                    @JsonProperty("startedBy") String startedBy,
                     @JsonProperty("startedAt") long startedAt,
                     @JsonProperty("finishedAt") long finishedAt,
                     @JsonProperty("deviceIds") int[] deviceIds,
@@ -51,6 +54,7 @@ public final class Shipment {
         this.title = title;
         this.pathToFirmware = pathToFirmware;
         this.firmwareOriginalFileName = firmwareOriginalFileName;
+        this.startedBy = startedBy;
         this.startedAt = startedAt;
         this.finishedAt = finishedAt;
         this.deviceIds = deviceIds;
@@ -60,18 +64,19 @@ public final class Shipment {
         this.status = status == null ? ShipmentStatus.RUN : status;
     }
 
-    public Shipment(ShipmentDTO shipmentDTO, boolean isSecure, long now) {
+    public Shipment(ShipmentDTO shipmentDTO, String startedBy, long now) {
         this(shipmentDTO.id,
                 shipmentDTO.productId,
                 shipmentDTO.title,
                 shipmentDTO.pathToFirmware,
                 shipmentDTO.firmwareOriginalFileName,
+                startedBy,
                 now,
                 -1,
                 shipmentDTO.deviceIds,
                 shipmentDTO.firmwareInfo,
                 shipmentDTO.attemptsLimit,
-                isSecure,
+                shipmentDTO.isSecure(),
                 ShipmentStatus.RUN
         );
     }
@@ -82,6 +87,7 @@ public final class Shipment {
                 shipment.title,
                 shipment.pathToFirmware,
                 shipment.firmwareOriginalFileName,
+                shipment.startedBy,
                 shipment.startedAt,
                 shipment.finishedAt,
                 shipment.deviceIds,

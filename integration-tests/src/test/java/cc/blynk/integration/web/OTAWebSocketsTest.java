@@ -116,8 +116,9 @@ public class OTAWebSocketsTest extends SingleServerInstancePerTestWithDBAndNewOr
         assertNotNull(createdDevice);
         assertNotNull(createdDevice.deviceOtaInfo);
         assertEquals(OTADeviceStatus.STARTED, createdDevice.deviceOtaInfo.status);
-        assertEquals(getUserName(), createdDevice.deviceOtaInfo.otaStartedBy);
-        assertEquals(System.currentTimeMillis(), createdDevice.deviceOtaInfo.otaStartedAt, 5000);
+        //todo check within shipment
+        //assertEquals(getUserName(), createdDevice.deviceOtaInfo.otaStartedBy);
+        //assertEquals(System.currentTimeMillis(), createdDevice.deviceOtaInfo.otaStartedAt, 5000);
         assertEquals(pathToFirmware, createdDevice.deviceOtaInfo.pathToFirmware);
         assertEquals("May  9 2018 12:36:07", createdDevice.deviceOtaInfo.buildDate);
 

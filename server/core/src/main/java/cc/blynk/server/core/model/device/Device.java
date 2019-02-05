@@ -297,7 +297,7 @@ public class Device {
     public void requestSent() {
         DeviceOtaInfo prev = this.deviceOtaInfo;
         long now = System.currentTimeMillis();
-        this.deviceOtaInfo = new DeviceOtaInfo(prev.shipmentId, prev.otaStartedBy, prev.otaStartedAt,
+        this.deviceOtaInfo = new DeviceOtaInfo(prev.shipmentId,
                 now, -1L, -1L, -1L,
                 prev.pathToFirmware, prev.buildDate,
                 OTADeviceStatus.REQUEST_SENT, prev.attempts);

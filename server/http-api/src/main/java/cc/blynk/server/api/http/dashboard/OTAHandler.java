@@ -105,12 +105,11 @@ public class OTAHandler extends BaseHttpHandler {
 
         long now = System.currentTimeMillis();
         Organization org = organizationDao.getOrgByIdOrThrow(shipmentDTO.orgId);
-        boolean isSecure = shipmentDTO.isSecure();
-        Shipment shipment = new Shipment(shipmentDTO, isSecure, now);
+        Shipment shipment = new Shipment(shipmentDTO, user.email, now);
         org.addShipment(shipment);
 
         for (Device device : filteredDevices) {
-            DeviceOtaInfo deviceOtaInfo = new DeviceOtaInfo(shipment.id, user.email, now,
+            DeviceOtaInfo deviceOtaInfo = new DeviceOtaInfo(shipment.id,
                     -1L, -1L, -1L, -1L,
                     shipmentDTO.pathToFirmware, shipmentDTO.firmwareInfo.buildDate,
                     OTADeviceStatus.STARTED, 0);
@@ -118,7 +117,7 @@ public class OTAHandler extends BaseHttpHandler {
         }
 
         Session session = sessionDao.getOrgSession(shipmentDTO.orgId);
-        String serverUrl = props.getServerUrl(isSecure);
+        String serverUrl = props.getServerUrl(shipment.isSecure);
         if (session != null) {
             for (Channel channel : session.hardwareChannels) {
                 HardwareStateHolder hardwareState = getHardState(channel);

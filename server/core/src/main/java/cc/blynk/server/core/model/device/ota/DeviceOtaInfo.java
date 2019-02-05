@@ -12,10 +12,6 @@ public final class DeviceOtaInfo {
 
     public final int shipmentId;
 
-    public final String otaStartedBy;
-
-    public final long otaStartedAt;
-
     public final long requestSentAt;
 
     public final long firmwareRequestedAt;
@@ -34,8 +30,6 @@ public final class DeviceOtaInfo {
 
     @JsonCreator
     public DeviceOtaInfo(@JsonProperty("shipmentId") int shipmentId,
-                         @JsonProperty("otaStartedBy") String otaStartedBy,
-                         @JsonProperty("otaStartedAt") long otaStartedAt,
                          @JsonProperty("requestSentAt") long requestSentAt,
                          @JsonProperty("firmwareRequestedAt") long firmwareRequestedAt,
                          @JsonProperty("firmwareUploadedAt") long firmwareUploadedAt,
@@ -45,8 +39,6 @@ public final class DeviceOtaInfo {
                          @JsonProperty("status") OTADeviceStatus status,
                          @JsonProperty("attempts") int attempts) {
         this.shipmentId = shipmentId;
-        this.otaStartedBy = otaStartedBy;
-        this.otaStartedAt = otaStartedAt;
         this.requestSentAt = requestSentAt;
         this.firmwareRequestedAt = firmwareRequestedAt;
         this.firmwareUploadedAt = firmwareUploadedAt;
@@ -60,7 +52,7 @@ public final class DeviceOtaInfo {
     public DeviceOtaInfo(DeviceOtaInfo prev,
                          long finishedAt,
                          OTADeviceStatus status) {
-        this(prev.shipmentId, prev.otaStartedBy, prev.otaStartedAt,
+        this(prev.shipmentId,
                 prev.requestSentAt, prev.firmwareRequestedAt, prev.firmwareUploadedAt, finishedAt,
                 prev.pathToFirmware, prev.buildDate,
                 status,
@@ -74,7 +66,7 @@ public final class DeviceOtaInfo {
                          long finishedAt,
                          OTADeviceStatus status,
                          int attempts) {
-        this(prev.shipmentId, prev.otaStartedBy, prev.otaStartedAt,
+        this(prev.shipmentId,
                 prev.requestSentAt, firmwareRequestedAt, firmwareUploadedAt, finishedAt,
                 prev.pathToFirmware, prev.buildDate,
                 status, attempts);
@@ -85,7 +77,7 @@ public final class DeviceOtaInfo {
                          long firmwareUploadedAt,
                          long finishedAt,
                          OTADeviceStatus status) {
-        this(prev.shipmentId, prev.otaStartedBy, prev.otaStartedAt,
+        this(prev.shipmentId,
                 prev.requestSentAt, prev.firmwareRequestedAt, firmwareUploadedAt, finishedAt,
                 prev.pathToFirmware, prev.buildDate,
                 status, prev.attempts);

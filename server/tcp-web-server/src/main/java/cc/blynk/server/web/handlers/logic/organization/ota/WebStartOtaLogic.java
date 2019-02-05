@@ -86,14 +86,13 @@ public final class WebStartOtaLogic implements PermissionBasedLogic<WebAppStateH
 
         long now = System.currentTimeMillis();
         Organization org = organizationDao.getOrgByIdOrThrow(orgId);
-        boolean isSecure = shipmentDTO.isSecure();
-        Shipment shipment = new Shipment(shipmentDTO, isSecure, now);
+        Shipment shipment = new Shipment(shipmentDTO, user.email, now);
         org.addShipment(shipment);
 
         for (int deviceId : shipmentDTO.deviceIds) {
             DeviceValue deviceValue = deviceDao.getDeviceValueById(deviceId);
             if (deviceValue != null) {
-                DeviceOtaInfo deviceOtaInfo = new DeviceOtaInfo(shipment.id, user.email, now,
+                DeviceOtaInfo deviceOtaInfo = new DeviceOtaInfo(shipment.id,
                         -1L, -1L, -1L, -1L,
                         shipmentDTO.pathToFirmware, shipmentDTO.firmwareInfo.buildDate,
                         OTADeviceStatus.STARTED, 0);
@@ -102,7 +101,7 @@ public final class WebStartOtaLogic implements PermissionBasedLogic<WebAppStateH
         }
 
         Session session = sessionDao.getOrgSession(orgId);
-        String serverUrl = props.getServerUrl(isSecure);
+        String serverUrl = props.getServerUrl(shipment.isSecure);
         if (session != null) {
             for (Channel channel : session.hardwareChannels) {
                 HardwareStateHolder hardwareState = getHardState(channel);
