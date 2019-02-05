@@ -159,11 +159,11 @@ class CampaignsList extends Component {
       render: (value) => {
         const menu = (
           <Menu>
-            <Menu.Item disabled>
-               <span onClick={() => this.cancelOTA(value.shipment.id)}>
-                  <Icon type="close" className="ota-shipment-table-icon"/> Cancel
-               </span>
-            </Menu.Item>
+            {/*<Menu.Item disabled>*/}
+               {/*<span onClick={() => this.cancelOTA(value.shipment.id)}>*/}
+                  {/*<Icon type="close" className="ota-shipment-table-icon"/> Cancel*/}
+               {/*</span>*/}
+            {/*</Menu.Item>*/}
             {value.status === 'RUN' && (<Menu.Item>
               <span onClick={() => this.pauseOTA(value.shipment)}>
                 <Icon type="pause-circle" className="ota-shipment-table-icon"/> Pause
