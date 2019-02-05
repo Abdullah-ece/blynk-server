@@ -30,10 +30,11 @@ public final class HardwareInfoPrivate {
                     this.heartbeatInterval = -1;
                 }
                 break;
-            case "ver" :
+            case "blynk" :
+            case "fw" :
                 this.blynkVersion = value;
                 break;
-            case "fw" :
+            case "ver" :
                 this.version = value;
                 break;
             case "dev" :
