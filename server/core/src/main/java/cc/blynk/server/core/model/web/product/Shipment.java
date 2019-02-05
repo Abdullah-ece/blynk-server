@@ -27,7 +27,7 @@ public final class Shipment {
 
     public final FirmwareInfo firmwareInfo;
 
-    public final int attempts;
+    public final int attemptsLimit;
 
     public final boolean isSecure;
 
@@ -43,7 +43,7 @@ public final class Shipment {
                     @JsonProperty("finishedAt") long finishedAt,
                     @JsonProperty("deviceIds") int[] deviceIds,
                     @JsonProperty("firmwareInfo") FirmwareInfo firmwareInfo,
-                    @JsonProperty("attempts") int attempts,
+                    @JsonProperty("attemptsLimit") int attemptsLimit,
                     @JsonProperty("isSecure") boolean isSecure,
                     @JsonProperty("status") ShipmentStatus status) {
         this.id = id;
@@ -55,7 +55,7 @@ public final class Shipment {
         this.finishedAt = finishedAt;
         this.deviceIds = deviceIds;
         this.firmwareInfo = firmwareInfo;
-        this.attempts = attempts;
+        this.attemptsLimit = attemptsLimit;
         this.isSecure = isSecure;
         this.status = status == null ? ShipmentStatus.RUN : status;
     }
@@ -86,7 +86,7 @@ public final class Shipment {
                 shipment.finishedAt,
                 shipment.deviceIds,
                 shipment.firmwareInfo,
-                shipment.attempts,
+                shipment.attemptsLimit,
                 shipment.isSecure,
                 status
         );
