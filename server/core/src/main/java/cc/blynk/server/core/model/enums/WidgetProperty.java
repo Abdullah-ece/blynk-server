@@ -28,7 +28,7 @@ public enum WidgetProperty {
     OPACITY("opacity"),
     SCALE("scale"),
     ROTATION("rotation"),
-    SORT_TPYE("sortType");
+    SORT_TYPE("sortType");
 
     public final String label;
     //cached value for values field to avoid allocations
@@ -83,7 +83,7 @@ public enum WidgetProperty {
             case "rotation" :
                 return ROTATION;
             case "sortType" :
-                return SORT_TPYE;
+                return SORT_TYPE;
             default:
                 return null;
         }

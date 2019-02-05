@@ -358,7 +358,7 @@ public final class DeviceTiles extends Widget implements MobileSyncWidget, Devic
 
     @Override
     public boolean setProperty(WidgetProperty property, String propertyValue) {
-        if (property == WidgetProperty.SORT_TPYE) {
+        if (property == WidgetProperty.SORT_TYPE) {
             this.sortType = SortType.valueOf(propertyValue);
             return true;
         }
