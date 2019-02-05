@@ -1,4 +1,4 @@
-package cc.blynk.server.application.handlers.main.logic.dashboard.widget.group;
+package cc.blynk.server.application.handlers.main.logic.dashboard.widget.group.template;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.DashBoard;
@@ -22,11 +22,11 @@ import static cc.blynk.utils.StringUtils.split3;
  * Created by Dmitriy Dumanskiy.
  * Created on 01.02.16.
  */
-public final class MobileCreateGroupTemplateLogic {
+public final class MobileEditGroupTemplateLogic {
 
-    private static final Logger log = LogManager.getLogger(MobileCreateGroupTemplateLogic.class);
+    private static final Logger log = LogManager.getLogger(MobileEditGroupTemplateLogic.class);
 
-    public MobileCreateGroupTemplateLogic(Holder holder) {
+    public MobileEditGroupTemplateLogic(Holder holder) {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, MobileStateHolder state, StringMessage message) {
@@ -53,17 +53,13 @@ public final class MobileCreateGroupTemplateLogic {
         }
 
         DeviceTiles deviceTiles = (DeviceTiles) widget;
-
         BaseGroupTemplate newGroupTemplate = JsonParser.parseGroupTemplate(groupTemplateString, message.id);
 
-        BaseGroupTemplate groupTemplateTemp = deviceTiles.getGroupTemplateById(newGroupTemplate.id);
-        if (groupTemplateTemp != null) {
-            throw new JsonException("Group template with same id already exists.");
-        }
+        log.debug("Updating group template {}.", groupTemplateString);
 
-        log.debug("Creating group template {}.", newGroupTemplate);
+        int existingGroupTemplateIndex = deviceTiles.getGroupTemplateIndexByIdOrThrow(newGroupTemplate.id);
+        deviceTiles.replaceGroupTemplate(newGroupTemplate, existingGroupTemplateIndex);
 
-        deviceTiles.addGroupTemplate(newGroupTemplate);
         dash.updatedAt = System.currentTimeMillis();
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());

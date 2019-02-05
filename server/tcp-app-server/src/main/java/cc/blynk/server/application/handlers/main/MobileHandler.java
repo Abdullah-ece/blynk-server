@@ -37,9 +37,9 @@ import cc.blynk.server.application.handlers.main.logic.dashboard.widget.MobileCr
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.MobileDeleteWidgetLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.MobileGetWidgetLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.MobileUpdateWidgetLogic;
-import cc.blynk.server.application.handlers.main.logic.dashboard.widget.group.MobileCreateGroupTemplateLogic;
-import cc.blynk.server.application.handlers.main.logic.dashboard.widget.group.MobileDeleteGroupTemplateLogic;
-import cc.blynk.server.application.handlers.main.logic.dashboard.widget.group.MobileEditGroupTemplateLogic;
+import cc.blynk.server.application.handlers.main.logic.dashboard.widget.group.template.MobileCreateGroupTemplateLogic;
+import cc.blynk.server.application.handlers.main.logic.dashboard.widget.group.template.MobileDeleteGroupTemplateLogic;
+import cc.blynk.server.application.handlers.main.logic.dashboard.widget.group.template.MobileEditGroupTemplateLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.tile.MobileCreateTileTemplateLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.tile.MobileDeleteTileTemplateLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.tile.MobileUpdateTileTemplateLogic;

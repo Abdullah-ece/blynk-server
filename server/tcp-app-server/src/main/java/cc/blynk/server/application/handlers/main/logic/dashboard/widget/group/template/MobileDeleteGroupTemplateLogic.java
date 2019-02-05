@@ -1,4 +1,4 @@
-package cc.blynk.server.application.handlers.main.logic.dashboard.widget.group;
+package cc.blynk.server.application.handlers.main.logic.dashboard.widget.group.template;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.DeviceDao;
