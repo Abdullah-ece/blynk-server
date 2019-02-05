@@ -65,6 +65,9 @@
          https://github.com/blynkkk/blynk-server/issues/751 -->
         <Logger name="io.netty" level="INFO" additivity="false" />
 
+        <!-- turn off clickhouse errors for now -->
+        <Logger name="ru.yandex.clickhouse" level="INFO" additivity="false" />
+
         <Root level="trace">
             <AppenderRef ref="userLog"/>
         </Root>
