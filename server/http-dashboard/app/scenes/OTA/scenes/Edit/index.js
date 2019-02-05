@@ -6,14 +6,14 @@ import {
   Row,
   Button,
   Table,
-  Input,
-  Select,
+  // Input,
+  // Select,
   message,
   Badge,
   Modal,
   // Progress
 } from "antd";
-import FormItem from "components/FormItem";
+// import FormItem from "components/FormItem";
 import ImageUploader from "components/ImageUploader";
 
 import EditSection from "../../components/EditSection";
@@ -309,12 +309,12 @@ class Edit extends React.Component {
 
   render() {
     const { OTA } = this.state;
-    const products = this.props.products || [];
+    // const products = this.props.products || [];
 
-    let productsList = products.map((product) => ({
-      key: product.id,
-      value: product.name,
-    }));
+    // let productsList = products.map((product) => ({
+    //   key: product.id,
+    //   value: product.name,
+    // }));
 
     return (
       <div>
@@ -359,43 +359,43 @@ class Edit extends React.Component {
           <MainLayout.Content className="organizations-create-content">
             <EditSection>
               <Row gutter={24}>
-                <Col span={7}>
-                  <div className="edit-section-sub-title ">
-                    Target selection
-                  </div>
-                  <div className="product-details-row">
-                    <FormItem>
-                      <FormItem.Title>Product</FormItem.Title>
-                      <FormItem.Content>
-                        <Select className="edit-section-content-input"
-                                value={OTA.productId}
-                                onChange={value => this.onChange({
-                                  value,
-                                  name: "productId"
-                                })}
-                                placeholder={`Select product to filter devices`}>
-                          {productsList.map((product) => (
-                            <Select.Option key={`${product.key}`}
-                                           value={`${product.key}`}>{product.value}</Select.Option>
-                          ))}
-                        </Select>
-                      </FormItem.Content>
-                    </FormItem>
-                  </div>
-                  <div className="product-details-row">
-                    <FormItem className="edit-section-content">
-                      <FormItem.Title>Product</FormItem.Title>
-                      <FormItem.Content>
-                        <Input value=""
-                               onChange={this.onChange}
-                               name=""
-                               placeholder="Search devices"
-                               disabled={true}/>
-                      </FormItem.Content>
-                    </FormItem>
-                  </div>
-                </Col>
-                <Col span={17}>
+                {/*<Col span={7}>*/}
+                  {/*<div className="edit-section-sub-title ">*/}
+                    {/*Target selection*/}
+                  {/*</div>*/}
+                  {/*<div className="product-details-row">*/}
+                    {/*<FormItem>*/}
+                      {/*<FormItem.Title>Product</FormItem.Title>*/}
+                      {/*<FormItem.Content>*/}
+                        {/*<Select className="edit-section-content-input"*/}
+                                {/*value={OTA.productId}*/}
+                                {/*onChange={value => this.onChange({*/}
+                                  {/*value,*/}
+                                  {/*name: "productId"*/}
+                                {/*})}*/}
+                                {/*placeholder={`Select product to filter devices`}>*/}
+                          {/*{productsList.map((product) => (*/}
+                            {/*<Select.Option key={`${product.key}`}*/}
+                                           {/*value={`${product.key}`}>{product.value}</Select.Option>*/}
+                          {/*))}*/}
+                        {/*</Select>*/}
+                      {/*</FormItem.Content>*/}
+                    {/*</FormItem>*/}
+                  {/*</div>*/}
+                  {/*<div className="product-details-row">*/}
+                    {/*<FormItem className="edit-section-content">*/}
+                      {/*<FormItem.Title>Product</FormItem.Title>*/}
+                      {/*<FormItem.Content>*/}
+                        {/*<Input value=""*/}
+                               {/*onChange={this.onChange}*/}
+                               {/*name=""*/}
+                               {/*placeholder="Search devices"*/}
+                               {/*disabled={true}/>*/}
+                      {/*</FormItem.Content>*/}
+                    {/*</FormItem>*/}
+                  {/*</div>*/}
+                {/*</Col>*/}
+                <Col span={24}>
                   <div className="edit-section-sub-title ">
                     {this.getSelectedDevicesTitle()}
                   </div>
