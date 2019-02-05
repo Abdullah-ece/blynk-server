@@ -93,7 +93,7 @@ public final class MobileCreateWidgetLogic {
             dash.widgets = ArrayUtil.add(dash.widgets, newWidget, Widget.class);
         } else {
             //right now we can only add to DeviceTiles widget
-            DeviceTiles deviceTiles = (DeviceTiles) dash.getWidgetByIdOrThrow(widgetAddToId);
+            DeviceTiles deviceTiles = dash.getDeviceTilesByIdOrThrow(widgetAddToId);
             TileTemplate tileTemplate = deviceTiles.getTileTemplateByIdOrThrow(templateIdAddToId);
             tileTemplate.widgets = ArrayUtil.add(tileTemplate.widgets, newWidget, Widget.class);
         }

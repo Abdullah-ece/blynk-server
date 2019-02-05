@@ -1,4 +1,4 @@
-package cc.blynk.server.application.handlers.main.logic.dashboard.widget.group.template;
+package cc.blynk.server.application.handlers.main.logic.dashboard.widget.group;
 
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
@@ -18,16 +18,18 @@ import static cc.blynk.utils.StringUtils.split3;
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
- * Created on 01.02.16.
+ * Created on 2/1/2015.
+ *
  */
-public final class MobileEditGroupTemplateLogic {
+public final class MobileEditGroupLogic {
 
-    private static final Logger log = LogManager.getLogger(MobileEditGroupTemplateLogic.class);
+    private static final Logger log = LogManager.getLogger(MobileEditGroupLogic.class);
 
-    public MobileEditGroupTemplateLogic() {
+    public MobileEditGroupLogic() {
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, MobileStateHolder state, StringMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx,
+                                MobileStateHolder state, StringMessage message) {
         String[] split = split3(message.body);
 
         if (split.length < 3) {
@@ -45,6 +47,7 @@ public final class MobileEditGroupTemplateLogic {
         User user = state.user;
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
         DeviceTiles deviceTiles = dash.getDeviceTilesByIdOrThrow(widgetId);
+
         BaseGroupTemplate newGroupTemplate = JsonParser.parseGroupTemplate(groupTemplateString, message.id);
 
         log.debug("Updating group template {}.", groupTemplateString);

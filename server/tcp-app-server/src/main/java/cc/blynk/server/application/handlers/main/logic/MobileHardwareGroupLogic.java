@@ -8,7 +8,6 @@ import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.storage.key.DeviceStorageKey;
-import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.group.Group;
 import cc.blynk.server.core.processors.BaseProcessorHandler;
@@ -62,14 +61,7 @@ public class MobileHardwareGroupLogic extends BaseProcessorHandler {
         DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
 
         long widgetId = Long.parseLong(split[1]);
-        Widget widget = dash.getWidgetByIdOrThrow(widgetId);
-
-        if (!(widget instanceof DeviceTiles)) {
-            log.trace("Widget is not Device Tiles.");
-            return;
-        }
-
-        DeviceTiles deviceTiles = (DeviceTiles) widget;
+        DeviceTiles deviceTiles = dash.getDeviceTilesByIdOrThrow(widgetId);
 
         String body = split[3];
         char operation = body.charAt(1);

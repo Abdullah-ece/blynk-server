@@ -4,7 +4,6 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -44,13 +43,7 @@ public final class MobileDeleteGroupTemplateLogic {
 
         User user = state.user;
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
-        Widget widget = dash.getWidgetByIdOrThrow(widgetId);
-
-        if (!(widget instanceof DeviceTiles)) {
-            throw new JsonException("Income widget id is not DeviceTiles.");
-        }
-
-        DeviceTiles deviceTiles = (DeviceTiles) widget;
+        DeviceTiles deviceTiles = dash.getDeviceTilesByIdOrThrow(widgetId);
 
         log.debug("Deleting group template dashId : {}, widgetId : {}, groupTemplateId : {}.",
                 dash, widgetId, groupTemplateId);

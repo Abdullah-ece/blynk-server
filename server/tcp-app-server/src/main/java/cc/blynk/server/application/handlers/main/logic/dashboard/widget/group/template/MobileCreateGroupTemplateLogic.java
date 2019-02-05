@@ -4,7 +4,6 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.group.BaseGroupTemplate;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
@@ -46,20 +45,9 @@ public final class MobileCreateGroupTemplateLogic {
 
         User user = state.user;
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
-        Widget widget = dash.getWidgetByIdOrThrow(widgetId);
-
-        if (!(widget instanceof DeviceTiles)) {
-            throw new JsonException("Income widget id is not DeviceTiles.");
-        }
-
-        DeviceTiles deviceTiles = (DeviceTiles) widget;
-
+        DeviceTiles deviceTiles = dash.getDeviceTilesByIdOrThrow(widgetId);
         BaseGroupTemplate newGroupTemplate = JsonParser.parseGroupTemplate(groupTemplateString, message.id);
-
-        BaseGroupTemplate groupTemplateTemp = deviceTiles.getGroupTemplateById(newGroupTemplate.id);
-        if (groupTemplateTemp != null) {
-            throw new JsonException("Group template with same id already exists.");
-        }
+        deviceTiles.checkTemplateExists(newGroupTemplate.id);
 
         log.debug("Creating group template {}.", newGroupTemplate);
 

@@ -23,6 +23,7 @@ import cc.blynk.server.core.model.widgets.ui.reporting.ReportingWidget;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
+import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.workers.timer.TimerWorker;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.apache.logging.log4j.LogManager;
@@ -153,6 +154,14 @@ public class DashBoard {
 
     public Widget getWidgetByIdOrThrow(long id) {
         return widgets[getWidgetIndexByIdOrThrow(id)];
+    }
+
+    public DeviceTiles getDeviceTilesByIdOrThrow(long id) {
+        Widget widget = widgets[getWidgetIndexByIdOrThrow(id)];
+        if (!(widget instanceof DeviceTiles)) {
+            throw new JsonException("Income widget id is not DeviceTiles.");
+        }
+        return (DeviceTiles) widget;
     }
 
     public Widget getWidgetById(long id) {

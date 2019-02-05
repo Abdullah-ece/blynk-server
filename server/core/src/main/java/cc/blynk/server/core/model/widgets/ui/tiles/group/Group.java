@@ -9,7 +9,7 @@ import static cc.blynk.utils.IntArray.EMPTY_INTS;
 
 public final class Group {
 
-    public final int id;
+    public final long id;
 
     public final String name;
 
@@ -22,7 +22,7 @@ public final class Group {
     public final DataStream[] viewDataStreams;
 
     @JsonCreator
-    public Group(@JsonProperty("id") int id,
+    public Group(@JsonProperty("id") long id,
                  @JsonProperty("name") String name,
                  @JsonProperty("templateId") long templateId,
                  @JsonProperty("deviceIds") int[] deviceIds,
