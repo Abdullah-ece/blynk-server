@@ -94,7 +94,7 @@ public final class WebStartOtaLogic implements PermissionBasedLogic<WebAppStateH
             if (deviceValue != null) {
                 DeviceOtaInfo deviceOtaInfo = new DeviceOtaInfo(shipment.id,
                         -1L, -1L, -1L, -1L,
-                        shipmentDTO.pathToFirmware, shipmentDTO.firmwareInfo.buildDate,
+                        shipmentDTO.pathToFirmware,
                         OTADeviceStatus.STARTED, 0);
                 deviceValue.device.setDeviceOtaInfo(deviceOtaInfo);
             }

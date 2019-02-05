@@ -130,7 +130,6 @@ public class OTATest extends APIBaseTest {
             //assertEquals(admin.email, newDevice.deviceOtaInfo.otaStartedBy);
             //assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.otaStartedAt, 5000);
             assertEquals(pathToFirmware, newDevice.deviceOtaInfo.pathToFirmware);
-            assertEquals("May  9 2018 12:36:07", newDevice.deviceOtaInfo.buildDate);
         }
 
         TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
@@ -157,7 +156,6 @@ public class OTATest extends APIBaseTest {
             assertEquals(OTADeviceStatus.REQUEST_SENT, newDevice.deviceOtaInfo.status);
             assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.requestSentAt, 5000);
             assertEquals(pathToFirmware, newDevice.deviceOtaInfo.pathToFirmware);
-            assertEquals("May  9 2018 12:36:07", newDevice.deviceOtaInfo.buildDate);
         }
 
         Path tmpFile = Files.createTempFile("123", "test");
@@ -200,7 +198,6 @@ public class OTATest extends APIBaseTest {
             assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.firmwareUploadedAt, 5000);
             assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.finishedAt, 5000);
             assertEquals(pathToFirmware, newDevice.deviceOtaInfo.pathToFirmware);
-            assertEquals("May  9 2018 12:36:07", newDevice.deviceOtaInfo.buildDate);
             assertEquals("May  9 2018 12:36:07", newDevice.hardwareInfo.build);
         }
     }
@@ -260,7 +257,6 @@ public class OTATest extends APIBaseTest {
             //assertEquals(admin.email, newDevice.deviceOtaInfo.otaStartedBy);
             //assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.otaStartedAt, 5000);
             assertEquals(pathToFirmware, newDevice.deviceOtaInfo.pathToFirmware);
-            assertEquals("May  9 2018 12:36:07", newDevice.deviceOtaInfo.buildDate);
         }
 
         TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
@@ -287,7 +283,6 @@ public class OTATest extends APIBaseTest {
             assertEquals(OTADeviceStatus.REQUEST_SENT, newDevice.deviceOtaInfo.status);
             assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.requestSentAt, 5000);
             assertEquals(pathToFirmware, newDevice.deviceOtaInfo.pathToFirmware);
-            assertEquals("May  9 2018 12:36:07", newDevice.deviceOtaInfo.buildDate);
             assertEquals(-1L, newDevice.deviceOtaInfo.firmwareRequestedAt);
             assertEquals(-1L, newDevice.deviceOtaInfo.firmwareUploadedAt);
             assertEquals(-1L, newDevice.deviceOtaInfo.finishedAt);
@@ -318,7 +313,6 @@ public class OTATest extends APIBaseTest {
             assertEquals(OTADeviceStatus.FIRMWARE_UPLOADED, newDevice.deviceOtaInfo.status);
             assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.requestSentAt, 5000);
             assertEquals(pathToFirmware, newDevice.deviceOtaInfo.pathToFirmware);
-            assertEquals("May  9 2018 12:36:07", newDevice.deviceOtaInfo.buildDate);
             assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.firmwareRequestedAt, 5000);
             assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.firmwareUploadedAt, 5000);
             assertEquals(-1L, newDevice.deviceOtaInfo.finishedAt);
@@ -395,7 +389,6 @@ public class OTATest extends APIBaseTest {
             assertEquals(OTADeviceStatus.REQUEST_SENT, newDevice.deviceOtaInfo.status);
             assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.requestSentAt, 5000);
             assertEquals(pathToFirmware, newDevice.deviceOtaInfo.pathToFirmware);
-            assertEquals("May  9 2018 12:36:07", newDevice.deviceOtaInfo.buildDate);
         }
     }
 
@@ -453,7 +446,6 @@ public class OTATest extends APIBaseTest {
             //assertEquals(admin.email, newDevice.deviceOtaInfo.otaStartedBy);
             //assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.otaStartedAt, 5000);
             assertEquals(pathToFirmware, newDevice.deviceOtaInfo.pathToFirmware);
-            assertEquals("May  9 2018 12:36:07", newDevice.deviceOtaInfo.buildDate);
         }
 
         post = new HttpPost(httpsAdminServerUrl + "/ota/stop");
