@@ -336,7 +336,7 @@ class UserLayout extends React.Component {
               </Menu.Item>
               {this.props.Organization && this.props.Organization.parentId === -1 ? (
                 <Menu.Item key="/products">
-                  <LinearIcon type="gift"/>
+                  <LinearIcon type="grid2"/>
                   <span>Products</span>
                 </Menu.Item>
               ) : (null)}
@@ -348,7 +348,7 @@ class UserLayout extends React.Component {
               )}
               {VerifyPermission(this.props.currentRole.permissionGroup1, PERMISSIONS_INDEX.OTA_VIEW) && (
                 <Menu.Item key="/ota">
-                  <LinearIcon type="cloud-upload"/>
+                  <LinearIcon type="mail4"/>
                   <span>OTA</span>
                 </Menu.Item>
               )}
