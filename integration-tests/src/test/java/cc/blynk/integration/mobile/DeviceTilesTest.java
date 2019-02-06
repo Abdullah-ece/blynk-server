@@ -1,4 +1,4 @@
-package cc.blynk.integration.web;
+package cc.blynk.integration.mobile;
 
 import cc.blynk.integration.SingleServerInstancePerTestWithDBAndNewOrg;
 import cc.blynk.integration.model.tcp.TestAppClient;
