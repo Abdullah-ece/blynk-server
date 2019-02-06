@@ -204,7 +204,7 @@ class CampaignsList extends Component {
     return (
       <MainLayout>
         <MainLayout.Header
-          title={'All Shippings'}
+          title={'Blynk.Air'}
           options={(
             <div>
               <Button type="primary"
