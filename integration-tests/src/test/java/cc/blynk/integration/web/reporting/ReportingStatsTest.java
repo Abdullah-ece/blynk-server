@@ -13,11 +13,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.HashMap;
 import java.util.Map;
 
 import static cc.blynk.integration.TestUtil.hardware;
-import static cc.blynk.integration.TestUtil.sleep;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICE;
@@ -150,16 +148,13 @@ public class ReportingStatsTest extends SingleServerInstancePerTestWithDB {
         assertNotNull(commands);
 
         statsWorker.run();
-        sleep(500);
 
         short createDeviceCommand = MOBILE_CREATE_DEVICE;
 
         commands = holder.reportingDBManager.reportingStatsDao.selectMonthlyCommandsStat(now);
         assertNotNull(commands);
         assertFalse(commands.isEmpty());
-        assertEquals((long) commands.get(createDeviceCommand), 6);
-
-        Map<Short, Long> prev = new HashMap<>(commands);
+        assertEquals(6, (long) commands.get(createDeviceCommand));
 
         device = new Device();
         device.name = "My New Device2";
@@ -169,12 +164,11 @@ public class ReportingStatsTest extends SingleServerInstancePerTestWithDB {
         assertNotNull(device);
 
         statsWorker.run();
-        sleep(500);
 
         commands = holder.reportingDBManager.reportingStatsDao.selectMonthlyCommandsStat(now);
         assertNotNull(commands);
         assertFalse(commands.isEmpty());
 
-        assertEquals((long) commands.get(createDeviceCommand), 8);
+        assertEquals(8, (long) commands.get(createDeviceCommand));
     }
 }
