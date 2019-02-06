@@ -23,11 +23,12 @@
         <module>http-core</module>
         <module>http-admin</module>
         <module>http-api</module>
-        <module>http-dashboard</module>
 
         <module>tcp-app-server</module>
         <module>tcp-hardware-server</module>
         <module>tcp-web-server</module>
+
+        <module>http-dashboard</module>
 
         <module>launcher</module>
         <module>tools</module>
