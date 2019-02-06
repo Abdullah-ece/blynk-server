@@ -1,7 +1,8 @@
 import React from 'react';
-import {Upload, Icon, message} from 'antd';
+import { Upload, message } from 'antd';
+import { LinearIcon } from 'components';
 import classnames from 'classnames';
-import {FILE_UPLOAD_URL} from 'services/API';
+import { FILE_UPLOAD_URL } from 'services/API';
 import './styles.less';
 
 class ImageUploader extends React.Component {
@@ -72,20 +73,20 @@ class ImageUploader extends React.Component {
     return (
       <div className={classNames}>
         <Upload.Dragger {...fileProps} onChange={this.onChange.bind(this)}>
-          { this.props.logo && (
+          {this.props.logo && (
             <div className="image-uploader-cover">
-              { this.props.logo !== this.props.defaultImage && (
-                <div className="image-uploader-cover-tools">
-                  <Icon type="delete" onClick={this.handleDelete.bind(this)}/>
+              {this.props.logo !== this.props.defaultImage && (
+                <div className="image-uploader-cover-tools" onClick={this.handleDelete.bind(this)}>
+                  <LinearIcon type="trash"/>
                 </div>
               )}
               <img src={this.props.logo}
                    alt=""/>
             </div>)
           }
-          { !this.props.logo && <div>
+          {!this.props.logo && <div>
             <p className={this.props.iconClass || 'ant-upload-drag-icon'}>
-              <Icon type="cloud-upload-o"/>
+              <LinearIcon type="cloud-upload"/>
             </p>
             {this.props.text && <p
               className="ant-upload-text">{typeof this.props.text === 'function' ? this.props.text() : this.props.text} </p>}
@@ -94,9 +95,9 @@ class ImageUploader extends React.Component {
           </div>
           }
         </Upload.Dragger>
-        { this.props.error && this.props.touched && (
+        {this.props.error && this.props.touched && (
           <div className="image-uploader-error">
-            { this.props.error }
+            {this.props.error}
           </div>
         )}
       </div>
