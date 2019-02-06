@@ -211,7 +211,7 @@ class Edit extends React.Component {
         <div>
       <span>
         <LinearIcon className="ota-review-icon-success"
-              type="check"/> You will be shipping <b>{this.state.OTA.firmwareOriginalFileName}</b> to <b>{Pluralize("device", this.state.OTA.deviceIds.length, true)}</b>
+                    type="check"/> You will be shipping <b>{this.state.OTA.firmwareOriginalFileName}</b> to <b>{Pluralize("device", this.state.OTA.deviceIds.length, true)}</b>
       </span>
         </div>);
     } else {
@@ -268,15 +268,37 @@ class Edit extends React.Component {
     const columns = [{
       title: "Device Name",
       dataIndex: "nameAndOnline",
+      sorter: (a, b) => a.name.length - b.name.length,
+      sortDirections: ['descend'],
       render: (value) => {
         return (<Badge status={value.status === "ONLINE" ? "success" : "error"}
                        text={value.name}/>);
       }
     }, {
       title: "Firmware Version",
+      filters: this.props.devices
+        .map(
+          device => device.hardwareInfo.version)
+        .filter(onlyUnique)
+        .map((value) => ({
+          text: value,
+          value: value
+        })),
+      onFilter: (value, record) => {
+        return record.hardwareInfo.version === value;
+      },
+      sorter: (a, b) => a.name.length - b.name.length,
+      sortDirections: ['descend'],
       dataIndex: "hardwareInfo.version",
     }, {
+      title: "Product",
+      sorter: (a, b) => a.name.length - b.name.length,
+      sortDirections: ['descend'],
+      dataIndex: "productName",
+    }, {
       title: "Updated On",
+      sorter: (a, b) => a.name.length - b.name.length,
+      sortDirections: ['descend'],
       dataIndex: "deviceOtaInfo.buildDate",
     },];
     const selectedRowKeys = [];
@@ -360,40 +382,40 @@ class Edit extends React.Component {
             <EditSection>
               <Row gutter={24}>
                 {/*<Col span={7}>*/}
-                  {/*<div className="edit-section-sub-title ">*/}
-                    {/*Target selection*/}
-                  {/*</div>*/}
-                  {/*<div className="product-details-row">*/}
-                    {/*<FormItem>*/}
-                      {/*<FormItem.Title>Product</FormItem.Title>*/}
-                      {/*<FormItem.Content>*/}
-                        {/*<Select className="edit-section-content-input"*/}
-                                {/*value={OTA.productId}*/}
-                                {/*onChange={value => this.onChange({*/}
-                                  {/*value,*/}
-                                  {/*name: "productId"*/}
-                                {/*})}*/}
-                                {/*placeholder={`Select product to filter devices`}>*/}
-                          {/*{productsList.map((product) => (*/}
-                            {/*<Select.Option key={`${product.key}`}*/}
-                                           {/*value={`${product.key}`}>{product.value}</Select.Option>*/}
-                          {/*))}*/}
-                        {/*</Select>*/}
-                      {/*</FormItem.Content>*/}
-                    {/*</FormItem>*/}
-                  {/*</div>*/}
-                  {/*<div className="product-details-row">*/}
-                    {/*<FormItem className="edit-section-content">*/}
-                      {/*<FormItem.Title>Product</FormItem.Title>*/}
-                      {/*<FormItem.Content>*/}
-                        {/*<Input value=""*/}
-                               {/*onChange={this.onChange}*/}
-                               {/*name=""*/}
-                               {/*placeholder="Search devices"*/}
-                               {/*disabled={true}/>*/}
-                      {/*</FormItem.Content>*/}
-                    {/*</FormItem>*/}
-                  {/*</div>*/}
+                {/*<div className="edit-section-sub-title ">*/}
+                {/*Target selection*/}
+                {/*</div>*/}
+                {/*<div className="product-details-row">*/}
+                {/*<FormItem>*/}
+                {/*<FormItem.Title>Product</FormItem.Title>*/}
+                {/*<FormItem.Content>*/}
+                {/*<Select className="edit-section-content-input"*/}
+                {/*value={OTA.productId}*/}
+                {/*onChange={value => this.onChange({*/}
+                {/*value,*/}
+                {/*name: "productId"*/}
+                {/*})}*/}
+                {/*placeholder={`Select product to filter devices`}>*/}
+                {/*{productsList.map((product) => (*/}
+                {/*<Select.Option key={`${product.key}`}*/}
+                {/*value={`${product.key}`}>{product.value}</Select.Option>*/}
+                {/*))}*/}
+                {/*</Select>*/}
+                {/*</FormItem.Content>*/}
+                {/*</FormItem>*/}
+                {/*</div>*/}
+                {/*<div className="product-details-row">*/}
+                {/*<FormItem className="edit-section-content">*/}
+                {/*<FormItem.Title>Product</FormItem.Title>*/}
+                {/*<FormItem.Content>*/}
+                {/*<Input value=""*/}
+                {/*onChange={this.onChange}*/}
+                {/*name=""*/}
+                {/*placeholder="Search devices"*/}
+                {/*disabled={true}/>*/}
+                {/*</FormItem.Content>*/}
+                {/*</FormItem>*/}
+                {/*</div>*/}
                 {/*</Col>*/}
                 <Col span={24}>
                   <div className="edit-section-sub-title ">
@@ -441,6 +463,10 @@ class Edit extends React.Component {
     );
   }
 
+}
+
+function onlyUnique(value, index, self) {
+  return self.indexOf(value) === index;
 }
 
 export default Edit;
