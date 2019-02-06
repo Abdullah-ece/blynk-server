@@ -1,6 +1,7 @@
 package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
@@ -33,11 +34,16 @@ public final class MobileActivateDashboardLogic {
 
     private static final Logger log = LogManager.getLogger(MobileActivateDashboardLogic.class);
 
-    private MobileActivateDashboardLogic() {
+    private final SessionDao sessionDao;
+    private final DeviceDao deviceDao;
+
+    public MobileActivateDashboardLogic(Holder holder) {
+        this.sessionDao = holder.sessionDao;
+        this.deviceDao = holder.deviceDao;
     }
 
-    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
-                                       MobileStateHolder state, StringMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx,
+                                MobileStateHolder state, StringMessage message) {
         User user = state.user;
         String dashBoardIdString = message.body;
 
@@ -48,10 +54,9 @@ public final class MobileActivateDashboardLogic {
         dash.activate();
         user.lastModifiedTs = dash.updatedAt;
 
-        SessionDao sessionDao = holder.sessionDao;
         Session session = sessionDao.getOrgSession(state.user.orgId);
 
-        List<Device> devices = holder.deviceDao.getDevicesOwnedByUser(user.email);
+        List<Device> devices = deviceDao.getDevicesOwnedByUser(user.email);
         if (session.isHardwareConnected()) {
             for (Device device : devices) {
                 String pmBody = dash.buildPMMessage(device.id);

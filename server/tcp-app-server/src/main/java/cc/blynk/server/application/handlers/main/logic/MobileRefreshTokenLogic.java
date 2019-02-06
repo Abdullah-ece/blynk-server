@@ -1,6 +1,9 @@
 package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.core.dao.DeviceDao;
+import cc.blynk.server.core.dao.OrganizationDao;
+import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
@@ -21,21 +24,28 @@ import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
  */
 public final class MobileRefreshTokenLogic {
 
-    private MobileRefreshTokenLogic() {
+    private final DeviceDao deviceDao;
+    private final OrganizationDao organizationDao;
+    private final SessionDao sessionDao;
+
+    public MobileRefreshTokenLogic(Holder holder) {
+        this.deviceDao = holder.deviceDao;
+        this.organizationDao = holder.organizationDao;
+        this.sessionDao = holder.sessionDao;
     }
 
-    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
-                                       MobileStateHolder state, StringMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx,
+                                MobileStateHolder state, StringMessage message) {
         int deviceId = Integer.parseInt(message.body);
         User user = state.user;
 
-        Device device = holder.deviceDao.getByIdOrThrow(deviceId);
+        Device device = deviceDao.getByIdOrThrow(deviceId);
 
-        Product product = holder.organizationDao.getProductById(device.productId);
-        Organization org = holder.organizationDao.getOrgByIdOrThrow(user.orgId);
-        String token = holder.deviceDao.assignNewToken(org, user.email, product, device);
+        Product product = organizationDao.getProductById(device.productId);
+        Organization org = organizationDao.getOrgByIdOrThrow(user.orgId);
+        String token = deviceDao.assignNewToken(org, user.email, product, device);
 
-        Session session = holder.sessionDao.getOrgSession(state.user.orgId);
+        Session session = sessionDao.getOrgSession(state.user.orgId);
         session.closeHardwareChannelByDeviceId(deviceId);
 
         if (ctx.channel().isWritable()) {

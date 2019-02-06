@@ -30,11 +30,14 @@ public final class MobileEditReportLogic {
 
     private static final Logger log = LogManager.getLogger(MobileEditReportLogic.class);
 
-    private MobileEditReportLogic() {
+    private final ReportScheduler reportScheduler;
+
+    public MobileEditReportLogic(Holder holder) {
+        this.reportScheduler = holder.reportScheduler;
     }
 
-    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
-                                       User user, StringMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx,
+                                User user, StringMessage message) {
         String[] split = split2(message.body);
 
         if (split.length < 2) {
@@ -61,8 +64,6 @@ public final class MobileEditReportLogic {
         if (existingReportIndex == -1) {
             throw new JsonException("Cannot find report with provided id.");
         }
-
-        ReportScheduler reportScheduler = holder.reportScheduler;
 
         //always remove prev report before any validations are done
         if (report.isPeriodic()) {

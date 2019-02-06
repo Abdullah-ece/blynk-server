@@ -1,12 +1,14 @@
 package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.CopyUtil;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.db.DBManager;
 import cc.blynk.utils.TokenGeneratorUtil;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -26,11 +28,16 @@ public final class MobileGetCloneCodeLogic {
 
     private static final Logger log = LogManager.getLogger(MobileGetCloneCodeLogic.class);
 
-    private MobileGetCloneCodeLogic() {
+    private final BlockingIOProcessor blockingIOProcessor;
+    private final DBManager dbManager;
+
+    public MobileGetCloneCodeLogic(Holder holder) {
+        this.blockingIOProcessor = holder.blockingIOProcessor;
+        this.dbManager = holder.dbManager;
     }
 
-    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
-                                       User user, StringMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx,
+                                User user, StringMessage message) {
         int dashId = Integer.parseInt(message.body);
 
         //todo all this is very ugly, however takes 5 min for implementation, also this is rare feature
@@ -41,10 +48,10 @@ public final class MobileGetCloneCodeLogic {
         String json = JsonParser.toJsonRestrictiveDashboard(copiedDash);
         String qrToken = TokenGeneratorUtil.generateNewToken();
 
-        holder.blockingIOProcessor.executeDB(() -> {
+        blockingIOProcessor.executeDB(() -> {
             MessageBase result;
             try {
-                boolean insertStatus = holder.dbManager.insertClonedProject(qrToken, json);
+                boolean insertStatus = dbManager.insertClonedProject(qrToken, json);
                 if (insertStatus) {
                     result = makeASCIIStringMessage(GET_CLONE_CODE, message.id, qrToken);
                 } else {

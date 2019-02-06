@@ -29,19 +29,22 @@ public final class MobileCreateReportLogic {
 
     private static final Logger log = LogManager.getLogger(MobileCreateReportLogic.class);
 
-    private MobileCreateReportLogic() {
+    private final int reportsLimit;
+    private final ReportScheduler reportScheduler;
+
+    public MobileCreateReportLogic(Holder holder) {
+        this.reportsLimit = holder.limits.reportsLimit;
+        this.reportScheduler = holder.reportScheduler;
     }
 
-    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
-                                       User user, StringMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx,
+                                User user, StringMessage message) {
         String[] split = split2(message.body);
 
         if (split.length < 2) {
             throw new JsonException("Wrong income message format.");
         }
 
-        int reportsLimit = holder.limits.reportsLimit;
-        ReportScheduler reportScheduler = holder.reportScheduler;
 
         int dashId = Integer.parseInt(split[0]);
         String reportJson = split[1];

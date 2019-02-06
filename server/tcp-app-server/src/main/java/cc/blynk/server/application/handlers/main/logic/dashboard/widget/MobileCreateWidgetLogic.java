@@ -30,11 +30,16 @@ public final class MobileCreateWidgetLogic {
 
     private static final Logger log = LogManager.getLogger(MobileCreateWidgetLogic.class);
 
-    private MobileCreateWidgetLogic() {
+    private final TimerWorker timerWorker;
+    private final int widgetSizeLimitBytes;
+
+    public MobileCreateWidgetLogic(Holder holder) {
+        this.timerWorker = holder.timerWorker;
+        this.widgetSizeLimitBytes = holder.limits.widgetSizeLimitBytes;
     }
 
-    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
-                                       MobileStateHolder state, StringMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx,
+                                MobileStateHolder state, StringMessage message) {
         //format is "dashId widget_json" or "dashId widgetId templateId widget_json"
         String[] split = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
 
@@ -61,7 +66,7 @@ public final class MobileCreateWidgetLogic {
             throw new JsonException("Income widget message is empty.");
         }
 
-        if (widgetString.length() > holder.limits.widgetSizeLimitBytes) {
+        if (widgetString.length() > widgetSizeLimitBytes) {
             throw new JsonException("Widget is larger then limit.");
         }
 
@@ -101,7 +106,6 @@ public final class MobileCreateWidgetLogic {
         dash.updatedAt = System.currentTimeMillis();
         user.lastModifiedTs = dash.updatedAt;
 
-        TimerWorker timerWorker = holder.timerWorker;
         if (newWidget instanceof Timer) {
             timerWorker.add(state.user.orgId,
                     state.user.email, (Timer) newWidget, dashId, widgetAddToId, templateIdAddToId);

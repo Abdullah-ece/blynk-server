@@ -26,11 +26,14 @@ public final class MobileDeleteReportLogic {
 
     private static final Logger log = LogManager.getLogger(MobileDeleteReportLogic.class);
 
-    private MobileDeleteReportLogic() {
+    private final ReportScheduler reportScheduler;
+
+    public MobileDeleteReportLogic(Holder holder) {
+        this.reportScheduler = holder.reportScheduler;
     }
 
-    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
-                                       User user, StringMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx,
+                                User user, StringMessage message) {
         String[] split = split2(message.body);
 
         if (split.length < 2) {
@@ -57,7 +60,6 @@ public final class MobileDeleteReportLogic {
         dash.updatedAt = System.currentTimeMillis();
 
         if (reportToDel.isPeriodic()) {
-            ReportScheduler reportScheduler = holder.reportScheduler;
             boolean isRemoved = reportScheduler.cancelStoredFuture(user, dashId, reportId);
             log.debug("Deleting reportId {} in scheduler for {}. Is removed: {}?.",
                     reportToDel.id, user.email, isRemoved);

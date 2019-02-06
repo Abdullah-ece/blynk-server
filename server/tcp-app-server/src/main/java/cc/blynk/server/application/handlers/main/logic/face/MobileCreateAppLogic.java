@@ -1,5 +1,6 @@
 package cc.blynk.server.application.handlers.main.logic.face;
 
+import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.auth.App;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
@@ -23,11 +24,14 @@ public final class MobileCreateAppLogic {
 
     private static final Logger log = LogManager.getLogger(MobileCreateAppLogic.class);
 
-    private MobileCreateAppLogic() {
+    private final int maxWidgetSize;
+
+    public MobileCreateAppLogic(Holder holder) {
+        this.maxWidgetSize = holder.limits.widgetSizeLimitBytes;
     }
 
-    public static void messageReceived(ChannelHandlerContext ctx, MobileStateHolder state,
-                                       StringMessage message, int maxWidgetSize) {
+    public void messageReceived(ChannelHandlerContext ctx, MobileStateHolder state,
+                                       StringMessage message) {
         var appString = message.body;
 
         if (appString.isEmpty()) {

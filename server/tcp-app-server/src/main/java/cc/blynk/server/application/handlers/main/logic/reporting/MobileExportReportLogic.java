@@ -1,6 +1,7 @@
 package cc.blynk.server.application.handlers.main.logic.reporting;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.ui.reporting.BaseReportTask;
@@ -36,7 +37,12 @@ public final class MobileExportReportLogic {
 
     private final static long runDelay = TimeUnit.MINUTES.toMillis(1);
 
-    private MobileExportReportLogic() {
+    private final DeviceDao deviceDao;
+    private final ReportScheduler reportScheduler;
+
+    public MobileExportReportLogic(Holder holder) {
+        this.deviceDao = holder.deviceDao;
+        this.reportScheduler = holder.reportScheduler;
         createCSVFolder();
     }
 
@@ -48,8 +54,8 @@ public final class MobileExportReportLogic {
         }
     }
 
-    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
-                                       User user, StringMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx,
+                                User user, StringMessage message) {
         String[] split = split2(message.body);
 
         if (split.length < 2) {
@@ -82,9 +88,8 @@ public final class MobileExportReportLogic {
             throw new JsonException("Report trigger limit reached.");
         }
 
-        ReportScheduler reportScheduler = holder.reportScheduler;
         reportScheduler.schedule(new BaseReportTask(user, dashId, report,
-                reportScheduler.mailWrapper, reportScheduler.reportingDBDao, holder.deviceDao,
+                reportScheduler.mailWrapper, reportScheduler.reportingDBDao, deviceDao,
                 reportScheduler.downloadUrl) {
             @Override
             public void run() {

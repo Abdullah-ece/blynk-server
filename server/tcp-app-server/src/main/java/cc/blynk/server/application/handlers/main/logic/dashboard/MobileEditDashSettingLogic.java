@@ -1,5 +1,6 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard;
 
+import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DashboardSettings;
 import cc.blynk.server.core.model.auth.User;
@@ -24,11 +25,13 @@ public final class MobileEditDashSettingLogic {
 
     private static final Logger log = LogManager.getLogger(MobileEditDashSettingLogic.class);
 
-    private MobileEditDashSettingLogic() {
+    private final int settingsSizeLimit;
+
+    public MobileEditDashSettingLogic(Holder holder) {
+        this.settingsSizeLimit = holder.limits.widgetSizeLimitBytes;
     }
 
-    public static void messageReceived(ChannelHandlerContext ctx, MobileStateHolder state,
-                                       StringMessage message, int settingsSizeLimit) {
+    public void messageReceived(ChannelHandlerContext ctx, MobileStateHolder state, StringMessage message) {
         String[] split = StringUtils.split2(message.body);
 
         if (split.length < 2) {

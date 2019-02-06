@@ -32,11 +32,16 @@ public final class MobileEditWidgetLogic {
 
     private static final Logger log = LogManager.getLogger(MobileEditWidgetLogic.class);
 
-    private MobileEditWidgetLogic() {
+    private final TimerWorker timerWorker;
+    private final int widgetSizeLimitBytes;
+
+    public MobileEditWidgetLogic(Holder holder) {
+        this.timerWorker = holder.timerWorker;
+        this.widgetSizeLimitBytes = holder.limits.widgetSizeLimitBytes;
     }
 
-    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
-                                       MobileStateHolder state, StringMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx,
+                                MobileStateHolder state, StringMessage message) {
         String[] split = split2(message.body);
 
         if (split.length < 2) {
@@ -50,7 +55,7 @@ public final class MobileEditWidgetLogic {
             throw new JsonException("Income widget message is empty.");
         }
 
-        if (widgetString.length() > holder.limits.widgetSizeLimitBytes) {
+        if (widgetString.length() > widgetSizeLimitBytes) {
             throw new JsonException("Widget is larger then limit.");
         }
 
@@ -116,7 +121,6 @@ public final class MobileEditWidgetLogic {
             newReporting.reports = prevReporting.reports;
         }
 
-        TimerWorker timerWorker = holder.timerWorker;
         if (deviceTilesId != -1) {
             TileTemplate tileTemplate = deviceTiles.getTileTemplateByWidgetIdOrThrow(newWidget.id);
             if (newWidget instanceof Tabs) {

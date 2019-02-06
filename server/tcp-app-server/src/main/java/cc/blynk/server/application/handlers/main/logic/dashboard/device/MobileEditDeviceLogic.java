@@ -1,7 +1,7 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard.device;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
@@ -21,10 +21,13 @@ public final class MobileEditDeviceLogic {
 
     private static final Logger log = LogManager.getLogger(MobileEditDeviceLogic.class);
 
-    private MobileEditDeviceLogic() {
+    private final DeviceDao deviceDao;
+
+    public MobileEditDeviceLogic(Holder holder) {
+        this.deviceDao = holder.deviceDao;
     }
 
-    public static void messageReceived(Holder holder, ChannelHandlerContext ctx, User user, StringMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx, StringMessage message) {
         String deviceString = message.body;
 
         if (deviceString.isEmpty()) {
@@ -40,7 +43,7 @@ public final class MobileEditDeviceLogic {
             throw new JsonException("Income device message is not valid.");
         }
 
-        Device existingDevice = holder.deviceDao.getById(newDevice.id);
+        Device existingDevice = deviceDao.getById(newDevice.id);
 
         if (existingDevice == null) {
             log.debug("Attempt to update device with non existing id.");

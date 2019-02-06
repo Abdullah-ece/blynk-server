@@ -1,6 +1,7 @@
 package cc.blynk.server.application.handlers.main.logic.sharing;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.core.dao.SharedTokenManager;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
@@ -18,11 +19,14 @@ import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
  */
 public final class MobileGetShareTokenLogic {
 
-    private MobileGetShareTokenLogic() {
+    private final SharedTokenManager sharedTokenManager;
+
+    public MobileGetShareTokenLogic(Holder holder) {
+        this.sharedTokenManager = holder.sharedTokenManager;
     }
 
-    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
-                                       User user, StringMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx,
+                                User user, StringMessage message) {
         String dashBoardIdString = message.body;
 
         int dashId;
@@ -37,7 +41,7 @@ public final class MobileGetShareTokenLogic {
 
         //if token not exists. generate new one
         if (token == null) {
-            token = holder.sharedTokenManager.refreshSharedToken(user, dash);
+            token = sharedTokenManager.refreshSharedToken(user, dash);
             user.lastModifiedTs = System.currentTimeMillis();
         }
 

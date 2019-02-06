@@ -1,6 +1,7 @@
 package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -22,11 +23,13 @@ import static cc.blynk.server.internal.CommonByteBufUtil.ok;
  */
 public final class DashSyncLogic {
 
-    private DashSyncLogic() {
+    private final DeviceDao deviceDao;
+
+    public DashSyncLogic(Holder holder) {
+        this.deviceDao = holder.deviceDao;
     }
 
-    public static void messageReceived(Holder holder,
-                                       ChannelHandlerContext ctx, MobileStateHolder state, StringMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx, MobileStateHolder state, StringMessage message) {
         int dashId = Integer.parseInt(message.body);
 
         ctx.write(ok(message.id), ctx.voidPromise());
@@ -35,7 +38,7 @@ public final class DashSyncLogic {
         DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
 
         //todo not very optimal, but ok for now
-        List<Device> devices = holder.deviceDao.getDevicesOwnedByUser(state.user.email);
+        List<Device> devices = deviceDao.getDevicesOwnedByUser(state.user.email);
         for (Device device : devices) {
             if (dash.hasWidgetsByDeviceId(device.id)) {
                 device.sendPinStorageSyncs(appChannel);

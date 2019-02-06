@@ -1,6 +1,8 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard.device;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.core.dao.DeviceDao;
+import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.dto.DeviceMobileDTO;
 import cc.blynk.server.core.model.web.product.MetaField;
@@ -23,16 +25,21 @@ public final class MobileGetDeviceLogic {
 
     private static final Logger log = LogManager.getLogger(MobileGetDeviceLogic.class);
 
-    private MobileGetDeviceLogic() {
+    private final DeviceDao deviceDao;
+    private final OrganizationDao organizationDao;
+
+    public MobileGetDeviceLogic(Holder holder) {
+        this.deviceDao = holder.deviceDao;
+        this.organizationDao = holder.organizationDao;
     }
 
-    public static void messageReceived(Holder holder, ChannelHandlerContext ctx, StringMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx, StringMessage message) {
         String[] split = StringUtils.split2(message.body);
         int deviceId = Integer.parseInt(split[0]);
         boolean needMetaFilter = split.length > 1 && Boolean.parseBoolean(split[1]);
-        Device device = holder.deviceDao.getByIdOrThrow(deviceId);
+        Device device = deviceDao.getByIdOrThrow(deviceId);
 
-        Product product = holder.organizationDao.getProductByIdOrThrow(device.productId);
+        Product product = organizationDao.getProductByIdOrThrow(device.productId);
 
         DeviceMobileDTO deviceDTO;
         if (needMetaFilter) {

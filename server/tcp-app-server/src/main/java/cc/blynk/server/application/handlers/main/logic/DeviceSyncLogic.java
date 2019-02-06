@@ -1,6 +1,7 @@
 package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import io.netty.channel.Channel;
@@ -19,18 +20,20 @@ import static cc.blynk.server.internal.CommonByteBufUtil.ok;
  */
 public final class DeviceSyncLogic {
 
-    private DeviceSyncLogic() {
+    private final DeviceDao deviceDao;
+
+    public DeviceSyncLogic(Holder holder) {
+        this.deviceDao = holder.deviceDao;
     }
 
-    public static void messageReceived(Holder holder,
-                                       ChannelHandlerContext ctx, StringMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx, StringMessage message) {
         int deviceId = Integer.parseInt(message.body);
 
         ctx.write(ok(message.id), ctx.voidPromise());
         Channel appChannel = ctx.channel();
 
         //todo check access?
-        Device device = holder.deviceDao.getById(deviceId);
+        Device device = deviceDao.getById(deviceId);
         if (device != null) {
             device.sendPinStorageSyncs(appChannel);
         }

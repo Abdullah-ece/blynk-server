@@ -24,19 +24,24 @@ public final class MobileEditDashLogic {
 
     private static final Logger log = LogManager.getLogger(MobileEditDashLogic.class);
 
-    private MobileEditDashLogic() {
+    private final TimerWorker timerWorker;
+    private final int profileSizeLimitBytes;
+
+    public MobileEditDashLogic(Holder holder) {
+        this.timerWorker = holder.timerWorker;
+        this.profileSizeLimitBytes = holder.limits.profileSizeLimitBytes;
     }
 
     //todo should accept only dash info and ignore widgets. should be fixed after migration
-    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
-                                       MobileStateHolder state, StringMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx,
+                                MobileStateHolder state, StringMessage message) {
         String dashString = message.body;
 
         if (dashString.isEmpty()) {
             throw new JsonException("Income create dash message is empty.");
         }
 
-        if (dashString.length() > holder.limits.profileSizeLimitBytes) {
+        if (dashString.length() > profileSizeLimitBytes) {
             throw new JsonException("User dashboard is larger then limit.");
         }
 
@@ -53,7 +58,6 @@ public final class MobileEditDashLogic {
 
         DashBoard existingDash = user.profile.getDashByIdOrThrow(updatedDash.id);
 
-        TimerWorker timerWorker = holder.timerWorker;
         timerWorker.deleteTimers(state.user.orgId, state.user.email, existingDash);
         updatedDash.addTimers(timerWorker, state.user.orgId, state.user.email);
 

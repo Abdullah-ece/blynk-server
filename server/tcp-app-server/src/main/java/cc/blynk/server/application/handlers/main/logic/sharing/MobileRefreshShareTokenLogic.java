@@ -2,6 +2,8 @@ package cc.blynk.server.application.handlers.main.logic.sharing;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.sharing.auth.MobileShareStateHolder;
+import cc.blynk.server.core.dao.SessionDao;
+import cc.blynk.server.core.dao.SharedTokenManager;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
@@ -25,11 +27,15 @@ import static cc.blynk.utils.MobileStateHolderUtil.getShareState;
  */
 public final class MobileRefreshShareTokenLogic {
 
-    private MobileRefreshShareTokenLogic() {
+    private final SessionDao sessionDao;
+    private final SharedTokenManager sharedTokenManager;
+
+    public MobileRefreshShareTokenLogic(Holder holder) {
+        this.sessionDao = holder.sessionDao;
+        this.sharedTokenManager = holder.sharedTokenManager;
     }
 
-    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
-                                       MobileStateHolder state, StringMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx, MobileStateHolder state, StringMessage message) {
         String dashBoardIdString = message.body;
 
         int dashId;
@@ -42,10 +48,10 @@ public final class MobileRefreshShareTokenLogic {
         User user = state.user;
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
-        String token = holder.sharedTokenManager.refreshSharedToken(user, dash);
+        String token = sharedTokenManager.refreshSharedToken(user, dash);
 
         //todo move to session class?
-        Session session = holder.sessionDao.getOrgSession(state.user.orgId);
+        Session session = sessionDao.getOrgSession(state.user.orgId);
         for (Channel appChannel : session.appChannels) {
             MobileShareStateHolder localState = getShareState(appChannel);
             if (localState != null && localState.dashId == dashId) {

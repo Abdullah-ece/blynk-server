@@ -1,5 +1,6 @@
 package cc.blynk.server.application.handlers.main.logic.face;
 
+import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -19,11 +20,14 @@ public final class MobileEditAppLogic {
 
     private static final Logger log = LogManager.getLogger(MobileEditAppLogic.class);
 
-    private MobileEditAppLogic() {
+    private final int maxWidgetSize;
+
+    public MobileEditAppLogic(Holder holder) {
+        this.maxWidgetSize = holder.limits.widgetSizeLimitBytes;
     }
 
-    public static void messageReceived(ChannelHandlerContext ctx, MobileStateHolder state,
-                                       StringMessage message, int maxWidgetSize) {
+    public void messageReceived(ChannelHandlerContext ctx, MobileStateHolder state,
+                                StringMessage message) {
         var appString = message.body;
 
         if (appString.isEmpty()) {

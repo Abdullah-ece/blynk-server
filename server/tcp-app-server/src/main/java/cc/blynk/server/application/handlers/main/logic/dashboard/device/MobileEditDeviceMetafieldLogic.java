@@ -1,6 +1,8 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard.device;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.core.dao.DeviceDao;
+import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
@@ -26,18 +28,21 @@ public final class MobileEditDeviceMetafieldLogic {
 
     private static final Logger log = LogManager.getLogger(MobileEditDeviceMetafieldLogic.class);
 
-    private MobileEditDeviceMetafieldLogic() {
+    private final DeviceDao deviceDao;
+    private final SessionDao sessionDao;
+
+    public MobileEditDeviceMetafieldLogic(Holder holder) {
+        this.deviceDao = holder.deviceDao;
+        this.sessionDao = holder.sessionDao;
     }
 
-    public static void messageReceived(Holder holder,
-                                       ChannelHandlerContext ctx,
-                                       MobileStateHolder state, StringMessage message) {
-        messageReceived(holder, ctx, state.user, message);
+    public void messageReceived(ChannelHandlerContext ctx,
+                                MobileStateHolder state, StringMessage message) {
+        messageReceived(ctx, state.user, message);
     }
 
-    public static void messageReceived(Holder holder,
-                                       ChannelHandlerContext ctx,
-                                       User user, StringMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx,
+                                User user, StringMessage message) {
         String[] split = split2(message.body);
 
         if (split.length < 2) {
@@ -65,7 +70,7 @@ public final class MobileEditDeviceMetafieldLogic {
             metaField.validateAll();
         }
 
-        Device device = holder.deviceDao.getByIdOrThrow(deviceId);
+        Device device = deviceDao.getByIdOrThrow(deviceId);
 
         log.debug("Updating metafield {} for device {} and user {}.", metafieldString, deviceId, user.email);
         device.updateMetafields(metaFields);
@@ -73,7 +78,7 @@ public final class MobileEditDeviceMetafieldLogic {
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
 
         //if update comes from the app - send update to the web
-        Session session = holder.sessionDao.getOrgSession(user.orgId);
+        Session session = sessionDao.getOrgSession(user.orgId);
         session.sendToSelectedDeviceOnWeb(ctx.channel(), WEB_EDIT_DEVICE_METAFIELD, message.id, split[1], device.id);
     }
 

@@ -1,6 +1,9 @@
 package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.core.BlockingIOProcessor;
+import cc.blynk.server.core.dao.DeviceDao;
+import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.web.Organization;
@@ -27,15 +30,23 @@ public final class MobileAssignTokenLogic {
 
     private static final Logger log = LogManager.getLogger(MobileAssignTokenLogic.class);
 
-    private MobileAssignTokenLogic() {
+    private final DBManager dbManager;
+    private final BlockingIOProcessor blockingIOProcessor;
+    private final DeviceDao deviceDao;
+    private final OrganizationDao organizationDao;
+
+    public MobileAssignTokenLogic(Holder holder) {
+        this.dbManager = holder.dbManager;
+        this.blockingIOProcessor = holder.blockingIOProcessor;
+        this.deviceDao = holder.deviceDao;
+        this.organizationDao = holder.organizationDao;
     }
 
-    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
-                                       User user, StringMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx,
+                                User user, StringMessage message) {
         String token = message.body;
 
-        DBManager dbManager = holder.dbManager;
-        holder.blockingIOProcessor.executeDB(() -> {
+        blockingIOProcessor.executeDB(() -> {
             FlashedToken dbFlashedToken = dbManager.selectFlashedToken(token);
 
             if (dbFlashedToken == null) {
@@ -50,7 +61,7 @@ public final class MobileAssignTokenLogic {
                 return;
             }
 
-            Device device = holder.deviceDao.getById(dbFlashedToken.deviceId);
+            Device device = deviceDao.getById(dbFlashedToken.deviceId);
 
             if (device == null) {
                 log.error("Device with {} id not exists in dashboards.", dbFlashedToken.deviceId);
@@ -64,9 +75,9 @@ public final class MobileAssignTokenLogic {
                 return;
             }
 
-            Product product = holder.organizationDao.getProductById(device.productId);
-            Organization org = holder.organizationDao.getOrgByIdOrThrow(user.orgId);
-            holder.deviceDao.assignNewToken(org, user.email, product, device, token);
+            Product product = organizationDao.getProductById(device.productId);
+            Organization org = organizationDao.getOrgByIdOrThrow(user.orgId);
+            deviceDao.assignNewToken(org, user.email, product, device, token);
 
             ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
         });

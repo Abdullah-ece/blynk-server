@@ -1,6 +1,8 @@
 package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.core.dao.DeviceDao;
+import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
@@ -23,10 +25,15 @@ public final class MobileGetProvisionTokenLogic {
 
     private static final Logger log = LogManager.getLogger(MobileGetProvisionTokenLogic.class);
 
-    private MobileGetProvisionTokenLogic() {
+    private final DeviceDao deviceDao;
+    private final OrganizationDao organizationDao;
+
+    public MobileGetProvisionTokenLogic(Holder holder) {
+        this.deviceDao = holder.deviceDao;
+        this.organizationDao = holder.organizationDao;
     }
 
-    public static void messageReceived(Holder holder, ChannelHandlerContext ctx, User user, StringMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
         String deviceString = message.body;
 
         if (deviceString.isEmpty()) {
@@ -35,17 +42,16 @@ public final class MobileGetProvisionTokenLogic {
 
         Device temporaryDevice = JsonParser.parseDevice(deviceString, message.id);
 
-        temporaryDevice.id = holder.deviceDao.getId();
+        temporaryDevice.id = deviceDao.getId();
 
         log.debug("Getting provision token for deviceId {}.", temporaryDevice.id);
-        Organization org = holder.organizationDao.getOrgByIdOrThrow(user.orgId);
-        holder.deviceDao.assignTempToken(org, user, temporaryDevice);
+        Organization org = organizationDao.getOrgByIdOrThrow(user.orgId);
+        deviceDao.assignTempToken(org, user, temporaryDevice);
 
         if (ctx.channel().isWritable()) {
             ctx.writeAndFlush(makeASCIIStringMessage(MOBILE_GET_PROVISION_TOKEN,
                     message.id, temporaryDevice.toString()), ctx.voidPromise());
         }
-
     }
 
 }

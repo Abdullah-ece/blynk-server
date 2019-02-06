@@ -1,6 +1,7 @@
 package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -25,20 +26,23 @@ public final class MobileRedeemLogic {
 
     private static final Logger log = LogManager.getLogger(MobileRedeemLogic.class);
 
-    private MobileRedeemLogic() {
+    private final DBManager dbManager;
+    private final BlockingIOProcessor blockingIOProcessor;
+
+    public MobileRedeemLogic(Holder holder) {
+        this.dbManager = holder.dbManager;
+        this.blockingIOProcessor = holder.blockingIOProcessor;
     }
 
-    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
-                                       User user, StringMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
         String redeemToken = message.body;
 
-        holder.blockingIOProcessor.executeDB(() ->
-                ctx.writeAndFlush(verifyToken(holder, message, redeemToken, user), ctx.voidPromise()));
+        blockingIOProcessor.executeDB(() ->
+                ctx.writeAndFlush(verifyToken(message, redeemToken, user), ctx.voidPromise()));
     }
 
-    private static MessageBase verifyToken(Holder holder, StringMessage message, String redeemToken, User user) {
+    private MessageBase verifyToken(StringMessage message, String redeemToken, User user) {
         try {
-            DBManager dbManager = holder.dbManager;
             Redeem redeem = dbManager.selectRedeemByToken(redeemToken);
             if (redeem != null) {
                 if (redeem.isRedeemed && redeem.email.equals(user.email)) {

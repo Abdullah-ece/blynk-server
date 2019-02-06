@@ -14,6 +14,7 @@ import cc.blynk.server.application.handlers.sharing.logic.MobileShareHardwareLog
 import cc.blynk.server.common.JsonBasedSimpleChannelInboundHandler;
 import cc.blynk.server.common.handlers.logic.PingLogic;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.core.stats.GlobalStats;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.DASH_SYNC;
@@ -36,25 +37,31 @@ import static cc.blynk.server.core.protocol.enums.Command.PING;
 public class MobileShareHandler extends JsonBasedSimpleChannelInboundHandler<StringMessage, MobileShareStateHolder> {
 
     public final MobileShareStateHolder state;
-    private final Holder holder;
+    private final GlobalStats stats;
+
     private final MobileShareHardwareLogic hardwareApp;
     private final MobileGetOrgDevicesLogic mobileGetOrgDevicesLogic;
     private final MobileGetSuperChartDataLogic mobileGetSuperChartDataLogic;
     private final MobileDeleteOrgDeviceDataLogic mobileDeleteOrgDeviceDataLogic;
+    private final DeviceSyncLogic deviceSyncLogic;
+    private final DashSyncLogic dashSyncLogic;
 
     public MobileShareHandler(Holder holder, MobileShareStateHolder state) {
         super(StringMessage.class);
         this.state = state;
-        this.holder = holder;
+        this.stats = holder.stats;
+
         this.hardwareApp = new MobileShareHardwareLogic(holder);
         this.mobileGetOrgDevicesLogic = new MobileGetOrgDevicesLogic(holder);
         this.mobileGetSuperChartDataLogic = new MobileGetSuperChartDataLogic(holder);
         this.mobileDeleteOrgDeviceDataLogic = new MobileDeleteOrgDeviceDataLogic(holder);
+        this.deviceSyncLogic = new DeviceSyncLogic(holder);
+        this.dashSyncLogic = new DashSyncLogic(holder);
     }
 
     @Override
     public void messageReceived(ChannelHandlerContext ctx, StringMessage msg) {
-        holder.stats.incrementAppStat();
+        this.stats.incrementAppStat();
         switch (msg.command) {
             case HARDWARE:
                 hardwareApp.messageReceived(ctx, state, msg);
@@ -75,10 +82,10 @@ public class MobileShareHandler extends JsonBasedSimpleChannelInboundHandler<Str
                 PingLogic.messageReceived(ctx, msg.id);
                 break;
             case DEVICE_SYNC:
-                DeviceSyncLogic.messageReceived(holder, ctx, msg);
+                deviceSyncLogic.messageReceived(ctx, msg);
                 break;
             case DASH_SYNC:
-                DashSyncLogic.messageReceived(holder, ctx, state, msg);
+                dashSyncLogic.messageReceived(ctx, state, msg);
                 break;
             case LOGOUT :
                 MobileLogoutLogic.messageReceived(ctx, state.user, msg);

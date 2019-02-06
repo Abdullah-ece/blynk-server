@@ -1,6 +1,8 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard.device;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.core.dao.DeviceDao;
+import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
@@ -24,11 +26,16 @@ public final class MobileCreateDeviceLogic {
 
     private static final Logger log = LogManager.getLogger(MobileCreateDeviceLogic.class);
 
-    private MobileCreateDeviceLogic() {
+    private final OrganizationDao organizationDao;
+    private final DeviceDao deviceDao;
+
+    public MobileCreateDeviceLogic(Holder holder) {
+        this.deviceDao = holder.deviceDao;
+        this.organizationDao = holder.organizationDao;
     }
 
-    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
-                                       MobileStateHolder state, StringMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx,
+                                MobileStateHolder state, StringMessage message) {
         String deviceString = message.body;
 
         if (deviceString.isEmpty()) {
@@ -44,9 +51,9 @@ public final class MobileCreateDeviceLogic {
         }
 
         int orgId = state.user.orgId;
-        Organization org = holder.organizationDao.getOrgByIdOrThrow(orgId);
-        Product product = holder.organizationDao.assignToOrgAndAddDevice(org, newDevice);
-        holder.deviceDao.create(org, state.user.email, product, newDevice);
+        Organization org = organizationDao.getOrgByIdOrThrow(orgId);
+        Product product = organizationDao.assignToOrgAndAddDevice(org, newDevice);
+        deviceDao.create(org, state.user.email, product, newDevice);
 
         log.debug("Device for orgId {} created {}.", orgId, newDevice);
 

@@ -22,11 +22,14 @@ public final class MobileDeActivateDashboardLogic {
 
     private static final Logger log = LogManager.getLogger(MobileActivateDashboardLogic.class);
 
-    private MobileDeActivateDashboardLogic() {
+    private final SessionDao sessionDao;
+
+    public MobileDeActivateDashboardLogic(Holder holder) {
+        this.sessionDao = holder.sessionDao;
     }
 
-    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
-                                       MobileStateHolder state, StringMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx,
+                                MobileStateHolder state, StringMessage message) {
         var user = state.user;
 
         String sharedToken;
@@ -44,7 +47,6 @@ public final class MobileDeActivateDashboardLogic {
         }
         user.lastModifiedTs = System.currentTimeMillis();
 
-        SessionDao sessionDao = holder.sessionDao;
         var session = sessionDao.getOrgSession(state.user.orgId);
         session.sendToSharedApps(ctx.channel(), sharedToken, message.command, message.id, message.body);
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());

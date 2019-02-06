@@ -32,11 +32,14 @@ public final class MobileDeleteWidgetLogic {
 
     private static final Logger log = LogManager.getLogger(MobileDeleteWidgetLogic.class);
 
-    private MobileDeleteWidgetLogic() {
+    private final TimerWorker timerWorker;
+
+    public MobileDeleteWidgetLogic(Holder holder) {
+        this.timerWorker = holder.timerWorker;
     }
 
-    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
-                                       MobileStateHolder state, StringMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx,
+                                MobileStateHolder state, StringMessage message) {
         String[] split = split2(message.body);
 
         if (split.length < 2) {
@@ -81,7 +84,6 @@ public final class MobileDeleteWidgetLogic {
             throw new JsonException("Widget with passed id not found.");
         }
 
-        TimerWorker timerWorker = holder.timerWorker;
         if (deviceTilesId != -1) {
             TileTemplate tileTemplate = deviceTiles.getTileTemplateByIdOrThrow(templateId);
             if (widgetToDelete instanceof Tabs) {
