@@ -427,9 +427,11 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
 
         long now = System.currentTimeMillis();
 
-        holder.reportingDBManager.reportingDBDao.insertDataPoint(1, (short) 3, PinType.VIRTUAL, ((now - 180_000) / MINUTE) * MINUTE, 1);
-        holder.reportingDBManager.reportingDBDao.insertDataPoint(1, (short) 3, PinType.VIRTUAL, ((now - 120_000) / MINUTE) * MINUTE, 2);
-        holder.reportingDBManager.reportingDBDao.insertDataPoint(1, (short) 4, PinType.VIRTUAL, ((now - 60_000) / MINUTE) * MINUTE, 3);
+        holder.reportingDBManager.rawDataProcessor.collect(1, (short) 3, PinType.VIRTUAL, ((now - 180_000) / MINUTE) * MINUTE, 1);
+        holder.reportingDBManager.rawDataProcessor.collect(1, (short) 3, PinType.VIRTUAL, ((now - 120_000) / MINUTE) * MINUTE, 2);
+        holder.reportingDBManager.rawDataProcessor.collect(1, (short) 4, PinType.VIRTUAL, ((now - 60_000)  / MINUTE) * MINUTE, 3);
+
+        holder.reportingDBManager.reportingDBDao.insertDataPoint(holder.reportingDBManager.rawDataProcessor.rawStorage);
 
         appWebSocketClient.getGraphData(1, 432, Period.ONE_HOUR);
 
@@ -527,8 +529,10 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         }
 
         var now = System.currentTimeMillis();
-        holder.reportingDBManager.reportingDBDao.insertDataPoint(1, (short) 3, PinType.VIRTUAL, ((now - 60_000) / MINUTE) * MINUTE, 1.11D);
-        holder.reportingDBManager.reportingDBDao.insertDataPoint(1, (short) 3, PinType.VIRTUAL, (now / MINUTE) * MINUTE, 1.22D);
+        holder.reportingDBManager.rawDataProcessor.collect(1, (short) 3, PinType.VIRTUAL, ((now - 60_000) / MINUTE) * MINUTE, 1.11D);
+        holder.reportingDBManager.rawDataProcessor.collect(1, (short) 3, PinType.VIRTUAL, (now / MINUTE) * MINUTE, 1.22D);
+
+        holder.reportingDBManager.reportingDBDao.insertDataPoint(holder.reportingDBManager.rawDataProcessor.rawStorage);
 
         appWebSocketClient.send(GET_SUPERCHART_DATA, "1" + b(" 432 CUSTOM " + (now - 120_000) + " " + now));
 

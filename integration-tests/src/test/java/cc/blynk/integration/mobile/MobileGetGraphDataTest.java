@@ -22,6 +22,7 @@ import cc.blynk.server.core.model.widgets.web.WebLineGraph;
 import cc.blynk.server.core.protocol.model.messages.BinaryMessage;
 import cc.blynk.server.core.reporting.raw.BaseReportingKey;
 import cc.blynk.server.db.dao.RawEntry;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -66,6 +67,11 @@ public class MobileGetGraphDataTest extends SingleServerInstancePerTestWithDBAnd
         holder.reportingDBManager.executeSQL("ALTER TABLE reporting_average_hourly delete where device_id in " + ids);
         holder.reportingDBManager.executeSQL("ALTER TABLE reporting_average_daily delete where device_id in " + ids);
         holder.reportingDBManager.executeSQL("ALTER TABLE reporting_device_raw_data delete where device_id in " + ids);
+    }
+
+    @After
+    public void cleanRawDataCache() {
+        holder.reportingDBManager.rawDataProcessor.rawStorage.clear();
     }
 
     @Test
@@ -136,7 +142,9 @@ public class MobileGetGraphDataTest extends SingleServerInstancePerTestWithDBAnd
 
         long now = System.currentTimeMillis();
         double val = 1;
-        holder.reportingDBManager.reportingDBDao.insertDataPoint(device.id, dataStream.pin, dataStream.pinType, (now / MINUTE) * MINUTE, val);
+        holder.reportingDBManager.rawDataProcessor.collect(device.id, dataStream.pin, dataStream.pinType, (now / MINUTE) * MINUTE, val);
+
+        holder.reportingDBManager.reportingDBDao.insertDataPoint(holder.reportingDBManager.rawDataProcessor.rawStorage);
 
         appClient.getSuperChartData(dashBoard.id, superchart.id, Period.DAY);
         appClient.verifyResult(webJson(4, "No data.", 17));
@@ -180,8 +188,10 @@ public class MobileGetGraphDataTest extends SingleServerInstancePerTestWithDBAnd
         long now = System.currentTimeMillis();
         for (int point = 0; point < Period.ONE_HOUR.numberOfPoints; point++) {
             double val = (double) point;
-            holder.reportingDBManager.reportingDBDao.insertDataPoint(device.id, dataStream.pin, dataStream.pinType, (now / MINUTE) * MINUTE, val);
+            holder.reportingDBManager.rawDataProcessor.collect(device.id, dataStream.pin, dataStream.pinType, (now / MINUTE) * MINUTE, val);
         }
+
+        holder.reportingDBManager.reportingDBDao.insertDataPoint(holder.reportingDBManager.rawDataProcessor.rawStorage);
 
         appClient.getSuperChartData(dashBoard.id, superchart.id, Period.ONE_HOUR);
         BinaryMessage graphDataResponse = appClient.getBinaryBody();
@@ -239,8 +249,11 @@ public class MobileGetGraphDataTest extends SingleServerInstancePerTestWithDBAnd
         long now = System.currentTimeMillis();
         double val1 = 1D;
         double val2 = 2D;
-        holder.reportingDBManager.reportingDBDao.insertDataPoint(device.id, dataStream.pin, dataStream.pinType, (now / MINUTE) * MINUTE, val1);
-        holder.reportingDBManager.reportingDBDao.insertDataPoint(device.id, dataStream.pin, dataStream.pinType, (now / MINUTE) * MINUTE, val2);
+
+        holder.reportingDBManager.rawDataProcessor.collect(device.id, dataStream.pin, dataStream.pinType, (now / MINUTE) * MINUTE, val1);
+        holder.reportingDBManager.rawDataProcessor.collect(device.id, dataStream.pin, dataStream.pinType, (now / MINUTE) * MINUTE, val2);
+
+        holder.reportingDBManager.reportingDBDao.insertDataPoint(holder.reportingDBManager.rawDataProcessor.rawStorage);
 
         appClient.getSuperChartData(dashBoard.id, superchart.id, Period.ONE_HOUR);
         BinaryMessage graphDataResponse = appClient.getBinaryBody();
@@ -295,8 +308,11 @@ public class MobileGetGraphDataTest extends SingleServerInstancePerTestWithDBAnd
         long now = System.currentTimeMillis();
         double val1 = 1D;
         double val2 = 2D;
-        holder.reportingDBManager.reportingDBDao.insertDataPoint(device.id, dataStream.pin, dataStream.pinType, (now / MINUTE) * MINUTE, val1);
-        holder.reportingDBManager.reportingDBDao.insertDataPoint(device.id, dataStream.pin, dataStream.pinType, (now / MINUTE) * MINUTE, val2);
+
+        holder.reportingDBManager.rawDataProcessor.collect(device.id, dataStream.pin, dataStream.pinType, (now / MINUTE) * MINUTE, val1);
+        holder.reportingDBManager.rawDataProcessor.collect(device.id, dataStream.pin, dataStream.pinType, (now / MINUTE) * MINUTE, val2);
+
+        holder.reportingDBManager.reportingDBDao.insertDataPoint(holder.reportingDBManager.rawDataProcessor.rawStorage);
 
         appClient.getSuperChartData(dashBoard.id, superchart.id, Period.ONE_HOUR);
         BinaryMessage graphDataResponse = appClient.getBinaryBody();
@@ -356,8 +372,11 @@ public class MobileGetGraphDataTest extends SingleServerInstancePerTestWithDBAnd
         long now = System.currentTimeMillis();
         double val1 = 1D;
         double val2 = 2D;
-        holder.reportingDBManager.reportingDBDao.insertDataPoint(device.id, dataStream.pin, dataStream.pinType, (now / MINUTE) * MINUTE, val1);
-        holder.reportingDBManager.reportingDBDao.insertDataPoint(device.id, dataStream.pin, dataStream.pinType, (now / MINUTE) * MINUTE, val2);
+
+        holder.reportingDBManager.rawDataProcessor.collect(device.id, dataStream.pin, dataStream.pinType, (now / MINUTE) * MINUTE, val1);
+        holder.reportingDBManager.rawDataProcessor.collect(device.id, dataStream.pin, dataStream.pinType, (now / MINUTE) * MINUTE, val2);
+
+        holder.reportingDBManager.reportingDBDao.insertDataPoint(holder.reportingDBManager.rawDataProcessor.rawStorage);
 
         appClient.getSuperChartData(dashBoard.id, superchart.id, Period.ONE_HOUR);
         BinaryMessage graphDataResponse = appClient.getBinaryBody();
@@ -463,8 +482,11 @@ public class MobileGetGraphDataTest extends SingleServerInstancePerTestWithDBAnd
         long now = System.currentTimeMillis();
         double val1 = 1.11D;
         double val2 = 1.22D;
-        holder.reportingDBManager.reportingDBDao.insertDataPoint(device.id, dataStream.pin, dataStream.pinType, (now / MINUTE) * MINUTE, val1);
-        holder.reportingDBManager.reportingDBDao.insertDataPoint(device.id, dataStream.pin, dataStream.pinType, (now / MINUTE) * MINUTE, val2);
+
+        holder.reportingDBManager.rawDataProcessor.collect(device.id, dataStream.pin, dataStream.pinType, (now / MINUTE) * MINUTE, val1);
+        holder.reportingDBManager.rawDataProcessor.collect(device.id, dataStream.pin, dataStream.pinType, (now / MINUTE) * MINUTE, val2);
+
+        holder.reportingDBManager.reportingDBDao.insertDataPoint(holder.reportingDBManager.rawDataProcessor.rawStorage);
 
         appClient.deleteGraphData(dashBoard.id, superchart.id, "v8");
         appClient.verifyResult(ok(4));
@@ -513,8 +535,11 @@ public class MobileGetGraphDataTest extends SingleServerInstancePerTestWithDBAnd
         long now = System.currentTimeMillis();
         double val1 = 1.11D;
         double val2 = 1.22D;
-        holder.reportingDBManager.reportingDBDao.insertDataPoint(device.id, dataStream.pin, dataStream.pinType, (now / MINUTE) * MINUTE, val1);
-        holder.reportingDBManager.reportingDBDao.insertDataPoint(device.id, dataStream2.pin, dataStream2.pinType, (now / MINUTE) * MINUTE, val2);
+
+        holder.reportingDBManager.rawDataProcessor.collect(device.id, dataStream.pin, dataStream.pinType, (now / MINUTE) * MINUTE, val1);
+        holder.reportingDBManager.rawDataProcessor.collect(device.id, dataStream2.pin, dataStream2.pinType, (now / MINUTE) * MINUTE, val2);
+
+        holder.reportingDBManager.reportingDBDao.insertDataPoint(holder.reportingDBManager.rawDataProcessor.rawStorage);
 
         appClient.deleteGraphData(dashBoard.id, superchart.id, "v8", "v9");
         appClient.verifyResult(ok(4));
@@ -592,7 +617,10 @@ public class MobileGetGraphDataTest extends SingleServerInstancePerTestWithDBAnd
 
         long now = System.currentTimeMillis();
         double val = 1;
-        holder.reportingDBManager.reportingDBDao.insertDataPoint(device.id, dataStream.pin, dataStream.pinType, (now / MINUTE) * MINUTE, val);
+
+        holder.reportingDBManager.rawDataProcessor.collect(device.id, dataStream.pin, dataStream.pinType, (now / MINUTE) * MINUTE, val);
+
+        holder.reportingDBManager.reportingDBDao.insertDataPoint(holder.reportingDBManager.rawDataProcessor.rawStorage);
 
         TestHardClient hardClient = new TestHardClient("localhost", properties.getHttpPort());
         hardClient.start();
