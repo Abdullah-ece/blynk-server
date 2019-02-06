@@ -81,7 +81,7 @@ AS SELECT
     toStartOfMonth(ts) AS ts,
     command_code,
     toUInt64(counter) AS counter
-FROM reporting_command_stat_minute
+FROM reporting_command_stat_minute;
 
 CREATE MATERIALIZED VIEW reporting_average_minute
 ENGINE = AggregatingMergeTree()
