@@ -66,11 +66,7 @@ public class DataHandler extends BaseHttpHandler {
         long ts = (inTs == null ? System.currentTimeMillis() : inTs);
         double valueParsed = NumberUtil.parseDouble(value);
 
-        blockingIOProcessor.executeDB(() -> {
-            reportingDBManager.reportingDBDao.insertDataPoint(
-                    deviceId, pin, pinType, ts, valueParsed);
-            ctx.writeAndFlush(ok(), ctx.voidPromise());
-        });
+        reportingDBManager.rawDataProcessor.collect(deviceId, pin, pinType, ts, valueParsed);
 
         return null;
     }

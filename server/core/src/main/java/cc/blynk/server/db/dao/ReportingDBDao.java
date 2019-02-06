@@ -172,18 +172,6 @@ public class ReportingDBDao {
         return 0;
     }
 
-    public void insertDataPoint(int deviceId, short pin, PinType pinType, long ts, double value) {
-        try (Connection connection = ds.getConnection();
-             PreparedStatement ps = connection.prepareStatement(insertRaw)) {
-            prepareReportingInsert(ps, deviceId, pin, pinType, ts, value);
-
-            ps.executeUpdate();
-            connection.commit();
-        } catch (Exception e) {
-            log.error("Error inserting single point reporting data in DB.", e);
-        }
-    }
-
     public void insertDataPoint(Map<BaseReportingKey, Queue<BaseReportingValue>> tableDataMappers) {
         try (Connection connection = ds.getConnection();
              PreparedStatement ps = connection.prepareStatement(insertRaw)) {
