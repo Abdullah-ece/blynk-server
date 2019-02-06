@@ -41,7 +41,9 @@ public class ExternalAPITest extends APIBaseTest {
         httpsServerUrl = String.format("https://localhost:%s/external/api/", properties.getHttpsPort());
 
         //clean everything just in case
-        holder.dbManager.executeSQL("DELETE FROM reporting_events");
+        //clickhouse doesn't have normal way of data removal, so using "hack"
+        // only delete where ts >= 1 here works
+        holder.reportingDBManager.executeSQL("ALTER TABLE reporting_events delete where ts >= 1");
     }
 
     @Test
