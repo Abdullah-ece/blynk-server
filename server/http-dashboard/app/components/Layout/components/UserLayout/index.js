@@ -349,7 +349,7 @@ class UserLayout extends React.Component {
               {VerifyPermission(this.props.currentRole.permissionGroup1, PERMISSIONS_INDEX.OTA_VIEW) && (
                 <Menu.Item key="/ota">
                   <LinearIcon type="mail4"/>
-                  <span>OTA</span>
+                  <span>Blynk.Air</span>
                 </Menu.Item>
               )}
               {VerifyPermission(this.props.currentRole.permissionGroup2, PERMISSIONS2_INDEX.RULE_GROUP_VIEW) && (
