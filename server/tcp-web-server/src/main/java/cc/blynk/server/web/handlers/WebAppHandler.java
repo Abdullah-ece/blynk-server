@@ -77,13 +77,13 @@ public final class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<St
 
     public final WebAppStateHolder state;
     private final GlobalStats stats;
-    private final WebAppLogicHolder webAppLogicHolder;
+    private final WebLogicHolder webLogicHolder;
 
-    public WebAppHandler(GlobalStats stats, WebAppLogicHolder webAppLogicHolder, WebAppStateHolder state) {
+    public WebAppHandler(GlobalStats stats, WebLogicHolder webLogicHolder, WebAppStateHolder state) {
         super(StringMessage.class);
         this.state = state;
         this.stats = stats;
-        this.webAppLogicHolder = webAppLogicHolder;
+        this.webLogicHolder = webLogicHolder;
     }
 
     @Override
@@ -97,163 +97,163 @@ public final class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<St
                 WebEditAccountLogic.messageReceived(ctx, state, msg);
                 break;
             case HARDWARE :
-                webAppLogicHolder.webAppControlHardwareLogic.messageReceived(ctx, state, msg);
+                webLogicHolder.webAppControlHardwareLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_TRACK_DEVICE:
-                webAppLogicHolder.webTrackDeviceLogic.messageReceived(ctx, state, msg);
+                webLogicHolder.webTrackDeviceLogic.messageReceived(ctx, state, msg);
                 break;
             case GET_SUPERCHART_DATA:
-                webAppLogicHolder.webGetGraphDataLogic.messageReceived(ctx, state, msg);
+                webLogicHolder.webGetGraphDataLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_RESOLVE_EVENT:
-                webAppLogicHolder.webResolveLogEventLogic.messageReceived(ctx, state, msg);
+                webLogicHolder.webResolveLogEventLogic.messageReceived(ctx, state, msg);
                 break;
             case PING :
                 PingLogic.messageReceived(ctx, msg.id);
                 break;
             case WEB_CREATE_DEVICE :
-                webAppLogicHolder.webCreateOrgDeviceLogic.messageReceived(ctx, state, msg);
+                webLogicHolder.webCreateOrgDeviceLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_EDIT_DEVICE:
-                webAppLogicHolder.webEditOrgDeviceLogic.messageReceived(ctx, state, msg);
+                webLogicHolder.webEditOrgDeviceLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_GET_DEVICES :
-                webAppLogicHolder.webGetOrgDevicesLogic.messageReceived(ctx, state, msg);
+                webLogicHolder.webGetOrgDevicesLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_GET_DEVICE :
-                webAppLogicHolder.webGetOrgDeviceLogic.messageReceived(ctx, state, msg);
+                webLogicHolder.webGetOrgDeviceLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_GET_ORG :
-                webAppLogicHolder.webGetOrganizationLogic.messageReceived(ctx, state, msg);
+                webLogicHolder.webGetOrganizationLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_GET_ORGS :
-                webAppLogicHolder.webGetOrganizationsLogic.messageReceived(ctx, state, msg);
+                webLogicHolder.webGetOrganizationsLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_GET_ORG_USERS :
-                webAppLogicHolder.webGetOrgUsersLogic.messageReceived(ctx, state, msg);
+                webLogicHolder.webGetOrgUsersLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_GET_PRODUCT_LOCATIONS:
-                webAppLogicHolder.webGetProductLocationsLogic.messageReceived(ctx, state, msg);
+                webLogicHolder.webGetProductLocationsLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_CAN_INVITE_USER :
-                webAppLogicHolder.webCanInviteUserLogic.messageReceived(ctx, state, msg);
+                webLogicHolder.webCanInviteUserLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_CREATE_PRODUCT :
-                webAppLogicHolder.webCreateProductLogic.messageReceived(ctx, state, msg);
+                webLogicHolder.webCreateProductLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_GET_PRODUCT :
-                webAppLogicHolder.webGetProductLogic.messageReceived(ctx, state, msg);
+                webLogicHolder.webGetProductLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_GET_PRODUCTS :
-                webAppLogicHolder.webGetProductsLogic.messageReceived(ctx, state, msg);
+                webLogicHolder.webGetProductsLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_EDIT_PRODUCT:
-                webAppLogicHolder.webEditProductLogic.messageReceived(ctx, state, msg);
+                webLogicHolder.webEditProductLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_DELETE_PRODUCT :
-                webAppLogicHolder.webDeleteProductLogic.messageReceived(ctx, state, msg);
+                webLogicHolder.webDeleteProductLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_EDIT_DEVICES_META_IN_PRODUCT:
-                webAppLogicHolder.webEditDevicesMetaInProductLogic.messageReceived(ctx, state, msg);
+                webLogicHolder.webEditDevicesMetaInProductLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_EDIT_USER_INFO:
-                webAppLogicHolder.webEditUserInfoLogic.messageReceived(ctx, state, msg);
+                webLogicHolder.webEditUserInfoLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_DELETE_USER :
-                webAppLogicHolder.webDeleteUserLogic.messageReceived(ctx, state, msg);
+                webLogicHolder.webDeleteUserLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_CREATE_ORG :
-                webAppLogicHolder.webCreateOrganizationLogic.messageReceived(ctx, state, msg);
+                webLogicHolder.webCreateOrganizationLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_EDIT_ORG:
-                webAppLogicHolder.webEditOrganizationLogic.messageReceived(ctx, state, msg);
+                webLogicHolder.webEditOrganizationLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_DELETE_ORG :
-                webAppLogicHolder.webDeleteOrganizationLogic.messageReceived(ctx, state, msg);
+                webLogicHolder.webDeleteOrganizationLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_CAN_DELETE_PRODUCT :
-                webAppLogicHolder.webCanDeleteProductLogic.messageReceived(ctx, state, msg);
+                webLogicHolder.webCanDeleteProductLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_INVITE_USER :
-                webAppLogicHolder.webInviteUserLogic.messageReceived(ctx, state, msg);
+                webLogicHolder.webInviteUserLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_EDIT_DEVICE_METAFIELD:
-                webAppLogicHolder.webEditDeviceMetafieldLogic.messageReceived(ctx, state, msg);
+                webLogicHolder.webEditDeviceMetafieldLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_GET_DEVICE_TIMELINE :
-                webAppLogicHolder.webGetDeviceTimelineLogic.messageReceived(ctx, state, msg);
+                webLogicHolder.webGetDeviceTimelineLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_DELETE_DEVICE :
-                webAppLogicHolder.webDeleteOrgDeviceLogic.messageReceived(ctx, state, msg);
+                webLogicHolder.webDeleteOrgDeviceLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_GET_METAFIELD :
-                webAppLogicHolder.webGetMetaFieldLogic.messageReceived(ctx, state, msg);
+                webLogicHolder.webGetMetaFieldLogic.messageReceived(ctx, state, msg);
                 break;
             case LOGOUT :
                 MobileLogoutLogic.messageReceived(ctx, state.user, msg);
                 break;
             case WEB_GET_TEMP_SECURE_TOKEN :
-                webAppLogicHolder.webGetTempSecureTokenLogic.messageReceived(ctx, state.user, msg);
+                webLogicHolder.webGetTempSecureTokenLogic.messageReceived(ctx, state.user, msg);
                 break;
             case WEB_GET_ORG_HIERARCHY :
-                webAppLogicHolder.webGetOrganizationsHierarchyLogic.messageReceived(ctx, state, msg);
+                webLogicHolder.webGetOrganizationsHierarchyLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_CREATE_ROLE :
-                webAppLogicHolder.webCreateRoleLogic.messageReceived(ctx, state, msg);
+                webLogicHolder.webCreateRoleLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_EDIT_ROLE:
-                webAppLogicHolder.webEditRoleLogic.messageReceived(ctx, state, msg);
+                webLogicHolder.webEditRoleLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_DELETE_ROLE :
-                webAppLogicHolder.webDeleteRoleLogic.messageReceived(ctx, state, msg);
+                webLogicHolder.webDeleteRoleLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_GET_ROLES :
-                webAppLogicHolder.webGetRolesLogic.messageReceived(ctx, state, msg);
+                webLogicHolder.webGetRolesLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_GET_ROLE :
-                webAppLogicHolder.webGetRoleLogic.messageReceived(ctx, state, msg);
+                webLogicHolder.webGetRoleLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_SET_AUTH_TOKEN :
-                webAppLogicHolder.webSetAuthTokenForDeviceLogic.messageReceived(ctx, state, msg);
+                webLogicHolder.webSetAuthTokenForDeviceLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_EDIT_OWN_ORG :
-                webAppLogicHolder.webEditOwnOrganizationLogic.messageReceived(ctx, state, msg);
+                webLogicHolder.webEditOwnOrganizationLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_GET_DEVICE_COUNT_FOR_ORG :
-                webAppLogicHolder.webGetDeviceCountLogic.messageReceived(ctx, state, msg);
+                webLogicHolder.webGetDeviceCountLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_GET_DEVICE_COUNT_FOR_PRODUCT_AND_SUBPRODUCTS :
-                webAppLogicHolder.webGetDeviceCountFromProductIDLogic.messageReceived(ctx, state, msg);
+                webLogicHolder.webGetDeviceCountFromProductIDLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_OTA_GET_FIRMWARE_INFO :
-                webAppLogicHolder.webGetFirmwareInfoLogic.messageReceived(ctx, state, msg);
+                webLogicHolder.webGetFirmwareInfoLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_OTA_START :
-                webAppLogicHolder.webStartOtaLogic.messageReceived(ctx, state, msg);
+                webLogicHolder.webStartOtaLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_OTA_STOP :
-                webAppLogicHolder.webStopOtaLogic.messageReceived(ctx, state, msg);
+                webLogicHolder.webStopOtaLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_SHIPMENT_DELETE:
-                webAppLogicHolder.webCleanOtaLogic.messageReceived(ctx, state, msg);
+                webLogicHolder.webCleanOtaLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_TRACK_ORG :
-                webAppLogicHolder.webTrackOrganizationLogic.messageReceived(ctx, state, msg);
+                webLogicHolder.webTrackOrganizationLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_GET_USER_COUNTERS_BY_ROLE :
-                webAppLogicHolder.webGetUserCountersByRoleLogic.messageReceived(ctx, state, msg);
+                webLogicHolder.webGetUserCountersByRoleLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_GET_DEVICES_BY_REFERENCE_METAFIELD :
-                webAppLogicHolder.commonGetDevicesByReferenceMetafieldLogic.messageReceived(ctx, state, msg);
+                webLogicHolder.commonGetDevicesByReferenceMetafieldLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_GET_RULE_GROUP :
-                webAppLogicHolder.webGetRuleGroupLogic.messageReceived(ctx, state, msg);
+                webLogicHolder.webGetRuleGroupLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_EDIT_RULE_GROUP :
-                webAppLogicHolder.webEditRuleGroupLogic.messageReceived(ctx, state, msg);
+                webLogicHolder.webEditRuleGroupLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_GET_ORG_SHIPMENTS :
-                webAppLogicHolder.webGetOrgShipmentsLogic.messageReceived(ctx, state, msg);
+                webLogicHolder.webGetOrgShipmentsLogic.messageReceived(ctx, state, msg);
                 break;
         }
     }

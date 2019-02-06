@@ -20,6 +20,7 @@ import cc.blynk.server.api.http.dashboard.WebLoginHandler;
 import cc.blynk.server.api.http.handlers.BaseHttpAndBlynkUnificationHandler;
 import cc.blynk.server.api.http.handlers.BaseWebSocketUnificator;
 import cc.blynk.server.application.handlers.main.MobileChannelStateHandler;
+import cc.blynk.server.application.handlers.main.MobileLogicHolder;
 import cc.blynk.server.application.handlers.main.MobileResetPasswordHandler;
 import cc.blynk.server.application.handlers.main.auth.MobileAlreadyLoggedHandler;
 import cc.blynk.server.application.handlers.main.auth.MobileGetServerHandler;
@@ -36,7 +37,7 @@ import cc.blynk.server.core.protocol.handlers.encoders.WSMessageEncoder;
 import cc.blynk.server.hardware.handlers.hardware.auth.HardwareLoginHandler;
 import cc.blynk.server.hardware.handlers.hardware.state.HardwareChannelStateHandler;
 import cc.blynk.server.servers.BaseServer;
-import cc.blynk.server.web.handlers.WebAppLogicHolder;
+import cc.blynk.server.web.handlers.WebLogicHolder;
 import cc.blynk.server.web.handlers.auth.WebAppLoginHandler;
 import cc.blynk.server.web.handlers.auth.WebAppLoginViaInviteHandler;
 import cc.blynk.server.web.handlers.auth.WebAppResetPasswordHandler;
@@ -72,11 +73,12 @@ public class MobileAndHttpsServer extends BaseServer {
         super(holder.props.getProperty("listen.address"),
                 holder.props.getIntProperty("https.port"), holder.transportTypeHolder);
 
-        var webAppLogicHolder = new WebAppLogicHolder(holder);
+        var mobileLogicHolder = new MobileLogicHolder(holder);
+        var webAppLogicHolder = new WebLogicHolder(holder);
         var appChannelStateHandler = new MobileChannelStateHandler(holder.sessionDao);
         var registerHandler = new MobileRegisterHandler(holder);
-        var appLoginHandler = new MobileLoginHandler(holder);
-        var appShareLoginHandler = new MobileShareLoginHandler(holder);
+        var appLoginHandler = new MobileLoginHandler(holder, mobileLogicHolder);
+        var appShareLoginHandler = new MobileShareLoginHandler(holder, mobileLogicHolder);
         var userNotLoggedHandler = new UserNotLoggedHandler();
         var getServerHandler = new MobileGetServerHandler(holder);
         var resetPasswordHandler = new MobileResetPasswordHandler(holder);

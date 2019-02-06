@@ -58,7 +58,7 @@ import cc.blynk.server.web.handlers.logic.product.WebGetProductsLogic;
  * Created by Dmitriy Dumanskiy.
  * Created on 06.02.19.
  */
-public final class WebAppLogicHolder {
+public final class WebLogicHolder {
 
     final WebAppControlHardwareLogic webAppControlHardwareLogic;
     final WebGetGraphDataLogic webGetGraphDataLogic;
@@ -112,7 +112,7 @@ public final class WebAppLogicHolder {
     final WebGetTempSecureTokenLogic webGetTempSecureTokenLogic;
     final CommonGetDevicesByReferenceMetafieldLogic commonGetDevicesByReferenceMetafieldLogic;
 
-    public WebAppLogicHolder(Holder holder) {
+    public WebLogicHolder(Holder holder) {
         this.webAppControlHardwareLogic = new WebAppControlHardwareLogic(holder);
         this.webGetGraphDataLogic = new WebGetGraphDataLogic(holder);
         this.webResolveLogEventLogic = new WebResolveLogEventLogic(holder);

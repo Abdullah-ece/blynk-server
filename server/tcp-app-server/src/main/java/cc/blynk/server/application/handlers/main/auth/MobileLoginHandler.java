@@ -2,6 +2,7 @@ package cc.blynk.server.application.handlers.main.auth;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.MobileHandler;
+import cc.blynk.server.application.handlers.main.MobileLogicHolder;
 import cc.blynk.server.application.handlers.main.MobileResetPasswordHandler;
 import cc.blynk.server.application.handlers.sharing.auth.MobileShareLoginHandler;
 import cc.blynk.server.common.handlers.UserNotLoggedHandler;
@@ -57,11 +58,13 @@ public class MobileLoginHandler extends SimpleChannelInboundHandler<LoginMessage
     private static final Logger log = LogManager.getLogger(MobileLoginHandler.class);
 
     private final Holder holder;
+    private final MobileLogicHolder mobileLogicHolder;
     private final DefaultAsyncHttpClient asyncHttpClient;
     private final boolean allowStoreIp;
 
-    public MobileLoginHandler(Holder holder) {
+    public MobileLoginHandler(Holder holder, MobileLogicHolder mobileLogicHolder) {
         this.holder = holder;
+        this.mobileLogicHolder = mobileLogicHolder;
         this.asyncHttpClient = holder.asyncHttpClient;
         this.allowStoreIp = holder.props.getAllowStoreIp();
     }
@@ -192,7 +195,7 @@ public class MobileLoginHandler extends SimpleChannelInboundHandler<LoginMessage
 
         Role role = holder.organizationDao.getRole(user);
         var appStateHolder = new MobileStateHolder(user, role, version);
-        pipeline.addLast("AAppHandler", new MobileHandler(holder, appStateHolder));
+        pipeline.addLast("AAppHandler", new MobileHandler(holder, mobileLogicHolder, appStateHolder));
 
         var channel = ctx.channel();
 

@@ -1,6 +1,7 @@
 package cc.blynk.server.application.handlers.sharing.auth;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.application.handlers.main.MobileLogicHolder;
 import cc.blynk.server.application.handlers.main.auth.MobileGetServerHandler;
 import cc.blynk.server.application.handlers.main.auth.MobileLoginHandler;
 import cc.blynk.server.application.handlers.main.auth.MobileRegisterHandler;
@@ -41,9 +42,11 @@ public class MobileShareLoginHandler extends SimpleChannelInboundHandler<ShareLo
     private static final Logger log = LogManager.getLogger(MobileShareLoginHandler.class);
 
     private final Holder holder;
+    private final MobileLogicHolder mobileLogicHolder;
 
-    public MobileShareLoginHandler(Holder holder) {
+    public MobileShareLoginHandler(Holder holder, MobileLogicHolder mobileLogicHolder) {
         this.holder = holder;
+        this.mobileLogicHolder = mobileLogicHolder;
     }
 
     @Override
@@ -90,7 +93,8 @@ public class MobileShareLoginHandler extends SimpleChannelInboundHandler<ShareLo
         Role role = holder.organizationDao.getRole(user);
         MobileShareStateHolder mobileShareStateHolder =
                 new MobileShareStateHolder(user, role, version, token, dashId);
-        ctx.pipeline().addLast("AAppSHareHandler", new MobileShareHandler(holder, mobileShareStateHolder));
+        ctx.pipeline().addLast("AAppSHareHandler",
+                new MobileShareHandler(holder, mobileLogicHolder, mobileShareStateHolder));
 
         Session session = holder.sessionDao.getOrCreateSessionForOrg(
                 user.orgId, ctx.channel().eventLoop());

@@ -1,71 +1,18 @@
 package cc.blynk.server.application.handlers.main;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.application.handlers.main.logic.MobileActivateDashboardLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileAddPushLogic;
-import cc.blynk.server.application.handlers.main.logic.MobileAssignTokenLogic;
-import cc.blynk.server.application.handlers.main.logic.MobileDashSyncLogic;
-import cc.blynk.server.application.handlers.main.logic.MobileDeActivateDashboardLogic;
-import cc.blynk.server.application.handlers.main.logic.MobileDeviceSyncLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileEditProfileSettingLogic;
-import cc.blynk.server.application.handlers.main.logic.MobileGetCloneCodeLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileGetEnergyLogic;
-import cc.blynk.server.application.handlers.main.logic.MobileGetProjectByClonedTokenLogic;
-import cc.blynk.server.application.handlers.main.logic.MobileGetProjectByTokenLogic;
-import cc.blynk.server.application.handlers.main.logic.MobileGetProvisionTokenLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileHardwareGroupLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileHardwareLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileHardwareResendFromBTLogic;
-import cc.blynk.server.application.handlers.main.logic.MobileLoadProfileGzippedLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileLogoutLogic;
-import cc.blynk.server.application.handlers.main.logic.MobileMailLogic;
-import cc.blynk.server.application.handlers.main.logic.MobilePurchaseLogic;
-import cc.blynk.server.application.handlers.main.logic.MobileRedeemLogic;
-import cc.blynk.server.application.handlers.main.logic.MobileRefreshTokenLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileSetWidgetPropertyLogic;
-import cc.blynk.server.application.handlers.main.logic.dashboard.MobileCreateDashLogic;
-import cc.blynk.server.application.handlers.main.logic.dashboard.MobileDeleteDashLogic;
-import cc.blynk.server.application.handlers.main.logic.dashboard.MobileEditDashLogic;
-import cc.blynk.server.application.handlers.main.logic.dashboard.MobileEditDashSettingLogic;
-import cc.blynk.server.application.handlers.main.logic.dashboard.device.MobileCreateDeviceLogic;
-import cc.blynk.server.application.handlers.main.logic.dashboard.device.MobileDeleteDeviceLogic;
-import cc.blynk.server.application.handlers.main.logic.dashboard.device.MobileEditDeviceLogic;
-import cc.blynk.server.application.handlers.main.logic.dashboard.device.MobileEditDeviceMetafieldLogic;
-import cc.blynk.server.application.handlers.main.logic.dashboard.device.MobileGetDeviceLogic;
-import cc.blynk.server.application.handlers.main.logic.dashboard.device.MobileGetOrgDevicesLogic;
-import cc.blynk.server.application.handlers.main.logic.dashboard.widget.MobileCreateWidgetLogic;
-import cc.blynk.server.application.handlers.main.logic.dashboard.widget.MobileDeleteWidgetLogic;
-import cc.blynk.server.application.handlers.main.logic.dashboard.widget.MobileEditWidgetLogic;
-import cc.blynk.server.application.handlers.main.logic.dashboard.widget.MobileGetWidgetLogic;
-import cc.blynk.server.application.handlers.main.logic.dashboard.widget.group.MobileCreateGroupLogic;
-import cc.blynk.server.application.handlers.main.logic.dashboard.widget.group.MobileDeleteGroupLogic;
-import cc.blynk.server.application.handlers.main.logic.dashboard.widget.group.MobileEditGroupLogic;
-import cc.blynk.server.application.handlers.main.logic.dashboard.widget.group.template.MobileCreateGroupTemplateLogic;
-import cc.blynk.server.application.handlers.main.logic.dashboard.widget.group.template.MobileDeleteGroupTemplateLogic;
-import cc.blynk.server.application.handlers.main.logic.dashboard.widget.group.template.MobileEditGroupTemplateLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.tile.MobileCreateTileTemplateLogic;
-import cc.blynk.server.application.handlers.main.logic.dashboard.widget.tile.MobileDeleteTileTemplateLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.tile.MobileEditTileTemplateLogic;
-import cc.blynk.server.application.handlers.main.logic.face.MobileCreateAppLogic;
-import cc.blynk.server.application.handlers.main.logic.face.MobileDeleteAppLogic;
-import cc.blynk.server.application.handlers.main.logic.face.MobileEditAppLogic;
-import cc.blynk.server.application.handlers.main.logic.face.MobileEditFaceLogic;
-import cc.blynk.server.application.handlers.main.logic.face.MobileMailQRsLogic;
-import cc.blynk.server.application.handlers.main.logic.graph.MobileDeleteOrgDeviceDataLogic;
-import cc.blynk.server.application.handlers.main.logic.graph.MobileDeleteSuperChartDataLogic;
-import cc.blynk.server.application.handlers.main.logic.graph.MobileGetSuperChartDataLogic;
-import cc.blynk.server.application.handlers.main.logic.reporting.MobileCreateReportLogic;
-import cc.blynk.server.application.handlers.main.logic.reporting.MobileDeleteReportLogic;
-import cc.blynk.server.application.handlers.main.logic.reporting.MobileEditReportLogic;
-import cc.blynk.server.application.handlers.main.logic.reporting.MobileExportReportLogic;
-import cc.blynk.server.application.handlers.main.logic.sharing.MobileGetShareTokenLogic;
-import cc.blynk.server.application.handlers.main.logic.sharing.MobileRefreshShareTokenLogic;
-import cc.blynk.server.application.handlers.main.logic.sharing.MobileShareLogic;
 import cc.blynk.server.common.JsonBasedSimpleChannelInboundHandler;
-import cc.blynk.server.common.handlers.CommonGetDevicesByReferenceMetafieldLogic;
 import cc.blynk.server.common.handlers.logic.PingLogic;
-import cc.blynk.server.common.handlers.logic.timeline.WebGetDeviceTimelineLogic;
-import cc.blynk.server.common.handlers.logic.timeline.WebResolveLogEventLogic;
 import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.mobile.MobileStateHolder;
@@ -147,125 +94,23 @@ public final class MobileHandler extends JsonBasedSimpleChannelInboundHandler<St
 
     public final MobileStateHolder state;
     private final GlobalStats stats;
-    private final MobileHardwareLogic hardwareLogic;
+    private final MobileLogicHolder mobileLogicHolder;
+
+    private final MobileHardwareLogic mobileHardwareLogic;
     private final MobileHardwareGroupLogic mobileHardwareGroupLogic;
 
-    private final MobileHardwareResendFromBTLogic hardwareResendFromBTLogic;
-    private final MobileMailLogic mobileMailLogic;
-    private final MobilePurchaseLogic mobilePurchaseLogic;
-    private final MobileDeleteAppLogic mobileDeleteAppLogic;
-    private final MobileMailQRsLogic mailQRsLogic;
-    private final MobileGetProjectByClonedTokenLogic mobileGetProjectByCloneCodeLogic;
-    private final MobileGetOrgDevicesLogic mobileGetOrgDevicesLogic;
-    private final MobileDeleteOrgDeviceDataLogic mobileDeleteOrgDeviceDataLogic;
-    private final MobileLoadProfileGzippedLogic mobileLoadProfileGzippedLogic;
-    private final MobileGetWidgetLogic mobileGetWidgetLogic;
-    private final WebGetDeviceTimelineLogic webGetDeviceTimelineLogic;
-    private final WebResolveLogEventLogic webResolveLogEventLogic;
-    private final MobileGetSuperChartDataLogic mobileGetSuperChartDataLogic;
-    private final MobileCreateGroupTemplateLogic mobileCreateGroupTemplateLogic;
-    private final MobileEditGroupTemplateLogic mobileEditGroupTemplateLogic;
-    private final MobileDeleteGroupTemplateLogic mobileDeleteGroupTemplateLogic;
-    private final MobileCreateGroupLogic mobileCreateGroupLogic;
-    private final MobileEditGroupLogic mobileEditGroupLogic;
-    private final MobileDeleteGroupLogic mobileDeleteGroupLogic;
-    private final CommonGetDevicesByReferenceMetafieldLogic commonGetDevicesByReferenceMetafieldLogic;
-    private final MobileCreateReportLogic mobileCreateReportLogic;
-    private final MobileEditReportLogic mobileEditReportLogic;
-    private final MobileDeleteReportLogic mobileDeleteReportLogic;
-    private final MobileExportReportLogic mobileExportReportLogic;
-    private final MobileGetProvisionTokenLogic mobileGetProvisionTokenLogic;
-    private final MobileGetCloneCodeLogic mobileGetCloneCodeLogic;
-    private final MobileEditFaceLogic mobileEditFaceLogic;
-    private final MobileGetProjectByTokenLogic mobileGetProjectByTokenLogic;
-    private final MobileDashSyncLogic mobileDashSyncLogic;
-    private final MobileDeviceSyncLogic mobileDeviceSyncLogic;
-    private final MobileGetDeviceLogic mobileGetDeviceLogic;
-    private final MobileEditDeviceMetafieldLogic mobileEditDeviceMetafieldLogic;
-    private final MobileDeleteDeviceLogic mobileDeleteDeviceLogic;
-    private final MobileEditDeviceLogic mobileEditDeviceLogic;
-    private final MobileCreateDeviceLogic mobileCreateDeviceLogic;
-    private final MobileRedeemLogic mobileRedeemLogic;
-    private final MobileDeleteTileTemplateLogic mobileDeleteTileTemplateLogic;
-    private final MobileDeleteWidgetLogic mobileDeleteWidgetLogic;
-    private final MobileEditWidgetLogic mobileEditWidgetLogic;
-    private final MobileCreateWidgetLogic mobileCreateWidgetLogic;
-    private final MobileDeleteDashLogic mobileDeleteDashLogic;
-    private final MobileEditDashLogic mobileEditDashLogic;
-    private final MobileCreateDashLogic mobileCreateDashLogic;
-    private final MobileRefreshShareTokenLogic mobileRefreshShareTokenLogic;
-    private final MobileGetShareTokenLogic mobileGetShareTokenLogic;
-    private final MobileDeleteSuperChartDataLogic mobileDeleteSuperChartDataLogic;
-    private final MobileRefreshTokenLogic mobileRefreshTokenLogic;
-    private final MobileAssignTokenLogic mobileAssignTokenLogic;
-    private final MobileShareLogic mobileShareLogic;
-    private final MobileDeActivateDashboardLogic mobileDeActivateDashboardLogic;
-    private final MobileActivateDashboardLogic mobileActivateDashboardLogic;
-    private final MobileEditAppLogic mobileEditAppLogic;
-    private final MobileEditDashSettingLogic mobileEditDashSettingLogic;
-    private final MobileCreateAppLogic mobileCreateAppLogic;
+    private final MobileHardwareResendFromBTLogic mobileHardwareResendFromBTLogic;
 
-    public MobileHandler(Holder holder, MobileStateHolder state) {
+    public MobileHandler(Holder holder, MobileLogicHolder mobileLogicHolder, MobileStateHolder state) {
         super(StringMessage.class);
         this.state = state;
         this.stats = holder.stats;
+        this.mobileLogicHolder = mobileLogicHolder;
 
-        this.hardwareLogic = new MobileHardwareLogic(holder);
+        //those handlers hold state
+        this.mobileHardwareLogic = new MobileHardwareLogic(holder);
         this.mobileHardwareGroupLogic = new MobileHardwareGroupLogic(holder);
-        this.mobileGetOrgDevicesLogic = new MobileGetOrgDevicesLogic(holder);
-        this.mobileLoadProfileGzippedLogic = new MobileLoadProfileGzippedLogic(holder);
-        this.mobileGetWidgetLogic = new MobileGetWidgetLogic(holder);
-        this.webGetDeviceTimelineLogic = new WebGetDeviceTimelineLogic(holder);
-        this.webResolveLogEventLogic = new WebResolveLogEventLogic(holder);
-        this.mobileGetSuperChartDataLogic = new MobileGetSuperChartDataLogic(holder);
-        this.mobileDeleteOrgDeviceDataLogic = new MobileDeleteOrgDeviceDataLogic(holder);
-        this.mobileCreateGroupTemplateLogic = new MobileCreateGroupTemplateLogic(holder);
-        this.mobileEditGroupTemplateLogic = new MobileEditGroupTemplateLogic();
-        this.mobileDeleteGroupTemplateLogic = new MobileDeleteGroupTemplateLogic(holder);
-        this.mobileCreateGroupLogic = new MobileCreateGroupLogic();
-        this.mobileEditGroupLogic = new MobileEditGroupLogic();
-        this.mobileDeleteGroupLogic = new MobileDeleteGroupLogic();
-        this.commonGetDevicesByReferenceMetafieldLogic = new CommonGetDevicesByReferenceMetafieldLogic(holder);
-        this.mobileCreateReportLogic = new MobileCreateReportLogic(holder);
-        this.mobileEditReportLogic = new MobileEditReportLogic(holder);
-        this.mobileDeleteReportLogic = new MobileDeleteReportLogic(holder);
-        this.mobileExportReportLogic = new MobileExportReportLogic(holder);
-        this.mobileGetProvisionTokenLogic = new MobileGetProvisionTokenLogic(holder);
-        this.mobileGetProjectByCloneCodeLogic = new MobileGetProjectByClonedTokenLogic(holder);
-        this.mobileGetCloneCodeLogic = new MobileGetCloneCodeLogic(holder);
-        this.mobileEditFaceLogic = new MobileEditFaceLogic(holder);
-        this.mailQRsLogic = new MobileMailQRsLogic(holder);
-        this.mobileGetProjectByTokenLogic = new MobileGetProjectByTokenLogic(holder);
-        this.mobileDeleteAppLogic = new MobileDeleteAppLogic(holder);
-        this.mobileDashSyncLogic = new MobileDashSyncLogic(holder);
-        this.mobileDeviceSyncLogic = new MobileDeviceSyncLogic(holder);
-        this.mobileGetDeviceLogic = new MobileGetDeviceLogic(holder);
-        this.mobileEditDeviceMetafieldLogic = new MobileEditDeviceMetafieldLogic(holder);
-        this.mobileDeleteDeviceLogic = new MobileDeleteDeviceLogic(holder);
-        this.mobileEditDeviceLogic = new MobileEditDeviceLogic(holder);
-        this.mobileCreateDeviceLogic = new MobileCreateDeviceLogic(holder);
-        this.mobilePurchaseLogic = new MobilePurchaseLogic(holder);
-        this.mobileRedeemLogic = new MobileRedeemLogic(holder);
-        this.mobileDeleteTileTemplateLogic = new MobileDeleteTileTemplateLogic(holder);
-        this.mobileDeleteWidgetLogic = new MobileDeleteWidgetLogic(holder);
-        this.mobileEditWidgetLogic = new MobileEditWidgetLogic(holder);
-        this.mobileCreateWidgetLogic = new MobileCreateWidgetLogic(holder);
-        this.mobileDeleteDashLogic = new MobileDeleteDashLogic(holder);
-        this.mobileEditDashLogic = new MobileEditDashLogic(holder);
-        this.mobileCreateDashLogic = new MobileCreateDashLogic(holder);
-        this.mobileMailLogic = new MobileMailLogic(holder);
-        this.mobileRefreshShareTokenLogic = new MobileRefreshShareTokenLogic(holder);
-        this.mobileGetShareTokenLogic = new MobileGetShareTokenLogic(holder);
-        this.mobileDeleteSuperChartDataLogic = new MobileDeleteSuperChartDataLogic(holder);
-        this.mobileRefreshTokenLogic = new MobileRefreshTokenLogic(holder);
-        this.mobileAssignTokenLogic = new MobileAssignTokenLogic(holder);
-        this.mobileShareLogic = new MobileShareLogic(holder);
-        this.mobileDeActivateDashboardLogic = new MobileDeActivateDashboardLogic(holder);
-        this.mobileActivateDashboardLogic = new MobileActivateDashboardLogic(holder);
-        this.hardwareResendFromBTLogic = new MobileHardwareResendFromBTLogic(holder);
-        this.mobileEditAppLogic = new MobileEditAppLogic(holder);
-        this.mobileEditDashSettingLogic = new MobileEditDashSettingLogic(holder);
-        this.mobileCreateAppLogic = new MobileCreateAppLogic(holder);
+        this.mobileHardwareResendFromBTLogic = new MobileHardwareResendFromBTLogic(holder);
     }
 
     @Override
@@ -273,79 +118,79 @@ public final class MobileHandler extends JsonBasedSimpleChannelInboundHandler<St
         this.stats.incrementAppStat();
         switch (msg.command) {
             case HARDWARE :
-                hardwareLogic.messageReceived(ctx, state, msg);
+                mobileHardwareLogic.messageReceived(ctx, state, msg);
                 break;
             case MOBILE_HARDWARE_GROUP :
                 mobileHardwareGroupLogic.messageReceived(ctx, state, msg);
                 break;
             case HARDWARE_RESEND_FROM_BLUETOOTH :
-                hardwareResendFromBTLogic.messageReceived(state, msg);
+                mobileHardwareResendFromBTLogic.messageReceived(state, msg);
                 break;
             case MOBILE_ACTIVATE_DASHBOARD :
-                mobileActivateDashboardLogic.messageReceived(ctx, state, msg);
+                mobileLogicHolder.mobileActivateDashboardLogic.messageReceived(ctx, state, msg);
                 break;
             case MOBILE_DEACTIVATE_DASHBOARD :
-                mobileDeActivateDashboardLogic.messageReceived(ctx, state, msg);
+                mobileLogicHolder.mobileDeActivateDashboardLogic.messageReceived(ctx, state, msg);
                 break;
             case MOBILE_LOAD_PROFILE_GZIPPED :
-                mobileLoadProfileGzippedLogic.messageReceived(ctx, state, msg);
+                mobileLogicHolder.mobileLoadProfileGzippedLogic.messageReceived(ctx, state, msg);
                 break;
             case SHARING :
-                mobileShareLogic.messageReceived(ctx, state, msg);
+                mobileLogicHolder.mobileShareLogic.messageReceived(ctx, state, msg);
                 break;
 
             case ASSIGN_TOKEN :
-                mobileAssignTokenLogic.messageReceived(ctx, state.user, msg);
+                mobileLogicHolder.mobileAssignTokenLogic.messageReceived(ctx, state.user, msg);
                 break;
             case MOBILE_ADD_PUSH_TOKEN :
                 MobileAddPushLogic.messageReceived(ctx, state, msg);
                 break;
             case REFRESH_TOKEN :
-                mobileRefreshTokenLogic.messageReceived(ctx, state, msg);
+                mobileLogicHolder.mobileRefreshTokenLogic.messageReceived(ctx, state, msg);
                 break;
 
             case GET_SUPERCHART_DATA :
-                mobileGetSuperChartDataLogic.messageReceived(ctx, state, msg);
+                mobileLogicHolder.mobileGetSuperChartDataLogic.messageReceived(ctx, state, msg);
                 break;
             case MOBILE_DELETE_GRAPH_DATA:
-                mobileDeleteSuperChartDataLogic.messageReceived(ctx, state.user, msg);
+                mobileLogicHolder.mobileDeleteSuperChartDataLogic.messageReceived(ctx, state.user, msg);
                 break;
             case PING :
                 PingLogic.messageReceived(ctx, msg.id);
                 break;
 
             case GET_SHARE_TOKEN :
-                mobileGetShareTokenLogic.messageReceived(ctx, state.user, msg);
+                mobileLogicHolder.mobileGetShareTokenLogic.messageReceived(ctx, state.user, msg);
                 break;
             case REFRESH_SHARE_TOKEN :
-                mobileRefreshShareTokenLogic.messageReceived(ctx, state, msg);
+                mobileLogicHolder.mobileRefreshShareTokenLogic.messageReceived(ctx, state, msg);
                 break;
 
             case EMAIL :
-                mobileMailLogic.messageReceived(ctx, state.user, msg);
+                mobileLogicHolder.mobileMailLogic.messageReceived(ctx, state.user, msg);
                 break;
 
             case MOBILE_CREATE_DASH :
-                mobileCreateDashLogic.messageReceived(ctx, state, msg);
+                mobileLogicHolder.mobileCreateDashLogic.messageReceived(ctx, state, msg);
                 break;
             case MOBILE_EDIT_DASH :
-                mobileEditDashLogic.messageReceived(ctx, state, msg);
+                mobileLogicHolder.mobileEditDashLogic.messageReceived(ctx, state, msg);
                 break;
             case MOBILE_DELETE_DASH :
-                mobileDeleteDashLogic.messageReceived(ctx, state, msg);
+                mobileLogicHolder.mobileDeleteDashLogic.messageReceived(ctx, state, msg);
                 break;
 
             case MOBILE_CREATE_WIDGET :
-                mobileCreateWidgetLogic.messageReceived(ctx, state, msg);
+                mobileLogicHolder.mobileCreateWidgetLogic.messageReceived(ctx, state, msg);
                 break;
             case MOBILE_EDIT_WIDGET :
-                mobileEditWidgetLogic.messageReceived(ctx, state, msg);
+                mobileLogicHolder.mobileEditWidgetLogic.messageReceived(ctx, state, msg);
                 break;
             case MOBILE_DELETE_WIDGET :
-                mobileDeleteWidgetLogic.messageReceived(ctx, state, msg);
+                mobileLogicHolder.mobileDeleteWidgetLogic.messageReceived(ctx, state, msg);
                 break;
             case MOBILE_GET_WIDGET :
-                mobileGetWidgetLogic.messageReceived(ctx, state, msg);
+                mobileLogicHolder.mobileGetWidgetLogic.messageReceived(ctx, state, msg);
                 break;
 
             case MOBILE_CREATE_TILE_TEMPLATE :
@@ -355,77 +200,77 @@ public final class MobileHandler extends JsonBasedSimpleChannelInboundHandler<St
                 MobileEditTileTemplateLogic.messageReceived(ctx, state, msg);
                 break;
             case MOBILE_DELETE_TILE_TEMPLATE :
-                mobileDeleteTileTemplateLogic.messageReceived(ctx, state, msg);
+                mobileLogicHolder.mobileDeleteTileTemplateLogic.messageReceived(ctx, state, msg);
                 break;
 
             case REDEEM :
-                mobileRedeemLogic.messageReceived(ctx, state.user, msg);
+                mobileLogicHolder.mobileRedeemLogic.messageReceived(ctx, state.user, msg);
                 break;
 
             case MOBILE_GET_ENERGY :
                 MobileGetEnergyLogic.messageReceived(ctx, state.user, msg);
                 break;
             case MOBILE_ADD_ENERGY :
-                mobilePurchaseLogic.messageReceived(ctx, state, msg);
+                mobileLogicHolder.mobilePurchaseLogic.messageReceived(ctx, state, msg);
                 break;
 
             case MOBILE_EDIT_PROJECT_SETTINGS :
-                mobileEditDashSettingLogic.messageReceived(ctx, state, msg);
+                mobileLogicHolder.mobileEditDashSettingLogic.messageReceived(ctx, state, msg);
                 break;
 
             case MOBILE_CREATE_DEVICE :
-                mobileCreateDeviceLogic.messageReceived(ctx, state, msg);
+                mobileLogicHolder.mobileCreateDeviceLogic.messageReceived(ctx, state, msg);
                 break;
             case MOBILE_EDIT_DEVICE :
-                mobileEditDeviceLogic.messageReceived(ctx, msg);
+                mobileLogicHolder.mobileEditDeviceLogic.messageReceived(ctx, msg);
                 break;
             case MOBILE_DELETE_DEVICE :
-                mobileDeleteDeviceLogic.messageReceived(ctx, state, msg);
+                mobileLogicHolder.mobileDeleteDeviceLogic.messageReceived(ctx, state, msg);
                 break;
             case MOBILE_GET_DEVICES :
-                mobileGetOrgDevicesLogic.messageReceived(ctx, state, msg);
+                mobileLogicHolder.mobileGetOrgDevicesLogic.messageReceived(ctx, state, msg);
                 break;
             case MOBILE_EDIT_DEVICE_METAFIELD :
-                mobileEditDeviceMetafieldLogic.messageReceived(ctx, state, msg);
+                mobileLogicHolder.mobileEditDeviceMetafieldLogic.messageReceived(ctx, state, msg);
                 break;
             case MOBILE_GET_DEVICES_BY_REFERENCE_METAFIELD :
-                commonGetDevicesByReferenceMetafieldLogic.messageReceived(ctx, state, msg);
+                mobileLogicHolder.commonGetDevicesByReferenceMetafieldLogic.messageReceived(ctx, state, msg);
                 break;
             case MOBILE_GET_DEVICE :
-                mobileGetDeviceLogic.messageReceived(ctx, msg);
+                mobileLogicHolder.mobileGetDeviceLogic.messageReceived(ctx, msg);
                 break;
 
             case DEVICE_SYNC :
-                mobileDeviceSyncLogic.messageReceived(ctx, msg);
+                mobileLogicHolder.mobileDeviceSyncLogic.messageReceived(ctx, msg);
                 break;
             case DASH_SYNC :
-                mobileDashSyncLogic.messageReceived(ctx, state, msg);
+                mobileLogicHolder.mobileDashSyncLogic.messageReceived(ctx, state, msg);
                 break;
 
             case MOBILE_CREATE_APP :
-                mobileCreateAppLogic.messageReceived(ctx, state, msg);
+                mobileLogicHolder.mobileCreateAppLogic.messageReceived(ctx, state, msg);
                 break;
             case MOBILE_EDIT_APP :
-                mobileEditAppLogic.messageReceived(ctx, state, msg);
+                mobileLogicHolder.mobileEditAppLogic.messageReceived(ctx, state, msg);
                 break;
             case MOBILE_DELETE_APP :
-                mobileDeleteAppLogic.messageReceived(ctx, state, msg);
+                mobileLogicHolder.mobileDeleteAppLogic.messageReceived(ctx, state, msg);
                 break;
 
             case GET_PROJECT_BY_TOKEN :
-                mobileGetProjectByTokenLogic.messageReceived(ctx, state.user, msg);
+                mobileLogicHolder.mobileGetProjectByTokenLogic.messageReceived(ctx, state.user, msg);
                 break;
             case EMAIL_QR :
-                mailQRsLogic.messageReceived(ctx, state.user, msg);
+                mobileLogicHolder.mailQRsLogic.messageReceived(ctx, state.user, msg);
                 break;
             case MOBILE_EDIT_FACE :
-                mobileEditFaceLogic.messageReceived(ctx, state.user, msg);
+                mobileLogicHolder.mobileEditFaceLogic.messageReceived(ctx, state.user, msg);
                 break;
             case GET_CLONE_CODE :
-                mobileGetCloneCodeLogic.messageReceived(ctx, state.user, msg);
+                mobileLogicHolder.mobileGetCloneCodeLogic.messageReceived(ctx, state.user, msg);
                 break;
             case GET_PROJECT_BY_CLONE_CODE :
-                mobileGetProjectByCloneCodeLogic.messageReceived(ctx, state.user, msg);
+                mobileLogicHolder.mobileGetProjectByCloneCodeLogic.messageReceived(ctx, state.user, msg);
                 break;
             case LOGOUT :
                 MobileLogoutLogic.messageReceived(ctx, state.user, msg);
@@ -434,49 +279,49 @@ public final class MobileHandler extends JsonBasedSimpleChannelInboundHandler<St
                 MobileSetWidgetPropertyLogic.messageReceived(ctx, state.user, msg);
                 break;
             case MOBILE_GET_PROVISION_TOKEN :
-                mobileGetProvisionTokenLogic.messageReceived(ctx, state.user, msg);
+                mobileLogicHolder.mobileGetProvisionTokenLogic.messageReceived(ctx, state.user, msg);
                 break;
             case MOBILE_DELETE_DEVICE_DATA :
-                mobileDeleteOrgDeviceDataLogic.messageReceived(ctx, state, msg);
+                mobileLogicHolder.mobileDeleteOrgDeviceDataLogic.messageReceived(ctx, state, msg);
                 break;
             case MOBILE_CREATE_REPORT :
-                mobileCreateReportLogic.messageReceived(ctx, state.user, msg);
+                mobileLogicHolder.mobileCreateReportLogic.messageReceived(ctx, state.user, msg);
                 break;
             case MOBILE_EDIT_REPORT :
-                mobileEditReportLogic.messageReceived(ctx, state.user, msg);
+                mobileLogicHolder.mobileEditReportLogic.messageReceived(ctx, state.user, msg);
                 break;
             case MOBILE_DELETE_REPORT :
-                mobileDeleteReportLogic.messageReceived(ctx, state.user, msg);
+                mobileLogicHolder.mobileDeleteReportLogic.messageReceived(ctx, state.user, msg);
                 break;
             case MOBILE_EXPORT_REPORT :
-                mobileExportReportLogic.messageReceived(ctx, state.user, msg);
+                mobileLogicHolder.mobileExportReportLogic.messageReceived(ctx, state.user, msg);
                 break;
             case MOBILE_EDIT_PROFILE_SETTINGS :
                 MobileEditProfileSettingLogic.messageReceived(ctx, state, msg);
                 break;
             case MOBILE_GET_DEVICE_TIMELINE :
-                webGetDeviceTimelineLogic.messageReceived(ctx, state, msg);
+                mobileLogicHolder.webGetDeviceTimelineLogic.messageReceived(ctx, state, msg);
                 break;
             case MOBILE_RESOLVE_DEVICE_TIMELINE :
-                webResolveLogEventLogic.messageReceived(ctx, state, msg);
+                mobileLogicHolder.webResolveLogEventLogic.messageReceived(ctx, state, msg);
                 break;
             case MOBILE_CREATE_GROUP_TEMPLATE :
-                mobileCreateGroupTemplateLogic.messageReceived(ctx, state, msg);
+                mobileLogicHolder.mobileCreateGroupTemplateLogic.messageReceived(ctx, state, msg);
                 break;
             case MOBILE_EDIT_GROUP_TEMPLATE :
-                mobileEditGroupTemplateLogic.messageReceived(ctx, state, msg);
+                mobileLogicHolder.mobileEditGroupTemplateLogic.messageReceived(ctx, state, msg);
                 break;
             case MOBILE_DELETE_GROUP_TEMPLATE :
-                mobileDeleteGroupTemplateLogic.messageReceived(ctx, state, msg);
+                mobileLogicHolder.mobileDeleteGroupTemplateLogic.messageReceived(ctx, state, msg);
                 break;
             case MOBILE_CREATE_GROUP :
-                mobileCreateGroupLogic.messageReceived(ctx, state, msg);
+                mobileLogicHolder.mobileCreateGroupLogic.messageReceived(ctx, state, msg);
                 break;
             case MOBILE_EDIT_GROUP :
-                mobileEditGroupLogic.messageReceived(ctx, state, msg);
+                mobileLogicHolder.mobileEditGroupLogic.messageReceived(ctx, state, msg);
                 break;
             case MOBILE_DELETE_GROUP :
-                mobileDeleteGroupLogic.messageReceived(ctx, state, msg);
+                mobileLogicHolder.mobileDeleteGroupLogic.messageReceived(ctx, state, msg);
                 break;
         }
     }
