@@ -1,6 +1,7 @@
 package cc.blynk.server.web.handlers.logic.device;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -24,11 +25,13 @@ public final class WebGetMetaFieldLogic {
 
     private static final Logger log = LogManager.getLogger(WebGetMetaFieldLogic.class);
 
-    private WebGetMetaFieldLogic() {
+    private final DeviceDao deviceDao;
+
+    public WebGetMetaFieldLogic(Holder holder) {
+        this.deviceDao = holder.deviceDao;
     }
 
-    public static void messageReceived(Holder holder,
-                                       ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         String[] split = StringUtils.split2(message.body);
 
         int deviceId = Integer.parseInt(split[0]);
@@ -36,7 +39,7 @@ public final class WebGetMetaFieldLogic {
 
         //todo refactor when permissions ready
         //todo check access for the device
-        Device device = holder.deviceDao.getById(deviceId);
+        Device device = deviceDao.getById(deviceId);
         if (device == null) {
             log.error("Device {} not found for {}.", deviceId, state.user.email);
             ctx.writeAndFlush(json(message.id, "Device not found."), ctx.voidPromise());

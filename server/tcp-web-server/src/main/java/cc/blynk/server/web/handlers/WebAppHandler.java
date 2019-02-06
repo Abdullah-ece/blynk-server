@@ -128,7 +128,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
 
     public final WebAppStateHolder state;
     private final WebAppControlHardwareLogic webAppControlHardwareLogic;
-    private final WebGetGraphDataLogic getWebGraphDataLogic;
+    private final WebGetGraphDataLogic webGetGraphDataLogic;
     private final WebResolveLogEventLogic webResolveLogEventLogic;
     private final WebCreateOrgDeviceLogic webCreateOrgDeviceLogic;
     private final WebGetOrgDeviceLogic webGetOrgDeviceLogic;
@@ -136,7 +136,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
     private final WebGetOrganizationsLogic webGetOrganizationsLogic;
     private final WebGetOrgUsersLogic webGetOrgUsersLogic;
     private final WebGetProductLocationsLogic webGetProductLocationsLogic;
-    private final WebCanInviteUserLogic canInviteUserLogic;
+    private final WebCanInviteUserLogic webCanInviteUserLogic;
     private final WebCreateProductLogic webCreateProductLogic;
     private final WebGetProductsLogic webGetProductsLogic;
     private final WebDeleteProductLogic webDeleteProductLogic;
@@ -175,13 +175,15 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
     private final WebGetRuleGroupLogic webGetRuleGroupLogic;
     private final WebEditRuleGroupLogic webEditRuleGroupLogic;
     private final WebGetOrgShipmentsLogic webGetOrgShipmentsLogic;
+    private final WebGetMetaFieldLogic webGetMetaFieldLogic;
+    private final WebGetTempSecureTokenLogic webGetTempSecureTokenLogic;
 
     private final Holder holder;
 
     public WebAppHandler(Holder holder, WebAppStateHolder state) {
         super(StringMessage.class);
         this.webAppControlHardwareLogic = new WebAppControlHardwareLogic(holder);
-        this.getWebGraphDataLogic = new WebGetGraphDataLogic(holder);
+        this.webGetGraphDataLogic = new WebGetGraphDataLogic(holder);
         this.webResolveLogEventLogic = new WebResolveLogEventLogic(holder);
         this.webCreateOrgDeviceLogic = new WebCreateOrgDeviceLogic(holder);
         this.webGetOrgDeviceLogic = new WebGetOrgDeviceLogic(holder);
@@ -189,7 +191,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
         this.webGetOrganizationsLogic = new WebGetOrganizationsLogic(holder);
         this.webGetOrgUsersLogic = new WebGetOrgUsersLogic(holder);
         this.webGetProductLocationsLogic = new WebGetProductLocationsLogic(holder);
-        this.canInviteUserLogic = new WebCanInviteUserLogic(holder);
+        this.webCanInviteUserLogic = new WebCanInviteUserLogic(holder);
         this.webCreateProductLogic = new WebCreateProductLogic(holder);
         this.webGetProductsLogic = new WebGetProductsLogic(holder);
         this.webDeleteProductLogic = new WebDeleteProductLogic(holder);
@@ -228,6 +230,8 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
         this.webGetRuleGroupLogic = new WebGetRuleGroupLogic(holder);
         this.webEditRuleGroupLogic = new WebEditRuleGroupLogic(holder);
         this.webGetOrgShipmentsLogic = new WebGetOrgShipmentsLogic(holder);
+        this.webGetMetaFieldLogic = new WebGetMetaFieldLogic(holder);
+        this.webGetTempSecureTokenLogic = new WebGetTempSecureTokenLogic(holder);
 
         this.state = state;
         this.holder = holder;
@@ -235,7 +239,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
 
     @Override
     public void messageReceived(ChannelHandlerContext ctx, StringMessage msg) {
-        this.holder.stats.incrementAppStat();
+        this.holder.stats.incrementWebStat();
         switch (msg.command) {
             case WEB_GET_ACCOUNT:
                 WebGetAccountLogic.messageReceived(ctx, state, msg);
@@ -250,7 +254,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
                 webTrackDeviceLogic.messageReceived(ctx, state, msg);
                 break;
             case GET_SUPERCHART_DATA:
-                getWebGraphDataLogic.messageReceived(ctx, state, msg);
+                webGetGraphDataLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_RESOLVE_EVENT:
                 webResolveLogEventLogic.messageReceived(ctx, state, msg);
@@ -283,7 +287,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
                 webGetProductLocationsLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_CAN_INVITE_USER :
-                canInviteUserLogic.messageReceived(ctx, state, msg);
+                webCanInviteUserLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_CREATE_PRODUCT :
                 webCreateProductLogic.messageReceived(ctx, state, msg);
@@ -334,13 +338,13 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
                 webDeleteOrgDeviceLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_GET_METAFIELD :
-                WebGetMetaFieldLogic.messageReceived(holder, ctx, state, msg);
+                webGetMetaFieldLogic.messageReceived(ctx, state, msg);
                 break;
             case LOGOUT :
                 MobileLogoutLogic.messageReceived(ctx, state.user, msg);
                 break;
             case WEB_GET_TEMP_SECURE_TOKEN :
-                WebGetTempSecureTokenLogic.messageReceived(holder, ctx, state.user, msg);
+                webGetTempSecureTokenLogic.messageReceived(ctx, state.user, msg);
                 break;
             case WEB_GET_ORG_HIERARCHY :
                 webGetOrganizationsHierarchyLogic.messageReceived(ctx, state, msg);
