@@ -36,6 +36,7 @@ import cc.blynk.server.core.protocol.handlers.encoders.WSMessageEncoder;
 import cc.blynk.server.hardware.handlers.hardware.auth.HardwareLoginHandler;
 import cc.blynk.server.hardware.handlers.hardware.state.HardwareChannelStateHandler;
 import cc.blynk.server.servers.BaseServer;
+import cc.blynk.server.web.handlers.WebAppLogicHolder;
 import cc.blynk.server.web.handlers.auth.WebAppLoginHandler;
 import cc.blynk.server.web.handlers.auth.WebAppLoginViaInviteHandler;
 import cc.blynk.server.web.handlers.auth.WebAppResetPasswordHandler;
@@ -71,6 +72,7 @@ public class MobileAndHttpsServer extends BaseServer {
         super(holder.props.getProperty("listen.address"),
                 holder.props.getIntProperty("https.port"), holder.transportTypeHolder);
 
+        var webAppLogicHolder = new WebAppLogicHolder(holder);
         var appChannelStateHandler = new MobileChannelStateHandler(holder.sessionDao);
         var registerHandler = new MobileRegisterHandler(holder);
         var appLoginHandler = new MobileLoginHandler(holder);
@@ -92,8 +94,8 @@ public class MobileAndHttpsServer extends BaseServer {
         var noMatchHandler = new NoMatchHandler();
 
         var webAppMessageEncoder = new WSMessageEncoder();
-        var webAppLoginHandler = new WebAppLoginHandler(holder);
-        var webAppLoginViaInviteHandler = new WebAppLoginViaInviteHandler(holder);
+        var webAppLoginHandler = new WebAppLoginHandler(holder, webAppLogicHolder);
+        var webAppLoginViaInviteHandler = new WebAppLoginViaInviteHandler(holder, webAppLogicHolder);
         var webAppResetPasswordHandler = new WebAppResetPasswordHandler(holder);
 
         var externalAPIHandler = new ExternalAPIHandler(holder, "/external/api");

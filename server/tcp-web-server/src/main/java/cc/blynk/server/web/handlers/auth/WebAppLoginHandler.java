@@ -11,6 +11,7 @@ import cc.blynk.server.core.session.mobile.Version;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
 import cc.blynk.server.internal.ReregisterChannelUtil;
 import cc.blynk.server.web.handlers.WebAppHandler;
+import cc.blynk.server.web.handlers.WebAppLogicHolder;
 import cc.blynk.utils.IPUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
@@ -37,14 +38,16 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
  *
  */
 @ChannelHandler.Sharable
-public class WebAppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> {
+public final class WebAppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> {
 
     private static final Logger log = LogManager.getLogger(WebAppLoginHandler.class);
 
     private final Holder holder;
+    private final WebAppLogicHolder webAppLogicHolder;
 
-    public WebAppLoginHandler(Holder holder) {
+    public WebAppLoginHandler(Holder holder, WebAppLogicHolder webAppLogicHolder) {
         this.holder = holder;
+        this.webAppLogicHolder = webAppLogicHolder;
     }
 
     private static void cleanPipeline(DefaultChannelPipeline pipeline) {
@@ -100,7 +103,7 @@ public class WebAppLoginHandler extends SimpleChannelInboundHandler<LoginMessage
 
         Role role = holder.organizationDao.getRole(user);
         WebAppStateHolder appStateHolder = new WebAppStateHolder(user, role, new Version(WEB_SOCKET, 41));
-        pipeline.addLast("AWebAppHandler", new WebAppHandler(holder, appStateHolder));
+        pipeline.addLast("AWebAppHandler", new WebAppHandler(holder.stats, webAppLogicHolder, appStateHolder));
 
         Channel channel = ctx.channel();
 

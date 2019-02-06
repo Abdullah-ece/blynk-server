@@ -14,6 +14,7 @@ import cc.blynk.server.core.session.web.WebAppStateHolder;
 import cc.blynk.server.internal.ReregisterChannelUtil;
 import cc.blynk.server.internal.token.InviteToken;
 import cc.blynk.server.web.handlers.WebAppHandler;
+import cc.blynk.server.web.handlers.WebAppLogicHolder;
 import cc.blynk.utils.IPUtils;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.Channel;
@@ -39,14 +40,16 @@ import static cc.blynk.server.internal.WebByteBufUtil.json;
  *
  */
 @ChannelHandler.Sharable
-public class WebAppLoginViaInviteHandler extends SimpleChannelInboundHandler<WebLoginViaInviteMessage> {
+public final class WebAppLoginViaInviteHandler extends SimpleChannelInboundHandler<WebLoginViaInviteMessage> {
 
     private static final Logger log = LogManager.getLogger(WebAppLoginViaInviteHandler.class);
 
     private final Holder holder;
+    private final WebAppLogicHolder webAppLogicHolder;
 
-    public WebAppLoginViaInviteHandler(Holder holder) {
+    public WebAppLoginViaInviteHandler(Holder holder, WebAppLogicHolder webAppLogicHolder) {
         this.holder = holder;
+        this.webAppLogicHolder = webAppLogicHolder;
     }
 
     private static void cleanPipeline(DefaultChannelPipeline pipeline) {
@@ -110,7 +113,7 @@ public class WebAppLoginViaInviteHandler extends SimpleChannelInboundHandler<Web
         cleanPipeline(pipeline);
 
         WebAppStateHolder appStateHolder = new WebAppStateHolder(user, role, new Version(OsType.WEB_SOCKET, 41));
-        pipeline.addLast("AWebAppHandler", new WebAppHandler(holder, appStateHolder));
+        pipeline.addLast("AWebAppHandler", new WebAppHandler(holder.stats, webAppLogicHolder, appStateHolder));
 
         Channel channel = ctx.channel();
 
