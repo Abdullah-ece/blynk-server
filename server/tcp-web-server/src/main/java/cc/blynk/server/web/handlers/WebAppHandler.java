@@ -10,6 +10,7 @@ import cc.blynk.server.common.handlers.logic.timeline.WebResolveLogEventLogic;
 import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
+import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.web.handlers.logic.account.WebEditAccountLogic;
 import cc.blynk.server.web.handlers.logic.account.WebGetAccountLogic;
 import cc.blynk.server.web.handlers.logic.device.WebCreateOrgDeviceLogic;
@@ -127,6 +128,8 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_TRACK_ORG;
 public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMessage, WebAppStateHolder> {
 
     public final WebAppStateHolder state;
+    private final GlobalStats stats;
+
     private final WebAppControlHardwareLogic webAppControlHardwareLogic;
     private final WebGetGraphDataLogic webGetGraphDataLogic;
     private final WebResolveLogEventLogic webResolveLogEventLogic;
@@ -177,11 +180,13 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
     private final WebGetOrgShipmentsLogic webGetOrgShipmentsLogic;
     private final WebGetMetaFieldLogic webGetMetaFieldLogic;
     private final WebGetTempSecureTokenLogic webGetTempSecureTokenLogic;
-
-    private final Holder holder;
+    private final CommonGetDevicesByReferenceMetafieldLogic commonGetDevicesByReferenceMetafieldLogic;
 
     public WebAppHandler(Holder holder, WebAppStateHolder state) {
         super(StringMessage.class);
+        this.state = state;
+        this.stats = holder.stats;
+
         this.webAppControlHardwareLogic = new WebAppControlHardwareLogic(holder);
         this.webGetGraphDataLogic = new WebGetGraphDataLogic(holder);
         this.webResolveLogEventLogic = new WebResolveLogEventLogic(holder);
@@ -232,14 +237,12 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
         this.webGetOrgShipmentsLogic = new WebGetOrgShipmentsLogic(holder);
         this.webGetMetaFieldLogic = new WebGetMetaFieldLogic(holder);
         this.webGetTempSecureTokenLogic = new WebGetTempSecureTokenLogic(holder);
-
-        this.state = state;
-        this.holder = holder;
+        this.commonGetDevicesByReferenceMetafieldLogic = new CommonGetDevicesByReferenceMetafieldLogic(holder);
     }
 
     @Override
     public void messageReceived(ChannelHandlerContext ctx, StringMessage msg) {
-        this.holder.stats.incrementWebStat();
+        this.stats.incrementWebStat();
         switch (msg.command) {
             case WEB_GET_ACCOUNT:
                 WebGetAccountLogic.messageReceived(ctx, state, msg);
@@ -395,7 +398,7 @@ public class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<StringMe
                 webGetUserCountersByRoleLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_GET_DEVICES_BY_REFERENCE_METAFIELD :
-                CommonGetDevicesByReferenceMetafieldLogic.messageReceived(holder, ctx, state, msg);
+                commonGetDevicesByReferenceMetafieldLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_GET_RULE_GROUP :
                 webGetRuleGroupLogic.messageReceived(ctx, state, msg);

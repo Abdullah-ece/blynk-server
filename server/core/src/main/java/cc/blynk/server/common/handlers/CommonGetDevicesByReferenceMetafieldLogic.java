@@ -1,6 +1,8 @@
 package cc.blynk.server.common.handlers;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.core.dao.DeviceDao;
+import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.dto.IdNameDTO;
 import cc.blynk.server.core.model.serialization.JsonParser;
@@ -31,14 +33,19 @@ public final class CommonGetDevicesByReferenceMetafieldLogic {
 
     private static final Logger log = LogManager.getLogger(CommonGetDevicesByReferenceMetafieldLogic.class);
 
-    private CommonGetDevicesByReferenceMetafieldLogic() {
+    private final DeviceDao deviceDao;
+    private final OrganizationDao organizationDao;
+
+    public CommonGetDevicesByReferenceMetafieldLogic(Holder holder) {
+        this.deviceDao = holder.deviceDao;
+        this.organizationDao = holder.organizationDao;
     }
 
-    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
-                                       BaseUserStateHolder state, StringMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx,
+                                BaseUserStateHolder state, StringMessage message) {
         String[] split = StringUtils.split2(message.body);
         int deviceId = Integer.parseInt(split[0]);
-        Device device = holder.deviceDao.getByIdOrThrow(deviceId);
+        Device device = deviceDao.getByIdOrThrow(deviceId);
 
         int metafieldId = Integer.parseInt(split[1]);
         MetaField metaField = device.findMetaFieldByIdOrThrow(metafieldId);
@@ -51,12 +58,12 @@ public final class CommonGetDevicesByReferenceMetafieldLogic {
         //we allow to view devices only from the current org of this user
         //todo security checks
         int orgId = state.selectedOrgId;
-        Organization org = holder.organizationDao.getOrgByIdOrThrow(orgId);
+        Organization org = organizationDao.getOrgByIdOrThrow(orgId);
 
         DeviceReferenceMetaField deviceReferenceMetaField = (DeviceReferenceMetaField) metaField;
         List<IdNameDTO> result = new ArrayList<>();
         for (int productId : deviceReferenceMetaField.selectedProductIds) {
-            int[] subProductIds = holder.organizationDao.getProductChilds(productId);
+            int[] subProductIds = organizationDao.getProductChilds(productId);
             for (Product product : org.products) {
                 if (ArrayUtil.contains(subProductIds, product.id)) {
                     for (Device tempDevice : product.devices) {

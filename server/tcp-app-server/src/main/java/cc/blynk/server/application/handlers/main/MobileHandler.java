@@ -69,6 +69,7 @@ import cc.blynk.server.common.handlers.logic.timeline.WebResolveLogEventLogic;
 import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.mobile.MobileStateHolder;
+import cc.blynk.server.core.stats.GlobalStats;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.ASSIGN_TOKEN;
@@ -145,6 +146,7 @@ import static cc.blynk.server.core.protocol.enums.Command.SHARING;
 public final class MobileHandler extends JsonBasedSimpleChannelInboundHandler<StringMessage, MobileStateHolder> {
 
     public final MobileStateHolder state;
+    private final GlobalStats stats;
     private final Holder holder;
     private final MobileHardwareLogic hardwareLogic;
     private final MobileHardwareGroupLogic mobileHardwareGroupLogic;
@@ -168,10 +170,12 @@ public final class MobileHandler extends JsonBasedSimpleChannelInboundHandler<St
     private final MobileCreateGroupLogic mobileCreateGroupLogic;
     private final MobileEditGroupLogic mobileEditGroupLogic;
     private final MobileDeleteGroupLogic mobileDeleteGroupLogic;
+    private final CommonGetDevicesByReferenceMetafieldLogic commonGetDevicesByReferenceMetafieldLogic;
 
     public MobileHandler(Holder holder, MobileStateHolder state) {
         super(StringMessage.class);
         this.state = state;
+        this.stats = holder.stats;
         this.holder = holder;
 
         this.hardwareLogic = new MobileHardwareLogic(holder);
@@ -189,11 +193,12 @@ public final class MobileHandler extends JsonBasedSimpleChannelInboundHandler<St
         this.mobileCreateGroupLogic = new MobileCreateGroupLogic();
         this.mobileEditGroupLogic = new MobileEditGroupLogic();
         this.mobileDeleteGroupLogic = new MobileDeleteGroupLogic();
+        this.commonGetDevicesByReferenceMetafieldLogic = new CommonGetDevicesByReferenceMetafieldLogic(holder);
     }
 
     @Override
     public void messageReceived(ChannelHandlerContext ctx, StringMessage msg) {
-        holder.stats.incrementAppStat();
+        this.stats.incrementAppStat();
         switch (msg.command) {
             case HARDWARE :
                 hardwareLogic.messageReceived(ctx, state, msg);
@@ -321,7 +326,7 @@ public final class MobileHandler extends JsonBasedSimpleChannelInboundHandler<St
                 MobileEditDeviceMetafieldLogic.messageReceived(holder, ctx, state, msg);
                 break;
             case MOBILE_GET_DEVICES_BY_REFERENCE_METAFIELD :
-                CommonGetDevicesByReferenceMetafieldLogic.messageReceived(holder, ctx, state, msg);
+                commonGetDevicesByReferenceMetafieldLogic.messageReceived(ctx, state, msg);
                 break;
             case MOBILE_GET_DEVICE :
                 MobileGetDeviceLogic.messageReceived(holder, ctx, msg);
