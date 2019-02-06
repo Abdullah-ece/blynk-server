@@ -15,6 +15,8 @@ import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.graph.Period;
 import cc.blynk.server.core.model.widgets.ui.reporting.Report;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
+import cc.blynk.server.core.model.widgets.ui.tiles.group.BaseGroupTemplate;
+import cc.blynk.server.core.model.widgets.ui.tiles.group.Group;
 import cc.blynk.server.core.protocol.handlers.encoders.MobileMessageEncoder;
 import cc.blynk.server.core.protocol.model.messages.BinaryMessage;
 import cc.blynk.server.core.stats.GlobalStats;
@@ -39,6 +41,8 @@ import static cc.blynk.server.core.protocol.enums.Command.MOBILE_ADD_PUSH_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_APP;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_DEVICE;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_GROUP;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_GROUP_TEMPLATE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_REPORT;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_TILE_TEMPLATE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_WIDGET;
@@ -63,6 +67,7 @@ import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICES;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICES_BY_REFERENCE_METAFIELD;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_PROVISION_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_WIDGET;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_HARDWARE_GROUP;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_LOAD_PROFILE_GZIPPED;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_REGISTER;
 import static cc.blynk.server.core.protocol.enums.Command.RESET_PASSWORD;
@@ -297,6 +302,20 @@ public class TestAppClient extends BaseTestAppClient {
 
     public void createTemplate(int dashId, long widgetId, TileTemplate tileTemplate) throws Exception {
         createTemplate(dashId, widgetId, JsonParser.MAPPER.writeValueAsString(tileTemplate));
+    }
+
+    public void createGroup(int dashId, long widgetId, Group group) {
+        send(MOBILE_CREATE_GROUP, "" + dashId + BODY_SEPARATOR + widgetId + BODY_SEPARATOR + group);
+    }
+
+    public void hardwareForGroup(int dashId, long widgetId, long groupId, int pin, String value) {
+        send(MOBILE_HARDWARE_GROUP, "" + dashId + BODY_SEPARATOR
+                + widgetId + BODY_SEPARATOR + groupId + BODY_SEPARATOR
+                + "vw" + BODY_SEPARATOR + pin + BODY_SEPARATOR + value);
+    }
+
+    public void createGroupTemplate(int dashId, long widgetId, BaseGroupTemplate baseGroupTemplate) {
+        send(MOBILE_CREATE_GROUP_TEMPLATE, "" + dashId + BODY_SEPARATOR + widgetId + BODY_SEPARATOR + baseGroupTemplate);
     }
 
     public void createTemplate(int dashId, long widgetId, String tileTemplate) {
