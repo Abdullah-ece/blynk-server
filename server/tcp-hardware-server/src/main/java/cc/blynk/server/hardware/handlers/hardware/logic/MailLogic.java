@@ -29,7 +29,7 @@ import static cc.blynk.server.internal.CommonByteBufUtil.ok;
  * Created on 2/1/2015.
  *
  */
-public class MailLogic extends NotificationBase {
+public final class MailLogic extends NotificationBase {
 
     private static final Logger log = LogManager.getLogger(MailLogic.class);
 

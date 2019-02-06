@@ -12,6 +12,7 @@ import cc.blynk.server.api.http.handlers.BaseWebSocketUnificator;
 import cc.blynk.server.api.http.handlers.LetsEncryptHandler;
 import cc.blynk.server.core.protocol.handlers.decoders.HardwareMessageDecoder;
 import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
+import cc.blynk.server.hardware.handlers.hardware.HardwareLogicHolder;
 import cc.blynk.server.hardware.handlers.hardware.auth.HardwareAlreadyLoggedHandler;
 import cc.blynk.server.hardware.handlers.hardware.auth.HardwareLoginHandler;
 import cc.blynk.server.hardware.handlers.hardware.state.HardwareChannelStateHandler;
@@ -42,8 +43,9 @@ public class HardwareAndHttpAPIServer extends BaseServer {
         super(holder.props.getProperty("listen.address"),
                 holder.props.getIntProperty("http.port"), holder.transportTypeHolder);
 
+        var hardwareLogicHolder = new HardwareLogicHolder(holder);
         var letsEncryptHandler = new LetsEncryptHandler(holder.sslContextHolder.contentHolder);
-        var hardwareLoginHandler = new HardwareLoginHandler(holder, port);
+        var hardwareLoginHandler = new HardwareLoginHandler(holder, hardwareLogicHolder, port);
         var hardwareChannelStateHandler = new HardwareChannelStateHandler(holder);
         var alreadyLoggedHandler = new HardwareAlreadyLoggedHandler();
         int maxWebLength = holder.limits.webRequestMaxSize;

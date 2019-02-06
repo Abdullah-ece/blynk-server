@@ -10,8 +10,6 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.storage.key.DeviceStorageKey;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.group.Group;
-import cc.blynk.server.core.processors.BaseProcessorHandler;
-import cc.blynk.server.core.processors.WebhookProcessor;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.mobile.MobileStateHolder;
 import cc.blynk.utils.NumberUtil;
@@ -35,7 +33,7 @@ import static cc.blynk.utils.StringUtils.split3;
  * Created on 2/1/2015.
  *
  */
-public class MobileHardwareGroupLogic extends BaseProcessorHandler {
+public final class MobileHardwareGroupLogic {
 
     private static final Logger log = LogManager.getLogger(MobileHardwareGroupLogic.class);
 
@@ -43,12 +41,6 @@ public class MobileHardwareGroupLogic extends BaseProcessorHandler {
     private final DeviceDao deviceDao;
 
     public MobileHardwareGroupLogic(Holder holder) {
-        super(holder.eventorProcessor, new WebhookProcessor(holder.asyncHttpClient,
-                holder.limits.webhookPeriodLimitation,
-                holder.limits.webhookResponseSizeLimitBytes,
-                holder.limits.webhookFailureLimit,
-                holder.stats),
-                holder.deviceDao);
         this.sessionDao = holder.sessionDao;
         this.deviceDao = holder.deviceDao;
     }
@@ -103,7 +95,6 @@ public class MobileHardwareGroupLogic extends BaseProcessorHandler {
                 log.debug("Device not in the network.");
                 ctx.writeAndFlush(deviceNotInNetwork(message.id), ctx.voidPromise());
             }
-            //processEventorAndWebhook(state.user, dash, targetId, session, pin, pinType, value, now);
         }
     }
 

@@ -33,7 +33,7 @@ import static cc.blynk.server.internal.CommonByteBufUtil.ok;
  * Created on 2/1/2015.
  *
  */
-public class ProvisionedHardwareFirstHandler extends SimpleChannelInboundHandler<StringMessage> {
+public final class ProvisionedHardwareFirstHandler extends SimpleChannelInboundHandler<StringMessage> {
 
     private static final Logger log = LogManager.getLogger(ProvisionedHardwareFirstHandler.class);
 

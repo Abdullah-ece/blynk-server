@@ -34,6 +34,7 @@ import cc.blynk.server.core.protocol.handlers.decoders.WSMessageDecoder;
 import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
 import cc.blynk.server.core.protocol.handlers.encoders.MobileMessageEncoder;
 import cc.blynk.server.core.protocol.handlers.encoders.WSMessageEncoder;
+import cc.blynk.server.hardware.handlers.hardware.HardwareLogicHolder;
 import cc.blynk.server.hardware.handlers.hardware.auth.HardwareLoginHandler;
 import cc.blynk.server.hardware.handlers.hardware.state.HardwareChannelStateHandler;
 import cc.blynk.server.servers.BaseServer;
@@ -73,6 +74,7 @@ public class MobileAndHttpsServer extends BaseServer {
         super(holder.props.getProperty("listen.address"),
                 holder.props.getIntProperty("https.port"), holder.transportTypeHolder);
 
+        var hardwareLogicHolder = new HardwareLogicHolder(holder);
         var mobileLogicHolder = new MobileLogicHolder(holder);
         var webAppLogicHolder = new WebLogicHolder(holder);
         var appChannelStateHandler = new MobileChannelStateHandler(holder.sessionDao);
@@ -86,7 +88,7 @@ public class MobileAndHttpsServer extends BaseServer {
         var appIdleTimeout = holder.limits.appIdleTimeout;
 
         var hardwareChannelStateHandler = new HardwareChannelStateHandler(holder);
-        var hardwareLoginHandler = new HardwareLoginHandler(holder, port);
+        var hardwareLoginHandler = new HardwareLoginHandler(holder, hardwareLogicHolder, port);
 
         var apiPath = holder.props.getApiPath();
 

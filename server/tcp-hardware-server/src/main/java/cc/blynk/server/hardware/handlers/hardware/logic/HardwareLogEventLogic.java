@@ -26,7 +26,7 @@ import static cc.blynk.utils.StringUtils.split2;
  * Created on 2/1/2015.
  *
  */
-public class HardwareLogEventLogic {
+public final class HardwareLogEventLogic {
 
     private static final Logger log = LogManager.getLogger(HardwareLogEventLogic.class);
 

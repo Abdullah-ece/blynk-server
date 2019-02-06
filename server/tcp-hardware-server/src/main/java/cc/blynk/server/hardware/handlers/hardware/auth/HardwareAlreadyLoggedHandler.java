@@ -17,7 +17,7 @@ import static cc.blynk.server.internal.CommonByteBufUtil.alreadyRegistered;
  * Created on 2/1/2015.
  */
 @ChannelHandler.Sharable
-public class HardwareAlreadyLoggedHandler extends SimpleChannelInboundHandler<MessageBase> {
+public final class HardwareAlreadyLoggedHandler extends SimpleChannelInboundHandler<MessageBase> {
 
     private static final Logger log = LogManager.getLogger(HardwareAlreadyLoggedHandler.class);
 

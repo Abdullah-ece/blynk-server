@@ -1,5 +1,6 @@
 package cc.blynk.server.hardware.handlers.hardware.logic;
 
+import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.widgets.notifications.Twitter;
 import cc.blynk.server.core.processors.NotificationBase;
@@ -27,15 +28,15 @@ import static cc.blynk.server.internal.CommonByteBufUtil.ok;
  * Created on 2/1/2015.
  *
  */
-public class TwitLogic extends NotificationBase {
+public final class TwitLogic extends NotificationBase {
 
     private static final Logger log = LogManager.getLogger(TwitLogic.class);
 
     private final TwitterWrapper twitterWrapper;
 
-    public TwitLogic(TwitterWrapper twitterWrapper, long notificationQuotaLimit) {
-        super(notificationQuotaLimit);
-        this.twitterWrapper = twitterWrapper;
+    public TwitLogic(Holder holder) {
+        super(holder.limits.notificationPeriodLimitSec);
+        this.twitterWrapper = holder.twitterWrapper;
     }
 
     private static void logError(String errorMessage) {

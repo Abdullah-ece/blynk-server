@@ -4,7 +4,6 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.logic.MobileAddPushLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileEditProfileSettingLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileGetEnergyLogic;
-import cc.blynk.server.application.handlers.main.logic.MobileHardwareGroupLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileHardwareLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileHardwareResendFromBTLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileLogoutLogic;
@@ -97,7 +96,6 @@ public final class MobileHandler extends JsonBasedSimpleChannelInboundHandler<St
     private final MobileLogicHolder mobileLogicHolder;
 
     private final MobileHardwareLogic mobileHardwareLogic;
-    private final MobileHardwareGroupLogic mobileHardwareGroupLogic;
 
     private final MobileHardwareResendFromBTLogic mobileHardwareResendFromBTLogic;
 
@@ -109,7 +107,6 @@ public final class MobileHandler extends JsonBasedSimpleChannelInboundHandler<St
 
         //those handlers hold state
         this.mobileHardwareLogic = new MobileHardwareLogic(holder);
-        this.mobileHardwareGroupLogic = new MobileHardwareGroupLogic(holder);
         this.mobileHardwareResendFromBTLogic = new MobileHardwareResendFromBTLogic(holder);
     }
 
@@ -121,7 +118,7 @@ public final class MobileHandler extends JsonBasedSimpleChannelInboundHandler<St
                 mobileHardwareLogic.messageReceived(ctx, state, msg);
                 break;
             case MOBILE_HARDWARE_GROUP :
-                mobileHardwareGroupLogic.messageReceived(ctx, state, msg);
+                mobileLogicHolder.mobileHardwareGroupLogic.messageReceived(ctx, state, msg);
                 break;
             case HARDWARE_RESEND_FROM_BLUETOOTH :
                 mobileHardwareResendFromBTLogic.messageReceived(state, msg);

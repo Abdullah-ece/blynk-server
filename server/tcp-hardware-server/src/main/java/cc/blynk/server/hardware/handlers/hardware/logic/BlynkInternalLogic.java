@@ -13,9 +13,11 @@ import cc.blynk.server.core.model.widgets.others.rtc.RTC;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.internal.token.OTADownloadToken;
+import cc.blynk.server.internal.token.TokensPool;
 import cc.blynk.utils.NumberUtil;
 import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.TokenGeneratorUtil;
+import cc.blynk.utils.properties.ServerProperties;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.timeout.IdleStateHandler;
 import org.apache.logging.log4j.LogManager;
@@ -41,11 +43,28 @@ public final class BlynkInternalLogic {
 
     private static final Logger log = LogManager.getLogger(BlynkInternalLogic.class);
 
-    private BlynkInternalLogic() {
+    private final int hardwareIdleTimeout;
+    private final TokensPool tokensPool;
+    private final ServerProperties props;
+
+    public BlynkInternalLogic(Holder holder) {
+        this.hardwareIdleTimeout = holder.limits.hardwareIdleTimeout;
+        this.tokensPool = holder.tokensPool;
+        this.props = holder.props;
     }
 
-    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
-                                       HardwareStateHolder state, StringMessage message) {
+    private static void sendRTC(ChannelHandlerContext ctx, int msgId) {
+        //todo fix?
+        DashBoard dashBoard = new DashBoard();
+        RTC rtc = dashBoard.getWidgetByType(RTC.class);
+        if (rtc != null && ctx.channel().isWritable()) {
+            ctx.writeAndFlush(makeASCIIStringMessage(BLYNK_INTERNAL, msgId, "rtc" + BODY_SEPARATOR + rtc.getTime()),
+                    ctx.voidPromise());
+        }
+    }
+
+    public void messageReceived(ChannelHandlerContext ctx,
+                                HardwareStateHolder state, StringMessage message) {
         String[] messageParts = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
 
         if (messageParts.length == 0 || messageParts[0].isEmpty()) {
@@ -63,10 +82,10 @@ public final class BlynkInternalLogic {
             case 'd' : //dev
             case 'c' : //cpu
             case 't' : //tmpl
-                parseHardwareInfo(holder, ctx, messageParts, state, message.id);
+                parseHardwareInfo(ctx, messageParts, state, message.id);
                 break;
             case 'r' : //rtc
-                sendRTC(ctx, state, message.id);
+                sendRTC(ctx, message.id);
                 break;
             case 'a' :
             case 'o' :
@@ -75,24 +94,13 @@ public final class BlynkInternalLogic {
 
     }
 
-    private static void sendRTC(ChannelHandlerContext ctx, HardwareStateHolder state, int msgId) {
-        //todo fix?
-        DashBoard dashBoard = new DashBoard();
-        RTC rtc = dashBoard.getWidgetByType(RTC.class);
-        if (rtc != null && ctx.channel().isWritable()) {
-            ctx.writeAndFlush(makeASCIIStringMessage(BLYNK_INTERNAL, msgId, "rtc" + BODY_SEPARATOR + rtc.getTime()),
-                    ctx.voidPromise());
-        }
-    }
-
-    private static void parseHardwareInfo(Holder holder, ChannelHandlerContext ctx,
-                                          String[] messageParts,
-                                          HardwareStateHolder state, int msgId) {
+    private void parseHardwareInfo(ChannelHandlerContext ctx,
+                                   String[] messageParts,
+                                   HardwareStateHolder state, int msgId) {
         HardwareInfo hardwareInfo = new HardwareInfo(messageParts);
         int newHardwareInterval = hardwareInfo.heartbeatInterval;
 
         log.trace("Info command. heartbeat interval {}", newHardwareInterval);
-        int hardwareIdleTimeout = holder.limits.hardwareIdleTimeout;
 
         //no need to change IdleStateHandler if heartbeat interval wasn't changed or wasn't provided
         if (hardwareIdleTimeout != 0 && newHardwareInterval > 0 && newHardwareInterval != hardwareIdleTimeout) {
@@ -105,7 +113,7 @@ public final class BlynkInternalLogic {
         Device device = state.device;
 
         if (device != null) {
-            processOTA(holder, ctx, state.org, device, hardwareInfo);
+            processOTA(ctx, state.org, device, hardwareInfo);
 
             //special temporary hotfix https://github.com/blynkkk/dash/issues/1765
             String templateId = hardwareInfo.templateId;
@@ -130,7 +138,7 @@ public final class BlynkInternalLogic {
         ctx.writeAndFlush(ok(msgId), ctx.voidPromise());
     }
 
-    private static void processOTA(Holder holder, ChannelHandlerContext ctx,
+    private void processOTA(ChannelHandlerContext ctx,
                                    Organization org, Device device, HardwareInfo hardwareInfo) {
         DeviceOtaInfo deviceOtaInfo = device.deviceOtaInfo;
         if (deviceOtaInfo == null) {
@@ -149,9 +157,9 @@ public final class BlynkInternalLogic {
                     log.warn("OTA limit reached for deviceId {}.", device.id);
                     device.firmwareDownloadLimitReached();
                 } else {
-                    String serverUrl = holder.props.getServerUrl(shipment.isSecure);
+                    String serverUrl = props.getServerUrl(shipment.isSecure);
                     String downloadToken = TokenGeneratorUtil.generateNewToken();
-                    holder.tokensPool.addToken(downloadToken, new OTADownloadToken(device.id));
+                    tokensPool.addToken(downloadToken, new OTADownloadToken(device.id));
                     String body = StringUtils.makeHardwareBody(serverUrl,
                             shipment.pathToFirmware, downloadToken);
                     StringMessage msg = makeASCIIStringMessage(BLYNK_INTERNAL, 7777, body);

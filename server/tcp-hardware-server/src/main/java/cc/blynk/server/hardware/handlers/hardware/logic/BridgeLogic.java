@@ -1,5 +1,6 @@
 package cc.blynk.server.hardware.handlers.hardware.logic;
 
+import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.DeviceValue;
 import cc.blynk.server.core.dao.SessionDao;
@@ -40,9 +41,9 @@ public class BridgeLogic {
     private final DeviceDao deviceDao;
     private Map<String, DeviceValue> sendToMap;
 
-    public BridgeLogic(SessionDao sessionDao, DeviceDao deviceDao) {
-        this.sessionDao = sessionDao;
-        this.deviceDao = deviceDao;
+    public BridgeLogic(Holder holder) {
+        this.sessionDao = holder.sessionDao;
+        this.deviceDao = holder.deviceDao;
     }
 
     private static boolean isInit(String body) {

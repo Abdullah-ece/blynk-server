@@ -10,6 +10,7 @@ import cc.blynk.server.application.handlers.main.logic.MobileGetCloneCodeLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileGetProjectByClonedTokenLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileGetProjectByTokenLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileGetProvisionTokenLogic;
+import cc.blynk.server.application.handlers.main.logic.MobileHardwareGroupLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileLoadProfileGzippedLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileMailLogic;
 import cc.blynk.server.application.handlers.main.logic.MobilePurchaseLogic;
@@ -112,6 +113,7 @@ public final class MobileLogicHolder {
     final MobileEditAppLogic mobileEditAppLogic;
     final MobileEditDashSettingLogic mobileEditDashSettingLogic;
     final MobileCreateAppLogic mobileCreateAppLogic;
+    final MobileHardwareGroupLogic mobileHardwareGroupLogic;
 
     //common handler
     final CommonGetDevicesByReferenceMetafieldLogic commonGetDevicesByReferenceMetafieldLogic;
@@ -171,6 +173,7 @@ public final class MobileLogicHolder {
         this.mobileEditAppLogic = new MobileEditAppLogic(holder);
         this.mobileEditDashSettingLogic = new MobileEditDashSettingLogic(holder);
         this.mobileCreateAppLogic = new MobileCreateAppLogic(holder);
+        this.mobileHardwareGroupLogic = new MobileHardwareGroupLogic(holder);
 
         this.commonGetDevicesByReferenceMetafieldLogic = new CommonGetDevicesByReferenceMetafieldLogic(holder);
 

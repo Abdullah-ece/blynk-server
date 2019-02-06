@@ -41,7 +41,7 @@ public class Limits {
         this.profileSizeLimitBytes = props.getIntProperty("user.profile.max.size", 64) * 1024;
 
         this.notificationPeriodLimitSec =
-                props.getLongProperty("notifications.frequency.user.quota.limit", 15L) * 1000L;
+                props.getLongProperty("notifications.frequency.user.quota.limit", 5L) * 1000L;
         this.userQuotaLimit = props.getIntProperty("user.message.quota.limit", 100);
         this.webhookPeriodLimitation =
                 isUnlimited(props.getLongProperty("webhooks.frequency.user.quota.limit", 1000), -1L);

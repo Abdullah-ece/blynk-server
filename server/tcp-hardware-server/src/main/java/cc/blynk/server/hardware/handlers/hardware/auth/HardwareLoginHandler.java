@@ -17,6 +17,7 @@ import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.ReportingDBManager;
 import cc.blynk.server.hardware.handlers.hardware.HardwareHandler;
+import cc.blynk.server.hardware.handlers.hardware.HardwareLogicHolder;
 import cc.blynk.server.hardware.internal.ProvisionedDeviceAddedMessage;
 import cc.blynk.server.internal.ReregisterChannelUtil;
 import cc.blynk.utils.IPUtils;
@@ -53,19 +54,21 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
  *
  */
 @ChannelHandler.Sharable
-public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessage> {
+public final class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessage> {
 
     private static final Logger log = LogManager.getLogger(HardwareLoginHandler.class);
 
     private final Holder holder;
+    private final HardwareLogicHolder hardwareLogicHolder;
     private final DBManager dbManager;
     private final ReportingDBManager reportingDBManager;
     private final BlockingIOProcessor blockingIOProcessor;
     private final String listenPort;
     private final boolean allowStoreIp;
 
-    public HardwareLoginHandler(Holder holder, int listenPort) {
+    public HardwareLoginHandler(Holder holder, HardwareLogicHolder hardwareLogicHolder, int listenPort) {
         this.holder = holder;
+        this.hardwareLogicHolder = hardwareLogicHolder;
         this.reportingDBManager = holder.reportingDBManager;
         this.dbManager = holder.dbManager;
         this.blockingIOProcessor = holder.blockingIOProcessor;
@@ -164,7 +167,8 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         HardwareStateHolder hardwareStateHolder = new HardwareStateHolder(org, product, device);
 
         ChannelPipeline pipeline = ctx.pipeline();
-        pipeline.replace(this, "HHArdwareHandler", new HardwareHandler(holder, hardwareStateHolder));
+        pipeline.replace(this, "HHArdwareHandler",
+                new HardwareHandler(holder, hardwareLogicHolder, hardwareStateHolder));
 
         Session session = holder.sessionDao.getOrCreateSessionForOrg(
                 hardwareStateHolder.org.id, ctx.channel().eventLoop());

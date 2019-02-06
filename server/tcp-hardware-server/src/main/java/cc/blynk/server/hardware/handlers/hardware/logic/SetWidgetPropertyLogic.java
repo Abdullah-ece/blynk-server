@@ -28,13 +28,13 @@ public final class SetWidgetPropertyLogic {
 
     private static final Logger log = LogManager.getLogger(SetWidgetPropertyLogic.class);
 
-    private SetWidgetPropertyLogic() {
+    private final SessionDao sessionDao;
+
+    public SetWidgetPropertyLogic(Holder holder) {
+        this.sessionDao = holder.sessionDao;
     }
 
-    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
-                                       HardwareStateHolder state, StringMessage message) {
-        SessionDao sessionDao = holder.sessionDao;
-
+    public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
         String[] bodyParts = split3(message.body);
 
         if (bodyParts.length != 3) {

@@ -1,5 +1,6 @@
 package cc.blynk.server.hardware.handlers.hardware.logic;
 
+import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.NotificationsDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.auth.User;
@@ -27,19 +28,17 @@ import static cc.blynk.server.internal.CommonByteBufUtil.ok;
  * Created on 2/1/2015.
  *
  */
-public class PushLogic extends NotificationBase {
+public final class PushLogic extends NotificationBase {
 
     private static final Logger log = LogManager.getLogger(PushLogic.class);
 
     private final NotificationsDao notificationsDao;
     private final UserDao userDao;
 
-    public PushLogic(NotificationsDao notificationsDao,
-                     UserDao userDao,
-                     long notificationQuotaLimit) {
-        super(notificationQuotaLimit);
-        this.notificationsDao = notificationsDao;
-        this.userDao = userDao;
+    public PushLogic(Holder holder) {
+        super(holder.limits.notificationPeriodLimitSec);
+        this.notificationsDao = holder.notificationsDao;
+        this.userDao = holder.userDao;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {

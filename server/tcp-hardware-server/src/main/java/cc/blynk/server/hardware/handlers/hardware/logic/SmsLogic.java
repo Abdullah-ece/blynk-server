@@ -1,5 +1,6 @@
 package cc.blynk.server.hardware.handlers.hardware.logic;
 
+import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.widgets.notifications.SMS;
 import cc.blynk.server.core.processors.NotificationBase;
@@ -24,7 +25,7 @@ import static cc.blynk.server.internal.CommonByteBufUtil.ok;
  * Created on 2/1/2015.
  *
  */
-public class SmsLogic extends NotificationBase {
+public final class SmsLogic extends NotificationBase {
 
     private static final Logger log = LogManager.getLogger(SmsLogic.class);
 
@@ -32,9 +33,9 @@ public class SmsLogic extends NotificationBase {
 
     private final SMSWrapper smsWrapper;
 
-    public SmsLogic(SMSWrapper smsWrapper, long notificationQuotaLimit) {
-        super(notificationQuotaLimit);
-        this.smsWrapper = smsWrapper;
+    public SmsLogic(Holder holder) {
+        super(holder.limits.notificationPeriodLimitSec);
+        this.smsWrapper = holder.smsWrapper;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
