@@ -39,7 +39,7 @@ public final class DeviceTiles extends Widget implements MobileSyncWidget, Devic
 
     public volatile BaseGroupTemplate[] groupTemplates = EMPTY_GROUP_TEMPLATES;
 
-    public Group[] groups = EMPTY_GROUPS;
+    public volatile Group[] groups = EMPTY_GROUPS;
 
     public volatile TileTemplate[] templates = EMPTY_TEMPLATES;
 
@@ -332,9 +332,8 @@ public final class DeviceTiles extends Widget implements MobileSyncWidget, Devic
     }
 
     public void deleteGroupTemplateById(long groupTemplateId) {
-        int existingGroupTemplateIndex = getGroupTemplateIndexByIdOrThrow(groupTemplateId);
-        this.groupTemplates = ArrayUtil.remove(
-                this.groupTemplates, existingGroupTemplateIndex, BaseGroupTemplate.class);
+        int index = getGroupTemplateIndexByIdOrThrow(groupTemplateId);
+        this.groupTemplates = ArrayUtil.remove(this.groupTemplates, index, BaseGroupTemplate.class);
     }
 
     public void addGroupTemplate(BaseGroupTemplate groupTemplate) {
@@ -379,6 +378,11 @@ public final class DeviceTiles extends Widget implements MobileSyncWidget, Devic
             throw new IllegalCommandException("Group with passed id not found.");
         }
         return group;
+    }
+
+    public void updateGroup(Group group) {
+        int existingGroupIndex = getGroupIndexByIdOrThrow(group.id);
+        this.groups = ArrayUtil.copyAndReplace(this.groups, group, existingGroupIndex);
     }
 
     @Override

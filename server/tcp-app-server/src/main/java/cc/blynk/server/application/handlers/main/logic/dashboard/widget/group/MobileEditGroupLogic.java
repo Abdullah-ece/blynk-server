@@ -4,7 +4,7 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
-import cc.blynk.server.core.model.widgets.ui.tiles.group.BaseGroupTemplate;
+import cc.blynk.server.core.model.widgets.ui.tiles.group.Group;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.mobile.MobileStateHolder;
@@ -38,22 +38,20 @@ public final class MobileEditGroupLogic {
 
         int dashId = Integer.parseInt(split[0]);
         long widgetId = Long.parseLong(split[1]);
-        String groupTemplateString = split[2];
+        String groupString = split[2];
 
-        if (groupTemplateString == null || groupTemplateString.isEmpty()) {
-            throw new JsonException("Income group template message is empty.");
+        if (groupString == null || groupString.isEmpty()) {
+            throw new JsonException("Income group message is empty.");
         }
 
         User user = state.user;
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
         DeviceTiles deviceTiles = dash.getDeviceTilesByIdOrThrow(widgetId);
 
-        BaseGroupTemplate newGroupTemplate = JsonParser.parseGroupTemplate(groupTemplateString, message.id);
+        Group editedGroup = JsonParser.parseGroup(groupString, message.id);
 
-        log.debug("Updating group template {}.", groupTemplateString);
-
-        int existingGroupTemplateIndex = deviceTiles.getGroupTemplateIndexByIdOrThrow(newGroupTemplate.id);
-        deviceTiles.replaceGroupTemplate(newGroupTemplate, existingGroupTemplateIndex);
+        log.debug("Updating group {}.", editedGroup);
+        deviceTiles.updateGroup(editedGroup);
 
         dash.updatedAt = System.currentTimeMillis();
 

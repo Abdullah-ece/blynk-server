@@ -42,7 +42,7 @@ public final class MobileDeleteGroupLogic {
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
         DeviceTiles deviceTiles = dash.getDeviceTilesByIdOrThrow(widgetId);
 
-        log.debug("Deleting group dashId : {}, widgetId : {}, groupTemplateId : {}.",
+        log.debug("Deleting group dashId : {}, widgetId : {}, groupId : {}.",
                 dash, widgetId, groupId);
 
         deviceTiles.deleteGroupById(groupId);
