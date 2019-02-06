@@ -17,9 +17,10 @@ import java.util.Map;
 
 import static cc.blynk.integration.TestUtil.hardware;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICE;
-import static cc.blynk.server.core.protocol.enums.Command.VALUES_NAME;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -36,10 +37,9 @@ public class ReportingStatsTest extends SingleServerInstancePerTestWithDB {
     @Before
     public void clearDB() throws Exception {
         // clickhouse doesn't have normal way of data removal, so using "hack"
-        holder.reportingDBManager.executeSQL("ALTER TABLE reporting_app_stat_minute DELETE where region = 'ua'");
-        holder.reportingDBManager.executeSQL("ALTER TABLE reporting_command_stat_minute DELETE where region = 'ua'");
-        holder.reportingDBManager.executeSQL("ALTER TABLE reporting_app_stat_minute DELETE where region = 'test-region'");
-        holder.reportingDBManager.executeSQL("ALTER TABLE reporting_command_stat_minute DELETE where region = 'test-region'");
+        holder.reportingDBManager.executeSQL("ALTER TABLE reporting_app_stat_minute DELETE where region IN ('" + UA + "', 'test-region')");
+        holder.reportingDBManager.executeSQL("ALTER TABLE reporting_command_stat_minute DELETE where region IN ('" + UA + "', 'test-region')");
+        holder.reportingDBManager.executeSQL("ALTER TABLE reporting_command_stat_monthly DELETE where region IN ('" + UA + "', 'test-region')");
     }
 
     @Test
@@ -71,9 +71,9 @@ public class ReportingStatsTest extends SingleServerInstancePerTestWithDB {
                 assertEquals(0, rs.getInt("active_month"));
                 assertEquals(1, rs.getInt("connected"));
                 assertEquals(1, rs.getInt("online_apps"));
-                assertEquals(1, rs.getInt("total_online_apps"));
+                assertTrue(rs.getInt("total_online_apps") >= 1);
                 assertEquals(1, rs.getInt("online_hards"));
-                assertEquals(1, rs.getInt("total_online_hards"));
+                assertTrue(rs.getInt("total_online_hards") >= 1);
             }
 
             connection.commit();
@@ -129,5 +129,46 @@ public class ReportingStatsTest extends SingleServerInstancePerTestWithDB {
 
             connection.commit();
         }
+    }
+
+    @Test
+    public void testMonthlyCommandCountersHavingTwoStatsWorkers() throws Exception {
+        ClientPair clientPair = initAppAndHardPair();
+        var statsWorker = new StatsWorker(holder);
+        long now = System.currentTimeMillis();
+
+        Device device = new Device();
+        device.name = "My New Device";
+
+        clientPair.appClient.createDevice(device);
+        device = clientPair.appClient.parseDevice(1);
+        assertNotNull(device);
+
+        Map<Short, Long> commands = holder.reportingDBManager.reportingStatsDao.selectMonthlyCommandsStat(now);
+        assertNotNull(commands);
+
+        statsWorker.run();
+
+        short createDeviceCommand = MOBILE_CREATE_DEVICE;
+
+        commands = holder.reportingDBManager.reportingStatsDao.selectMonthlyCommandsStat(now);
+        assertNotNull(commands);
+        assertFalse(commands.isEmpty());
+        assertEquals(6, (long) commands.get(createDeviceCommand));
+
+        device = new Device();
+        device.name = "My New Device2";
+
+        clientPair.appClient.createDevice(device);
+        device = clientPair.appClient.parseDevice(2);
+        assertNotNull(device);
+
+        statsWorker.run();
+
+        commands = holder.reportingDBManager.reportingStatsDao.selectMonthlyCommandsStat(now);
+        assertNotNull(commands);
+        assertFalse(commands.isEmpty());
+
+        assertEquals(8, (long) commands.get(createDeviceCommand));
     }
 }

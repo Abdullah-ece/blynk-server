@@ -8,8 +8,10 @@ import org.apache.logging.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -28,6 +30,10 @@ public final class ReportingStatsDao {
     private static final String insertStatAllCommandsMinute =
             "INSERT INTO reporting_command_stat_minute (region, ts, command_code, counter) "
                     + "VALUES(?,?,?,?)";
+
+    private static final String selectMonthlyCommandStat =
+            "SELECT command_code, sum(counter) AS counter FROM reporting_command_stat_monthly "
+                    + "WHERE ts = toStartOfMonth(toDateTime(?)) GROUP BY command_code";
 
     private static final Logger log = LogManager.getLogger(ReportingStatsDao.class);
 
@@ -57,6 +63,28 @@ public final class ReportingStatsDao {
             log.error("Error inserting real time stat in DB.", e);
         }
         return false;
+    }
+
+    public Map<Short, Long> selectMonthlyCommandsStat(long ts) {
+        Map<Short, Long> commands = new HashMap<>();
+
+        try (Connection connection = ds.getConnection();
+             PreparedStatement commandStatPS = connection.prepareStatement(selectMonthlyCommandStat)) {
+            commandStatPS.setTimestamp(1, new Timestamp(ts));
+
+            try (ResultSet rs = commandStatPS.executeQuery()) {
+                while (rs.next()) {
+                    short commandCode = rs.getShort("command_code");
+                    long  counter     = rs.getLong("counter");
+                    commands.put(commandCode, counter);
+                }
+
+                connection.commit();
+            }
+        } catch (Exception e) {
+            log.error("Error receiving month command stat from DB.", e);
+        }
+        return commands;
     }
 
     private void insertAppStat(PreparedStatement appStatPS,
