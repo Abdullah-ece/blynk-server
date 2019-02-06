@@ -196,6 +196,7 @@ class Edit extends React.Component {
         <span>Upload firmware file (.bin, .tar)<br/><br/></span>)}
                      logo={value}
                      error={error}
+                     isNotImage={true}
                      iconClass="ota-upload-drag-icon"
                      onChange={handleComponentChange}
                      fileProps={fileProps}/>

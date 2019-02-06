@@ -17,6 +17,7 @@ class ImageUploader extends React.Component {
     logo: React.PropTypes.string,
     defaultImage: React.PropTypes.string,
     iconClass: React.PropTypes.string,
+    isNotImage: React.PropTypes.bool,
   };
 
   constructor(props) {
@@ -76,12 +77,22 @@ class ImageUploader extends React.Component {
           {this.props.logo && (
             <div className="image-uploader-cover">
               {this.props.logo !== this.props.defaultImage && (
-                <div className="image-uploader-cover-tools" onClick={this.handleDelete.bind(this)}>
+                <div className="image-uploader-cover-tools"
+                     onClick={this.handleDelete.bind(this)}>
                   <LinearIcon type="trash"/>
                 </div>
               )}
-              <img src={this.props.logo}
-                   alt=""/>
+              {this.props.isNotImage ?
+                (
+                  <div>
+                    <LinearIcon type="cube"
+                                className="image-uploader-file-icon"/>
+                    <div>{this.props.logo}</div>
+                  </div>
+                ) : (
+                  <img src={this.props.logo}
+                       alt=""/>
+                )}
             </div>)
           }
           {!this.props.logo && <div>
