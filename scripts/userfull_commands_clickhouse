@@ -1,0 +1,12 @@
+View tables size:
+
+    SELECT table,
+        formatReadableSize(sum(bytes)) as size,
+        min(min_date) as min_date,
+        max(max_date) as max_date
+        FROM system.parts
+        WHERE active
+    GROUP BY table
+    HAVING sum(bytes) > 1000
+    ORDER BY sum(bytes) DESC;
+
