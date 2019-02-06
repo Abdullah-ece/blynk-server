@@ -71,7 +71,7 @@ public class OTAWebSocketsTest extends SingleServerInstancePerTestWithDBAndNewOr
         client.getTempSecureToken();
         String uploadToken = client.parseToken(1).token;
 
-        String pathToFirmware = upload(httpclient, uploadHttpsUrl, uploadToken, "static/ota/blnkinf2.0.0.bin");
+        String pathToFirmware = upload(httpclient, uploadHttpsUrl, uploadToken, "static/ota/Airius_CC3220SF_v081.ota.tar");
 
         HttpGet index = new HttpGet("https://localhost:" + properties.getHttpsPort() + pathToFirmware);
         try (CloseableHttpResponse response = httpclient.execute(index)) {
@@ -81,10 +81,10 @@ public class OTAWebSocketsTest extends SingleServerInstancePerTestWithDBAndNewOr
         client.getFirmwareInfo(pathToFirmware);
         FirmwareInfo parsedFirmwareInfo = client.parseFirmwareInfo(2);
         assertNotNull(parsedFirmwareInfo);
-        assertEquals("2.0.0", parsedFirmwareInfo.version);
-        assertEquals(BoardType.NodeMCU, parsedFirmwareInfo.boardType);
-        assertEquals("May  9 2018 12:36:07", parsedFirmwareInfo.buildDate);
-        assertEquals("DA2A7DDC95F46ED14126F5BCEF304833", parsedFirmwareInfo.md5Hash);
+        assertEquals("0.8.1", parsedFirmwareInfo.version);
+        assertEquals(BoardType.TI_CC3220, parsedFirmwareInfo.boardType);
+        assertEquals("Dec 13 2018 15:04:29", parsedFirmwareInfo.buildDate);
+        assertEquals("7AC03C4FECAB96547DBB50350425A204", parsedFirmwareInfo.md5Hash);
 
         Product product = new Product();
         product.name = "My product";
@@ -125,7 +125,7 @@ public class OTAWebSocketsTest extends SingleServerInstancePerTestWithDBAndNewOr
         newHardClient.login(createdDevice.token);
         newHardClient.verifyResult(ok(1));
 
-        String firmwareDownloadUrl = "http://localhost:" + properties.getHttpPort() + pathToFirmware + "?token=";
+        String firmwareDownloadUrl = "https://localhost:" + properties.getHttpsPort() + pathToFirmware + "?token=";
         newHardClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
 
         String s = newHardClient.getBody(2);
@@ -165,7 +165,7 @@ public class OTAWebSocketsTest extends SingleServerInstancePerTestWithDBAndNewOr
         newHardClient.login(createdDevice.token);
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        newHardClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build ") + "May  9 2018 12:36:07");
+        newHardClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build ") + "Dec 13 2018 15:04:29");
         newHardClient.verifyResult(ok(2));
         newHardClient.never(internal(7777, "ota\0" + firmwareDownloadUrl));
         client.verifyResult(deviceConnected(1, createdDevice.id));
@@ -181,7 +181,7 @@ public class OTAWebSocketsTest extends SingleServerInstancePerTestWithDBAndNewOr
         assertEquals(System.currentTimeMillis(), createdDevice.deviceOtaInfo.firmwareRequestedAt, 5000);
         assertEquals(System.currentTimeMillis(), createdDevice.deviceOtaInfo.firmwareUploadedAt, 5000);
         assertEquals(System.currentTimeMillis(), createdDevice.deviceOtaInfo.finishedAt, 5000);
-        assertEquals("May  9 2018 12:36:07", createdDevice.hardwareInfo.build);
+        assertEquals("Dec 13 2018 15:04:29", createdDevice.hardwareInfo.build);
     }
 
 }

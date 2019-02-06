@@ -80,7 +80,7 @@ public class OTATest extends APIBaseTest {
     public void otaBasicFlowForDeviceConnectedAfterOTAStarted() throws Exception {
         login(admin.email, admin.pass);
 
-        String pathToFirmware = upload("static/ota/blnkinf2.0.0.bin");
+        String pathToFirmware = upload("static/ota/Airius_CC3220SF_v081.ota.tar");
 
         HttpGet index = new HttpGet("https://localhost:" + properties.getHttpsPort() + pathToFirmware);
         try (CloseableHttpResponse response = httpclient.execute(index)) {
@@ -94,7 +94,7 @@ public class OTATest extends APIBaseTest {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String firmwareInfoString = consumeText(response);
             assertNotNull(firmwareInfoString);
-            assertEquals("{\"version\":\"2.0.0\",\"boardType\":\"NodeMCU\",\"buildDate\":\"May  9 2018 12:36:07\",\"md5Hash\":\"DA2A7DDC95F46ED14126F5BCEF304833\"}", firmwareInfoString);
+            assertEquals("{\"version\":\"0.8.1\",\"boardType\":\"TI CC3220\",\"buildDate\":\"Dec 13 2018 15:04:29\",\"md5Hash\":\"7AC03C4FECAB96547DBB50350425A204\"}", firmwareInfoString);
             firmwareInfo = JsonParser.MAPPER.readValue(firmwareInfoString, FirmwareInfo.class);
         }
 
@@ -136,7 +136,7 @@ public class OTATest extends APIBaseTest {
         newHardClient.login(newDevice.token);
         newHardClient.verifyResult(ok(1));
 
-        String firmwareDownloadUrl = "http://localhost:" + properties.getHttpPort() + pathToFirmware + "?token=";
+        String firmwareDownloadUrl = "https://localhost:" + properties.getHttpsPort() + pathToFirmware + "?token=";
         newHardClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
 
         String s = newHardClient.getBody(2);
@@ -178,7 +178,7 @@ public class OTATest extends APIBaseTest {
         newHardClient.login(newDevice.token);
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        newHardClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build ") + "May  9 2018 12:36:07");
+        newHardClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build ") + "Dec 13 2018 15:04:29");
         newHardClient.verifyResult(ok(2));
         newHardClient.never(internal(7777, "ota\0" + firmwareDownloadUrl));
 
@@ -195,7 +195,7 @@ public class OTATest extends APIBaseTest {
             assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.firmwareRequestedAt, 5000);
             assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.firmwareUploadedAt, 5000);
             assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.finishedAt, 5000);
-            assertEquals("May  9 2018 12:36:07", newDevice.hardwareInfo.build);
+            assertEquals("Dec 13 2018 15:04:29", newDevice.hardwareInfo.build);
         }
     }
 
@@ -204,7 +204,7 @@ public class OTATest extends APIBaseTest {
     public void otaFullFlowForDeviceConnectedAfterOTAStarted() throws Exception {
         login(admin.email, admin.pass);
 
-        String pathToFirmware = upload("static/ota/blnkinf2.0.0.bin");
+        String pathToFirmware = upload("static/ota/Airius_CC3220SF_v081.ota.tar");
 
         HttpGet index = new HttpGet("https://localhost:" + properties.getHttpsPort() + pathToFirmware);
         try (CloseableHttpResponse response = httpclient.execute(index)) {
@@ -218,7 +218,7 @@ public class OTATest extends APIBaseTest {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String firmwareInfoString = consumeText(response);
             assertNotNull(firmwareInfoString);
-            assertEquals("{\"version\":\"2.0.0\",\"boardType\":\"NodeMCU\",\"buildDate\":\"May  9 2018 12:36:07\",\"md5Hash\":\"DA2A7DDC95F46ED14126F5BCEF304833\"}", firmwareInfoString);
+            assertEquals("{\"version\":\"0.8.1\",\"boardType\":\"TI CC3220\",\"buildDate\":\"Dec 13 2018 15:04:29\",\"md5Hash\":\"7AC03C4FECAB96547DBB50350425A204\"}", firmwareInfoString);
             firmwareInfo = JsonParser.MAPPER.readValue(firmwareInfoString, FirmwareInfo.class);
         }
 
@@ -261,7 +261,7 @@ public class OTATest extends APIBaseTest {
         newHardClient.verifyResult(ok(1));
 
         newHardClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
-        String firmwareDownloadUrl = "http://localhost:" + properties.getHttpPort() + pathToFirmware + "?token=";
+        String firmwareDownloadUrl = "https://localhost:" + properties.getHttpsPort() + pathToFirmware + "?token=";
         newHardClient.verifyResult(ok(2));
 
         String s = newHardClient.getBody(2);
@@ -318,7 +318,7 @@ public class OTATest extends APIBaseTest {
     public void otaBasicFlowForDeviceConnectedWhenOTAStarted() throws Exception {
         login(admin.email, admin.pass);
 
-        String pathToFirmware = upload("static/ota/blnkinf2.0.0.bin");
+        String pathToFirmware = upload("static/ota/Airius_CC3220SF_v081.ota.tar");
 
         HttpGet index = new HttpGet("https://localhost:" + properties.getHttpsPort() + pathToFirmware);
         try (CloseableHttpResponse response = httpclient.execute(index)) {
@@ -332,7 +332,7 @@ public class OTATest extends APIBaseTest {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String firmwareInfoString = consumeText(response);
             assertNotNull(firmwareInfoString);
-            assertEquals("{\"version\":\"2.0.0\",\"boardType\":\"NodeMCU\",\"buildDate\":\"May  9 2018 12:36:07\",\"md5Hash\":\"DA2A7DDC95F46ED14126F5BCEF304833\"}", firmwareInfoString);
+            assertEquals("{\"version\":\"0.8.1\",\"boardType\":\"TI CC3220\",\"buildDate\":\"Dec 13 2018 15:04:29\",\"md5Hash\":\"7AC03C4FECAB96547DBB50350425A204\"}", firmwareInfoString);
             firmwareInfo = JsonParser.MAPPER.readValue(firmwareInfoString, FirmwareInfo.class);
         }
 
@@ -367,7 +367,7 @@ public class OTATest extends APIBaseTest {
         }
 
         String s = newHardClient.getBody(3);
-        assertTrue(s.startsWith(b("ota http://localhost:" + properties.getHttpPort()) + pathToFirmware + "?token="));
+        assertTrue(s.startsWith(b("ota https://localhost:" + properties.getHttpsPort()) + pathToFirmware + "?token="));
         //newHardClient.verifyResult(internal(7777, b("ota http://localhost:" + properties.getHttpPort()) + pathToFirmware + "?token="));
 
         HttpGet getDevices = new HttpGet(httpsAdminServerUrl + "/devices/1/1");
@@ -389,7 +389,7 @@ public class OTATest extends APIBaseTest {
     public void otaStop() throws Exception {
         login(admin.email, admin.pass);
 
-        String pathToFirmware = upload("static/ota/blnkinf2.0.0.bin");
+        String pathToFirmware = upload("static/ota/Airius_CC3220SF_v081.ota.tar");
 
         HttpGet index = new HttpGet("https://localhost:" + properties.getHttpsPort() + pathToFirmware);
         try (CloseableHttpResponse response = httpclient.execute(index)) {
@@ -403,7 +403,7 @@ public class OTATest extends APIBaseTest {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String firmwareInfoString = consumeText(response);
             assertNotNull(firmwareInfoString);
-            assertEquals("{\"version\":\"2.0.0\",\"boardType\":\"NodeMCU\",\"buildDate\":\"May  9 2018 12:36:07\",\"md5Hash\":\"DA2A7DDC95F46ED14126F5BCEF304833\"}", firmwareInfoString);
+            assertEquals("{\"version\":\"0.8.1\",\"boardType\":\"TI CC3220\",\"buildDate\":\"Dec 13 2018 15:04:29\",\"md5Hash\":\"7AC03C4FECAB96547DBB50350425A204\"}", firmwareInfoString);
             firmwareInfo = JsonParser.MAPPER.readValue(firmwareInfoString, FirmwareInfo.class);
         }
 
@@ -480,7 +480,7 @@ public class OTATest extends APIBaseTest {
 
             assertNotNull(staticPath);
             assertTrue(staticPath.startsWith("/static"));
-            assertTrue(staticPath.endsWith("bin"));
+            assertTrue(staticPath.endsWith("tar"));
         }
 
         return staticPath;
