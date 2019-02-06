@@ -152,7 +152,7 @@ public final class MobileHandler extends JsonBasedSimpleChannelInboundHandler<St
 
     private final MobileHardwareResendFromBTLogic hardwareResendFromBTLogic;
     private final MobileMailLogic mobileMailLogic;
-    private final MobilePurchaseLogic purchaseLogic;
+    private final MobilePurchaseLogic mobilePurchaseLogic;
     private final MobileDeleteAppLogic mobileDeleteAppLogic;
     private final MobileMailQRsLogic mailQRsLogic;
     private final MobileGetProjectByClonedTokenLogic mobileGetProjectByCloneCodeLogic;
@@ -244,7 +244,7 @@ public final class MobileHandler extends JsonBasedSimpleChannelInboundHandler<St
         this.mobileDeleteDeviceLogic = new MobileDeleteDeviceLogic(holder);
         this.mobileEditDeviceLogic = new MobileEditDeviceLogic(holder);
         this.mobileCreateDeviceLogic = new MobileCreateDeviceLogic(holder);
-        this.purchaseLogic = new MobilePurchaseLogic(holder);
+        this.mobilePurchaseLogic = new MobilePurchaseLogic(holder);
         this.mobileRedeemLogic = new MobileRedeemLogic(holder);
         this.mobileDeleteTileTemplateLogic = new MobileDeleteTileTemplateLogic(holder);
         this.mobileDeleteWidgetLogic = new MobileDeleteWidgetLogic(holder);
@@ -366,7 +366,7 @@ public final class MobileHandler extends JsonBasedSimpleChannelInboundHandler<St
                 MobileGetEnergyLogic.messageReceived(ctx, state.user, msg);
                 break;
             case MOBILE_ADD_ENERGY :
-                purchaseLogic.messageReceived(ctx, state, msg);
+                mobilePurchaseLogic.messageReceived(ctx, state, msg);
                 break;
 
             case MOBILE_EDIT_PROJECT_SETTINGS :
