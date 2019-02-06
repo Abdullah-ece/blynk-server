@@ -18,11 +18,11 @@ import static cc.blynk.server.internal.CommonByteBufUtil.ok;
  * Created on 2/1/2015.
  *
  */
-public final class DeviceSyncLogic {
+public final class MobileDeviceSyncLogic {
 
     private final DeviceDao deviceDao;
 
-    public DeviceSyncLogic(Holder holder) {
+    public MobileDeviceSyncLogic(Holder holder) {
         this.deviceDao = holder.deviceDao;
     }
 

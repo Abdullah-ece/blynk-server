@@ -1,12 +1,12 @@
 package cc.blynk.server.application.handlers.main;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.application.handlers.main.logic.DashSyncLogic;
-import cc.blynk.server.application.handlers.main.logic.DeviceSyncLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileActivateDashboardLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileAddPushLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileAssignTokenLogic;
+import cc.blynk.server.application.handlers.main.logic.MobileDashSyncLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileDeActivateDashboardLogic;
+import cc.blynk.server.application.handlers.main.logic.MobileDeviceSyncLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileEditProfileSettingLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileGetCloneCodeLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileGetEnergyLogic;
@@ -153,9 +153,9 @@ public final class MobileHandler extends JsonBasedSimpleChannelInboundHandler<St
     private final MobileHardwareResendFromBTLogic hardwareResendFromBTLogic;
     private final MobileMailLogic mobileMailLogic;
     private final MobilePurchaseLogic purchaseLogic;
-    private final MobileDeleteAppLogic deleteAppLogic;
+    private final MobileDeleteAppLogic mobileDeleteAppLogic;
     private final MobileMailQRsLogic mailQRsLogic;
-    private final MobileGetProjectByClonedTokenLogic getProjectByCloneCodeLogic;
+    private final MobileGetProjectByClonedTokenLogic mobileGetProjectByCloneCodeLogic;
     private final MobileGetOrgDevicesLogic mobileGetOrgDevicesLogic;
     private final MobileDeleteOrgDeviceDataLogic mobileDeleteOrgDeviceDataLogic;
     private final MobileLoadProfileGzippedLogic mobileLoadProfileGzippedLogic;
@@ -178,8 +178,8 @@ public final class MobileHandler extends JsonBasedSimpleChannelInboundHandler<St
     private final MobileGetCloneCodeLogic mobileGetCloneCodeLogic;
     private final MobileEditFaceLogic mobileEditFaceLogic;
     private final MobileGetProjectByTokenLogic mobileGetProjectByTokenLogic;
-    private final DashSyncLogic dashSyncLogic;
-    private final DeviceSyncLogic deviceSyncLogic;
+    private final MobileDashSyncLogic mobileDashSyncLogic;
+    private final MobileDeviceSyncLogic mobileDeviceSyncLogic;
     private final MobileGetDeviceLogic mobileGetDeviceLogic;
     private final MobileEditDeviceMetafieldLogic mobileEditDeviceMetafieldLogic;
     private final MobileDeleteDeviceLogic mobileDeleteDeviceLogic;
@@ -231,14 +231,14 @@ public final class MobileHandler extends JsonBasedSimpleChannelInboundHandler<St
         this.mobileDeleteReportLogic = new MobileDeleteReportLogic(holder);
         this.mobileExportReportLogic = new MobileExportReportLogic(holder);
         this.mobileGetProvisionTokenLogic = new MobileGetProvisionTokenLogic(holder);
-        this.getProjectByCloneCodeLogic = new MobileGetProjectByClonedTokenLogic(holder);
+        this.mobileGetProjectByCloneCodeLogic = new MobileGetProjectByClonedTokenLogic(holder);
         this.mobileGetCloneCodeLogic = new MobileGetCloneCodeLogic(holder);
         this.mobileEditFaceLogic = new MobileEditFaceLogic(holder);
         this.mailQRsLogic = new MobileMailQRsLogic(holder);
         this.mobileGetProjectByTokenLogic = new MobileGetProjectByTokenLogic(holder);
-        this.deleteAppLogic = new MobileDeleteAppLogic(holder);
-        this.dashSyncLogic = new DashSyncLogic(holder);
-        this.deviceSyncLogic = new DeviceSyncLogic(holder);
+        this.mobileDeleteAppLogic = new MobileDeleteAppLogic(holder);
+        this.mobileDashSyncLogic = new MobileDashSyncLogic(holder);
+        this.mobileDeviceSyncLogic = new MobileDeviceSyncLogic(holder);
         this.mobileGetDeviceLogic = new MobileGetDeviceLogic(holder);
         this.mobileEditDeviceMetafieldLogic = new MobileEditDeviceMetafieldLogic(holder);
         this.mobileDeleteDeviceLogic = new MobileDeleteDeviceLogic(holder);
@@ -396,10 +396,10 @@ public final class MobileHandler extends JsonBasedSimpleChannelInboundHandler<St
                 break;
 
             case DEVICE_SYNC :
-                deviceSyncLogic.messageReceived(ctx, msg);
+                mobileDeviceSyncLogic.messageReceived(ctx, msg);
                 break;
             case DASH_SYNC :
-                dashSyncLogic.messageReceived(ctx, state, msg);
+                mobileDashSyncLogic.messageReceived(ctx, state, msg);
                 break;
 
             case MOBILE_CREATE_APP :
@@ -409,7 +409,7 @@ public final class MobileHandler extends JsonBasedSimpleChannelInboundHandler<St
                 mobileEditAppLogic.messageReceived(ctx, state, msg);
                 break;
             case MOBILE_DELETE_APP :
-                deleteAppLogic.messageReceived(ctx, state, msg);
+                mobileDeleteAppLogic.messageReceived(ctx, state, msg);
                 break;
 
             case GET_PROJECT_BY_TOKEN :
@@ -425,7 +425,7 @@ public final class MobileHandler extends JsonBasedSimpleChannelInboundHandler<St
                 mobileGetCloneCodeLogic.messageReceived(ctx, state.user, msg);
                 break;
             case GET_PROJECT_BY_CLONE_CODE :
-                getProjectByCloneCodeLogic.messageReceived(ctx, state.user, msg);
+                mobileGetProjectByCloneCodeLogic.messageReceived(ctx, state.user, msg);
                 break;
             case LOGOUT :
                 MobileLogoutLogic.messageReceived(ctx, state.user, msg);

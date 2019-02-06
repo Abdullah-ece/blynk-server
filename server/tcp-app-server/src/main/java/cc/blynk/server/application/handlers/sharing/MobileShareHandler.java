@@ -1,10 +1,10 @@
 package cc.blynk.server.application.handlers.sharing;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.application.handlers.main.logic.DashSyncLogic;
-import cc.blynk.server.application.handlers.main.logic.DeviceSyncLogic;
 import cc.blynk.server.application.handlers.main.logic.LoadSharedProfileGzippedLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileAddPushLogic;
+import cc.blynk.server.application.handlers.main.logic.MobileDashSyncLogic;
+import cc.blynk.server.application.handlers.main.logic.MobileDeviceSyncLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileLogoutLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.MobileGetOrgDevicesLogic;
 import cc.blynk.server.application.handlers.main.logic.graph.MobileDeleteOrgDeviceDataLogic;
@@ -43,8 +43,8 @@ public class MobileShareHandler extends JsonBasedSimpleChannelInboundHandler<Str
     private final MobileGetOrgDevicesLogic mobileGetOrgDevicesLogic;
     private final MobileGetSuperChartDataLogic mobileGetSuperChartDataLogic;
     private final MobileDeleteOrgDeviceDataLogic mobileDeleteOrgDeviceDataLogic;
-    private final DeviceSyncLogic deviceSyncLogic;
-    private final DashSyncLogic dashSyncLogic;
+    private final MobileDeviceSyncLogic mobileDeviceSyncLogic;
+    private final MobileDashSyncLogic mobileDashSyncLogic;
 
     public MobileShareHandler(Holder holder, MobileShareStateHolder state) {
         super(StringMessage.class);
@@ -55,8 +55,8 @@ public class MobileShareHandler extends JsonBasedSimpleChannelInboundHandler<Str
         this.mobileGetOrgDevicesLogic = new MobileGetOrgDevicesLogic(holder);
         this.mobileGetSuperChartDataLogic = new MobileGetSuperChartDataLogic(holder);
         this.mobileDeleteOrgDeviceDataLogic = new MobileDeleteOrgDeviceDataLogic(holder);
-        this.deviceSyncLogic = new DeviceSyncLogic(holder);
-        this.dashSyncLogic = new DashSyncLogic(holder);
+        this.mobileDeviceSyncLogic = new MobileDeviceSyncLogic(holder);
+        this.mobileDashSyncLogic = new MobileDashSyncLogic(holder);
     }
 
     @Override
@@ -82,10 +82,10 @@ public class MobileShareHandler extends JsonBasedSimpleChannelInboundHandler<Str
                 PingLogic.messageReceived(ctx, msg.id);
                 break;
             case DEVICE_SYNC:
-                deviceSyncLogic.messageReceived(ctx, msg);
+                mobileDeviceSyncLogic.messageReceived(ctx, msg);
                 break;
             case DASH_SYNC:
-                dashSyncLogic.messageReceived(ctx, state, msg);
+                mobileDashSyncLogic.messageReceived(ctx, state, msg);
                 break;
             case LOGOUT :
                 MobileLogoutLogic.messageReceived(ctx, state.user, msg);

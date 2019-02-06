@@ -21,11 +21,11 @@ import static cc.blynk.server.internal.CommonByteBufUtil.ok;
  * Created on 2/1/2015.
  *
  */
-public final class DashSyncLogic {
+public final class MobileDashSyncLogic {
 
     private final DeviceDao deviceDao;
 
-    public DashSyncLogic(Holder holder) {
+    public MobileDashSyncLogic(Holder holder) {
         this.deviceDao = holder.deviceDao;
     }
 
