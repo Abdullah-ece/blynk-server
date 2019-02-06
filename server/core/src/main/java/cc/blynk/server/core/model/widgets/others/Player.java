@@ -38,12 +38,10 @@ public class Player extends OnePinWidget {
 
     @Override
     public boolean setProperty(WidgetProperty property, String propertyValue) {
-        switch (property) {
-            case IS_ON_PLAY :
-                this.isOnPlay = Boolean.parseBoolean(propertyValue);
-                return true;
-            default:
-                return super.setProperty(property, propertyValue);
+        if (property == WidgetProperty.IS_ON_PLAY) {
+            this.isOnPlay = Boolean.parseBoolean(propertyValue);
+            return true;
         }
+        return super.setProperty(property, propertyValue);
     }
 }

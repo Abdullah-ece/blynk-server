@@ -22,13 +22,11 @@ public class NumberInput extends OnePinWidget {
 
     @Override
     public boolean setProperty(WidgetProperty property, String propertyValue) {
-        switch (property) {
-            case SUFFIX :
-                this.suffix = propertyValue;
-                return true;
-            default:
-                return super.setProperty(property, propertyValue);
+        if (property == WidgetProperty.SUFFIX) {
+            this.suffix = propertyValue;
+            return true;
         }
+        return super.setProperty(property, propertyValue);
     }
 
     @Override

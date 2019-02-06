@@ -24,12 +24,10 @@ public class SegmentedControl extends OnePinWidget {
 
     @Override
     public boolean setProperty(WidgetProperty property, String propertyValue) {
-        switch (property) {
-            case LABELS :
-                this.labels = propertyValue.split(StringUtils.BODY_SEPARATOR_STRING);
-                return true;
-            default:
-                return super.setProperty(property, propertyValue);
+        if (property == WidgetProperty.LABELS) {
+            this.labels = propertyValue.split(StringUtils.BODY_SEPARATOR_STRING);
+            return true;
         }
+        return super.setProperty(property, propertyValue);
     }
 }

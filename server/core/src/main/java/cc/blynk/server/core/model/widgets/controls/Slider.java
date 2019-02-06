@@ -26,12 +26,10 @@ public class Slider extends OnePinWidget {
 
     @Override
     public boolean setProperty(WidgetProperty property, String propertyValue) {
-        switch (property) {
-            case FRACTION :
-                this.maximumFractionDigits = Integer.parseInt(propertyValue);
-                return true;
-            default:
-                return super.setProperty(property, propertyValue);
+        if (property == WidgetProperty.FRACTION) {
+            this.maximumFractionDigits = Integer.parseInt(propertyValue);
+            return true;
         }
+        return super.setProperty(property, propertyValue);
     }
 }

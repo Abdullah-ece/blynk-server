@@ -20,13 +20,11 @@ public class LabeledValueDisplay extends OnePinReadingWidget {
 
     @Override
     public boolean setProperty(WidgetProperty property, String propertyValue) {
-        switch (property) {
-            case VALUE_FORMATTING :
-                this.valueFormatting = propertyValue;
-                return true;
-            default:
-                return super.setProperty(property, propertyValue);
+        if (property == WidgetProperty.VALUE_FORMATTING) {
+            this.valueFormatting = propertyValue;
+            return true;
         }
+        return super.setProperty(property, propertyValue);
     }
 
     @Override

@@ -22,13 +22,11 @@ public class Video extends OnePinWidget {
 
     @Override
     public boolean setProperty(WidgetProperty property, String propertyValue) {
-        switch (property) {
-            case URL :
-                this.url = propertyValue;
-                return true;
-            default:
-                return super.setProperty(property, propertyValue);
+        if (property == WidgetProperty.URL) {
+            this.url = propertyValue;
+            return true;
         }
+        return super.setProperty(property, propertyValue);
     }
 
     @Override
