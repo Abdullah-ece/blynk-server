@@ -407,19 +407,6 @@
                   "stopValue":"0"
                },
                {
-                  "type":"BRIDGE",
-                  "id":251138143,
-                  "x":0,
-                  "y":2,
-                  "color":-308477697,
-                  "width":2,
-                  "height":1,
-                  "pwmMode":false,
-                  "rangeMappingOn":false,
-                  "min":0,
-                  "max":0
-               },
-               {
                   "type":"LED",
                   "id":1534122532,
                   "x":2,
