@@ -394,7 +394,9 @@ public final class DeviceTiles extends Widget implements MobileSyncWidget, Devic
         List<GroupFunctionValue> functionList = new ArrayList<>();
         for (Group group : this.groups) {
             for (DataStream dataStream : group.viewDataStreams) {
-                functionList.add(new GroupFunctionValue(group, dataStream));
+                if (dataStream.isValid() && dataStream.aggregationFunctionType != null) {
+                    functionList.add(new GroupFunctionValue(group, dataStream));
+                }
             }
         }
         return functionList.toArray(new GroupFunctionValue[0]);
