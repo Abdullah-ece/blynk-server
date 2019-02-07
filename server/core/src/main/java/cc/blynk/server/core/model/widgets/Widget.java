@@ -25,7 +25,6 @@ import cc.blynk.server.core.model.widgets.notifications.SMS;
 import cc.blynk.server.core.model.widgets.notifications.Twitter;
 import cc.blynk.server.core.model.widgets.others.Bluetooth;
 import cc.blynk.server.core.model.widgets.others.BluetoothSerial;
-import cc.blynk.server.core.model.widgets.others.Bridge;
 import cc.blynk.server.core.model.widgets.others.Player;
 import cc.blynk.server.core.model.widgets.others.Video;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
@@ -140,7 +139,6 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
         @JsonSubTypes.Type(value = ReportingWidget.class, name = "REPORT"),
 
         //others
-        @JsonSubTypes.Type(value = Bridge.class, name = "BRIDGE"),
         @JsonSubTypes.Type(value = Bluetooth.class, name = "BLUETOOTH"),
         @JsonSubTypes.Type(value = BluetoothSerial.class, name = "BLUETOOTH_SERIAL"),
         @JsonSubTypes.Type(value = Eventor.class, name = "EVENTOR"),

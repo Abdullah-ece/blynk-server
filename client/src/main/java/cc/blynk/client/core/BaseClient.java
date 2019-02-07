@@ -22,7 +22,6 @@ import java.nio.channels.UnresolvedAddressException;
 import java.util.Collections;
 import java.util.Random;
 
-import static cc.blynk.server.core.protocol.enums.Command.BRIDGE;
 import static cc.blynk.server.core.protocol.enums.Command.EMAIL;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_RESEND_FROM_BLUETOOTH;
@@ -93,7 +92,6 @@ public abstract class BaseClient {
                 || command == SHARE_LOGIN
                 || command == MOBILE_LOAD_PROFILE_GZIPPED
                 || command == HARDWARE_RESEND_FROM_BLUETOOTH
-                || command == BRIDGE
                 || command == EMAIL
                 || command == SHARING
                 || command == SET_WIDGET_PROPERTY

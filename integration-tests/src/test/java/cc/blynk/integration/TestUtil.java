@@ -80,7 +80,6 @@ import static cc.blynk.integration.APIBaseTest.createDeviceNameMeta;
 import static cc.blynk.integration.APIBaseTest.createDeviceOwnerMeta;
 import static cc.blynk.server.core.model.web.Organization.NO_PARENT_ID;
 import static cc.blynk.server.core.protocol.enums.Command.BLYNK_INTERNAL;
-import static cc.blynk.server.core.protocol.enums.Command.BRIDGE;
 import static cc.blynk.server.core.protocol.enums.Command.CONNECT_REDIRECT;
 import static cc.blynk.server.core.protocol.enums.Command.DEVICE_CONNECTED;
 import static cc.blynk.server.core.protocol.enums.Command.DEVICE_DISCONNECTED;
@@ -180,10 +179,6 @@ public final class TestUtil {
 
     public static ResponseMessage ok(int msgId) {
         return new ResponseMessage(msgId, OK);
-    }
-
-    public static StringMessage bridge(int msgId, String body) {
-        return new StringMessage(msgId, BRIDGE, b(body));
     }
 
     public static StringMessage internal(int msgId, String body) {

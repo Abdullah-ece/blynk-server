@@ -6,19 +6,16 @@ import cc.blynk.server.common.handlers.logic.PingLogic;
 import cc.blynk.server.core.protocol.exceptions.BaseServerException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
-import cc.blynk.server.hardware.handlers.hardware.logic.BridgeLogic;
 import cc.blynk.server.hardware.handlers.hardware.logic.HardwareLogic;
 import cc.blynk.server.hardware.handlers.hardware.logic.HardwareSyncLogic;
 import cc.blynk.server.hardware.handlers.hardware.logic.MailLogic;
 import cc.blynk.server.hardware.handlers.hardware.logic.PushLogic;
 import cc.blynk.server.hardware.handlers.hardware.logic.SmsLogic;
 import cc.blynk.server.hardware.handlers.hardware.logic.TwitLogic;
-import cc.blynk.server.hardware.internal.BridgeForwardMessage;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.ReferenceCountUtil;
 
 import static cc.blynk.server.core.protocol.enums.Command.BLYNK_INTERNAL;
-import static cc.blynk.server.core.protocol.enums.Command.BRIDGE;
 import static cc.blynk.server.core.protocol.enums.Command.EMAIL;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_LOGIN;
@@ -49,7 +46,6 @@ public final class HardwareHandler extends BaseSimpleChannelInboundHandler<Strin
     private final HardwareLogic hardware;
 
     //this is rare handlers, most of users don't use them, so lazy init it.
-    private BridgeLogic bridge;
     private TwitLogic tweet;
     private SmsLogic sms;
     private MailLogic mailLogic;
@@ -94,12 +90,6 @@ public final class HardwareHandler extends BaseSimpleChannelInboundHandler<Strin
             case PING:
                 PingLogic.messageReceived(ctx, msg.id);
                 break;
-            case BRIDGE:
-                if (bridge == null) {
-                    this.bridge = new BridgeLogic(holder);
-                }
-                bridge.messageReceived(ctx, state, msg);
-                break;
             case EMAIL:
                 if (this.mailLogic == null) {
                     this.mailLogic = new MailLogic(holder);
@@ -140,23 +130,6 @@ public final class HardwareHandler extends BaseSimpleChannelInboundHandler<Strin
                     ctx.writeAndFlush(alreadyRegistered(msg.id), ctx.voidPromise());
                 }
                 break;
-        }
-    }
-
-    @Override
-    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) {
-        if (evt instanceof BridgeForwardMessage) {
-            var bridgeForwardMessage = (BridgeForwardMessage) evt;
-            var tokenValue = bridgeForwardMessage.tokenValue;
-            try {
-                hardware.messageReceived(ctx, bridgeForwardMessage.message, bridgeForwardMessage.orgId,
-                       tokenValue.device);
-            } catch (NumberFormatException nfe) {
-                log.debug("Error parsing number. {}", nfe.getMessage());
-                ctx.writeAndFlush(illegalCommand(bridgeForwardMessage.message.id), ctx.voidPromise());
-            }
-        } else {
-            ctx.fireUserEventTriggered(evt);
         }
     }
 

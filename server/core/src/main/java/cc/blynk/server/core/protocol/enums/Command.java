@@ -32,7 +32,6 @@ public final class Command {
     public static final short TWEET = 12;
     public static final short EMAIL = 13;
     public static final short PUSH_NOTIFICATION = 14;
-    public static final short BRIDGE = 15;
     public static final short HARDWARE_SYNC = 16;
     public static final short BLYNK_INTERNAL = 17;
     public static final short SMS = 18;

@@ -2,7 +2,6 @@ package cc.blynk.client;
 
 import static cc.blynk.server.core.protocol.enums.Command.ASSIGN_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.BLYNK_INTERNAL;
-import static cc.blynk.server.core.protocol.enums.Command.BRIDGE;
 import static cc.blynk.server.core.protocol.enums.Command.DEVICE_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.EMAIL;
 import static cc.blynk.server.core.protocol.enums.Command.EMAIL_QR;
@@ -175,9 +174,6 @@ public final class CommandParserUtil {
                 return SMS;
             case "addpushtoken" :
                 return MOBILE_ADD_PUSH_TOKEN;
-
-            case "bridge" :
-                return BRIDGE;
 
             case "createdash" :
                 return MOBILE_CREATE_DASH;
