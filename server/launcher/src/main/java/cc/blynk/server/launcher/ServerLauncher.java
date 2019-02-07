@@ -28,6 +28,7 @@ import cc.blynk.server.core.model.web.product.events.user.WarningEvent;
 import cc.blynk.server.core.model.web.product.metafields.DeviceNameMetaField;
 import cc.blynk.server.core.model.web.product.metafields.DeviceOwnerMetaField;
 import cc.blynk.server.core.model.widgets.Widget;
+import cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType;
 import cc.blynk.server.core.model.widgets.web.WebSource;
 import cc.blynk.server.core.model.widgets.web.label.ColorSet;
 import cc.blynk.server.core.model.widgets.web.label.WebLabel;
@@ -53,7 +54,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static cc.blynk.server.core.model.web.Organization.NO_PARENT_ID;
-import static cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType.RAW_DATA;
 
 /**
  * Entry point for server launch.
@@ -236,7 +236,7 @@ public final class ServerLauncher {
         };
         webLabel.sources = new WebSource[] {
                 new WebSource("some Label", "#334455",
-                        false, RAW_DATA, new DataStream((byte) 0, PinType.VIRTUAL),
+                        false, AggregationFunctionType.AVG, new DataStream((byte) 0, PinType.VIRTUAL),
                         null,
                         null,
                         null, SortOrder.ASC, 10, false, null, false)

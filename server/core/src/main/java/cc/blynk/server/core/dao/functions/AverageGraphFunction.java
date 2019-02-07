@@ -5,7 +5,7 @@ package cc.blynk.server.core.dao.functions;
  * Created by Dmitriy Dumanskiy.
  * Created on 21.07.17.
  */
-public class AverageGraphFunction implements GraphFunction {
+public final class AverageGraphFunction implements GraphFunction {
 
     private int count;
     private double sum;

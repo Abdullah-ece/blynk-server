@@ -5,18 +5,17 @@ package cc.blynk.server.core.dao.functions;
  * Created by Dmitriy Dumanskiy.
  * Created on 21.07.17.
  */
-public final class MinGraphFunction implements GraphFunction {
+public final class CountGraphFunction implements GraphFunction {
 
-    private double value = Double.MAX_VALUE;
+    private int value = 0;
 
     @Override
     public void apply(double newValue) {
-        this.value = Math.min(value, newValue);
+        this.value++;
     }
 
     @Override
     public double getResult() {
         return value;
     }
-
 }

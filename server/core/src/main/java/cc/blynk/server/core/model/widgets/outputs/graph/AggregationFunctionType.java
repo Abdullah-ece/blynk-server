@@ -1,6 +1,7 @@
 package cc.blynk.server.core.model.widgets.outputs.graph;
 
 import cc.blynk.server.core.dao.functions.AverageGraphFunction;
+import cc.blynk.server.core.dao.functions.CountGraphFunction;
 import cc.blynk.server.core.dao.functions.GraphFunction;
 import cc.blynk.server.core.dao.functions.MaxGraphFunction;
 import cc.blynk.server.core.dao.functions.MedianGraphFunction;
@@ -14,14 +15,12 @@ import cc.blynk.server.core.dao.functions.SumGraphFunction;
  */
 public enum AggregationFunctionType {
 
-    RAW_DATA,
     MIN,
     MAX,
     AVG,
     SUM,
     MED,
-    COUNT,
-    CUMULATIVE_COUNT;
+    COUNT;
 
     public GraphFunction produce() {
         switch (this) {
@@ -33,6 +32,8 @@ public enum AggregationFunctionType {
                 return new SumGraphFunction();
             case MED :
                 return new MedianGraphFunction();
+            case COUNT :
+                return new CountGraphFunction();
             default:
                 return new AverageGraphFunction();
         }

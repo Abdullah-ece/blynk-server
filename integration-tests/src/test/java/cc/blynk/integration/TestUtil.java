@@ -24,6 +24,7 @@ import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.WebDashboard;
 import cc.blynk.server.core.model.web.product.metafields.DeviceOwnerMetaField;
 import cc.blynk.server.core.model.widgets.MobileSyncWidget;
+import cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType;
 import cc.blynk.server.core.model.widgets.web.WebLineGraph;
 import cc.blynk.server.core.model.widgets.web.WebSlider;
 import cc.blynk.server.core.model.widgets.web.WebSource;
@@ -78,7 +79,6 @@ import java.util.concurrent.TimeUnit;
 import static cc.blynk.integration.APIBaseTest.createDeviceNameMeta;
 import static cc.blynk.integration.APIBaseTest.createDeviceOwnerMeta;
 import static cc.blynk.server.core.model.web.Organization.NO_PARENT_ID;
-import static cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType.RAW_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.BLYNK_INTERNAL;
 import static cc.blynk.server.core.protocol.enums.Command.BRIDGE;
 import static cc.blynk.server.core.protocol.enums.Command.CONNECT_REDIRECT;
@@ -447,7 +447,7 @@ public final class TestUtil {
         webLabel.width = 20;
         webLabel.sources = new WebSource[] {
                 new WebSource("Web Source Label", "#334455",
-                        false, RAW_DATA, new DataStream((byte) pin, PinType.VIRTUAL),
+                        false, AggregationFunctionType.AVG, new DataStream((byte) pin, PinType.VIRTUAL),
                         null,
                         null,
                         null, SortOrder.ASC, 10, false, null, false)
@@ -465,7 +465,7 @@ public final class TestUtil {
         webSwitch.width = 60;
         webSwitch.sources = new WebSource[] {
                 new WebSource("Web Source Label", "#334455",
-                        false, RAW_DATA, new DataStream((byte) pin, PinType.VIRTUAL),
+                        false, AggregationFunctionType.AVG, new DataStream((byte) pin, PinType.VIRTUAL),
                         null,
                         null,
                         null, SortOrder.ASC, 10, false, null, false)
@@ -483,7 +483,7 @@ public final class TestUtil {
         webSlider.width = 60;
         webSlider.sources = new WebSource[] {
                 new WebSource("Web Source Label", "#334455",
-                        false, RAW_DATA, new DataStream((byte) pin, PinType.VIRTUAL),
+                        false, AggregationFunctionType.AVG, new DataStream((byte) pin, PinType.VIRTUAL),
                         null,
                         null,
                         null, SortOrder.ASC, 10, false, null, false)
@@ -505,7 +505,7 @@ public final class TestUtil {
         webGraph.width = 20;
         webGraph.sources = new WebSource[] {
                 new WebSource("Web Source Label", "#334455", false,
-                        RAW_DATA, new DataStream((byte) pin, PinType.VIRTUAL),
+                        AggregationFunctionType.AVG, new DataStream((byte) pin, PinType.VIRTUAL),
                         null,
                         null,
                         null,

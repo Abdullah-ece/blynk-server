@@ -8,7 +8,7 @@ import java.util.Collections;
  * Created by Dmitriy Dumanskiy.
  * Created on 21.07.17.
  */
-public class MedianGraphFunction implements GraphFunction {
+public final class MedianGraphFunction implements GraphFunction {
 
     private final ArrayList<Double> array;
 

@@ -18,6 +18,7 @@ import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.WebDashboard;
 import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
 import cc.blynk.server.core.model.widgets.Widget;
+import cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType;
 import cc.blynk.server.core.model.widgets.outputs.graph.Period;
 import cc.blynk.server.core.model.widgets.web.WebLineGraph;
 import cc.blynk.server.core.model.widgets.web.WebSource;
@@ -53,7 +54,6 @@ import static cc.blynk.integration.TestUtil.consumeText;
 import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.integration.TestUtil.webJson;
 import static cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType.AVG;
-import static cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType.RAW_DATA;
 import static cc.blynk.server.core.model.widgets.outputs.graph.Period.LIVE;
 import static cc.blynk.server.core.protocol.enums.Command.GET_SUPERCHART_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_TRACK_DEVICE;
@@ -622,7 +622,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         webSwitch.width = 20;
         webSwitch.sources = new WebSource[] {
                 new WebSource("some switch", "#334455",
-                        false, RAW_DATA, new DataStream((byte) 1, PinType.VIRTUAL),
+                        false, AggregationFunctionType.AVG, new DataStream((byte) 1, PinType.VIRTUAL),
                         null,
                         null,
                         null, SortOrder.ASC, 10, false, null, false)
@@ -637,7 +637,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         webLabel.width = 20;
         webLabel.sources = new WebSource[] {
                 new WebSource("some Label", "#334455",
-                        false, RAW_DATA, new DataStream((byte) 2, PinType.VIRTUAL),
+                        false, AggregationFunctionType.AVG, new DataStream((byte) 2, PinType.VIRTUAL),
                         null,
                         null,
                         null, SortOrder.ASC, 10, false, null, false)
@@ -652,7 +652,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         webLabelNew.width = 20;
         webLabelNew.sources = new WebSource[] {
                 new WebSource("some Label", "#334455",
-                        false, RAW_DATA, new DataStream((byte) 3, PinType.VIRTUAL),
+                        false, AggregationFunctionType.AVG, new DataStream((byte) 3, PinType.VIRTUAL),
                         null,
                         null,
                         null, SortOrder.ASC, 10, false, null, false)
@@ -728,7 +728,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         webSwitch.width = 20;
         webSwitch.sources = new WebSource[] {
                 new WebSource("some switch", "#334455",
-                        false, RAW_DATA, new DataStream((byte) 1, PinType.VIRTUAL),
+                        false, AggregationFunctionType.AVG, new DataStream((byte) 1, PinType.VIRTUAL),
                         null,
                         null,
                         null, SortOrder.ASC, 10, false, null, false)
@@ -743,7 +743,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         webLabel.width = 20;
         webLabel.sources = new WebSource[] {
                 new WebSource("some Label", "#334455",
-                        false, RAW_DATA, new DataStream((byte) 2, PinType.VIRTUAL),
+                        false, AggregationFunctionType.AVG, new DataStream((byte) 2, PinType.VIRTUAL),
                         null,
                         null,
                         null, SortOrder.ASC, 10, false, null, false)

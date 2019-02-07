@@ -42,7 +42,7 @@ import java.util.List;
 import java.util.StringJoiner;
 
 import static cc.blynk.integration.TestUtil.consumeText;
-import static cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType.RAW_DATA;
+import static cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType.AVG;
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -59,25 +59,11 @@ public class DataAPITest extends APIBaseTest {
     private BaseServer hardwareServer;
     private ClientPair clientPair;
 
-    @Before
-    public void init() throws Exception {
-        super.init();
-        this.hardwareServer = new HardwareAndHttpAPIServer(holder).start();
-
-        this.clientPair = initAppAndHardPair();
-        //clean everything just in case
-        //clickhouse doesn't have normal way of data removal, so using "hack"
-        StringJoiner stringJoiner = new StringJoiner(",", "(", ")");
-
-        for (int i = 0; i < 50; i++) {
-            stringJoiner.add("" + i);
-        }
-
-        String ids = stringJoiner.toString();
-        holder.reportingDBManager.executeSQL("ALTER TABLE reporting_average_minute delete where device_id in " + ids);
-        holder.reportingDBManager.executeSQL("ALTER TABLE reporting_average_hourly delete where device_id in " + ids);
-        holder.reportingDBManager.executeSQL("ALTER TABLE reporting_average_daily delete where device_id in " + ids);
-        holder.reportingDBManager.executeSQL("ALTER TABLE reporting_device_raw_data delete where device_id in " + ids);
+    private static DataQueryRequestGroupDTO makeReq(PinType pinType, int pin, long from, long to) {
+        return new DataQueryRequestGroupDTO(new DataQueryRequestDTO[] {
+                new DataQueryRequestDTO(AVG, pinType, (byte) pin,
+                        null, null, null, null, 0, 1000, from, to)
+        });
     }
 
     @After
@@ -169,70 +155,25 @@ public class DataAPITest extends APIBaseTest {
         System.out.println(JsonParser.init().writerWithDefaultPrettyPrinter().writeValueAsString(dataStream));
     }
 
-    @Test
-    @Ignore
-    public void testMultiPinRequest() throws Exception {
-        login(regularUser.email, regularUser.pass);
+    @Before
+    public void init() throws Exception {
+        super.init();
+        this.hardwareServer = new HardwareAndHttpAPIServer(holder).start();
 
-        Device newDevice = new Device();
-        newDevice.name = "My New Device";
-        newDevice.productId = createProduct();
+        this.clientPair = initAppAndHardPair();
+        //clean everything just in case
+        //clickhouse doesn't have normal way of data removal, so using "hack"
+        StringJoiner stringJoiner = new StringJoiner(",", "(", ")");
 
-        HttpPut httpPut = new HttpPut(httpsAdminServerUrl + "/devices/1");
-        httpPut.setEntity(new StringEntity(newDevice.toString(), APPLICATION_JSON));
-
-        try (CloseableHttpResponse response = httpclient.execute(httpPut)) {
-            assertEquals(200, response.getStatusLine().getStatusCode());
+        for (int i = 0; i < 50; i++) {
+            stringJoiner.add("" + i);
         }
 
-        RawDataProcessor rawDataProcessor = new RawDataProcessor();
-        rawDataProcessor.collect(new BaseReportingKey(1, PinType.VIRTUAL, (byte) 1), System.currentTimeMillis(), 123);
-        rawDataProcessor.collect(new BaseReportingKey(1, PinType.VIRTUAL, (byte) 2), System.currentTimeMillis(), 124);
-
-        //invoking directly dao to avoid separate thread execution
-        holder.reportingDBManager.reportingDBDao.insertDataPoint(rawDataProcessor.rawStorage);
-
-        DataQueryRequestGroupDTO dataQueryRequestGroup = new DataQueryRequestGroupDTO(new DataQueryRequestDTO[] {
-                new DataQueryRequestDTO(RAW_DATA, PinType.VIRTUAL, (byte) 1,
-                        null, null, null, null, 0, 1000, 0, System.currentTimeMillis()),
-                new DataQueryRequestDTO(RAW_DATA, PinType.VIRTUAL, (byte) 2,
-                        null, null, null, null, 0, 1000, 0, System.currentTimeMillis())
-        });
-
-        HttpPost getData = new HttpPost(httpsAdminServerUrl + "/data/1/history");
-        getData.setEntity(new StringEntity(JsonParser.toJson(dataQueryRequestGroup), APPLICATION_JSON));
-
-        try (CloseableHttpResponse response = httpclient.execute(getData)) {
-            assertEquals(200, response.getStatusLine().getStatusCode());
-            String responseString = consumeText(response);
-            //expected string is
-            //[
-            //   {
-            //      "data":[{"1507809234902":123.0}]
-            //   },
-            //   {
-            //      "data":[{"1507809234902":124.0}]
-            //   }
-            //]
-            System.out.println(responseString);
-
-            DataDTO<ArrayList<LinkedHashMap>>[] obj = JsonParser.MAPPER.readValue(responseString, DataDTO[].class);
-            assertNotNull(obj);
-            assertEquals(2, obj.length);
-            List dataField = obj[0].data;
-            assertNotNull(dataField);
-            assertEquals(1, dataField.size());
-
-            LinkedHashMap point0 = (LinkedHashMap) dataField.get(0);
-            assertTrue(point0.containsValue(123.0D));
-
-            dataField = obj[1].data;
-            assertNotNull(dataField);
-            assertEquals(1, dataField.size());
-
-            point0 = (LinkedHashMap) dataField.get(0);
-            assertTrue(point0.containsValue(124.0D));
-        }
+        String ids = stringJoiner.toString();
+        holder.reportingDBManager.executeSQL("ALTER TABLE reporting_average_minute delete where device_id in " + ids);
+        holder.reportingDBManager.executeSQL("ALTER TABLE reporting_average_hourly delete where device_id in " + ids);
+        holder.reportingDBManager.executeSQL("ALTER TABLE reporting_average_daily delete where device_id in " + ids);
+        holder.reportingDBManager.executeSQL("ALTER TABLE reporting_device_AVG delete where device_id in " + ids);
     }
 
     @Test
@@ -288,11 +229,70 @@ public class DataAPITest extends APIBaseTest {
         }
     }
 
-    private static DataQueryRequestGroupDTO makeReq(PinType pinType, int pin, long from, long to) {
-        return new DataQueryRequestGroupDTO(new DataQueryRequestDTO[] {
-                new DataQueryRequestDTO(RAW_DATA, pinType, (byte) pin,
-                        null, null, null, null, 0, 1000, from, to)
+    @Test
+    @Ignore
+    public void testMultiPinRequest() throws Exception {
+        login(regularUser.email, regularUser.pass);
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.productId = createProduct();
+
+        HttpPut httpPut = new HttpPut(httpsAdminServerUrl + "/devices/1");
+        httpPut.setEntity(new StringEntity(newDevice.toString(), APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(httpPut)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        RawDataProcessor rawDataProcessor = new RawDataProcessor();
+        rawDataProcessor.collect(new BaseReportingKey(1, PinType.VIRTUAL, (byte) 1), System.currentTimeMillis(), 123);
+        rawDataProcessor.collect(new BaseReportingKey(1, PinType.VIRTUAL, (byte) 2), System.currentTimeMillis(), 124);
+
+        //invoking directly dao to avoid separate thread execution
+        holder.reportingDBManager.reportingDBDao.insertDataPoint(rawDataProcessor.rawStorage);
+
+        DataQueryRequestGroupDTO dataQueryRequestGroup = new DataQueryRequestGroupDTO(new DataQueryRequestDTO[] {
+                new DataQueryRequestDTO(AVG, PinType.VIRTUAL, (byte) 1,
+                        null, null, null, null, 0, 1000, 0, System.currentTimeMillis()),
+                new DataQueryRequestDTO(AVG, PinType.VIRTUAL, (byte) 2,
+                        null, null, null, null, 0, 1000, 0, System.currentTimeMillis())
         });
+
+        HttpPost getData = new HttpPost(httpsAdminServerUrl + "/data/1/history");
+        getData.setEntity(new StringEntity(JsonParser.toJson(dataQueryRequestGroup), APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(getData)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            //expected string is
+            //[
+            //   {
+            //      "data":[{"1507809234902":123.0}]
+            //   },
+            //   {
+            //      "data":[{"1507809234902":124.0}]
+            //   }
+            //]
+            System.out.println(responseString);
+
+            DataDTO<ArrayList<LinkedHashMap>>[] obj = JsonParser.MAPPER.readValue(responseString, DataDTO[].class);
+            assertNotNull(obj);
+            assertEquals(2, obj.length);
+            List dataField = obj[0].data;
+            assertNotNull(dataField);
+            assertEquals(1, dataField.size());
+
+            LinkedHashMap point0 = (LinkedHashMap) dataField.get(0);
+            assertTrue(point0.containsValue(123.0D));
+
+            dataField = obj[1].data;
+            assertNotNull(dataField);
+            assertEquals(1, dataField.size());
+
+            point0 = (LinkedHashMap) dataField.get(0);
+            assertTrue(point0.containsValue(124.0D));
+        }
     }
 
     private int createProduct() throws Exception {
@@ -316,7 +316,7 @@ public class DataAPITest extends APIBaseTest {
         webLabel.width = 20;
         webLabel.sources = new WebSource[] {
                 new WebSource("some Label", "#334455", false,
-                        RAW_DATA, new DataStream((byte) 1, PinType.VIRTUAL),
+                        AVG, new DataStream((byte) 1, PinType.VIRTUAL),
                         null, null, null, SortOrder.ASC, 10, false, null, false)
         };
 

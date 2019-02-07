@@ -70,7 +70,7 @@ import static cc.blynk.integration.TestUtil.updateProductMetafields;
 import static cc.blynk.integration.TestUtil.updateProductName;
 import static cc.blynk.integration.TestUtil.updateProductWebDash;
 import static cc.blynk.integration.TestUtil.webJson;
-import static cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType.RAW_DATA;
+import static cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType.AVG;
 import static java.time.LocalTime.ofSecondOfDay;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertArrayEquals;
@@ -1242,7 +1242,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         webLabel.width = 20;
         webLabel.sources = new WebSource[] {
                 new WebSource("some Label", "#334455",
-                        false, RAW_DATA, new DataStream((byte) 2, PinType.VIRTUAL),
+                        false, AVG, new DataStream((byte) 2, PinType.VIRTUAL),
                         null,
                         null,
                         null, SortOrder.ASC, 10, false, null, false)
@@ -1280,7 +1280,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         webLabel.width = 20;
         webLabel.sources = new WebSource[] {
                 new WebSource("some Label", "#334455",
-                        false, RAW_DATA, new DataStream((byte) 2, PinType.VIRTUAL),
+                        false, AVG, new DataStream((byte) 2, PinType.VIRTUAL),
                         null,
                         null,
                         null, SortOrder.ASC, 10, false, null, false)
@@ -1327,7 +1327,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         webLabel.width = 20;
         webLabel.sources = new WebSource[] {
                 new WebSource("some Label", "#334455",
-                        false, RAW_DATA, new DataStream((byte) 2, PinType.VIRTUAL),
+                        false, AVG, new DataStream((byte) 2, PinType.VIRTUAL),
                         null,
                         null,
                         null, SortOrder.ASC, 10, false, null, false)
@@ -1380,7 +1380,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         webLabel.width = 20;
         webLabel.sources = new WebSource[] {
                 new WebSource("some Label", "#334455",
-                        false, RAW_DATA, new DataStream((byte) 2, PinType.VIRTUAL),
+                        false, AVG, new DataStream((byte) 2, PinType.VIRTUAL),
                         null,
                         null,
                         null, SortOrder.ASC, 10, false, null, false)
@@ -1443,7 +1443,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         webLabel.width = 20;
         webLabel.sources = new WebSource[] {
                 new WebSource("some Label", "#334455",
-                        false, RAW_DATA, new DataStream((byte) 2, PinType.VIRTUAL),
+                        false, AVG, new DataStream((byte) 2, PinType.VIRTUAL),
                         null,
                         null,
                         null, SortOrder.ASC, 10, false, null, false)
@@ -1515,7 +1515,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         webLabel.width = 20;
         webLabel.sources = new WebSource[] {
                 new WebSource("some Label", "#334455",
-                        false, RAW_DATA, new DataStream((byte) 2, PinType.VIRTUAL),
+                        false, AVG, new DataStream((byte) 2, PinType.VIRTUAL),
                         null,
                         null,
                         null, SortOrder.ASC, 10, false, null, false)
@@ -1673,7 +1673,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         webLabel.width = 20;
         webLabel.sources = new WebSource[] {
                 new WebSource("some Label", "#334455",
-                        false, RAW_DATA, new DataStream((byte) 2, PinType.VIRTUAL),
+                        false, AVG, new DataStream((byte) 2, PinType.VIRTUAL),
                         null,
                         null,
                         null, SortOrder.ASC, 10, false, null, false)
@@ -1734,7 +1734,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         webLabel.width = 20;
         webLabel.sources = new WebSource[] {
                 new WebSource("some Label", "#334455",
-                        false, RAW_DATA, new DataStream((byte) 2, PinType.VIRTUAL),
+                        false, AVG, new DataStream((byte) 2, PinType.VIRTUAL),
                         null,
                         null,
                         null, SortOrder.ASC, 10, false, null, false)

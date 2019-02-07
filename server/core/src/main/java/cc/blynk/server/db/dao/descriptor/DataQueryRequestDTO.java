@@ -58,7 +58,7 @@ public class DataQueryRequestDTO {
                                @JsonProperty("from") long from,
                                @JsonProperty("to") long to) {
 
-        this.sourceType = sourceType == null ? AggregationFunctionType.RAW_DATA : sourceType;
+        this.sourceType = sourceType;
         this.pinType = pinType;
         this.pin = pin;
         this.selectedColumns = selectedColumns;
