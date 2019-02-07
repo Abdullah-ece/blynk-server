@@ -103,7 +103,7 @@ public final class MobileHardwareGroupLogic {
             //sending to shared dashes and master-master apps
             //session.sendToSharedApps(ctx.channel(), dash.sharedToken, DEVICE_SYNC, message.id, message.body);
             session.sendToApps(ctx.channel(), MOBILE_HARDWARE_GROUP, message.id, message.body);
-            session.sendToSelectedDeviceOnWeb(MOBILE_HARDWARE_GROUP, message.id, body, deviceIds);
+            session.sendToSelectedDeviceOnWeb(HARDWARE, message.id, body, deviceIds);
 
             if (session.sendMessageToHardware(HARDWARE, message.id, body, deviceIds)) {
                 log.debug("Device not in the network.");
