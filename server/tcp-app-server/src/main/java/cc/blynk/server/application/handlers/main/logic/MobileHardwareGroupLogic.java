@@ -46,16 +46,30 @@ public final class MobileHardwareGroupLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, MobileStateHolder state, StringMessage message) {
-        //here expecting command in format "dashId widgetId groupId vw 88 1"
-        String[] split = message.body.split(StringUtils.BODY_SEPARATOR_STRING, 4);
+        //here expecting command in format "dashId-widgetId-groupId vw 88 1"
+        String[] split = StringUtils.split2(message.body);
 
-        int dashId = Integer.parseInt(split[0]);
+        if (split.length < 2) {
+            log.debug("Not valid write command.");
+            ctx.writeAndFlush(json(message.id, "Not valid write group command format."), ctx.voidPromise());
+            return;
+        }
+
+        String[] ids = split[0].split(StringUtils.DEVICE_SEPARATOR_STRING);
+
+        if (ids.length < 3) {
+            log.debug("Not valid write command.");
+            ctx.writeAndFlush(json(message.id, "Not valid write group command format."), ctx.voidPromise());
+            return;
+        }
+
+        int dashId = Integer.parseInt(ids[0]);
         DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
 
-        long widgetId = Long.parseLong(split[1]);
+        long widgetId = Long.parseLong(ids[1]);
         DeviceTiles deviceTiles = dash.getDeviceTilesByIdOrThrow(widgetId);
 
-        String body = split[3];
+        String body = split[1];
         char operation = body.charAt(1);
 
         if (operation == 'w') {
@@ -72,7 +86,7 @@ public final class MobileHardwareGroupLogic {
             String value = splitBody[2];
             long now = System.currentTimeMillis();
 
-            long groupId = Long.parseLong(split[2]);
+            long groupId = Long.parseLong(ids[2]);
             Group group = deviceTiles.getGroupByIdOrThrow(groupId);
             group.updateValue(pin, pinType, value);
 

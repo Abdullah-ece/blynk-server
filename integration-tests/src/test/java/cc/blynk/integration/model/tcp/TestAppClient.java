@@ -309,8 +309,8 @@ public class TestAppClient extends BaseTestAppClient {
     }
 
     public void hardwareForGroup(int dashId, long widgetId, long groupId, int pin, String value) {
-        send(MOBILE_HARDWARE_GROUP, "" + dashId + BODY_SEPARATOR
-                + widgetId + BODY_SEPARATOR + groupId + BODY_SEPARATOR
+        send(MOBILE_HARDWARE_GROUP, "" + dashId + DEVICE_SEPARATOR
+                + widgetId + DEVICE_SEPARATOR + groupId + BODY_SEPARATOR
                 + "vw" + BODY_SEPARATOR + pin + BODY_SEPARATOR + value);
     }
 
