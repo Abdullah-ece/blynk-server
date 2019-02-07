@@ -13,6 +13,16 @@
             </Policies>
         </RollingFile>
 
+        <RollingFile name="clickhouseDBLog" fileName="${sys:logs.folder}/clickhouse.log"
+                     filePattern="${sys:logs.folder}/archive/clickhouse.log.%d{yyyy-MM-dd}">
+            <PatternLayout>
+                <pattern>%d{HH:mm:ss.SSS} - %msg%n</pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+        </RollingFile>
+
         <RollingFile name="workersLog" fileName="${sys:logs.folder}/worker.log"
                      filePattern="${sys:logs.folder}/archive/worker.log.%d{yyyy-MM-dd}">
             <PatternLayout>
@@ -65,8 +75,9 @@
          https://github.com/blynkkk/blynk-server/issues/751 -->
         <Logger name="io.netty" level="INFO" additivity="false" />
 
-        <!-- turn off clickhouse errors for now -->
-        <Logger name="ru.yandex.clickhouse" level="INFO" additivity="false" />
+        <Logger name="ru.yandex.clickhouse" level="debug" additivity="false" >
+                <appender-ref ref="clickhouseDBLog"/>
+        </Logger>
 
         <Root level="trace">
             <AppenderRef ref="userLog"/>
