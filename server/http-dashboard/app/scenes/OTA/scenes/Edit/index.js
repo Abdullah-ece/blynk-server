@@ -51,7 +51,6 @@ class Edit extends React.Component {
   static propTypes = {
     OTA: PropTypes.object,
     orgId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    devicesproductId: PropTypes.string,
     firmwareUpdateStart: PropTypes.func,
     otaStart: PropTypes.func,
     otaStop: PropTypes.func,
@@ -254,7 +253,7 @@ class Edit extends React.Component {
 
   createTable() {
     const { productId } = this.state.OTA;
-    let devices = this.props.devicesproductId ? this.props.devices.filter((device) => device.productId === productId) : this.props.devices;
+    let devices = productId ? this.props.devices.filter((device) => device.productId === productId) : this.props.devices;
 
     devices = devices.map(device => {
       return {
@@ -279,7 +278,10 @@ class Edit extends React.Component {
       title: "Firmware Version",
       filters: this.props.devices
         .map(
-          device => device.hardwareInfo.version)
+          device => {
+            const { hardwareInfo } = device;
+            return hardwareInfo && hardwareInfo.version ? hardwareInfo.version : '';
+          })
         .filter(onlyUnique)
         .map((value) => ({
           text: value,
@@ -467,7 +469,7 @@ class Edit extends React.Component {
 }
 
 function onlyUnique(value, index, self) {
-  return self.indexOf(value) === index;
+  return value && self.indexOf(value) === index;
 }
 
 export default Edit;
