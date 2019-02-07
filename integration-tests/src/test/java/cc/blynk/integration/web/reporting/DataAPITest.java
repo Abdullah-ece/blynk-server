@@ -173,7 +173,7 @@ public class DataAPITest extends APIBaseTest {
         holder.reportingDBManager.executeSQL("ALTER TABLE reporting_average_minute delete where device_id in " + ids);
         holder.reportingDBManager.executeSQL("ALTER TABLE reporting_average_hourly delete where device_id in " + ids);
         holder.reportingDBManager.executeSQL("ALTER TABLE reporting_average_daily delete where device_id in " + ids);
-        holder.reportingDBManager.executeSQL("ALTER TABLE reporting_device_AVG delete where device_id in " + ids);
+        holder.reportingDBManager.executeSQL("ALTER TABLE reporting_device_raw_data delete where device_id in " + ids);
     }
 
     @Test
