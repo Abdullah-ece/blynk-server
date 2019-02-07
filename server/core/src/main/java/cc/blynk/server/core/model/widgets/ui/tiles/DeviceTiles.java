@@ -32,6 +32,7 @@ import static cc.blynk.utils.StringUtils.prependDeviceId;
  */
 public final class DeviceTiles extends Widget implements MobileSyncWidget, DeviceCleaner {
 
+    private static final GroupFunctionValue[] EMPTY_FUNCTION_VALUES = {};
     private static final Tile[] EMPTY_DEVICE_TILES = {};
     private static final TileTemplate[] EMPTY_TEMPLATES = {};
     private static final BaseGroupTemplate[] EMPTY_GROUP_TEMPLATES = {};
@@ -383,6 +384,28 @@ public final class DeviceTiles extends Widget implements MobileSyncWidget, Devic
     public void updateGroup(Group group) {
         int existingGroupIndex = getGroupIndexByIdOrThrow(group.id);
         this.groups = ArrayUtil.copyAndReplace(this.groups, group, existingGroupIndex);
+    }
+
+    //todo optimize someday?
+    public GroupFunctionValue[] makeGroupFunctionList() {
+        if (this.groups.length == 0) {
+            return EMPTY_FUNCTION_VALUES;
+        }
+        List<GroupFunctionValue> functionList = new ArrayList<>();
+        for (Group group : this.groups) {
+            for (DataStream dataStream : group.viewDataStreams) {
+                functionList.add(new GroupFunctionValue(group, dataStream));
+            }
+        }
+        return functionList.toArray(new GroupFunctionValue[0]);
+    }
+
+    public void apply(GroupFunctionValue[] functions) {
+        for (GroupFunctionValue groupFunctionValue : functions) {
+            for (Group group : groups) {
+                group.updateDataSteamForFunctionValue(groupFunctionValue);
+            }
+        }
     }
 
     @Override

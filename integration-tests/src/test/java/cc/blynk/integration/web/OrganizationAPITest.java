@@ -655,7 +655,7 @@ public class OrganizationAPITest extends APIBaseTest {
         };
 
         product.dataStreams = new DataStream[] {
-                new DataStream(0, (byte) 100, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius)
+                new DataStream(0, (byte) 100, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius, null)
         };
 
         product.webDashboard = new WebDashboard(new Widget[]{
@@ -769,7 +769,7 @@ public class OrganizationAPITest extends APIBaseTest {
                 createTextMeta(1, "My Farm", "Farm of Smith")
         };
         product.dataStreams = new DataStream[] {
-                new DataStream(0, (byte) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius)
+                new DataStream(0, (byte) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius, null)
         };
 
         HttpPut createProductReq = new HttpPut(httpsAdminServerUrl + "/product");
@@ -792,7 +792,7 @@ public class OrganizationAPITest extends APIBaseTest {
                 createTextMeta(1, "My Farm", "Farm of Smith")
         };
         product2.dataStreams = new DataStream[] {
-                new DataStream(0, (byte) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius)
+                new DataStream(0, (byte) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius, null)
         };
 
         HttpPut req2 = new HttpPut(httpsAdminServerUrl + "/product");
@@ -898,7 +898,7 @@ public class OrganizationAPITest extends APIBaseTest {
                 createTextMeta(1, "My Farm", "Farm of Smith")
         };
         product.dataStreams = new DataStream[] {
-                new DataStream(0, (byte) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius)
+                new DataStream(0, (byte) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius, null)
         };
 
         HttpPut createProductReq = new HttpPut(httpsAdminServerUrl + "/product");
@@ -921,7 +921,7 @@ public class OrganizationAPITest extends APIBaseTest {
                 createTextMeta(1, "My Farm", "Farm of Smith")
         };
         product2.dataStreams = new DataStream[] {
-                new DataStream(0, (byte) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius)
+                new DataStream(0, (byte) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius, null)
         };
 
         HttpPut req2 = new HttpPut(httpsAdminServerUrl + "/product");

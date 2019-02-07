@@ -88,7 +88,7 @@ public final class MobileHardwareGroupLogic {
 
             long groupId = Long.parseLong(ids[2]);
             Group group = deviceTiles.getGroupByIdOrThrow(groupId);
-            group.updateValue(pin, pinType, value);
+            group.updateControlDataStream(pin, pinType, value);
 
             DeviceStorageKey deviceStorageKey = new DeviceStorageKey(pin, pinType);
             int[] deviceIds = group.deviceIds;

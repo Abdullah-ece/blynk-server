@@ -127,7 +127,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         };
 
         product.dataStreams = new DataStream[] {
-                new DataStream(0, (byte) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius)
+                new DataStream(0, (byte) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius, null)
         };
 
         EventReceiver eventReceiver = new EventReceiver(1, MetadataType.Contact, "Farm Owner");
@@ -308,7 +308,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         };
 
         product.dataStreams = new DataStream[] {
-                new DataStream(0, (byte) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius)
+                new DataStream(0, (byte) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius, null)
         };
 
         client.createProduct(product);
@@ -347,7 +347,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         };
 
         product.dataStreams = new DataStream[] {
-                new DataStream(0, (byte) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius)
+                new DataStream(0, (byte) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius, null)
         };
 
         client.createProduct(product);
@@ -378,8 +378,8 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         };
 
         product.dataStreams = new DataStream[] {
-                new DataStream(0, (short) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius),
-                new DataStream(1, (short) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius)
+                new DataStream(0, (short) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius, null),
+                new DataStream(1, (short) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius, null)
         };
 
         client.createProduct(product);
@@ -439,7 +439,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         };
 
         product.dataStreams = new DataStream[] {
-                new DataStream(0, (byte) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius)
+                new DataStream(0, (byte) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius, null)
         };
 
         product.webDashboard = new WebDashboard(new Widget[] {

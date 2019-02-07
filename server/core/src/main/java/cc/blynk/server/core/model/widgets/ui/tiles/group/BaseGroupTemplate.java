@@ -5,6 +5,11 @@ import cc.blynk.server.core.model.widgets.outputs.graph.FontSize;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
+/**
+ * The Blynk Project.
+ * Created by Dmitriy Dumanskiy.
+ * Created on 07.02.19.
+ */
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
         property = "mode")

@@ -3,6 +3,7 @@ package cc.blynk.server.core.model;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.model.web.product.metafields.MeasurementUnit;
+import cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType;
 import cc.blynk.utils.CopyObject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -39,6 +40,8 @@ public class DataStream implements CopyObject<DataStream> {
 
     public final MeasurementUnit units;
 
+    public final AggregationFunctionType aggregationFunctionType;
+
     @JsonCreator
     public DataStream(@JsonProperty("id") int id,
                       @JsonProperty("pin") short pin,
@@ -49,7 +52,8 @@ public class DataStream implements CopyObject<DataStream> {
                       @JsonProperty("min") float min,
                       @JsonProperty("max") float max,
                       @JsonProperty("label") String label,
-                      @JsonProperty("units") MeasurementUnit units) {
+                      @JsonProperty("units") MeasurementUnit units,
+                      @JsonProperty("aggregationFunctionType") AggregationFunctionType aggregationFunctionType) {
         this.id = id;
         this.pin = pin;
         this.pwmMode = pwmMode;
@@ -60,16 +64,22 @@ public class DataStream implements CopyObject<DataStream> {
         this.max = max;
         this.label = label;
         this.units = units;
+        this.aggregationFunctionType = aggregationFunctionType;
     }
 
     public DataStream(DataStream dataStream) {
         this(dataStream.id, dataStream.pin, dataStream.pwmMode, dataStream.rangeMappingOn,
                 dataStream.pinType, dataStream.value,
-                dataStream.min, dataStream.max, dataStream.label, dataStream.units);
+                dataStream.min, dataStream.max, dataStream.label,
+                dataStream.units, dataStream.aggregationFunctionType);
     }
 
     public DataStream(short pin, PinType pinType) {
-        this(0, pin, false, false, pinType, null, 0, 255, null, null);
+        this(0, pin, false, false, pinType, null, 0, 255, null, null, null);
+    }
+
+    public DataStream(short pin, PinType pinType, AggregationFunctionType aggregationFunctionType) {
+        this(0, pin, false, false, pinType, null, 0, 255, null, null, aggregationFunctionType);
     }
 
     public static String makeReadingHardwareBody(char pinType, short pin) {
@@ -106,6 +116,15 @@ public class DataStream implements CopyObject<DataStream> {
 
     public boolean isSame(short pin, PinType type) {
         return this.pin == pin && (type == this.pinType || (this.pwmMode && type == PinType.ANALOG));
+    }
+
+    public static DataStream getDataStream(DataStream[] dataStreams, short pin, PinType pinType) {
+        for (DataStream dataStream : dataStreams) {
+            if (dataStream.isSame(pin, pinType)) {
+                return dataStream;
+            }
+        }
+        return null;
     }
 
     public boolean isValid() {

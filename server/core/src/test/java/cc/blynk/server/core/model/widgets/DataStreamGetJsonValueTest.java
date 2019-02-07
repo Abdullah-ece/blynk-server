@@ -17,7 +17,7 @@ import static org.junit.Assert.assertEquals;
 public class DataStreamGetJsonValueTest {
 
     private static DataStream createPinWithValue(String val) {
-        return new DataStream(0, (short) 1, false, false, PinType.VIRTUAL, val, 0, 255, null, null);
+        return new DataStream(0, (short) 1, false, false, PinType.VIRTUAL, val, 0, 255, null, null, null);
     }
 
     @Test

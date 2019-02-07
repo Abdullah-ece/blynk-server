@@ -7,6 +7,7 @@ import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.storage.key.DeviceStorageKey;
 import cc.blynk.server.core.model.storage.value.PinStorageValue;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
+import cc.blynk.server.core.model.widgets.ui.tiles.GroupFunctionValue;
 import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.mobile.MobileStateHolder;
@@ -56,13 +57,20 @@ public final class MobileGetWidgetLogic {
             DeviceTiles deviceTiles = (DeviceTiles) widget;
             deviceTiles.recreateTiles(devices);
 
+            GroupFunctionValue[] functions = deviceTiles.makeGroupFunctionList();
             for (Device device : devices) {
                 for (var entry : device.pinStorage.values.entrySet()) {
                     DeviceStorageKey key = entry.getKey();
                     PinStorageValue value = entry.getValue();
                     deviceTiles.updateIfSame(device.id, key.pin, key.pinType, value.lastValue());
+                    for (GroupFunctionValue groupFunctionValue : functions) {
+                        if (groupFunctionValue.isSame(key, device.id)) {
+                            groupFunctionValue.apply(value.lastValue());
+                        }
+                    }
                 }
             }
+            deviceTiles.apply(functions);
         }
 
         if (ctx.channel().isWritable()) {

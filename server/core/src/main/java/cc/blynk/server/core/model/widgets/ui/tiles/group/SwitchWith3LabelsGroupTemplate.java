@@ -7,6 +7,11 @@ import cc.blynk.server.core.model.widgets.outputs.graph.FontSize;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * The Blynk Project.
+ * Created by Dmitriy Dumanskiy.
+ * Created on 07.02.19.
+ */
 public final class SwitchWith3LabelsGroupTemplate extends BaseGroupTemplate {
 
     private static final GroupLabel[] EMPTY_GROUP_LABELS = {};

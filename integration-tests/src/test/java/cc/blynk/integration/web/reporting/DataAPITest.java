@@ -165,7 +165,7 @@ public class DataAPITest extends APIBaseTest {
 
     @Test
     public void printDataStreamWithPinV100() throws Exception {
-        DataStream dataStream = new DataStream(0, (byte) 100, false, false, PinType.VIRTUAL, null, 0, 255, null, null);
+        DataStream dataStream = new DataStream(0, (byte) 100, false, false, PinType.VIRTUAL, null, 0, 255, null, null, null);
         System.out.println(JsonParser.init().writerWithDefaultPrettyPrinter().writeValueAsString(dataStream));
     }
 

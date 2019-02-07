@@ -12,10 +12,12 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
+import cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType;
 import cc.blynk.server.core.model.widgets.outputs.graph.FontSize;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.group.BaseGroupTemplate;
 import cc.blynk.server.core.model.widgets.ui.tiles.group.Group;
+import cc.blynk.server.core.model.widgets.ui.tiles.group.GroupLabel;
 import cc.blynk.server.core.model.widgets.ui.tiles.group.SwitchWith3LabelsGroupTemplate;
 import cc.blynk.server.core.model.widgets.ui.tiles.templates.PageTileTemplate;
 import org.junit.Test;
@@ -44,7 +46,7 @@ import static org.junit.Assert.assertTrue;
 public class HardwareGroupControlTest extends SingleServerInstancePerTestWithDBAndNewOrg {
 
     @Test
-    public void createBasicGroupAndSendControlCommand() throws Exception {
+    public void createBasicGroupAndSendControlCommandAndViewAggregatedData() throws Exception {
         AppWebSocketClient webClient = loggedDefaultClient("super@blynk.cc", "1");
 
         //create basic product
@@ -85,12 +87,16 @@ public class HardwareGroupControlTest extends SingleServerInstancePerTestWithDBA
         mobileClient.verifyResult(ok(3));
 
         //create group template
+        DataStream viewDataStream = new DataStream((short) 34, PinType.VIRTUAL, AggregationFunctionType.AVG);
+        GroupLabel[] groupLabels = new GroupLabel[] {
+                new GroupLabel(viewDataStream, null, null, -1, null, -1, -1, -1)
+        };
         DataStream switchDataStream = new DataStream((short) 33, PinType.VIRTUAL);
         SwitchWith3LabelsGroupTemplate switchWith3LabelsGroupTemplate = new SwitchWith3LabelsGroupTemplate(
                 1, null, "Base Group Template", null, null, null, -1,
                 switchDataStream,
                 -1,
-                null
+                groupLabels
         );
         mobileClient.createGroupTemplate(1, widgetId, switchWith3LabelsGroupTemplate);
         mobileClient.verifyResult(ok(4));
@@ -157,7 +163,7 @@ public class HardwareGroupControlTest extends SingleServerInstancePerTestWithDBA
                 10, "My new group", baseGroupTemplate.id,
                 new int[] {deviceFromApi1.id, deviceFromApi2.id},
                 new DataStream[] {switchDataStream},
-                null
+                new DataStream[] {viewDataStream}
         );
         mobileClient.createGroup(1, widgetId, group);
         mobileClient.verifyResult(ok(2));
@@ -168,6 +174,30 @@ public class HardwareGroupControlTest extends SingleServerInstancePerTestWithDBA
         //check both hardware got command
         newHardClient1.verifyResult(hardware(3, "vw 33 100"));
         newHardClient2.verifyResult(hardware(3, "vw 33 100"));
+
+        newHardClient1.send("hardware vw 34 200");
+        newHardClient2.send("hardware vw 34 100");
+
+        mobileClient.verifyResult(hardware(3, deviceFromApi1.id + " vw 34 200"));
+        mobileClient.verifyResult(hardware(3, deviceFromApi2.id + " vw 34 100"));
+
+        mobileClient.reset();
+        mobileClient.getWidget(1, widgetId);
+        deviceTiles = (DeviceTiles) JsonParser.parseWidget(mobileClient.getBody(1), 0);
+        assertNotNull(deviceTiles);
+        assertEquals(widgetId, deviceTiles.id);
+        assertNotNull(deviceTiles.groups);
+        assertEquals(1, deviceTiles.groups.length);
+        group = deviceTiles.groups[0];
+        assertEquals("My new group", group.name);
+
+        assertEquals(1, group.controlDataStreams.length);
+        assertEquals(33, group.controlDataStreams[0].pin);
+        assertEquals("100", group.controlDataStreams[0].value);
+
+        assertEquals(1, group.viewDataStreams.length);
+        assertEquals(34, group.viewDataStreams[0].pin);
+        assertEquals("150.0", group.viewDataStreams[0].value);
     }
 
 }
