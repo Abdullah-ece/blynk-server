@@ -295,6 +295,13 @@ class Edit extends React.Component {
       dataIndex: "hardwareInfo.version",
     }, {
       title: "Product",
+      filters: this.props.products.map((product) => ({
+        text: product.name,
+        value: product.id
+      })),
+      onFilter: (value, record) => {
+        return record.productId.toString() === value;
+      },
       sorter: (a, b) => a.name.length - b.name.length,
       sortDirections: ['descend'],
       dataIndex: "productName",
