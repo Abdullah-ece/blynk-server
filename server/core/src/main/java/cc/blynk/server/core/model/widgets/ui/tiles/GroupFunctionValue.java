@@ -33,7 +33,8 @@ public final class GroupFunctionValue {
                 dataStream.aggregationFunctionType.produce());
     }
 
-    private GroupFunctionValue(long groupId, int[] deviceIds, short pin, PinType pinType, AggregationFunction aggregationFunction) {
+    private GroupFunctionValue(long groupId, int[] deviceIds, short pin,
+                               PinType pinType, AggregationFunction aggregationFunction) {
         this.groupId = groupId;
         this.pin = pin;
         this.pinType = pinType;
