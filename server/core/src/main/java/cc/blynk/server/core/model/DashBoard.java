@@ -346,6 +346,7 @@ public class DashBoard {
             if (widget instanceof DeviceTiles) {
                 DeviceTiles deviceTiles = (DeviceTiles) widget;
                 deviceTiles.recreateTiles(devices);
+                deviceTiles.updateAllValues(devices);
             }
         }
         for (Device device : devices) {

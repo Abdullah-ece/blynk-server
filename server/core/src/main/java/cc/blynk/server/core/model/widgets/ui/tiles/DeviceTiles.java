@@ -5,6 +5,8 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.WidgetProperty;
+import cc.blynk.server.core.model.storage.key.DeviceStorageKey;
+import cc.blynk.server.core.model.storage.value.PinStorageValue;
 import cc.blynk.server.core.model.widgets.DeviceCleaner;
 import cc.blynk.server.core.model.widgets.MobileSyncWidget;
 import cc.blynk.server.core.model.widgets.Widget;
@@ -169,6 +171,11 @@ public final class DeviceTiles extends Widget implements MobileSyncWidget, Devic
 
     @Override
     public boolean updateIfSame(int deviceId, short pin, PinType pinType, String value) {
+        return false;
+    }
+
+    //todo DeviceTiles updated in another if branch so we don't want to do double job
+    private boolean updateIfSame0(int deviceId, short pin, PinType pinType, String value) {
         for (Tile tile : tiles) {
             if (tile.updateIfSame(deviceId, pin, pinType, value)) {
                 return true;
@@ -408,6 +415,23 @@ public final class DeviceTiles extends Widget implements MobileSyncWidget, Devic
                 group.updateDataSteamForFunctionValue(groupFunctionValue);
             }
         }
+    }
+
+    public void updateAllValues(List<Device> devices) {
+        GroupFunctionValue[] functions = makeGroupFunctionList();
+        for (Device device : devices) {
+            for (var entry : device.pinStorage.values.entrySet()) {
+                DeviceStorageKey key = entry.getKey();
+                PinStorageValue value = entry.getValue();
+                updateIfSame0(device.id, key.pin, key.pinType, value.lastValue());
+                for (GroupFunctionValue groupFunctionValue : functions) {
+                    if (groupFunctionValue.isSame(key, device.id)) {
+                        groupFunctionValue.apply(value.lastValue());
+                    }
+                }
+            }
+        }
+        apply(functions);
     }
 
     @Override
