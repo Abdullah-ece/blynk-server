@@ -15,6 +15,9 @@ import cc.blynk.server.core.dao.functions.SumFunction;
  */
 public enum AggregationFunctionType {
 
+    //todo - remove
+    @Deprecated
+    RAW_DATA,
     MIN,
     MAX,
     AVG,
