@@ -11,8 +11,6 @@ import static cc.blynk.integration.TestUtil.b;
 import static cc.blynk.integration.TestUtil.hardware;
 import static cc.blynk.integration.TestUtil.internal;
 import static cc.blynk.integration.TestUtil.ok;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 /**
  * The Blynk Project.
@@ -23,22 +21,6 @@ import static org.junit.Assert.assertNotNull;
 @RunWith(MockitoJUnitRunner.class)
 @Ignore
 public class BlynkInternalTest extends SingleServerInstancePerTest {
-
-    @Test
-    public void testGetRTC() throws Exception {
-        clientPair.appClient.createWidget(1, "{\"type\":\"RTC\",\"orgId\":99, \"pin\":99, \"pinType\":\"VIRTUAL\", " +
-                "\"x\":0,\"y\":0,\"width\":0,\"height\":0}");
-
-        clientPair.hardwareClient.send("internal rtc");
-        String rtcResponse = clientPair.hardwareClient.getBody();
-        assertNotNull(rtcResponse);
-
-        String rtcTime = rtcResponse.split("\0")[1];
-
-        assertNotNull(rtcTime);
-        assertEquals(10, rtcTime.length());
-        assertEquals(System.currentTimeMillis(), Long.parseLong(rtcTime) * 1000, 10000L);
-    }
 
     @Test
     public void appConnectedEvent() throws Exception {
