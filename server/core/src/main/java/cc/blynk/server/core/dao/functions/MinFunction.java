@@ -5,7 +5,7 @@ package cc.blynk.server.core.dao.functions;
  * Created by Dmitriy Dumanskiy.
  * Created on 21.07.17.
  */
-public final class MinGraphFunction implements GraphFunction {
+public final class MinFunction implements AggregationFunction {
 
     private double value = Double.MAX_VALUE;
 

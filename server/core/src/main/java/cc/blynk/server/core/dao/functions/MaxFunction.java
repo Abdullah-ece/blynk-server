@@ -5,13 +5,13 @@ package cc.blynk.server.core.dao.functions;
  * Created by Dmitriy Dumanskiy.
  * Created on 21.07.17.
  */
-public final class CountGraphFunction implements GraphFunction {
+public final class MaxFunction implements AggregationFunction {
 
-    private int value = 0;
+    private double value = Double.MIN_VALUE;
 
     @Override
     public void apply(double newValue) {
-        this.value++;
+        this.value = Math.max(value, newValue);
     }
 
     @Override

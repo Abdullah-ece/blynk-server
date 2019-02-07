@@ -5,11 +5,11 @@ package cc.blynk.server.core.dao.functions;
  * Created by Dmitriy Dumanskiy.
  * Created on 21.07.17.
  */
-public final class SumGraphFunction implements GraphFunction {
+public final class SumFunction implements AggregationFunction {
 
     private double sum;
 
-    public SumGraphFunction() {
+    public SumFunction() {
         this.sum = 0;
     }
 

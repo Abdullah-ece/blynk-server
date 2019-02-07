@@ -1,6 +1,6 @@
 package cc.blynk.server.core.model.widgets.ui.tiles;
 
-import cc.blynk.server.core.dao.functions.GraphFunction;
+import cc.blynk.server.core.dao.functions.AggregationFunction;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.storage.key.DeviceStorageKey;
@@ -25,7 +25,7 @@ public final class GroupFunctionValue {
 
     private final int[] deviceIds;
 
-    private final GraphFunction graphFunction;
+    private final AggregationFunction aggregationFunction;
 
     GroupFunctionValue(Group group, DataStream dataStream) {
         this(group.id, group.deviceIds,
@@ -33,12 +33,12 @@ public final class GroupFunctionValue {
                 dataStream.aggregationFunctionType.produce());
     }
 
-    private GroupFunctionValue(long groupId, int[] deviceIds, short pin, PinType pinType, GraphFunction graphFunction) {
+    private GroupFunctionValue(long groupId, int[] deviceIds, short pin, PinType pinType, AggregationFunction aggregationFunction) {
         this.groupId = groupId;
         this.pin = pin;
         this.pinType = pinType;
         this.deviceIds = deviceIds;
-        this.graphFunction = graphFunction;
+        this.aggregationFunction = aggregationFunction;
     }
 
     public boolean isSame(short pin, PinType pinType) {
@@ -56,12 +56,12 @@ public final class GroupFunctionValue {
     public void apply(String value) {
         double parsed = NumberUtil.parseDouble(value);
         if (parsed != NO_RESULT) {
-            graphFunction.apply(parsed);
+            aggregationFunction.apply(parsed);
         }
     }
 
     public double result() {
-        return graphFunction.getResult();
+        return aggregationFunction.getResult();
     }
 
 }

@@ -1,12 +1,12 @@
 package cc.blynk.server.core.model.widgets.outputs.graph;
 
-import cc.blynk.server.core.dao.functions.AverageGraphFunction;
-import cc.blynk.server.core.dao.functions.CountGraphFunction;
-import cc.blynk.server.core.dao.functions.GraphFunction;
-import cc.blynk.server.core.dao.functions.MaxGraphFunction;
-import cc.blynk.server.core.dao.functions.MedianGraphFunction;
-import cc.blynk.server.core.dao.functions.MinGraphFunction;
-import cc.blynk.server.core.dao.functions.SumGraphFunction;
+import cc.blynk.server.core.dao.functions.AggregationFunction;
+import cc.blynk.server.core.dao.functions.AverageFunction;
+import cc.blynk.server.core.dao.functions.CountFunction;
+import cc.blynk.server.core.dao.functions.MaxFunction;
+import cc.blynk.server.core.dao.functions.MedianFunction;
+import cc.blynk.server.core.dao.functions.MinFunction;
+import cc.blynk.server.core.dao.functions.SumFunction;
 
 /**
  * The Blynk Project.
@@ -22,20 +22,20 @@ public enum AggregationFunctionType {
     MED,
     COUNT;
 
-    public GraphFunction produce() {
+    public AggregationFunction produce() {
         switch (this) {
             case MIN :
-                return new MinGraphFunction();
+                return new MinFunction();
             case MAX :
-                return new MaxGraphFunction();
+                return new MaxFunction();
             case SUM :
-                return new SumGraphFunction();
+                return new SumFunction();
             case MED :
-                return new MedianGraphFunction();
+                return new MedianFunction();
             case COUNT :
-                return new CountGraphFunction();
+                return new CountFunction();
             default:
-                return new AverageGraphFunction();
+                return new AverageFunction();
         }
     }
 
