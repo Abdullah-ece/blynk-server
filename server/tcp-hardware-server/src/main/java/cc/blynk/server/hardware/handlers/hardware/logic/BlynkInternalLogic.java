@@ -1,7 +1,6 @@
 package cc.blynk.server.hardware.handlers.hardware.logic;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.HardwareInfo;
 import cc.blynk.server.core.model.device.ota.DeviceOtaInfo;
@@ -9,7 +8,6 @@ import cc.blynk.server.core.model.device.ota.OTADeviceStatus;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.Shipment;
-import cc.blynk.server.core.model.widgets.others.rtc.RTC;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.internal.token.OTADownloadToken;
@@ -27,7 +25,6 @@ import static cc.blynk.server.core.protocol.enums.Command.BLYNK_INTERNAL;
 import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeASCIIStringMessage;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
-import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 
 /**
  *
@@ -54,13 +51,11 @@ public final class BlynkInternalLogic {
     }
 
     private static void sendRTC(ChannelHandlerContext ctx, int msgId) {
-        //todo fix?
-        DashBoard dashBoard = new DashBoard();
-        RTC rtc = dashBoard.getWidgetByType(RTC.class);
-        if (rtc != null && ctx.channel().isWritable()) {
-            ctx.writeAndFlush(makeASCIIStringMessage(BLYNK_INTERNAL, msgId, "rtc" + BODY_SEPARATOR + rtc.getTime()),
-                    ctx.voidPromise());
-        }
+        //todo rtc should be inherited from the product or user that provision device?
+        //if (rtc != null && ctx.channel().isWritable()) {
+        //    ctx.writeAndFlush(makeASCIIStringMessage(BLYNK_INTERNAL, msgId, "rtc" + BODY_SEPARATOR + rtc.getTime()),
+        //            ctx.voidPromise());
+        //}
     }
 
     public void messageReceived(ChannelHandlerContext ctx,

@@ -17,7 +17,6 @@ import cc.blynk.server.core.model.widgets.others.eventor.TimerTime;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.BaseAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinActionType;
-import cc.blynk.server.core.model.widgets.others.rtc.RTC;
 import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
 import cc.blynk.server.core.model.widgets.outputs.ValueDisplay;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
@@ -161,27 +160,6 @@ public class HttpAndTCPSameJVMTest extends SingleServerInstancePerTest {
             List<String> values = TestUtil.consumeJsonPinValues(response);
             assertEquals(1, values.size());
             assertEquals("201", values.get(0));
-        }
-    }
-
-    @Test
-    public void testRTCWorksViaHttpAPI() throws Exception {
-        RTC rtc = new RTC();
-        rtc.id = 434;
-        rtc.height = 1;
-        rtc.width = 2;
-
-        clientPair.appClient.createWidget(1, rtc);
-        clientPair.appClient.verifyResult(ok(1));
-
-        reset(clientPair.appClient.responseMock);
-
-        HttpGet request = new HttpGet(httpsServerUrl + clientPair.token + "/rtc");
-
-        try (CloseableHttpResponse response = httpclient.execute(request)) {
-            assertEquals(200, response.getStatusLine().getStatusCode());
-            List<String> values = TestUtil.consumeJsonPinValues(response);
-            assertEquals(1, values.size());
         }
     }
 
