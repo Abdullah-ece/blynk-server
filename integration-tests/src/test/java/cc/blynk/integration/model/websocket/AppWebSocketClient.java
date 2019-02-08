@@ -507,7 +507,7 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), FirmwareInfo.class);
     }
 
-    public Shipment parseOtaProgress(int expectedMessageOrder) throws Exception {
+    public Shipment parseShipment(int expectedMessageOrder) throws Exception {
         return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), Shipment.class);
     }
 
