@@ -37,9 +37,9 @@ public class ReportingStatsTest extends SingleServerInstancePerTestWithDB {
     @Before
     public void clearDB() throws Exception {
         // clickhouse doesn't have normal way of data removal, so using "hack"
-        holder.reportingDBManager.executeSQL("ALTER TABLE reporting_app_stat_minute DELETE where region IN ('" + UA + "', 'test-region')");
-        holder.reportingDBManager.executeSQL("ALTER TABLE reporting_command_stat_minute DELETE where region IN ('" + UA + "', 'test-region')");
-        holder.reportingDBManager.executeSQL("ALTER TABLE reporting_command_stat_monthly DELETE where region IN ('" + UA + "', 'test-region')");
+        holder.reportingDBManager.executeSQL("ALTER TABLE reporting_app_stat_minute DELETE where region IN ('" + UA + "', 'test-region', 'local')");
+        holder.reportingDBManager.executeSQL("ALTER TABLE reporting_command_stat_minute DELETE where region IN ('" + UA + "', 'test-region', 'local')");
+        holder.reportingDBManager.executeSQL("ALTER TABLE reporting_command_stat_monthly DELETE where region IN ('" + UA + "', 'test-region', 'local')");
     }
 
     @Test
