@@ -15,6 +15,14 @@
 
         sudo apt-get purge oracle-java10-installer
         sudo apt-get purge oracle-java9-installer
+        
+        nano /etc/ssh/sshd_config
+        Port 666
+        PubkeyAuthentication yes
+        sudo service ssh reload
+        
+        adduser blynk
+        usermod -aG sudo blynk
 
         sudo add-apt-repository ppa:openjdk-r/ppa \
         && sudo apt-get update -q \
