@@ -60,7 +60,6 @@ class CampaignsList extends Component {
       () => {
         this.props.getOrgShipments({ orgId: this.props.orgId }).then(
           shipments => {
-            console.log(shipments)
             this.setState({ shipments: shipments.payload.data });
           });
       }).catch(err => console.error(err));
