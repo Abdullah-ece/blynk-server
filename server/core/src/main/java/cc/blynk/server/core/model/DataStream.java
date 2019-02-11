@@ -64,7 +64,9 @@ public class DataStream implements CopyObject<DataStream> {
         this.max = max;
         this.label = label;
         this.units = units;
-        this.aggregationFunctionType = aggregationFunctionType;
+        //todo temp solution, remove later
+        this.aggregationFunctionType =
+                aggregationFunctionType == null ? AggregationFunctionType.AVG : aggregationFunctionType;
     }
 
     public DataStream(DataStream dataStream) {
