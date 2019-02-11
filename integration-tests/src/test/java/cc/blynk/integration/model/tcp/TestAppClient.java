@@ -56,6 +56,7 @@ import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_DEVICE_METAFIELD;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_FACE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_PROFILE_SETTINGS;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_PROJECT_SETTINGS;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_REPORT;
@@ -405,6 +406,10 @@ public class TestAppClient extends BaseTestAppClient {
 
     public void editDashboarSettings(int dashId, DashboardSettings dashboardSettings) {
         send(MOBILE_EDIT_PROJECT_SETTINGS, "" + dashId + BODY_SEPARATOR + dashboardSettings);
+    }
+
+    public void editFace(int parentDashId) {
+        send(MOBILE_EDIT_FACE, "" + parentDashId);
     }
 
     public void createApp(App app) {

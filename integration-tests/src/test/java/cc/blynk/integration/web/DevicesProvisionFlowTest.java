@@ -33,9 +33,12 @@ import cc.blynk.server.core.model.web.product.metafields.DeviceReferenceMetaFiel
 import cc.blynk.server.core.model.web.product.metafields.MeasurementUnit;
 import cc.blynk.server.core.model.web.product.metafields.TemplateIdMetaField;
 import cc.blynk.server.core.model.widgets.outputs.ValueDisplay;
+import cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType;
 import cc.blynk.server.core.model.widgets.outputs.graph.FontSize;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.Tile;
+import cc.blynk.server.core.model.widgets.ui.tiles.group.GroupLabel;
+import cc.blynk.server.core.model.widgets.ui.tiles.group.SwitchWith3LabelsGroupTemplate;
 import cc.blynk.server.core.model.widgets.ui.tiles.templates.ButtonTileTemplate;
 import cc.blynk.server.core.model.widgets.ui.tiles.templates.PageTileTemplate;
 import cc.blynk.server.core.protocol.enums.Command;
@@ -1445,5 +1448,158 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         newHardClient.login(deviceFromApi.token);
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         mobileClient.verifyResult(TestUtil.deviceConnected(1, deviceFromApi.id));
+    }
+
+    @Test
+    public void fullProvisionWithGroups() throws Exception {
+        //Step 1. Create new user to be Blynk app project creator
+        String superUser = "super@blynk.cc";
+        String pass = "1";
+
+        TestAppClient mobileClient = new TestAppClient(properties);
+        mobileClient.start();
+        mobileClient.login(superUser, pass);
+        mobileClient.verifyResult(ok(1));
+
+        //Step 2. Create minimal project with 1 widget.
+        DashBoard dashBoard = new DashBoard();
+        dashBoard.id = 0;
+        dashBoard.name = "123";
+        mobileClient.createDash(dashBoard);
+        mobileClient.verifyResult(ok(2));
+
+        //Step 2. Create minimal project with 1 DeviceTiles.
+        long widgetId = 21321;
+        DeviceTiles deviceTiles = new DeviceTiles();
+        deviceTiles.id = widgetId;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+        deviceTiles.color = -231;
+        mobileClient.createWidget(dashBoard.id, deviceTiles);
+        mobileClient.verifyResult(ok(3));
+        PageTileTemplate tileTemplate = new PageTileTemplate(1,
+                null, null, "TMPL0001", "name", "iconName", ESP8266, new DataStream((byte) 1, PinType.VIRTUAL),
+                false, null, null, null, -75056000, -231, FontSize.LARGE, false, 2);
+        mobileClient.createTemplate(dashBoard.id, widgetId, tileTemplate);
+        mobileClient.verifyResult(ok(4));
+        //create group template
+        DataStream viewDataStream = new DataStream((short) 34, PinType.VIRTUAL, AggregationFunctionType.AVG);
+        GroupLabel[] groupLabels = new GroupLabel[] {
+                new GroupLabel(viewDataStream, null, null, -1, null, -1, -1, -1)
+        };
+        DataStream switchDataStream = new DataStream((short) 33, PinType.VIRTUAL);
+        SwitchWith3LabelsGroupTemplate switchWith3LabelsGroupTemplate = new SwitchWith3LabelsGroupTemplate(
+                1, null, "Base Group Template", null, null, null, -1,
+                switchDataStream,
+                -1,
+                groupLabels
+        );
+        mobileClient.createGroupTemplate(dashBoard.id, widgetId, switchWith3LabelsGroupTemplate);
+        mobileClient.verifyResult(ok(5));
+
+        DashBoard childDash = new DashBoard();
+        childDash.id = 123;
+        childDash.name = "Test";
+        childDash.parentId = dashBoard.id;
+        childDash.isPreview = true;
+        mobileClient.createDash(childDash);
+        mobileClient.verifyResult(ok(6));
+
+        mobileClient.createWidget(childDash.id, deviceTiles);
+        mobileClient.verifyResult(ok(7));
+
+        mobileClient.createGroupTemplate(childDash.id, widgetId, switchWith3LabelsGroupTemplate);
+        mobileClient.verifyResult(ok(8));
+
+        //Step 3. Create the app
+        App app = new App(null, Theme.BlynkLight,
+                ProvisionType.DYNAMIC,
+                0, false, "My app", null, new int[] {childDash.id});
+        mobileClient.createApp(app);
+        App appFromApi = mobileClient.parseApp(9);
+        assertNotNull(appFromApi);
+        assertNotNull(appFromApi.id);
+        assertTrue(appFromApi.id.startsWith("blynk"));
+        mobileClient.send("emailQr " + childDash.id + StringUtils.BODY_SEPARATOR_STRING + appFromApi.id);
+        mobileClient.verifyResult(ok(10));
+        verify(holder.mailWrapper, timeout(1500)).sendWithAttachment(eq(superUser), eq("My app" + " - App details"), eq(holder.textHolder.dynamicMailBody.replace("{project_name}", "Test")), any(QrHolder.class));
+
+        //Step 4. Invite new user
+        String invitedUser = "test@gmail.com";
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+        client.inviteUser(orgId, invitedUser, "Dmitriy", 3);
+        client.verifyResult(ok(1));
+        ArgumentCaptor<String> bodyArgumentCapture = ArgumentCaptor.forClass(String.class);
+        verify(holder.mailWrapper, timeout(1000).times(1)).sendHtml(eq(invitedUser),
+                eq("Invitation to Blynk Inc. dashboard."), bodyArgumentCapture.capture());
+        String body = bodyArgumentCapture.getValue();
+        String token = body.substring(body.indexOf("token=") + 6, body.indexOf("&"));
+        assertEquals(32, token.length());
+        verify(holder.mailWrapper).sendHtml(eq(invitedUser),
+                eq("Invitation to Blynk Inc. dashboard."), contains("/dashboard/invite?token="));
+        String passHash = SHA256Util.makeHash("123", invitedUser);
+        AppWebSocketClient appWebSocketClient = defaultClient();
+        appWebSocketClient.start();
+        appWebSocketClient.loginViaInvite(token, passHash);
+        appWebSocketClient.verifyResult(ok(1));
+
+        appWebSocketClient.getAccount();
+        User user = appWebSocketClient.parseAccount(2);
+        TestCase.assertNotNull(user);
+        assertEquals(invitedUser, user.email);
+        assertEquals("Dmitriy", user.name);
+        assertEquals(3, user.roleId);
+        assertEquals(orgId, user.orgId);
+
+        //Step 5. Login via app
+        TestAppClient invitedUserAppClient = new TestAppClient(properties);
+        invitedUserAppClient.start();
+        invitedUserAppClient.login(invitedUser, "123");
+        invitedUserAppClient.verifyResult(ok(1));
+
+        invitedUserAppClient.loadProfileGzipped();
+        Profile profile = invitedUserAppClient.parseProfile(2);
+        assertNotNull(profile);
+        assertNotNull(profile.dashBoards);
+        assertEquals(1, profile.dashBoards.length);
+        DashBoard invitedUserdash = profile.dashBoards[0];
+        assertNotNull(dashBoard);
+        assertEquals(dashBoard.id, invitedUserdash.parentId);
+        assertEquals(1, invitedUserdash.id);
+        assertTrue(invitedUserdash.isPreview);
+        assertTrue(invitedUserdash.isActive);
+
+        deviceTiles = (DeviceTiles) invitedUserdash.getWidgetById(widgetId);
+        assertNotNull(deviceTiles);
+        assertNotNull(deviceTiles.groupTemplates);
+        assertEquals(1, deviceTiles.groupTemplates.length);
+
+        mobileClient.editFace(dashBoard.id);
+        mobileClient.verifyResult(ok(11));
+        assertTrue(invitedUserAppClient.isClosed());
+
+        invitedUserAppClient = new TestAppClient(properties);
+        invitedUserAppClient.start();
+        invitedUserAppClient.login(invitedUser, "123");
+        invitedUserAppClient.verifyResult(ok(1));
+
+        invitedUserAppClient.loadProfileGzipped();
+        profile = invitedUserAppClient.parseProfile(2);
+        assertNotNull(profile);
+        assertNotNull(profile.dashBoards);
+        assertEquals(1, profile.dashBoards.length);
+        invitedUserdash = profile.dashBoards[0];
+        assertNotNull(dashBoard);
+        assertEquals(dashBoard.id, invitedUserdash.parentId);
+        assertEquals(1, invitedUserdash.id);
+        assertTrue(invitedUserdash.isPreview);
+        assertTrue(invitedUserdash.isActive);
+
+        deviceTiles = (DeviceTiles) invitedUserdash.getWidgetById(widgetId);
+        assertNotNull(deviceTiles);
+        assertNotNull(deviceTiles.groupTemplates);
+        assertEquals(1, deviceTiles.groupTemplates.length);
     }
 }
