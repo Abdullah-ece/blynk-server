@@ -2,6 +2,7 @@ package cc.blynk.server.core.model.dto;
 
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.FirmwareInfo;
+import cc.blynk.server.core.model.web.product.ShipmentProgress;
 import cc.blynk.utils.IntArray;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -33,6 +34,8 @@ public final class ShipmentDTO {
 
     public final Boolean isSecure;
 
+    public final ShipmentProgress shipmentProgress;
+
     @JsonCreator
     public ShipmentDTO(@JsonProperty("id") int id,
                        @JsonProperty("orgId") int orgId,
@@ -43,7 +46,8 @@ public final class ShipmentDTO {
                        @JsonProperty("title") String title,
                        @JsonProperty("firmwareInfo") FirmwareInfo firmwareInfo,
                        @JsonProperty("attemptsLimit") int attemptsLimit,
-                       @JsonProperty("isSecure") Boolean isSecure) {
+                       @JsonProperty("isSecure") Boolean isSecure,
+                       @JsonProperty("shipmentProgress") ShipmentProgress shipmentProgress) {
         this.id = id;
         this.orgId = orgId;
         this.productId = productId;
@@ -54,6 +58,7 @@ public final class ShipmentDTO {
         this.firmwareInfo = firmwareInfo;
         this.attemptsLimit = attemptsLimit == 0 ? 3 : attemptsLimit;
         this.isSecure = isSecure;
+        this.shipmentProgress = shipmentProgress;
     }
 
     public boolean isSecure() {

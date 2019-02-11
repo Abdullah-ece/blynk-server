@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static cc.blynk.server.core.protocol.enums.Command.WEB_OTA_STATUS;
 import static cc.blynk.server.internal.CommonByteBufUtil.deviceOffline;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.server.internal.StateHolderUtil.getHardState;
@@ -226,6 +227,14 @@ public class Session {
         }
     }
 
+    public void sendToUserOnWeb(int msgId, String email, String finalBody) {
+        webChannels.forEach(channel -> {
+            if (StateHolderUtil.isSameEmail(channel, email)) {
+                send(channel, WEB_OTA_STATUS, msgId, finalBody);
+            }
+        });
+    }
+
     private static void sendMessageToMultipleReceivers(Set<Channel> targets, StringMessage msg) {
         for (Channel channel : targets) {
             if (channel.isWritable()) {
@@ -234,9 +243,20 @@ public class Session {
         }
     }
 
+    private static void sendMessageToOneReceiver(Channel target, StringMessage msg) {
+        if (target.isWritable()) {
+            target.writeAndFlush(msg, target.voidPromise());
+        }
+    }
+
     private static void send(Set<Channel> targets, short cmd, int msgId, String body) {
         StringMessage msg = makeUTF8StringMessage(cmd, msgId, body);
         sendMessageToMultipleReceivers(targets, msg);
+    }
+
+    private static void send(Channel target, short cmd, int msgId, String body) {
+        StringMessage msg = makeUTF8StringMessage(cmd, msgId, body);
+        sendMessageToOneReceiver(target, msg);
     }
 
     public void sendToSharedApps(Channel sendingChannel, String sharedToken, short cmd, int msgId, String body) {

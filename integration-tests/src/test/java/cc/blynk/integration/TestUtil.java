@@ -12,6 +12,7 @@ import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.device.ota.OTADeviceStatus;
 import cc.blynk.server.core.model.dto.ProductDTO;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.SortOrder;
@@ -21,6 +22,7 @@ import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
+import cc.blynk.server.core.model.web.product.ShipmentStatus;
 import cc.blynk.server.core.model.web.product.WebDashboard;
 import cc.blynk.server.core.model.web.product.metafields.DeviceOwnerMetaField;
 import cc.blynk.server.core.model.widgets.MobileSyncWidget;
@@ -91,12 +93,15 @@ import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_PROVISION_T
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_LOAD_PROFILE_GZIPPED;
 import static cc.blynk.server.core.protocol.enums.Command.OUTDATED_APP_NOTIFICATION;
 import static cc.blynk.server.core.protocol.enums.Command.SET_WIDGET_PROPERTY;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_OTA_STATUS;
 import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND;
 import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND_BODY;
 import static cc.blynk.server.core.protocol.enums.Response.INVALID_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Response.NOT_ALLOWED;
 import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static cc.blynk.server.core.protocol.enums.Response.SERVER_ERROR;
+import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
+import static cc.blynk.utils.StringUtils.DEVICE_SEPARATOR;
 import static cc.blynk.utils.StringUtils.WEBSOCKET_WEB_PATH;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -195,6 +200,16 @@ public final class TestUtil {
 
     public static StringMessage deviceConnected(int msgId, String body) {
         return new StringMessage(msgId, DEVICE_CONNECTED, body);
+    }
+
+    public static StringMessage otaStatus(int msgId, int shipmentId, int deviceId, OTADeviceStatus status) {
+        return new StringMessage(msgId, WEB_OTA_STATUS,
+                "" + shipmentId + DEVICE_SEPARATOR + deviceId + BODY_SEPARATOR + status);
+    }
+
+    public static StringMessage otaShipmentStatus(int msgId, int shipmentId, int deviceId, ShipmentStatus status) {
+        return new StringMessage(msgId, WEB_OTA_STATUS,
+                "" + shipmentId + DEVICE_SEPARATOR + deviceId + BODY_SEPARATOR + status);
     }
 
     public static GetServerMessage getServer(int msgId, String body) {

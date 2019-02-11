@@ -1,6 +1,8 @@
 package cc.blynk.server.hardware.handlers.hardware.logic;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.core.dao.SessionDao;
+import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.HardwareInfo;
 import cc.blynk.server.core.model.device.ota.DeviceOtaInfo;
@@ -43,11 +45,13 @@ public final class BlynkInternalLogic {
     private final int hardwareIdleTimeout;
     private final TokensPool tokensPool;
     private final ServerProperties props;
+    private final SessionDao sessionDao;
 
     public BlynkInternalLogic(Holder holder) {
         this.hardwareIdleTimeout = holder.limits.hardwareIdleTimeout;
         this.tokensPool = holder.tokensPool;
         this.props = holder.props;
+        this.sessionDao = holder.sessionDao;
     }
 
     private static void sendRTC(ChannelHandlerContext ctx, int msgId) {
@@ -108,7 +112,7 @@ public final class BlynkInternalLogic {
         Device device = state.device;
 
         if (device != null) {
-            processOTA(ctx, state.org, device, hardwareInfo);
+            processOTA(ctx, state.org, device, hardwareInfo, msgId);
 
             //special temporary hotfix https://github.com/blynkkk/dash/issues/1765
             String templateId = hardwareInfo.templateId;
@@ -134,7 +138,7 @@ public final class BlynkInternalLogic {
     }
 
     private void processOTA(ChannelHandlerContext ctx,
-                                   Organization org, Device device, HardwareInfo hardwareInfo) {
+                                   Organization org, Device device, HardwareInfo hardwareInfo, int msgId) {
         DeviceOtaInfo deviceOtaInfo = device.deviceOtaInfo;
         if (deviceOtaInfo == null) {
             return;
@@ -150,7 +154,8 @@ public final class BlynkInternalLogic {
             if (deviceOtaInfo.status != null && deviceOtaInfo.status.isNotFailure()) {
                 if (deviceOtaInfo.isLimitReached(shipment.attemptsLimit)) {
                     log.warn("OTA limit reached for deviceId {}.", device.id);
-                    device.firmwareDownloadLimitReached();
+                    Session session = sessionDao.getOrgSession(org.id);
+                    device.firmwareDownloadLimitReached(session, msgId, shipment.startedBy, shipment);
                 } else {
                     String serverUrl = props.getServerUrl(shipment.isSecure);
                     String downloadToken = TokenGeneratorUtil.generateNewToken();
@@ -164,7 +169,8 @@ public final class BlynkInternalLogic {
             }
         } else {
             if (deviceOtaInfo.status == OTADeviceStatus.FIRMWARE_UPLOADED) {
-                device.success();
+                Session session = sessionDao.getOrgSession(org.id);
+                device.success(session, msgId, shipment.startedBy, shipment);
             }
         }
     }
