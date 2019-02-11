@@ -36,6 +36,9 @@ import cc.blynk.server.application.handlers.main.logic.dashboard.widget.group.Mo
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.group.template.MobileCreateGroupTemplateLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.group.template.MobileDeleteGroupTemplateLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.group.template.MobileEditGroupTemplateLogic;
+import cc.blynk.server.application.handlers.main.logic.dashboard.widget.group.widget.MobileCreateGroupWidgetLogic;
+import cc.blynk.server.application.handlers.main.logic.dashboard.widget.group.widget.MobileDeleteGroupWidgetLogic;
+import cc.blynk.server.application.handlers.main.logic.dashboard.widget.group.widget.MobileEditGroupWidgetLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.tile.MobileDeleteTileTemplateLogic;
 import cc.blynk.server.application.handlers.main.logic.face.MobileCreateAppLogic;
 import cc.blynk.server.application.handlers.main.logic.face.MobileDeleteAppLogic;
@@ -114,6 +117,9 @@ public final class MobileLogicHolder {
     final MobileEditDashSettingLogic mobileEditDashSettingLogic;
     final MobileCreateAppLogic mobileCreateAppLogic;
     final MobileHardwareGroupLogic mobileHardwareGroupLogic;
+    final MobileCreateGroupWidgetLogic mobileCreateGroupWidgetLogic;
+    final MobileEditGroupWidgetLogic mobileEditGroupWidgetLogic;
+    final MobileDeleteGroupWidgetLogic mobileDeleteGroupWidgetLogic;
 
     //common handler
     final CommonGetDevicesByReferenceMetafieldLogic commonGetDevicesByReferenceMetafieldLogic;
@@ -174,6 +180,9 @@ public final class MobileLogicHolder {
         this.mobileEditDashSettingLogic = new MobileEditDashSettingLogic(holder);
         this.mobileCreateAppLogic = new MobileCreateAppLogic(holder);
         this.mobileHardwareGroupLogic = new MobileHardwareGroupLogic(holder);
+        this.mobileCreateGroupWidgetLogic = new MobileCreateGroupWidgetLogic(holder);
+        this.mobileEditGroupWidgetLogic = new MobileEditGroupWidgetLogic(holder);
+        this.mobileDeleteGroupWidgetLogic = new MobileDeleteGroupWidgetLogic();
 
         this.commonGetDevicesByReferenceMetafieldLogic = new CommonGetDevicesByReferenceMetafieldLogic(holder);
 

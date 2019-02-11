@@ -39,6 +39,7 @@ import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_GROUP;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_GROUP_TEMPLATE;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_GROUP_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_REPORT;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_TILE_TEMPLATE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_CREATE_WIDGET;
@@ -50,6 +51,7 @@ import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_DEVICE_D
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_GROUP;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_GROUP_TEMPLATE;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_GROUP_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_REPORT;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_TILE_TEMPLATE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_WIDGET;
@@ -60,6 +62,7 @@ import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_DEVICE_MET
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_FACE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_GROUP;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_GROUP_TEMPLATE;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_GROUP_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_PROFILE_SETTINGS;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_PROJECT_SETTINGS;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_REPORT;
@@ -319,6 +322,15 @@ public final class MobileHandler extends JsonBasedSimpleChannelInboundHandler<St
                 break;
             case MOBILE_DELETE_GROUP :
                 mobileLogicHolder.mobileDeleteGroupLogic.messageReceived(ctx, state, msg);
+                break;
+            case MOBILE_CREATE_GROUP_WIDGET :
+                mobileLogicHolder.mobileCreateGroupWidgetLogic.messageReceived(ctx, state, msg);
+                break;
+            case MOBILE_EDIT_GROUP_WIDGET :
+                mobileLogicHolder.mobileEditGroupWidgetLogic.messageReceived(ctx, state, msg);
+                break;
+            case MOBILE_DELETE_GROUP_WIDGET :
+                mobileLogicHolder.mobileDeleteGroupWidgetLogic.messageReceived(ctx, state, msg);
                 break;
         }
     }

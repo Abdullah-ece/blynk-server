@@ -2,6 +2,7 @@ package cc.blynk.server.core.model.widgets.ui.tiles.group;
 
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.graph.FontSize;
+import cc.blynk.utils.ArrayUtil;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
@@ -43,4 +44,19 @@ public abstract class BaseGroupTemplate {
         this.fontSize = fontSize;
         this.tileColor = tileColor;
     }
+
+    public void addWidget(Widget newWidget) {
+        this.widgets = ArrayUtil.add(this.widgets, newWidget, Widget.class);
+    }
+
+    public void deleteWidgetById(long id) {
+        int index = Widget.getWidgetIndexByIdOrThrow(this.widgets, id);
+        this.widgets = ArrayUtil.remove(this.widgets, index, Widget.class);
+    }
+
+    public void updateWidget(Widget widget) {
+        int index = Widget.getWidgetIndexByIdOrThrow(this.widgets, widget.id);
+        this.widgets = ArrayUtil.copyAndReplace(this.widgets, widget, index);
+    }
+
 }

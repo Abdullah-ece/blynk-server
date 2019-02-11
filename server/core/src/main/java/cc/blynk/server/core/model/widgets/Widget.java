@@ -59,6 +59,7 @@ import cc.blynk.server.core.model.widgets.web.WebLineGraph;
 import cc.blynk.server.core.model.widgets.web.WebSlider;
 import cc.blynk.server.core.model.widgets.web.WebSwitch;
 import cc.blynk.server.core.model.widgets.web.label.WebLabel;
+import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.utils.ByteUtils;
 import cc.blynk.utils.CopyObject;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -181,6 +182,15 @@ public abstract class Widget implements CopyObject<Widget> {
      * Device for Tiles not assigned directly, but assigned via provisioning
      */
     public abstract boolean isAssignedToDevice(int deviceId);
+
+    public static int getWidgetIndexByIdOrThrow(Widget[] widgets, long id) {
+        for (int i = 0; i < widgets.length; i++) {
+            if (widgets[i].id == id) {
+                return i;
+            }
+        }
+        throw new IllegalCommandException("Widget with passed id not found.");
+    }
 
     protected void append(StringBuilder sb, short pin, PinType pinType) {
         if (pin != DataStream.NO_PIN && pinType != PinType.VIRTUAL) {

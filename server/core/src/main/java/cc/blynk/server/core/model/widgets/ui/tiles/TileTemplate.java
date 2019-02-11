@@ -1,6 +1,5 @@
 package cc.blynk.server.core.model.widgets.ui.tiles;
 
-import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.widgets.Widget;
@@ -89,6 +88,6 @@ public abstract class TileTemplate {
     }
 
     public int getWidgetIndexByIdOrThrow(long widgetId) {
-        return DashBoard.getWidgetIndexByIdOrThrow(widgets, widgetId);
+        return Widget.getWidgetIndexByIdOrThrow(widgets, widgetId);
     }
 }

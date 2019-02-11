@@ -311,6 +311,14 @@ public final class DeviceTiles extends Widget implements MobileSyncWidget, Devic
         throw new IllegalCommandException("Group with passed id not found.");
     }
 
+    public BaseGroupTemplate getGroupTemplateByIdOrThrow(long id) {
+        BaseGroupTemplate baseGroupTemplate = getGroupTemplateById(id);
+        if (baseGroupTemplate == null) {
+            throw new IllegalCommandException("Template group with passed id not found.");
+        }
+        return baseGroupTemplate;
+    }
+
     public BaseGroupTemplate getGroupTemplateById(long id) {
         for (BaseGroupTemplate groupTemplate : this.groupTemplates) {
             if (groupTemplate.id == id) {
