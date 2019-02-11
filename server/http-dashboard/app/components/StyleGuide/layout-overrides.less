@@ -1,20 +1,20 @@
 @import "style-guide";
 
-@user-layout-navigation-background-color: #fff;
+@user-layout-navigation-background-color: @color-white;
 
 @user-layout-navigation-menu-item-icon-color: fade(#000, 65%);
 
 @user-layout-navigation-collapse-btn-idle-color: fade(#000, 65%);
-@user-layout-navigation-collapse-btn-hover-color: #e92126;
+@user-layout-navigation-collapse-btn-hover-color: @color-primary-6;
 
 @user-layout-navigation-menu-item-idle-color: fade(#000, 65%);
 @user-layout-navigation-menu-item-idle-background-color: @user-layout-navigation-background-color;
 
-@user-layout-navigation-menu-item-hover-color: #e92126;
-@user-layout-navigation-menu-item-hover-background-color: #fff2f0;
+@user-layout-navigation-menu-item-hover-color: @color-primary-6;
+@user-layout-navigation-menu-item-hover-background-color: @color-primary-1;
 
-@user-layout-navigation-menu-item-active-color: #e92126;
-@user-layout-navigation-menu-item-active-background-color: #fff2f0;
+@user-layout-navigation-menu-item-active-color: @color-white;
+@user-layout-navigation-menu-item-active-background-color: @color-primary-6;
 
 .user-layout-left-navigation {
   background-color: @user-layout-navigation-background-color;
@@ -34,8 +34,8 @@
       }
 
       &:hover {
-        color: @user-layout-navigation-menu-item-active-color;
-        background-color: @user-layout-navigation-menu-item-active-background-color;
+        color: @user-layout-navigation-menu-item-hover-color;
+        background-color: @user-layout-navigation-menu-item-hover-background-color;
       }
     }
   }
