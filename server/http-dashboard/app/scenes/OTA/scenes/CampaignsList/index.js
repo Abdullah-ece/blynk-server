@@ -9,14 +9,12 @@ import { bindActionCreators } from "redux";
 import {
   OTAStart,
   OTAStop,
-  ShipmentDelete,
   GetOrgShipments,
 } from "data/Product/actions";
 
 @connect((state) => ({
   orgId: state.Account.selectedOrgId
 }), (dispatch) => ({
-  otaDelete: bindActionCreators(ShipmentDelete, dispatch),
   otaStart: bindActionCreators(OTAStart, dispatch),
   otaStop: bindActionCreators(OTAStop, dispatch),
   getOrgShipments: bindActionCreators(GetOrgShipments, dispatch),
@@ -76,13 +74,7 @@ class CampaignsList extends Component {
   }
 
   deleteOTA(id) {
-    this.props.otaDelete({ shipmentId: id }).then(
-      () => {
-        this.props.getOrgShipments({ orgId: this.props.orgId }).then(
-          shipments => {
-            this.setState({ shipments: shipments.payload.data });
-          });
-      }).catch(err => console.error(err));
+    this.props.otaDelete(id);
   }
 
   buildDataSource() {
