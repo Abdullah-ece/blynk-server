@@ -113,10 +113,10 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         String superUser = "super@blynk.cc";
         String pass = "1";
 
-        TestAppClient appClient = new TestAppClient(properties);
-        appClient.start();
-        appClient.login(superUser, pass);
-        appClient.verifyResult(ok(1));
+        TestAppClient mobileClient = new TestAppClient(properties);
+        mobileClient.start();
+        mobileClient.login(superUser, pass);
+        mobileClient.verifyResult(ok(1));
 
         int parentId = 0;
 
@@ -124,8 +124,8 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         DashBoard dashBoard = new DashBoard();
         dashBoard.id = parentId;
         dashBoard.name = "123";
-        appClient.createDash(dashBoard);
-        appClient.verifyResult(ok(2));
+        mobileClient.createDash(dashBoard);
+        mobileClient.verifyResult(ok(2));
 
         //Step 2. Create minimal project with 1 widget.
         ValueDisplay valueDisplay = new ValueDisplay();
@@ -135,31 +135,31 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         valueDisplay.width = 4;
         valueDisplay.height = 1;
         valueDisplay.pinType = PinType.VIRTUAL;
-        appClient.createWidget(parentId, valueDisplay);
-        appClient.verifyResult(ok(3));
+        mobileClient.createWidget(parentId, valueDisplay);
+        mobileClient.verifyResult(ok(3));
 
         DashBoard childDash = new DashBoard();
         childDash.id = 123;
         childDash.name = "Test";
         childDash.parentId = parentId;
         childDash.isPreview = true;
-        appClient.createDash(childDash);
-        appClient.verifyResult(ok(4));
+        mobileClient.createDash(childDash);
+        mobileClient.verifyResult(ok(4));
 
-        appClient.createWidget(childDash.id, valueDisplay);
-        appClient.verifyResult(ok(5));
+        mobileClient.createWidget(childDash.id, valueDisplay);
+        mobileClient.verifyResult(ok(5));
 
         //Step 3. Create the app
         App app = new App(null, Theme.BlynkLight,
                 ProvisionType.DYNAMIC,
                 0, false, "My app", null, new int[] {childDash.id});
-        appClient.createApp(app);
-        App appFromApi = appClient.parseApp(6);
+        mobileClient.createApp(app);
+        App appFromApi = mobileClient.parseApp(6);
         assertNotNull(appFromApi);
         assertNotNull(appFromApi.id);
         assertTrue(appFromApi.id.startsWith("blynk"));
-        appClient.send("emailQr " + childDash.id + StringUtils.BODY_SEPARATOR_STRING + appFromApi.id);
-        appClient.verifyResult(ok(7));
+        mobileClient.send("emailQr " + childDash.id + StringUtils.BODY_SEPARATOR_STRING + appFromApi.id);
+        mobileClient.verifyResult(ok(7));
         verify(holder.mailWrapper, timeout(1500)).sendWithAttachment(eq(superUser), eq("My app" + " - App details"), eq(holder.textHolder.dynamicMailBody.replace("{project_name}", "Test")), any(QrHolder.class));
 
         //Step 4. Invite new user
@@ -242,12 +242,12 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         newDevice.name = "My New Device";
         newDevice.boardType = BoardType.ESP32_Dev_Board;
 
-        TestAppClient appClient = new TestAppClient("localhost", properties.getHttpsPort());
-        appClient.start();
-        appClient.login(getUserName(), "1");
-        appClient.verifyResult(ok(1));
-        appClient.getProvisionToken(newDevice);
-        Device deviceFromApi = appClient.parseDevice(2);
+        TestAppClient mobileClient = new TestAppClient("localhost", properties.getHttpsPort());
+        mobileClient.start();
+        mobileClient.login(getUserName(), "1");
+        mobileClient.verifyResult(ok(1));
+        mobileClient.getProvisionToken(newDevice);
+        Device deviceFromApi = mobileClient.parseDevice(2);
         assertNotNull(deviceFromApi);
         assertNotNull(deviceFromApi.token);
 
@@ -261,30 +261,30 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         deviceTiles.height = 100;
         deviceTiles.color = -231;
 
-        appClient.createWidget(1, deviceTiles);
-        appClient.verifyResult(ok(3));
+        mobileClient.createWidget(1, deviceTiles);
+        mobileClient.verifyResult(ok(3));
 
         PageTileTemplate tileTemplate = new PageTileTemplate(1,
                 null, null, "TMPL0001", "name", "iconName", ESP8266, new DataStream((byte) 1, PinType.VIRTUAL),
                 false, null, null, null, -75056000, -231, FontSize.LARGE, false, 2);
 
-        appClient.createTemplate(1, widgetId, tileTemplate);
-        appClient.verifyResult(ok(4));
+        mobileClient.createTemplate(1, widgetId, tileTemplate);
+        mobileClient.verifyResult(ok(4));
 
         TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
         newHardClient.start();
         newHardClient.login(deviceFromApi.token);
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        appClient.never(deviceConnected(1, "1-1"));
+        mobileClient.never(deviceConnected(1, "1-1"));
 
         newHardClient.send("internal " + b("ver 0.3.1 tmpl TMPL0001 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
         newHardClient.verifyResult(ok(2));
-        appClient.verifyResult(deviceConnected(2, deviceFromApi.id));
+        mobileClient.verifyResult(deviceConnected(2, deviceFromApi.id));
         client.verifyResult(deviceConnected(2, deviceFromApi.id));
 
-        appClient.reset();
-        appClient.getDevice(deviceFromApi.id);
-        Device provisionedDevice = appClient.parseDevice(1);
+        mobileClient.reset();
+        mobileClient.getDevice(deviceFromApi.id);
+        Device provisionedDevice = mobileClient.parseDevice(1);
         assertNotNull(provisionedDevice);
         assertNotNull(provisionedDevice.metaFields);
         assertEquals(3, provisionedDevice.metaFields.length);
@@ -295,8 +295,8 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         assertEquals(ESP8266, provisionedDevice.boardType);
         assertEquals("My Default device Name", provisionedDevice.name);
 
-        appClient.getWidget(1, widgetId);
-        deviceTiles = (DeviceTiles) JsonParser.parseWidget(appClient.getBody(2), 0);
+        mobileClient.getWidget(1, widgetId);
+        deviceTiles = (DeviceTiles) JsonParser.parseWidget(mobileClient.getBody(2), 0);
         assertNotNull(deviceTiles);
         assertEquals(widgetId, deviceTiles.id);
         assertNotNull(deviceTiles.templates);
@@ -313,9 +313,9 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         client.deleteDevice(orgId, deviceFromApi.id);
         client.verifyResult(ok(1));
 
-        appClient.reset();
-        appClient.getWidget(1, widgetId);
-        deviceTiles = (DeviceTiles) JsonParser.parseWidget(appClient.getBody(1), 0);
+        mobileClient.reset();
+        mobileClient.getWidget(1, widgetId);
+        deviceTiles = (DeviceTiles) JsonParser.parseWidget(mobileClient.getBody(1), 0);
         assertNotNull(deviceTiles);
         assertEquals(widgetId, deviceTiles.id);
         assertNotNull(deviceTiles.templates);
@@ -334,10 +334,10 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         String superUser = "super@blynk.cc";
         String pass = "1";
 
-        TestAppClient appClient = new TestAppClient(properties);
-        appClient.start();
-        appClient.login(superUser, pass);
-        appClient.verifyResult(ok(1));
+        TestAppClient mobileClient = new TestAppClient(properties);
+        mobileClient.start();
+        mobileClient.login(superUser, pass);
+        mobileClient.verifyResult(ok(1));
 
         int parentId = 0;
 
@@ -345,8 +345,8 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         DashBoard dashBoard = new DashBoard();
         dashBoard.id = parentId;
         dashBoard.name = "123";
-        appClient.createDash(dashBoard);
-        appClient.verifyResult(ok(2));
+        mobileClient.createDash(dashBoard);
+        mobileClient.verifyResult(ok(2));
 
         ValueDisplay valueDisplay = new ValueDisplay();
         valueDisplay.label = "Temperature";
@@ -355,8 +355,8 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         valueDisplay.width = 4;
         valueDisplay.height = 1;
         valueDisplay.pinType = PinType.VIRTUAL;
-        appClient.createWidget(parentId, valueDisplay);
-        appClient.verifyResult(ok(3));
+        mobileClient.createWidget(parentId, valueDisplay);
+        mobileClient.verifyResult(ok(3));
 
         DashBoard childDash = new DashBoard();
         childDash.id = 123;
@@ -364,23 +364,23 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         childDash.parentId = parentId;
         childDash.isPreview = true;
         childDash.isActive = true;
-        appClient.createDash(childDash);
-        appClient.verifyResult(ok(4));
+        mobileClient.createDash(childDash);
+        mobileClient.verifyResult(ok(4));
 
-        appClient.createWidget(childDash.id, valueDisplay);
-        appClient.verifyResult(ok(5));
+        mobileClient.createWidget(childDash.id, valueDisplay);
+        mobileClient.verifyResult(ok(5));
 
         //Step 3. Create the app
         App app = new App(null, Theme.BlynkLight,
                 ProvisionType.DYNAMIC,
                 0, false, "My app", null, new int[] {childDash.id});
-        appClient.createApp(app);
-        App appFromApi = appClient.parseApp(6);
+        mobileClient.createApp(app);
+        App appFromApi = mobileClient.parseApp(6);
         assertNotNull(appFromApi);
         assertNotNull(appFromApi.id);
         assertTrue(appFromApi.id.startsWith("blynk"));
-        appClient.send("emailQr " + childDash.id + StringUtils.BODY_SEPARATOR_STRING + appFromApi.id);
-        appClient.verifyResult(ok(7));
+        mobileClient.send("emailQr " + childDash.id + StringUtils.BODY_SEPARATOR_STRING + appFromApi.id);
+        mobileClient.verifyResult(ok(7));
         verify(holder.mailWrapper, timeout(1500)).sendWithAttachment(eq(superUser), eq("My app" + " - App details"), eq(holder.textHolder.dynamicMailBody.replace("{project_name}", "Test")), any(QrHolder.class));
 
         //Step 4. No need for invite step as we are already here
@@ -429,12 +429,12 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         Device createdDevice = client.parseDevice(2);
         assertNotNull(createdDevice);
 
-        TestAppClient appClient = new TestAppClient("localhost", properties.getHttpsPort());
-        appClient.start();
-        appClient.login(getUserName(), "1");
-        appClient.verifyResult(ok(1));
-        appClient.getDevice(createdDevice.id);
-        Device device = appClient.parseDevice(2);
+        TestAppClient mobileClient = new TestAppClient("localhost", properties.getHttpsPort());
+        mobileClient.start();
+        mobileClient.login(getUserName(), "1");
+        mobileClient.verifyResult(ok(1));
+        mobileClient.getDevice(createdDevice.id);
+        Device device = mobileClient.parseDevice(2);
         MetaField[] metaFields = device.metaFields;
         assertNotNull(metaFields);
         assertEquals(2, metaFields.length);
@@ -474,20 +474,20 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         Device createdDevice = client.parseDevice(3);
         assertNotNull(createdDevice);
 
-        TestAppClient appClient = new TestAppClient("localhost", properties.getHttpsPort());
-        appClient.start();
-        appClient.login(getUserName(), "1", "Android", "2.27.1");
-        appClient.verifyResult(ok(1));
-        appClient.getDevice(createdDevice.id, true);
-        Device device = appClient.parseDevice(2);
+        TestAppClient mobileClient = new TestAppClient("localhost", properties.getHttpsPort());
+        mobileClient.start();
+        mobileClient.login(getUserName(), "1", "Android", "2.27.1");
+        mobileClient.verifyResult(ok(1));
+        mobileClient.getDevice(createdDevice.id, true);
+        Device device = mobileClient.parseDevice(2);
         MetaField[] metaFields = device.metaFields;
         assertNotNull(metaFields);
         assertEquals(3, metaFields.length);
         MetaField metaField = metaFields[1];
         assertTrue(metaField instanceof DeviceReferenceMetaField);
 
-        appClient.getDevicesByReferenceMetafield(createdDevice.id, metaField.id);
-        Device[] deviceDTOS = appClient.parseDevices(3);
+        mobileClient.getDevicesByReferenceMetafield(createdDevice.id, metaField.id);
+        Device[] deviceDTOS = mobileClient.parseDevices(3);
         assertNotNull(deviceDTOS);
         assertEquals(1, deviceDTOS.length);
         assertEquals("My New Device", deviceDTOS[0].name);
@@ -571,13 +571,13 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         String hash = SHA256Util.makeHash(pass, subOrgUser1);
         holder.userDao.add(subOrgUser1.toLowerCase(), hash, orgFromApi.id, 1);
 
-        TestAppClient appClient = new TestAppClient("localhost", properties.getHttpsPort());
-        appClient.start();
-        appClient.login(subOrgUser1, pass);
-        appClient.verifyResult(ok(1));
+        TestAppClient mobileClient = new TestAppClient("localhost", properties.getHttpsPort());
+        mobileClient.start();
+        mobileClient.login(subOrgUser1, pass);
+        mobileClient.verifyResult(ok(1));
 
-        appClient.getDevicesByReferenceMetafield(createdDevice.id, deviceReferenceMetaField.id);
-        Device[] devices = appClient.parseDevices(2);
+        mobileClient.getDevicesByReferenceMetafield(createdDevice.id, deviceReferenceMetaField.id);
+        Device[] devices = mobileClient.parseDevices(2);
         assertNotNull(devices);
         assertEquals(1, devices.length);
         assertEquals("My New Device For Product 3", devices[0].name);
@@ -628,12 +628,12 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         newDevice.name = "My New Device";
         newDevice.boardType = BoardType.ESP32_Dev_Board;
 
-        TestAppClient appClient = new TestAppClient("localhost", properties.getHttpsPort());
-        appClient.start();
-        appClient.login(getUserName(), "1");
-        appClient.verifyResult(ok(1));
-        appClient.getProvisionToken(newDevice);
-        Device deviceFromApi = appClient.parseDevice(2);
+        TestAppClient mobileClient = new TestAppClient("localhost", properties.getHttpsPort());
+        mobileClient.start();
+        mobileClient.login(getUserName(), "1");
+        mobileClient.verifyResult(ok(1));
+        mobileClient.getProvisionToken(newDevice);
+        Device deviceFromApi = mobileClient.parseDevice(2);
         assertNotNull(deviceFromApi);
         assertNotNull(deviceFromApi.token);
 
@@ -641,7 +641,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         newHardClient.start();
         newHardClient.login(deviceFromApi.token);
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        appClient.never(deviceConnected(1, "1-1"));
+        mobileClient.never(deviceConnected(1, "1-1"));
 
         newHardClient.send("internal " + b("ver 0.3.1 tmpl TMPL0001 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
         newHardClient.verifyResult(ok(2));
@@ -649,10 +649,10 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         newHardClient.send("ping");
         newHardClient.verifyResult(ok(3));
 
-        appClient.verifyResult(TestUtil.deviceConnected(2, deviceFromApi.id));
+        mobileClient.verifyResult(TestUtil.deviceConnected(2, deviceFromApi.id));
 
-        appClient.getDevice(deviceFromApi.id, true);
-        Device provisionedDevice = appClient.parseDevice(4);
+        mobileClient.getDevice(deviceFromApi.id, true);
+        Device provisionedDevice = mobileClient.parseDevice(4);
         assertNotNull(provisionedDevice);
         assertNotNull(provisionedDevice.metaFields);
         assertEquals(2, provisionedDevice.metaFields.length);
@@ -679,20 +679,20 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
 
         //apps call get devices and not getDevice method
         //so we have to make sure that provisioned device is returned
-        appClient.getDevices();
-        Device[] allDevices = appClient.parseDevices(5);
+        mobileClient.getDevices();
+        Device[] allDevices = mobileClient.parseDevices(5);
         assertNotNull(allDevices);
         provisionedDevice = getDeviceById(allDevices, deviceFromApi.id);
         assertNotNull(provisionedDevice);
 
         newHardClient.stop();
-        appClient.reset();
+        mobileClient.reset();
 
         newHardClient = new TestHardClient("localhost", properties.getHttpPort());
         newHardClient.start();
         newHardClient.login(deviceFromApi.token);
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        appClient.verifyResult(TestUtil.deviceConnected(1, deviceFromApi.id));
+        mobileClient.verifyResult(TestUtil.deviceConnected(1, deviceFromApi.id));
     }
 
     @Test
@@ -725,12 +725,12 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         newDevice.name = "My New Device";
         newDevice.boardType = BoardType.ESP32_Dev_Board;
 
-        TestAppClient appClient = new TestAppClient("localhost", properties.getHttpsPort());
-        appClient.start();
-        appClient.login(getUserName(), "1");
-        appClient.verifyResult(ok(1));
-        appClient.getProvisionToken(newDevice);
-        Device deviceFromApi = appClient.parseDevice(2);
+        TestAppClient mobileClient = new TestAppClient("localhost", properties.getHttpsPort());
+        mobileClient.start();
+        mobileClient.login(getUserName(), "1");
+        mobileClient.verifyResult(ok(1));
+        mobileClient.getProvisionToken(newDevice);
+        Device deviceFromApi = mobileClient.parseDevice(2);
         assertNotNull(deviceFromApi);
         assertNotNull(deviceFromApi.token);
 
@@ -738,7 +738,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         newHardClient.start();
         newHardClient.login(deviceFromApi.token);
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        appClient.never(deviceConnected(1, "1-1"));
+        mobileClient.never(deviceConnected(1, "1-1"));
 
         newHardClient.send("internal " + b("ver 0.3.1 tmpl TMPL0001 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
         newHardClient.verifyResult(ok(2));
@@ -746,12 +746,12 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         newHardClient.send("ping");
         newHardClient.verifyResult(ok(3));
 
-        appClient.verifyResult(TestUtil.deviceConnected(2, deviceFromApi.id));
+        mobileClient.verifyResult(TestUtil.deviceConnected(2, deviceFromApi.id));
 
         //apps call get devices and not getDevice method
         //so we have to make sure that provisioned device is returned
-        appClient.getDevices();
-        Device[] allDevices = appClient.parseDevices(4);
+        mobileClient.getDevices();
+        Device[] allDevices = mobileClient.parseDevices(4);
         assertNotNull(allDevices);
         assertEquals(2, allDevices.length);
         Device provisionedDevice = getDeviceById(allDevices, deviceFromApi.id);
@@ -801,12 +801,12 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         newDevice.name = "My New Device";
         newDevice.boardType = BoardType.ESP32_Dev_Board;
 
-        TestAppClient appClient = new TestAppClient("localhost", properties.getHttpsPort());
-        appClient.start();
-        appClient.login(getUserName(), "1");
-        appClient.verifyResult(ok(1));
-        appClient.getProvisionToken(newDevice);
-        Device deviceFromApi = appClient.parseDevice(2);
+        TestAppClient mobileClient = new TestAppClient("localhost", properties.getHttpsPort());
+        mobileClient.start();
+        mobileClient.login(getUserName(), "1");
+        mobileClient.verifyResult(ok(1));
+        mobileClient.getProvisionToken(newDevice);
+        Device deviceFromApi = mobileClient.parseDevice(2);
         assertNotNull(deviceFromApi);
         assertNotNull(deviceFromApi.token);
 
@@ -820,25 +820,25 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         deviceTiles.height = 100;
         deviceTiles.color = -231;
 
-        appClient.createWidget(1, deviceTiles);
-        appClient.verifyResult(ok(3));
+        mobileClient.createWidget(1, deviceTiles);
+        mobileClient.verifyResult(ok(3));
 
         PageTileTemplate tileTemplate = new PageTileTemplate(1,
                 null, null, "TMPL0001", "name", "iconName", ESP8266, new DataStream((byte) 1, PinType.VIRTUAL),
                 false, null, null, null, -75056000, -231, FontSize.LARGE, false, 2);
 
-        appClient.createTemplate(1, widgetId, tileTemplate);
-        appClient.verifyResult(ok(4));
+        mobileClient.createTemplate(1, widgetId, tileTemplate);
+        mobileClient.verifyResult(ok(4));
 
         TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
         newHardClient.start();
         newHardClient.login(deviceFromApi.token);
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        appClient.never(deviceConnected(1, "1-1"));
+        mobileClient.never(deviceConnected(1, "1-1"));
 
         newHardClient.send("internal " + b("ver 0.3.1 tmpl TMPL0001 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
         newHardClient.verifyResult(ok(2));
-        appClient.verifyResult(deviceConnected(2, deviceFromApi.id));
+        mobileClient.verifyResult(deviceConnected(2, deviceFromApi.id));
         client.verifyResult(deviceConnected(2, deviceFromApi.id));
 
         //here we check, that webapp retrieves WEB_CREATE_DEVICE after device was provisioned.
@@ -862,8 +862,8 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         assertEquals(ESP8266, createdDeviceFromTheProvision.boardType);
         assertEquals("My Default device Name", createdDeviceFromTheProvision.name);
 
-        appClient.getDevice(deviceFromApi.id);
-        Device provisionedDevice = appClient.parseDevice(6);
+        mobileClient.getDevice(deviceFromApi.id);
+        Device provisionedDevice = mobileClient.parseDevice(6);
         assertNotNull(provisionedDevice);
         assertNotNull(provisionedDevice.metaFields);
         assertEquals(3, provisionedDevice.metaFields.length);
@@ -884,17 +884,17 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         assertEquals("TMPL0001", webDevice.hardwareInfo.templateId);
 
         newHardClient.stop();
-        appClient.reset();
+        mobileClient.reset();
 
         newHardClient = new TestHardClient("localhost", properties.getHttpPort());
         newHardClient.start();
         newHardClient.login(deviceFromApi.token);
         verify(newHardClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
-        appClient.verifyResult(deviceConnected(1, deviceFromApi.id));
-        appClient.reset();
+        mobileClient.verifyResult(deviceConnected(1, deviceFromApi.id));
+        mobileClient.reset();
 
-        appClient.getWidget(1, widgetId);
-        deviceTiles = (DeviceTiles) JsonParser.parseWidget(appClient.getBody(1), 0);
+        mobileClient.getWidget(1, widgetId);
+        deviceTiles = (DeviceTiles) JsonParser.parseWidget(mobileClient.getBody(1), 0);
         assertNotNull(deviceTiles);
         assertEquals(widgetId, deviceTiles.id);
         assertNotNull(deviceTiles.templates);
@@ -928,12 +928,12 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         newDevice.name = "My New Device";
         newDevice.boardType = BoardType.ESP32_Dev_Board;
 
-        TestAppClient appClient = new TestAppClient("localhost", properties.getHttpsPort());
-        appClient.start();
-        appClient.login(getUserName(), "1");
-        appClient.verifyResult(ok(1));
-        appClient.getProvisionToken(newDevice);
-        Device deviceFromApi = appClient.parseDevice(2);
+        TestAppClient mobileClient = new TestAppClient("localhost", properties.getHttpsPort());
+        mobileClient.start();
+        mobileClient.login(getUserName(), "1");
+        mobileClient.verifyResult(ok(1));
+        mobileClient.getProvisionToken(newDevice);
+        Device deviceFromApi = mobileClient.parseDevice(2);
         assertNotNull(deviceFromApi);
         assertNotNull(deviceFromApi.token);
 
@@ -947,29 +947,29 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         deviceTiles.height = 100;
         deviceTiles.color = -231;
 
-        appClient.createWidget(1, deviceTiles);
-        appClient.verifyResult(ok(3));
+        mobileClient.createWidget(1, deviceTiles);
+        mobileClient.verifyResult(ok(3));
 
         PageTileTemplate tileTemplate = new PageTileTemplate(1,
                 null, null, "TMPL0001", "name", "iconName", ESP8266, new DataStream((byte) 1, PinType.VIRTUAL),
                 false, null, null, null, -75056000, -231, FontSize.LARGE, false, 2);
 
-        appClient.createTemplate(1, widgetId, tileTemplate);
-        appClient.verifyResult(ok(4));
+        mobileClient.createTemplate(1, widgetId, tileTemplate);
+        mobileClient.verifyResult(ok(4));
 
         TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
         newHardClient.start();
         newHardClient.login(deviceFromApi.token);
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        appClient.never(deviceConnected(1, "1-1"));
+        mobileClient.never(deviceConnected(1, "1-1"));
 
         newHardClient.send("internal " + b("ver 0.3.1 tmpl TMPL0001 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
         newHardClient.verifyResult(ok(2));
-        appClient.verifyResult(deviceConnected(2, deviceFromApi.id));
+        mobileClient.verifyResult(deviceConnected(2, deviceFromApi.id));
         client.verifyResult(deviceConnected(2, deviceFromApi.id));
 
-        appClient.getDevice(deviceFromApi.id);
-        Device provisionedDevice = appClient.parseDevice(6);
+        mobileClient.getDevice(deviceFromApi.id);
+        Device provisionedDevice = mobileClient.parseDevice(6);
         assertNotNull(provisionedDevice);
         assertNotNull(provisionedDevice.metaFields);
         assertEquals(4, provisionedDevice.metaFields.length);
@@ -981,13 +981,13 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         assertEquals("My Default device Name", provisionedDevice.name);
 
         newHardClient.send("hardware vw 1 123");
-        appClient.verifyResult(hardware(3, deviceFromApi.id + " vw 1 123"));
+        mobileClient.verifyResult(hardware(3, deviceFromApi.id + " vw 1 123"));
 
         client.reset();
-        appClient.reset();
+        mobileClient.reset();
 
-        appClient.loadProfileGzipped();
-        Profile profile = appClient.parseProfile(1);
+        mobileClient.loadProfileGzipped();
+        Profile profile = mobileClient.parseProfile(1);
         assertNotNull(profile);
         assertNotNull(profile.dashBoards);
         assertEquals(1, profile.dashBoards.length);
@@ -1049,14 +1049,14 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         newDevice.name = "My New Device";
         newDevice.boardType = BoardType.ESP32_Dev_Board;
 
-        TestAppClient appClient = new TestAppClient("localhost", properties.getHttpsPort());
-        appClient.start();
-        appClient.login(getUserName(), "1");
-        appClient.verifyResult(ok(1));
-        appClient.addPushToken("androidUid", "androidToken");
-        appClient.verifyResult(ok(2));
-        appClient.getProvisionToken(newDevice);
-        Device deviceFromApi = appClient.parseDevice(3);
+        TestAppClient mobileClient = new TestAppClient("localhost", properties.getHttpsPort());
+        mobileClient.start();
+        mobileClient.login(getUserName(), "1");
+        mobileClient.verifyResult(ok(1));
+        mobileClient.addPushToken("androidUid", "androidToken");
+        mobileClient.verifyResult(ok(2));
+        mobileClient.getProvisionToken(newDevice);
+        Device deviceFromApi = mobileClient.parseDevice(3);
         assertNotNull(deviceFromApi);
         assertNotNull(deviceFromApi.token);
 
@@ -1070,29 +1070,29 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         deviceTiles.height = 100;
         deviceTiles.color = -231;
 
-        appClient.createWidget(1, deviceTiles);
-        appClient.verifyResult(ok(4));
+        mobileClient.createWidget(1, deviceTiles);
+        mobileClient.verifyResult(ok(4));
 
         PageTileTemplate tileTemplate = new PageTileTemplate(1,
                 null, null, "TMPL0001", "name", "iconName", ESP8266, new DataStream((byte) 1, PinType.VIRTUAL),
                 false, null, null, null, -75056000, -231, FontSize.LARGE, false, 2);
 
-        appClient.createTemplate(1, widgetId, tileTemplate);
-        appClient.verifyResult(ok(5));
+        mobileClient.createTemplate(1, widgetId, tileTemplate);
+        mobileClient.verifyResult(ok(5));
 
         TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
         newHardClient.start();
         newHardClient.login(deviceFromApi.token);
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        appClient.never(deviceConnected(1, "1-1"));
+        mobileClient.never(deviceConnected(1, "1-1"));
 
         newHardClient.send("internal " + b("ver 0.3.1 tmpl TMPL0001 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
         newHardClient.verifyResult(ok(2));
-        appClient.verifyResult(deviceConnected(2, deviceFromApi.id));
+        mobileClient.verifyResult(deviceConnected(2, deviceFromApi.id));
         client.verifyResult(deviceConnected(2, deviceFromApi.id));
 
-        appClient.getDevice(deviceFromApi.id);
-        Device provisionedDevice = appClient.parseDevice(7);
+        mobileClient.getDevice(deviceFromApi.id);
+        Device provisionedDevice = mobileClient.parseDevice(7);
         assertNotNull(provisionedDevice);
         assertNotNull(provisionedDevice.metaFields);
         assertEquals(4, provisionedDevice.metaFields.length);
@@ -1134,12 +1134,12 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         newDevice.name = "My New Device";
         newDevice.boardType = BoardType.ESP32_Dev_Board;
 
-        TestAppClient appClient = new TestAppClient("localhost", properties.getHttpsPort());
-        appClient.start();
-        appClient.login(getUserName(), "1");
-        appClient.verifyResult(ok(1));
-        appClient.getProvisionToken(newDevice);
-        Device deviceFromApi = appClient.parseDevice(2);
+        TestAppClient mobileClient = new TestAppClient("localhost", properties.getHttpsPort());
+        mobileClient.start();
+        mobileClient.login(getUserName(), "1");
+        mobileClient.verifyResult(ok(1));
+        mobileClient.getProvisionToken(newDevice);
+        Device deviceFromApi = mobileClient.parseDevice(2);
         assertNotNull(deviceFromApi);
         assertNotNull(deviceFromApi.token);
 
@@ -1153,30 +1153,30 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         deviceTiles.height = 100;
         deviceTiles.color = -231;
 
-        appClient.createWidget(1, deviceTiles);
-        appClient.verifyResult(ok(3));
+        mobileClient.createWidget(1, deviceTiles);
+        mobileClient.verifyResult(ok(3));
 
         ButtonTileTemplate tileTemplate = new ButtonTileTemplate(1,
                 null, null, "TMPL0001", "name", "iconName", BoardType.ESP8266,
                 new DataStream((short) 1, PinType.VIRTUAL),
                 false, false, false, null, null);
 
-        appClient.createTemplate(1, widgetId, tileTemplate);
-        appClient.verifyResult(ok(4));
+        mobileClient.createTemplate(1, widgetId, tileTemplate);
+        mobileClient.verifyResult(ok(4));
 
         TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
         newHardClient.start();
         newHardClient.login(deviceFromApi.token);
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        appClient.never(deviceConnected(1, "1-1"));
+        mobileClient.never(deviceConnected(1, "1-1"));
 
         newHardClient.send("internal " + b("ver 0.3.1 tmpl TMPL0001 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
         newHardClient.verifyResult(ok(2));
-        appClient.verifyResult(deviceConnected(2, deviceFromApi.id));
+        mobileClient.verifyResult(deviceConnected(2, deviceFromApi.id));
         client.verifyResult(deviceConnected(2, deviceFromApi.id));
 
-        appClient.getDevice(deviceFromApi.id);
-        Device provisionedDevice = appClient.parseDevice(6);
+        mobileClient.getDevice(deviceFromApi.id);
+        Device provisionedDevice = mobileClient.parseDevice(6);
         assertNotNull(provisionedDevice);
         assertNotNull(provisionedDevice.metaFields);
         assertEquals(3, provisionedDevice.metaFields.length);
@@ -1197,18 +1197,18 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         assertEquals("TMPL0001", webDevice.hardwareInfo.templateId);
 
         newHardClient.stop();
-        appClient.reset();
+        mobileClient.reset();
 
         newHardClient = new TestHardClient("localhost", properties.getHttpPort());
         newHardClient.start();
         newHardClient.login(deviceFromApi.token);
         verify(newHardClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
-        appClient.verifyResult(deviceConnected(1, deviceFromApi.id));
-        appClient.reset();
+        mobileClient.verifyResult(deviceConnected(1, deviceFromApi.id));
+        mobileClient.reset();
         client.reset();
 
-        appClient.getWidget(1, widgetId);
-        deviceTiles = (DeviceTiles) JsonParser.parseWidget(appClient.getBody(1), 0);
+        mobileClient.getWidget(1, widgetId);
+        deviceTiles = (DeviceTiles) JsonParser.parseWidget(mobileClient.getBody(1), 0);
         assertNotNull(deviceTiles);
         assertEquals(widgetId, deviceTiles.id);
         assertNotNull(deviceTiles.templates);
@@ -1223,10 +1223,10 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         client.trackDevice(provisionedDevice.id);
         client.verifyResult(ok(1));
 
-        appClient.send("hardware " + provisionedDevice.id + " vw 1 1");
+        mobileClient.send("hardware " + provisionedDevice.id + " vw 1 1");
         client.verifyResult(appSync(2, provisionedDevice.id + " vw 1 1"));
-        appClient.loadProfileGzipped();
-        Profile userProfile = appClient.parseProfile(2);
+        mobileClient.loadProfileGzipped();
+        Profile userProfile = mobileClient.parseProfile(2);
         assertNotNull(userProfile);
         DashBoard dashBoard = userProfile.getDashById(1);
         assertNotNull(dashBoard);
@@ -1268,12 +1268,12 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         newDevice.boardType = BoardType.ESP32_Dev_Board;
         newDevice.productId = fromApiProduct.id;
 
-        TestAppClient appClient = new TestAppClient("localhost", properties.getHttpsPort());
-        appClient.start();
-        appClient.login(getUserName(), "1");
-        appClient.verifyResult(ok(1));
-        appClient.getProvisionToken(newDevice);
-        Device deviceFromApi = appClient.parseDevice(2);
+        TestAppClient mobileClient = new TestAppClient("localhost", properties.getHttpsPort());
+        mobileClient.start();
+        mobileClient.login(getUserName(), "1");
+        mobileClient.verifyResult(ok(1));
+        mobileClient.getProvisionToken(newDevice);
+        Device deviceFromApi = mobileClient.parseDevice(2);
         assertNotNull(deviceFromApi);
         assertNotNull(deviceFromApi.token);
 
@@ -1281,14 +1281,14 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         newHardClient.start();
         newHardClient.login(deviceFromApi.token);
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        appClient.never(deviceConnected(1, "1-1"));
+        mobileClient.never(deviceConnected(1, "1-1"));
 
         newHardClient.send("internal " + b("ver 0.3.1 tmpl TMPL0001 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
         newHardClient.verifyResult(ok(2));
-        appClient.verifyResult(TestUtil.deviceConnected(2, deviceFromApi.id));
+        mobileClient.verifyResult(TestUtil.deviceConnected(2, deviceFromApi.id));
 
-        appClient.getDevice(deviceFromApi.id);
-        Device provisionedDevice = appClient.parseDevice(4);
+        mobileClient.getDevice(deviceFromApi.id);
+        Device provisionedDevice = mobileClient.parseDevice(4);
         assertNotNull(provisionedDevice);
         assertNotNull(provisionedDevice.metaFields);
 
@@ -1299,13 +1299,13 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         assertEquals("TMPL0001", provisionedDevice.hardwareInfo.templateId);
 
         newHardClient.stop();
-        appClient.reset();
+        mobileClient.reset();
 
         newHardClient = new TestHardClient("localhost", properties.getHttpPort());
         newHardClient.start();
         newHardClient.login(deviceFromApi.token);
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        appClient.verifyResult(TestUtil.deviceConnected(1, deviceFromApi.id));
+        mobileClient.verifyResult(TestUtil.deviceConnected(1, deviceFromApi.id));
     }
 
     @Test
@@ -1338,12 +1338,12 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         newDevice.name = "My New Device";
         newDevice.boardType = BoardType.ESP32_Dev_Board;
 
-        TestAppClient appClient = new TestAppClient("localhost", properties.getHttpsPort());
-        appClient.start();
-        appClient.login(getUserName(), "1");
-        appClient.verifyResult(ok(1));
-        appClient.getProvisionToken(newDevice);
-        Device deviceFromApi = appClient.parseDevice(2);
+        TestAppClient mobileClient = new TestAppClient("localhost", properties.getHttpsPort());
+        mobileClient.start();
+        mobileClient.login(getUserName(), "1");
+        mobileClient.verifyResult(ok(1));
+        mobileClient.getProvisionToken(newDevice);
+        Device deviceFromApi = mobileClient.parseDevice(2);
         assertNotNull(deviceFromApi);
         assertNotNull(deviceFromApi.token);
 
@@ -1351,14 +1351,14 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         newHardClient.start();
         newHardClient.login(deviceFromApi.token);
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        appClient.never(deviceConnected(1, "1-1"));
+        mobileClient.never(deviceConnected(1, "1-1"));
 
         newHardClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
         newHardClient.verifyResult(ok(2));
-        appClient.verifyResult(TestUtil.deviceConnected(2, deviceFromApi.id));
+        mobileClient.verifyResult(TestUtil.deviceConnected(2, deviceFromApi.id));
 
-        appClient.getDevice(deviceFromApi.id);
-        Device provisionedDevice = appClient.parseDevice(4);
+        mobileClient.getDevice(deviceFromApi.id);
+        Device provisionedDevice = mobileClient.parseDevice(4);
         assertNotNull(provisionedDevice);
         //id of default product that is first in the list
         assertEquals(0, provisionedDevice.productId);
@@ -1368,13 +1368,13 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         assertNull(provisionedDevice.hardwareInfo.templateId);
 
         newHardClient.stop();
-        appClient.reset();
+        mobileClient.reset();
 
         newHardClient = new TestHardClient("localhost", properties.getHttpPort());
         newHardClient.start();
         newHardClient.login(deviceFromApi.token);
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        appClient.verifyResult(TestUtil.deviceConnected(1, deviceFromApi.id));
+        mobileClient.verifyResult(TestUtil.deviceConnected(1, deviceFromApi.id));
     }
 
     @Test
@@ -1407,12 +1407,12 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         newDevice.name = "My New Device";
         newDevice.boardType = BoardType.ESP32_Dev_Board;
 
-        TestAppClient appClient = new TestAppClient("localhost", properties.getHttpsPort());
-        appClient.start();
-        appClient.login(getUserName(), "1");
-        appClient.verifyResult(ok(1));
-        appClient.getProvisionToken(newDevice);
-        Device deviceFromApi = appClient.parseDevice(2);
+        TestAppClient mobileClient = new TestAppClient("localhost", properties.getHttpsPort());
+        mobileClient.start();
+        mobileClient.login(getUserName(), "1");
+        mobileClient.verifyResult(ok(1));
+        mobileClient.getProvisionToken(newDevice);
+        Device deviceFromApi = mobileClient.parseDevice(2);
         assertNotNull(deviceFromApi);
         assertNotNull(deviceFromApi.token);
 
@@ -1420,14 +1420,14 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         newHardClient.start();
         newHardClient.login(deviceFromApi.token);
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        appClient.never(deviceConnected(1, "1-" + deviceFromApi.id));
+        mobileClient.never(deviceConnected(1, "1-" + deviceFromApi.id));
 
         newHardClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
         newHardClient.verifyResult(ok(2));
-        appClient.verifyResult(TestUtil.deviceConnected(2, deviceFromApi.id));
+        mobileClient.verifyResult(TestUtil.deviceConnected(2, deviceFromApi.id));
 
-        appClient.getDevice(deviceFromApi.id);
-        Device provisionedDevice = appClient.parseDevice(4);
+        mobileClient.getDevice(deviceFromApi.id);
+        Device provisionedDevice = mobileClient.parseDevice(4);
         assertNotNull(provisionedDevice);
         //id of default product that is first in the list
         assertEquals(0, provisionedDevice.productId);
@@ -1438,12 +1438,12 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         assertNull(provisionedDevice.hardwareInfo.templateId);
 
         newHardClient.stop();
-        appClient.reset();
+        mobileClient.reset();
 
         newHardClient = new TestSslHardClient("localhost", properties.getHttpsPort());
         newHardClient.start();
         newHardClient.login(deviceFromApi.token);
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        appClient.verifyResult(TestUtil.deviceConnected(1, deviceFromApi.id));
+        mobileClient.verifyResult(TestUtil.deviceConnected(1, deviceFromApi.id));
     }
 }
