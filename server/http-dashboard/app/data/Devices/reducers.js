@@ -1,5 +1,5 @@
-import {fromJS} from 'immutable';
-import {Log} from 'services/Log';
+import { fromJS } from 'immutable';
+import { Log } from 'services/Log';
 import {
   DEVICES_SORT,
   TIMELINE_TIME_FILTERS,
@@ -14,7 +14,7 @@ import {
 import _ from 'lodash';
 
 
-import {ACTIONS} from 'store/blynk-websocket-middleware/actions';
+import { ACTIONS } from 'store/blynk-websocket-middleware/actions';
 
 // temporarily comment
 
@@ -120,7 +120,7 @@ const cutDeviceNameMetaFieldFromMetaFields = (device) => {
 };
 
 const getLocationMetaFieldOnly = (metaFields) => {
-  if(!metaFields || !metaFields.length)
+  if (!metaFields || !metaFields.length)
     return [];
 
   return metaFields.filter((field) => (
@@ -210,12 +210,12 @@ let deviceDetails;
 
 function updateDevicesDashboardLiveData(state, action) {
 
-  let {pin, value} = action.value;
+  let { pin, value } = action.value;
 
   pin = Number(pin);
   value = String(value);
 
-  let deviceDashboardLiveData = {...state.deviceDashboardLiveData};
+  let deviceDashboardLiveData = { ...state.deviceDashboardLiveData };
 
   if (!deviceDashboardLiveData[pin]) {
     deviceDashboardLiveData = state.deviceDashboardLiveData;
@@ -223,9 +223,9 @@ function updateDevicesDashboardLiveData(state, action) {
     deviceDashboardLiveData[pin] = value;
   }
 
-  let deviceDashboardChartLiveData = {...state.deviceDashboardChartLiveData};
+  let deviceDashboardChartLiveData = { ...state.deviceDashboardChartLiveData };
 
-  if(!deviceDashboardChartLiveData[pin]) {
+  if (!deviceDashboardChartLiveData[pin]) {
     deviceDashboardChartLiveData = state.deviceDashboardChartLiveData;
   } else {
     deviceDashboardChartLiveData[pin].data = [
@@ -276,7 +276,6 @@ export default function Devices(state = initialState, action) {
       };
 
     case ACTIONS.BLYNK_WS_DEVICE_CONNECT:
-
       devicesList = state.devices.map((device) => {
         if (Number(device.id) === Number(action.value.deviceId))
           return {
@@ -298,11 +297,21 @@ export default function Devices(state = initialState, action) {
 
       return {
         ...state,
-        devices      : devicesList,
+        otaDevices: state.otaDevices.map((device) => {
+          if (Number(device.id) === Number(action.value.deviceId))
+            return {
+              ...device,
+              status: 'ONLINE'
+            };
+
+          return device;
+        }),
+        devices: devicesList,
         deviceDetails: deviceDetails,
       };
 
     case ACTIONS.BLYNK_WS_DEVICE_DISCONNECT:
+
       devicesList = state.devices.map((device) => {
         if (Number(device.id) === Number(action.value.deviceId))
           return {
@@ -324,16 +333,25 @@ export default function Devices(state = initialState, action) {
 
       return {
         ...state,
-        devices      : devicesList,
+        otaDevices: state.otaDevices.map((device) => {
+          if (Number(device.id) === Number(action.value.deviceId))
+            return {
+              ...device,
+              status: 'OFFLINE'
+            };
+
+          return device;
+        }),
+        devices: devicesList,
         deviceDetails: deviceDetails,
       };
 
     case ACTIONS.BLYNK_WS_DEVICE_METAFIELD_UPDATE:
 
-      if(state.deviceDetails && Number(state.deviceDetails.id) === Number(action.value.deviceId)) {
+      if (state.deviceDetails && Number(state.deviceDetails.id) === Number(action.value.deviceId)) {
 
         let metaFields = state.deviceDetails.metaFields.map((metaField) => {
-          if(action.value.metafield && action.value.metafield.id && metaField.id === action.value.metafield.id) {
+          if (action.value.metafield && action.value.metafield.id && metaField.id === action.value.metafield.id) {
             return action.value.metafield;
           }
           return metaField;
@@ -407,12 +425,12 @@ export default function Devices(state = initialState, action) {
         }
 
         logEvents = [{
-          id         : -1,
-          eventType  : event.type,
-          name       : event.name,
+          id: -1,
+          eventType: event.type,
+          name: event.name,
           description: action.value.eventDescription || event.description,
-          ts         : new Date().getTime(),
-          isResolved : false,
+          ts: new Date().getTime(),
+          isResolved: false,
         }, ...logEvents];
 
         return {
@@ -460,9 +478,9 @@ export default function Devices(state = initialState, action) {
       return {
         ...state,
         deviceDashboardLiveData: {},
-        deviceDashboardData    : {},
-        deviceDashboard        : {},
-        deviceDashboardLoading : true,
+        deviceDashboardData: {},
+        deviceDashboard: {},
+        deviceDashboardLoading: true,
       };
 
 
@@ -478,7 +496,7 @@ export default function Devices(state = initialState, action) {
         let pin = Number(source && source.dataStream && source.dataStream.pin);
 
         pins.push({
-          pin   : isNaN(pin) ? -1 : pin
+          pin: isNaN(pin) ? -1 : pin
         });
 
         return pins;
@@ -502,7 +520,7 @@ export default function Devices(state = initialState, action) {
               ...state.deviceDashboardChartLiveData,
               [pin]: {
                 loading: true,
-                data   : []
+                data: []
               }
             }
           };
@@ -517,7 +535,7 @@ export default function Devices(state = initialState, action) {
                 ...(state.deviceDashboardChartData[action.value.widgetId] || {}),
                 [pin]: {
                   loading: true,
-                  data   : []
+                  data: []
                 }
               }
             }
@@ -529,7 +547,7 @@ export default function Devices(state = initialState, action) {
 
     case ACTIONS.BLYNK_WS_CHART_DATA_RESPONSE:
 
-      if(!Array.isArray(action.value.points)) {
+      if (!Array.isArray(action.value.points)) {
         return state;
       }
 
@@ -543,7 +561,7 @@ export default function Devices(state = initialState, action) {
         let pin = source && source.dataStream && source.dataStream.pin;
 
         pins.push({
-          pin   : pin,
+          pin: pin,
           points: action.value.points[index] || []
         });
 
@@ -563,11 +581,11 @@ export default function Devices(state = initialState, action) {
 
         if (isLive) {
 
-          let deviceDashboardChartLiveData = {...state.deviceDashboardChartLiveData};
+          let deviceDashboardChartLiveData = { ...state.deviceDashboardChartLiveData };
 
           deviceDashboardChartLiveData[pin] = {
             loading: false,
-            data   : points
+            data: points
           };
 
           return {
@@ -577,12 +595,12 @@ export default function Devices(state = initialState, action) {
 
         } else {
 
-          let deviceDashboardChartData = {...state.deviceDashboardChartData};
+          let deviceDashboardChartData = { ...state.deviceDashboardChartData };
 
           deviceDashboardChartData[action.value.widgetId][pin] = {
-            pin    : pin,
+            pin: pin,
             loading: false,
-            data   : points
+            data: points
           };
 
           return {
@@ -621,8 +639,8 @@ export default function Devices(state = initialState, action) {
           if (dataStream)
             sources.push({
               widgetId: widget.id,
-              pin     : dataStream.pin,
-              value   : dataStream.value
+              pin: dataStream.pin,
+              value: dataStream.value
             });
         });
 
@@ -633,7 +651,7 @@ export default function Devices(state = initialState, action) {
 
       sources.forEach((source) => {
         deviceDashboardData[source.widgetId] = {
-          pin  : source.pin,
+          pin: source.pin,
           value: source.value
         };
         deviceDashboardLiveData[source.pin] = source.value === undefined ? true : String(source.value);
@@ -641,13 +659,13 @@ export default function Devices(state = initialState, action) {
 
       return {
         ...state,
-        deviceDashboardLiveData     : deviceDashboardLiveData,
-        deviceDashboardChartData    : {},
+        deviceDashboardLiveData: deviceDashboardLiveData,
+        deviceDashboardChartData: {},
         deviceDashboardChartLiveData: {},
-        deviceDashboardData         : deviceDashboardData,
+        deviceDashboardData: deviceDashboardData,
         // deviceDashboard             : addAdditionalFieldsForTesting(dashboard),
-        deviceDashboard             : dashboard,
-        deviceDashboardLoading      : false
+        deviceDashboard: dashboard,
+        deviceDashboardLoading: false
       };
 
     case "API_DASHBOARD_FETCH_FAILURE":
@@ -680,7 +698,7 @@ export default function Devices(state = initialState, action) {
     case "DEVICES_LIST_NAME_UPDATE":
 
       let devicesList = state.devices.map((device) => {
-        if(Number(action.value.deviceId) === Number(device.id)) {
+        if (Number(action.value.deviceId) === Number(device.id)) {
           return {
             ...device,
             name: action.value.name
@@ -714,7 +732,7 @@ export default function Devices(state = initialState, action) {
 
     case "API_DEVICE_FETCH_SUCCESS":
       const devices = [...state.devices].map((device) => {
-        if(device.id === action.payload.data.id)
+        if (device.id === action.payload.data.id)
           return action.payload.data;
 
         return device;
@@ -795,23 +813,23 @@ export default function Devices(state = initialState, action) {
         }
       };
 
-      // return state.setIn(['deviceDetails', 'info', 'data'], cutDeviceNameMetaFieldFromMetaFields(fromJS(action.payload.data))).update('devices', (devices) => {
-      //   return devices.map((device) => {
-      //
-      //     if(Number(device.get('id')) !== Number(action.payload.data.id)) return device;
-      //
-      //     const criticalSinceLastView = device.get('criticalSinceLastView') || 0;
-      //     const warningSinceLastView = device.get('warningSinceLastView') || 0;
-      //
-      //     return fromJS(action.payload.data)
-      //       .set('criticalSinceLastView', criticalSinceLastView)
-      //       .set('warningSinceLastView', warningSinceLastView);
-      //
-      //   });
-      // });
+    // return state.setIn(['deviceDetails', 'info', 'data'], cutDeviceNameMetaFieldFromMetaFields(fromJS(action.payload.data))).update('devices', (devices) => {
+    //   return devices.map((device) => {
+    //
+    //     if(Number(device.get('id')) !== Number(action.payload.data.id)) return device;
+    //
+    //     const criticalSinceLastView = device.get('criticalSinceLastView') || 0;
+    //     const warningSinceLastView = device.get('warningSinceLastView') || 0;
+    //
+    //     return fromJS(action.payload.data)
+    //       .set('criticalSinceLastView', criticalSinceLastView)
+    //       .set('warningSinceLastView', warningSinceLastView);
+    //
+    //   });
+    // });
 
     case "API_DEVICE_DELETE_SUCCESS":
-      let returnState =  state;
+      let returnState = state;
 
       try {
         returnState = {
