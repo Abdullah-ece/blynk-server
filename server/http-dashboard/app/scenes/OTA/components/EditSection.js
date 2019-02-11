@@ -2,9 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 class EditSection extends React.Component {
-  propTypes = {
+  static propTypes = {
     title: PropTypes.string,
-    children: PropTypes.array,
+    children: PropTypes.oneOfType([
+      PropTypes.arrayOf(PropTypes.element),
+      PropTypes.element
+    ]),
   };
 
   render() {

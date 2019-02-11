@@ -271,8 +271,9 @@ class Edit extends React.Component {
       sorter: (a, b) => a.name.length - b.name.length,
       sortDirections: ['descend'],
       render: (value) => {
-        return (<Badge status={value.status === "ONLINE" ? "success" : "default"}
-                       text={value.name}/>);
+        return (
+          <Badge status={value.status === "ONLINE" ? "success" : "default"}
+                 text={value.name}/>);
       }
     }, {
       title: "Firmware Version",
@@ -336,7 +337,9 @@ class Edit extends React.Component {
 
     return (
       <Table rowSelection={rowSelection} columns={columns}
-             dataSource={devices} pagination={false}/>);
+             dataSource={devices} pagination={false}
+             rowKey={record => record.id}/>
+    );
   }
 
   render() {
