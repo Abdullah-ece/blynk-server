@@ -271,7 +271,7 @@ class Edit extends React.Component {
       sorter: (a, b) => a.name.length - b.name.length,
       sortDirections: ['descend'],
       render: (value) => {
-        return (<Badge status={value.status === "ONLINE" ? "success" : "error"}
+        return (<Badge status={value.status === "ONLINE" ? "success" : "default"}
                        text={value.name}/>);
       }
     }, {
