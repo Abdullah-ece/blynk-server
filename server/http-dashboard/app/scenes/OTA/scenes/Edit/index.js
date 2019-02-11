@@ -337,8 +337,7 @@ class Edit extends React.Component {
 
     return (
       <Table rowSelection={rowSelection} columns={columns}
-             dataSource={devices} pagination={false}
-             rowKey={record => record.id}/>
+             dataSource={devices} pagination={false}/>
     );
   }
 
