@@ -557,60 +557,64 @@ export default function Devices(state = initialState, action) {
 
       widget = _.find(state.deviceDashboard.widgets, (widget) => Number(widget.id) === Number(action.value.widgetId));
 
-      pins = widget.sources.reduce((pins, source, index) => {
-        let pin = source && source.dataStream && source.dataStream.pin;
+      if (widget) {
+        pins = widget.sources.reduce((pins, source, index) => {
+          let pin = source && source.dataStream && source.dataStream.pin;
 
-        pins.push({
-          pin: pin,
-          points: action.value.points[index] || []
-        });
-
-        return pins;
-
-      }, pins);
-
-      return pins.reduce((state, data) => {
-
-        let pin = data.pin;
-        let points = data.points;
-
-        if (pin === -1) {
-          // return state if pin not specified
-          return state;
-        }
-
-        if (isLive) {
-
-          let deviceDashboardChartLiveData = { ...state.deviceDashboardChartLiveData };
-
-          deviceDashboardChartLiveData[pin] = {
-            loading: false,
-            data: points
-          };
-
-          return {
-            ...state,
-            deviceDashboardChartLiveData: deviceDashboardChartLiveData
-          };
-
-        } else {
-
-          let deviceDashboardChartData = { ...state.deviceDashboardChartData };
-
-          deviceDashboardChartData[action.value.widgetId][pin] = {
+          pins.push({
             pin: pin,
-            loading: false,
-            data: points
-          };
+            points: action.value.points[index] || []
+          });
 
-          return {
-            ...state,
-            deviceDashboardChartData: deviceDashboardChartData
-          };
+          return pins;
 
-        }
+        }, pins);
 
-      }, state);
+        return pins.reduce((state, data) => {
+
+          let pin = data.pin;
+          let points = data.points;
+
+          if (pin === -1) {
+            // return state if pin not specified
+            return state;
+          }
+
+          if (isLive) {
+
+            let deviceDashboardChartLiveData = { ...state.deviceDashboardChartLiveData };
+
+            deviceDashboardChartLiveData[pin] = {
+              loading: false,
+              data: points
+            };
+
+            return {
+              ...state,
+              deviceDashboardChartLiveData: deviceDashboardChartLiveData
+            };
+
+          } else {
+
+            let deviceDashboardChartData = { ...state.deviceDashboardChartData };
+
+            deviceDashboardChartData[action.value.widgetId][pin] = {
+              pin: pin,
+              loading: false,
+              data: points
+            };
+
+            return {
+              ...state,
+              deviceDashboardChartData: deviceDashboardChartData
+            };
+
+          }
+
+        }, state);
+      }
+
+      return state;
 
     case "BLYNK_WS_DEVICE_CREATED":
       return {
