@@ -21,11 +21,11 @@ class Empty extends React.Component {
       <MainLayout.Content className="organizations-empty">
         <MainList>
           {canCreateOrgs ? <MainList.Empty title="Manage organizations easily"
-                          description="Start with adding a new Organization that will get access to the Products and devices they own."
+                          description="Start with adding a new organization that will get access to the devices they own."
                           link="/organizations/create"
                           btnText="Create New Organization"/> :
           <MainList.Empty title="Manage organizations easily"
-                          description="Start with adding a new Organization that will get access to the Products and devices they own."
+                          description="Start with adding a new organization that will get access to the devices they own."
                           />}
         </MainList>
       </MainLayout.Content>
