@@ -183,13 +183,21 @@ public abstract class Widget implements CopyObject<Widget> {
      */
     public abstract boolean isAssignedToDevice(int deviceId);
 
-    public static int getWidgetIndexByIdOrThrow(Widget[] widgets, long id) {
+    public static int getWidgetIndexById(Widget[] widgets, long id) {
         for (int i = 0; i < widgets.length; i++) {
             if (widgets[i].id == id) {
                 return i;
             }
         }
-        throw new IllegalCommandException("Widget with passed id not found.");
+        return -1;
+    }
+
+    public static int getWidgetIndexByIdOrThrow(Widget[] widgets, long id) {
+        int i = getWidgetIndexById(widgets, id);
+        if (i == -1) {
+            throw new IllegalCommandException("Widget with passed id not found.");
+        }
+        return i;
     }
 
     protected void append(StringBuilder sb, short pin, PinType pinType) {
