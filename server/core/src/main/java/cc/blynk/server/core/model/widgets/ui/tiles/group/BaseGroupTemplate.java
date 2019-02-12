@@ -50,13 +50,17 @@ public abstract class BaseGroupTemplate {
     }
 
     public void deleteWidgetById(long id) {
-        int index = Widget.getWidgetIndexByIdOrThrow(this.widgets, id);
-        this.widgets = ArrayUtil.remove(this.widgets, index, Widget.class);
+        int index = Widget.getWidgetIndexById(this.widgets, id);
+        if (index != -1) {
+            this.widgets = ArrayUtil.remove(this.widgets, index, Widget.class);
+        }
     }
 
     public void updateWidget(Widget widget) {
-        int index = Widget.getWidgetIndexByIdOrThrow(this.widgets, widget.id);
-        this.widgets = ArrayUtil.copyAndReplace(this.widgets, widget, index);
+        int index = Widget.getWidgetIndexById(this.widgets, widget.id);
+        if (index != -1) {
+            this.widgets = ArrayUtil.copyAndReplace(this.widgets, widget, index);
+        }
     }
 
 }
