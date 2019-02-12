@@ -37,6 +37,7 @@ import cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType;
 import cc.blynk.server.core.model.widgets.outputs.graph.FontSize;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.Tile;
+import cc.blynk.server.core.model.widgets.ui.tiles.group.Group;
 import cc.blynk.server.core.model.widgets.ui.tiles.group.GroupLabel;
 import cc.blynk.server.core.model.widgets.ui.tiles.group.SwitchWith3LabelsGroupTemplate;
 import cc.blynk.server.core.model.widgets.ui.tiles.templates.ButtonTileTemplate;
@@ -1575,6 +1576,17 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         assertNotNull(deviceTiles);
         assertNotNull(deviceTiles.groupTemplates);
         assertEquals(1, deviceTiles.groupTemplates.length);
+        assertNotNull(deviceTiles.groups);
+        assertEquals(0, deviceTiles.groups.length);
+
+        Group group = new Group(
+                10, "My new group", deviceTiles.groupTemplates[0].id,
+                null,
+                new DataStream[] {switchDataStream},
+                new DataStream[] {viewDataStream}
+        );
+        invitedUserAppClient.createGroup(invitedUserdash.id, widgetId, group);
+        invitedUserAppClient.verifyResult(ok(3));
 
         mobileClient.editFace(dashBoard.id);
         mobileClient.verifyResult(ok(11));
@@ -1601,5 +1613,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         assertNotNull(deviceTiles);
         assertNotNull(deviceTiles.groupTemplates);
         assertEquals(1, deviceTiles.groupTemplates.length);
+        assertNotNull(deviceTiles.groups);
+        assertEquals(1, deviceTiles.groups.length);
     }
 }

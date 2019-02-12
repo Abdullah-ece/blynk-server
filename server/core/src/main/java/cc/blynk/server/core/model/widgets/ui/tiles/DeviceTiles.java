@@ -206,6 +206,7 @@ public final class DeviceTiles extends Widget implements MobileSyncWidget, Devic
         if (oldWidget instanceof DeviceTiles) {
             DeviceTiles oldDeviceTiles = (DeviceTiles) oldWidget;
             this.tiles = oldDeviceTiles.tiles;
+            this.groups = oldDeviceTiles.groups;
             for (TileTemplate tileTemplate : templates) {
                 TileTemplate oldTileTemplate = oldDeviceTiles.getTileTemplateById(tileTemplate.id);
                 if (oldTileTemplate != null) {
