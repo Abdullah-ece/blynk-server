@@ -150,7 +150,7 @@ class CampaignsList extends Component {
       dataIndex: "firmwareInfo.version",
     }, {
       title: "Started Date",
-      dataIndex: "firmwareInfo.startedAt",
+      dataIndex: "startedAt",
     }, {
       title: "",
       dataIndex: "options",
