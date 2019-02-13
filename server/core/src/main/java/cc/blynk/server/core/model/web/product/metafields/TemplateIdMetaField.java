@@ -12,6 +12,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class TemplateIdMetaField extends MetaField {
 
+    private static final String[] EMPTY_OPTIONS = {};
+
     public final String[] options;
 
     @JsonCreator
@@ -24,7 +26,7 @@ public class TemplateIdMetaField extends MetaField {
                                @JsonProperty("icon") String icon,
                                @JsonProperty("options") String[] options) {
         super(id, name, roleIds, includeInProvision, isMandatory, isDefault, icon);
-        this.options = options;
+        this.options = options == null ? EMPTY_OPTIONS : options;
     }
 
     public boolean containsTemplate(String templateId) {
