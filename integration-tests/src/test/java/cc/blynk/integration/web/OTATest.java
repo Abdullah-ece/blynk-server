@@ -154,7 +154,6 @@ public class OTATest extends APIBaseTest {
             assertNotNull(newDevice);
             assertNotNull(newDevice.deviceOtaInfo);
             assertEquals(OTADeviceStatus.REQUEST_SENT, newDevice.deviceOtaInfo.status);
-            assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.requestSentAt, 5000);
         }
 
         Path tmpFile = Files.createTempFile("123", "test");
@@ -192,10 +191,6 @@ public class OTATest extends APIBaseTest {
             assertNotNull(newDevice.deviceOtaInfo);
             assertNotNull(newDevice.hardwareInfo);
             assertEquals(OTADeviceStatus.SUCCESS, newDevice.deviceOtaInfo.status);
-            assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.requestSentAt, 5000);
-            assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.firmwareRequestedAt, 5000);
-            assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.firmwareUploadedAt, 5000);
-            assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.finishedAt, 5000);
             assertEquals("Dec 13 2018 15:04:29", newDevice.hardwareInfo.build);
         }
     }
@@ -278,10 +273,6 @@ public class OTATest extends APIBaseTest {
             assertNotNull(newDevice);
             assertNotNull(newDevice.deviceOtaInfo);
             assertEquals(OTADeviceStatus.REQUEST_SENT, newDevice.deviceOtaInfo.status);
-            assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.requestSentAt, 5000);
-            assertEquals(-1L, newDevice.deviceOtaInfo.firmwareRequestedAt);
-            assertEquals(-1L, newDevice.deviceOtaInfo.firmwareUploadedAt);
-            assertEquals(-1L, newDevice.deviceOtaInfo.finishedAt);
         }
 
         Path tmpFile = Files.createTempFile("123", "test");
@@ -307,10 +298,6 @@ public class OTATest extends APIBaseTest {
             assertNotNull(newDevice);
             assertNotNull(newDevice.deviceOtaInfo);
             assertEquals(OTADeviceStatus.FIRMWARE_UPLOADED, newDevice.deviceOtaInfo.status);
-            assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.requestSentAt, 5000);
-            assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.firmwareRequestedAt, 5000);
-            assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.firmwareUploadedAt, 5000);
-            assertEquals(-1L, newDevice.deviceOtaInfo.finishedAt);
         }
 
     }
@@ -382,7 +369,6 @@ public class OTATest extends APIBaseTest {
             //assertEquals(admin.email, newDevice.deviceOtaInfo.otaStartedBy);
             //assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.otaStartedAt, 5000);
             assertEquals(OTADeviceStatus.REQUEST_SENT, newDevice.deviceOtaInfo.status);
-            assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.requestSentAt, 5000);
         }
     }
 

@@ -109,9 +109,7 @@ public class OTAHandler extends BaseHttpHandler {
         org.addShipment(shipment);
 
         for (Device device : filteredDevices) {
-            DeviceOtaInfo deviceOtaInfo = new DeviceOtaInfo(shipment.id,
-                    -1L, -1L, -1L, -1L,
-                    OTADeviceStatus.STARTED, 0);
+            DeviceOtaInfo deviceOtaInfo = new DeviceOtaInfo(shipment.id, OTADeviceStatus.STARTED, 0);
             device.setDeviceOtaInfo(deviceOtaInfo);
         }
 

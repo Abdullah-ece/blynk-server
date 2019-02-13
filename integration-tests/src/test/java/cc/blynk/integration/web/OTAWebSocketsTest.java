@@ -118,7 +118,6 @@ public class OTAWebSocketsTest extends SingleServerInstancePerTestWithDBAndNewOr
         assertNotNull(createdDevice);
         assertNotNull(createdDevice.deviceOtaInfo);
         assertEquals(OTADeviceStatus.REQUEST_SENT, createdDevice.deviceOtaInfo.status);
-        assertEquals(System.currentTimeMillis(), createdDevice.deviceOtaInfo.requestSentAt, 5000);
 
         createFile(parsedFirmwareInfo, firmwareDownloadUrl);
 
@@ -141,10 +140,6 @@ public class OTAWebSocketsTest extends SingleServerInstancePerTestWithDBAndNewOr
         assertNotNull(createdDevice.deviceOtaInfo);
         assertNotNull(createdDevice.hardwareInfo);
         assertEquals(OTADeviceStatus.SUCCESS, createdDevice.deviceOtaInfo.status);
-        assertEquals(System.currentTimeMillis(), createdDevice.deviceOtaInfo.requestSentAt, 5000);
-        assertEquals(System.currentTimeMillis(), createdDevice.deviceOtaInfo.firmwareRequestedAt, 5000);
-        assertEquals(System.currentTimeMillis(), createdDevice.deviceOtaInfo.firmwareUploadedAt, 5000);
-        assertEquals(System.currentTimeMillis(), createdDevice.deviceOtaInfo.finishedAt, 5000);
         assertEquals("Dec 13 2018 15:04:29", createdDevice.hardwareInfo.build);
     }
 
@@ -195,10 +190,6 @@ public class OTAWebSocketsTest extends SingleServerInstancePerTestWithDBAndNewOr
         assertNotNull(createdDevice);
         assertNotNull(createdDevice.deviceOtaInfo);
         assertEquals(OTADeviceStatus.REQUEST_SENT, createdDevice.deviceOtaInfo.status);
-        assertEquals(System.currentTimeMillis(), createdDevice.deviceOtaInfo.requestSentAt, 5000);
-        assertEquals(-1L, createdDevice.deviceOtaInfo.firmwareRequestedAt);
-        assertEquals(-1L, createdDevice.deviceOtaInfo.firmwareUploadedAt);
-        assertEquals(-1L, createdDevice.deviceOtaInfo.finishedAt);
 
         createFile(parsedFirmwareInfo, firmwareDownloadUrl);
 
@@ -208,10 +199,6 @@ public class OTAWebSocketsTest extends SingleServerInstancePerTestWithDBAndNewOr
         assertNotNull(createdDevice);
         assertNotNull(createdDevice.deviceOtaInfo);
         assertEquals(OTADeviceStatus.FIRMWARE_UPLOADED, createdDevice.deviceOtaInfo.status);
-        assertEquals(System.currentTimeMillis(), createdDevice.deviceOtaInfo.requestSentAt, 5000);
-        assertEquals(System.currentTimeMillis(), createdDevice.deviceOtaInfo.firmwareRequestedAt, 5000);
-        assertEquals(System.currentTimeMillis(), createdDevice.deviceOtaInfo.firmwareUploadedAt, 5000);
-        assertEquals(-1L, createdDevice.deviceOtaInfo.finishedAt);
     }
 
     @Test
@@ -257,7 +244,6 @@ public class OTAWebSocketsTest extends SingleServerInstancePerTestWithDBAndNewOr
         //assertEquals(getUserName(), newDevice.deviceOtaInfo.otaStartedBy);
         //assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.otaStartedAt, 5000);
         assertEquals(OTADeviceStatus.REQUEST_SENT, createdDevice.deviceOtaInfo.status);
-        assertEquals(System.currentTimeMillis(), createdDevice.deviceOtaInfo.requestSentAt, 5000);
     }
 
     @Test
@@ -367,7 +353,6 @@ public class OTAWebSocketsTest extends SingleServerInstancePerTestWithDBAndNewOr
         assertNotNull(createdDevice);
         assertNotNull(createdDevice.deviceOtaInfo);
         assertEquals(OTADeviceStatus.REQUEST_SENT, createdDevice.deviceOtaInfo.status);
-        assertEquals(System.currentTimeMillis(), createdDevice.deviceOtaInfo.requestSentAt, 5000);
 
         createFile(parsedFirmwareInfo, firmwareDownloadUrl);
 
@@ -438,7 +423,6 @@ public class OTAWebSocketsTest extends SingleServerInstancePerTestWithDBAndNewOr
         assertNotNull(createdDevice);
         assertNotNull(createdDevice.deviceOtaInfo);
         assertEquals(OTADeviceStatus.REQUEST_SENT, createdDevice.deviceOtaInfo.status);
-        assertEquals(System.currentTimeMillis(), createdDevice.deviceOtaInfo.requestSentAt, 5000);
 
         createFile(parsedFirmwareInfo, firmwareDownloadUrl);
 
@@ -544,7 +528,7 @@ public class OTAWebSocketsTest extends SingleServerInstancePerTestWithDBAndNewOr
         newDevice.name = "My New Device";
         newDevice.boardType = BoardType.NodeMCU;
         newDevice.productId = productDTO.id;
-        newDevice.setDeviceOtaInfo(new DeviceOtaInfo(1, 1L, 1L, 1L, 1L, OTADeviceStatus.STARTED, 1));
+        newDevice.setDeviceOtaInfo(new DeviceOtaInfo(1, OTADeviceStatus.STARTED, 1));
         client.createDevice(orgId, newDevice);
         Device createdDevice = client.parseDevice(1);
         assertNotNull(createdDevice);

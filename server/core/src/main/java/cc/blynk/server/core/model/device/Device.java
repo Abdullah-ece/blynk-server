@@ -305,15 +305,13 @@ public class Device {
     public void requestSent() {
         DeviceOtaInfo prev = this.deviceOtaInfo;
         long now = System.currentTimeMillis();
-        this.deviceOtaInfo = new DeviceOtaInfo(prev.shipmentId,
-                now, -1L, -1L, -1L,
-                OTADeviceStatus.REQUEST_SENT, prev.attempts);
+        this.deviceOtaInfo = new DeviceOtaInfo(prev.shipmentId, OTADeviceStatus.REQUEST_SENT, prev.attempts);
         this.updatedAt = now;
     }
 
     public void success(Session session, int msgId, String shipmentOwner, Shipment shipment) {
         long now = System.currentTimeMillis();
-        this.deviceOtaInfo = new DeviceOtaInfo(this.deviceOtaInfo, now, OTADeviceStatus.SUCCESS);
+        this.deviceOtaInfo = new DeviceOtaInfo(this.deviceOtaInfo, OTADeviceStatus.SUCCESS);
         this.updatedAt = now;
 
         session.sendToUserOnWeb(msgId, shipmentOwner, createOTAStatusMessage(shipment.id, id, deviceOtaInfo.status));
@@ -323,21 +321,20 @@ public class Device {
     public void firmwareRequested() {
         DeviceOtaInfo prev = this.deviceOtaInfo;
         long now = System.currentTimeMillis();
-        this.deviceOtaInfo =  new DeviceOtaInfo(prev, now, -1L, -1L,
-                OTADeviceStatus.FIRMWARE_REQUESTED, prev.attempts + 1);
+        this.deviceOtaInfo =  new DeviceOtaInfo(prev, OTADeviceStatus.FIRMWARE_REQUESTED, prev.attempts + 1);
         this.updatedAt = now;
     }
 
     public void firmwareUploaded() {
         DeviceOtaInfo prev = this.deviceOtaInfo;
         long now = System.currentTimeMillis();
-        this.deviceOtaInfo =  new DeviceOtaInfo(prev, now, -1L, OTADeviceStatus.FIRMWARE_UPLOADED);
+        this.deviceOtaInfo =  new DeviceOtaInfo(prev, OTADeviceStatus.FIRMWARE_UPLOADED);
         this.updatedAt = now;
     }
 
     public void firmwareUploadFailure(Session session, int msgId, String shipmentOwner, Shipment shipment) {
         long now = System.currentTimeMillis();
-        this.deviceOtaInfo = new DeviceOtaInfo(this.deviceOtaInfo, now, OTADeviceStatus.FAILURE);
+        this.deviceOtaInfo = new DeviceOtaInfo(this.deviceOtaInfo, OTADeviceStatus.FAILURE);
         this.updatedAt = now;
 
         session.sendToUserOnWeb(msgId, shipmentOwner, createOTAStatusMessage(shipment.id, id, deviceOtaInfo.status));
@@ -346,7 +343,7 @@ public class Device {
 
     public void firmwareDownloadLimitReached(Session session, int msgId, String shipmentOwner, Shipment shipment) {
         long now = System.currentTimeMillis();
-        this.deviceOtaInfo = new DeviceOtaInfo(this.deviceOtaInfo, now, OTADeviceStatus.DOWNLOAD_LIMIT_REACHED);
+        this.deviceOtaInfo = new DeviceOtaInfo(this.deviceOtaInfo, OTADeviceStatus.DOWNLOAD_LIMIT_REACHED);
         this.updatedAt = now;
 
         session.sendToUserOnWeb(msgId, shipmentOwner, createOTAStatusMessage(shipment.id, id, deviceOtaInfo.status));

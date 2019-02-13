@@ -12,64 +12,27 @@ public final class DeviceOtaInfo {
 
     public final int shipmentId;
 
-    public final long requestSentAt;
-
-    public final long firmwareRequestedAt;
-
-    public final long firmwareUploadedAt;
-
-    public final long finishedAt;
-
     public final OTADeviceStatus status;
 
     public final int attempts;
 
     @JsonCreator
     public DeviceOtaInfo(@JsonProperty("shipmentId") int shipmentId,
-                         @JsonProperty("requestSentAt") long requestSentAt,
-                         @JsonProperty("firmwareRequestedAt") long firmwareRequestedAt,
-                         @JsonProperty("firmwareUploadedAt") long firmwareUploadedAt,
-                         @JsonProperty("finishedAt") long finishedAt,
                          @JsonProperty("status") OTADeviceStatus status,
                          @JsonProperty("attempts") int attempts) {
         this.shipmentId = shipmentId;
-        this.requestSentAt = requestSentAt;
-        this.firmwareRequestedAt = firmwareRequestedAt;
-        this.firmwareUploadedAt = firmwareUploadedAt;
-        this.finishedAt = finishedAt;
         this.status = status;
         this.attempts = attempts;
     }
 
-    public DeviceOtaInfo(DeviceOtaInfo prev,
-                         long finishedAt,
-                         OTADeviceStatus status) {
-        this(prev.shipmentId,
-                prev.requestSentAt, prev.firmwareRequestedAt, prev.firmwareUploadedAt, finishedAt,
-                status,
-                prev.attempts);
+    public DeviceOtaInfo(DeviceOtaInfo prev, OTADeviceStatus status) {
+        this(prev.shipmentId, status, prev.attempts);
 
     }
 
-    public DeviceOtaInfo(DeviceOtaInfo prev,
-                         long firmwareRequestedAt,
-                         long firmwareUploadedAt,
-                         long finishedAt,
-                         OTADeviceStatus status,
-                         int attempts) {
-        this(prev.shipmentId,
-                prev.requestSentAt, firmwareRequestedAt, firmwareUploadedAt, finishedAt,
-                status, attempts);
+    public DeviceOtaInfo(DeviceOtaInfo prev, OTADeviceStatus status, int attempts) {
+        this(prev.shipmentId, status, attempts);
 
-    }
-
-    public DeviceOtaInfo(DeviceOtaInfo prev,
-                         long firmwareUploadedAt,
-                         long finishedAt,
-                         OTADeviceStatus status) {
-        this(prev.shipmentId,
-                prev.requestSentAt, prev.firmwareRequestedAt, firmwareUploadedAt, finishedAt,
-                status, prev.attempts);
     }
 
     public boolean isLimitReached(int attemptsLimit) {
