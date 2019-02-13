@@ -55,7 +55,7 @@ public final class Group {
         }
     }
 
-    private DataStream getDataStreamByFunctionValue(GroupFunctionValue groupFunctionValue) {
+    public DataStream getDataStreamByFunctionValue(GroupFunctionValue groupFunctionValue) {
         if (this.id == groupFunctionValue.groupId) {
             for (DataStream dataStream : this.viewDataStreams) {
                 if (groupFunctionValue.isSame(dataStream)) {

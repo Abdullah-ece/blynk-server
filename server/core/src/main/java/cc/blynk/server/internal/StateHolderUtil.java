@@ -4,6 +4,7 @@ import cc.blynk.server.common.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.core.session.mobile.BaseUserStateHolder;
+import cc.blynk.server.core.session.mobile.MobileStateHolder;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
 import io.netty.channel.Channel;
 
@@ -28,6 +29,11 @@ public final class StateHolderUtil {
     public static WebAppStateHolder getWebState(Channel channel) {
         BaseSimpleChannelInboundHandler handler = channel.pipeline().get(BaseSimpleChannelInboundHandler.class);
         return handler == null ? null : (WebAppStateHolder) handler.getState();
+    }
+
+    public static MobileStateHolder getMobileState(Channel channel) {
+        BaseSimpleChannelInboundHandler handler = channel.pipeline().get(BaseSimpleChannelInboundHandler.class);
+        return handler == null ? null : (MobileStateHolder) handler.getState();
     }
 
     public static void applyRoleChanges(Channel channel, Role role) {

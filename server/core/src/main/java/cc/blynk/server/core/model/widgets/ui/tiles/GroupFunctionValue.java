@@ -27,7 +27,7 @@ public final class GroupFunctionValue {
 
     private final AggregationFunction aggregationFunction;
 
-    GroupFunctionValue(Group group, DataStream dataStream) {
+    public GroupFunctionValue(Group group, DataStream dataStream) {
         this(group.id, group.deviceIds,
                 dataStream.pin, dataStream.pinType,
                 dataStream.aggregationFunctionType.produce());

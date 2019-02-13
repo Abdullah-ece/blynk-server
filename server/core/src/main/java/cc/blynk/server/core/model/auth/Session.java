@@ -228,9 +228,13 @@ public class Session {
 
     private static void sendMessageToMultipleReceivers(Set<Channel> targets, StringMessage msg) {
         for (Channel channel : targets) {
-            if (channel.isWritable()) {
-                channel.writeAndFlush(msg, channel.voidPromise());
-            }
+            send(channel, msg);
+        }
+    }
+
+    private static void send(Channel target, StringMessage msg) {
+        if (target.isWritable()) {
+            target.writeAndFlush(msg, target.voidPromise());
         }
     }
 

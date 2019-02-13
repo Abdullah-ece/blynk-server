@@ -90,6 +90,10 @@ public class ServerProperties extends BaseProperties {
         }
     }
 
+    public int getGroupValueUpdaterPeriod() {
+        return getIntProperty("group.value.updater.period", 5);
+    }
+
     public String getRestoreHost() {
         return getProperty("restore.host", getHostProperty());
     }

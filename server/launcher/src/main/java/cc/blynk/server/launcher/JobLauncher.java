@@ -3,6 +3,7 @@ package cc.blynk.server.launcher;
 import cc.blynk.server.Holder;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.workers.CertificateRenewalWorker;
+import cc.blynk.server.workers.GroupValueUpdaterWorker;
 import cc.blynk.server.workers.ProfileSaverWorker;
 import cc.blynk.server.workers.ReportingWorker;
 import cc.blynk.server.workers.ShutdownHookWorker;
@@ -18,6 +19,7 @@ import java.util.concurrent.TimeUnit;
 import static java.util.concurrent.TimeUnit.DAYS;
 import static java.util.concurrent.TimeUnit.HOURS;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 /**
  * Launches a bunch of separate jobs/schedulers responsible for different aspects of business logic
@@ -71,6 +73,11 @@ final class JobLauncher {
         var ses = Executors.newScheduledThreadPool(1, BlynkTPFactory.build("TimerAndReading"));
         ses.scheduleAtFixedRate(holder.timerWorker, startDelay, 1000, MILLISECONDS);
         ses.scheduleAtFixedRate(holder.readingWidgetsWorker, startDelay + 400, 1000, MILLISECONDS);
+
+        GroupValueUpdaterWorker groupValueUpdaterWorker = new GroupValueUpdaterWorker(
+                holder.sessionDao, holder.organizationDao);
+        int groupValueUpdaterPeriod = holder.props.getGroupValueUpdaterPeriod();
+        ses.scheduleAtFixedRate(groupValueUpdaterWorker, groupValueUpdaterPeriod, groupValueUpdaterPeriod, SECONDS);
 
         //shutdown hook thread catcher
         Runtime.getRuntime().addShutdownHook(new Thread(

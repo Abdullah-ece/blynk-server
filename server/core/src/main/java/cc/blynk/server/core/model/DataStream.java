@@ -133,6 +133,10 @@ public class DataStream implements CopyObject<DataStream> {
         return isValid(pin, pinType);
     }
 
+    public boolean isValidForGroups() {
+         return isValid() && this.aggregationFunctionType != null;
+    }
+
     public boolean isNotEmpty() {
         return value != null;
     }
