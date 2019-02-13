@@ -3,7 +3,6 @@ package cc.blynk.core.http.handlers;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.DeviceValue;
-import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.device.Device;
@@ -89,7 +88,6 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
     private final StaticFile[] staticPaths;
     private final DeviceDao deviceDao;
     private final TokensPool tokensPool;
-    private final OrganizationDao organizationDao;
     private final SessionDao sessionDao;
 
     public StaticFileHandler(Holder holder, StaticFile... staticPaths) {
@@ -97,7 +95,6 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
         this.isUnpacked = holder.props.isUnpacked;
         this.deviceDao = holder.deviceDao;
         this.tokensPool = holder.tokensPool;
-        this.organizationDao = holder.organizationDao;
         this.sessionDao = holder.sessionDao;
     }
 
@@ -307,20 +304,19 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
         }
 
         if (device != null) {
-            int deviceId = device.id;
+            Device finalDevice = device;
             Shipment shipment = deviceValue.org.getShipmentById(device.deviceOtaInfo.shipmentId);
-            log.debug("Adding finish upload listener for deviceId {}.", deviceId);
+            log.debug("Adding finish upload listener for deviceId {}.", finalDevice.id);
             lastContentFuture.addListener((future) -> {
                     if (future.isSuccess()) {
-                        log.debug("Upload success for deviceId {}.", deviceId);
-                        deviceDao.getByIdOrThrow(deviceId).firmwareUploaded();
+                        log.debug("Upload success for deviceId {}.", finalDevice.id);
+                        finalDevice.firmwareUploaded();
                         tokensPool.removeToken(downloadToken);
                     } else {
-                        log.debug("Upload failure for deviceId {}.", deviceId);
+                        log.debug("Upload failure for deviceId {}.", finalDevice.id);
                         Session session = sessionDao.getOrgSession(deviceValue.org.id);
-                        deviceDao.getByIdOrThrow(deviceId)
-                                .firmwareUploadFailure(session, DEFAULT_OTA_STATUS_MSG_ID,
-                                        shipment.startedBy, shipment);
+                        finalDevice.firmwareUploadFailure(
+                                session, DEFAULT_OTA_STATUS_MSG_ID, shipment.startedBy, shipment);
                     }
                 }
             );

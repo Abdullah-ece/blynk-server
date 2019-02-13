@@ -73,29 +73,7 @@ public final class Shipment {
         this.attemptsLimit = attemptsLimit;
         this.isSecure = isSecure;
         this.status = status == null ? ShipmentStatus.RUN : status;
-        this.shipmentProgress = (shipmentProgress == null)
-                ? new ShipmentProgress()
-                : shipmentProgress;
-    }
-
-    public Shipment(ShipmentDTO shipmentDTO, String startedBy, long now, ShipmentProgress shipmentProgress) {
-        this(shipmentDTO.id,
-                shipmentDTO.productId,
-                shipmentDTO.title,
-                shipmentDTO.pathToFirmware,
-                shipmentDTO.firmwareOriginalFileName,
-                startedBy,
-                now,
-                -1,
-                shipmentDTO.deviceIds,
-                shipmentDTO.firmwareInfo,
-                shipmentDTO.attemptsLimit,
-                shipmentDTO.isSecure(),
-                ShipmentStatus.RUN,
-                (shipmentProgress == null)
-                        ? new ShipmentProgress()
-                        : shipmentProgress
-        );
+        this.shipmentProgress = shipmentProgress;
     }
 
     public Shipment(ShipmentDTO shipmentDTO, String startedBy, long now) {
@@ -112,7 +90,7 @@ public final class Shipment {
                 shipmentDTO.attemptsLimit,
                 shipmentDTO.isSecure(),
                 ShipmentStatus.RUN,
-                shipmentDTO.shipmentProgress
+                new ShipmentProgress()
         );
     }
 
@@ -134,30 +112,30 @@ public final class Shipment {
         );
     }
 
+    private static String createSuccessOTAStatusMessage(int shipmentId, int deviceId) {
+        return "" + shipmentId + DEVICE_SEPARATOR + deviceId + BODY_SEPARATOR + ShipmentStatus.FINISH;
+    }
+
     public void success(Session session, int deviceId) {
-        shipmentProgress.success.incrementAndGet();
+        this.shipmentProgress.success.incrementAndGet();
         checkProgressAndSendMessageIfFinished(session, deviceId);
     }
 
     public void failure(Session session, int deviceId) {
-        shipmentProgress.failure.incrementAndGet();
+        this.shipmentProgress.failure.incrementAndGet();
         checkProgressAndSendMessageIfFinished(session, deviceId);
     }
 
     public void downloadLimitReached(Session session, int deviceId) {
-        shipmentProgress.downloadLimitReached.incrementAndGet();
+        this.shipmentProgress.downloadLimitReached.incrementAndGet();
         checkProgressAndSendMessageIfFinished(session, deviceId);
     }
 
     private void checkProgressAndSendMessageIfFinished(Session session, int deviceId) {
-        if (shipmentProgress.isFinished(deviceIds.length)) {
-            session.sendToUserOnWeb(DEFAULT_OTA_SHIPMENT_STATUS_MSG_ID, startedBy,
-                    createOTAStatusMessage(id, deviceId, ShipmentStatus.FINISH));
+        if (shipmentProgress.isFinished(this.deviceIds.length)) {
+            session.sendToUserOnWeb(DEFAULT_OTA_SHIPMENT_STATUS_MSG_ID, this.startedBy,
+                    createSuccessOTAStatusMessage(this.id, deviceId));
         }
-    }
-
-    private static String createOTAStatusMessage(int shipmentId, int deviceId, ShipmentStatus shipmentStatus) {
-        return "" + shipmentId + DEVICE_SEPARATOR + deviceId + BODY_SEPARATOR + shipmentStatus;
     }
 
     @Override

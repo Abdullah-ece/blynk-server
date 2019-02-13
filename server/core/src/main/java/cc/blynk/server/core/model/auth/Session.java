@@ -247,12 +247,6 @@ public class Session {
         }
     }
 
-    private static void sendMessageToOneReceiver(Channel target, StringMessage msg) {
-        if (target.isWritable()) {
-            target.writeAndFlush(msg, target.voidPromise());
-        }
-    }
-
     private static void send(Set<Channel> targets, short cmd, int msgId, String body) {
         StringMessage msg = makeUTF8StringMessage(cmd, msgId, body);
         sendMessageToMultipleReceivers(targets, msg);
@@ -260,7 +254,7 @@ public class Session {
 
     private static void send(Channel target, short cmd, int msgId, String body) {
         StringMessage msg = makeUTF8StringMessage(cmd, msgId, body);
-        sendMessageToOneReceiver(target, msg);
+        send(target, msg);
     }
 
     public void sendToSharedApps(Channel sendingChannel, String sharedToken, short cmd, int msgId, String body) {

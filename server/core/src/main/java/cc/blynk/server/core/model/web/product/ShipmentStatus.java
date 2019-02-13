@@ -2,6 +2,9 @@ package cc.blynk.server.core.model.web.product;
 
 public enum ShipmentStatus {
 
-    RUN, PAUSE, FINISH, STOP
+    RUN,
+    PAUSE,
+    FINISH,
+    STOP
 
 }

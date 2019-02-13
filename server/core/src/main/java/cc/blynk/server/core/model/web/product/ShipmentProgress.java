@@ -37,7 +37,7 @@ public final class ShipmentProgress {
     }
 
     public boolean isFinished(int deviceCount) {
-        return success.get() + failure.get() + downloadLimitReached.get() == deviceCount;
+        return success.get() + failure.get() + downloadLimitReached.get() >= deviceCount;
     }
 
 }

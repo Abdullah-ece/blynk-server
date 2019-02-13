@@ -311,16 +311,13 @@ public class Device {
         this.updatedAt = now;
     }
 
-    public void success(Session session, int msgId, String email, Shipment shipment) {
+    public void success(Session session, int msgId, String shipmentOwner, Shipment shipment) {
         long now = System.currentTimeMillis();
         this.deviceOtaInfo = new DeviceOtaInfo(this.deviceOtaInfo, now, OTADeviceStatus.SUCCESS);
         this.updatedAt = now;
 
-        if (session != null) {
-            session.sendToUserOnWeb(msgId, email,
-                    createOTAStatusMessage(shipment.id, id, deviceOtaInfo.status));
-            shipment.success(session, id);
-        }
+        session.sendToUserOnWeb(msgId, shipmentOwner, createOTAStatusMessage(shipment.id, id, deviceOtaInfo.status));
+        shipment.success(session, id);
     }
 
     public void firmwareRequested() {
@@ -338,28 +335,22 @@ public class Device {
         this.updatedAt = now;
     }
 
-    public void firmwareUploadFailure(Session session, int msgId, String email, Shipment shipment) {
+    public void firmwareUploadFailure(Session session, int msgId, String shipmentOwner, Shipment shipment) {
         long now = System.currentTimeMillis();
         this.deviceOtaInfo = new DeviceOtaInfo(this.deviceOtaInfo, now, OTADeviceStatus.FAILURE);
         this.updatedAt = now;
 
-        if (session != null) {
-            session.sendToUserOnWeb(msgId, email,
-                    createOTAStatusMessage(shipment.id, id, deviceOtaInfo.status));
-            shipment.failure(session, id);
-        }
+        session.sendToUserOnWeb(msgId, shipmentOwner, createOTAStatusMessage(shipment.id, id, deviceOtaInfo.status));
+        shipment.failure(session, id);
     }
 
-    public void firmwareDownloadLimitReached(Session session, int msgId, String email, Shipment shipment) {
+    public void firmwareDownloadLimitReached(Session session, int msgId, String shipmentOwner, Shipment shipment) {
         long now = System.currentTimeMillis();
         this.deviceOtaInfo = new DeviceOtaInfo(this.deviceOtaInfo, now, OTADeviceStatus.DOWNLOAD_LIMIT_REACHED);
         this.updatedAt = now;
 
-        if (session != null) {
-            session.sendToUserOnWeb(msgId, email,
-                    createOTAStatusMessage(shipment.id, id, deviceOtaInfo.status));
-            shipment.downloadLimitReached(session, id);
-        }
+        session.sendToUserOnWeb(msgId, shipmentOwner, createOTAStatusMessage(shipment.id, id, deviceOtaInfo.status));
+        shipment.downloadLimitReached(session, id);
     }
 
     public boolean fitsBufferSize(int bodySize) {
