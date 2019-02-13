@@ -4,6 +4,8 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.DeviceValue;
 import cc.blynk.server.core.dao.OrganizationDao;
+import cc.blynk.server.core.dao.SessionDao;
+import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.web.product.Shipment;
 import cc.blynk.server.internal.token.OTADownloadToken;
@@ -46,6 +48,7 @@ import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import static cc.blynk.server.core.model.web.product.Shipment.DEFAULT_OTA_STATUS_MSG_ID;
 import static cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler.handleGeneralException;
 import static io.netty.handler.codec.http.HttpHeaderNames.ACCESS_CONTROL_ALLOW_ORIGIN;
 import static io.netty.handler.codec.http.HttpHeaderNames.CACHE_CONTROL;
@@ -87,6 +90,7 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
     private final DeviceDao deviceDao;
     private final TokensPool tokensPool;
     private final OrganizationDao organizationDao;
+    private final SessionDao sessionDao;
 
     public StaticFileHandler(Holder holder, StaticFile... staticPaths) {
         this.staticPaths = staticPaths;
@@ -94,6 +98,7 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
         this.deviceDao = holder.deviceDao;
         this.tokensPool = holder.tokensPool;
         this.organizationDao = holder.organizationDao;
+        this.sessionDao = holder.sessionDao;
     }
 
     private static void sendError(ChannelHandlerContext ctx, HttpResponseStatus status) {
@@ -303,6 +308,7 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
 
         if (device != null) {
             int deviceId = device.id;
+            Shipment shipment = deviceValue.org.getShipmentById(device.deviceOtaInfo.shipmentId);
             log.debug("Adding finish upload listener for deviceId {}.", deviceId);
             lastContentFuture.addListener((future) -> {
                     if (future.isSuccess()) {
@@ -311,7 +317,10 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
                         tokensPool.removeToken(downloadToken);
                     } else {
                         log.debug("Upload failure for deviceId {}.", deviceId);
-                        deviceDao.getByIdOrThrow(deviceId).firmwareUploadFailure();
+                        Session session = sessionDao.getOrgSession(deviceValue.org.id);
+                        deviceDao.getByIdOrThrow(deviceId)
+                                .firmwareUploadFailure(session, DEFAULT_OTA_STATUS_MSG_ID,
+                                        shipment.startedBy, shipment);
                     }
                 }
             );

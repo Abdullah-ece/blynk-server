@@ -1,6 +1,7 @@
 package cc.blynk.server.core.model.device;
 
 import cc.blynk.server.core.model.DataStream;
+import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.ota.DeviceOtaInfo;
 import cc.blynk.server.core.model.device.ota.OTADeviceStatus;
@@ -12,6 +13,7 @@ import cc.blynk.server.core.model.storage.key.DevicePropertyStorageKey;
 import cc.blynk.server.core.model.storage.key.DeviceStorageKey;
 import cc.blynk.server.core.model.storage.value.PinStorageValue;
 import cc.blynk.server.core.model.web.product.MetaField;
+import cc.blynk.server.core.model.web.product.Shipment;
 import cc.blynk.server.core.model.web.product.WebDashboard;
 import cc.blynk.server.core.model.web.product.metafields.DeviceNameMetaField;
 import cc.blynk.server.core.model.web.product.metafields.DeviceOwnerMetaField;
@@ -30,6 +32,8 @@ import static cc.blynk.server.core.model.device.HardwareInfo.DEFAULT_HARDWARE_BU
 import static cc.blynk.server.core.model.web.product.MetaField.EMPTY_META_FIELDS;
 import static cc.blynk.utils.ArrayUtil.arrayToList;
 import static cc.blynk.utils.ArrayUtil.concat;
+import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
+import static cc.blynk.utils.StringUtils.DEVICE_SEPARATOR;
 
 /**
  * The Blynk Project.
@@ -109,6 +113,10 @@ public class Device {
         this.token = token;
         this.productId = productId;
         this.connectionType = connectionType;
+    }
+
+    private static String createOTAStatusMessage(int shipmentId, int deviceId, OTADeviceStatus status) {
+        return "" + shipmentId + DEVICE_SEPARATOR + deviceId + BODY_SEPARATOR + status;
     }
 
     public MetaField findMetaFieldById(int id) {
@@ -303,10 +311,16 @@ public class Device {
         this.updatedAt = now;
     }
 
-    public void success() {
+    public void success(Session session, int msgId, String email, Shipment shipment) {
         long now = System.currentTimeMillis();
         this.deviceOtaInfo = new DeviceOtaInfo(this.deviceOtaInfo, now, OTADeviceStatus.SUCCESS);
         this.updatedAt = now;
+
+        if (session != null) {
+            session.sendToUserOnWeb(msgId, email,
+                    createOTAStatusMessage(shipment.id, id, deviceOtaInfo.status));
+            shipment.success(session, id);
+        }
     }
 
     public void firmwareRequested() {
@@ -324,16 +338,28 @@ public class Device {
         this.updatedAt = now;
     }
 
-    public void firmwareUploadFailure() {
+    public void firmwareUploadFailure(Session session, int msgId, String email, Shipment shipment) {
         long now = System.currentTimeMillis();
         this.deviceOtaInfo = new DeviceOtaInfo(this.deviceOtaInfo, now, OTADeviceStatus.FAILURE);
         this.updatedAt = now;
+
+        if (session != null) {
+            session.sendToUserOnWeb(msgId, email,
+                    createOTAStatusMessage(shipment.id, id, deviceOtaInfo.status));
+            shipment.failure(session, id);
+        }
     }
 
-    public void firmwareDownloadLimitReached() {
+    public void firmwareDownloadLimitReached(Session session, int msgId, String email, Shipment shipment) {
         long now = System.currentTimeMillis();
         this.deviceOtaInfo = new DeviceOtaInfo(this.deviceOtaInfo, now, OTADeviceStatus.DOWNLOAD_LIMIT_REACHED);
         this.updatedAt = now;
+
+        if (session != null) {
+            session.sendToUserOnWeb(msgId, email,
+                    createOTAStatusMessage(shipment.id, id, deviceOtaInfo.status));
+            shipment.downloadLimitReached(session, id);
+        }
     }
 
     public boolean fitsBufferSize(int bodySize) {

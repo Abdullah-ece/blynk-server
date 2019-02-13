@@ -194,6 +194,7 @@ public final class Command {
     public static final short MOBILE_CREATE_GROUP = 157;
     public static final short MOBILE_EDIT_GROUP = 158;
     public static final short MOBILE_DELETE_GROUP = 159;
+    public static final short WEB_OTA_STATUS = 160;
 
     public static final short MOBILE_CREATE_GROUP_WIDGET = 161;
     public static final short MOBILE_EDIT_GROUP_WIDGET = 162;
