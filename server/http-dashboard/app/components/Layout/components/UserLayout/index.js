@@ -7,7 +7,7 @@ import {
   OrganizationsHierarchyFetch
 } from "data/Organizations/actions";
 import React from 'react';
-import { Menu, Icon, Avatar, Dropdown } from 'antd';
+import { Menu, Icon, Dropdown } from 'antd';
 import { LinearIcon } from "components";
 import { Link } from 'react-router';
 import { connect } from 'react-redux';
@@ -18,7 +18,11 @@ import {
   blynkWsLogin
 } from 'store/blynk-websocket-middleware/actions';
 import { StartLoading, FinishLoading } from 'data/PageLoading/actions';
-import { VerifyPermission, PERMISSIONS_INDEX, PERMISSIONS2_INDEX } from "services/Roles";
+import {
+  VerifyPermission,
+  PERMISSIONS_INDEX,
+  PERMISSIONS2_INDEX
+} from "services/Roles";
 
 import './styles.less';
 import Watermark from "../Watermark";
@@ -260,18 +264,21 @@ class UserLayout extends React.Component {
         </Menu.ItemGroup>
         <Menu.Divider/>
         <Menu.ItemGroup title="Organization">
-          {VerifyPermission(this.props.currentRole.permissionGroup1, PERMISSIONS_INDEX.ORG_VIEW) && (<Menu.Item key="/user-profile/organization-settings">
-            <LinearIcon type="cog"/> Organization Settings
-          </Menu.Item>)}
-          {VerifyPermission(this.props.currentRole.permissionGroup1, PERMISSIONS_INDEX.ORG_VIEW_USERS) && (<Menu.Item key="/user-profile/users">
-            <LinearIcon type="users2"/> Users
-          </Menu.Item>)}
+          {VerifyPermission(this.props.currentRole.permissionGroup1, PERMISSIONS_INDEX.ORG_VIEW) && (
+            <Menu.Item key="/user-profile/organization-settings">
+              <LinearIcon type="cog"/> Organization Settings
+            </Menu.Item>)}
+          {VerifyPermission(this.props.currentRole.permissionGroup1, PERMISSIONS_INDEX.ORG_VIEW_USERS) && (
+            <Menu.Item key="/user-profile/users">
+              <LinearIcon type="users2"/> Users
+            </Menu.Item>)}
           {/*<Menu.Item key="/user-profile/branding">*/}
           {/*Branding*/}
           {/*</Menu.Item>*/}
-          {VerifyPermission(this.props.currentRole.permissionGroup1, PERMISSIONS_INDEX.ROLE_VIEW) && (<Menu.Item key="/user-profile/roles-and-permissions">
-            <LinearIcon type="lock"/> Roles & Permissions
-          </Menu.Item>)}
+          {VerifyPermission(this.props.currentRole.permissionGroup1, PERMISSIONS_INDEX.ROLE_VIEW) && (
+            <Menu.Item key="/user-profile/roles-and-permissions">
+              <LinearIcon type="lock"/> Roles & Permissions
+            </Menu.Item>)}
         </Menu.ItemGroup>
 
         {/*<Menu.Item key="/billing">*/}
@@ -364,10 +371,12 @@ class UserLayout extends React.Component {
                 overlayClassName={`user-layout-left-navigation-profile--overlay ${this.state.collapsed ? '' : 'user-layout-left-navigation-profile--overlay--open'}`}
                 overlay={this.AccountMenu()} trigger={['hover']}
                 placement="topLeft" className="my-custom-dropdown">
-                <Avatar size="large" icon="user"
-                        className="user-layout-left-navigation-profile-button"/>
+                <div>
+                  <LinearIcon type="user"
+                              className="user-layout-left-navigation-profile-button"/>
+                </div>
               </Dropdown>
-              <div>
+              <div className="user-layout-left-navigation-profile-text">
                 {!this.state.collapsed && this.props.Account.name}
               </div>
             </div>
