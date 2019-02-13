@@ -9,8 +9,6 @@ import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.device.ota.DeviceOtaInfo;
-import cc.blynk.server.core.model.device.ota.OTADeviceStatus;
 import cc.blynk.server.core.model.dto.ShipmentDTO;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
@@ -19,6 +17,7 @@ import cc.blynk.server.core.protocol.exceptions.JsonException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
+import cc.blynk.server.db.ReportingDBManager;
 import cc.blynk.server.internal.token.OTADownloadToken;
 import cc.blynk.server.internal.token.TokensPool;
 import cc.blynk.utils.StringUtils;
@@ -44,6 +43,7 @@ public final class WebStartOtaLogic implements PermissionBasedLogic<WebAppStateH
     private final DeviceDao deviceDao;
     private final OTADao otaDao;
     private final SessionDao sessionDao;
+    private final ReportingDBManager reportingDBManager;
     private final TokensPool tokensPool;
     private final ServerProperties props;
 
@@ -52,6 +52,7 @@ public final class WebStartOtaLogic implements PermissionBasedLogic<WebAppStateH
         this.deviceDao = holder.deviceDao;
         this.otaDao = holder.otaDao;
         this.sessionDao = holder.sessionDao;
+        this.reportingDBManager = holder.reportingDBManager;
         this.tokensPool = holder.tokensPool;
         this.props = holder.props;
     }
@@ -92,8 +93,8 @@ public final class WebStartOtaLogic implements PermissionBasedLogic<WebAppStateH
         for (int deviceId : shipmentDTO.deviceIds) {
             DeviceValue deviceValue = deviceDao.getDeviceValueById(deviceId);
             if (deviceValue != null) {
-                DeviceOtaInfo deviceOtaInfo = new DeviceOtaInfo(shipment.id, OTADeviceStatus.STARTED, 0);
-                deviceValue.device.setDeviceOtaInfo(deviceOtaInfo);
+                deviceValue.device.startedOTA(shipment, 0);
+                reportingDBManager.collectEvent(shipment, deviceValue.device);
             }
         }
 
@@ -112,6 +113,7 @@ public final class WebStartOtaLogic implements PermissionBasedLogic<WebAppStateH
                     StringMessage msg = makeASCIIStringMessage(BLYNK_INTERNAL, 7777, body);
                     channel.writeAndFlush(msg, channel.voidPromise());
                     hardwareState.device.requestSent();
+                    reportingDBManager.collectEvent(shipment, hardwareState.device);
                 }
             }
         }

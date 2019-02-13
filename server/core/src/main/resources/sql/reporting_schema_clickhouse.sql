@@ -71,6 +71,16 @@ ENGINE = MergeTree()
 PARTITION BY toYYYYMM(ts)
 ORDER BY (region, ts, command_code);
 
+CREATE TABLE reporting_ota_events_stat (
+  shipment_id UInt32,
+  device_id UInt32,
+  ts DateTime DEFAULT now(),
+  status UInt8
+)
+ENGINE = MergeTree()
+PARTITION BY toYYYYMM(ts)
+ORDER BY (shipment_id, device_id, ts);
+
 CREATE MATERIALIZED VIEW reporting_command_stat_monthly
 (region String,  ts Date,  command_code UInt16,  counter UInt64)
 ENGINE = SummingMergeTree()

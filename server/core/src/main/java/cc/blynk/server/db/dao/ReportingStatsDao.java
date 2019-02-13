@@ -66,11 +66,12 @@ public final class ReportingStatsDao {
     }
 
     public Map<Short, Long> selectMonthlyCommandsStat(long ts) {
+        final Timestamp timestamp = new Timestamp(ts);
         Map<Short, Long> commands = new HashMap<>();
 
         try (Connection connection = ds.getConnection();
              PreparedStatement commandStatPS = connection.prepareStatement(selectMonthlyCommandStat)) {
-            commandStatPS.setTimestamp(1, new Timestamp(ts));
+            commandStatPS.setTimestamp(1, timestamp);
 
             try (ResultSet rs = commandStatPS.executeQuery()) {
                 while (rs.next()) {
@@ -87,7 +88,7 @@ public final class ReportingStatsDao {
         return commands;
     }
 
-    private void insertAppStat(PreparedStatement appStatPS,
+    private static void insertAppStat(PreparedStatement appStatPS,
                                 Stat stat, String region, Timestamp ts) throws SQLException {
         appStatPS.setString(1, region);
         appStatPS.setTimestamp(2, ts);
@@ -105,14 +106,14 @@ public final class ReportingStatsDao {
         appStatPS.addBatch();
     }
 
-    private void insertAllCommandsStat(PreparedStatement allCommandsStatPS,
+    private static void insertAllCommandsStat(PreparedStatement allCommandsStatPS,
                                         Stat stat, String region, Timestamp ts) throws SQLException {
         for (Map.Entry<Short, Integer> entry: stat.statsForDB.entrySet()) {
             setAndExecuteCommand(allCommandsStatPS, region, ts, entry.getKey(), entry.getValue());
         }
     }
 
-    private void setAndExecuteCommand(PreparedStatement preparedStatement,
+    private static void setAndExecuteCommand(PreparedStatement preparedStatement,
                                       String region, Timestamp ts,
                                       short command, int dataToInsert) throws SQLException {
         preparedStatement.setString(1, region);

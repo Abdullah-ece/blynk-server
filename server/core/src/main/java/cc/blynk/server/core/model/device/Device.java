@@ -36,6 +36,8 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 import static cc.blynk.utils.StringUtils.DEVICE_SEPARATOR;
 
 /**
+ * To collect OTA events all device OTA-related methods should be accomplished with manual event inserts
+ *
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 16.11.16.
@@ -302,6 +304,12 @@ public class Device {
         this.updatedAt = System.currentTimeMillis();
     }
 
+    public void startedOTA(Shipment shipment, int attempts) {
+        long now = System.currentTimeMillis();
+        this.deviceOtaInfo = new DeviceOtaInfo(shipment.id, OTADeviceStatus.STARTED, attempts);
+        this.updatedAt = now;
+    }
+
     public void requestSent() {
         DeviceOtaInfo prev = this.deviceOtaInfo;
         long now = System.currentTimeMillis();
@@ -309,44 +317,47 @@ public class Device {
         this.updatedAt = now;
     }
 
-    public void success(Session session, int msgId, String shipmentOwner, Shipment shipment) {
+    public void success(Session session, int msgId, Shipment shipment) {
         long now = System.currentTimeMillis();
         this.deviceOtaInfo = new DeviceOtaInfo(this.deviceOtaInfo, OTADeviceStatus.SUCCESS);
         this.updatedAt = now;
 
-        session.sendToUserOnWeb(msgId, shipmentOwner, createOTAStatusMessage(shipment.id, id, deviceOtaInfo.status));
+        session.sendToUserOnWeb(msgId, shipment.startedBy,
+                createOTAStatusMessage(shipment.id, id, deviceOtaInfo.status));
         shipment.success(session, id);
     }
 
     public void firmwareRequested() {
         DeviceOtaInfo prev = this.deviceOtaInfo;
         long now = System.currentTimeMillis();
-        this.deviceOtaInfo =  new DeviceOtaInfo(prev, OTADeviceStatus.FIRMWARE_REQUESTED, prev.attempts + 1);
+        this.deviceOtaInfo = new DeviceOtaInfo(prev, OTADeviceStatus.FIRMWARE_REQUESTED, prev.attempts + 1);
         this.updatedAt = now;
     }
 
     public void firmwareUploaded() {
         DeviceOtaInfo prev = this.deviceOtaInfo;
         long now = System.currentTimeMillis();
-        this.deviceOtaInfo =  new DeviceOtaInfo(prev, OTADeviceStatus.FIRMWARE_UPLOADED);
+        this.deviceOtaInfo = new DeviceOtaInfo(prev, OTADeviceStatus.FIRMWARE_UPLOADED);
         this.updatedAt = now;
     }
 
-    public void firmwareUploadFailure(Session session, int msgId, String shipmentOwner, Shipment shipment) {
+    public void firmwareUploadFailure(Session session, int msgId, Shipment shipment) {
         long now = System.currentTimeMillis();
         this.deviceOtaInfo = new DeviceOtaInfo(this.deviceOtaInfo, OTADeviceStatus.FAILURE);
         this.updatedAt = now;
 
-        session.sendToUserOnWeb(msgId, shipmentOwner, createOTAStatusMessage(shipment.id, id, deviceOtaInfo.status));
+        session.sendToUserOnWeb(msgId, shipment.startedBy,
+                createOTAStatusMessage(shipment.id, id, deviceOtaInfo.status));
         shipment.failure(session, id);
     }
 
-    public void firmwareDownloadLimitReached(Session session, int msgId, String shipmentOwner, Shipment shipment) {
+    public void firmwareDownloadLimitReached(Session session, int msgId, Shipment shipment) {
         long now = System.currentTimeMillis();
         this.deviceOtaInfo = new DeviceOtaInfo(this.deviceOtaInfo, OTADeviceStatus.DOWNLOAD_LIMIT_REACHED);
         this.updatedAt = now;
 
-        session.sendToUserOnWeb(msgId, shipmentOwner, createOTAStatusMessage(shipment.id, id, deviceOtaInfo.status));
+        session.sendToUserOnWeb(msgId, shipment.startedBy,
+                createOTAStatusMessage(shipment.id, id, deviceOtaInfo.status));
         shipment.downloadLimitReached(session, id);
     }
 

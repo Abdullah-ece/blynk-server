@@ -12,6 +12,7 @@ import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.Shipment;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
+import cc.blynk.server.db.ReportingDBManager;
 import cc.blynk.server.internal.token.OTADownloadToken;
 import cc.blynk.server.internal.token.TokensPool;
 import cc.blynk.utils.NumberUtil;
@@ -46,12 +47,14 @@ public final class BlynkInternalLogic {
     private final TokensPool tokensPool;
     private final ServerProperties props;
     private final SessionDao sessionDao;
+    private final ReportingDBManager reportingDBManager;
 
     public BlynkInternalLogic(Holder holder) {
         this.hardwareIdleTimeout = holder.limits.hardwareIdleTimeout;
         this.tokensPool = holder.tokensPool;
         this.props = holder.props;
         this.sessionDao = holder.sessionDao;
+        this.reportingDBManager = holder.reportingDBManager;
     }
 
     private static void sendRTC(ChannelHandlerContext ctx, int msgId) {
@@ -155,7 +158,8 @@ public final class BlynkInternalLogic {
                 if (deviceOtaInfo.isLimitReached(shipment.attemptsLimit)) {
                     log.warn("OTA limit reached for deviceId {}.", device.id);
                     Session session = sessionDao.getOrgSession(org.id);
-                    device.firmwareDownloadLimitReached(session, msgId, shipment.startedBy, shipment);
+                    device.firmwareDownloadLimitReached(session, msgId, shipment);
+                    reportingDBManager.collectEvent(shipment, device);
                 } else {
                     String serverUrl = props.getServerUrl(shipment.isSecure);
                     String downloadToken = TokenGeneratorUtil.generateNewToken();
@@ -165,12 +169,14 @@ public final class BlynkInternalLogic {
                     StringMessage msg = makeASCIIStringMessage(BLYNK_INTERNAL, 7777, body);
                     ctx.write(msg, ctx.voidPromise());
                     device.requestSent();
+                    reportingDBManager.collectEvent(shipment, device);
                 }
             }
         } else {
             if (deviceOtaInfo.status == OTADeviceStatus.FIRMWARE_UPLOADED) {
                 Session session = sessionDao.getOrgSession(org.id);
-                device.success(session, msgId, shipment.startedBy, shipment);
+                device.success(session, msgId, shipment);
+                reportingDBManager.collectEvent(shipment, device);
             }
         }
     }
