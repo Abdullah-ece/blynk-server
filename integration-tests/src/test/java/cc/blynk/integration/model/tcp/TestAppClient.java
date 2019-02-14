@@ -51,6 +51,7 @@ import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_DEVICE_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_GRAPH_DATA;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_GROUP_TEMPLATE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_REPORT;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_DELETE_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EDIT_DASH;
@@ -217,6 +218,10 @@ public class TestAppClient extends BaseTestAppClient {
 
     public void deleteWidget(int dashId, long widgetId) {
         send(MOBILE_DELETE_WIDGET, "" + dashId + " " + widgetId);
+    }
+
+    public void deleteGroupTemplate(int dashId, long widgetId, long groupTemplateId) {
+        send(MOBILE_DELETE_GROUP_TEMPLATE, "" + dashId + BODY_SEPARATOR + widgetId + BODY_SEPARATOR + groupTemplateId);
     }
 
     public void activate(int dashId) {

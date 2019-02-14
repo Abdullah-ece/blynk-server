@@ -206,13 +206,22 @@ public final class DeviceTiles extends Widget implements MobileSyncWidget, Devic
         if (oldWidget instanceof DeviceTiles) {
             DeviceTiles oldDeviceTiles = (DeviceTiles) oldWidget;
             this.tiles = oldDeviceTiles.tiles;
-            this.groups = oldDeviceTiles.groups;
             for (TileTemplate tileTemplate : templates) {
                 TileTemplate oldTileTemplate = oldDeviceTiles.getTileTemplateById(tileTemplate.id);
                 if (oldTileTemplate != null) {
                     tileTemplate.deviceIds = oldTileTemplate.deviceIds;
                 }
             }
+
+            //logic for groups
+            List<Group> oldGroups = new ArrayList<>(Arrays.asList(oldDeviceTiles.groups));
+            for (Group oldGroup : oldDeviceTiles.groups) {
+                //if groupTemplate was removed and user has old group with it
+                if (getGroupTemplateIndexById(oldGroup.templateId) == -1) {
+                    oldGroups.remove(oldGroup);
+                }
+            }
+            this.groups = oldGroups.toArray(new Group[0]);
         }
     }
 
@@ -294,13 +303,21 @@ public final class DeviceTiles extends Widget implements MobileSyncWidget, Devic
         this.templates = ArrayUtil.copyAndReplace(this.templates, newTileTemplate, existingTileTemplateIndex);
     }
 
-    public int getGroupTemplateIndexByIdOrThrow(long id) {
+    private int getGroupTemplateIndexById(long id) {
         for (int i = 0; i < this.groupTemplates.length; i++) {
             if (this.groupTemplates[i].id == id) {
                 return i;
             }
         }
-        throw new IllegalCommandException("Group template with passed id not found.");
+        return -1;
+    }
+
+    public int getGroupTemplateIndexByIdOrThrow(long id) {
+        int index = getGroupTemplateIndexById(id);
+        if (index == -1) {
+            throw new IllegalCommandException("Group template with passed id not found.");
+        }
+        return index;
     }
 
     public int getGroupIndexByIdOrThrow(long id) {
