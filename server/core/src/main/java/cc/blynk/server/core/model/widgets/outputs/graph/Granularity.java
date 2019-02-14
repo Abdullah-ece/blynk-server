@@ -11,7 +11,7 @@ public enum Granularity {
     FIVE_MINUTE("reporting_average_5_minute", 5 * 60 * 1000),
     FIFTEEN_MINUTE("reporting_average_15_minute", 15 * 60 * 1000),
     HOURLY("reporting_average_hourly", 60 * 60 * 1000),
-    DAILY("daily", 24 * 60 * 60 * 1000);
+    DAILY("reporting_average_daily", 24 * 60 * 60 * 1000);
 
     public final String tableName;
     public final long period;
