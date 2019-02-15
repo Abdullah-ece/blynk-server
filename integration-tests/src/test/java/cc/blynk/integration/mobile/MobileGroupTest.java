@@ -47,7 +47,7 @@ import static org.junit.Assert.assertTrue;
  * Created on 24.12.15.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class HardwareGroupControlTest extends SingleServerInstancePerTestWithDBAndNewOrg {
+public class MobileGroupTest extends SingleServerInstancePerTestWithDBAndNewOrg {
 
     @Test
     public void createBasicGroupAndSendControlCommandAndViewAggregatedData() throws Exception {
