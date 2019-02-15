@@ -4,6 +4,9 @@ import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.web.product.EventType;
+import cc.blynk.server.core.model.web.product.Shipment;
+import cc.blynk.server.core.reporting.ota.DeviceShipmentEvent;
+import cc.blynk.server.core.reporting.ota.OTAStatusProcessor;
 import cc.blynk.server.core.reporting.raw.BaseReportingKey;
 import cc.blynk.server.core.reporting.raw.BaseReportingValue;
 import cc.blynk.server.core.reporting.raw.RawDataCacheForGraphProcessor;
@@ -12,6 +15,7 @@ import cc.blynk.server.core.stats.model.Stat;
 import cc.blynk.server.db.dao.EventDBDao;
 import cc.blynk.server.db.dao.RawEntry;
 import cc.blynk.server.db.dao.ReportingDBDao;
+import cc.blynk.server.db.dao.ReportingOTAStatsDao;
 import cc.blynk.server.db.dao.ReportingStatsDao;
 import cc.blynk.utils.NumberUtil;
 import cc.blynk.utils.properties.BaseProperties;
@@ -43,11 +47,13 @@ public final class ReportingDBManager implements Closeable {
     private final BlockingIOProcessor blockingIOProcessor;
     public final RawDataCacheForGraphProcessor rawDataCacheForGraphProcessor;
     public final RawDataProcessor rawDataProcessor;
+    public final OTAStatusProcessor otaStatusProcessor;
 
     public final EventDBDao eventDBDao;
 
     public final ReportingDBDao reportingDBDao;
     public final ReportingStatsDao reportingStatsDao;
+    public final ReportingOTAStatsDao reportingOTAStatsDao;
 
     public ReportingDBManager(BlockingIOProcessor blockingIOProcessor) {
         this(DB_PROPERTIES_FILENAME, blockingIOProcessor);
@@ -68,9 +74,11 @@ public final class ReportingDBManager implements Closeable {
         this.ds = hikariDataSource;
         this.reportingDBDao = new ReportingDBDao(hikariDataSource);
         this.reportingStatsDao = new ReportingStatsDao(hikariDataSource);
+        this.reportingOTAStatsDao = new ReportingOTAStatsDao(hikariDataSource);
         this.eventDBDao = new EventDBDao(hikariDataSource);
         this.rawDataCacheForGraphProcessor = new RawDataCacheForGraphProcessor();
         this.rawDataProcessor = new RawDataProcessor();
+        this.otaStatusProcessor = new OTAStatusProcessor();
 
         log.info("Connected to reporting database successfully.");
     }
@@ -101,9 +109,19 @@ public final class ReportingDBManager implements Closeable {
         }
     }
 
+    public void collectEvent(Shipment shipment, Device device) {
+        otaStatusProcessor.collect(shipment.id, device.id, device.updatedAt, device.deviceOtaInfo.status);
+    }
+
     public void insertStat(String region, Stat stat) {
         if (isDBEnabled()) {
             reportingStatsDao.insertStat(region, stat);
+        }
+    }
+
+    public void insertBatchOTAStats(Queue<DeviceShipmentEvent> eventsDataBatch) {
+        if (isDBEnabled() && eventsDataBatch.size() > 0) {
+            blockingIOProcessor.executeDB(() -> reportingOTAStatsDao.insertOTAEventsStat(eventsDataBatch));
         }
     }
 

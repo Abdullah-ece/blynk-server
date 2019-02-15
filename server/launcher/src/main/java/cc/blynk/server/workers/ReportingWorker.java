@@ -28,6 +28,11 @@ public final class ReportingWorker implements Runnable {
         } catch (Exception e) {
             log.error("Error during reporting job.", e);
         }
+        try {
+            reportingDBManager.insertBatchOTAStats(reportingDBManager.otaStatusProcessor.otaStatusesStorage);
+        } catch (Exception e) {
+            log.error("Error during reporting job.", e);
+        }
     }
 
 }

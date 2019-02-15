@@ -7,6 +7,7 @@ import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.web.product.Shipment;
+import cc.blynk.server.db.ReportingDBManager;
 import cc.blynk.server.internal.token.OTADownloadToken;
 import cc.blynk.server.internal.token.TokensPool;
 import cc.blynk.utils.FileUtils;
@@ -89,6 +90,7 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
     private final DeviceDao deviceDao;
     private final TokensPool tokensPool;
     private final SessionDao sessionDao;
+    private final ReportingDBManager reportingDBManager;
 
     public StaticFileHandler(Holder holder, StaticFile... staticPaths) {
         this.staticPaths = staticPaths;
@@ -96,6 +98,7 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
         this.deviceDao = holder.deviceDao;
         this.tokensPool = holder.tokensPool;
         this.sessionDao = holder.sessionDao;
+        this.reportingDBManager = holder.reportingDBManager;
     }
 
     private static void sendError(ChannelHandlerContext ctx, HttpResponseStatus status) {
@@ -278,10 +281,13 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
         Device device = null;
         if (deviceValue != null) {
             device = deviceValue.device;
-            device.firmwareRequested();
             Shipment shipment = deviceValue.org.getShipmentById(device.deviceOtaInfo.shipmentId);
-            if (shipment != null && shipment.firmwareInfo != null) {
-                response.headers().set(MD5_HEADER, shipment.firmwareInfo.md5Hash);
+            if (shipment != null) {
+                device.firmwareRequested();
+                reportingDBManager.collectEvent(shipment, device);
+                if (shipment.firmwareInfo != null) {
+                    response.headers().set(MD5_HEADER, shipment.firmwareInfo.md5Hash);
+                }
             }
         }
 
@@ -311,12 +317,13 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
                     if (future.isSuccess()) {
                         log.debug("Upload success for deviceId {}.", finalDevice.id);
                         finalDevice.firmwareUploaded();
+                        reportingDBManager.collectEvent(shipment, finalDevice);
                         tokensPool.removeToken(downloadToken);
                     } else {
                         log.debug("Upload failure for deviceId {}.", finalDevice.id);
                         Session session = sessionDao.getOrgSession(deviceValue.org.id);
-                        finalDevice.firmwareUploadFailure(
-                                session, DEFAULT_OTA_STATUS_MSG_ID, shipment.startedBy, shipment);
+                        finalDevice.firmwareUploadFailure(session, DEFAULT_OTA_STATUS_MSG_ID, shipment);
+                        reportingDBManager.collectEvent(shipment, finalDevice);
                     }
                 }
             );

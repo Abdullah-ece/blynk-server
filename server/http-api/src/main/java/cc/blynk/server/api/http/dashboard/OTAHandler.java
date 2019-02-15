@@ -17,7 +17,6 @@ import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.model.device.ota.DeviceOtaInfo;
 import cc.blynk.server.core.model.device.ota.OTADeviceStatus;
 import cc.blynk.server.core.model.dto.ShipmentDTO;
 import cc.blynk.server.core.model.web.Organization;
@@ -25,6 +24,7 @@ import cc.blynk.server.core.model.web.product.FirmwareInfo;
 import cc.blynk.server.core.model.web.product.Shipment;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
+import cc.blynk.server.db.ReportingDBManager;
 import cc.blynk.server.internal.token.OTADownloadToken;
 import cc.blynk.server.internal.token.TokensPool;
 import cc.blynk.utils.FileUtils;
@@ -57,6 +57,7 @@ public class OTAHandler extends BaseHttpHandler {
     private final OrganizationDao organizationDao;
     private final DeviceDao deviceDao;
     private final SessionDao sessionDao;
+    private final ReportingDBManager reportingDBManager;
     private final String staticFilesFolder;
     private final TokensPool tokensPool;
     private final ServerProperties props;
@@ -66,6 +67,7 @@ public class OTAHandler extends BaseHttpHandler {
         this.organizationDao = holder.organizationDao;
         this.deviceDao = holder.deviceDao;
         this.sessionDao = holder.sessionDao;
+        this.reportingDBManager = holder.reportingDBManager;
         this.tokensPool = holder.tokensPool;
         this.staticFilesFolder = holder.props.jarPath;
         this.props = holder.props;
@@ -109,8 +111,8 @@ public class OTAHandler extends BaseHttpHandler {
         org.addShipment(shipment);
 
         for (Device device : filteredDevices) {
-            DeviceOtaInfo deviceOtaInfo = new DeviceOtaInfo(shipment.id, OTADeviceStatus.STARTED, 0);
-            device.setDeviceOtaInfo(deviceOtaInfo);
+            device.startedOTA(shipment, 0);
+            reportingDBManager.collectEvent(shipment, device);
         }
 
         Session session = sessionDao.getOrgSession(shipmentDTO.orgId);
@@ -128,6 +130,7 @@ public class OTAHandler extends BaseHttpHandler {
                     StringMessage msg = makeASCIIStringMessage(BLYNK_INTERNAL, 7777, body);
                     channel.writeAndFlush(msg, channel.voidPromise());
                     hardwareState.device.requestSent();
+                    reportingDBManager.collectEvent(shipment, hardwareState.device);
                 }
             }
         }
