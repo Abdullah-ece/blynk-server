@@ -24,10 +24,10 @@ import java.util.Queue;
 public class ReportingOTAStatsDao {
 
     private static final String insertShipmentReportingEventsStat =
-            "INSERT INTO reporting_ota_events_stat (shipment_id, device_id, ts, status) VALUES(?,?,?,?)";
+            "INSERT INTO reporting_shipment_events (shipment_id, device_id, ts, status) VALUES(?,?,?,?)";
 
     private static final String selectShipmentStatusMessagesCount =
-            "SELECT status, count() FROM reporting_ota_events_stat WHERE shipment_id = ? GROUP BY status";
+            "SELECT status, count() FROM reporting_shipment_events WHERE shipment_id = ? GROUP BY status";
 
     private static final Logger log = LogManager.getLogger(ReportingOTAStatsDao.class);
 

@@ -71,7 +71,7 @@ ENGINE = MergeTree()
 PARTITION BY toYYYYMM(ts)
 ORDER BY (region, ts, command_code);
 
-CREATE TABLE reporting_ota_events_stat (
+CREATE TABLE reporting_shipment_events (
   shipment_id UInt32,
   device_id UInt32,
   ts DateTime DEFAULT now(),

@@ -69,7 +69,7 @@ public class ReportingOTAEventsTest extends SingleServerInstancePerTestWithDBAnd
     @Before
     public void clearDB() throws Exception {
         // clickhouse doesn't have normal way of data removal, so using "hack"
-        holder.reportingDBManager.executeSQL("ALTER TABLE reporting_ota_events_stat DELETE where ts > 0");
+        holder.reportingDBManager.executeSQL("ALTER TABLE reporting_shipment_events DELETE where ts > 0");
     }
 
     @Test
