@@ -21,22 +21,14 @@ public final class RawEntry {
         this.value = value;
     }
 
-    public long getTs() {
-        return ts;
-    }
-
-    public double getValue() {
-        return value;
-    }
-
     public static ByteBuffer convertToByteBuffer(Collection<RawEntry> rawEntries) {
         if (rawEntries == null || rawEntries.size() == 0) {
             return ByteBuffer.allocate(0);
         }
         ByteBuffer byteBuffer = ByteBuffer.allocate(rawEntries.size() * REPORTING_RECORD_SIZE_BYTES);
         for (RawEntry rawEntry : rawEntries) {
-            byteBuffer.putDouble(rawEntry.getValue());
-            byteBuffer.putLong(rawEntry.getTs());
+            byteBuffer.putDouble(rawEntry.value);
+            byteBuffer.putLong(rawEntry.ts);
         }
         return byteBuffer;
     }
