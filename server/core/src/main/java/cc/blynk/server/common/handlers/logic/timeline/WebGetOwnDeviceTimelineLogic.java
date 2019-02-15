@@ -79,7 +79,7 @@ public final class WebGetOwnDeviceTimelineLogic implements PermissionBasedLogic<
 
         Product product = deviceValue.product;
 
-        blockingIOProcessor.executeEvent(() -> {
+        blockingIOProcessor.executeReportingEvent(() -> {
             MessageBase response;
             try {
                 List<LogEventDTO> eventList;

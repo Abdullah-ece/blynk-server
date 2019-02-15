@@ -4,6 +4,7 @@ import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType;
 import io.netty.channel.Channel;
 
 import java.util.Iterator;
@@ -36,6 +37,8 @@ public abstract class OnePinWidget extends Widget implements MobileSyncWidget {
     public float max;
 
     public volatile String value;
+
+    public AggregationFunctionType aggregationFunctionType = AggregationFunctionType.AVG;
 
     public static String makeMultiValueHardwareBody(int deviceId,
                                                     char pintTypeChar, short pin, Iterator<?> values) {

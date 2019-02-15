@@ -33,6 +33,7 @@ import cc.blynk.server.application.handlers.main.logic.dashboard.widget.MobileGe
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.group.MobileCreateGroupLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.group.MobileDeleteGroupLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.group.MobileEditGroupLogic;
+import cc.blynk.server.application.handlers.main.logic.dashboard.widget.group.MobileGetGroupWidgetsDataLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.group.template.MobileCreateGroupTemplateLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.group.template.MobileDeleteGroupTemplateLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.group.template.MobileEditGroupTemplateLogic;
@@ -120,6 +121,7 @@ public final class MobileLogicHolder {
     final MobileCreateGroupWidgetLogic mobileCreateGroupWidgetLogic;
     final MobileEditGroupWidgetLogic mobileEditGroupWidgetLogic;
     final MobileDeleteGroupWidgetLogic mobileDeleteGroupWidgetLogic;
+    final MobileGetGroupWidgetsDataLogic mobileGetGroupWidgetsDataLogic;
 
     //common handler
     final CommonGetDevicesByReferenceMetafieldLogic commonGetDevicesByReferenceMetafieldLogic;
@@ -183,6 +185,7 @@ public final class MobileLogicHolder {
         this.mobileCreateGroupWidgetLogic = new MobileCreateGroupWidgetLogic(holder);
         this.mobileEditGroupWidgetLogic = new MobileEditGroupWidgetLogic(holder);
         this.mobileDeleteGroupWidgetLogic = new MobileDeleteGroupWidgetLogic();
+        this.mobileGetGroupWidgetsDataLogic = new MobileGetGroupWidgetsDataLogic(holder);
 
         this.commonGetDevicesByReferenceMetafieldLogic = new CommonGetDevicesByReferenceMetafieldLogic(holder);
 

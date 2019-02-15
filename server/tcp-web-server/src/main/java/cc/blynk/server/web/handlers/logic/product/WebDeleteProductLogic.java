@@ -93,7 +93,7 @@ public final class WebDeleteProductLogic implements PermissionBasedLogic<WebAppS
         int[] deviceIds = intArray.toArray();
         Session session = sessionDao.getOrgSession(org.id);
         session.closeHardwareChannelByDeviceId(deviceIds);
-        blockingIOProcessor.executeHistory(() -> {
+        blockingIOProcessor.executeReporting(() -> {
             try {
                 reportingDBDao.delete(deviceIds);
             } catch (Exception e) {

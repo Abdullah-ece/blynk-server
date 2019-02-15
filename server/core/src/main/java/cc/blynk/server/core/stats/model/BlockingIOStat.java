@@ -38,8 +38,8 @@ final class BlockingIOStat {
     public void update(BlockingIOProcessor blockingIOProcessor, ReportScheduler reportScheduler) {
         this.messagingActiveTasks   = blockingIOProcessor.messagingExecutor.getQueue().size();
         this.messagingExecutedTasks = blockingIOProcessor.messagingExecutor.getCompletedTaskCount();
-        this.historyActiveTasks     = blockingIOProcessor.historyExecutor.getQueue().size();
-        this.historyExecutedTasks   = blockingIOProcessor.historyExecutor.getCompletedTaskCount();
+        this.historyActiveTasks     = blockingIOProcessor.dbReportingExecutor.getQueue().size();
+        this.historyExecutedTasks   = blockingIOProcessor.dbReportingExecutor.getCompletedTaskCount();
         this.dbActiveTasks          = blockingIOProcessor.dbExecutor.getQueue().size();
         this.dbExecutedTasks        = blockingIOProcessor.dbExecutor.getCompletedTaskCount();
         this.getServerActiveTasks   = blockingIOProcessor.dbGetServerExecutor.getQueue().size();

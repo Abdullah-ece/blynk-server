@@ -60,7 +60,7 @@ public class ReportingDBTest {
         DataStream dataStream = new DataStream((byte) 1, VIRTUAL);
         WebGraphRequest graphPinRequest = new WebGraphRequest(0, dataStream, Period.N_DAY,
                 0, AggregationFunctionType.AVG, 0L, 1L);
-        List<RawEntry> rawEntries = reportingDBManager.reportingDBDao.getReportingDataByTs(graphPinRequest);
+        List<RawEntry> rawEntries = reportingDBManager.reportingDBDao.getAverageForSingleDevice(graphPinRequest);
         assertNotNull(rawEntries);
         assertEquals(0, rawEntries.size());
     }

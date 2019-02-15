@@ -30,7 +30,7 @@ public final class MobileDeleteGroupLogic {
                                 MobileStateHolder state, StringMessage message) {
         String[] split = split3(message.body);
 
-        if (split.length < 2) {
+        if (split.length < 3) {
             throw new JsonException("Wrong income message format.");
         }
 

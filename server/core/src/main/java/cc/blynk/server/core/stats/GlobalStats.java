@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.LongAdder;
  */
 public class GlobalStats {
 
-    private static final int APP_STAT_COUNTER_INDEX = Command.LAST_COMMAND_INDEX - 1;
+    private static final int MOBILE_STAT_COUNTER_INDEX = Command.LAST_COMMAND_INDEX - 1;
     private static final int WEB_STAT_COUNTER_INDEX = Command.LAST_COMMAND_INDEX - 2;
 
     //separate by income/outcome?
@@ -47,17 +47,17 @@ public class GlobalStats {
         specificCounters[WEB_STAT_COUNTER_INDEX].increment();
     }
 
-    public void incrementAppStat() {
-        specificCounters[APP_STAT_COUNTER_INDEX].increment();
+    public void incrementMobileStat() {
+        specificCounters[MOBILE_STAT_COUNTER_INDEX].increment();
     }
 
     public long getTotalWebCounter() {
-        LongAdder longAdder = specificCounters[APP_STAT_COUNTER_INDEX];
+        LongAdder longAdder = specificCounters[MOBILE_STAT_COUNTER_INDEX];
         return longAdder.sumThenReset();
     }
 
     public long getTotalAppCounter() {
-        LongAdder longAdder = specificCounters[APP_STAT_COUNTER_INDEX];
+        LongAdder longAdder = specificCounters[MOBILE_STAT_COUNTER_INDEX];
         return longAdder.sumThenReset();
     }
 

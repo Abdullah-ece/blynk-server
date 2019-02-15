@@ -136,7 +136,7 @@ public final class MobileGetSuperChartDataLogic {
 
     private void readGraphData(ChannelHandlerContext ctx, User user,
                                MobileGraphRequest[] requestedPins, int msgId) {
-        blockingIOProcessor.executeHistory(() -> {
+        blockingIOProcessor.executeReporting(() -> {
             try {
                 byte[][] values = new byte[requestedPins.length][];
 
@@ -147,7 +147,8 @@ public final class MobileGetSuperChartDataLogic {
                         if (mobileGraphRequest.isLiveData()) {
                             values[i] = rawDataCacheForGraphProcessor.getLiveGraphData(mobileGraphRequest);
                         } else {
-                            List<RawEntry> rawEntriesList = reportingDBDao.getReportingDataByTs(mobileGraphRequest);
+                            List<RawEntry> rawEntriesList =
+                                    reportingDBDao.getAverageForSingleDevice(mobileGraphRequest);
                             values[i] = convert(rawEntriesList);
                         }
 

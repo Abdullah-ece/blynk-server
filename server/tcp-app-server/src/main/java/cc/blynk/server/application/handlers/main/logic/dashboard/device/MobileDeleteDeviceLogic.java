@@ -51,7 +51,7 @@ public final class MobileDeleteDeviceLogic {
         session.closeHardwareChannelByDeviceId(deviceId);
         user.deleteDevice(deviceId);
 
-        blockingIOProcessor.executeHistory(() -> {
+        blockingIOProcessor.executeReporting(() -> {
             try {
                 reportingDBManager.reportingDBDao.delete(deviceId);
             } catch (Exception e) {

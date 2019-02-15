@@ -50,7 +50,7 @@ public class MobileShareHandler extends JsonBasedSimpleChannelInboundHandler<Str
 
     @Override
     public void messageReceived(ChannelHandlerContext ctx, StringMessage msg) {
-        this.stats.incrementAppStat();
+        this.stats.incrementMobileStat();
         switch (msg.command) {
             case HARDWARE:
                 hardwareApp.messageReceived(ctx, state, msg);

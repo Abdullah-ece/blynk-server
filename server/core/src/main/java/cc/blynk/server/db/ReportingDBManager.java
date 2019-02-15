@@ -14,6 +14,7 @@ import cc.blynk.server.core.stats.model.Stat;
 import cc.blynk.server.db.dao.EventDBDao;
 import cc.blynk.server.db.dao.RawEntry;
 import cc.blynk.server.db.dao.ReportingDBDao;
+import cc.blynk.server.db.dao.ReportingGroupDBDao;
 import cc.blynk.server.db.dao.ReportingOTAStatsDao;
 import cc.blynk.server.db.dao.ReportingStatsDao;
 import cc.blynk.utils.NumberUtil;
@@ -51,6 +52,7 @@ public final class ReportingDBManager implements Closeable {
     public final EventDBDao eventDBDao;
 
     public final ReportingDBDao reportingDBDao;
+    public final ReportingGroupDBDao reportingGroupDBDao;
     public final ReportingStatsDao reportingStatsDao;
     public final ReportingOTAStatsDao reportingOTAStatsDao;
 
@@ -72,6 +74,7 @@ public final class ReportingDBManager implements Closeable {
 
         this.ds = hikariDataSource;
         this.reportingDBDao = new ReportingDBDao(hikariDataSource);
+        this.reportingGroupDBDao = new ReportingGroupDBDao(hikariDataSource);
         this.reportingStatsDao = new ReportingStatsDao(hikariDataSource);
         this.reportingOTAStatsDao = new ReportingOTAStatsDao(hikariDataSource);
         this.eventDBDao = new EventDBDao(hikariDataSource);
@@ -132,7 +135,7 @@ public final class ReportingDBManager implements Closeable {
 
     public void insertSystemEvent(int deviceId, EventType eventType) {
         if (isDBEnabled()) {
-            blockingIOProcessor.executeEvent(() -> {
+            blockingIOProcessor.executeReportingEvent(() -> {
                 log.trace("Executing system event {} for deviceId {}.", eventType, deviceId);
                 eventDBDao.insertSystemEvent(deviceId, eventType);
             });

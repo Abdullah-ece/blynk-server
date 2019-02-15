@@ -71,7 +71,7 @@ public final class WebDeleteOwnDeviceLogic implements PermissionBasedLogic<WebAp
         Session session = sessionDao.getOrgSession(orgId);
         session.closeHardwareChannelByDeviceId(deviceId);
 
-        blockingIOProcessor.executeHistory(() -> {
+        blockingIOProcessor.executeReporting(() -> {
             try {
                 reportingDBDao.delete(deviceId);
             } catch (Exception e) {

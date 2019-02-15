@@ -164,7 +164,7 @@ public abstract class BaseReportTask implements Runnable {
                         for (ReportDataStream reportDataStream : reportSource.reportDataStreams) {
                             if (reportDataStream.isValid()) {
 
-                                List<RawEntry> entries = reportingDBDao.getReportingDataByTs(
+                                List<RawEntry> entries = reportingDBDao.getAverageForSingleDevice(
                                         report.granularityType, deviceId,
                                         reportDataStream.pin, reportDataStream.pinType,
                                         from, to,
@@ -199,7 +199,7 @@ public abstract class BaseReportTask implements Runnable {
                         zipStream.putNextEntry(zipEntry);
                         for (ReportDataStream reportDataStream : reportSource.reportDataStreams) {
                             if (reportDataStream.isValid()) {
-                                List<RawEntry> entries = reportingDBDao.getReportingDataByTs(
+                                List<RawEntry> entries = reportingDBDao.getAverageForSingleDevice(
                                         report.granularityType,
                                         deviceId, reportDataStream.pin,
                                         reportDataStream.pinType,
@@ -231,7 +231,7 @@ public abstract class BaseReportTask implements Runnable {
                         String deviceName = deviceDao.getDeviceName(deviceId);
                         for (ReportDataStream reportDataStream : reportSource.reportDataStreams) {
                             if (reportDataStream.isValid()) {
-                                List<RawEntry> entries = reportingDBDao.getReportingDataByTs(
+                                List<RawEntry> entries = reportingDBDao.getAverageForSingleDevice(
                                         report.granularityType,
                                         deviceId, reportDataStream.pin,
                                         reportDataStream.pinType,

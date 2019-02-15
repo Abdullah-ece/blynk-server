@@ -74,6 +74,7 @@ import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICES;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICES_BY_REFERENCE_METAFIELD;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICE_TIMELINE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_ENERGY;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_GROUP_WIDGETS_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_PROVISION_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_HARDWARE_GROUP;
@@ -115,7 +116,7 @@ public final class MobileHandler extends JsonBasedSimpleChannelInboundHandler<St
 
     @Override
     public void messageReceived(ChannelHandlerContext ctx, StringMessage msg) {
-        this.stats.incrementAppStat();
+        this.stats.incrementMobileStat();
         switch (msg.command) {
             case HARDWARE :
                 mobileHardwareLogic.messageReceived(ctx, state, msg);
@@ -331,6 +332,9 @@ public final class MobileHandler extends JsonBasedSimpleChannelInboundHandler<St
                 break;
             case MOBILE_DELETE_GROUP_WIDGET :
                 mobileLogicHolder.mobileDeleteGroupWidgetLogic.messageReceived(ctx, state, msg);
+                break;
+            case MOBILE_GET_GROUP_WIDGETS_DATA :
+                mobileLogicHolder.mobileGetGroupWidgetsDataLogic.messageReceived(ctx, state, msg);
                 break;
         }
     }

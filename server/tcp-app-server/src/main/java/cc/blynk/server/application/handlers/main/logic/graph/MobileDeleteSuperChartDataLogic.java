@@ -79,7 +79,7 @@ public final class MobileDeleteSuperChartDataLogic {
 
     private void delete(ChannelHandlerContext ctx, int msgId,
                         int targetId, GraphDataStream... dataStreams) {
-        blockingIOProcessor.executeHistory(() -> {
+        blockingIOProcessor.executeReporting(() -> {
             try {
                 for (GraphDataStream graphDataStream : dataStreams) {
                     int targetIdUpdated = graphDataStream.getTargetId(targetId);

@@ -82,7 +82,7 @@ public final class WebResolveOwnLogEventLogic implements PermissionBasedLogic<Ba
             throw new JsonException("User tries to access device he has no access.");
         }
 
-        blockingIOProcessor.executeEvent(() -> {
+        blockingIOProcessor.executeReportingEvent(() -> {
             MessageBase response;
             try {
                 if (reportingDBManager.eventDBDao.resolveEvent(resolveEventDTO, user.name)) {

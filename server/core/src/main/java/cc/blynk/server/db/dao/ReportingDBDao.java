@@ -26,13 +26,15 @@ import java.util.Queue;
  * Created by Dmitriy Dumanskiy.
  * Created on 09.03.16.
  */
-public class ReportingDBDao {
+public final class ReportingDBDao {
+
+    private static final Logger log = LogManager.getLogger(ReportingDBDao.class);
 
     private static final String insertRaw =
             "INSERT INTO reporting_device_raw_data (device_id, pin, pin_type, ts, value) "
                     + "VALUES (?, ?, ?, ?, ?)";
 
-    private static final String selectFromAverage =
+    private static final String selectAverageForSingleDeviceAndPin =
             "SELECT ts, avgMerge(value) as value FROM {TABLE} GROUP BY device_id, pin, pin_type, ts "
                     + "HAVING device_id = ? and pin = ? and pin_type = ? and ts between ? and ? "
                     + "ORDER BY ts DESC limit ?,?";
@@ -42,8 +44,6 @@ public class ReportingDBDao {
 
     private static final String deleteDevicePinData =
             "ALTER TABLE {TABLE} delete WHERE device_id = ? and pin = ? and pin_type = ?";
-
-    private static final Logger log = LogManager.getLogger(ReportingDBDao.class);
 
     private final HikariDataSource ds;
 
@@ -64,11 +64,11 @@ public class ReportingDBDao {
         ps.setDouble(5, value);
     }
 
-    public List<RawEntry> getReportingDataByTs(Granularity granularityType, int deviceId,
-                                               short pin, PinType pinType,
-                                               long from, long to, int offset, int limit) throws Exception {
+    public List<RawEntry> getAverageForSingleDevice(Granularity granularityType, int deviceId,
+                                                    short pin, PinType pinType,
+                                                    long from, long to, int offset, int limit) throws Exception {
         List<RawEntry> result = new ArrayList<>();
-        String query = selectFromAverage.replace("{TABLE}", granularityType.tableName);
+        String query = selectAverageForSingleDeviceAndPin.replace("{TABLE}", granularityType.tableName);
 
         try (Connection connection = ds.getConnection()) {
             PreparedStatement ps = connection.prepareStatement(query);
@@ -97,8 +97,8 @@ public class ReportingDBDao {
         return result;
     }
 
-    public List<RawEntry> getReportingDataByTs(WebGraphRequest webGraphRequest) throws Exception {
-        return getReportingDataByTs(
+    public List<RawEntry> getAverageForSingleDevice(WebGraphRequest webGraphRequest) throws Exception {
+        return getAverageForSingleDevice(
                 webGraphRequest.type, webGraphRequest.deviceId,
                 webGraphRequest.pin, webGraphRequest.pinType,
                 webGraphRequest.from, webGraphRequest.to,
@@ -106,8 +106,8 @@ public class ReportingDBDao {
         );
     }
 
-    public List<RawEntry> getReportingDataByTs(MobileGraphRequest mobileMobileGraphRequest) throws Exception {
-        return getReportingDataByTs(
+    public List<RawEntry> getAverageForSingleDevice(MobileGraphRequest mobileMobileGraphRequest) throws Exception {
+        return getAverageForSingleDevice(
                 mobileMobileGraphRequest.type, mobileMobileGraphRequest.deviceId,
                 mobileMobileGraphRequest.pin, mobileMobileGraphRequest.pinType,
                 mobileMobileGraphRequest.from, mobileMobileGraphRequest.to,

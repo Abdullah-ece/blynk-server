@@ -139,14 +139,14 @@ public final class WebGetGraphDataLogic {
                 fromTS = Long.parseLong(messageParts[3]);
                 toTS = Long.parseLong(messageParts[4]);
                 period = Period.calcGraphPeriod(fromTS, toTS);
-                sourceFunction = reportingDBDao::getReportingDataByTs;
+                sourceFunction = reportingDBDao::getAverageForSingleDevice;
                 log.trace("Selected granularity fro custom range: {}", period);
                 break;
             default :
                 long now = System.currentTimeMillis();
                 fromTS = now - period.millis;
                 toTS = now;
-                sourceFunction = reportingDBDao::getReportingDataByTs;
+                sourceFunction = reportingDBDao::getAverageForSingleDevice;
                 break;
         }
 

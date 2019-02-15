@@ -77,7 +77,7 @@ public final class MobileDeleteOwnDeviceDataLogic implements Permission2BasedLog
     }
 
     private void delete(Channel channel, int msgId, int... deviceIds) {
-        blockingIOProcessor.executeHistory(() -> {
+        blockingIOProcessor.executeReporting(() -> {
             try {
                 for (int deviceId : deviceIds) {
                     reportingDBDao.delete(deviceId);
@@ -94,7 +94,7 @@ public final class MobileDeleteOwnDeviceDataLogic implements Permission2BasedLog
     }
 
     private void delete(Channel channel, int msgId, int deviceId, String[] pins) {
-        blockingIOProcessor.executeHistory(() -> {
+        blockingIOProcessor.executeReporting(() -> {
             try {
                 for (String pinString : pins) {
                     PinType pinType = PinType.getPinType(pinString.charAt(0));

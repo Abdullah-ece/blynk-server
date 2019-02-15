@@ -26,12 +26,10 @@ public class BlockingIOProcessor implements Closeable {
 
     //DB pool is needed as in case DB goes down messaging still should work
     public final ThreadPoolExecutor dbExecutor;
-    private final ThreadPoolExecutor dbEventExecutor;
-
-    public final ThreadPoolExecutor dbGetServerExecutor;
-
     //separate pool for history graph data
-    public final ThreadPoolExecutor historyExecutor;
+    public final ThreadPoolExecutor dbReportingExecutor;
+    public final ThreadPoolExecutor dbGetServerExecutor;
+    private final ThreadPoolExecutor dbReportingEventExecutor;
 
     public BlockingIOProcessor(int poolSize, int maxQueueSize) {
         //pool size can't be less than 3.
@@ -49,21 +47,21 @@ public class BlockingIOProcessor implements Closeable {
                 TimeUnit.MINUTES,
                 new ArrayBlockingQueue<>(250),
                 BlynkTPFactory.build("db"));
-        this.dbEventExecutor = new ThreadPoolExecutor(
+        this.dbReportingEventExecutor = new ThreadPoolExecutor(
                 1,
                 1,
                 10L,
                 TimeUnit.MINUTES,
                 new ArrayBlockingQueue<>(1000),
-                BlynkTPFactory.build("dbEvents"));
+                BlynkTPFactory.build("reportingEvents"));
 
         this.dbGetServerExecutor = new ThreadPoolExecutor(poolSize / 3, poolSize / 3, 2L,
                 TimeUnit.MINUTES, new ArrayBlockingQueue<>(250),
                 BlynkTPFactory.build("getServer"));
 
-        this.historyExecutor = new ThreadPoolExecutor(poolSize / 4, poolSize / 2, 2L,
+        this.dbReportingExecutor = new ThreadPoolExecutor(poolSize / 4, poolSize / 2, 2L,
                 TimeUnit.MINUTES, new ArrayBlockingQueue<>(250),
-                BlynkTPFactory.build("history"));
+                BlynkTPFactory.build("reporting"));
     }
 
     public void execute(Runnable task) {
@@ -74,12 +72,12 @@ public class BlockingIOProcessor implements Closeable {
         dbExecutor.execute(task);
     }
 
-    public void executeEvent(Runnable task) {
-        dbEventExecutor.execute(task);
+    public void executeReportingEvent(Runnable task) {
+        dbReportingEventExecutor.execute(task);
     }
 
-    public void executeHistory(Runnable task) {
-        historyExecutor.execute(task);
+    public void executeReporting(Runnable task) {
+        dbReportingExecutor.execute(task);
     }
 
     public void executeDBGetServer(Runnable task) {
@@ -90,7 +88,8 @@ public class BlockingIOProcessor implements Closeable {
     public void close() {
         dbExecutor.shutdown();
         messagingExecutor.shutdown();
-        historyExecutor.shutdown();
+        dbReportingEventExecutor.shutdown();
+        dbReportingExecutor.shutdown();
         dbGetServerExecutor.shutdown();
     }
 }
