@@ -19,8 +19,8 @@ public final class ReportingGroupDBDao {
 
     //todo could be slow. filter by ts.
     private static final String selectAverageForGroupOfDevices =
-            "SELECT ts, avgMerge(value) as value FROM {TABLE} " +
-                    "WHERE device_id in (?) and pin = ? and pin_type = ? group by ts order by ts desc limit 1";
+            "SELECT ts, avgMerge(value) as value FROM {TABLE} "
+                    + "WHERE device_id in (?) and pin = ? and pin_type = ? group by ts order by ts desc limit 1";
 
     private final HikariDataSource ds;
 

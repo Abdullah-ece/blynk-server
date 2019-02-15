@@ -15,7 +15,7 @@ import java.util.StringJoiner;
  * Created by Dmitriy Dumanskiy.
  * Created on 09.03.16.
  */
-public class ForwardingTokenDBDao {
+public final class ForwardingTokenDBDao {
 
     private static final String selectHostByToken = "SELECT host from forwarding_tokens where token = ?";
     private static final String insertTokenHostProject =

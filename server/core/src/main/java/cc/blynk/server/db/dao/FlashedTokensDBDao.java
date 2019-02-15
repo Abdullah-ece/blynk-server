@@ -14,7 +14,7 @@ import java.sql.ResultSet;
  * Created by Dmitriy Dumanskiy.
  * Created on 09.03.16.
  */
-public class FlashedTokensDBDao {
+public final class FlashedTokensDBDao {
 
     private static final String selectToken = "SELECT * from flashed_tokens where token = ?";
     private static final String activateToken =

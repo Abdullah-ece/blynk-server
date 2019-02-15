@@ -21,7 +21,7 @@ import java.util.Queue;
  * Created by Nikita Piashyntsev.
  * Created on 02.13.19.
  */
-public class ReportingOTAStatsDao {
+public final class ReportingOTAStatsDao {
 
     private static final String insertShipmentReportingEventsStat =
             "INSERT INTO reporting_shipment_events (shipment_id, device_id, ts, status) VALUES(?,?,?,?)";

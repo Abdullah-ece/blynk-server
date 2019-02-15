@@ -11,7 +11,7 @@ import java.sql.ResultSet;
  * Created by Dmitriy Dumanskiy.
  * Created on 09.03.16.
  */
-public class CloneProjectDBDao {
+public final class CloneProjectDBDao {
 
     private static final String selectClonedProjectByToken = "SELECT * from cloned_projects where token = ?";
     private static final String insertClonedProject =

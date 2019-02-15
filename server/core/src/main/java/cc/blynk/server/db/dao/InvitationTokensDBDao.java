@@ -14,7 +14,7 @@ import java.sql.ResultSet;
  * Created by Dmitriy Dumanskiy.
  * Created on 09.03.16.
  */
-public class InvitationTokensDBDao {
+public final class InvitationTokensDBDao {
 
     public static final String selectToken = "SELECT * from invitation_tokens where token = ?";
     public static final String activateToken = "UPDATE invitation_tokens SET is_activated = true, "

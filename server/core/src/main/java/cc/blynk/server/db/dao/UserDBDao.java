@@ -23,7 +23,7 @@ import static cc.blynk.utils.DateTimeUtils.UTC_CALENDAR;
  * Created by Dmitriy Dumanskiy.
  * Created on 09.03.16.
  */
-public class UserDBDao {
+public final class UserDBDao {
 
     private static final String upsertUser =
             "INSERT INTO users (email, org_id, region, ip, name, pass, last_modified, last_logged,"

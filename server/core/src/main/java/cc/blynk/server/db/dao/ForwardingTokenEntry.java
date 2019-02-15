@@ -5,7 +5,7 @@ package cc.blynk.server.db.dao;
  * Created by Dmitriy Dumanskiy.
  * Created on 17.11.17.
  */
-public class ForwardingTokenEntry {
+public final class ForwardingTokenEntry {
 
     public final String token;
     public final String host;

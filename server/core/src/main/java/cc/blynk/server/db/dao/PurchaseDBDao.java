@@ -13,7 +13,7 @@ import java.sql.PreparedStatement;
  * Created by Dmitriy Dumanskiy.
  * Created on 09.03.16.
  */
-public class PurchaseDBDao {
+public final class PurchaseDBDao {
 
     private static final String insertPurchase =
             "INSERT INTO purchase (email, reward, transactionId, price) values (?, ?, ?, ?)";

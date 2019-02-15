@@ -15,7 +15,7 @@ import java.util.List;
  * Created by Dmitriy Dumanskiy.
  * Created on 09.03.16.
  */
-public class RedeemDBDao {
+public final class RedeemDBDao {
 
     private static final String selectRedeemToken = "SELECT * from redeem where token = ?";
     private static final String updateRedeemToken =
