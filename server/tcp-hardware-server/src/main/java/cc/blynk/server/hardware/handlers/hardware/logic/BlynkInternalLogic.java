@@ -159,7 +159,7 @@ public final class BlynkInternalLogic {
                     log.warn("OTA limit reached for deviceId {}.", device.id);
                     Session session = sessionDao.getOrgSession(org.id);
                     device.firmwareDownloadLimitReached(session, msgId, shipment);
-                    reportingDBManager.collectEvent(shipment, device);
+                    reportingDBManager.collectEvent(shipment.id, device);
                 } else {
                     String serverUrl = props.getServerUrl(shipment.isSecure);
                     String downloadToken = TokenGeneratorUtil.generateNewToken();
@@ -169,14 +169,14 @@ public final class BlynkInternalLogic {
                     StringMessage msg = makeASCIIStringMessage(BLYNK_INTERNAL, 7777, body);
                     ctx.write(msg, ctx.voidPromise());
                     device.requestSent();
-                    reportingDBManager.collectEvent(shipment, device);
+                    reportingDBManager.collectEvent(shipment.id, device);
                 }
             }
         } else {
             if (deviceShipmentInfo.status == ShipmentDeviceStatus.FIRMWARE_UPLOADED) {
                 Session session = sessionDao.getOrgSession(org.id);
                 device.success(session, msgId, shipment);
-                reportingDBManager.collectEvent(shipment, device);
+                reportingDBManager.collectEvent(shipment.id, device);
             }
         }
     }

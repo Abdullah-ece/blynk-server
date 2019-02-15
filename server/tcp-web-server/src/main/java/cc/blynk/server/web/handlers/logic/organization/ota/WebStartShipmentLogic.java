@@ -94,7 +94,7 @@ public final class WebStartShipmentLogic implements PermissionBasedLogic<WebAppS
             DeviceValue deviceValue = deviceDao.getDeviceValueById(deviceId);
             if (deviceValue != null) {
                 deviceValue.device.startShipment(shipment, 0);
-                reportingDBManager.collectEvent(shipment, deviceValue.device);
+                reportingDBManager.collectEvent(shipment.id, deviceValue.device);
             }
         }
 
@@ -113,7 +113,7 @@ public final class WebStartShipmentLogic implements PermissionBasedLogic<WebAppS
                     StringMessage msg = makeASCIIStringMessage(BLYNK_INTERNAL, 7777, body);
                     channel.writeAndFlush(msg, channel.voidPromise());
                     hardwareState.device.requestSent();
-                    reportingDBManager.collectEvent(shipment, hardwareState.device);
+                    reportingDBManager.collectEvent(shipment.id, hardwareState.device);
                 }
             }
         }

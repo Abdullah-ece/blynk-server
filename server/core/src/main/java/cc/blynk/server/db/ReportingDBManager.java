@@ -4,7 +4,6 @@ import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.web.product.EventType;
-import cc.blynk.server.core.model.web.product.Shipment;
 import cc.blynk.server.core.reporting.ota.DeviceShipmentEvent;
 import cc.blynk.server.core.reporting.ota.ShipmentStatusProcessor;
 import cc.blynk.server.core.reporting.raw.BaseReportingKey;
@@ -109,8 +108,8 @@ public final class ReportingDBManager implements Closeable {
         }
     }
 
-    public void collectEvent(Shipment shipment, Device device) {
-        shipmentStatusProcessor.collect(shipment.id, device.id, device.updatedAt, device.deviceShipmentInfo.status);
+    public void collectEvent(int shipmentId, Device device) {
+        shipmentStatusProcessor.collect(shipmentId, device.id, device.updatedAt, device.deviceShipmentInfo.status);
     }
 
     public void insertStat(String region, Stat stat) {

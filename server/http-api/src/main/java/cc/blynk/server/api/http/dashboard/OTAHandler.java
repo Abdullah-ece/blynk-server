@@ -111,7 +111,7 @@ public class OTAHandler extends BaseHttpHandler {
 
         for (Device device : filteredDevices) {
             device.startShipment(shipment, 0);
-            reportingDBManager.collectEvent(shipment, device);
+            reportingDBManager.collectEvent(shipment.id, device);
         }
 
         Session session = sessionDao.getOrgSession(shipmentDTO.orgId);
@@ -129,7 +129,7 @@ public class OTAHandler extends BaseHttpHandler {
                     StringMessage msg = makeASCIIStringMessage(BLYNK_INTERNAL, 7777, body);
                     channel.writeAndFlush(msg, channel.voidPromise());
                     hardwareState.device.requestSent();
-                    reportingDBManager.collectEvent(shipment, hardwareState.device);
+                    reportingDBManager.collectEvent(shipment.id, hardwareState.device);
                 }
             }
         }

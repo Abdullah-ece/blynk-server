@@ -6,6 +6,7 @@ import cc.blynk.server.core.dao.DeviceValue;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.device.ota.DeviceShipmentInfo;
 import cc.blynk.server.core.model.web.product.Shipment;
 import cc.blynk.server.db.ReportingDBManager;
 import cc.blynk.server.internal.token.ShipmentFirmwareDownloadToken;
@@ -279,14 +280,18 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
         String downloadToken = parseUploadToken(uriParts);
         DeviceValue deviceValue = getDownloadingDevice(downloadToken);
         Device device = null;
+        Shipment shipment = null;
         if (deviceValue != null) {
             device = deviceValue.device;
-            Shipment shipment = deviceValue.org.getShipmentById(device.deviceShipmentInfo.shipmentId);
-            if (shipment != null) {
-                device.firmwareRequested();
-                reportingDBManager.collectEvent(shipment, device);
-                if (shipment.firmwareInfo != null) {
-                    response.headers().set(MD5_HEADER, shipment.firmwareInfo.md5Hash);
+            DeviceShipmentInfo deviceShipmentInfo = device.deviceShipmentInfo;
+            if (deviceShipmentInfo != null) {
+                shipment = deviceValue.org.getShipmentById(deviceShipmentInfo.shipmentId);
+                if (shipment != null) {
+                    device.firmwareRequested();
+                    reportingDBManager.collectEvent(shipment.id, device);
+                    if (shipment.firmwareInfo != null) {
+                        response.headers().set(MD5_HEADER, shipment.firmwareInfo.md5Hash);
+                    }
                 }
             }
         }
@@ -311,19 +316,23 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
 
         if (device != null) {
             Device finalDevice = device;
-            Shipment shipment = deviceValue.org.getShipmentById(device.deviceShipmentInfo.shipmentId);
+            Shipment finalShipment = shipment;
             log.debug("Adding finish upload listener for deviceId {}.", finalDevice.id);
             lastContentFuture.addListener((future) -> {
                     if (future.isSuccess()) {
                         log.debug("Upload success for deviceId {}.", finalDevice.id);
                         finalDevice.firmwareUploaded();
-                        reportingDBManager.collectEvent(shipment, finalDevice);
+                        if (finalShipment != null) {
+                            reportingDBManager.collectEvent(finalShipment.id, finalDevice);
+                        }
                         tokensPool.removeToken(downloadToken);
                     } else {
                         log.debug("Upload failure for deviceId {}.", finalDevice.id);
                         Session session = sessionDao.getOrgSession(deviceValue.org.id);
-                        finalDevice.firmwareUploadFailure(session, DEFAULT_OTA_STATUS_MSG_ID, shipment);
-                        reportingDBManager.collectEvent(shipment, finalDevice);
+                        finalDevice.firmwareUploadFailure(session, DEFAULT_OTA_STATUS_MSG_ID, finalShipment);
+                        if (finalShipment != null) {
+                            reportingDBManager.collectEvent(finalShipment.id, finalDevice);
+                        }
                     }
                 }
             );

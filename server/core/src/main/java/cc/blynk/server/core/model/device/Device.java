@@ -29,6 +29,13 @@ import java.util.Arrays;
 import java.util.List;
 
 import static cc.blynk.server.core.model.device.HardwareInfo.DEFAULT_HARDWARE_BUFFER_SIZE;
+import static cc.blynk.server.core.model.device.ota.ShipmentDeviceStatus.DOWNLOAD_LIMIT_REACHED;
+import static cc.blynk.server.core.model.device.ota.ShipmentDeviceStatus.FAILURE;
+import static cc.blynk.server.core.model.device.ota.ShipmentDeviceStatus.FIRMWARE_REQUESTED;
+import static cc.blynk.server.core.model.device.ota.ShipmentDeviceStatus.FIRMWARE_UPLOADED;
+import static cc.blynk.server.core.model.device.ota.ShipmentDeviceStatus.REQUEST_SENT;
+import static cc.blynk.server.core.model.device.ota.ShipmentDeviceStatus.STARTED;
+import static cc.blynk.server.core.model.device.ota.ShipmentDeviceStatus.SUCCESS;
 import static cc.blynk.server.core.model.web.product.MetaField.EMPTY_META_FIELDS;
 import static cc.blynk.utils.ArrayUtil.arrayToList;
 import static cc.blynk.utils.ArrayUtil.concat;
@@ -301,19 +308,18 @@ public class Device {
     }
 
     public void startShipment(Shipment shipment, int attempts) {
-        this.deviceShipmentInfo = new DeviceShipmentInfo(shipment.id, ShipmentDeviceStatus.STARTED, attempts);
+        this.deviceShipmentInfo = new DeviceShipmentInfo(shipment.id, STARTED, attempts);
         this.updatedAt = System.currentTimeMillis();
     }
 
     public void requestSent() {
         DeviceShipmentInfo prev = this.deviceShipmentInfo;
-        this.deviceShipmentInfo =
-                new DeviceShipmentInfo(prev.shipmentId, ShipmentDeviceStatus.REQUEST_SENT, prev.attempts);
+        this.deviceShipmentInfo = new DeviceShipmentInfo(prev.shipmentId, REQUEST_SENT, prev.attempts);
         this.updatedAt = System.currentTimeMillis();
     }
 
     public void success(Session session, int msgId, Shipment shipment) {
-        this.deviceShipmentInfo = new DeviceShipmentInfo(this.deviceShipmentInfo, ShipmentDeviceStatus.SUCCESS);
+        this.deviceShipmentInfo = new DeviceShipmentInfo(this.deviceShipmentInfo, SUCCESS);
         this.updatedAt = System.currentTimeMillis();
 
         String shipmentStatusMessage = createShipmentStatusMessage(shipment.id, this.id, deviceShipmentInfo.status);
@@ -323,29 +329,29 @@ public class Device {
 
     public void firmwareRequested() {
         DeviceShipmentInfo prev = this.deviceShipmentInfo;
-        this.deviceShipmentInfo =
-                new DeviceShipmentInfo(prev, ShipmentDeviceStatus.FIRMWARE_REQUESTED, prev.attempts + 1);
+        this.deviceShipmentInfo = new DeviceShipmentInfo(prev, FIRMWARE_REQUESTED, prev.attempts + 1);
         this.updatedAt = System.currentTimeMillis();
     }
 
     public void firmwareUploaded() {
         DeviceShipmentInfo prev = this.deviceShipmentInfo;
-        this.deviceShipmentInfo = new DeviceShipmentInfo(prev, ShipmentDeviceStatus.FIRMWARE_UPLOADED);
+        this.deviceShipmentInfo = new DeviceShipmentInfo(prev, FIRMWARE_UPLOADED);
         this.updatedAt = System.currentTimeMillis();
     }
 
     public void firmwareUploadFailure(Session session, int msgId, Shipment shipment) {
-        this.deviceShipmentInfo = new DeviceShipmentInfo(this.deviceShipmentInfo, ShipmentDeviceStatus.FAILURE);
+        this.deviceShipmentInfo = new DeviceShipmentInfo(this.deviceShipmentInfo, FAILURE);
         this.updatedAt = System.currentTimeMillis();
 
-        String shipmentStatusMessage = createShipmentStatusMessage(shipment.id, this.id, deviceShipmentInfo.status);
-        session.sendToUserOnWeb(msgId, shipment.startedBy, shipmentStatusMessage);
-        shipment.failure(session, this.id);
+        if (shipment != null) {
+            String shipmentStatusMessage = createShipmentStatusMessage(shipment.id, this.id, deviceShipmentInfo.status);
+            session.sendToUserOnWeb(msgId, shipment.startedBy, shipmentStatusMessage);
+            shipment.failure(session, this.id);
+        }
     }
 
     public void firmwareDownloadLimitReached(Session session, int msgId, Shipment shipment) {
-        this.deviceShipmentInfo =
-                new DeviceShipmentInfo(this.deviceShipmentInfo, ShipmentDeviceStatus.DOWNLOAD_LIMIT_REACHED);
+        this.deviceShipmentInfo = new DeviceShipmentInfo(this.deviceShipmentInfo, DOWNLOAD_LIMIT_REACHED);
         this.updatedAt = System.currentTimeMillis();
 
         String shipmentStatusMessage = createShipmentStatusMessage(shipment.id, this.id, deviceShipmentInfo.status);
