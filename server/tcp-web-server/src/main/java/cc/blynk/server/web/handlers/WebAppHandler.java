@@ -58,12 +58,12 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_RULE_GROUP;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_TEMP_SECURE_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_USER_COUNTERS_BY_ROLE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_INVITE_USER;
-import static cc.blynk.server.core.protocol.enums.Command.WEB_OTA_GET_FIRMWARE_INFO;
-import static cc.blynk.server.core.protocol.enums.Command.WEB_OTA_START;
-import static cc.blynk.server.core.protocol.enums.Command.WEB_OTA_STOP;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_RESOLVE_EVENT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_SET_AUTH_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_SHIPMENT_DELETE;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_SHIPMENT_GET_FIRMWARE_INFO;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_SHIPMENT_START;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_SHIPMENT_STOP;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_TRACK_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_TRACK_ORG;
 
@@ -225,14 +225,14 @@ public final class WebAppHandler extends JsonBasedSimpleChannelInboundHandler<St
             case WEB_GET_DEVICE_COUNT_FOR_PRODUCT_AND_SUBPRODUCTS :
                 webLogicHolder.webGetDeviceCountFromProductIDLogic.messageReceived(ctx, state, msg);
                 break;
-            case WEB_OTA_GET_FIRMWARE_INFO :
+            case WEB_SHIPMENT_GET_FIRMWARE_INFO:
                 webLogicHolder.webGetFirmwareInfoLogic.messageReceived(ctx, state, msg);
                 break;
-            case WEB_OTA_START :
-                webLogicHolder.webStartOtaLogic.messageReceived(ctx, state, msg);
+            case WEB_SHIPMENT_START:
+                webLogicHolder.webStartShipmentLogic.messageReceived(ctx, state, msg);
                 break;
-            case WEB_OTA_STOP :
-                webLogicHolder.webStopOtaLogic.messageReceived(ctx, state, msg);
+            case WEB_SHIPMENT_STOP:
+                webLogicHolder.webStopShipmentLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_SHIPMENT_DELETE:
                 webLogicHolder.webCleanOtaLogic.messageReceived(ctx, state, msg);

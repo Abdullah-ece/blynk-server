@@ -6,7 +6,7 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.web.product.EventType;
 import cc.blynk.server.core.model.web.product.Shipment;
 import cc.blynk.server.core.reporting.ota.DeviceShipmentEvent;
-import cc.blynk.server.core.reporting.ota.OTAStatusProcessor;
+import cc.blynk.server.core.reporting.ota.ShipmentStatusProcessor;
 import cc.blynk.server.core.reporting.raw.BaseReportingKey;
 import cc.blynk.server.core.reporting.raw.BaseReportingValue;
 import cc.blynk.server.core.reporting.raw.RawDataCacheForGraphProcessor;
@@ -47,7 +47,7 @@ public final class ReportingDBManager implements Closeable {
     private final BlockingIOProcessor blockingIOProcessor;
     public final RawDataCacheForGraphProcessor rawDataCacheForGraphProcessor;
     public final RawDataProcessor rawDataProcessor;
-    public final OTAStatusProcessor otaStatusProcessor;
+    public final ShipmentStatusProcessor shipmentStatusProcessor;
 
     public final EventDBDao eventDBDao;
 
@@ -78,7 +78,7 @@ public final class ReportingDBManager implements Closeable {
         this.eventDBDao = new EventDBDao(hikariDataSource);
         this.rawDataCacheForGraphProcessor = new RawDataCacheForGraphProcessor();
         this.rawDataProcessor = new RawDataProcessor();
-        this.otaStatusProcessor = new OTAStatusProcessor();
+        this.shipmentStatusProcessor = new ShipmentStatusProcessor();
 
         log.info("Connected to reporting database successfully.");
     }
@@ -110,7 +110,7 @@ public final class ReportingDBManager implements Closeable {
     }
 
     public void collectEvent(Shipment shipment, Device device) {
-        otaStatusProcessor.collect(shipment.id, device.id, device.updatedAt, device.deviceOtaInfo.status);
+        shipmentStatusProcessor.collect(shipment.id, device.id, device.updatedAt, device.deviceShipmentInfo.status);
     }
 
     public void insertStat(String region, Stat stat) {

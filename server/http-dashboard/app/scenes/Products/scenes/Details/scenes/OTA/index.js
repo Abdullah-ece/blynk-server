@@ -78,7 +78,7 @@ class OTAScene extends React.Component {
          lastLoggedIP     : PropTypes.string,
          connectTime      : PropTypes.number
       }),
-      deviceOtaInfo: PropTypes.shape({
+      deviceShipmentInfo: PropTypes.shape({
         otaInitiatedBy: PropTypes.string,
         buildDate: PropTypes.string,
         pathToFirmware: PropTypes.string,
@@ -347,8 +347,8 @@ class OTAScene extends React.Component {
       let devices = this.props.devices.filter((device) => OTAUpdate.deviceIds.indexOf(Number(device.id)) >= 0);
 
       devicesUpdated = devices.filter((device) => {
-        if(device && device.deviceOtaInfo && device.deviceOtaInfo.otaStatus) {
-          return [OTA_STATUSES.SUCCESS].indexOf(device.deviceOtaInfo.otaStatus) >= 0;
+        if(device && device.deviceShipmentInfo && device.deviceShipmentInfo.status) {
+          return [OTA_STATUSES.SUCCESS].indexOf(device.deviceShipmentInfo.status) >= 0;
         }
         return false;
       });
@@ -361,15 +361,15 @@ class OTAScene extends React.Component {
         step = OTA_STEPS.SUCCESS;
 
         dateStarted = getCalendarFormatDate(devices.reduce((acc, device) => {
-          if(device && device.deviceOtaInfo && device.deviceOtaInfo.otaInitiatedAt && device.deviceOtaInfo.otaInitiatedAt > acc) {
-            return device.deviceOtaInfo.otaInitiatedAt;
+          if(device && device.deviceShipmentInfo && device.deviceShipmentInfo.otaInitiatedAt > acc) {
+            return device.deviceShipmentInfo.otaInitiatedAt;
           }
           return acc;
         }, 0));
 
         dateFinished = getCalendarFormatDate(devices.reduce((acc, device) => {
-          if(device && device.deviceOtaInfo && device.deviceOtaInfo.finishedAt && device.deviceOtaInfo.finishedAt > acc) {
-            return device.deviceOtaInfo.finishedAt;
+          if(device && device.deviceShipmentInfo && device.deviceShipmentInfo.finishedAt > acc) {
+            return device.deviceShipmentInfo.finishedAt;
           }
           return acc;
         }, 0));

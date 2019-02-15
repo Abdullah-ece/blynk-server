@@ -1,6 +1,6 @@
 package cc.blynk.server.db.dao;
 
-import cc.blynk.server.core.model.device.ota.OTADeviceStatus;
+import cc.blynk.server.core.model.device.ota.ShipmentDeviceStatus;
 import cc.blynk.server.core.reporting.ota.DeviceShipmentEvent;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.logging.log4j.LogManager;
@@ -23,10 +23,10 @@ import java.util.Queue;
  */
 public class ReportingOTAStatsDao {
 
-    private static final String insertOTAReportingEventsStat =
+    private static final String insertShipmentReportingEventsStat =
             "INSERT INTO reporting_ota_events_stat (shipment_id, device_id, ts, status) VALUES(?,?,?,?)";
 
-    private static final String selectOTAStatusMessagesCount =
+    private static final String selectShipmentStatusMessagesCount =
             "SELECT status, count() FROM reporting_ota_events_stat WHERE shipment_id = ? GROUP BY status";
 
     private static final Logger log = LogManager.getLogger(ReportingOTAStatsDao.class);
@@ -37,15 +37,24 @@ public class ReportingOTAStatsDao {
         this.ds = hikariDataSource;
     }
 
-    public Map<OTADeviceStatus, Integer> selectOTAStatusMessagesCount(int shipmentId) {
-        Map<OTADeviceStatus, Integer> messagesCount = new EnumMap<>(OTADeviceStatus.class);
+    private static void prepareInsertOTAEventStat(PreparedStatement ps,
+                                                  int shipmentId, int deviceId, long ts,
+                                                  ShipmentDeviceStatus shipmentDeviceStatus) throws SQLException {
+        ps.setInt(1, shipmentId);
+        ps.setInt(2, deviceId);
+        ps.setTimestamp(3, new Timestamp(ts));
+        ps.setInt(4, shipmentDeviceStatus.ordinal());
+    }
+
+    public Map<ShipmentDeviceStatus, Integer> selectShipmentStatusMessagesCount(int shipmentId) {
+        Map<ShipmentDeviceStatus, Integer> messagesCount = new EnumMap<>(ShipmentDeviceStatus.class);
         try (Connection connection = ds.getConnection();
-             PreparedStatement ps = connection.prepareStatement(selectOTAStatusMessagesCount)) {
+             PreparedStatement ps = connection.prepareStatement(selectShipmentStatusMessagesCount)) {
             ps.setInt(1, shipmentId);
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    OTADeviceStatus otaEventName = OTADeviceStatus.values()[rs.getByte("status")];
+                    ShipmentDeviceStatus otaEventName = ShipmentDeviceStatus.values()[rs.getByte("status")];
                     int             count        = rs.getInt("count()");
 
                     messagesCount.put(otaEventName, count);
@@ -61,13 +70,14 @@ public class ReportingOTAStatsDao {
 
     public boolean insertOTAEventsStat(Queue<DeviceShipmentEvent> values) {
         try (Connection connection = ds.getConnection();
-             PreparedStatement ps = connection.prepareStatement(insertOTAReportingEventsStat)) {
+             PreparedStatement ps = connection.prepareStatement(insertShipmentReportingEventsStat)) {
 
             if (values != null) {
                 Iterator<DeviceShipmentEvent> iterator = values.iterator();
                 while (iterator.hasNext()) {
                     DeviceShipmentEvent value = iterator.next();
-                    prepareInsertOTAEventStat(ps, value.shipmentId, value.deviceId, value.ts, value.otaDeviceStatus);
+                    prepareInsertOTAEventStat(ps,
+                            value.shipmentId, value.deviceId, value.ts, value.shipmentDeviceStatus);
                     ps.addBatch();
                     iterator.remove();
                 }
@@ -80,15 +90,6 @@ public class ReportingOTAStatsDao {
             log.error("Error inserting batch of OTA events reporting data in DB.", e);
         }
         return false;
-    }
-
-    private static void prepareInsertOTAEventStat(PreparedStatement ps,
-                                                  int shipmentId, int deviceId, long ts,
-                                                  OTADeviceStatus otaDeviceStatus) throws SQLException {
-        ps.setInt(1, shipmentId);
-        ps.setInt(2, deviceId);
-        ps.setTimestamp(3, new Timestamp(ts));
-        ps.setInt(4, otaDeviceStatus.ordinal());
     }
 
 }

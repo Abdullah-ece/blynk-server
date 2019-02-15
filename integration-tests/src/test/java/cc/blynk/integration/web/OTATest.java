@@ -8,7 +8,7 @@ import cc.blynk.server.api.http.dashboard.dto.ProductAndOrgIdDTO;
 import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.model.device.ota.OTADeviceStatus;
+import cc.blynk.server.core.model.device.ota.ShipmentDeviceStatus;
 import cc.blynk.server.core.model.dto.ProductDTO;
 import cc.blynk.server.core.model.dto.ShipmentDTO;
 import cc.blynk.server.core.model.serialization.JsonParser;
@@ -125,11 +125,11 @@ public class OTATest extends APIBaseTest {
             String responseString = consumeText(response);
             newDevice = JsonParser.readAny(responseString, Device.class);
             assertNotNull(newDevice);
-            assertNotNull(newDevice.deviceOtaInfo);
-            assertEquals(OTADeviceStatus.STARTED, newDevice.deviceOtaInfo.status);
+            assertNotNull(newDevice.deviceShipmentInfo);
+            assertEquals(ShipmentDeviceStatus.STARTED, newDevice.deviceShipmentInfo.status);
             //todo check within shipment
-            //assertEquals(admin.email, newDevice.deviceOtaInfo.otaStartedBy);
-            //assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.otaStartedAt, 5000);
+            //assertEquals(admin.email, newDevice.deviceShipmentInfo.otaStartedBy);
+            //assertEquals(System.currentTimeMillis(), newDevice.deviceShipmentInfo.otaStartedAt, 5000);
         }
 
         TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
@@ -152,8 +152,8 @@ public class OTATest extends APIBaseTest {
             String responseString = consumeText(response);
             newDevice = JsonParser.readAny(responseString, Device.class);
             assertNotNull(newDevice);
-            assertNotNull(newDevice.deviceOtaInfo);
-            assertEquals(OTADeviceStatus.REQUEST_SENT, newDevice.deviceOtaInfo.status);
+            assertNotNull(newDevice.deviceShipmentInfo);
+            assertEquals(ShipmentDeviceStatus.REQUEST_SENT, newDevice.deviceShipmentInfo.status);
         }
 
         Path tmpFile = Files.createTempFile("123", "test");
@@ -188,9 +188,9 @@ public class OTATest extends APIBaseTest {
             String responseString = consumeText(response);
             newDevice = JsonParser.readAny(responseString, Device.class);
             assertNotNull(newDevice);
-            assertNotNull(newDevice.deviceOtaInfo);
+            assertNotNull(newDevice.deviceShipmentInfo);
             assertNotNull(newDevice.hardwareInfo);
-            assertEquals(OTADeviceStatus.SUCCESS, newDevice.deviceOtaInfo.status);
+            assertEquals(ShipmentDeviceStatus.SUCCESS, newDevice.deviceShipmentInfo.status);
             assertEquals("Dec 13 2018 15:04:29", newDevice.hardwareInfo.build);
         }
     }
@@ -244,11 +244,11 @@ public class OTATest extends APIBaseTest {
             String responseString = consumeText(response);
             newDevice = JsonParser.readAny(responseString, Device.class);
             assertNotNull(newDevice);
-            assertNotNull(newDevice.deviceOtaInfo);
-            assertEquals(OTADeviceStatus.STARTED, newDevice.deviceOtaInfo.status);
+            assertNotNull(newDevice.deviceShipmentInfo);
+            assertEquals(ShipmentDeviceStatus.STARTED, newDevice.deviceShipmentInfo.status);
             //todo check within shipment
-            //assertEquals(admin.email, newDevice.deviceOtaInfo.otaStartedBy);
-            //assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.otaStartedAt, 5000);
+            //assertEquals(admin.email, newDevice.deviceShipmentInfo.otaStartedBy);
+            //assertEquals(System.currentTimeMillis(), newDevice.deviceShipmentInfo.otaStartedAt, 5000);
         }
 
         TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
@@ -271,8 +271,8 @@ public class OTATest extends APIBaseTest {
             String responseString = consumeText(response);
             newDevice = JsonParser.readAny(responseString, Device.class);
             assertNotNull(newDevice);
-            assertNotNull(newDevice.deviceOtaInfo);
-            assertEquals(OTADeviceStatus.REQUEST_SENT, newDevice.deviceOtaInfo.status);
+            assertNotNull(newDevice.deviceShipmentInfo);
+            assertEquals(ShipmentDeviceStatus.REQUEST_SENT, newDevice.deviceShipmentInfo.status);
         }
 
         Path tmpFile = Files.createTempFile("123", "test");
@@ -296,8 +296,8 @@ public class OTATest extends APIBaseTest {
             String responseString = consumeText(response);
             newDevice = JsonParser.readAny(responseString, Device.class);
             assertNotNull(newDevice);
-            assertNotNull(newDevice.deviceOtaInfo);
-            assertEquals(OTADeviceStatus.FIRMWARE_UPLOADED, newDevice.deviceOtaInfo.status);
+            assertNotNull(newDevice.deviceShipmentInfo);
+            assertEquals(ShipmentDeviceStatus.FIRMWARE_UPLOADED, newDevice.deviceShipmentInfo.status);
         }
 
     }
@@ -364,11 +364,11 @@ public class OTATest extends APIBaseTest {
             String responseString = consumeText(response);
             newDevice = JsonParser.readAny(responseString, Device.class);
             assertNotNull(newDevice);
-            assertNotNull(newDevice.deviceOtaInfo);
+            assertNotNull(newDevice.deviceShipmentInfo);
             //todo check within shipment
-            //assertEquals(admin.email, newDevice.deviceOtaInfo.otaStartedBy);
-            //assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.otaStartedAt, 5000);
-            assertEquals(OTADeviceStatus.REQUEST_SENT, newDevice.deviceOtaInfo.status);
+            //assertEquals(admin.email, newDevice.deviceShipmentInfo.otaStartedBy);
+            //assertEquals(System.currentTimeMillis(), newDevice.deviceShipmentInfo.otaStartedAt, 5000);
+            assertEquals(ShipmentDeviceStatus.REQUEST_SENT, newDevice.deviceShipmentInfo.status);
         }
     }
 
@@ -420,11 +420,11 @@ public class OTATest extends APIBaseTest {
             String responseString = consumeText(response);
             newDevice = JsonParser.readAny(responseString, Device.class);
             assertNotNull(newDevice);
-            assertNotNull(newDevice.deviceOtaInfo);
-            assertEquals(OTADeviceStatus.STARTED, newDevice.deviceOtaInfo.status);
+            assertNotNull(newDevice.deviceShipmentInfo);
+            assertEquals(ShipmentDeviceStatus.STARTED, newDevice.deviceShipmentInfo.status);
             //todo check within shipment
-            //assertEquals(admin.email, newDevice.deviceOtaInfo.otaStartedBy);
-            //assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.otaStartedAt, 5000);
+            //assertEquals(admin.email, newDevice.deviceShipmentInfo.otaStartedBy);
+            //assertEquals(System.currentTimeMillis(), newDevice.deviceShipmentInfo.otaStartedAt, 5000);
         }
 
         post = new HttpPost(httpsAdminServerUrl + "/ota/stop");
@@ -441,7 +441,7 @@ public class OTATest extends APIBaseTest {
             String responseString = consumeText(response);
             newDevice = JsonParser.readAny(responseString, Device.class);
             assertNotNull(newDevice);
-            assertNull(newDevice.deviceOtaInfo);
+            assertNull(newDevice.deviceShipmentInfo);
         }
     }
 

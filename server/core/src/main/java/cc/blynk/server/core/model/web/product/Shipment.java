@@ -112,7 +112,7 @@ public final class Shipment {
         );
     }
 
-    private static String createSuccessOTAStatusMessage(int shipmentId, int deviceId) {
+    private static String createSuccessShipmentStatusMessage(int shipmentId, int deviceId) {
         return "" + shipmentId + DEVICE_SEPARATOR + deviceId + BODY_SEPARATOR + ShipmentStatus.FINISH;
     }
 
@@ -134,7 +134,7 @@ public final class Shipment {
     private void checkProgressAndSendMessageIfFinished(Session session, int deviceId) {
         if (shipmentProgress.isFinished(this.deviceIds.length)) {
             session.sendToUserOnWeb(DEFAULT_OTA_SHIPMENT_STATUS_MSG_ID, this.startedBy,
-                    createSuccessOTAStatusMessage(this.id, deviceId));
+                    createSuccessShipmentStatusMessage(this.id, deviceId));
         }
     }
 

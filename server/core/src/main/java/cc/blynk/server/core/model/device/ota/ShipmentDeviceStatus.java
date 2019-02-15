@@ -1,6 +1,6 @@
 package cc.blynk.server.core.model.device.ota;
 
-public enum OTADeviceStatus {
+public enum ShipmentDeviceStatus {
 
     STARTED,
     REQUEST_SENT,
@@ -12,6 +12,11 @@ public enum OTADeviceStatus {
 
     public boolean isNotFailure() {
         return this != FAILURE && this != DOWNLOAD_LIMIT_REACHED;
+    }
+
+    public boolean inProgress() {
+        return this == STARTED || this == REQUEST_SENT
+                || this == FIRMWARE_REQUESTED || this == FIRMWARE_UPLOADED;
     }
 
 }

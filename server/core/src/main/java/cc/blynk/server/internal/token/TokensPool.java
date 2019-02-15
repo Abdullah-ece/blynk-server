@@ -52,8 +52,8 @@ public final class TokensPool implements Closeable {
         return getTokenByType(token, ResetPassToken.class);
     }
 
-    public OTADownloadToken getOTADownloadToken(String token) {
-        return getTokenByType(token, OTADownloadToken.class);
+    public ShipmentFirmwareDownloadToken getOTADownloadToken(String token) {
+        return getTokenByType(token, ShipmentFirmwareDownloadToken.class);
     }
 
     @SuppressWarnings("unchecked")

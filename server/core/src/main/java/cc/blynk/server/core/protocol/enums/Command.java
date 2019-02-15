@@ -175,9 +175,9 @@ public final class Command {
     public static final short WEB_SET_AUTH_TOKEN = 138;
     public static final short WEB_EDIT_OWN_ORG = 139;
     public static final short WEB_GET_DEVICE_COUNT_FOR_ORG = 140;
-    public static final short WEB_OTA_START = 141;
-    public static final short WEB_OTA_STOP = 142;
-    public static final short WEB_OTA_GET_FIRMWARE_INFO = 143;
+    public static final short WEB_SHIPMENT_START = 141;
+    public static final short WEB_SHIPMENT_STOP = 142;
+    public static final short WEB_SHIPMENT_GET_FIRMWARE_INFO = 143;
     public static final short WEB_SHIPMENT_DELETE = 144;
     public static final short WEB_TRACK_ORG = 145;
     public static final short WEB_GET_USER_COUNTERS_BY_ROLE = 146;

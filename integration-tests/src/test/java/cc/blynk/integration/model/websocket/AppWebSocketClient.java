@@ -122,11 +122,11 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_TEMP_SECURE_TO
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_USER_COUNTERS_BY_ROLE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_INVITE_USER;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_LOGIN_VIA_INVITE;
-import static cc.blynk.server.core.protocol.enums.Command.WEB_OTA_GET_FIRMWARE_INFO;
-import static cc.blynk.server.core.protocol.enums.Command.WEB_OTA_START;
-import static cc.blynk.server.core.protocol.enums.Command.WEB_OTA_STOP;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_RESOLVE_EVENT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_SET_AUTH_TOKEN;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_SHIPMENT_GET_FIRMWARE_INFO;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_SHIPMENT_START;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_SHIPMENT_STOP;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_TRACK_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_TRACK_ORG;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
@@ -549,18 +549,18 @@ public final class AppWebSocketClient extends BaseTestAppClient {
 
     public void getFirmwareInfo(String firmwareUrl) {
         if (firmwareUrl == null) {
-            send(WEB_OTA_GET_FIRMWARE_INFO);
+            send(WEB_SHIPMENT_GET_FIRMWARE_INFO);
         } else {
-            send(WEB_OTA_GET_FIRMWARE_INFO, firmwareUrl);
+            send(WEB_SHIPMENT_GET_FIRMWARE_INFO, firmwareUrl);
         }
     }
 
     public void otaStart(ShipmentDTO shipmentDTO) {
-        send(WEB_OTA_START, shipmentDTO);
+        send(WEB_SHIPMENT_START, shipmentDTO);
     }
 
     public void otaStop(ShipmentDTO shipmentDTO) {
-        send(WEB_OTA_STOP, shipmentDTO);
+        send(WEB_SHIPMENT_STOP, shipmentDTO);
     }
 
     public void getDevicesByReferenceMetafield(int deviceId, int metafieldId) {

@@ -310,7 +310,7 @@ class Edit extends React.Component {
       title: "Updated On",
       sorter: (a, b) => a.name.length - b.name.length,
       sortDirections: ['descend'],
-      dataIndex: "deviceOtaInfo.buildDate",
+      dataIndex: "deviceShipmentInfo.buildDate",
     },];
     const selectedRowKeys = [];
 

@@ -32,8 +32,8 @@ import cc.blynk.server.web.handlers.logic.organization.WebTrackOrganizationLogic
 import cc.blynk.server.web.handlers.logic.organization.ota.WebDeleteShipmentLogic;
 import cc.blynk.server.web.handlers.logic.organization.ota.WebGetFirmwareInfoLogic;
 import cc.blynk.server.web.handlers.logic.organization.ota.WebGetOrgShipmentsLogic;
-import cc.blynk.server.web.handlers.logic.organization.ota.WebStartOtaLogic;
-import cc.blynk.server.web.handlers.logic.organization.ota.WebStopOtaLogic;
+import cc.blynk.server.web.handlers.logic.organization.ota.WebStartShipmentLogic;
+import cc.blynk.server.web.handlers.logic.organization.ota.WebStopShipmentLogic;
 import cc.blynk.server.web.handlers.logic.organization.roles.WebCreateRoleLogic;
 import cc.blynk.server.web.handlers.logic.organization.roles.WebDeleteRoleLogic;
 import cc.blynk.server.web.handlers.logic.organization.roles.WebEditRoleLogic;
@@ -96,8 +96,8 @@ public final class WebLogicHolder {
     final WebSetAuthTokenForDeviceLogic webSetAuthTokenForDeviceLogic;
     final WebEditOwnOrganizationLogic webEditOwnOrganizationLogic;
     final WebGetFirmwareInfoLogic webGetFirmwareInfoLogic;
-    final WebStartOtaLogic webStartOtaLogic;
-    final WebStopOtaLogic webStopOtaLogic;
+    final WebStartShipmentLogic webStartShipmentLogic;
+    final WebStopShipmentLogic webStopShipmentLogic;
     final WebDeleteShipmentLogic webCleanOtaLogic;
     final WebTrackOrganizationLogic webTrackOrganizationLogic;
     final WebEditDeviceMetafieldLogic webEditDeviceMetafieldLogic;
@@ -149,8 +149,8 @@ public final class WebLogicHolder {
         this.webSetAuthTokenForDeviceLogic = new WebSetAuthTokenForDeviceLogic(holder);
         this.webEditOwnOrganizationLogic = new WebEditOwnOrganizationLogic(holder);
         this.webGetFirmwareInfoLogic = new WebGetFirmwareInfoLogic(holder);
-        this.webStartOtaLogic = new WebStartOtaLogic(holder);
-        this.webStopOtaLogic = new WebStopOtaLogic(holder);
+        this.webStartShipmentLogic = new WebStartShipmentLogic(holder);
+        this.webStopShipmentLogic = new WebStopShipmentLogic(holder);
         this.webCleanOtaLogic = new WebDeleteShipmentLogic(holder);
         this.webTrackOrganizationLogic = new WebTrackOrganizationLogic(holder);
         this.webEditDeviceMetafieldLogic = new WebEditDeviceMetafieldLogic(holder);

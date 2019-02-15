@@ -5,7 +5,7 @@ import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.HardwareInfo;
 import cc.blynk.server.core.model.device.Status;
-import cc.blynk.server.core.model.device.ota.DeviceOtaInfo;
+import cc.blynk.server.core.model.device.ota.DeviceShipmentInfo;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.EventType;
 import cc.blynk.server.core.model.web.product.MetaField;
@@ -72,7 +72,7 @@ public class DeviceDTO {
 
     public final HardwareInfo hardwareInfo;
 
-    public final DeviceOtaInfo deviceOtaInfo;
+    public final DeviceShipmentInfo deviceShipmentInfo;
 
     @JsonCreator
     public DeviceDTO(@JsonProperty("id") int id,
@@ -98,7 +98,7 @@ public class DeviceDTO {
                      @JsonProperty("criticalSinceLastView") Integer criticalSinceLastView,
                      @JsonProperty("warningSinceLastView") Integer warningSinceLastView,
                      @JsonProperty("hardwareInfo") HardwareInfo hardwareInfo,
-                     @JsonProperty("deviceOtaInfo") DeviceOtaInfo deviceOtaInfo) {
+                     @JsonProperty("deviceShipmentInfo") DeviceShipmentInfo deviceShipmentInfo) {
         this.id = id;
         this.productId = productId;
         this.name = name;
@@ -122,7 +122,7 @@ public class DeviceDTO {
         this.criticalSinceLastView = criticalSinceLastView;
         this.warningSinceLastView = warningSinceLastView;
         this.hardwareInfo = hardwareInfo;
-        this.deviceOtaInfo = deviceOtaInfo;
+        this.deviceShipmentInfo = deviceShipmentInfo;
     }
 
     public DeviceDTO(Device device, Product product) {
@@ -144,7 +144,7 @@ public class DeviceDTO {
         this.metadataUpdatedBy = device.metadataUpdatedBy;
         this.lastReportedAt = device.pinStorage.lastReportedAt;
         this.hardwareInfo = device.hardwareInfo;
-        this.deviceOtaInfo = device.deviceOtaInfo;
+        this.deviceShipmentInfo = device.deviceShipmentInfo;
 
         if (product != null) {
             this.productName = product.name;

@@ -17,7 +17,6 @@ import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.model.device.ota.OTADeviceStatus;
 import cc.blynk.server.core.model.dto.ShipmentDTO;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.FirmwareInfo;
@@ -25,7 +24,7 @@ import cc.blynk.server.core.model.web.product.Shipment;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.db.ReportingDBManager;
-import cc.blynk.server.internal.token.OTADownloadToken;
+import cc.blynk.server.internal.token.ShipmentFirmwareDownloadToken;
 import cc.blynk.server.internal.token.TokensPool;
 import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.StringUtils;
@@ -111,7 +110,7 @@ public class OTAHandler extends BaseHttpHandler {
         org.addShipment(shipment);
 
         for (Device device : filteredDevices) {
-            device.startedOTA(shipment, 0);
+            device.startShipment(shipment, 0);
             reportingDBManager.collectEvent(shipment, device);
         }
 
@@ -125,7 +124,7 @@ public class OTAHandler extends BaseHttpHandler {
                         && channel.isWritable()) {
 
                     String downloadToken = TokenGeneratorUtil.generateNewToken();
-                    tokensPool.addToken(downloadToken, new OTADownloadToken(hardwareState.device.id));
+                    tokensPool.addToken(downloadToken, new ShipmentFirmwareDownloadToken(hardwareState.device.id));
                     String body = StringUtils.makeHardwareBody(serverUrl, shipmentDTO.pathToFirmware, downloadToken);
                     StringMessage msg = makeASCIIStringMessage(BLYNK_INTERNAL, 7777, body);
                     channel.writeAndFlush(msg, channel.voidPromise());
@@ -157,9 +156,8 @@ public class OTAHandler extends BaseHttpHandler {
         log.info("Stopping OTA for {}. {}", user.email, shipmentDTO);
 
         for (Device device : filteredDevices) {
-            if (device.deviceOtaInfo != null && device.deviceOtaInfo.status != OTADeviceStatus.SUCCESS
-                    && device.deviceOtaInfo.status != OTADeviceStatus.FAILURE) {
-                device.setDeviceOtaInfo(null);
+            if (device.deviceShipmentInfo != null && device.deviceShipmentInfo.status.inProgress()) {
+                device.clearDeviceShipmentInfo();
             }
         }
 

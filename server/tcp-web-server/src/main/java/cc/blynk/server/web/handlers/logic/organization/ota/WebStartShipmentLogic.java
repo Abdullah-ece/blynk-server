@@ -18,7 +18,7 @@ import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.core.session.web.WebAppStateHolder;
 import cc.blynk.server.db.ReportingDBManager;
-import cc.blynk.server.internal.token.OTADownloadToken;
+import cc.blynk.server.internal.token.ShipmentFirmwareDownloadToken;
 import cc.blynk.server.internal.token.TokensPool;
 import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.TokenGeneratorUtil;
@@ -37,7 +37,7 @@ import static cc.blynk.server.internal.StateHolderUtil.getHardState;
  * Created by Dmitriy Dumanskiy.
  * Created on 12.12.18.
  */
-public final class WebStartOtaLogic implements PermissionBasedLogic<WebAppStateHolder> {
+public final class WebStartShipmentLogic implements PermissionBasedLogic<WebAppStateHolder> {
 
     private final OrganizationDao organizationDao;
     private final DeviceDao deviceDao;
@@ -47,7 +47,7 @@ public final class WebStartOtaLogic implements PermissionBasedLogic<WebAppStateH
     private final TokensPool tokensPool;
     private final ServerProperties props;
 
-    public WebStartOtaLogic(Holder holder) {
+    public WebStartShipmentLogic(Holder holder) {
         this.organizationDao = holder.organizationDao;
         this.deviceDao = holder.deviceDao;
         this.otaDao = holder.otaDao;
@@ -93,7 +93,7 @@ public final class WebStartOtaLogic implements PermissionBasedLogic<WebAppStateH
         for (int deviceId : shipmentDTO.deviceIds) {
             DeviceValue deviceValue = deviceDao.getDeviceValueById(deviceId);
             if (deviceValue != null) {
-                deviceValue.device.startedOTA(shipment, 0);
+                deviceValue.device.startShipment(shipment, 0);
                 reportingDBManager.collectEvent(shipment, deviceValue.device);
             }
         }
@@ -108,7 +108,7 @@ public final class WebStartOtaLogic implements PermissionBasedLogic<WebAppStateH
                         && channel.isWritable()) {
 
                     String downloadToken = TokenGeneratorUtil.generateNewToken();
-                    tokensPool.addToken(downloadToken, new OTADownloadToken(hardwareState.device.id));
+                    tokensPool.addToken(downloadToken, new ShipmentFirmwareDownloadToken(hardwareState.device.id));
                     String body = StringUtils.makeHardwareBody(serverUrl, shipmentDTO.pathToFirmware, downloadToken);
                     StringMessage msg = makeASCIIStringMessage(BLYNK_INTERNAL, 7777, body);
                     channel.writeAndFlush(msg, channel.voidPromise());

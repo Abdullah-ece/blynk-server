@@ -5,15 +5,15 @@ import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.HardwareInfo;
-import cc.blynk.server.core.model.device.ota.DeviceOtaInfo;
-import cc.blynk.server.core.model.device.ota.OTADeviceStatus;
+import cc.blynk.server.core.model.device.ota.DeviceShipmentInfo;
+import cc.blynk.server.core.model.device.ota.ShipmentDeviceStatus;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.Shipment;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.db.ReportingDBManager;
-import cc.blynk.server.internal.token.OTADownloadToken;
+import cc.blynk.server.internal.token.ShipmentFirmwareDownloadToken;
 import cc.blynk.server.internal.token.TokensPool;
 import cc.blynk.utils.NumberUtil;
 import cc.blynk.utils.StringUtils;
@@ -142,20 +142,20 @@ public final class BlynkInternalLogic {
 
     private void processOTA(ChannelHandlerContext ctx,
                                    Organization org, Device device, HardwareInfo hardwareInfo, int msgId) {
-        DeviceOtaInfo deviceOtaInfo = device.deviceOtaInfo;
-        if (deviceOtaInfo == null) {
+        DeviceShipmentInfo deviceShipmentInfo = device.deviceShipmentInfo;
+        if (deviceShipmentInfo == null) {
             return;
         }
 
-        Shipment shipment = org.getShipmentById(deviceOtaInfo.shipmentId);
+        Shipment shipment = org.getShipmentById(deviceShipmentInfo.shipmentId);
         if (shipment == null || shipment.firmwareInfo == null) {
-            log.trace("Shipment by id {} not found or empty firmware info.", deviceOtaInfo.shipmentId);
+            log.trace("Shipment by id {} not found or empty firmware info.", deviceShipmentInfo.shipmentId);
             return;
         }
 
         if (hardwareInfo.isFirmwareVersionChanged(shipment.firmwareInfo.buildDate)) {
-            if (deviceOtaInfo.status != null && deviceOtaInfo.status.isNotFailure()) {
-                if (deviceOtaInfo.isLimitReached(shipment.attemptsLimit)) {
+            if (deviceShipmentInfo.status != null && deviceShipmentInfo.status.isNotFailure()) {
+                if (deviceShipmentInfo.isLimitReached(shipment.attemptsLimit)) {
                     log.warn("OTA limit reached for deviceId {}.", device.id);
                     Session session = sessionDao.getOrgSession(org.id);
                     device.firmwareDownloadLimitReached(session, msgId, shipment);
@@ -163,7 +163,7 @@ public final class BlynkInternalLogic {
                 } else {
                     String serverUrl = props.getServerUrl(shipment.isSecure);
                     String downloadToken = TokenGeneratorUtil.generateNewToken();
-                    tokensPool.addToken(downloadToken, new OTADownloadToken(device.id));
+                    tokensPool.addToken(downloadToken, new ShipmentFirmwareDownloadToken(device.id));
                     String body = StringUtils.makeHardwareBody(serverUrl,
                             shipment.pathToFirmware, downloadToken);
                     StringMessage msg = makeASCIIStringMessage(BLYNK_INTERNAL, 7777, body);
@@ -173,7 +173,7 @@ public final class BlynkInternalLogic {
                 }
             }
         } else {
-            if (deviceOtaInfo.status == OTADeviceStatus.FIRMWARE_UPLOADED) {
+            if (deviceShipmentInfo.status == ShipmentDeviceStatus.FIRMWARE_UPLOADED) {
                 Session session = sessionDao.getOrgSession(org.id);
                 device.success(session, msgId, shipment);
                 reportingDBManager.collectEvent(shipment, device);

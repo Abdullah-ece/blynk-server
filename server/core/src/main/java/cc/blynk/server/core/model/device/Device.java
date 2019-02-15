@@ -3,8 +3,8 @@ package cc.blynk.server.core.model.device;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.device.ota.DeviceOtaInfo;
-import cc.blynk.server.core.model.device.ota.OTADeviceStatus;
+import cc.blynk.server.core.model.device.ota.DeviceShipmentInfo;
+import cc.blynk.server.core.model.device.ota.ShipmentDeviceStatus;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.model.serialization.JsonParser;
@@ -79,7 +79,7 @@ public class Device {
     public volatile HardwareInfo hardwareInfo;
 
     @JsonView(View.Private.class)
-    public volatile DeviceOtaInfo deviceOtaInfo;
+    public volatile DeviceShipmentInfo deviceShipmentInfo;
 
     public volatile long metadataUpdatedAt;
 
@@ -117,7 +117,7 @@ public class Device {
         this.connectionType = connectionType;
     }
 
-    private static String createOTAStatusMessage(int shipmentId, int deviceId, OTADeviceStatus status) {
+    private static String createShipmentStatusMessage(int shipmentId, int deviceId, ShipmentDeviceStatus status) {
         return "" + shipmentId + DEVICE_SEPARATOR + deviceId + BODY_SEPARATOR + status;
     }
 
@@ -247,7 +247,7 @@ public class Device {
         this.isUserIcon = newDevice.isUserIcon;
         //that's fine. leave this fields as it is. It cannot be update from app client.
         //this.hardwareInfo = newDevice.hardwareInfo;
-        //this.deviceOtaInfo = newDevice.deviceOtaInfo;
+        //this.deviceShipmentInfo = newDevice.deviceShipmentInfo;
         updateDeviceNameMetaFieldFromName();
         this.updatedAt = System.currentTimeMillis();
     }
@@ -282,12 +282,12 @@ public class Device {
         this.lastLoggedIP = null;
         this.status = Status.OFFLINE;
         this.hardwareInfo = null;
-        this.deviceOtaInfo = null;
+        this.deviceShipmentInfo = null;
         this.webDashboard = new WebDashboard();
         this.metadataUpdatedAt = 0;
         this.metadataUpdatedBy = null;
         this.updatedAt = 0;
-        this.deviceOtaInfo = null;
+        this.deviceShipmentInfo = null;
         this.pinStorage.erase();
     }
 
@@ -295,70 +295,62 @@ public class Device {
         return name == null ? "New Device" : name;
     }
 
-    public void clearDeviceOtaInfo() {
-        setDeviceOtaInfo(null);
-    }
-
-    public void setDeviceOtaInfo(DeviceOtaInfo deviceOtaInfo) {
-        this.deviceOtaInfo = deviceOtaInfo;
+    public void clearDeviceShipmentInfo() {
+        this.deviceShipmentInfo = null;
         this.updatedAt = System.currentTimeMillis();
     }
 
-    public void startedOTA(Shipment shipment, int attempts) {
-        long now = System.currentTimeMillis();
-        this.deviceOtaInfo = new DeviceOtaInfo(shipment.id, OTADeviceStatus.STARTED, attempts);
-        this.updatedAt = now;
+    public void startShipment(Shipment shipment, int attempts) {
+        this.deviceShipmentInfo = new DeviceShipmentInfo(shipment.id, ShipmentDeviceStatus.STARTED, attempts);
+        this.updatedAt = System.currentTimeMillis();
     }
 
     public void requestSent() {
-        DeviceOtaInfo prev = this.deviceOtaInfo;
-        long now = System.currentTimeMillis();
-        this.deviceOtaInfo = new DeviceOtaInfo(prev.shipmentId, OTADeviceStatus.REQUEST_SENT, prev.attempts);
-        this.updatedAt = now;
+        DeviceShipmentInfo prev = this.deviceShipmentInfo;
+        this.deviceShipmentInfo =
+                new DeviceShipmentInfo(prev.shipmentId, ShipmentDeviceStatus.REQUEST_SENT, prev.attempts);
+        this.updatedAt = System.currentTimeMillis();
     }
 
     public void success(Session session, int msgId, Shipment shipment) {
-        long now = System.currentTimeMillis();
-        this.deviceOtaInfo = new DeviceOtaInfo(this.deviceOtaInfo, OTADeviceStatus.SUCCESS);
-        this.updatedAt = now;
+        this.deviceShipmentInfo = new DeviceShipmentInfo(this.deviceShipmentInfo, ShipmentDeviceStatus.SUCCESS);
+        this.updatedAt = System.currentTimeMillis();
 
-        session.sendToUserOnWeb(msgId, shipment.startedBy,
-                createOTAStatusMessage(shipment.id, id, deviceOtaInfo.status));
+        String shipmentStatusMessage = createShipmentStatusMessage(shipment.id, this.id, deviceShipmentInfo.status);
+        session.sendToUserOnWeb(msgId, shipment.startedBy, shipmentStatusMessage);
         shipment.success(session, id);
     }
 
     public void firmwareRequested() {
-        DeviceOtaInfo prev = this.deviceOtaInfo;
-        long now = System.currentTimeMillis();
-        this.deviceOtaInfo = new DeviceOtaInfo(prev, OTADeviceStatus.FIRMWARE_REQUESTED, prev.attempts + 1);
-        this.updatedAt = now;
+        DeviceShipmentInfo prev = this.deviceShipmentInfo;
+        this.deviceShipmentInfo =
+                new DeviceShipmentInfo(prev, ShipmentDeviceStatus.FIRMWARE_REQUESTED, prev.attempts + 1);
+        this.updatedAt = System.currentTimeMillis();
     }
 
     public void firmwareUploaded() {
-        DeviceOtaInfo prev = this.deviceOtaInfo;
-        long now = System.currentTimeMillis();
-        this.deviceOtaInfo = new DeviceOtaInfo(prev, OTADeviceStatus.FIRMWARE_UPLOADED);
-        this.updatedAt = now;
+        DeviceShipmentInfo prev = this.deviceShipmentInfo;
+        this.deviceShipmentInfo = new DeviceShipmentInfo(prev, ShipmentDeviceStatus.FIRMWARE_UPLOADED);
+        this.updatedAt = System.currentTimeMillis();
     }
 
     public void firmwareUploadFailure(Session session, int msgId, Shipment shipment) {
-        long now = System.currentTimeMillis();
-        this.deviceOtaInfo = new DeviceOtaInfo(this.deviceOtaInfo, OTADeviceStatus.FAILURE);
-        this.updatedAt = now;
+        this.deviceShipmentInfo = new DeviceShipmentInfo(this.deviceShipmentInfo, ShipmentDeviceStatus.FAILURE);
+        this.updatedAt = System.currentTimeMillis();
 
-        session.sendToUserOnWeb(msgId, shipment.startedBy,
-                createOTAStatusMessage(shipment.id, id, deviceOtaInfo.status));
-        shipment.failure(session, id);
+        String shipmentStatusMessage = createShipmentStatusMessage(shipment.id, this.id, deviceShipmentInfo.status);
+        session.sendToUserOnWeb(msgId, shipment.startedBy, shipmentStatusMessage);
+        shipment.failure(session, this.id);
     }
 
     public void firmwareDownloadLimitReached(Session session, int msgId, Shipment shipment) {
-        long now = System.currentTimeMillis();
-        this.deviceOtaInfo = new DeviceOtaInfo(this.deviceOtaInfo, OTADeviceStatus.DOWNLOAD_LIMIT_REACHED);
-        this.updatedAt = now;
+        this.deviceShipmentInfo =
+                new DeviceShipmentInfo(this.deviceShipmentInfo, ShipmentDeviceStatus.DOWNLOAD_LIMIT_REACHED);
+        this.updatedAt = System.currentTimeMillis();
 
-        session.sendToUserOnWeb(msgId, shipment.startedBy,
-                createOTAStatusMessage(shipment.id, id, deviceOtaInfo.status));
-        shipment.downloadLimitReached(session, id);
+        String shipmentStatusMessage = createShipmentStatusMessage(shipment.id, this.id, deviceShipmentInfo.status);
+        session.sendToUserOnWeb(msgId, shipment.startedBy, shipmentStatusMessage);
+        shipment.downloadLimitReached(session, this.id);
     }
 
     public boolean fitsBufferSize(int bodySize) {

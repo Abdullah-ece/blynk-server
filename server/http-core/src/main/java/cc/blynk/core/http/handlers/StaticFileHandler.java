@@ -8,7 +8,7 @@ import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.web.product.Shipment;
 import cc.blynk.server.db.ReportingDBManager;
-import cc.blynk.server.internal.token.OTADownloadToken;
+import cc.blynk.server.internal.token.ShipmentFirmwareDownloadToken;
 import cc.blynk.server.internal.token.TokensPool;
 import cc.blynk.utils.FileUtils;
 import io.netty.buffer.Unpooled;
@@ -281,7 +281,7 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
         Device device = null;
         if (deviceValue != null) {
             device = deviceValue.device;
-            Shipment shipment = deviceValue.org.getShipmentById(device.deviceOtaInfo.shipmentId);
+            Shipment shipment = deviceValue.org.getShipmentById(device.deviceShipmentInfo.shipmentId);
             if (shipment != null) {
                 device.firmwareRequested();
                 reportingDBManager.collectEvent(shipment, device);
@@ -311,7 +311,7 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
 
         if (device != null) {
             Device finalDevice = device;
-            Shipment shipment = deviceValue.org.getShipmentById(device.deviceOtaInfo.shipmentId);
+            Shipment shipment = deviceValue.org.getShipmentById(device.deviceShipmentInfo.shipmentId);
             log.debug("Adding finish upload listener for deviceId {}.", finalDevice.id);
             lastContentFuture.addListener((future) -> {
                     if (future.isSuccess()) {
@@ -340,12 +340,12 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
         if (downloadToken == null) {
             return null;
         }
-        OTADownloadToken otaDownloadToken = tokensPool.getOTADownloadToken(downloadToken);
-        if (otaDownloadToken == null) {
+        ShipmentFirmwareDownloadToken shipmentFirmwareDownloadToken = tokensPool.getOTADownloadToken(downloadToken);
+        if (shipmentFirmwareDownloadToken == null) {
             log.warn("Unexpected token for static file {}.", downloadToken);
             return null;
         }
-        return deviceDao.getDeviceValueById(otaDownloadToken.deviceId);
+        return deviceDao.getDeviceValueById(shipmentFirmwareDownloadToken.deviceId);
     }
 
     //todo check somehow it is OTA file?

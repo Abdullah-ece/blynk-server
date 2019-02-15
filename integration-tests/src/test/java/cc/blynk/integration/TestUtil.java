@@ -12,7 +12,7 @@ import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.model.device.ota.OTADeviceStatus;
+import cc.blynk.server.core.model.device.ota.ShipmentDeviceStatus;
 import cc.blynk.server.core.model.dto.ProductDTO;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.SortOrder;
@@ -202,7 +202,7 @@ public final class TestUtil {
         return new StringMessage(msgId, DEVICE_CONNECTED, body);
     }
 
-    public static StringMessage otaStatus(int msgId, int shipmentId, int deviceId, OTADeviceStatus status) {
+    public static StringMessage otaStatus(int msgId, int shipmentId, int deviceId, ShipmentDeviceStatus status) {
         return new StringMessage(msgId, WEB_OTA_STATUS,
                 "" + shipmentId + DEVICE_SEPARATOR + deviceId + BODY_SEPARATOR + status);
     }

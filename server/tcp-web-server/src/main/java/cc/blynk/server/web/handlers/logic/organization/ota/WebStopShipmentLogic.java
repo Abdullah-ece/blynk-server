@@ -6,7 +6,7 @@ import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.DeviceValue;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.model.device.ota.OTADeviceStatus;
+import cc.blynk.server.core.model.device.ota.DeviceShipmentInfo;
 import cc.blynk.server.core.model.dto.ShipmentDTO;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
@@ -23,12 +23,12 @@ import static cc.blynk.server.internal.CommonByteBufUtil.ok;
  * Created by Dmitriy Dumanskiy.
  * Created on 12.12.18.
  */
-public final class WebStopOtaLogic implements PermissionBasedLogic<WebAppStateHolder> {
+public final class WebStopShipmentLogic implements PermissionBasedLogic<WebAppStateHolder> {
 
     private final OrganizationDao organizationDao;
     private final DeviceDao deviceDao;
 
-    public WebStopOtaLogic(Holder holder) {
+    public WebStopShipmentLogic(Holder holder) {
         this.organizationDao = holder.organizationDao;
         this.deviceDao = holder.deviceDao;
     }
@@ -64,9 +64,9 @@ public final class WebStopOtaLogic implements PermissionBasedLogic<WebAppStateHo
             DeviceValue deviceValue = deviceDao.getDeviceValueById(deviceId);
             if (deviceValue != null) {
                 Device device = deviceValue.device;
-                if (device.deviceOtaInfo != null && device.deviceOtaInfo.status != OTADeviceStatus.SUCCESS
-                        && device.deviceOtaInfo.status.isNotFailure()) {
-                    device.clearDeviceOtaInfo();
+                DeviceShipmentInfo deviceShipmentInfo = device.deviceShipmentInfo;
+                if (deviceShipmentInfo != null && deviceShipmentInfo.status.inProgress()) {
+                    device.clearDeviceShipmentInfo();
                 }
             }
         }

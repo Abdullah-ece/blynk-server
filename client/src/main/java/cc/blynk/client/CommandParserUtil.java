@@ -105,11 +105,11 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_TEMP_SECURE_TO
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_USER_COUNTERS_BY_ROLE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_INVITE_USER;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_LOGIN_VIA_INVITE;
-import static cc.blynk.server.core.protocol.enums.Command.WEB_OTA_GET_FIRMWARE_INFO;
-import static cc.blynk.server.core.protocol.enums.Command.WEB_OTA_START;
-import static cc.blynk.server.core.protocol.enums.Command.WEB_OTA_STOP;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_RESOLVE_EVENT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_SET_AUTH_TOKEN;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_SHIPMENT_GET_FIRMWARE_INFO;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_SHIPMENT_START;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_SHIPMENT_STOP;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_TRACK_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_TRACK_ORG;
 
@@ -356,11 +356,11 @@ public final class CommandParserUtil {
             case "webtrackorg" :
                 return WEB_TRACK_ORG;
             case "webotagetfirmwareinfo" :
-                return WEB_OTA_GET_FIRMWARE_INFO;
+                return WEB_SHIPMENT_GET_FIRMWARE_INFO;
             case "webstartota" :
-                return WEB_OTA_START;
+                return WEB_SHIPMENT_START;
             case "webstopota" :
-                return WEB_OTA_STOP;
+                return WEB_SHIPMENT_STOP;
             case "getusercountersbyrole" :
                 return WEB_GET_USER_COUNTERS_BY_ROLE;
             case "webgetdevicesbyreferencemetafield" :

@@ -5,7 +5,7 @@ import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.HardwareInfo;
 import cc.blynk.server.core.model.device.Status;
-import cc.blynk.server.core.model.device.ota.DeviceOtaInfo;
+import cc.blynk.server.core.model.device.ota.DeviceShipmentInfo;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.WebDashboard;
 
@@ -14,7 +14,7 @@ import cc.blynk.server.core.model.web.product.WebDashboard;
  * Created by Dmitriy Dumanskiy.
  * Created on 07.07.17.
  */
-public class DeviceWithOrgIdDTO {
+public final class DeviceWithOrgIdDTO {
 
     public final int id;
 
@@ -54,7 +54,7 @@ public class DeviceWithOrgIdDTO {
 
     public final HardwareInfo hardwareInfo;
 
-    public final DeviceOtaInfo deviceOtaInfo;
+    public final DeviceShipmentInfo deviceShipmentInfo;
 
     public DeviceWithOrgIdDTO(Device device, int orgId) {
         this.id = device.id;
@@ -76,6 +76,6 @@ public class DeviceWithOrgIdDTO {
         this.metadataUpdatedBy = device.metadataUpdatedBy;
         this.lastReportedAt = device.pinStorage.lastReportedAt;
         this.hardwareInfo = device.hardwareInfo;
-        this.deviceOtaInfo = device.deviceOtaInfo;
+        this.deviceShipmentInfo = device.deviceShipmentInfo;
     }
 }

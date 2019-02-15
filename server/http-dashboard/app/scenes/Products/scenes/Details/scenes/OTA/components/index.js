@@ -396,7 +396,7 @@ class OTA extends React.Component {
 
     }, {
       title         : 'FOTA Status',
-      dataIndex     : 'deviceOtaInfo.otaStatus',
+      dataIndex     : 'deviceShipmentInfo.status',
       filters       : [{
         text : 'Pending',
         value: 'PENDING',
@@ -413,33 +413,33 @@ class OTA extends React.Component {
       filterMultiple: false,
       onFilter      : (value, record) => {
         if (value === 'PENDING') {
-          return [OTA_STATUSES.STARTED, OTA_STATUSES.REQUEST_SENT, OTA_STATUSES.FIRMWARE_UPLOADED].indexOf(record && record.deviceOtaInfo && record.deviceOtaInfo.otaStatus || null) >= 0;
+          return [OTA_STATUSES.STARTED, OTA_STATUSES.REQUEST_SENT, OTA_STATUSES.FIRMWARE_UPLOADED].indexOf(record && record.deviceShipmentInfo && record.deviceShipmentInfo.status || null) >= 0;
         }
 
         if (value === 'SUCCESS') {
-          return OTA_STATUSES.SUCCESS === record && record.deviceOtaInfo && record.deviceOtaInfo.otaStatus || false;
+          return OTA_STATUSES.SUCCESS === record && record.deviceShipmentInfo && record.deviceShipmentInfo.status || false;
         }
 
         if (value === 'FAILURE') {
-          return OTA_STATUSES.FAILURE === record && record.deviceOtaInfo && record.deviceOtaInfo.otaStatus || false;
+          return OTA_STATUSES.FAILURE === record && record.deviceShipmentInfo && record.deviceShipmentInfo.status || false;
         }
 
         if (value === 'NEVER_UPDATED') {
-          return !record || !record.deviceOtaInfo || !record.deviceOtaInfo.otaStatus;
+          return !record || !record.deviceShipmentInfo || !record.deviceShipmentInfo.otaStatus;
         }
       },
 
-      render: (text, record) => <OTAStatus deviceOtaInfo={record && record.deviceOtaInfo}
-                                           status={record && record.deviceOtaInfo && record.deviceOtaInfo.otaStatus || null}
+      render: (text, record) => <OTAStatus deviceShipmentInfo={record && record.deviceShipmentInfo}
+                                           status={record && record.deviceShipmentInfo && record.deviceShipmentInfo.status || null}
                                            disconnectTime={record.disconnectTime}/>
     }, {
       title    : 'OTA initiated',
-      dataIndex: 'deviceOtaInfo.otaInitiatedBy',
+      dataIndex: 'deviceShipmentInfo.otaInitiatedBy',
       render   : (text, record) =>
-        <div>{text || "-"} {record.deviceOtaInfo && record.deviceOtaInfo.otaInitiatedAt && getCalendarFormatDate(record.deviceOtaInfo.otaInitiatedAt)}</div>
+        <div>{text || "-"} {record.deviceShipmentInfo && getCalendarFormatDate(record.deviceShipmentInfo.otaInitiatedAt)}</div>
     }, {
       title    : 'Last Updated',
-      dataIndex: 'deviceOtaInfo.finishedAt',
+      dataIndex: 'deviceShipmentInfo.finishedAt',
       render   : (value) => <div>{(!value || value < 0 ? "-" : getCalendarFormatDate(value)) || "-"}</div>
     },];
   }

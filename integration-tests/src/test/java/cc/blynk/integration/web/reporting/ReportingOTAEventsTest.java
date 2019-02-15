@@ -6,7 +6,7 @@ import cc.blynk.integration.model.websocket.AppWebSocketClient;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.model.device.ota.OTADeviceStatus;
+import cc.blynk.server.core.model.device.ota.ShipmentDeviceStatus;
 import cc.blynk.server.core.model.dto.ProductDTO;
 import cc.blynk.server.core.model.dto.ShipmentDTO;
 import cc.blynk.server.core.model.web.product.FirmwareInfo;
@@ -98,8 +98,8 @@ public class ReportingOTAEventsTest extends SingleServerInstancePerTestWithDBAnd
         createdDevice = client.parseDevice(2);
 
         assertNotNull(createdDevice);
-        assertNotNull(createdDevice.deviceOtaInfo);
-        assertEquals(OTADeviceStatus.STARTED, createdDevice.deviceOtaInfo.status);
+        assertNotNull(createdDevice.deviceShipmentInfo);
+        assertEquals(ShipmentDeviceStatus.STARTED, createdDevice.deviceShipmentInfo.status);
 
         TestHardClient newHardClient = createHardClient(createdDevice.token, properties);
 
@@ -116,8 +116,8 @@ public class ReportingOTAEventsTest extends SingleServerInstancePerTestWithDBAnd
         client.getDevice(orgId, createdDevice.id);
         createdDevice = client.parseDevice(1);
         assertNotNull(createdDevice);
-        assertNotNull(createdDevice.deviceOtaInfo);
-        assertEquals(OTADeviceStatus.REQUEST_SENT, createdDevice.deviceOtaInfo.status);
+        assertNotNull(createdDevice.deviceShipmentInfo);
+        assertEquals(ShipmentDeviceStatus.REQUEST_SENT, createdDevice.deviceShipmentInfo.status);
 
         createFile(parsedFirmwareInfo, firmwareDownloadUrl, null, null, httpclient);
 
@@ -137,17 +137,17 @@ public class ReportingOTAEventsTest extends SingleServerInstancePerTestWithDBAnd
         client.getDevice(orgId, createdDevice.id);
         createdDevice = client.parseDevice(1);
         assertNotNull(createdDevice);
-        assertNotNull(createdDevice.deviceOtaInfo);
+        assertNotNull(createdDevice.deviceShipmentInfo);
         assertNotNull(createdDevice.hardwareInfo);
-        assertEquals(OTADeviceStatus.SUCCESS, createdDevice.deviceOtaInfo.status);
+        assertEquals(ShipmentDeviceStatus.SUCCESS, createdDevice.deviceShipmentInfo.status);
         assertEquals("Dec 13 2018 15:04:29", createdDevice.hardwareInfo.build);
 
-        Map<OTADeviceStatus, Integer> expected = Map.of(
-                OTADeviceStatus.STARTED,            1,
-                OTADeviceStatus.REQUEST_SENT,       1,
-                OTADeviceStatus.FIRMWARE_REQUESTED, 1,
-                OTADeviceStatus.FIRMWARE_UPLOADED,  1,
-                OTADeviceStatus.SUCCESS,            1
+        Map<ShipmentDeviceStatus, Integer> expected = Map.of(
+                ShipmentDeviceStatus.STARTED,            1,
+                ShipmentDeviceStatus.REQUEST_SENT,       1,
+                ShipmentDeviceStatus.FIRMWARE_REQUESTED, 1,
+                ShipmentDeviceStatus.FIRMWARE_UPLOADED,  1,
+                ShipmentDeviceStatus.SUCCESS,            1
         );
 
         checkOTAStatsWithWorker(expected, shipment.id, holder.reportingDBManager);
@@ -180,19 +180,19 @@ public class ReportingOTAEventsTest extends SingleServerInstancePerTestWithDBAnd
         createdDevice = client.parseDevice(2);
 
         assertNotNull(createdDevice);
-        assertNotNull(createdDevice.deviceOtaInfo);
-        assertEquals(OTADeviceStatus.STARTED, createdDevice.deviceOtaInfo.status);
+        assertNotNull(createdDevice.deviceShipmentInfo);
+        assertEquals(ShipmentDeviceStatus.STARTED, createdDevice.deviceShipmentInfo.status);
 
         TestHardClient newHardClient = createHardClient(createdDevice.token, properties);
 
         newHardClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
-        client.verifyResult(otaStatus(1, shipment.id, createdDevice.id, OTADeviceStatus.DOWNLOAD_LIMIT_REACHED));
+        client.verifyResult(otaStatus(1, shipment.id, createdDevice.id, ShipmentDeviceStatus.DOWNLOAD_LIMIT_REACHED));
 
-        checkDeviceStatus(client, createdDevice.id, orgId, OTADeviceStatus.DOWNLOAD_LIMIT_REACHED);
+        checkDeviceStatus(client, createdDevice.id, orgId, ShipmentDeviceStatus.DOWNLOAD_LIMIT_REACHED);
 
-        Map<OTADeviceStatus, Integer> expected = Map.of(
-                OTADeviceStatus.STARTED,                1,
-                OTADeviceStatus.DOWNLOAD_LIMIT_REACHED, 1
+        Map<ShipmentDeviceStatus, Integer> expected = Map.of(
+                ShipmentDeviceStatus.STARTED,                1,
+                ShipmentDeviceStatus.DOWNLOAD_LIMIT_REACHED, 1
         );
 
         checkOTAStatsWithWorker(expected, shipment.id, holder.reportingDBManager);
@@ -218,35 +218,35 @@ public class ReportingOTAEventsTest extends SingleServerInstancePerTestWithDBAnd
         long now = System.currentTimeMillis();
         Shipment shipment = new Shipment(shipmentDTO, user, now);
 
-        createdDevice.startedOTA(shipment, 0);
+        createdDevice.startShipment(shipment, 0);
         holder.reportingDBManager.collectEvent(shipment, createdDevice);
 
         Session session = holder.sessionDao.getOrgSession(orgId);
         createdDevice.firmwareUploadFailure(session, 1, shipment);
         holder.reportingDBManager.collectEvent(shipment, createdDevice);
 
-        client.verifyResult(otaStatus(1, shipment.id, createdDevice.id, OTADeviceStatus.FAILURE));
+        client.verifyResult(otaStatus(1, shipment.id, createdDevice.id, ShipmentDeviceStatus.FAILURE));
 
-        assertNotNull(createdDevice.deviceOtaInfo);
-        assertEquals(OTADeviceStatus.FAILURE, createdDevice.deviceOtaInfo.status);
+        assertNotNull(createdDevice.deviceShipmentInfo);
+        assertEquals(ShipmentDeviceStatus.FAILURE, createdDevice.deviceShipmentInfo.status);
 
-        Map<OTADeviceStatus, Integer> expected = Map.of(
-                OTADeviceStatus.STARTED, 1,
-                OTADeviceStatus.FAILURE, 1
+        Map<ShipmentDeviceStatus, Integer> expected = Map.of(
+                ShipmentDeviceStatus.STARTED, 1,
+                ShipmentDeviceStatus.FAILURE, 1
         );
 
         checkOTAStatsWithWorker(expected, shipment.id, holder.reportingDBManager);
     }
 
-    private void checkOTAStatsWithWorker(Map<OTADeviceStatus, Integer> expected, int shipmentId, ReportingDBManager reportingDBManager) {
+    private void checkOTAStatsWithWorker(Map<ShipmentDeviceStatus, Integer> expected, int shipmentId, ReportingDBManager reportingDBManager) {
         ReportingWorker reportingWorker = new ReportingWorker(reportingDBManager);
         reportingWorker.run();
         sleep(60);
 
-        Map<OTADeviceStatus, Integer> messagesCount = holder.reportingDBManager.reportingOTAStatsDao.selectOTAStatusMessagesCount(shipmentId);
+        Map<ShipmentDeviceStatus, Integer> messagesCount = holder.reportingDBManager.reportingOTAStatsDao.selectShipmentStatusMessagesCount(shipmentId);
         assertNotNull(messagesCount);
 
-        for (Map.Entry<OTADeviceStatus, Integer> entry: expected.entrySet()) {
+        for (Map.Entry<ShipmentDeviceStatus, Integer> entry: expected.entrySet()) {
             Integer expectedValue = entry.getValue();
             Integer receivedValue = messagesCount.get(entry.getKey());
 

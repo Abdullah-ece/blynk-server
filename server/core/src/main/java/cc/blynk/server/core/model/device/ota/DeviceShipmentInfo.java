@@ -8,29 +8,29 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Created by Dmitriy Dumanskiy.
  * Created on 17.08.17.
  */
-public final class DeviceOtaInfo {
+public final class DeviceShipmentInfo {
 
     public final int shipmentId;
 
-    public final OTADeviceStatus status;
+    public final ShipmentDeviceStatus status;
 
     public final int attempts;
 
     @JsonCreator
-    public DeviceOtaInfo(@JsonProperty("shipmentId") int shipmentId,
-                         @JsonProperty("status") OTADeviceStatus status,
-                         @JsonProperty("attempts") int attempts) {
+    public DeviceShipmentInfo(@JsonProperty("shipmentId") int shipmentId,
+                              @JsonProperty("status") ShipmentDeviceStatus status,
+                              @JsonProperty("attempts") int attempts) {
         this.shipmentId = shipmentId;
         this.status = status;
         this.attempts = attempts;
     }
 
-    public DeviceOtaInfo(DeviceOtaInfo prev, OTADeviceStatus status) {
+    public DeviceShipmentInfo(DeviceShipmentInfo prev, ShipmentDeviceStatus status) {
         this(prev.shipmentId, status, prev.attempts);
 
     }
 
-    public DeviceOtaInfo(DeviceOtaInfo prev, OTADeviceStatus status, int attempts) {
+    public DeviceShipmentInfo(DeviceShipmentInfo prev, ShipmentDeviceStatus status, int attempts) {
         this(prev.shipmentId, status, attempts);
 
     }

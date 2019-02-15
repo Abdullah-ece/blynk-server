@@ -67,7 +67,7 @@ public class CloneWorkFlowTest extends SingleServerInstancePerTestWithDB {
         assertEquals(0, device.connectTime);
         assertEquals(0, device.disconnectTime);
         assertEquals(0, device.firstConnectTime);
-        assertNull(device.deviceOtaInfo);
+        assertNull(device.deviceShipmentInfo);
         assertNull(device.hardwareInfo);
         Slider slider = (Slider) dashBoard.getWidgetById(4);
         assertNotNull(slider);
@@ -94,7 +94,7 @@ public class CloneWorkFlowTest extends SingleServerInstancePerTestWithDB {
         assertEquals(0, device.connectTime);
         assertEquals(0, device.disconnectTime);
         assertEquals(0, device.firstConnectTime);
-        assertNull(device.deviceOtaInfo);
+        assertNull(device.deviceShipmentInfo);
         assertNull(device.hardwareInfo);
         assertNotNull(device.token);
 

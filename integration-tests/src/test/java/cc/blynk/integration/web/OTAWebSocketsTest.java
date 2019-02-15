@@ -8,7 +8,7 @@ import cc.blynk.integration.model.websocket.AppWebSocketClient;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.model.device.ota.OTADeviceStatus;
+import cc.blynk.server.core.model.device.ota.ShipmentDeviceStatus;
 import cc.blynk.server.core.model.dto.ProductDTO;
 import cc.blynk.server.core.model.dto.ShipmentDTO;
 import cc.blynk.server.core.model.web.product.FirmwareInfo;
@@ -71,6 +71,19 @@ public class OTAWebSocketsTest extends SingleServerInstancePerTestWithDBAndNewOr
         uploadHttpsUrl = String.format("https://localhost:%s" + properties.getUploadPath(), properties.getHttpsPort());
     }
 
+    // resets client
+    public static void checkDeviceStatus(AppWebSocketClient client, int deviceId, int orgId, ShipmentDeviceStatus status) throws Exception {
+        client.reset();
+
+        client.getDevice(orgId, deviceId);
+        Device device = client.parseDevice(1);
+        assertNotNull(device);
+        assertNotNull(device.deviceShipmentInfo);
+        assertEquals(status, device.deviceShipmentInfo.status);
+
+        client.reset();
+    }
+
     @Test
     public void otaBasicFlowForDeviceConnectedAfterOTAStarted() throws Exception {
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
@@ -97,11 +110,11 @@ public class OTAWebSocketsTest extends SingleServerInstancePerTestWithDBAndNewOr
         createdDevice = client.parseDevice(2);
 
         assertNotNull(createdDevice);
-        assertNotNull(createdDevice.deviceOtaInfo);
-        assertEquals(OTADeviceStatus.STARTED, createdDevice.deviceOtaInfo.status);
+        assertNotNull(createdDevice.deviceShipmentInfo);
+        assertEquals(ShipmentDeviceStatus.STARTED, createdDevice.deviceShipmentInfo.status);
         //todo check within shipment
-        //assertEquals(getUserName(), createdDevice.deviceOtaInfo.otaStartedBy);
-        //assertEquals(System.currentTimeMillis(), createdDevice.deviceOtaInfo.otaStartedAt, 5000);
+        //assertEquals(getUserName(), createdDevice.deviceShipmentInfo.otaStartedBy);
+        //assertEquals(System.currentTimeMillis(), createdDevice.deviceShipmentInfo.otaStartedAt, 5000);
 
         TestHardClient newHardClient = createHardClient(createdDevice.token, properties);
 
@@ -118,8 +131,8 @@ public class OTAWebSocketsTest extends SingleServerInstancePerTestWithDBAndNewOr
         client.getDevice(orgId, createdDevice.id);
         createdDevice = client.parseDevice(1);
         assertNotNull(createdDevice);
-        assertNotNull(createdDevice.deviceOtaInfo);
-        assertEquals(OTADeviceStatus.REQUEST_SENT, createdDevice.deviceOtaInfo.status);
+        assertNotNull(createdDevice.deviceShipmentInfo);
+        assertEquals(ShipmentDeviceStatus.REQUEST_SENT, createdDevice.deviceShipmentInfo.status);
 
         createFile(parsedFirmwareInfo, firmwareDownloadUrl, null, null, httpclient);
 
@@ -139,9 +152,9 @@ public class OTAWebSocketsTest extends SingleServerInstancePerTestWithDBAndNewOr
         client.getDevice(orgId, createdDevice.id);
         createdDevice = client.parseDevice(1);
         assertNotNull(createdDevice);
-        assertNotNull(createdDevice.deviceOtaInfo);
+        assertNotNull(createdDevice.deviceShipmentInfo);
         assertNotNull(createdDevice.hardwareInfo);
-        assertEquals(OTADeviceStatus.SUCCESS, createdDevice.deviceOtaInfo.status);
+        assertEquals(ShipmentDeviceStatus.SUCCESS, createdDevice.deviceShipmentInfo.status);
         assertEquals("Dec 13 2018 15:04:29", createdDevice.hardwareInfo.build);
     }
 
@@ -171,11 +184,11 @@ public class OTAWebSocketsTest extends SingleServerInstancePerTestWithDBAndNewOr
         createdDevice = client.parseDevice(2);
 
         assertNotNull(createdDevice);
-        assertNotNull(createdDevice.deviceOtaInfo);
-        assertEquals(OTADeviceStatus.STARTED, createdDevice.deviceOtaInfo.status);
+        assertNotNull(createdDevice.deviceShipmentInfo);
+        assertEquals(ShipmentDeviceStatus.STARTED, createdDevice.deviceShipmentInfo.status);
         //todo check within shipment
-        //assertEquals(getUserName(), createdDevice.deviceOtaInfo.otaStartedBy);
-        //assertEquals(System.currentTimeMillis(), createdDevice.deviceOtaInfo.otaStartedAt, 5000);
+        //assertEquals(getUserName(), createdDevice.deviceShipmentInfo.otaStartedBy);
+        //assertEquals(System.currentTimeMillis(), createdDevice.deviceShipmentInfo.otaStartedAt, 5000);
 
         TestHardClient newHardClient = createHardClient(createdDevice.token, properties);
 
@@ -192,8 +205,8 @@ public class OTAWebSocketsTest extends SingleServerInstancePerTestWithDBAndNewOr
         client.getDevice(orgId, createdDevice.id);
         createdDevice = client.parseDevice(1);
         assertNotNull(createdDevice);
-        assertNotNull(createdDevice.deviceOtaInfo);
-        assertEquals(OTADeviceStatus.REQUEST_SENT, createdDevice.deviceOtaInfo.status);
+        assertNotNull(createdDevice.deviceShipmentInfo);
+        assertEquals(ShipmentDeviceStatus.REQUEST_SENT, createdDevice.deviceShipmentInfo.status);
 
         createFile(parsedFirmwareInfo, firmwareDownloadUrl, null, null, httpclient);
 
@@ -201,8 +214,8 @@ public class OTAWebSocketsTest extends SingleServerInstancePerTestWithDBAndNewOr
         client.getDevice(orgId, createdDevice.id);
         createdDevice = client.parseDevice(1);
         assertNotNull(createdDevice);
-        assertNotNull(createdDevice.deviceOtaInfo);
-        assertEquals(OTADeviceStatus.FIRMWARE_UPLOADED, createdDevice.deviceOtaInfo.status);
+        assertNotNull(createdDevice.deviceShipmentInfo);
+        assertEquals(ShipmentDeviceStatus.FIRMWARE_UPLOADED, createdDevice.deviceShipmentInfo.status);
     }
 
     @Test
@@ -245,11 +258,33 @@ public class OTAWebSocketsTest extends SingleServerInstancePerTestWithDBAndNewOr
         client.getDevice(orgId, createdDevice.id);
         createdDevice = client.parseDevice(3);
         assertNotNull(createdDevice);
-        assertNotNull(createdDevice.deviceOtaInfo);
+        assertNotNull(createdDevice.deviceShipmentInfo);
         //todo check within shipment
-        //assertEquals(getUserName(), newDevice.deviceOtaInfo.otaStartedBy);
-        //assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.otaStartedAt, 5000);
-        assertEquals(OTADeviceStatus.REQUEST_SENT, createdDevice.deviceOtaInfo.status);
+        //assertEquals(getUserName(), newDevice.deviceShipmentInfo.otaStartedBy);
+        //assertEquals(System.currentTimeMillis(), newDevice.deviceShipmentInfo.otaStartedAt, 5000);
+        assertEquals(ShipmentDeviceStatus.REQUEST_SENT, createdDevice.deviceShipmentInfo.status);
+    }
+
+    @Test
+    public void testShipment() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+
+        client.getTempSecureToken();
+        String uploadToken = client.parseToken(1).token;
+
+        String pathToFirmware = upload(httpclient, uploadHttpsUrl, uploadToken, "static/ota/Airius_CC3220SF_v081.ota.tar");
+
+        FirmwareInfo parsedFirmwareInfo = getFirmwareInfo(client, pathToFirmware, "0.8.1",
+                BoardType.TI_CC3220, "Dec 13 2018 15:04:29", "7AC03C4FECAB96547DBB50350425A204",
+                properties, httpclient);
+
+        Device createdDevice = createProductAndDevice(client, orgId);
+
+        ShipmentDTO shipmentDTO = new ShipmentDTO(1, 1, createdDevice.productId, pathToFirmware, "original name",
+                new int[] {createdDevice.id}, "title", parsedFirmwareInfo, 5, null, new ShipmentProgress());
+        client.otaStart(shipmentDTO);
+        Shipment shipment = client.parseShipment(1);
+        checkShipment(shipment, shipmentDTO, 1);
     }
 
     @Test
@@ -276,11 +311,11 @@ public class OTAWebSocketsTest extends SingleServerInstancePerTestWithDBAndNewOr
         client.getDevice(orgId, createdDevice.id);
         createdDevice = client.parseDevice(2);
         assertNotNull(createdDevice);
-        assertNotNull(createdDevice.deviceOtaInfo);
-        assertEquals(OTADeviceStatus.STARTED, createdDevice.deviceOtaInfo.status);
+        assertNotNull(createdDevice.deviceShipmentInfo);
+        assertEquals(ShipmentDeviceStatus.STARTED, createdDevice.deviceShipmentInfo.status);
         //todo check within shipment
-        //assertEquals(getUserName(), newDevice.deviceOtaInfo.otaStartedBy);
-        //assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.otaStartedAt, 5000);
+        //assertEquals(getUserName(), newDevice.deviceShipmentInfo.otaStartedBy);
+        //assertEquals(System.currentTimeMillis(), newDevice.deviceShipmentInfo.otaStartedAt, 5000);
 
         int orgId = 1;
         client.getDevice(orgId, createdDevice.id);
@@ -295,29 +330,7 @@ public class OTAWebSocketsTest extends SingleServerInstancePerTestWithDBAndNewOr
         client.getDevice(orgId, createdDevice.id);
         createdDevice = client.parseDevice(2);
         assertNotNull(createdDevice);
-        assertNull(createdDevice.deviceOtaInfo);
-    }
-
-    @Test
-    public void testShipment() throws Exception {
-        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
-
-        client.getTempSecureToken();
-        String uploadToken = client.parseToken(1).token;
-
-        String pathToFirmware = upload(httpclient, uploadHttpsUrl, uploadToken, "static/ota/Airius_CC3220SF_v081.ota.tar");
-
-        FirmwareInfo parsedFirmwareInfo = getFirmwareInfo(client, pathToFirmware, "0.8.1",
-                BoardType.TI_CC3220, "Dec 13 2018 15:04:29", "7AC03C4FECAB96547DBB50350425A204",
-                properties, httpclient);
-
-        Device createdDevice = createProductAndDevice(client, orgId);
-
-        ShipmentDTO shipmentDTO = new ShipmentDTO(1, 1, createdDevice.productId, pathToFirmware, "original name",
-                new int[] {createdDevice.id}, "title", parsedFirmwareInfo, 5, null, new ShipmentProgress());
-        client.otaStart(shipmentDTO);
-        Shipment shipment = client.parseShipment(1);
-        checkShipment(shipment, shipmentDTO, 1);
+        assertNull(createdDevice.deviceShipmentInfo);
     }
 
     @Test
@@ -346,8 +359,8 @@ public class OTAWebSocketsTest extends SingleServerInstancePerTestWithDBAndNewOr
         createdDevice = client.parseDevice(2);
 
         assertNotNull(createdDevice);
-        assertNotNull(createdDevice.deviceOtaInfo);
-        assertEquals(OTADeviceStatus.STARTED, createdDevice.deviceOtaInfo.status);
+        assertNotNull(createdDevice.deviceShipmentInfo);
+        assertEquals(ShipmentDeviceStatus.STARTED, createdDevice.deviceShipmentInfo.status);
 
         TestHardClient newHardClient = createHardClient(createdDevice.token, properties);
 
@@ -363,8 +376,8 @@ public class OTAWebSocketsTest extends SingleServerInstancePerTestWithDBAndNewOr
         client.getDevice(orgId, createdDevice.id);
         createdDevice = client.parseDevice(1);
         assertNotNull(createdDevice);
-        assertNotNull(createdDevice.deviceOtaInfo);
-        assertEquals(OTADeviceStatus.REQUEST_SENT, createdDevice.deviceOtaInfo.status);
+        assertNotNull(createdDevice.deviceShipmentInfo);
+        assertEquals(ShipmentDeviceStatus.REQUEST_SENT, createdDevice.deviceShipmentInfo.status);
 
         createFile(parsedFirmwareInfo, firmwareDownloadUrl, null, null, httpclient);
 
@@ -380,10 +393,10 @@ public class OTAWebSocketsTest extends SingleServerInstancePerTestWithDBAndNewOr
         newHardClient.never(internal(7777, "ota\0" + firmwareDownloadUrl));
 
         client.verifyResult(deviceConnected(1, createdDevice.id));
-        client.verifyResult(otaStatus(2, shipment.id, createdDevice.id, OTADeviceStatus.SUCCESS));
+        client.verifyResult(otaStatus(2, shipment.id, createdDevice.id, ShipmentDeviceStatus.SUCCESS));
         client.verifyResult(otaShipmentStatus(0, shipment.id, createdDevice.id, ShipmentStatus.FINISH));
 
-        checkDeviceStatus(client, createdDevice.id, orgId, OTADeviceStatus.SUCCESS);
+        checkDeviceStatus(client, createdDevice.id, orgId, ShipmentDeviceStatus.SUCCESS);
     }
 
     @Test
@@ -416,8 +429,8 @@ public class OTAWebSocketsTest extends SingleServerInstancePerTestWithDBAndNewOr
         createdDevice = client.parseDevice(2);
 
         assertNotNull(createdDevice);
-        assertNotNull(createdDevice.deviceOtaInfo);
-        assertEquals(OTADeviceStatus.STARTED, createdDevice.deviceOtaInfo.status);
+        assertNotNull(createdDevice.deviceShipmentInfo);
+        assertEquals(ShipmentDeviceStatus.STARTED, createdDevice.deviceShipmentInfo.status);
 
         TestHardClient newHardClient = createHardClient(createdDevice.token, properties);
 
@@ -435,8 +448,8 @@ public class OTAWebSocketsTest extends SingleServerInstancePerTestWithDBAndNewOr
         client.getDevice(orgId, createdDevice.id);
         createdDevice = client.parseDevice(1);
         assertNotNull(createdDevice);
-        assertNotNull(createdDevice.deviceOtaInfo);
-        assertEquals(OTADeviceStatus.REQUEST_SENT, createdDevice.deviceOtaInfo.status);
+        assertNotNull(createdDevice.deviceShipmentInfo);
+        assertEquals(ShipmentDeviceStatus.REQUEST_SENT, createdDevice.deviceShipmentInfo.status);
 
         createFile(parsedFirmwareInfo, firmwareDownloadUrl, null, null, httpclient);
 
@@ -452,7 +465,7 @@ public class OTAWebSocketsTest extends SingleServerInstancePerTestWithDBAndNewOr
         newHardClient.never(internal(7777, "ota\0" + firmwareDownloadUrl));
         client.verifyResult(deviceConnected(1, createdDevice.id));
 
-        checkDeviceStatus(client, createdDevice.id, orgId, OTADeviceStatus.SUCCESS);
+        checkDeviceStatus(client, createdDevice.id, orgId, ShipmentDeviceStatus.SUCCESS);
 
 
         client.reset();
@@ -488,10 +501,10 @@ public class OTAWebSocketsTest extends SingleServerInstancePerTestWithDBAndNewOr
         newHardClient.never(internal(7777, "ota\0" + firmwareDownloadUrl));
 
         client.verifyResult(deviceConnected(1, createdDevice1.id), 2);
-        client.verifyResult(otaStatus(2, shipment.id, createdDevice1.id, OTADeviceStatus.SUCCESS));
+        client.verifyResult(otaStatus(2, shipment.id, createdDevice1.id, ShipmentDeviceStatus.SUCCESS));
         client.verifyResult(otaShipmentStatus(0, shipment.id, createdDevice1.id, ShipmentStatus.FINISH));
 
-        checkDeviceStatus(client, createdDevice1.id, orgId, OTADeviceStatus.SUCCESS);
+        checkDeviceStatus(client, createdDevice1.id, orgId, ShipmentDeviceStatus.SUCCESS);
     }
 
     @Test
@@ -521,18 +534,18 @@ public class OTAWebSocketsTest extends SingleServerInstancePerTestWithDBAndNewOr
         createdDevice = client.parseDevice(2);
 
         assertNotNull(createdDevice);
-        assertNotNull(createdDevice.deviceOtaInfo);
-        assertEquals(OTADeviceStatus.STARTED, createdDevice.deviceOtaInfo.status);
+        assertNotNull(createdDevice.deviceShipmentInfo);
+        assertEquals(ShipmentDeviceStatus.STARTED, createdDevice.deviceShipmentInfo.status);
         //todo check within shipment
-        //assertEquals(getUserName(), createdDevice.deviceOtaInfo.otaStartedBy);
-        //assertEquals(System.currentTimeMillis(), createdDevice.deviceOtaInfo.otaStartedAt, 5000);
+        //assertEquals(getUserName(), createdDevice.deviceShipmentInfo.otaStartedBy);
+        //assertEquals(System.currentTimeMillis(), createdDevice.deviceShipmentInfo.otaStartedAt, 5000);
 
         TestHardClient newHardClient = createHardClient(createdDevice.token, properties);
 
         newHardClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
-        client.verifyResult(otaStatus(1, shipment.id, createdDevice.id, OTADeviceStatus.DOWNLOAD_LIMIT_REACHED));
+        client.verifyResult(otaStatus(1, shipment.id, createdDevice.id, ShipmentDeviceStatus.DOWNLOAD_LIMIT_REACHED));
 
-        checkDeviceStatus(client, createdDevice.id, orgId, OTADeviceStatus.DOWNLOAD_LIMIT_REACHED);
+        checkDeviceStatus(client, createdDevice.id, orgId, ShipmentDeviceStatus.DOWNLOAD_LIMIT_REACHED);
     }
 
     @Test
@@ -555,66 +568,16 @@ public class OTAWebSocketsTest extends SingleServerInstancePerTestWithDBAndNewOr
         long now = System.currentTimeMillis();
         Shipment shipment = new Shipment(shipmentDTO, user, now);
 
-        createdDevice.startedOTA(shipment, 0);
+        createdDevice.startShipment(shipment, 0);
         holder.reportingDBManager.collectEvent(shipment, createdDevice);
 
         Session session = holder.sessionDao.getOrgSession(orgId);
         createdDevice.firmwareUploadFailure(session, 1, shipment);
         holder.reportingDBManager.collectEvent(shipment, createdDevice);
-        client.verifyResult(otaStatus(1, shipment.id, createdDevice.id, OTADeviceStatus.FAILURE));
+        client.verifyResult(otaStatus(1, shipment.id, createdDevice.id, ShipmentDeviceStatus.FAILURE));
 
-        assertNotNull(createdDevice.deviceOtaInfo);
-        assertEquals(OTADeviceStatus.FAILURE, createdDevice.deviceOtaInfo.status);
-    }
-
-    @Test
-    public void testUserFromSameOrgDoesNotReceiveOTAStatusUpdate() throws Exception {
-        String user = getUserName();
-        AppWebSocketClient client = loggedDefaultClient(user, "1");
-
-        AppWebSocketClient clientFromSameOrg = loggedDefaultClient("super@blynk.cc", "1");
-
-        client.getTempSecureToken();
-        String uploadToken = client.parseToken(1).token;
-
-        String pathToFirmware = upload(httpclient, uploadHttpsUrl, uploadToken, "static/ota/Airius_CC3220SF_v081.ota.tar");
-
-        FirmwareInfo parsedFirmwareInfo = getFirmwareInfo(client, pathToFirmware, "0.8.1",
-                BoardType.TI_CC3220, "Dec 13 2018 15:04:29", "7AC03C4FECAB96547DBB50350425A204",
-                properties, httpclient);
-
-        Device createdDevice = createProductAndDevice(client, orgId);
-
-        // set attemptsLimit to -1 to reach download limit
-        ShipmentDTO shipmentDTO = new ShipmentDTO(1, 1, createdDevice.productId, pathToFirmware, "original name",
-                new int[] {createdDevice.id}, "title", parsedFirmwareInfo, -1, null, new ShipmentProgress());
-        client.otaStart(shipmentDTO);
-        Shipment shipment = client.parseShipment(1);
-        checkShipment(shipment, shipmentDTO, 1);
-
-        int orgId = 1;
-        client.getDevice(orgId, createdDevice.id);
-        createdDevice = client.parseDevice(2);
-
-        assertNotNull(createdDevice);
-        assertNotNull(createdDevice.deviceOtaInfo);
-        assertEquals(OTADeviceStatus.STARTED, createdDevice.deviceOtaInfo.status);
-
-        TestHardClient newHardClient = createHardClient(createdDevice.token, properties);
-
-        newHardClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
-        client.verifyResult(otaStatus(1, shipment.id, createdDevice.id, OTADeviceStatus.DOWNLOAD_LIMIT_REACHED));
-        client.verifyResult(otaShipmentStatus(0, shipment.id, createdDevice.id, ShipmentStatus.FINISH));
-
-        checkDeviceStatus(client, createdDevice.id, orgId, OTADeviceStatus.DOWNLOAD_LIMIT_REACHED);
-
-        for (OTADeviceStatus status: OTADeviceStatus.values()) {
-            clientFromSameOrg.never(otaStatus(1, shipment.id, createdDevice.id, status));
-        }
-
-        for (ShipmentStatus status: ShipmentStatus.values()) {
-            clientFromSameOrg.never(otaShipmentStatus(0, shipment.id, createdDevice.id, status));
-        }
+        assertNotNull(createdDevice.deviceShipmentInfo);
+        assertEquals(ShipmentDeviceStatus.FAILURE, createdDevice.deviceShipmentInfo.status);
     }
 
     // resets client
@@ -745,16 +708,53 @@ public class OTAWebSocketsTest extends SingleServerInstancePerTestWithDBAndNewOr
         assertEquals(shipmentDTO.firmwareInfo.toString(), shipment.firmwareInfo.toString());
     }
 
-    // resets client
-    public static void checkDeviceStatus(AppWebSocketClient client, int deviceId, int orgId, OTADeviceStatus status) throws Exception {
-        client.reset();
+    @Test
+    public void testUserFromSameOrgDoesNotReceiveOTAStatusUpdate() throws Exception {
+        String user = getUserName();
+        AppWebSocketClient client = loggedDefaultClient(user, "1");
 
-        client.getDevice(orgId, deviceId);
-        Device device = client.parseDevice(1);
-        assertNotNull(device);
-        assertNotNull(device.deviceOtaInfo);
-        assertEquals(status, device.deviceOtaInfo.status);
+        AppWebSocketClient clientFromSameOrg = loggedDefaultClient("super@blynk.cc", "1");
 
-        client.reset();
+        client.getTempSecureToken();
+        String uploadToken = client.parseToken(1).token;
+
+        String pathToFirmware = upload(httpclient, uploadHttpsUrl, uploadToken, "static/ota/Airius_CC3220SF_v081.ota.tar");
+
+        FirmwareInfo parsedFirmwareInfo = getFirmwareInfo(client, pathToFirmware, "0.8.1",
+                BoardType.TI_CC3220, "Dec 13 2018 15:04:29", "7AC03C4FECAB96547DBB50350425A204",
+                properties, httpclient);
+
+        Device createdDevice = createProductAndDevice(client, orgId);
+
+        // set attemptsLimit to -1 to reach download limit
+        ShipmentDTO shipmentDTO = new ShipmentDTO(1, 1, createdDevice.productId, pathToFirmware, "original name",
+                new int[] {createdDevice.id}, "title", parsedFirmwareInfo, -1, null, new ShipmentProgress());
+        client.otaStart(shipmentDTO);
+        Shipment shipment = client.parseShipment(1);
+        checkShipment(shipment, shipmentDTO, 1);
+
+        int orgId = 1;
+        client.getDevice(orgId, createdDevice.id);
+        createdDevice = client.parseDevice(2);
+
+        assertNotNull(createdDevice);
+        assertNotNull(createdDevice.deviceShipmentInfo);
+        assertEquals(ShipmentDeviceStatus.STARTED, createdDevice.deviceShipmentInfo.status);
+
+        TestHardClient newHardClient = createHardClient(createdDevice.token, properties);
+
+        newHardClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
+        client.verifyResult(otaStatus(1, shipment.id, createdDevice.id, ShipmentDeviceStatus.DOWNLOAD_LIMIT_REACHED));
+        client.verifyResult(otaShipmentStatus(0, shipment.id, createdDevice.id, ShipmentStatus.FINISH));
+
+        checkDeviceStatus(client, createdDevice.id, orgId, ShipmentDeviceStatus.DOWNLOAD_LIMIT_REACHED);
+
+        for (ShipmentDeviceStatus status: ShipmentDeviceStatus.values()) {
+            clientFromSameOrg.never(otaStatus(1, shipment.id, createdDevice.id, status));
+        }
+
+        for (ShipmentStatus status: ShipmentStatus.values()) {
+            clientFromSameOrg.never(otaShipmentStatus(0, shipment.id, createdDevice.id, status));
+        }
     }
 }
