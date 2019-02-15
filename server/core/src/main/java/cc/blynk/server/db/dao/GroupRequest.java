@@ -26,7 +26,9 @@ public final class GroupRequest {
                         AggregationFunctionType aggregationFunctionType,
                         int[] deviceIds, short pin, PinType pinType) {
         this.granularity = granularity;
-        this.aggregationFunctionType = aggregationFunctionType;
+        this.aggregationFunctionType = aggregationFunctionType == null
+                ? AggregationFunctionType.AVG
+                : aggregationFunctionType;
         this.deviceIds = deviceIds;
         this.pin = pin;
         this.pinType = pinType;
