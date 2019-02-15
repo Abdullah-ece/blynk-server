@@ -1,6 +1,8 @@
 package cc.blynk.server.db.dao;
 
 import cc.blynk.server.core.model.enums.PinType;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * The Blynk Project.
@@ -17,7 +19,11 @@ public final class RawEntryWithPin {
 
     public final PinType pinType;
 
-    public RawEntryWithPin(long ts, double value, short pin, PinType pinType) {
+    @JsonCreator
+    public RawEntryWithPin(@JsonProperty("ts") long ts,
+                           @JsonProperty("value") double value,
+                           @JsonProperty("pin") short pin,
+                           @JsonProperty("pinType") PinType pinType) {
         this.ts = ts;
         this.value = value;
         this.pin = pin;

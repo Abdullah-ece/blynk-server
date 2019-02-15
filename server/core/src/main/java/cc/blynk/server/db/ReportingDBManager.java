@@ -4,10 +4,8 @@ import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.web.product.EventType;
-import cc.blynk.server.core.reporting.ota.DeviceShipmentEvent;
 import cc.blynk.server.core.reporting.ota.ShipmentStatusProcessor;
 import cc.blynk.server.core.reporting.raw.BaseReportingKey;
-import cc.blynk.server.core.reporting.raw.BaseReportingValue;
 import cc.blynk.server.core.reporting.raw.RawDataCacheForGraphProcessor;
 import cc.blynk.server.core.reporting.raw.RawDataProcessor;
 import cc.blynk.server.core.stats.model.Stat;
@@ -29,8 +27,6 @@ import ru.yandex.clickhouse.ClickHouseDriver;
 import java.io.Closeable;
 import java.sql.Connection;
 import java.sql.Statement;
-import java.util.Map;
-import java.util.Queue;
 
 import static cc.blynk.utils.properties.DBProperties.DB_PROPERTIES_FILENAME;
 
@@ -118,18 +114,6 @@ public final class ReportingDBManager implements Closeable {
     public void insertStat(String region, Stat stat) {
         if (isDBEnabled()) {
             reportingStatsDao.insertStat(region, stat);
-        }
-    }
-
-    public void insertBatchOTAStats(Queue<DeviceShipmentEvent> eventsDataBatch) {
-        if (isDBEnabled() && eventsDataBatch.size() > 0) {
-            blockingIOProcessor.executeDB(() -> reportingOTAStatsDao.insertOTAEventsStat(eventsDataBatch));
-        }
-    }
-
-    public void insertBatchDataPoints(Map<BaseReportingKey, Queue<BaseReportingValue>> rawDataBatch) {
-        if (isDBEnabled() && rawDataBatch.size() > 0) {
-            blockingIOProcessor.executeDB(() -> reportingDBDao.insertDataPoint(rawDataBatch));
         }
     }
 

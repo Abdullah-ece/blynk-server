@@ -19,9 +19,12 @@ import cc.blynk.server.core.model.widgets.ui.tiles.group.BaseGroupTemplate;
 import cc.blynk.server.core.model.widgets.ui.tiles.group.Group;
 import cc.blynk.server.core.protocol.handlers.encoders.MobileMessageEncoder;
 import cc.blynk.server.core.protocol.model.messages.BinaryMessage;
+import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.stats.GlobalStats;
+import cc.blynk.server.db.dao.RawEntryWithPin;
 import cc.blynk.utils.SHA256Util;
 import cc.blynk.utils.properties.ServerProperties;
+import com.fasterxml.jackson.core.type.TypeReference;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
@@ -29,6 +32,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 import java.util.StringJoiner;
 
@@ -67,6 +71,7 @@ import static cc.blynk.server.core.protocol.enums.Command.MOBILE_EXPORT_REPORT;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICES;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICES_BY_REFERENCE_METAFIELD;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_GROUP_WIDGETS_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_PROVISION_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_HARDWARE_GROUP;
@@ -161,6 +166,13 @@ public class TestAppClient extends BaseTestAppClient {
         ArgumentCaptor<BinaryMessage> objectArgumentCaptor = ArgumentCaptor.forClass(BinaryMessage.class);
         verify(responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
         return objectArgumentCaptor.getValue();
+    }
+
+    public List<RawEntryWithPin> getGroupWidgetsData() throws Exception {
+        ArgumentCaptor<StringMessage> objectArgumentCaptor = ArgumentCaptor.forClass(StringMessage.class);
+        verify(responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
+        StringMessage stringMessage = objectArgumentCaptor.getValue();
+        return JsonParser.MAPPER.readValue(stringMessage.body, new TypeReference<List<RawEntryWithPin>>(){});
     }
 
     @Override
@@ -326,6 +338,10 @@ public class TestAppClient extends BaseTestAppClient {
 
     public void createTemplate(int dashId, long widgetId, String tileTemplate) {
         send(MOBILE_CREATE_TILE_TEMPLATE, "" + dashId + BODY_SEPARATOR + widgetId + BODY_SEPARATOR + tileTemplate);
+    }
+
+    public void getGroupWidgetsData(int dashId, long widgetId, long groupId) {
+        send(MOBILE_GET_GROUP_WIDGETS_DATA, "" + dashId + BODY_SEPARATOR + widgetId + BODY_SEPARATOR + groupId);
     }
 
     public void updateTemplate(int dashId, long widgetId, TileTemplate tileTemplate) throws Exception {
