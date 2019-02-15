@@ -219,11 +219,11 @@ public class ReportingOTAEventsTest extends SingleServerInstancePerTestWithDBAnd
         Shipment shipment = new Shipment(shipmentDTO, user, now);
 
         createdDevice.startShipment(shipment, 0);
-        holder.reportingDBManager.collectEvent(shipment, createdDevice);
+        holder.reportingDBManager.collectEvent(shipment.id, createdDevice);
 
         Session session = holder.sessionDao.getOrgSession(orgId);
         createdDevice.firmwareUploadFailure(session, 1, shipment);
-        holder.reportingDBManager.collectEvent(shipment, createdDevice);
+        holder.reportingDBManager.collectEvent(shipment.id, createdDevice);
 
         client.verifyResult(otaStatus(1, shipment.id, createdDevice.id, ShipmentDeviceStatus.FAILURE));
 
