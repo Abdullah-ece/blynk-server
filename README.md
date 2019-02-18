@@ -14,7 +14,7 @@ Blynk has a bunch of integration tests that require DB, so you have to skip test
 
 Local server uses by default self-generated certificates, so you have to disable tls/ssl on the localhost for your browser:
 
-- Paste in chrome
+- Paste in Chrome
 
         chrome://flags/#allow-insecure-localhost
 
@@ -22,7 +22,7 @@ Local server uses by default self-generated certificates, so you have to disable
 
 ### For Firefox
 
-- Pain firefox
+- Paste in Firefox
 
         about:config
 
