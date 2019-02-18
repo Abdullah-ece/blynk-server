@@ -25,9 +25,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.server.internal.WebByteBufUtil.serverError;
@@ -70,7 +68,7 @@ public final class MobileGetGroupWidgetsDataLogic {
 
         //todo for now we support only aggregation function and only hour granularity
         List<GroupRequest> groupRequests = new ArrayList<>();
-        Set<RawEntryWithPin> result = new HashSet<>();
+        List<RawEntryWithPin> result = new ArrayList<>();
         for (Widget widget : groupTemplate.widgets) {
             if (widget instanceof OnePinWidget) {
                 OnePinWidget onePinWidget = (OnePinWidget) widget;
