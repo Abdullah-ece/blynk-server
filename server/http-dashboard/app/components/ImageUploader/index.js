@@ -87,7 +87,7 @@ class ImageUploader extends React.Component {
                   <div>
                     <LinearIcon type="cube"
                                 className="image-uploader-file-icon"/>
-                    <div>{this.props.logo}</div>
+                    <div className="file-uploader-text">{this.props.logo}</div>
                   </div>
                 ) : (
                   <img src={this.props.logo}
