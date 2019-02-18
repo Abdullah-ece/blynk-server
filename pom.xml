@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <name>Blynk Server</name>
+    <name>Blynk Web Dashboard</name>
     <url>https://www.blynk.cc/</url>
     <description>
         Blynk - platform with iOs and Android apps to control Arduino,
@@ -14,7 +14,7 @@
     </organization>
     <issueManagement>
         <system>github</system>
-        <url>https://github.com/blynkkk/blynk-server/issues</url>
+        <url>https://github.com/blynkkk/dash/issues</url>
     </issueManagement>
 
     <groupId>cc.blynk</groupId>
@@ -23,9 +23,9 @@
     <packaging>pom</packaging>
 
     <scm>
-        <url>https://github.com/blynkkk/blynk-server.git</url>
-        <connection>scm:git:ssh://git@github.com/blynkkk/blynk-server.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/blynkkk/blynk-server.git</developerConnection>
+        <url>https://github.com/blynkkk/dash</url>
+        <connection>scm:git:ssh://git@github.com/blynkkk/dash.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/blynkkk/dash.git</developerConnection>
         <tag>v0.41.0</tag>
     </scm>
 
