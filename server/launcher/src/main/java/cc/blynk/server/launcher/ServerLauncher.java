@@ -254,7 +254,7 @@ public final class ServerLauncher {
             newDevice.boardType = BoardType.ESP8266;
             newDevice.token = null;
             newDevice.productId = product.id;
-            newDevice.connectionType =ConnectionType.WI_FI;
+            newDevice.connectionType = ConnectionType.WI_FI;
             newDevice.setHardwareInfo(new HardwareInfo("1.0.0", "0.5.0", "Particle Photon", "atm33",
                     "WI-FI", "0.0.0", null, 1, -1));
 
