@@ -59,6 +59,9 @@ public class Device {
 
     public volatile BoardType boardType = BoardType.Generic_Board;
 
+    //used for bluetooth
+    public volatile String address;
+
     @JsonView(View.Private.class)
     public volatile String token;
 
@@ -242,6 +245,7 @@ public class Device {
         this.connectionType = newDevice.connectionType;
         this.iconName = newDevice.iconName;
         this.isUserIcon = newDevice.isUserIcon;
+        this.address = newDevice.address;
         //that's fine. leave this fields as it is. It cannot be update from app client.
         //this.hardwareInfo = newDevice.hardwareInfo;
         //this.deviceShipmentInfo = newDevice.deviceShipmentInfo;
@@ -269,23 +273,6 @@ public class Device {
         long now = System.currentTimeMillis();
         this.connectTime = now;
         this.updatedAt = now;
-    }
-
-    public void erase() {
-        this.token = null;
-        this.disconnectTime = 0;
-        this.connectTime = 0;
-        this.firstConnectTime = 0;
-        this.lastLoggedIP = null;
-        this.status = Status.OFFLINE;
-        this.hardwareInfo = null;
-        this.deviceShipmentInfo = null;
-        this.webDashboard = new WebDashboard();
-        this.metadataUpdatedAt = 0;
-        this.metadataUpdatedBy = null;
-        this.updatedAt = 0;
-        this.deviceShipmentInfo = null;
-        this.pinStorage.erase();
     }
 
     public String getNameOrDefault() {
