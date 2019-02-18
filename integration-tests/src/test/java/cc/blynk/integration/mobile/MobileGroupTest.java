@@ -665,5 +665,9 @@ public class MobileGroupTest extends SingleServerInstancePerTestWithDBAndNewOrg 
         List<RawEntryWithPin> entries = mobileClient.getGroupWidgetsData();
         assertNotNull(entries);
         assertEquals(1, entries.size());
+        RawEntryWithPin entry = entries.get(0);
+        assertEquals(150, entry.value, 0.00001);
+        assertEquals(37, entry.pin);
+        assertEquals(PinType.VIRTUAL, entry.pinType);
     }
 }
