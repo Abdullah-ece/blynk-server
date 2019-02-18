@@ -85,11 +85,12 @@ export const API_COMMANDS = {
   WEB_GET_DEVICES_BY_REFERENCE_METAFIELD: 147,
   WEB_GET_RULE_GROUP: 150,
   WEB_EDIT_RULE_GROUP: 151,
-  WEB_OTA_START: 141, // accepts json string otaDTO
-  WEB_OTA_STOP: 142, // accepts json_string otaDTO
-  WEB_OTA_GET_FIRMWARE_INFO: 143,//  "path_to_firmware"
+  WEB_SHIPMENT_START: 141, // accepts json string otaDTO
+  WEB_SHIPMENT_STOP: 142, // accepts json_string otaDTO
+  WEB_SHIPMENT_GET_FIRMWARE_INFO: 143,//  "path_to_firmware"
   WEB_SHIPMENT_DELETE: 144, // "shipmentId"
   WEB_GET_ORG_SHIPMENTS: 153,
+  WEB_SHIPMENT_STATUS: 160
 };
 
 const blynkHeader = (msg_type, msg_id) => {

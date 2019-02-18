@@ -372,11 +372,11 @@ class Edit extends React.Component {
                 continue
               </Col>
             </Row>
-            {/*<Row>*/}
-            {/*<Col span={24} style={{ paddingRight: 16 }}>*/}
-            {/*<Progress percent={60} successPercent={30}/>*/}
-            {/*</Col>*/}
-            {/*</Row>*/}
+            <Row>
+              <Col span={24} style={{ paddingRight: 16 }}>
+                {/*<Progress percent={60} successPercent={30} status="exception"/>*/}
+              </Col>
+            </Row>
             <Row>
               <Col span={24} style={{ paddingRight: 16 }}>
                 Target: {Pluralize("device", OTA.deviceIds.length, true)}

@@ -144,10 +144,10 @@ export function OTAStart(params) {
   const { otaDTO } = params;
 
   return {
-    type: 'WEB_OTA_START',
+    type: 'WEB_SHIPMENT_START',
     ws: {
       request: {
-        command: API_COMMANDS.WEB_OTA_START,
+        command: API_COMMANDS.WEB_SHIPMENT_START,
         query: [
           JSON.stringify(otaDTO)
         ],
@@ -160,10 +160,10 @@ export function OTAStop(params) {
   const { otaDTO } = params;
 
   return {
-    type: 'WEB_OTA_STOP',
+    type: 'WEB_SHIPMENT_STOP',
     ws: {
       request: {
-        command: API_COMMANDS.WEB_OTA_STOP,
+        command: API_COMMANDS.WEB_SHIPMENT_STOP,
         query: [
           JSON.stringify(otaDTO)
         ],
@@ -176,10 +176,10 @@ export function OTAGetFirmwareInfo(params) {
   const { path_to_firmware } = params;
 
   return {
-    type: 'WEB_OTA_GET_FIRMWARE_INFO',
+    type: 'WEB_SHIPMENT_GET_FIRMWARE_INFO',
     ws: {
       request: {
-        command: API_COMMANDS.WEB_OTA_GET_FIRMWARE_INFO,
+        command: API_COMMANDS.WEB_SHIPMENT_GET_FIRMWARE_INFO,
         query: [
           path_to_firmware
         ],
