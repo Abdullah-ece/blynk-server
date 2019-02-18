@@ -29,4 +29,28 @@ public final class RawEntryWithPin {
         this.pin = pin;
         this.pinType = pinType;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        RawEntryWithPin that = (RawEntryWithPin) o;
+
+        if (pin != that.pin) {
+            return false;
+        }
+        return pinType == that.pinType;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) pin;
+        result = 31 * result + (pinType != null ? pinType.hashCode() : 0);
+        return result;
+    }
 }

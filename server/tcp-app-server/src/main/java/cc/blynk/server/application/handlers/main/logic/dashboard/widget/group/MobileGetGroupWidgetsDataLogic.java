@@ -6,6 +6,7 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.model.storage.value.PinStorageValue;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.graph.Granularity;
@@ -18,12 +19,15 @@ import cc.blynk.server.core.session.mobile.MobileStateHolder;
 import cc.blynk.server.db.dao.GroupRequest;
 import cc.blynk.server.db.dao.RawEntryWithPin;
 import cc.blynk.server.db.dao.ReportingGroupDBDao;
+import cc.blynk.utils.NumberUtil;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.server.internal.WebByteBufUtil.serverError;
@@ -38,7 +42,6 @@ import static cc.blynk.utils.StringUtils.split3;
 public final class MobileGetGroupWidgetsDataLogic {
 
     private static final Logger log = LogManager.getLogger(MobileGetGroupWidgetsDataLogic.class);
-
 
     private final ReportingGroupDBDao reportingGroupDBDao;
     private final BlockingIOProcessor blockingIOProcessor;
@@ -67,33 +70,44 @@ public final class MobileGetGroupWidgetsDataLogic {
 
         //todo for now we support only aggregation function and only hour granularity
         List<GroupRequest> groupRequests = new ArrayList<>();
+        Set<RawEntryWithPin> result = new HashSet<>();
         for (Widget widget : groupTemplate.widgets) {
-            if (widget.getModeType() == PinMode.in && widget instanceof OnePinWidget) {
+            if (widget instanceof OnePinWidget) {
                 OnePinWidget onePinWidget = (OnePinWidget) widget;
-                if (onePinWidget.isValid()) {
-                    groupRequests.add(new GroupRequest(
-                            Granularity.HOURLY,
-                            onePinWidget.aggregationFunctionType,
-                            group.deviceIds,
-                            onePinWidget.pin,
-                            onePinWidget.pinType
-                        )
-                    );
+                //for control widgets we have values in memory so we can fill them right away
+                if (widget.getModeType() == PinMode.out) {
+                    PinStorageValue pinStorageValue = group.pinStorage.get(onePinWidget.pin, onePinWidget.pinType);
+                    if (pinStorageValue != null) {
+                        double value = NumberUtil.parseDouble(pinStorageValue.lastValue());
+                        if (value != NumberUtil.NO_RESULT) {
+                            result.add(new RawEntryWithPin(0L, value, onePinWidget.pin, onePinWidget.pinType));
+                        }
+                    }
+                } else if (widget.getModeType() == PinMode.in) {
+                    if (onePinWidget.isValid()) {
+                        groupRequests.add(new GroupRequest(
+                                        Granularity.HOURLY,
+                                        onePinWidget.aggregationFunctionType,
+                                        group.deviceIds,
+                                        onePinWidget.pin,
+                                        onePinWidget.pinType
+                                )
+                        );
+                    }
                 }
             }
         }
 
         blockingIOProcessor.executeReporting(() -> {
             try {
-                List<RawEntryWithPin> rawEntries = new ArrayList<>();
                 for (GroupRequest groupRequest : groupRequests) {
                     RawEntryWithPin rawEntry = reportingGroupDBDao.getAverageForGroupOfDevices(groupRequest);
                     if (rawEntry != null) {
-                        rawEntries.add(rawEntry);
+                        result.add(rawEntry);
                     }
-                    String dataJson = JsonParser.toJson(rawEntries);
-                    ctx.writeAndFlush(makeUTF8StringMessage(message.command, message.id, dataJson));
                 }
+                String dataJson = JsonParser.toJson(result);
+                ctx.writeAndFlush(makeUTF8StringMessage(message.command, message.id, dataJson));
             } catch (Exception e) {
                 log.error("Error processing group get request.", e);
                 ctx.writeAndFlush(serverError(message.id, "Error processing group get request."), ctx.voidPromise());

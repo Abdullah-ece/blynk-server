@@ -1,12 +1,15 @@
 package cc.blynk.server.core.model.widgets.ui.tiles.group;
 
 import cc.blynk.server.core.model.DataStream;
+import cc.blynk.server.core.model.device.PinStorage;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.model.serialization.View;
 import cc.blynk.server.core.model.widgets.ui.tiles.GroupFunctionValue;
 import cc.blynk.utils.ArrayUtil;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
 
 import static cc.blynk.utils.IntArray.EMPTY_INTS;
 
@@ -28,6 +31,9 @@ public final class Group {
     public final DataStream[] controlDataStreams;
 
     public final DataStream[] viewDataStreams;
+
+    @JsonView(View.Private.class)
+    public final PinStorage pinStorage = new PinStorage();
 
     @JsonCreator
     public Group(@JsonProperty("id") long id,
@@ -71,6 +77,7 @@ public final class Group {
         if (controlDataStream != null) {
             controlDataStream.value = value;
         }
+        this.pinStorage.updateValue(pin, pinType, value);
     }
 
     @Override
