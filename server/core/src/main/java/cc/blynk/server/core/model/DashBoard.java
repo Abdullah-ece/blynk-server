@@ -13,12 +13,9 @@ import cc.blynk.server.core.model.widgets.MultiPinWidget;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Timer;
-import cc.blynk.server.core.model.widgets.notifications.Mail;
 import cc.blynk.server.core.model.widgets.notifications.Twitter;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
-import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
-import cc.blynk.server.core.model.widgets.outputs.graph.Superchart;
 import cc.blynk.server.core.model.widgets.ui.reporting.ReportingWidget;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
@@ -89,10 +86,6 @@ public class DashBoard {
 
     public boolean isChild() {
         return parentId != IS_PARENT_DASH;
-    }
-
-    public String getNameOrEmpty() {
-        return name == null ? "" : name;
     }
 
     public String getNameOrDefault() {
@@ -187,10 +180,6 @@ public class DashBoard {
 
     public Twitter getTwitterWidget() {
         return getWidgetByType(Twitter.class);
-    }
-
-    public Mail getMailWidget() {
-        return getWidgetByType(Mail.class);
     }
 
     public ReportingWidget getReportingWidget() {
@@ -365,23 +354,6 @@ public class DashBoard {
             }
         }
         return widget;
-    }
-
-    public boolean needRawDataForGraph(short pin, PinType pinType) {
-        for (Widget widget : widgets) {
-            if (widget instanceof Superchart) {
-                Superchart superchart = (Superchart) widget;
-                if (superchart.hasLivePeriodsSelected()) {
-                    //todo check targetId?
-                    for (GraphDataStream graphDataStream : superchart.dataStreams) {
-                        if (graphDataStream.dataStream != null && graphDataStream.dataStream.isSame(pin, pinType)) {
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-        return false;
     }
 
     @Override

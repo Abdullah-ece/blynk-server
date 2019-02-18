@@ -17,7 +17,6 @@
                 {"id":7, "x":1, "y":1, "label":"Some Text", "type":"DIGIT4_DISPLAY", "pinType":"ANALOG", "pin":7, "frequency" : 5000, "value":"3"},
                 {"id":30, "x":1, "y":1, "label":"Some Text", "type":"DIGIT4_DISPLAY", "pinType":"ANALOG", "pin":30, "frequency" : 100, "value":"3"},
                 {"id":8, "x":1, "y":1, "label":"Some Text", "type":"LABELED_VALUE_DISPLAY",          "pinType":"ANALOG", "pin":8},
-                {"id":10, "x":1, "y":1, "token":"token", "secret":"secret", "type":"TWITTER"},
                 {"id":12, "x":0, "y":0, "color":-1, "width":8, "height":2,
                     "type":"LCD",
                     "pins": [

@@ -20,9 +20,6 @@ import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.controls.TwoAxisJoystick;
 import cc.blynk.server.core.model.widgets.controls.VerticalSlider;
 import cc.blynk.server.core.model.widgets.controls.VerticalStep;
-import cc.blynk.server.core.model.widgets.notifications.Mail;
-import cc.blynk.server.core.model.widgets.notifications.SMS;
-import cc.blynk.server.core.model.widgets.notifications.Twitter;
 import cc.blynk.server.core.model.widgets.others.Player;
 import cc.blynk.server.core.model.widgets.others.Video;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
@@ -123,11 +120,6 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
         @JsonSubTypes.Type(value = Gravity.class, name = "GRAVITY"),
         @JsonSubTypes.Type(value = Barometer.class, name = "BAROMETER"),
         @JsonSubTypes.Type(value = Humidity.class, name = "HUMIDITY"),
-
-        //notifications
-        @JsonSubTypes.Type(value = Twitter.class, name = "TWITTER"),
-        @JsonSubTypes.Type(value = Mail.class, name = "EMAIL"),
-        @JsonSubTypes.Type(value = SMS.class, name = "SMS"),
 
         //interface
         @JsonSubTypes.Type(value = Menu.class, name = "MENU"),
