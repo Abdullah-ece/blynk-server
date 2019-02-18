@@ -21,6 +21,7 @@ class Index extends Component {
   static propTypes = {
     getOrgShipments: PropTypes.func,
     orgId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    otaDelete: PropTypes.func,
   };
 
   constructor(props) {
@@ -33,6 +34,12 @@ class Index extends Component {
     this.deleteOTA = this.deleteOTA.bind(this);
   }
 
+  componentWillMount() {
+    this.props.getOrgShipments({ orgId: this.props.orgId }).then(shipments => {
+      this.setState({ shipments: shipments.payload.data });
+    }).catch(err => console.error(err));
+  }
+
   deleteOTA(id) {
     this.props.otaDelete({ shipmentId: id }).then(
       () => {
@@ -41,12 +48,6 @@ class Index extends Component {
             this.setState({ shipments: shipments.payload.data });
           });
       }).catch(err => console.error(err));
-  }
-
-  componentWillMount() {
-    this.props.getOrgShipments({ orgId: this.props.orgId }).then(shipments => {
-      this.setState({ shipments: shipments.payload.data });
-    }).catch(err => console.error(err));
   }
 
   render() {
