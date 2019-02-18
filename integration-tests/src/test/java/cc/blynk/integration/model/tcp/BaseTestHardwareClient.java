@@ -71,6 +71,10 @@ public abstract class BaseTestHardwareClient extends BaseClient {
         send(HARDWARE_LOGIN, token);
     }
 
+    public void hardware(int pin, int value) {
+        hardware(pin, String.valueOf(value));
+    }
+
     public void hardware(int pin, String value) {
         send(HARDWARE, "vw" + BODY_SEPARATOR + pin + BODY_SEPARATOR + value);
     }

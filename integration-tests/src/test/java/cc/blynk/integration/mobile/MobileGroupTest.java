@@ -186,8 +186,8 @@ public class MobileGroupTest extends SingleServerInstancePerTestWithDBAndNewOrg 
         newHardClient1.verifyResult(hardware(3, "vw 33 100"));
         newHardClient2.verifyResult(hardware(3, "vw 33 100"));
 
-        newHardClient1.send("hardware vw 34 200");
-        newHardClient2.send("hardware vw 34 100");
+        newHardClient1.hardware(34, 200);
+        newHardClient2.hardware(34, 100);
 
         mobileClient.verifyResult(hardware(3, deviceFromApi1.id + " vw 34 200"));
         mobileClient.verifyResult(hardware(3, deviceFromApi2.id + " vw 34 100"));
@@ -341,8 +341,8 @@ public class MobileGroupTest extends SingleServerInstancePerTestWithDBAndNewOrg 
         newHardClient1.verifyResult(hardware(3, "vw 33 100"));
         newHardClient2.verifyResult(hardware(3, "vw 33 100"));
 
-        newHardClient1.send("hardware vw 34 200");
-        newHardClient2.send("hardware vw 34 100");
+        newHardClient1.hardware(34, 200);
+        newHardClient2.hardware(34, 100);
 
         mobileClient.verifyResult(hardware(3, deviceFromApi1.id + " vw 34 200"));
         mobileClient.verifyResult(hardware(3, deviceFromApi2.id + " vw 34 100"));
@@ -493,8 +493,8 @@ public class MobileGroupTest extends SingleServerInstancePerTestWithDBAndNewOrg 
         mobileClient.createGroup(1, widgetId, group);
         mobileClient.verifyResult(ok(2));
 
-        newHardClient1.send("hardware vw 34 200");
-        newHardClient2.send("hardware vw 34 100");
+        newHardClient1.hardware(34, 200);
+        newHardClient2.hardware(34, 100);
 
         mobileClient.verifyResult(hardware(3, deviceFromApi1.id + " vw 34 200"));
         mobileClient.verifyResult(hardware(3, deviceFromApi2.id + " vw 34 100"));
@@ -954,11 +954,11 @@ public class MobileGroupTest extends SingleServerInstancePerTestWithDBAndNewOrg 
         mobileClient.createGroup(1, widgetId, group);
         mobileClient.verifyResult(ok(2));
 
-        newHardClient1.send("hardware vw 37 200");
-        newHardClient2.send("hardware vw 37 100");
+        newHardClient1.hardware(37, 200);
+        newHardClient2.hardware(37, 100);
 
-        newHardClient1.send("hardware vw 38 500");
-        newHardClient2.send("hardware vw 38 500");
+        newHardClient1.hardware(38, 500);
+        newHardClient2.hardware(38, 500);
 
         mobileClient.verifyResult(hardware(3, deviceFromApi1.id + " vw 37 200"));
         mobileClient.verifyResult(hardware(3, deviceFromApi2.id + " vw 37 100"));
