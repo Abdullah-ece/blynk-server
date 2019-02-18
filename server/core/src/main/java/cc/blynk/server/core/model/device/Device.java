@@ -114,16 +114,6 @@ public class Device {
         this.webDashboard = new WebDashboard();
     }
 
-    //todo remove?
-    public Device(String name, BoardType boardType, String token, int productId, ConnectionType connectionType) {
-        this();
-        this.name = name;
-        this.boardType = boardType;
-        this.token = token;
-        this.productId = productId;
-        this.connectionType = connectionType;
-    }
-
     private static String createShipmentStatusMessage(int shipmentId, int deviceId, ShipmentDeviceStatus status) {
         return "" + shipmentId + DEVICE_SEPARATOR + deviceId + BODY_SEPARATOR + status;
     }

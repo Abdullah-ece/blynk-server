@@ -249,10 +249,15 @@ public final class ServerLauncher {
         holder.organizationDao.createProduct(superOrg.id, product);
 
         for (int i = 0; i < 20; i++) {
-            Device newDevice = new Device("My Device " + i, BoardType.ESP8266, "auth_123",
-                    product.id, ConnectionType.WI_FI);
+            Device newDevice = new Device();
+            newDevice.name = "My Device " + i;
+            newDevice.boardType = BoardType.ESP8266;
+            newDevice.token = null;
+            newDevice.productId = product.id;
+            newDevice.connectionType =ConnectionType.WI_FI;
             newDevice.setHardwareInfo(new HardwareInfo("1.0.0", "0.5.0", "Particle Photon", "atm33",
                     "WI-FI", "0.0.0", null, 1, -1));
+
             holder.organizationDao.assignToOrgAndAddDevice(superOrg, newDevice);
             holder.deviceDao.create(superOrg, "admin@blynk.cc", product, newDevice);
             for (EventType eventType : EventType.values()) {
